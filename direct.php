@@ -9,11 +9,11 @@ include "./php/class.php";
 $fileID = ( isset($_GET['fileID']) ) ? $_GET['fileID'] : '' ;
 $lang = ( isset($_GET['lang']) ) ? $_GET['lang'] : '' ;
 
-if( $fileID == '' ) { echo 'plop'; exit; }
+if( $fileID == '' ) { exit; }
 
 $phpDoc = new phpDoc();
 
-$phpDoc->login('cvsread', 'phpfi', 'fr');
+$phpDoc->login('cvsread', 'phpfi', $lang);
 
 $result = $phpDoc->searchXmlID($lang, $fileID);
 
