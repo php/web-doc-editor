@@ -1,28 +1,14 @@
--- phpMyAdmin SQL Dump
--- version 3.1.2deb1
--- http://www.phpmyadmin.net
---
--- Serveur: localhost
--- Généré le : Sam 28 Mars 2009 à 16:13
--- Version du serveur: 5.1.31
--- Version de PHP: 5.2.6-3ubuntu2
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 --
--- Base de données: `phpdoc2`
+-- Database: `doc-editor`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `commitMessage`
+-- Structure of table `commitMessage`
 --
 
 CREATE TABLE IF NOT EXISTS `commitMessage` (
@@ -30,12 +16,12 @@ CREATE TABLE IF NOT EXISTS `commitMessage` (
   `text` text NOT NULL,
   `userID` int(10) unsigned NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `dirs`
+-- Structure of table `dirs`
 --
 
 CREATE TABLE IF NOT EXISTS `dirs` (
@@ -43,12 +29,12 @@ CREATE TABLE IF NOT EXISTS `dirs` (
   `parentDir` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=545 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `errorfiles`
+-- Structure of table `errorfiles`
 --
 
 CREATE TABLE IF NOT EXISTS `errorfiles` (
@@ -61,12 +47,12 @@ CREATE TABLE IF NOT EXISTS `errorfiles` (
   `value_lang` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3914 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `files`
+-- Structure of table `files`
 --
 
 CREATE TABLE IF NOT EXISTS `files` (
@@ -95,12 +81,12 @@ CREATE TABLE IF NOT EXISTS `files` (
   `check_noexamples` int(11) DEFAULT NULL,
   `check_noerrors` int(11) DEFAULT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=232191 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `pendingCommit`
+-- Structure of table `pendingCommit`
 --
 
 CREATE TABLE IF NOT EXISTS `pendingCommit` (
@@ -115,12 +101,12 @@ CREATE TABLE IF NOT EXISTS `pendingCommit` (
   `modified_by` varchar(50) NOT NULL,
   `date` datetime NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=181 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `pendingPatch`
+-- Structure of table `pendingPatch`
 --
 
 CREATE TABLE IF NOT EXISTS `pendingPatch` (
@@ -133,12 +119,12 @@ CREATE TABLE IF NOT EXISTS `pendingPatch` (
   `uniqID` varchar(255) NOT NULL,
   `date` datetime NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=39 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `translators`
+-- Structure of table `translators`
 --
 
 CREATE TABLE IF NOT EXISTS `translators` (
@@ -150,12 +136,12 @@ CREATE TABLE IF NOT EXISTS `translators` (
   `cvs` varchar(255) NOT NULL,
   `editor` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=364 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users`
+-- Structure of table `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -171,4 +157,4 @@ CREATE TABLE IF NOT EXISTS `users` (
   `conf_theme` varchar(255) NOT NULL DEFAULT 'xtheme-default.css',
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
