@@ -60,7 +60,7 @@ class phpDoc
           $_MysqlServ='localhost';
           $_MysqlUser='root';
           $_MysqlMdp='xxxxxxx';
-          $_MysqlDB='phpdoc2';
+          $_MysqlDB='doc-editor';
 
           // Connection MySqli
           try {
