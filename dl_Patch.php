@@ -5,14 +5,14 @@ include "./php/class.php";
 
 $phpDoc = new phpDoc();
 
-$FilePath=$_GET['FilePath'];
-$FileName=$_GET['FileName'];
+$FilePath = $_GET['FilePath'];
+$FileName = $_GET['FileName'];
 
 $patch = $phpDoc->getRawDiff($FilePath, $FileName);
 
-$file='patch-'.time().'.patch';
+$file = 'patch-' . time() . '.patch';
 
-$size=strlen($patch);
+$size = strlen($patch);
 
 header("Content-Type: application/force-download; name=\"$file\"");
 header("Content-Transfer-Encoding: binary");
@@ -23,6 +23,3 @@ header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 echo $patch;
 exit(); 
-
-
-?>

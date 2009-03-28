@@ -20,5 +20,3 @@ echo "=> Parse translator\n";
 flush();
 // Parse translators
 $phpDoc->rev_parse_translation();
-
-?>

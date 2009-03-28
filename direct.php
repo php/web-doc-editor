@@ -6,10 +6,13 @@ set_time_limit(0);
 
 include "./php/class.php";
 
-$fileID = ( isset($_GET['fileID']) ) ? $_GET['fileID'] : '' ;
-$lang = ( isset($_GET['lang']) ) ? $_GET['lang'] : '' ;
+$fileID = isset($_GET['fileID']) ? $_GET['fileID'] : '';
+if ($fileID == '') { 
+    exit; 
+}
 
-if( $fileID == '' ) { exit; }
+$lang = isset($_GET['lang']) ? $_GET['lang'] : '';
+
 
 $phpDoc = new phpDoc();
 
@@ -21,5 +24,3 @@ $_SESSION['directAccess'] = $result;
 
 header("Location: ./");
 exit;
-
-?>

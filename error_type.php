@@ -7,15 +7,17 @@ include "./php/class.php";
 $phpDoc = new phpDoc();
 $phpDoc->isLogged();
 
-if( isset($_GET['dir']) && isset($_GET['file']) ) {
+if (isset($_GET['dir']) && isset($_GET['file'])) {
 
- // We retrieve all this error from DB to display the value.
- $error_to_display = $phpDoc->tools_error_getInfo($_GET['dir'], $_GET['file']);
+    // We retrieve all this error from DB to display the value.
+    $error_to_display = $phpDoc->tools_error_getInfo($_GET['dir'], $_GET['file']);
 
- $fileLibel = $_GET['dir'].$_GET['file'];
+    $fileLibel = $_GET['dir'] . $_GET['file'];
 
+} else {
+    $error_to_display = array();
+    $fileLibel = NULL;
 }
-else { $error_to_display=array(); $fileLibel = NULL; }
 
 /*
 echo '<pre>';
@@ -27,56 +29,56 @@ echo '</pre>';
 <style type="text/css">
 
 .member-table {
- font-size: 13px;
- color: #222222;
- font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
- margin: 10px;
- width: 98%;
- border: 1px solid #D0D0D0;
+    font-size: 13px;
+    color: #222222;
+    font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+    margin: 10px;
+    width: 98%;
+    border: 1px solid #D0D0D0;
 }
 
 .config-row {
- vertical-align: top;
+    vertical-align: top;
 }
 
 td.micon {
- background: #F9F9F9 url(/img/expand-bg.gif) repeat-y scroll right top;
- border-right: 1px solid #D0D0D0;
- border-top: 1px solid #D0D0D0;
- padding: 0;
- width: 16px;
+    background: #F9F9F9 url(/img/expand-bg.gif) repeat-y scroll right top;
+    border-right: 1px solid #D0D0D0;
+    border-top: 1px solid #D0D0D0;
+    padding: 0;
+    width: 16px;
 }
 
 td.sig {
- border-top: 1px solid #D0D0D0;
- padding: 4px 15px 4px 4px;
+    border-top: 1px solid #D0D0D0;
+    padding: 4px 15px 4px 4px;
 }
 
 .mdesc {
- color: #444444;
- padding: 5px 0;
- margin: 0;
+    color: #444444;
+    padding: 5px 0;
+    margin: 0;
 }
 
 em.exi {
- background: transparent url(/img/member-collapsed.gif) no-repeat scroll 5px 6px;
- height: 30px;
- width: 98%;
- display: block;
+    background: transparent url(/img/member-collapsed.gif) no-repeat scroll 5px 6px;
+    height: 30px;
+    width: 98%;
+    display: block;
 }
 
 th.sig-header {
- background: #F9F9F9 url(/img/grid3-hrow.gif) repeat-x scroll 0 top;
- padding: 3px;
- text-align: left;
- vertical-align: middle;
+    background: #F9F9F9 url(/img/grid3-hrow.gif) repeat-x scroll 0 top;
+    padding: 3px;
+    text-align: left;
+    vertical-align: middle;
 }
 
 h1.error-type-title {
- margin: 10px;
- font-size: 15px;
- color: #3764A0;
- border-bottom: 2px solid #99BBE8;
+    margin: 10px;
+    font-size: 15px;
+    color: #3764A0;
+    border-bottom: 2px solid #99BBE8;
 }
 
 </style>
@@ -231,29 +233,29 @@ $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribu
 
 $to_display = array();
 
-// Si $error_to_display est un array vide, on lui attribut toutes les erreurs (page par défaut)
+// Si $error_to_display est un array vide, on lui attribut toutes les erreurs (page par dï¿½faut)
 if( empty($error_to_display) ) {
- while (list($k, $v) = each($error)) {
-  $type[] = $k;
- }
+    while (list($k, $v) = each($error)) {
+        $type[] = $k;
+    }
 } else {
-  while (list($k, $v) = each($error_to_display)) {
-  $type[] = $k;
- }
+    while (list($k, $v) = each($error_to_display)) {
+        $type[] = $k;
+    }
 }
 
 for( $i=0; $i < count($type); $i++ ) {
-  $to_display[$error[$type[$i]]['head']][$type[$i]]['desc'] = $error[$type[$i]]['desc'];
+    $to_display[$error[$type[$i]]['head']][$type[$i]]['desc'] = $error[$type[$i]]['desc'];
 } // Fin for
 
 // Display title
 if( $fileLibel ) {
- echo '<h1 class="error-type-title">Check for errors in '.$fileLibel.'</h1>';
+    echo '<h1 class="error-type-title">Check for errors in '.$fileLibel.'</h1>';
 }
 
 while (list($k, $v) = each($to_display)) {
 
-  if( $k == '- No error -' && empty($error_to_display) ) { continue; }
+    if( $k == '- No error -' && empty($error_to_display) ) { continue; }
 ?>
 
 <table class="member-table" cellspacing="0">
@@ -261,28 +263,24 @@ while (list($k, $v) = each($to_display)) {
  <th class="sig-header" colspan="2"><?php echo $k; ?></th>
 </tr>
 <?php
- while (list($k2, $v2) = each($v)) {
+    while (list($k2, $v2) = each($v)) {
 
 ?>
 <tr class="config-row">
  <td class="micon"><em class="exi">&nbsp;</em></td>
  <td class="sig"><a id="<?php echo $k2; ?>" /><b><?php echo $k2; ?></b><div class="mdesc"><?php echo $v2['desc']; ?></div>
- <?php
-
-  if( isset($error_to_display[$k2]['error']) ) {
-   for( $i=0; $i < count($error_to_display[$k2]['error']); $i++) {
-
-    echo 'value in En : '.$error_to_display[$k2]['error'][$i]['value_en'].'<br>';
-    echo 'value in '.ucfirst($phpDoc->cvsLang).' : '.$error_to_display[$k2]['error'][$i]['value_lang'].'<br>';
-
-   }
-  }
-
- ?>
+<?php
+        if (isset($error_to_display[$k2]['error'])) {
+            for ($i = 0; $i < count($error_to_display[$k2]['error']); $i++) {
+                echo 'value in En : ' . $error_to_display[$k2]['error'][$i]['value_en'] . '<br/>';
+                echo 'value in ' . ucfirst($phpDoc->cvsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>';
+            }
+        }
+?>
  </td>
 </tr>
 <?php
- }
+    }
 ?>
 </table>
 <?php

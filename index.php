@@ -1,20 +1,19 @@
 <?php
 session_start();
 
-if( !isset( $_SESSION['userID'] ) ) {
-header("Location: /login.php");
-exit;
+if (!isset($_SESSION['userID'])) {
+    header("Location: /login.php");
+    exit;
 }
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-<head>
-<title>Php Documentation Online Editor</title>
-<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-<meta name="description" content="" />
-
-<style type="text/css">
+ <head>
+  <title>Php Documentation Online Editor</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  <meta name="description" content="" />
+  <style type="text/css">
 #loading-mask{
     position:absolute;
     left:0;
@@ -45,63 +44,57 @@ exit;
 #loading-msg {
     font: normal 10px arial,tahoma,sans-serif;
 }
-</style>
+  </style>
+ </head>
+ <body>
+  <div id="loading-mask" style=""></div>
+  <div id="loading">
+   <div class="loading-indicator">
+    <img src="/img/php.png" width="95" height="51" style="margin-right:8px;float:left;vertical-align:top;"/>PhpDocumentation Online Editor<br />
+    <span id="loading-msg">Loading styles and images...</span>
+   </div>
+  </div>
+  <link type="text/css" rel="stylesheet" href="/extjs/resources/css/ext-all.css" />
+  <link type="text/css" rel="stylesheet" href="/extjs/resources/css/xtheme-default.css" id="appTheme" />
 
-</head>
-<body>
-<div id="loading-mask" style=""></div>
-<div id="loading">
-    <div class="loading-indicator"><img src="/img/php.png" width="95" height="51" style="margin-right:8px;float:left;vertical-align:top;"/>PhpDocumentation Online Editor<br /><span id="loading-msg">Loading styles and images...</span></div>
+  <!-- Ext.ux Css files -->
+  <link type="text/css" rel="stylesheet" href="/js/ux/GridSummary/Ext.ux.grid.GridSummary.css" />
+  <link type="text/css" rel="stylesheet" href="/js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.css" />
+  <link type="text/css" rel="stylesheet" href="/themes/style.css" />
 
-</div>
+  <!-- ExtJs Javascript core files -->
+  <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Core API...';</script>
+  <script type="text/javascript" src="/extjs/adapter/ext/ext-base.js"></script>
 
-<link type="text/css" rel="stylesheet" href="/extjs/resources/css/ext-all.css" />
-<link type="text/css" rel="stylesheet" href="/extjs/resources/css/xtheme-default.css" id="appTheme" />
+  <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading UI Components...';</script>
+  <script type="text/javascript" src="/extjs/ext-all.js"></script>
 
-<!-- Ext.ux Css files -->
-<link type="text/css" rel="stylesheet" href="/js/ux/GridSummary/Ext.ux.grid.GridSummary.css" />
-<link type="text/css" rel="stylesheet" href="/js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.css" />
+  <!-- Ext.ux Javascript files -->
+  <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Initializing...';</script>
+  <script type="text/javascript" src="/js/ux/GridSummary/Ext.ux.grid.GridSummary.js"></script>
 
-<link type="text/css" rel="stylesheet" href="/themes/style.css" />
+  <script type="text/javascript" src="/js/ux/miframe1_2/miframe.js"></script>
+  <script type="text/javascript" src="/js/ux/md5/md5.js"></script>
 
-<!-- ExtJs Javascript core files -->
-<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Core API...';</script>
-<script type="text/javascript" src="/extjs/adapter/ext/ext-base.js"></script>
+  <script type="text/javascript" src="/js/ux/codemirror/js/codemirror.js"></script>
+  <script type="text/javascript" src="/js/ux/Ext.ux.CodeMirror.js"></script>
 
-<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading UI Components...';</script>
-<script type="text/javascript" src="/extjs/ext-all.js"></script>
+  <script type="text/javascript" src="/js/ux/md5/md5.js"></script>
+  <script type="text/javascript" src="/js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js"></script>
 
-<!-- Ext.ux Javascript files -->
-<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Initializing...';</script>
-<script type="text/javascript" src="/js/ux/GridSummary/Ext.ux.grid.GridSummary.js"></script>
+  <script type="text/javascript" src="/js/main_override.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
 
-<script type="text/javascript" src="/js/ux/miframe1_2/miframe.js"></script>
-<script type="text/javascript" src="/js/ux/md5/md5.js"></script>
-
-<script type="text/javascript" src="/js/ux/codemirror/js/codemirror.js"></script>
-<script type="text/javascript" src="/js/ux/Ext.ux.CodeMirror.js"></script>
-
-<script type="text/javascript" src="/js/ux/md5/md5.js"></script>
-<script type="text/javascript" src="/js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js"></script>
-
-<script type="text/javascript" src="/js/main_override.js"></script>
-<script type="text/javascript" src="/js/main.js"></script>
-
-<!-- Principal -->
-<script type="text/javascript">
+  <!-- Principal -->
+  <script type="text/javascript">
 <?php
 
-if( isset($_SESSION['directAccess']) && $_SESSION['directAccess'] != '' ) {
-
- echo 'var directAccess = {"lang":"'.$_SESSION['directAccess']->lang.'", "path":"'.$_SESSION['directAccess']->path.'", "name":"'.$_SESSION['directAccess']->name.'"}';
-
- $_SESSION['directAccess']='';
-
+if (isset($_SESSION['directAccess']) && is_object($_SESSION['directAccess'])) {
+     echo 'var directAccess = {"lang":"'.$_SESSION['directAccess']->lang.'", "path":"'.$_SESSION['directAccess']->path.'", "name":"'.$_SESSION['directAccess']->name.'"}';
+     $_SESSION['directAccess'] = '';
 } else {
- echo 'var directAccess = false;';
+     echo 'var directAccess = false;';
 }
-?>
-</script>
-
-</body>
+?></script>
+ </body>
 </html>
