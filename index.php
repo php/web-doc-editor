@@ -4,12 +4,12 @@ session_start();
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
-    echo cssLoadTemplate('extjs/resources/css/ext-all.css');
+    echo cssLoadTemplate('js/extjs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/style.css');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-    echo jsLoadTemplate('extjs/adapter/ext/ext-base.js');
+    echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-    echo jsLoadTemplate('extjs/ext-all.js');
+    echo jsLoadTemplate('js/extjs/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
     echo jsLoadTemplate('js/login.js');
     echo footerTemplate();
@@ -17,17 +17,17 @@ if (!isset($_SESSION['userID'])) {
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('extjs/resources/css/ext-all.css');
-echo cssLoadTemplate('extjs/resources/css/xtheme-default.css', 'appTheme');
+echo cssLoadTemplate('js/extjs/resources/css/ext-all.css');
+echo cssLoadTemplate('js/extjs/resources/css/xtheme-default.css', 'appTheme');
 // Ext.ux Css files
 echo cssLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.css');
 echo cssLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.css');
 echo cssLoadTemplate('themes/style.css');
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-echo jsLoadTemplate('extjs/adapter/ext/ext-base.js');
+echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-echo jsLoadTemplate('extjs/ext-all.js');
+echo jsLoadTemplate('js/extjs/ext-all.js');
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.js');
