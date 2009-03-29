@@ -3017,11 +3017,11 @@ var phpDoc = function(){
           success: function(r){
           
             if (r.responseText !== 'pong') {
-              window.location.href = '/login.php';
+              window.location.href = './login.php';
             }
           },
           failure: function(){
-            window.location.href = '/login.php';
+            window.location.href = './login.php';
           }
         });
         

@@ -59,7 +59,7 @@ class phpDoc
         // Database settings
         $_MysqlServ = 'localhost';
         $_MysqlUser = 'root';
-        $_MysqlMdp  = 'xxxxxxx';
+        $_MysqlMdp  = 'slucKeg7*'; //'xxxxxxx';
         $_MysqlDB   = 'doc-editor';
 
         // Connection MySqli
@@ -78,7 +78,7 @@ class phpDoc
         $this->availableLanguage = array('ar','pt_BR','bg','zh','hk','tw','cs','da','nl','fi','fr','de','el','he','hu','it','ja','kr','no','fa','pl','pt','ro','ru', 'se','sk','sl','es','sv','tr');
 
         //
-        $this->cvsDoc = $_SERVER["DOCUMENT_ROOT"].$this->dataPath."phpdoc-all/";
+        $this->cvsDoc = '../'.$this->dataPath."phpdoc-all/";
     }
 
     /**

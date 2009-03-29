@@ -11,7 +11,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
     initialised: false,
     parser: (this.parser) ? this.parser : "xml",
     parserFile: "parsexml.js",
-    parserStylesheet: "/js/ux/codemirror/css/xmlcolors.css",
+    parserStylesheet: "js/ux/codemirror/css/xmlcolors.css",
 
     initComponent : function() {
 
@@ -27,19 +27,19 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
       //For the parser
       if( this.parser == 'xml' ) {
         this.parserFile = "parsexml.js";
-        this.parserStylesheet = "/js/ux/codemirror/css/xmlcolors.css";
+        this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
       }
 
       if( this.parser == 'html' ) {
         this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
-        this.parserStylesheet = ["/js/ux/codemirror/css/xmlcolors.css", "/js/ux/codemirror/css/jscolors.css", "/js/ux/codemirror/css/csscolors.css"];
+        this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
       }
 
       if( this.parser == 'php' ) {
         this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
                            "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
                            "../contrib/php/js/parsephphtmlmixed.js"];
-        this.parserStylesheet = ["/js/ux/codemirror/css/xmlcolors.css", "/js/ux/codemirror/css/jscolors.css", "/js/ux/codemirror/css/csscolors.css", "/js/ux/codemirror/contrib/php/css/phpcolors.css"];
+        this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
       }
     },
     onRender : function(ct, position){
@@ -94,7 +94,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
        lineNumbers: true,
        cursorActivity: CursorActivity,
        stylesheet: this.parserStylesheet,
-       path: "/js/ux/codemirror/js/",
+       path: "js/ux/codemirror/js/",
        obj: this,
        initCallback: this.onInit,
        autoMatchParens: true
