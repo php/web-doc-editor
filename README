@@ -1,29 +1,37 @@
-==Installation instructions==
+=== Installation instructions ===
 
-=> About Files
+== Requirements ==
+* PHP 5.2.0+
+* The MySQLi extension
+* Shell exec privileges
 
-* Checkout the doc-editor CVS module
-* Download the Jpgraph distribution 2.x series from here :
+== Configuration ==
+* Configuration is set in php/config.inc.php
 
-http://hem.bredband.net/jpgraph2/jpgraph-2.3.4.tar.gz
+== File structure ==
+* A checkout of the CVS module named doc-editor
+  - cvs -d :pserver:cvsread@cvs.php.net:/repository checkout doc-editor
+* A copy of the jpgraph 2.x series
+  - Download from here: http://www.aditus.nu/jpgraph/jpdownload.php
+  - Unpack it like so: doc-editor/jpgraph/
+* A copy of the ExtJs 2.2.x series
+  - Download from here: http://extjs.com/products/extjs/download.php
+  - Unpack it like so: doc-editor/extjs/
+  - Note: extjs does not unzip into a new directory by default, so beware
+* Make sure the data directory has read/write permissions for the web server user
+  - Default data directory location: doc-editor/data
 
-* Unpack it on the root folder and rename the folder from jpgraph-2.x.x/ to jpgraph/
-* Download the ExtJs distribution 2.2.1 series from here :
+== The Database ==
+* Create a MySQL database as per config.inc.php
+* Import doc-editor.sql into this new database
+* Setup configuration options inside config.inc.php
 
-http://extjs.com/products/extjs/download.php?dl=extjs221
+== Initial (first) run ==
+* Execute scripts/firstRun.php either in the browser or via CLI
+  It will take a long time to execute, as it performs the following duties:
+  - Applies tools such as revcheck, doc_check, and error_check
+  - Checks out the phpdoc-all CVS module into the data directory
 
-* Unpack it into a new folder called "extjs/" on the root directory
-* Make sure the data/ folder have the read/write permission for the web server user.
-
-=> About DataBase
-
-* Create a new database called "doc-editor"
-* Import the file doc-editor.sql into this new database.
-* Open php/class.php and pass your DB settings into variables $_MysqlServ, $_MysqlUser, $_MysqlMdp
-
-=> First Run
-
-* Actually, you must setting up your web server in order to have this app on the root level. // TODO : make possible to don't need this.
-* Open your browser into the folder scripts/ and call the firstRun.php scripts. You can also use the PHP CLI to execute this scripts.
-This scripts will checkout the phpdoc-all CVS modules into the data/ folder, then, apply all tools like revcheck, doc_check, error_check, etc.. for all available language. It take a very long time...
-* Once this is done, just open your browser at the root level of your application and start edit the documentation with your cvs login/mdp or cvsread/phpfi account.
+=== Other notes ===
+* A common test PHP CVS user is: cvsread with password: phpfi
+* Or use your own CVS credentials
