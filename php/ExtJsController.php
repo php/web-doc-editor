@@ -185,7 +185,7 @@ class ExtJsController
         $cvsPasswd = $this->getRequestVariable('cvsPasswd');
 
         $this->phpDoc->login($cvsLogin,$cvsPasswd);
-        $r = $this->phpDoc->cvsLoggingIn();
+        $r = $this->phpDoc->checkCvsAuth();
 
         if ($r === true) {
             return $this->getSuccess();

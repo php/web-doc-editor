@@ -283,7 +283,7 @@ class phpDoc
 
                 //User unknow from this server for now.
                 // Is a valid cvs user ?
-                $r = $this->cvsLoggingIn();
+                $r = $this->checkCvsAuth();
 
                 if ($r === TRUE ) {
 
@@ -474,23 +474,24 @@ class phpDoc
     }
 
     /**
-     * Loggin into PHP CVS Server.
+     * Test the CVS credentials against the server
+     *
      * @return TRUE if the loggin success, error message otherwise.
      */
-    function cvsLoggingIn() {
+    function checkCvsAuth() {
 
-        $fp = fsockopen("cvs.php.net", 2401);
+        $fp = fsockopen(DOC_EDITOR_CVS_SERVER_HOST, DOC_EDITOR_CVS_SERVER_PORT);
         fwrite($fp, "BEGIN AUTH REQUEST\n");
-        fwrite($fp, "/repository\n");
+        fwrite($fp, DOC_EDITOR_CVS_SERVER_PATH . "\n");
         fwrite($fp, $this->cvsLogin."\n");
 
         fwrite($fp, $this->encodeCvsPass($this->cvsPasswd,"A")."\n");
         fwrite($fp, "END AUTH REQUEST\n");
 
-        $r = fread($fp,1024);
+        $r = trim(fread($fp, 1024));
 
-        if (trim($r) != 'I LOVE YOU')  {
-            if (trim($r) == 'I HATE YOU') {
+        if ($r != 'I LOVE YOU')  {
+            if ($r == 'I HATE YOU') {
                 return 'Bad password';
             } else {
                 return $r;
