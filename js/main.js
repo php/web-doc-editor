@@ -1394,7 +1394,7 @@ var phpDoc = function(){
                       iconCls: 'FilesError',
                       id: 'FE-help-' + FileID,
                       autoScroll: true,
-                      autoLoad: '/error_type.php?dir=' + FilePath + '&file=' + FileName
+                      autoLoad: './error_type.php?dir=' + FilePath + '&file=' + FileName
                     });
                     
                     Ext.getCmp('main-panel').setActiveTab('FE-help-' + FileID);
@@ -1456,7 +1456,7 @@ var phpDoc = function(){
                   }); // Ajax
                   if (Panel === 'FE') {
                     // We must reload the iframe of error description
-                    Ext.getCmp(Panel + '-error-type-' + FileID).setSrc('/error_type.php?dir=' + FilePath + '&file=' + FileName + '&nocache=' + new Date().getTime());
+                    Ext.getCmp(Panel + '-error-type-' + FileID).setSrc('./error_type.php?dir=' + FilePath + '&file=' + FileName + '&nocache=' + new Date().getTime());
                   }
                   
                 }
@@ -3368,7 +3368,7 @@ var phpDoc = function(){
                     xtype: 'iframepanel',
                     id: 'FE-error-type-' + FileID,
                     loadMask: true,
-                    defaultSrc: '/error_type.php?dir=' + FilePath + '&file=' + FileName
+                    defaultSrc: './error_type.php?dir=' + FilePath + '&file=' + FileName
                   }
                 }, {
                   region: 'west',
@@ -3691,7 +3691,7 @@ var phpDoc = function(){
                     iconCls: 'iconHelp',
                     id: 'FE-help-' + FileID,
                     autoScroll: true,
-                    autoLoad: '/error_type.php'
+                    autoLoad: './error_type.php'
                   });
                   Ext.getCmp('main-panel').setActiveTab('FE-help-' + FileID);
                 }
