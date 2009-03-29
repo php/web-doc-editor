@@ -15,10 +15,7 @@ include './conf.inc.php';
 class phpDoc
 {
 
-
-
     public $availableLanguage;
-
 
     /**
      * Hold the user's Cvs login.
@@ -41,16 +38,6 @@ class phpDoc
     private $db;
 
     /**
-     * Hold the path to the data.
-     */
-    public $dataPath = 'data/';
-
-    /**
-     * Hold the cvs files.
-     */
-    public $cvsDoc;
-
-    /**
      * Hold the user's Cvs password.
      */
     protected $cvsPasswd;
@@ -60,7 +47,7 @@ class phpDoc
 
         // Connection MySqli
         try {
-            $this->db = new mysqli(DOC_EDITOR_SQL_HOST, DOC_EDITOR_SQL_USER, DOC_EDITOR_SQL_MDP, DOC_EDITOR_SQL_DB);
+            $this->db = new mysqli(DOC_EDITOR_SQL_HOST, DOC_EDITOR_SQL_USER, DOC_EDITOR_SQL_PASS, DOC_EDITOR_SQL_BASE);
             if (mysqli_connect_errno()) {
                 throw new Exception('connect databases faild!');
             }
@@ -70,11 +57,8 @@ class phpDoc
             exit;
         }
 
-        //
         $this->availableLanguage = array('ar','pt_BR','bg','zh','hk','tw','cs','da','nl','fi','fr','de','el','he','hu','it','ja','kr','no','fa','pl','pt','ro','ru', 'se','sk','sl','es','sv','tr');
 
-        //
-        $this->cvsDoc = '../'.$this->dataPath."phpdoc-all/";
     }
 
     /**
@@ -84,13 +68,13 @@ class phpDoc
 
     function checkoutRepository() {
 
-        $lock_file = $_SERVER["DOCUMENT_ROOT"].$this->dataPath.".lock_checkout_repository";
+        $lock_file = DOC_EDITOR_DATA_PATH . ".lock_checkout_repository";
 
         // We place a lock file to test if checkout is finish
         touch($lock_file);
 
         // We exec the checkout
-        $cmd = "cd ".$_SERVER["DOCUMENT_ROOT"].$this->dataPath."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
+        $cmd = "cd " . DOC_EDITOR_DATA_PATH ."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
         exec($cmd);
 
         // We remove the lock file
@@ -106,14 +90,14 @@ class phpDoc
      * @return Nothing.
      */
     function rev_do_revcheck( $dir = '', $idDir ) {
-        if ($dh = opendir($this->cvsDoc . 'en/' . $dir)) {
+        if ($dh = opendir(DOC_EDITOR_CVS_PATH . 'en/' . $dir)) {
 
             $entriesDir = array();
             $entriesFiles = array();
 
             while (($file = readdir($dh)) !== false) {
                 if (
-                (!is_dir($this->cvsDoc . 'en' . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
+                (!is_dir(DOC_EDITOR_CVS_PATH . 'en' . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
                 || strpos($file, 'entities.') === 0
                 || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
                 || $file == 'contributors.ent' || $file == 'contributors.xml'
@@ -130,9 +114,9 @@ class phpDoc
 
                 if ($file != '.' && $file != '..' && $file != 'CVS' && $dir != '/functions') {
 
-                    if (is_dir($this->cvsDoc . 'en' . $dir.'/' .$file)) {
+                    if (is_dir(DOC_EDITOR_CVS_PATH . 'en' . $dir.'/' .$file)) {
                         $entriesDir[] = $file;
-                    } elseif (is_file($this->cvsDoc . 'en' . $dir.'/' .$file)) {
+                    } elseif (is_file(DOC_EDITOR_CVS_PATH . 'en' . $dir.'/' .$file)) {
                         $entriesFiles[] = $file;
                     }
                 }
@@ -143,7 +127,7 @@ class phpDoc
 
                 foreach($entriesFiles as $file) {
 
-                    $path = $this->cvsDoc . 'en' . $dir . '/' . $file;
+                    $path = DOC_EDITOR_CVS_PATH . 'en' . $dir . '/' . $file;
 
                     $en_size = intval(filesize($path) / 1024);
                     $en_date = filemtime($path);
@@ -183,7 +167,7 @@ class phpDoc
                     // Do for all language
                     while (list(, $lang) = each($this->availableLanguage)) {
 
-                        $path = $this->cvsDoc . $lang . $dir . '/' . $file;
+                        $path = DOC_EDITOR_CVS_PATH . $lang . $dir . '/' . $file;
 
                         if (is_file($path)) {
 
@@ -247,7 +231,7 @@ class phpDoc
 
                 foreach ($entriesDir as $Edir) {
 
-                    $path = $this->cvsDoc . 'en/' . $dir . '/' . $Edir;
+                    $path = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $Edir;
 
                     $this->db->query("INSERT INTO dirs (parentDir, name) VALUES (" . $idDir . ", '$Edir');") or die('Error: '.$this->db->error);
                     $last_id = $this->db->insert_id;
@@ -431,7 +415,7 @@ class phpDoc
      * @param $lockFile The name of the lock file we want to set.
      */
     function lockFileSet($lockFile) {
-        @touch($_SERVER["DOCUMENT_ROOT"].$this->dataPath.".".$lockFile);
+        @touch(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
     }
 
     /**
@@ -439,7 +423,7 @@ class phpDoc
      * @param $lockFile The name of the lock file we want to remove.
      */
     function lockFileRemove($lockFile) {
-        @unlink($_SERVER["DOCUMENT_ROOT"].$this->dataPath.".".$lockFile);
+        @unlink(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
     }
 
     /**
@@ -450,7 +434,7 @@ class phpDoc
      */
     function lockFileCheck($lockFile)
     {
-        return is_file($_SERVER["DOCUMENT_ROOT"].$this->dataPath."/.".$lockFile);
+        return is_file(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
     }
 
     /**
@@ -463,7 +447,7 @@ class phpDoc
         $this->lockFileSet('lock_update_repository');
 
         // We exec the update
-        $cmd = "cd ".$this->cvsDoc."; cvs -f -q update -d -P . ;";
+        $cmd = "cd ".DOC_EDITOR_CVS_PATH."; cvs -f -q update -d -P . ;";
         exec($cmd);
 
         // We remove the lock file
@@ -552,7 +536,7 @@ class phpDoc
      */
     function cvsGetLog($Path, $File) {
 
-        $cmd = 'cd '.$this->cvsDoc.$Path.'; cvs log '.$File;
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$Path.'; cvs log '.$File;
 
         $output = array();
         exec($cmd, $output);
@@ -632,14 +616,14 @@ class phpDoc
 
     function rev_check_old_files($dir = '') {
 
-        if ($dh = opendir($this->cvsDoc . $this->cvsLang . $dir)) {
+        if ($dh = opendir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir)) {
 
             $entriesDir = array();
             $entriesFiles = array();
 
             while (($file = readdir($dh)) !== false) {
                 if (
-                (!is_dir($this->cvsDoc . $this->cvsLang . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
+                (!is_dir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
                 || strpos($file, 'entities.') === 0
                 || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
                 || $file == 'contributors.ent' || $file == 'contributors.xml'
@@ -654,9 +638,9 @@ class phpDoc
 
                 if ($file != '.' && $file != '..' && $file != 'CVS' && $dir != '/functions') {
 
-                    if (is_dir($this->cvsDoc . $this->cvsLang . $dir.'/' .$file)) {
+                    if (is_dir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file)) {
                         $entriesDir[] = $file;
-                    } elseif (is_file($this->cvsDoc . $this->cvsLang . $dir.'/' .$file)) {
+                    } elseif (is_file(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file)) {
                         $entriesFiles[] = $file;
                     }
                 }
@@ -665,8 +649,8 @@ class phpDoc
             // Files first
             if (!empty($entriesFiles)) {
                 foreach($entriesFiles as $file) {
-                    $path_en = $this->cvsDoc . 'en/' . $dir . '/' . $file;
-                    $path = $this->cvsDoc . $this->cvsLang . $dir . '/' . $file;
+                    $path_en = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $file;
+                    $path = DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir . '/' . $file;
 
                     if (!@is_file($path_en)) {
                         $size = intval(filesize($path) / 1024);
@@ -696,7 +680,7 @@ class phpDoc
 
             // Path to find translation.xml file, set default values,
             // in case we can't find the translation file
-            $translation_xml = $this->cvsDoc . $lang . "/translation.xml";
+            $translation_xml = DOC_EDITOR_CVS_PATH . $lang . "/translation.xml";
 
             if (file_exists($translation_xml)) {
                 // Else go on, and load in the file, replacing all
@@ -1520,7 +1504,7 @@ class phpDoc
         if (isset($ModifiedFiles[$file])) { $extension = '.new'; }
         else { $extension = ''; }
 
-        $file = $this->cvsDoc.$file.$extension;
+        $file = DOC_EDITOR_CVS_PATH.$file.$extension;
 
         $charset = $this->getFileEncoding($file, 'file');
 
@@ -1548,11 +1532,11 @@ class phpDoc
         $FilePath = str_replace('..', '', $FilePath);
 
         // Open in w+ mode
-        $h = fopen($this->cvsDoc.$lang.$FilePath.$ext, 'w+');
+        $h = fopen(DOC_EDITOR_CVS_PATH.$lang.$FilePath.$ext, 'w+');
         fwrite($h, $content);
         fclose($h);
 
-        return $this->cvsDoc.$lang.$FilePath.$ext;
+        return DOC_EDITOR_CVS_PATH.$lang.$FilePath.$ext;
     }
 
     /**
@@ -1658,10 +1642,10 @@ class phpDoc
     function getDiffFromFiles($path, $file, $type='', $uniqID='') {
         include "./class.fileDiff.php";
 
-        $charset = $this->getFileEncoding($this->cvsDoc.$path.'/'.$file, 'file');
+        $charset = $this->getFileEncoding(DOC_EDITOR_CVS_PATH.$path.'/'.$file, 'file');
 
-        $FilePath1 = $this->cvsDoc.$path.'/'.$file;
-        $FilePath2 = ( $type == '' ) ? $this->cvsDoc.$path.'/'.$file.'.new' : $this->cvsDoc.$path.'/'.$file.'.'.$uniqID.'.patch';
+        $FilePath1 = DOC_EDITOR_CVS_PATH.$path.'/'.$file;
+        $FilePath2 = ( $type == '' ) ? DOC_EDITOR_CVS_PATH.$path.'/'.$file.'.new' : DOC_EDITOR_CVS_PATH.$path.'/'.$file.'.'.$uniqID.'.patch';
 
         $diff = new diff;
         $info['content'] = $diff->inline($FilePath1, $FilePath2, 2, $charset);
@@ -1678,7 +1662,7 @@ class phpDoc
      */
     function getRawDiff($path, $file) {
 
-        $cmd = 'cd '.$this->cvsDoc.$path.'; diff -uN '.$file.' '.$file.'.new';
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$path.'; diff -uN '.$file.' '.$file.'.new';
 
         $output = array();
         exec($cmd, $output);
@@ -1696,7 +1680,7 @@ class phpDoc
      */
     function getDiffFromExec($path, $file, $rev1, $rev2) {
 
-        $cmd = 'cd '.$this->cvsDoc.$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -1796,7 +1780,7 @@ class phpDoc
      */
     function saveOutputLogFile($file, $output)
     {
-        $fp = fopen($this->cvsDoc . '../.' . $file, 'w');
+        $fp = fopen(DOC_EDITOR_CVS_PATH . '../.' . $file, 'w');
         fwrite($fp, implode("<br>",$output));
         fclose($fp);
     }
@@ -1807,7 +1791,7 @@ class phpDoc
      * @return $content The content.
      */
     function getOutputLogFile($file) {
-        return file_get_contents($this->cvsDoc . '../.' . $file);
+        return file_get_contents(DOC_EDITOR_CVS_PATH . '../.' . $file);
     }
 
     /**
@@ -1818,9 +1802,9 @@ class phpDoc
     function checkBuild($enable_xml_details='false') {
 
         if ($enable_xml_details == 'true' ) {
-            $cmd = 'cd '.$this->cvsDoc.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error --enable-xml-details;';
+            $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error --enable-xml-details;';
         } else {
-            $cmd = 'cd '.$this->cvsDoc.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error;';
+            $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error;';
         }
 
         $output = array();
@@ -1858,7 +1842,7 @@ class phpDoc
         $this->db->query($s);
 
         // We need delete file on filesystem
-        $doc = $this->cvsDoc.$lang.$path.$file.".new";
+        $doc = DOC_EDITOR_CVS_PATH.$lang.$path.$file.".new";
 
         @unlink($doc);
 
@@ -1902,9 +1886,9 @@ class phpDoc
         for ($i = 0; $i < count($anode); $i++ ) {
 
             // We need move .new file into the real file
-            @unlink( $this->cvsDoc.$anode[$i][0].$anode[$i][1]);
-            @copy(   $this->cvsDoc.$anode[$i][0].$anode[$i][1].'.new', $this->cvsDoc.$anode[$i][0].$anode[$i][1]);
-            @unlink( $this->cvsDoc.$anode[$i][0].$anode[$i][1].'.new');
+            @unlink( DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1]);
+            @copy(   DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1].'.new', DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1]);
+            @unlink( DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1].'.new');
 
             $files .= $anode[$i][0].$anode[$i][1].' ';
 
@@ -1913,7 +1897,7 @@ class phpDoc
         $log = str_replace("'", "\\'", $log);
 
         // First, login into Cvs
-        $cmd = 'export CVS_PASSFILE='.$_SERVER["DOCUMENT_ROOT"].$this->dataPath.'.cvspass && cd '.$this->cvsDoc.' && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository login && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f commit -l -m \''.$log.'\' '.$files;
+        $cmd = 'export CVS_PASSFILE='.DOC_EDITOR_DATA_PATH.'.cvspass && cd '.DOC_EDITOR_CVS_PATH.' && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository login && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f commit -l -m \''.$log.'\' '.$files;
         $output  = array();
         exec($cmd, $output);
 
@@ -1955,7 +1939,7 @@ class phpDoc
             //En file ?
             if ($FileLang == 'en' ) {
 
-                $path    = $this->cvsDoc.'en/'.$FilePath.$FileName;
+                $path    = DOC_EDITOR_CVS_PATH.'en/'.$FilePath.$FileName;
                 $content = file_get_contents($path);
                 $info    = $this->getInfoFromContent($content);
                 $size    = intval(filesize($path) / 1024);
@@ -1990,14 +1974,14 @@ class phpDoc
 
             } else {
 
-                $path    = $this->cvsDoc.$FileLang.'/'.$FilePath.$FileName;
+                $path    = DOC_EDITOR_CVS_PATH.$FileLang.'/'.$FilePath.$FileName;
                 $content = file_get_contents($path);
                 $info    = $this->getInfoFromContent($content);
                 $size    = intval(filesize($path) / 1024);
                 $date    = filemtime($path);
 
 
-                $pathEN    = $this->cvsDoc.'en/'.$FilePath.$FileName;
+                $pathEN    = DOC_EDITOR_CVS_PATH.'en/'.$FilePath.$FileName;
                 $sizeEN    = intval(filesize($pathEN) / 1024);
                 $dateEN    = filemtime($pathEN);
 
@@ -2051,10 +2035,10 @@ class phpDoc
 
             if ($lang_content == '' ) {
                 // Do tools_error on this file
-                $en_content     = file_get_contents($this->cvsDoc.'en'.$FilePath.$FileName);
-                $lang_content   = file_get_contents($this->cvsDoc.$FileLang.$FilePath.$FileName);
+                $en_content     = file_get_contents(DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName);
+                $lang_content   = file_get_contents(DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName);
 
-                $info = $this->getInfoFromFile($this->cvsDoc.$FileLang.$FilePath.$FileName);
+                $info = $this->getInfoFromFile(DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName);
             } else {
                 $info = $this->getInfoFromContent($lang_content);
             }
@@ -2125,7 +2109,7 @@ class phpDoc
 
         $mess = '['.date("d/m:Y H:i:s").'] by '.$this->cvsLogin.' : '.$mess."\n";
 
-        $fp = fopen($this->cvsDoc.'../.debug', 'a+');
+        $fp = fopen(DOC_EDITOR_CVS_PATH.'../.debug', 'a+');
         fwrite($fp, $mess);
         fclose($fp);
 
@@ -2170,7 +2154,7 @@ class phpDoc
     {
 
         static $ignoredDirs = array('.', '..', 'CVS');
-        $heredir = $this->cvsDoc.$this->cvsLang.$dir;
+        $heredir = DOC_EDITOR_CVS_PATH.$this->cvsLang.$dir;
         $en_dir = str_replace("/".$this->cvsLang."/", "/en/", $heredir);
 
         // Collect files and folders in these arrays
@@ -3690,7 +3674,7 @@ class phpDoc
         // Security
         $node = str_replace('..', '', $node);
 
-        $d = dir($this->cvsDoc.$node);
+        $d = dir(DOC_EDITOR_CVS_PATH.$node);
 
         $nodes = array();
         while($f = $d->read()){
@@ -3710,7 +3694,7 @@ class phpDoc
 
             ) continue;
 
-            if (is_dir($this->cvsDoc . $node . '/' . $f)) {
+            if (is_dir(DOC_EDITOR_CVS_PATH . $node . '/' . $f)) {
                 $nodes[] = array('text' => $f, 'id' => $node . '/' . $f, 'cls' => 'folder', 'type' => 'folder');
             } else {
 
@@ -3779,7 +3763,7 @@ class phpDoc
         }
 
         // We need to delete this patch from filesystem...
-        @unlink($this->cvsDoc.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
 
         // ... and from DB
         $s = 'DELETE FROM `pendingPatch` WHERE id=\''.$a->id.'\'';
@@ -3804,7 +3788,7 @@ class phpDoc
         }
 
         // We need to delete this patch from filesystem...
-        @unlink($this->cvsDoc.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
 
         // ... and from DB
         $s = sprintf('DELETE FROM `pendingPatch` WHERE id="%s"', $a->id);
