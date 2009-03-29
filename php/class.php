@@ -10,6 +10,8 @@
 
 set_time_limit(0);
 
+include './conf.inc.php';
+
 class phpDoc
 {
 
@@ -56,15 +58,9 @@ class phpDoc
 
     function __construct() {
 
-        // Database settings
-        $_MysqlServ = 'localhost';
-        $_MysqlUser = 'root';
-        $_MysqlMdp  = 'xxxxxxx';
-        $_MysqlDB   = 'doc-editor';
-
         // Connection MySqli
         try {
-            $this->db = new mysqli($_MysqlServ, $_MysqlUser, $_MysqlMdp, $_MysqlDB);
+            $this->db = new mysqli(DOC_EDITOR_SQL_HOST, DOC_EDITOR_SQL_USER, DOC_EDITOR_SQL_MDP, DOC_EDITOR_SQL_DB);
             if (mysqli_connect_errno()) {
                 throw new Exception('connect databases faild!');
             }
