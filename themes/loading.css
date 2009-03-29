@@ -28,3 +28,10 @@
 #loading-msg {
     font: normal 10px arial,tahoma,sans-serif;
 }
+#loading-php-logo {
+    width:95px;
+    height:51px;
+    margin-right:8px;
+    float:left;
+    vertical-align:top;
+}
