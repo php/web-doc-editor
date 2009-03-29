@@ -303,7 +303,7 @@ class ExtJsController
         } else {
             $return['content'] = iconv($file['charset'], "UTF-8", $file['content']);
         }
-        return $this->getResponse();
+        return $this->getResponse($return);
     }
 
 
