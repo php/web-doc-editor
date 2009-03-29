@@ -71,7 +71,7 @@ if (!isset($_SESSION['userID'])) {
 
   <!-- Ext.ux Javascript files -->
   <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Initializing...';</script>
-  <script type="text/javascript" src="/js/ux/GridSummary/Ext.ux.grid.GridSummary.js"></script>
+  <script type="text/javascript" src="js/ux/GridSummary/Ext.ux.grid.GridSummary.js"></script>
 
   <script type="text/javascript" src="js/ux/miframe1_2/miframe.js"></script>
   <script type="text/javascript" src="js/ux/md5/md5.js"></script>

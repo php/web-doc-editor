@@ -235,7 +235,7 @@ var phpDoc = function(){
       this.storeCommitLogMessage = new Ext.data.Store({
         //autoLoad: true,
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'get-commit-log-message'
@@ -257,7 +257,7 @@ var phpDoc = function(){
         this.storeFilesError = new Ext.data.GroupingStore({
           autoLoad: ( this.userLang === 'en' ) ? false : true,
           proxy: new Ext.data.HttpProxy({
-            url: '/php/controller.php'
+            url: './php/controller.php'
           }),
           baseParams: {
             task: 'GetFilesError'
@@ -307,7 +307,7 @@ var phpDoc = function(){
         this.storeFilesNeedUpdate = new Ext.data.GroupingStore({
           autoLoad: ( this.userLang === 'en' ) ? false : true,
           proxy: new Ext.data.HttpProxy({
-            url: '/php/controller.php'
+            url: './php/controller.php'
           }),
           baseParams: {
             task: 'GetFilesNeedUpdate'
@@ -357,7 +357,7 @@ var phpDoc = function(){
         this.storeFilesNeedReviewed = new Ext.data.GroupingStore({
           autoLoad: (this.userLang === 'en' ) ? false : true,
           proxy: new Ext.data.HttpProxy({
-            url: '/php/controller.php'
+            url: './php/controller.php'
           }),
           baseParams: {
             task: 'GetFilesNeedReviewed'
@@ -402,7 +402,7 @@ var phpDoc = function(){
       this.storePendingCommit = new Ext.data.GroupingStore({
         autoLoad: true,
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'GetFilesPendingCommit'
@@ -446,7 +446,7 @@ var phpDoc = function(){
       this.storePendingPatch = new Ext.data.GroupingStore({
         autoLoad: true,
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'GetFilesPendingPatch'
@@ -493,7 +493,7 @@ var phpDoc = function(){
       this.storeMailing = new Ext.data.Store({
         //autoLoad: true,
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'get-mailing-info'
@@ -526,7 +526,7 @@ var phpDoc = function(){
       // Store : All open bugs for documentation
       this.storeBugs = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'get-open-bugs'
@@ -553,7 +553,7 @@ var phpDoc = function(){
       // Store : Translator with Informations like Revcheck first table
       this.storeTranslators = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'get-translator-info'
@@ -600,7 +600,7 @@ var phpDoc = function(){
       // Store : storeSummary with Informations like Revcheck second table
       this.storeSummary = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-          url: '/php/controller.php'
+          url: './php/controller.php'
         }),
         baseParams: {
           task: 'get-summary-info'
@@ -639,7 +639,7 @@ var phpDoc = function(){
         // The store
         ds = new Ext.data.Store({
           proxy: new Ext.data.HttpProxy({
-            url: '/php/controller.php'
+            url: './php/controller.php'
           }),
           baseParams: {
             task: 'get-check-doc-data'
@@ -795,7 +795,7 @@ var phpDoc = function(){
 
                   Ext.Ajax.request({
                     scope: this,
-                    url: '../php/controller.php',
+                    url: './php/controller.php',
                     params: {
                       task: 'get-check-doc-files',
                       path: path,
@@ -1004,7 +1004,7 @@ var phpDoc = function(){
           
           Ext.Ajax.request({
             scope: scope,
-            url: '../php/controller.php',
+            url: './php/controller.php',
             params: {
               task: 'after-patch-reject',
               PatchUniqID: FileUniqID
@@ -1057,7 +1057,7 @@ var phpDoc = function(){
           // We save LANG File
           Ext.Ajax.request({
             scope: scope,
-            url: '../php/controller.php',
+            url: './php/controller.php',
             params: {
               task: 'save-file',
               filePath: FilePath,
@@ -1081,7 +1081,7 @@ var phpDoc = function(){
                 // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
                 Ext.Ajax.request({
                   scope: scope,
-                  url: '../php/controller.php',
+                  url: './php/controller.php',
                   params: {
                     task: 'after-patch-accept',
                     PatchUniqID: FileUniqID
@@ -1126,7 +1126,7 @@ var phpDoc = function(){
       // We save LANG File
       Ext.Ajax.request({
         scope: scope,
-        url: '../php/controller.php',
+        url: './php/controller.php',
         params: {
           task: 'save-file',
           filePath: FilePath,
@@ -1246,7 +1246,7 @@ var phpDoc = function(){
             // We save this patch
             Ext.Ajax.request({
               scope: scope,
-              url: '../php/controller.php',
+              url: './php/controller.php',
               params: {
                 task: 'save-file',
                 filePath: FilePath,
@@ -1308,7 +1308,7 @@ var phpDoc = function(){
           // We save LANG File
           Ext.Ajax.request({
             scope: this,
-            url: '../php/controller.php',
+            url: './php/controller.php',
             params: {
               task: 'save-file',
               filePath: FilePath,
@@ -1370,7 +1370,7 @@ var phpDoc = function(){
             // We check for error
             Ext.Ajax.request({
               scope: this,
-              url: '../php/controller.php',
+              url: './php/controller.php',
               params: {
                 task: 'check-file-error',
                 FilePath: FilePath,
@@ -1415,7 +1415,7 @@ var phpDoc = function(){
                   // Now, We save LANG File
                   Ext.Ajax.request({
                     scope: this,
-                    url: '../php/controller.php',
+                    url: './php/controller.php',
                     params: {
                       task: 'save-file',
                       filePath: FilePath,
@@ -1483,7 +1483,7 @@ var phpDoc = function(){
       // We load the File
       Ext.Ajax.request({
         scope: this,
-        url: '../php/controller.php',
+        url: './php/controller.php',
         params: {
           task: 'get-file',
           FilePath: FilePath,
@@ -1845,7 +1845,7 @@ var phpDoc = function(){
                       //
                       Ext.Ajax.request({
                         scope: this,
-                        url: '../php/controller.php',
+                        url: './php/controller.php',
                         params: {
                           task: 'save-LogMessage',
                           messID: messID,
@@ -1902,7 +1902,7 @@ var phpDoc = function(){
                             // 
                             Ext.Ajax.request({
                               scope: this,
-                              url: '../php/controller.php',
+                              url: './php/controller.php',
                               params: {
                                 task: 'delete-LogMessage',
                                 messID: this.storeCommitLogMessage.getAt(rowIndex).data.id
@@ -2123,7 +2123,7 @@ var phpDoc = function(){
       Ext.getCmp('winCvsCommit').close();
       
       Ext.Ajax.request({
-        url: '../php/controller.php',
+        url: './php/controller.php',
         params: {
           task: 'cvs-commit',
           nodes: Ext.util.JSON.encode(nodes),
@@ -2159,7 +2159,7 @@ var phpDoc = function(){
             
             // Apply modification
             Ext.Ajax.request({
-              url: '../php/controller.php',
+              url: './php/controller.php',
               params: {
                 task: 'on-succes-commit',
                 nodes: Ext.util.JSON.encode(nodes),
@@ -2209,7 +2209,7 @@ var phpDoc = function(){
         Ext.get('wizard-step-1.1').replaceClass('wizard-wait', 'wizard-show');
         Ext.Ajax.request({
           scope: scope,
-          url: '../php/controller.php',
+          url: './php/controller.php',
           params: {
             task: 'update-repo'
           },
@@ -2232,7 +2232,7 @@ var phpDoc = function(){
             function checkLockFile(){
               Ext.Ajax.request({
                 scope: scope,
-                url: '../php/controller.php',
+                url: './php/controller.php',
                 params: {
                   task: 'check-lock-file',
                   lockFile: 'lock_update_repository'
@@ -2273,7 +2273,7 @@ var phpDoc = function(){
         Ext.get('wizard-step-2').replaceClass('wizard-step-before', 'wizard-step-working');
         Ext.Ajax.request({
           scope: scope,
-          url: '../php/controller.php',
+          url: './php/controller.php',
           params: {
             task: 'apply-tools'
           },
@@ -2292,7 +2292,7 @@ var phpDoc = function(){
             function checkLockFile2(){
               Ext.Ajax.request({
                 scope: scope,
-                url: '../php/controller.php',
+                url: './php/controller.php',
                 params: {
                   task: 'check-lock-file',
                   lockFile: 'lock_apply_tools'
@@ -2494,7 +2494,7 @@ var phpDoc = function(){
                   
                   function checkLockFile(){
                     Ext.Ajax.request({
-                      url: '../php/controller.php',
+                      url: './php/controller.php',
                       params: {
                         task: 'check-lock-file',
                         lockFile: 'lock_check_build'
@@ -2839,7 +2839,7 @@ var phpDoc = function(){
       // Apply modification in DB
       Ext.Ajax.request({
         scope: this,
-        url: '../php/controller.php',
+        url: './php/controller.php',
         params: {
           task: 'conf-update',
           item: item,
@@ -3099,7 +3099,7 @@ var phpDoc = function(){
               storeLogLang = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -3134,7 +3134,7 @@ var phpDoc = function(){
               storeLogEn = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -3841,7 +3841,7 @@ var phpDoc = function(){
               storeLogLang = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -3876,7 +3876,7 @@ var phpDoc = function(){
               storeLogEn = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -4483,7 +4483,7 @@ var phpDoc = function(){
               storeLog = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -5150,7 +5150,7 @@ var phpDoc = function(){
                   
                   Ext.Ajax.request({
                     scope: this,
-                    url: '../php/controller.php',
+                    url: './php/controller.php',
                     params: {
                       task: 'all-files-about-extension',
                       ExtName: group[2]
@@ -5213,7 +5213,7 @@ var phpDoc = function(){
               storeLogLang = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -5248,7 +5248,7 @@ var phpDoc = function(){
               storeLogEn = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                  url: '/php/controller.php'
+                  url: './php/controller.php'
                 }),
                 baseParams: {
                   task: 'get-log',
@@ -6077,7 +6077,7 @@ var phpDoc = function(){
             
             loadMask.show();
             img.hide();
-            img.dom.src = "/php/image_info.php";
+            img.dom.src = "php/image_info.php";
           } //AfterLayout
         } // Listeners
       };
@@ -6138,7 +6138,7 @@ var phpDoc = function(){
                 storeLog = new Ext.data.Store({
                   autoLoad: true,
                   proxy: new Ext.data.HttpProxy({
-                    url: '/php/controller.php'
+                    url: './php/controller.php'
                   }),
                   baseParams: {
                     task: 'get-log',
@@ -6365,7 +6365,7 @@ var phpDoc = function(){
                       // We save LANG File
                       Ext.Ajax.request({
                         scope: this,
-                        url: '../php/controller.php',
+                        url: './php/controller.php',
                         params: {
                           task: 'save-file',
                           filePath: FilePath,
