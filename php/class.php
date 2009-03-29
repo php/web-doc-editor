@@ -2435,6 +2435,15 @@ class phpDoc
         );
 
         foreach ($properties as $property => $label) {
+
+            if( !isset($en_chapter[$property]) ) {
+                $en_chapter[$property] = '';
+            }
+
+            if( !isset($en_chapter[$property]) ) {
+                $en_chapter[$property] = '';
+            }
+
             for ($i = 0; $i < count($en_chapter[$property]); $i++) {
                 if (!isset($en_chapter[$property][$i])) {
                     $en_chapter[$property][$i] = '';
@@ -2728,7 +2737,25 @@ class phpDoc
         'xmlnsxlink' => 'XmlNsXlink',
         );
         foreach ($properties as $property => $label) {
+
+            if( !isset($en_preface[$property]) ) {
+                $en_preface[$property] = '';
+            }
+
+            if( !isset($lang_preface[$property]) ) {
+                $lang_preface[$property] = '';
+            }
+
             for ($i = 0; $i < count($en_preface[$property]); $i++) {
+
+                if( !isset($en_preface[$property][$i]) ) {
+                    $en_preface[$property][$i] = '';
+                }
+
+                if( !isset($lang_preface[$property][$i]) ) {
+                    $lang_preface[$property][$i] = '';
+                }
+
                 if ($en_preface[$property][$i] != $lang_preface[$property][$i] ) {
                     $result_error[] = array(
                     'value_en' => $en_preface[$property][$i],
@@ -2770,7 +2797,25 @@ class phpDoc
         'xmlnsxlink' => 'XmlNsXlink',
         );
         foreach ($properties as $property => $label) {
+
+            if( !isset($en_section[$property]) ) {
+                $en_section[$property] = '';
+            }
+
+            if( !isset($lang_section[$property]) ) {
+                $lang_section[$property] = '';
+            }
+
             for ($i = 0; $i < count($en_section[$property]); $i++) {
+
+                if( !isset($en_section[$property][$i]) ) {
+                    $en_section[$property][$i] = '';
+                }
+
+                if( !isset($lang_section[$property][$i]) ) {
+                    $lang_section[$property][$i] = '';
+                }
+
                 if ($en_section[$property][$i] != $lang_section[$property][$i] ) {
                     $result_error[] = array(
                     'value_en' => $en_section[$property][$i],
@@ -2780,6 +2825,7 @@ class phpDoc
 
                 }
             }
+
         }
         return $result_error;
     }
@@ -2810,14 +2856,14 @@ class phpDoc
 
                 $lang_varlistentry[$i] = '';
             }
-        }
 
-        if ($en_varlistentry[$i] != $lang_varlistentry[$i] ) {
-            $result_error[] = array(
-            "value_en" => $en_varlistentry[$i],
-            "value_lang" => $lang_varlistentry[$i],
-            "type" => "attributXmlIdVarlistentry"
-            );
+            if ($en_varlistentry[$i] != $lang_varlistentry[$i] ) {
+                $result_error[] = array(
+                "value_en" => $en_varlistentry[$i],
+                "value_lang" => $lang_varlistentry[$i],
+                "type" => "attributXmlIdVarlistentry"
+                );
+            }
         }
         return $result_error;
     }
@@ -3276,13 +3322,18 @@ class phpDoc
 
         // attr in <row> tags
         $en_attrRow = array();
+        $lang_attrRow = array();
         $match = array();
+
+        $lang_attrRow['xmlid']='';
+        $en_attrRow['xmlid']='';
+
         $reg = '/<row(\s.*?)xml:id="(.*?)">/s';
+
         if (preg_match_all($reg, $en_content, $match)) {
             $en_attrRow['xmlid'] = $match[2];
         }
 
-        $lang_attrRow = array();
         $match = array();
         if (preg_match_all($reg, $lang_content, $match)) {
             $lang_attrRow['xmlid'] = $match[2];
