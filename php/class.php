@@ -10,7 +10,8 @@
 
 set_time_limit(0);
 
-include dirname(__FILE__).'/conf.inc.php';
+require_once dirname(__FILE__) . '/conf.inc.php';
+require_once './LockFile.php';
 
 class phpDoc
 {
@@ -68,13 +69,15 @@ class phpDoc
 
     function checkoutRepository() {
 
-        if ($this->lockFileSet('lock_checkout_repository')) {
+        $lock = new LockFile('lock_checkout_repository');
+
+        if ($lock->lock()) {
             // We exec the checkout
             $cmd = "cd " . DOC_EDITOR_DATA_PATH ."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
             exec($cmd);
         }
 
-        $this->lockFileRemove('lock_checkout_repository');
+        $lock->release();
     }
 
 
@@ -408,53 +411,21 @@ class phpDoc
     }
 
     /**
-     * Set a lock file.
-     * @param $lockFile The name of the lock file we want to set.
-     */
-    function lockFileSet($lockFile)
-    {
-        if (!$this->lockFileCheck($lockFile)) {
-            return touch(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
-        }
-        return false;
-    }
-
-    /**
-     * Remove a lock file.
-     * @param $lockFile The name of the lock file we want to remove.
-     */
-    function lockFileRemove($lockFile)
-    {
-        return unlink(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
-    }
-
-    /**
-     * Tells whether the lock file exist
-     * 
-     * @param $lockFile The name of the lock file we want to test.
-     * @return TRUE if the lock file exists, FALSE otherwise.
-     */
-    function lockFileCheck($lockFile)
-    {
-        return is_file(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
-    }
-
-    /**
      * Update the repository to sync our local copy. Simply exec an "cvs -f -q update -d -P" command.
      * As this exec command take some time, we start by creating a lock file, then run the command, then delete this lock file.
      * As it, we can test if this command has finish, or not.
      */
     function updateRepository() {
         // We place a lock file to test if update is finish
-        $this->lockFileSet('lock_update_repository');
-
-        // We exec the update
-        $cmd = "cd ".DOC_EDITOR_CVS_PATH."; cvs -f -q update -d -P . ;";
-        exec($cmd);
+        $lock = new LockFile('lock_update_repository');
+        if ($lock->lock()) {
+            // We exec the update
+            $cmd = "cd ".DOC_EDITOR_CVS_PATH."; cvs -f -q update -d -P . ;";
+            exec($cmd);
+        }
 
         // We remove the lock file
-        $this->lockFileRemove('lock_update_repository');
-
+        $lock->release();
     }
 
     /**
@@ -474,7 +445,7 @@ class phpDoc
      * Use to encode Cvs Password when we try to identify the user into PHP CVS Server.
      * @param $pass The password to encode.
      * @param $letter The password to encode.
-     * @return TRUE if the lock file is present, FALSE otherwise.
+     * @return string The encoded password
      */
     function encodeCvsPass($pass, $letter) {
         static $code = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
@@ -3761,10 +3732,10 @@ EOD;
             $this->sendEmail($to, $subject, $msg);
 
         }
-
+        
         // We need to delete this patch from filesystem...
         @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
-
+        
         // ... and from DB
         $s = 'DELETE FROM `pendingPatch` WHERE id=\''.$a->id.'\'';
         $this->db->query($s) or die($this->db->error);
@@ -3791,12 +3762,11 @@ Thank you for your submission.
 {$this->cvsLogin}@php.net
 EOD;
             $this->sendEmail($to, $subject, $msg);
-
         }
-
+        
         // We need to delete this patch from filesystem...
         @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
-
+        
         // ... and from DB
         $s = sprintf('DELETE FROM `pendingPatch` WHERE id="%s"', $a->id);
         $this->db->query($s) or die($this->db->error);

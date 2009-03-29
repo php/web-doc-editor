@@ -9,6 +9,7 @@
  * Required file
  */
 require_once './class.php';
+require_once './LockFile.php';
 
 /**
  * Ext JS controller class
@@ -137,10 +138,12 @@ class ExtJsController
 
     public function check_lock_file()
     {
-        $lockFile = $this->getRequestVariable('lockFile');
-        $this->phpDoc->isLogged();
 
-        return $this->phpDoc->lockFileCheck($lockFile) ? $this->getSuccess() : $this->getFailure();
+        $lockFile = $this->getRequestVariable('lockFile');
+        $lock = new LockFile($lockFile);
+
+        $this->phpDoc->isLogged();
+        return $lock->isLocked() ? $this->getSuccess() : $this->getFailure();
     }
 
     public function apply_tools()
@@ -150,20 +153,21 @@ class ExtJsController
         $this->phpDoc->cleanUp();
 
         // Set the lock File
-        $this->phpDoc->lockFileSet('lock_apply_tools');
+        $lock = new LockFile('lock_apply_tools');
 
-        // Start Revcheck
-        $this->phpDoc->rev_start();
+        if ($lock->lock()) {
+            // Start Revcheck
+            $this->phpDoc->rev_start();
 
-        // Parse translators
-        $this->phpDoc->rev_parse_translation();
+            // Parse translators
+            $this->phpDoc->rev_parse_translation();
 
-        // Check errors in files
-        //        $tool = new ToolsError($_SESSION['lang']);
-        //       $tool->run('/');
+            // Check errors in files
+            //        $tool = new ToolsError($_SESSION['lang']);
+            //       $tool->run('/');
 
-        // Remove the lock File
-        $this->phpDoc->lockFileRemove('lock_apply_tools');
+        }
+        $lock->release();
 
         return $this->getSuccess();
     }
@@ -543,14 +547,13 @@ class ExtJsController
 
         $xmlDetails = $this->getRequestVariable('xmlDetails');
 
-        // Set the lock File
-        $this->phpDoc->lockFileSet('lock_check_build');
-
-        // Start the checkBuild system
-        $output = $this->phpDoc->checkBuild($xmlDetails);
-
+        $lock = new LockFile('lock_check_build');
+        if ($lock->lock()) {
+            // Start the checkBuild system
+            $output = $this->phpDoc->checkBuild($xmlDetails);
+        }
         // Remove the lock File
-        $this->phpDoc->lockFileRemove('lock_check_build');
+        $lock->release();
 
         // Send output into a log file
         $this->phpDoc->saveOutputLogFile('log_check_build', $output);
@@ -801,13 +804,13 @@ class ExtJsController
         $noExplode = ($Total_files_lang == $up_to_date) ? 1 : 0;
 
         $legend = array(
-        $pourcent[0] . '%% up to date ('.$up_to_date.')', 
-        $pourcent[1] . '%% critical ('.$critical.')', 
-        $pourcent[2] . '%% old ('.$old.')', 
-        $pourcent[3] . '%% missing ('.$missing.')', 
+        $pourcent[0] . '%% up to date ('.$up_to_date.')',
+        $pourcent[1] . '%% critical ('.$critical.')',
+        $pourcent[2] . '%% old ('.$old.')',
+        $pourcent[3] . '%% missing ('.$missing.')',
         $pourcent[4] . '%% without revtag ('.$no_tag.')'
         );
-        
+
         $title = 'PHP : Details for '.ucfirst($this->phpDoc->cvsLang).' Documentation';
 
         $graph = new PieGraph(530,300);
