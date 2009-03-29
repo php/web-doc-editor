@@ -52,7 +52,7 @@ Ext.extend(Ext.ux.plugins.IconCombo, Ext.util.Observable, {
 
 var loginPage = function() {
   Ext.QuickTips.init();
-  Ext.BLANK_IMAGE_URL = 'extjs/resources/images/default/s.gif';
+  Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
 
   return {
 

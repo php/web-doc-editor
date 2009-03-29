@@ -1,7 +1,7 @@
 
 var phpDoc = function(){
   Ext.QuickTips.init();
-  Ext.BLANK_IMAGE_URL = 'extjs/resources/images/default/s.gif';
+  Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
   
   return {
   
@@ -1357,7 +1357,7 @@ var phpDoc = function(){
         else 
           if (btn === 'yes') {
           
-            Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Checking for error. Please, wait...');
+            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Checking for error. Please, wait...');
             
             Ext.getCmp(Panel + '-LANG-PANEL-btn-save-' + FileID).disable();
             Ext.getCmp(Panel + '-' + FileID).isModifiedLang = false;
@@ -1478,7 +1478,7 @@ var phpDoc = function(){
     getFile: function(FileID, FilePath, FileName, Panel1, Panel2){
     
       // Mask the panel
-      Ext.get(Panel1 + FileID).mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Loading...');
+      Ext.get(Panel1 + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Loading...');
       
       // We load the File
       Ext.Ajax.request({
@@ -1642,7 +1642,7 @@ var phpDoc = function(){
     }, //NewTabMailing
     winDiff: function(FilePath, FileName, rev1, rev2){
     
-      Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Finding the diff. Please, wait...');
+      Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Finding the diff. Please, wait...');
       
       // Load diff data
       Ext.Ajax.request({
@@ -2101,7 +2101,7 @@ var phpDoc = function(){
     }, // WinCommit
     WinCommitLastStep: function(files, scope){
     
-      Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, wait until commit...');
+      Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait until commit...');
       
       var nodes = [], node, tmp, LogMessage, i;
       
@@ -2464,7 +2464,7 @@ var phpDoc = function(){
               var choice = Ext.getCmp('option-xml-details').checked;
               
               win.close();
-              Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, wait until the build is checked...');
+              Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait until the build is checked...');
               
               // We need to stop pin test during this process
               this.TaskPing.cancel();
@@ -2553,7 +2553,7 @@ var phpDoc = function(){
       
       if (!winConf) {
       
-        tplMenu = new Ext.XTemplate('<tpl for=".">', '<div class="thumb-wrap" id="tplMenu-{id}">', '<div class="thumb"><img src="img/{img}" title=""></div>', '<span>{label}</span></div>', '</tpl>');
+        tplMenu = new Ext.XTemplate('<tpl for=".">', '<div class="thumb-wrap" id="tplMenu-{id}">', '<div class="thumb"><img src="themes/img/{img}" title=""></div>', '<span>{label}</span></div>', '</tpl>');
         tplMenu.compile();
         
         if( this.userLang === 'en' ) {
@@ -2896,7 +2896,7 @@ var phpDoc = function(){
             },
             items: [{
               title: 'About',
-              html: '<div id="phd-oe-about"><img src="img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + ' (c) 2008-2009, Yannick Torr&egrave;ss - <a href="mailto:yannick@php.net">yannick@php.net</a></div>'
+              html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + ' (c) 2008-2009, Yannick Torr&egrave;ss - <a href="mailto:yannick@php.net">yannick@php.net</a></div>'
             }, {
               title: 'Credits',
               bodyStyle: 'padding:15px',
@@ -3641,7 +3641,7 @@ var phpDoc = function(){
                   });
                   Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                   
-                  Ext.get('diff_panel_' + rowIndex).mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                  Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
                   
                   // Load diff data
                   Ext.Ajax.request({
@@ -3778,7 +3778,7 @@ var phpDoc = function(){
                   });
                   Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                   
-                  Ext.get('diff_panel_' + rowIndex).mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                  Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
                   
                   // Load diff data
                   Ext.Ajax.request({
@@ -4896,7 +4896,7 @@ var phpDoc = function(){
                   });
                   Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                   
-                  Ext.get('diff_panel_' + rowIndex).mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                  Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
                   
                   // Load diff data
                   Ext.Ajax.request({
@@ -5106,7 +5106,7 @@ var phpDoc = function(){
                   });
                   Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                   
-                  Ext.get('diff_panel_' + rowIndex).mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                  Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
                   
                   // Load diff data
                   Ext.Ajax.request({
@@ -5146,7 +5146,7 @@ var phpDoc = function(){
                 scope: this,
                 handler: function(){
                 
-                  Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Open all files about ' + group[2] + ' extension. Please, wait...');
+                  Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Open all files about ' + group[2] + ' extension. Please, wait...');
                   
                   Ext.Ajax.request({
                     scope: this,
@@ -6512,7 +6512,7 @@ var phpDoc = function(){
 
               if (btn === 'yes') {
               
-                Ext.getBody().mask('<img src="img/loading.gif" style="vertical-align: middle;" /> Please, wait...');
+                Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait...');
                 //
                 Ext.Ajax.request({
                   scope: this,
@@ -6581,7 +6581,7 @@ var phpDoc = function(){
         layout: 'border',
         items: [{
           region: 'north',
-          html: '<h1 class="x-panel-header"><img src="img/mini_php.png" style="vertical-align: middle;" />&nbsp;&nbsp;' + this.appName + '</h1>',
+          html: '<h1 class="x-panel-header"><img src="themes/img/mini_php.png" style="vertical-align: middle;" />&nbsp;&nbsp;' + this.appName + '</h1>',
           autoHeight: true,
           border: false,
           margins: '0 0 5 0'
