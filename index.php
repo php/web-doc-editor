@@ -70,7 +70,7 @@ function headerTemplate($title = 'PHP Documentation Online Editor')
   <div id="loading-mask" style=""></div>
   <div id="loading">
    <div class="loading-indicator">
-    <img src="img/php.png" class="loading-php-logo" alt="PHP" />PhpDocumentation Online Editor<br/>
+    <img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />PhpDocumentation Online Editor<br/>
     <span id="loading-msg">Loading styles and images...</span>
    </div>
   </div>
