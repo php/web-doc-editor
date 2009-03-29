@@ -75,7 +75,7 @@ class ExtJsController
     {
         return $this->getResponse(array('success' => true));
     }
-    
+
     /**
      * Gets the specified request variable
      *
@@ -97,7 +97,7 @@ class ExtJsController
     {
         return isset($this->requestVariables[$name]);
     }
-    
+
     /**
      * Login to the tool
      *
@@ -159,8 +159,8 @@ class ExtJsController
         $this->phpDoc->rev_parse_translation();
 
         // Check errors in files
-//        $tool = new ToolsError($_SESSION['lang']);
- //       $tool->run('/');
+        //        $tool = new ToolsError($_SESSION['lang']);
+        //       $tool->run('/');
 
         // Remove the lock File
         $this->phpDoc->lockFileRemove('lock_apply_tools');
@@ -619,7 +619,7 @@ class ExtJsController
         $to      = $this->getRequestVariable('to');
         $subject = $this->getRequestVariable('subject');
         $msg     = $this->getRequestVariable('msg');
-        
+
         $this->phpDoc->sendEmail($to, $subject, $msg);
         return $this->getSuccess();
     }
@@ -730,6 +730,38 @@ class ExtJsController
         $r = $this->phpDoc->get_Check_Doc_Files($path, $errorType);
 
         return $this->getResponse(array('success' => true, 'files' => $r));
+    }
+
+    public function downloadPatch()
+    {
+
+        $FilePath = $this->getRequestVariable('FilePath');
+        $FileName = $this->getRequestVariable('FileName');
+
+        $patch = $this->phpDoc->getRawDiff($FilePath, $FileName);
+
+        $file = 'patch-' . time() . '.patch';
+
+        $size = strlen($patch);
+
+        header("Content-Type: application/force-download; name=\"$file\"");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Disposition: attachment; filename=\"$file\"");
+        header("Expires: 0");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        return $patch;
+    }
+
+    public function logout()
+    {
+
+        $_SESSION = array();
+        setcookie(session_name(), '', time()-42000, '/');
+        session_destroy();
+        header("Location: ../");
+        exit;
+
     }
 
 }

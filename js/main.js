@@ -3017,11 +3017,11 @@ var phpDoc = function(){
           success: function(r){
           
             if (r.responseText !== 'pong') {
-              window.location.href = './login.php';
+              window.location.href = './';
             }
           },
           failure: function(){
-            window.location.href = './login.php';
+            window.location.href = './';
           }
         });
         
@@ -4928,7 +4928,7 @@ var phpDoc = function(){
                 iconCls: 'iconCommitFileCvs',
                 scope: this,
                 handler: function(){
-                  window.location.href = './dl_Patch.php?FilePath=' + FilePath + '&FileName=' + FileName;
+                  window.location.href = './php/controller.php?task=downloadPatch&FilePath=' + FilePath + '&FileName=' + FileName;
                 }
               }, '-', {
                 text: 'Clear this change',
@@ -6531,8 +6531,8 @@ var phpDoc = function(){
                         msg: 'Thank you for using this application !',
                         icon: Ext.MessageBox.INFO,
                         buttons: Ext.MessageBox.OK,
-                        fn: function(){
-                          window.location.href = './logout.php';
+                        fn: function() {
+                          window.location.href = './php/controller.php?task=logout';
                         }
                       });
                       
@@ -6553,7 +6553,7 @@ var phpDoc = function(){
           handler: function(){
             Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', function(btn){
               if (btn === 'yes') {
-                window.location.href = './logout.php';
+                  window.location.href = './php/controller.php?task=logout';
               }
               
             });

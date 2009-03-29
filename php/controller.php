@@ -19,7 +19,6 @@ if (method_exists($controller, $method)) {
     $response = $controller->getFailure(sprintf('Unknown controller action: %s', $method));
 }
 
-header('Content-Type: text/plain');
 header('Content-Length:' . strlen($response));
 echo $response;
 exit;
