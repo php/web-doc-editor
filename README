@@ -1,1 +1,29 @@
-Test.
+==Installation instructions==
+
+=> About Files
+
+* Checkout the doc-editor CVS module
+* Download the Jpgraph distribution 2.x series from here :
+
+http://hem.bredband.net/jpgraph2/jpgraph-2.3.4.tar.gz
+
+* Unpack it on the root folder and rename the folder from jpgraph-2.x.x/ to jpgraph/
+* Download the ExtJs distribution 2.2.1 series from here :
+
+http://extjs.com/products/extjs/download.php?dl=extjs221
+
+* Unpack it into a new folder called "extjs/" on the root directory
+* Make sure the data/ folder have the read/write permission for the web server user.
+
+=> About DataBase
+
+* Create a new database called "doc-editor"
+* Import the file doc-editor.sql into this new database.
+* Open php/class.php and pass your DB settings into variables $_MysqlServ, $_MysqlUser, $_MysqlMdp
+
+=> First Run
+
+* Actually, you must setting up your web server in order to have this app on the root level. // TODO : make possible to don't need this.
+* Open your browser into the folder scripts/ and call the firstRun.php scripts. You can also use the PHP CLI to execute this scripts.
+This scripts will checkout the phpdoc-all CVS modules into the data/ folder, then, apply all tools like revcheck, doc_check, error_check, etc.. for all available language. It take a very long time...
+* Once this is done, just open your browser at the root level of your application and start edit the documentation with your cvs login/mdp or cvsread/phpfi account.
