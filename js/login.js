@@ -97,7 +97,7 @@ var loginPage = function() {
                             xtype       : 'form',
                             region      : 'south',
                             id          : 'login-form',
-                            url         : '../php/controler.php',
+                            url         : '../php/controller.php',
                             bodyStyle   : 'padding:5px 5px 0',
                             border      : false,
                             height      : 100,

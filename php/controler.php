@@ -78,7 +78,7 @@ if ($task == 'apply-tools') {
     $phpDoc->rev_parse_translation();
 
     // Check errors in files
-    //$phpDoc->tools_error_start();
+    //$phpDoc->tools_error_do('/');
 
     // Remove the lock File
     $phpDoc->lockFileRemove('lock_apply_tools');
