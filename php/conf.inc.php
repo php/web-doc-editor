@@ -20,7 +20,7 @@ define('DOC_EDITOR_SQL_BASE', 'doc-editor');
 /**
  * Data path
  */
-define('DOC_EDITOR_DATA_PATH', $_SERVER['DOCUMENT_ROOT'] . 'data/');
+define('DOC_EDITOR_DATA_PATH', '../' . 'data/');
 /**
  * CVS checkout path
  */

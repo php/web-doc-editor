@@ -10,7 +10,7 @@
 
 set_time_limit(0);
 
-include './conf.inc.php';
+include dirname(__FILE__).'/conf.inc.php';
 
 class phpDoc
 {
