@@ -2908,7 +2908,7 @@ var phpDoc = function(){
             }, {
               title: 'License',
               autoLoad: {
-                url: '/license_LGPL_v2.txt'
+                url: './license_LGPL_v2.txt'
               }
             }]
           }),
