@@ -68,18 +68,13 @@ class phpDoc
 
     function checkoutRepository() {
 
-        $lock_file = DOC_EDITOR_DATA_PATH . ".lock_checkout_repository";
+        if ($this->lockFileSet('lock_checkout_repository')) {
+            // We exec the checkout
+            $cmd = "cd " . DOC_EDITOR_DATA_PATH ."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
+            exec($cmd);
+        }
 
-        // We place a lock file to test if checkout is finish
-        touch($lock_file);
-
-        // We exec the checkout
-        $cmd = "cd " . DOC_EDITOR_DATA_PATH ."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
-        exec($cmd);
-
-        // We remove the lock file
-        unlink($lock_file);
-
+        $this->lockFileRemove('lock_checkout_repository');
     }
 
 
@@ -307,19 +302,19 @@ class phpDoc
                     "conf_theme"                  => 'xtheme-default.css'
                     );
 
-                    $return['state'] = TRUE;
+                    $return['state'] = true;
 
                 } elseif ($r == 'Bad password') {
-                    $return['state'] = FALSE;
+                    $return['state'] = false;
                     $return['msg']   = 'Bad cvs password';
                 } else {
-                    $return['state'] = FALSE;
+                    $return['state'] = false;
                     $return['msg']   = 'unknow from cvs';
                 }
 
             } else {
                 //User exist, but a bad password is enter
-                $return['state'] = FALSE;
+                $return['state'] = false;
                 $return['msg']   = 'Bad db password';
             }
 
@@ -349,7 +344,7 @@ class phpDoc
             $_SESSION['lang'] = $this->cvsLang;
             $_SESSION['userConf'] = $this->userConf;
 
-            $return['state'] = TRUE;
+            $return['state'] = true;
             $return['msg']   = 'Welcome !';
 
             return $return;
@@ -392,8 +387,10 @@ class phpDoc
 
             $this->updateLastConnect();
 
-            return TRUE;
-        } else { return FALSE; }
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
@@ -414,16 +411,21 @@ class phpDoc
      * Set a lock file.
      * @param $lockFile The name of the lock file we want to set.
      */
-    function lockFileSet($lockFile) {
-        @touch(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
+    function lockFileSet($lockFile)
+    {
+        if (!$this->lockFileCheck($lockFile)) {
+            return touch(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
+        }
+        return false;
     }
 
     /**
      * Remove a lock file.
      * @param $lockFile The name of the lock file we want to remove.
      */
-    function lockFileRemove($lockFile) {
-        @unlink(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
+    function lockFileRemove($lockFile)
+    {
+        return unlink(DOC_EDITOR_DATA_PATH . '.' . $lockFile);
     }
 
     /**
@@ -523,7 +525,7 @@ class phpDoc
                 return $r;
             }
         } else {
-            return TRUE;
+            return true;
         }
 
     }
@@ -722,10 +724,10 @@ class phpDoc
     function get_modified_files() {
 
         // Get Modified Files
-        $s = sprintf('SELECT id, path, name, CONCAT("1.", revision) AS revision, 
+        $s = sprintf('SELECT id, path, name, CONCAT("1.", revision) AS revision,
         CONCAT("1.", en_revision) AS en_revision, maintainer, reviewed FROM `pendingCommit` WHERE 
         `lang`="%s" OR lang="en"', $this->cvsLang);
-        
+
         $r = $this->db->query($s) or die($this->db->error);
 
         $node = array();
@@ -879,9 +881,15 @@ class phpDoc
         $r = $this->db->query($s);
         $nb = $r->num_rows;
 
-        $node=array();
+        $node = array();
 
         while ($a = $r->fetch_object()) {
+
+            $temp = array(
+            "id"         => $a->id,
+            "path"       => $a->path,
+            "name"       => $a->name,
+            );
 
             if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name]) || isset($ModifiedFiles['en'.$a->path.$a->name])) {
 
@@ -895,24 +903,15 @@ class phpDoc
                     $new_maintainer  = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['maintainer'];
                 }
 
-                $node[] = array(
-                "id"         => $a->id,
-                "path"       => $a->path,
-                "name"       => $a->name,
-                "reviewed"   => $new_reviewed,
-                "maintainer" => $new_maintainer,
-                "needcommit" => true
-                );
+                $temp['reviewed']   = $new_reviewed;
+                $temp['maintainer'] = $new_maintainer;
+                $temp['needcommit'] = true;
             } else {
-                $node[] = array(
-                "id"         => $a->id,
-                "path"       => $a->path,
-                "name"       => $a->name,
-                "reviewed"   => $a->reviewed,
-                "maintainer" => $a->maintainer,
-                "needcommit" => false
-                );
+                $temp['reviewed']   = $a->reviewed;
+                $temp['maintainer'] = $a->maintainer;
+                $temp['needcommit'] = false;
             }
+            $node[] = $temp;
         }
         return array('nb'=>$nb, 'node'=>$node);
     }
@@ -923,26 +922,18 @@ class phpDoc
      */
     function get_files_pending_patch() {
 
-        $s = 'SELECT * FROM `pendingPatch` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
+        $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS by,
+        `uniqID`, `date` FROM `pendingPatch` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
         $r = $this->db->query($s) or die($this->db->error);
         $nb = $r->num_rows;
 
         $node = array();
 
-        while ($a = $r->fetch_object()) {
-
-            $node[] = array(
-            "id"          => $a->id,
-            "path"        => $a->lang.$a->path,
-            "name"        => $a->name,
-            "by"          => $a->posted_by,
-            "uniqID"      => $a->uniqID,
-            "date"        => $a->date
-            );
-
+        while ($row = $r->fetch_assoc()) {
+            $node[] = $row;
         }
 
-        return array('nb'=>$nb, 'node'=>$node);
+        return array('nb' => $nb, 'node' => $node);
     }
 
     /**
@@ -1800,11 +1791,10 @@ class phpDoc
      * @return The output log.
      */
     function checkBuild($enable_xml_details='false') {
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error;';
 
         if ($enable_xml_details == 'true' ) {
-            $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error --enable-xml-details;';
-        } else {
-            $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error;';
+            $cmd .= ' --enable-xml-details;';
         }
 
         $output = array();
@@ -2447,7 +2437,7 @@ class phpDoc
     function tools_error_check_attributAppendixTags($lang_content, $en_content) {
 
         // attributs in appendix tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $reg = '/<appendix\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
 
@@ -2494,7 +2484,7 @@ class phpDoc
     function tools_error_check_attributQandaentryTags($lang_content, $en_content) {
 
         // attributs in qandaentry tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $reg = '/<qandaentry\s*?xml:id="(.*?)"\s*?>/s';
 
@@ -2532,7 +2522,7 @@ class phpDoc
     function tools_error_check_attributLinkTags($lang_content, $en_content) {
 
         // attributs in Link tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $match = $en_xlink = array();
         preg_match_all('/<link\s*?xlink:href="(.*?)">/s', $en_content, $match);
@@ -2588,7 +2578,7 @@ class phpDoc
     function tools_error_check_attributSect1Tags($lang_content, $en_content) {
 
         // attributs in Sect1 tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_sect1 = array();
         $match = array();
@@ -2640,7 +2630,7 @@ class phpDoc
     function tools_error_check_attributBookTags($lang_content, $en_content) {
 
         // attributs in Book tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_book = $match = array();
         preg_match_all('/<book\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s', $en_content, $match);
@@ -2849,7 +2839,7 @@ class phpDoc
     function tools_error_check_attributReferenceTags($lang_content, $en_content) {
 
         // attributs in Reference tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_reference = array();
         $match = array();
@@ -2913,7 +2903,7 @@ class phpDoc
     function tools_error_check_attributRefentryTags($lang_content, $en_content) {
 
         // attributs in Refentry tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_refentry = array();
         $match = array();
@@ -2970,14 +2960,14 @@ class phpDoc
                 "type" => "attributXmlNsXlinkRefentry"
                 );
 
-             }
+            }
         }
         return $result_error;
     }
     function tools_error_check_attributRefsec1Tags($lang_content, $en_content) {
 
         // attributs in Refsec1 tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_refsect1 = array();
         $match = array();
@@ -3003,7 +2993,7 @@ class phpDoc
     function tools_error_check_spaceOrPeriodRefpurposeTags($lang_content, $en_content) {
 
         // Space or period at the end of Refpurpose tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $match = array();
         preg_match_all('/<refpurpose>.*([^A-Za-z1-9 ])<\/refpurpose>/s', $lang_content, $match);
@@ -3023,7 +3013,7 @@ class phpDoc
     function tools_error_check_nbCdataTags($lang_content, $en_content) {
 
         // Nb <![CDATA tags
-        $result_error = FALSE;
+        $result_error = false;
 
         $en_cdataSection = 0;
         $match = array();
@@ -3245,7 +3235,7 @@ class phpDoc
     function tools_error_check_nbChapterTag($lang_content, $en_content) {
 
         // Nb <chapter> tags
-        $result_error = FALSE;
+        $result_error = false;
         $en_chapter = 0;
         $match = array();
         if (preg_match_all('/<chapter /s', $en_content, $match)) {
@@ -3271,7 +3261,7 @@ class phpDoc
     function tools_error_check_nbLiteralTag($lang_content, $en_content) {
 
         // Nb <literal> tags
-        $result_error = FALSE;
+        $result_error = false;
         $en_literal = 0;
         $match = array();
         if (preg_match_all('/<literal>/s', $en_content, $match)) {
@@ -3406,7 +3396,7 @@ class phpDoc
     function tools_error_check_methodsynopsis($lang_content, $en_content) {
 
         // test with methodsynopsis
-        $result_error = FALSE;
+        $result_error = false;
 
         $match = $en_methodsynopsis = array();
         preg_match_all('/<methodsynopsis>(\s.*?)<\/methodsynopsis>/s', $en_content, $match);
@@ -3756,8 +3746,18 @@ class phpDoc
         if (trim($a->email) != '' ) {
 
             $to = trim($a->email);
-            $subject = '[PHP-DOC] - Patch Accepted for '.$a->lang.$a->path.$a->name;
-            $msg = "I just accept your patch for the following file :\n\n".$a->lang.$a->path.$a->name."\n\nThanks for your help.\n\n-- \n".$this->cvsLogin."\nPhpDocTeam";
+            $subject = '[PHP-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
+            $msg = <<<EOD
+Your patch ($PatchUniqID) was accepted and applied to the PHP Manual.
+
+Since the online and downloadable versions of the documentation need some
+time to get updated, we would like to ask you to be a bit patient.
+ 	
+Thank you for your submission, and for helping us make our documentation better.
+
+-- 
+{$this->cvsLogin}@php.net
+EOD;
             $this->sendEmail($to, $subject, $msg);
 
         }
@@ -3782,7 +3782,14 @@ class phpDoc
 
             $to = trim($a->email);
             $subject = '[PHP-DOC] - Patch Rejected for '.$a->lang.$a->path.$a->name;
-            $msg = "I just reject your patch for the following file :\n\n".$a->lang.$a->path.$a->name."\n\n-- \n".$this->cvsLogin."\nPhpDocTeam";
+            $msg = <<<EOD
+Your patch ($PatchUniqID) was rejected from the PHP Manual.
+ 	
+Thank you for your submission.
+
+-- 
+{$this->cvsLogin}@php.net
+EOD;
             $this->sendEmail($to, $subject, $msg);
 
         }
