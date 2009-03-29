@@ -1,0 +1,52 @@
+GENERAL:
+========
+
+* Dedicate a wiki page to the doc-editor (and move this TODO there)
+* Take a decision once and for all about the app name, and its spelling
+* Take a decision about the license, and update all the files accordingly
+* Use the $Revision$ keyword (in comments, about popup, ..)
+
+PHP:
+====
+
+* Security
+  - Fix XSS holes
+  - Redo the folder tree to keep classes and data out of web server reach
+
+* Clean up class.php
+  - Create a DocumentationFile class which will handle all the parsing task
+  - Create a TranslationStatus class which will compute the translation
+    status by comparing DocumentationFile objects
+  - Create a DocumentationCheck class which will perform all the tests against
+    the en/ tree (and other languages? we _should_ be able to rely on TranslationStatus
+    on its own
+  - Create a CvsClient class to handle all the CVS operations (fsockopen() and exec())
+  - Create a BugReader class
+  - Create a NewsReader class
+
+* Controller
+  - Implement Apache rewriting to have controller actions look like http://foo.com/do/task/?arg=val
+  - Clean up the action names (and reflect the changes in main.js)
+
+* Translation Status
+  - At the current time, the french translation graph is useless/unreadable. We need to find
+    a better way to display the information
+ 
+* Implement i18n
+
+JAVASCRIPT:
+===========
+
+* Clean up the namespaces
+* Implement i18n
+* Split main.js to several objects & files (to be discussed)
+
+USER INTERFACE:
+===============
+
+* Login page
+  - Make the combobox scroll as the user inputs his language
+  - Enable/disable the submit button regarding the Form validation state (bindForm: true?)
+
+* Main Interface
+  - Get rid of the "Main Menu" and put the buttons on the header
