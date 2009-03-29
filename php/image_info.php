@@ -2,14 +2,15 @@
 session_start();
 include "./class.php";
 
-include '../jpgraph/src/jpgraph.php';
-include '../jpgraph/src/jpgraph_pie.php';
-include '../jpgraph/src/jpgraph_pie3d.php';
+include './jpgraph/src/jpgraph.php';
+include './jpgraph/src/jpgraph_pie.php';
+include './jpgraph/src/jpgraph_pie3d.php';
 
 $phpDoc = new phpDoc();
 $phpDoc->isLogged();
 
 $Total_files_lang = $phpDoc->get_nb_files();
+$Total_files_lang = $Total_files_lang[0];
 //
 $up_to_date = $phpDoc->get_nb_files_Translated();
 $up_to_date = $up_to_date[0];

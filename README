@@ -13,21 +13,21 @@
   - cvs -d :pserver:cvsread@cvs.php.net:/repository checkout doc-editor
 * A copy of the jpgraph 2.x series
   - Download from here: http://www.aditus.nu/jpgraph/jpdownload.php
-  - Unpack it like so: doc-editor/jpgraph/
+  - Unpack it like so: doc-editor/php/jpgraph/
 * A copy of the ExtJs 2.2.x series
   - Download from here: http://extjs.com/products/extjs/download.php
-  - Unpack it like so: doc-editor/extjs/
+  - Unpack it like so: doc-editor/js/extjs/
   - Note: extjs does not unzip into a new directory by default, so beware
 * Make sure the data directory has read/write permissions for the web server user
   - Default data directory location: doc-editor/data
 
 == The Database ==
-* Create a MySQL database as per config.inc.php
-* Import doc-editor.sql into this new database
-* Setup configuration options inside config.inc.php
+* Create a MySQL database as per php/config.inc.php
+* Import install/doc-editor.sql into this new database
+* Setup configuration options inside php/config.inc.php
 
 == Initial (first) run ==
-* Execute scripts/firstRun.php either in the browser or via CLI
+* Execute install/firstRun.php either in the browser or via CLI
   It will take a long time to execute, as it performs the following duties:
   - Applies tools such as revcheck, doc_check, and error_check
   - Checks out the phpdoc-all CVS module into the data directory
