@@ -2,7 +2,7 @@
 session_start();
 
 if (isset($_SESSION['userID'])) {
-    header("Location: /");
+    header("Location: ./");
     exit;
 }
 
@@ -50,18 +50,18 @@ if (isset($_SESSION['userID'])) {
   <div id="loading-mask" style=""></div>
   <div id="loading">
    <div class="loading-indicator">
-    <img src="/img/php.png" width="95" height="51" style="margin-right:8px;float:left;vertical-align:top;"/>PhpDocumentation Online Editor<br />
+    <img src="img/php.png" width="95" height="51" style="margin-right:8px;float:left;vertical-align:top;"/>PhpDocumentation Online Editor<br />
     <span id="loading-msg">Loading styles and images...</span>
    </div>
   </div>
-  <link type="text/css" rel="stylesheet" href="/extjs/resources/css/ext-all.css" />
-  <link type="text/css" rel="stylesheet" href="/themes/style.css" />
+  <link type="text/css" rel="stylesheet" href="extjs/resources/css/ext-all.css" />
+  <link type="text/css" rel="stylesheet" href="themes/style.css" />
   <!-- ExtJs Javascript core files -->
   <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Core API...';</script>
-  <script type="text/javascript" src="/extjs/adapter/ext/ext-base.js"></script>
+  <script type="text/javascript" src="extjs/adapter/ext/ext-base.js"></script>
   <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading UI Components...';</script>
-  <script type="text/javascript" src="/extjs/ext-all.js"></script>
+  <script type="text/javascript" src="extjs/ext-all.js"></script>
   <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Initializing...';</script>
-  <script type="text/javascript" src="/js/login.js"></script>
+  <script type="text/javascript" src="js/login.js"></script>
  </body>
 </html>
