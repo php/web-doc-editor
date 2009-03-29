@@ -6077,7 +6077,7 @@ var phpDoc = function(){
             
             loadMask.show();
             img.hide();
-            img.dom.src = "php/image_info.php";
+            img.dom.src = "./php/controller.php?task=translationGraph";
           } //AfterLayout
         } // Listeners
       };
