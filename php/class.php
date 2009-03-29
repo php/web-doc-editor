@@ -742,7 +742,7 @@ class phpDoc
     function get_modified_files() {
 
         // Get Modified Files
-        $s = sprintf('SELECT id, dir AS path, name, CONCAT("1.", revision) AS revision, 
+        $s = sprintf('SELECT id, path, name, CONCAT("1.", revision) AS revision, 
         CONCAT("1.", en_revision) AS en_revision, maintainer, reviewed FROM `pendingCommit` WHERE 
         `lang`="%s" OR lang="en"', $this->cvsLang);
         
