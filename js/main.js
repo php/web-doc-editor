@@ -6532,7 +6532,7 @@ var phpDoc = function(){
                         icon: Ext.MessageBox.INFO,
                         buttons: Ext.MessageBox.OK,
                         fn: function(){
-                          window.location.href = '/logout.php';
+                          window.location.href = './logout.php';
                         }
                       });
                       
@@ -6553,7 +6553,7 @@ var phpDoc = function(){
           handler: function(){
             Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', function(btn){
               if (btn === 'yes') {
-                window.location.href = '/logout.php';
+                window.location.href = './logout.php';
               }
               
             });
