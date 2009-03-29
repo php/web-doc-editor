@@ -159,7 +159,8 @@ class ExtJsController
         $this->phpDoc->rev_parse_translation();
 
         // Check errors in files
-        //$this->phpDoc->tools_error_do('/');
+//        $tool = new ToolsError($_SESSION['lang']);
+ //       $tool->run('/');
 
         // Remove the lock File
         $this->phpDoc->lockFileRemove('lock_apply_tools');
@@ -719,7 +720,7 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public public function get_check_doc_files() {
+    public function get_check_doc_files() {
 
         $this->phpDoc->isLogged();
 
