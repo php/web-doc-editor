@@ -171,7 +171,6 @@ class ExtJsController
     /**
      * Tests the CVS username against its password
      *
-     * @todo FIXME: phpDoc->login() requires 3 argument. 2 given here
      * @return Success
      */
     public function testCvsLogin()

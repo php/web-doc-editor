@@ -278,7 +278,7 @@ class phpDoc
      * @param $lang      The language we want to access.
      * @return An associated array.
      */
-    function login($cvsLogin, $cvsPasswd, $lang) {
+    function login($cvsLogin, $cvsPasswd, $lang='en') {
 
         $return = array(); // Value return
 
