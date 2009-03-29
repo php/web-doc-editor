@@ -92,7 +92,7 @@ var loginPage = function() {
                             id        : 'login-logo',
                             region    : 'center',
                             bodyStyle : 'margin:4px 4px 4px 8px',
-                            html      : '<img src="img/logo.png" />'
+                            html      : '<img src="themes/img/logo.png" />'
                         },{
                             xtype       : 'form',
                             region      : 'south',
