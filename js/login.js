@@ -52,7 +52,7 @@ Ext.extend(Ext.ux.plugins.IconCombo, Ext.util.Observable, {
 
 var loginPage = function() {
   Ext.QuickTips.init();
-  Ext.BLANK_IMAGE_URL = '/extjs/resources/images/default/s.gif';
+  Ext.BLANK_IMAGE_URL = 'extjs/resources/images/default/s.gif';
 
   return {
 
@@ -92,12 +92,12 @@ var loginPage = function() {
                             id        : 'login-logo',
                             region    : 'center',
                             bodyStyle : 'margin:4px 4px 4px 8px',
-                            html      : '<img src="/img/logo.png" />'
+                            html      : '<img src="img/logo.png" />'
                         },{
                             xtype       : 'form',
                             region      : 'south',
                             id          : 'login-form',
-                            url         : '../php/controller.php',
+                            url         : './php/controller.php',
                             bodyStyle   : 'padding:5px 5px 0',
                             border      : false,
                             height      : 100,
@@ -202,7 +202,7 @@ var loginPage = function() {
                                   waitTitle:'Connecting', 
                                   waitMsg:'Sending data...',
                                   success:function(form, action) {
-                                    window.location.href = '/';
+                                    window.location.href = './';
                                   },
                                   failure:function(form, action) {
                                    if( action.response ) {
