@@ -1262,10 +1262,10 @@ var phpDoc = function(){
                 
                   // Add this files into storePendingPatch
                   if (FileLang !== 'all') {
-                    this.addToPendingPatch(FileLang + FilePath, FileName, o.uniqID);
+                    this.addToPendingPatch(FileLang + FilePath, FileName, o.uniqId);
                   }
                   else {
-                    this.addToPendingPatch(FilePath, FileName, o.uniqID);
+                    this.addToPendingPatch(FilePath, FileName, o.uniqId);
                   }
                   // Remove wait msg
                   msg.hide();
