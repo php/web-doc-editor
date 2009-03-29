@@ -1588,7 +1588,6 @@ class phpDoc
 
     /**
      * Register a new patch, into the database.
-     * @todo FIXME: Do we really want to return $uniqId and not $fileID ? If so, $fileId definition may be removed
      * @param $lang     The lang.
      * @param $FilePath The path for the file.
      * @param $FileName The name of the file.
@@ -1600,7 +1599,6 @@ class phpDoc
 
         $s = 'INSERT into pendingPatch (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES (\''.$lang.'\', \''.$FilePath.'\', \''.$FileName.'\', \''.$this->cvsLogin.'\', now(), \''.$emailAlert.'\', \''.$uniqID.'\')';
         $this->db->query($s) or die($this->db->error);
-        $fileID = $this->db->insert_id;
 
         return $uniqID;
 
