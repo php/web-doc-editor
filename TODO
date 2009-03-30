@@ -5,6 +5,10 @@ GENERAL:
 * Take a decision once and for all about the app name, and its spelling
 * Take a decision about the license, and update all the files accordingly
 * Use the $Revision$ keyword (in comments, about popup, ..)
+* Allow use for other systems
+  - Other PHP Projects (peardoc, gtkdocs, php-src/README*, phpweb/reST/)
+  - Other VCS Systems (SVN, GIT)
+  - Generic projects (not php.net related)
 
 PHP:
 ====
@@ -12,6 +16,7 @@ PHP:
 * Security
   - Fix XSS holes
   - Redo the folder tree to keep classes and data out of web server reach
+  - Implement php.net authentication scheme (cvsauth)
 
 * Clean up class.php
   - Create a DocumentationFile class which will handle all the parsing task
@@ -40,9 +45,15 @@ JAVASCRIPT:
 * Clean up the namespaces
 * Implement i18n
 * Split main.js to several objects & files (to be discussed)
+* Implement RTL where appropriate
 
 USER INTERFACE:
 ===============
 
 * Main Interface
   - Get rid of the "Main Menu" and put the buttons on the header
+
+* Add support and tools for specific markup types
+  - DocBook
+  - ReST
+  - PO files (gettext)
