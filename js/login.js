@@ -128,7 +128,7 @@ var loginPage = function() {
                                     listeners: {
                                       keypress: function(field, e) {
                                         if( e.getKey() == e.ENTER ) {
-                                          Ext.getCmp('login-btn').fireEvent('click');
+                                          Ext.getCmp('login-form-lang').focus();
                                         }
                                       }
                                     }
@@ -176,7 +176,7 @@ var loginPage = function() {
                                     valueField    : 'countryCode',
                                     listWidth     : 235,
                                     maxHeight     : 150,
-                                    editable      : false,
+                                    editable      : true,
                                     value         : 'ar',
                                     id            : 'login-form-lang',
                                     name          : 'langDisplay',

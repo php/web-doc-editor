@@ -45,7 +45,6 @@ USER INTERFACE:
 ===============
 
 * Login page
-  - Make the combobox scroll as the user inputs his language
   - Enable/disable the submit button regarding the Form validation state (bindForm: true?)
 
 * Main Interface
