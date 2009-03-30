@@ -29,10 +29,20 @@ var phpDoc = function(){
         userConf: {
             'conf_needupdate_diff': 'using-exec',
             'conf_needupdate_scrollbars': true,
+            'conf_needupdate_displaylog': false,
+
             'conf_error_skipnbliteraltag': true,
             'conf_error_scrollbars': true,
+            'conf_error_displaylog': false,
+
             'conf_reviewed_scrollbars': true,
+            'conf_reviewed_displaylog': false,
+
+            'conf_allfiles_displaylog': false,
+
             'conf_patch_scrollbars': true,
+            'conf_patch_displaylog': false,
+
             'conf_theme': 'xtheme-default.css'
         },
         
@@ -66,9 +76,19 @@ var phpDoc = function(){
                         
                         this.userConf.conf_needupdate_diff = o.mess.userConf.conf_needupdate_diff;
                         this.userConf.conf_needupdate_scrollbars = o.mess.userConf.conf_needupdate_scrollbars;
+                        this.userConf.conf_needupdate_displaylog = o.mess.userConf.conf_needupdate_displaylog;
+
                         this.userConf.conf_error_skipnbliteraltag = o.mess.userConf.conf_error_skipnbliteraltag;
                         this.userConf.conf_error_scrollbars = o.mess.userConf.conf_error_scrollbars;
+                        this.userConf.conf_error_displaylog = o.mess.userConf.conf_error_displaylog;
+
                         this.userConf.conf_reviewed_scrollbars = o.mess.userConf.conf_reviewed_scrollbars;
+                        this.userConf.conf_reviewed_displaylog = o.mess.userConf.conf_reviewed_displaylog;
+
+                        this.userConf.conf_allfiles_displaylog = o.mess.userConf.conf_allfiles_displaylog;
+
+                        this.userConf.conf_patch_scrollbars = o.mess.userConf.conf_patch_scrollbars;
+                        this.userConf.conf_patch_displaylog = o.mess.userConf.conf_patch_displaylog;
                         
                         //For the theme, we apply this.
                         this.userConf.conf_theme = o.mess.userConf.conf_theme;
@@ -966,7 +986,6 @@ var phpDoc = function(){
                         
                     }
                     else {
-                    
                         // walk into childs
                         for (i = 0; i < node.childNodes.length; i = i + 1) {
                             if (node.childNodes[i].text === FileName) {
@@ -2556,12 +2575,12 @@ var phpDoc = function(){
                 
                 if (this.userLang === 'en') {
                 
-                    storeData = [['1', 'go-home.png', 'Main'], ['5', 'view-media-playlist.png', 'Module "Pending Patch"']];
+                    storeData = [['1', 'go-home.png', 'Main'], ['5', 'view-list-tree.png', 'Module "All files"'], ['6', 'view-media-playlist.png', 'Module "Pending Patch"']];
                     
                 }
                 else {
                 
-                    storeData = [['1', 'go-home.png', 'Main'], ['2', 'edit-redo.png', 'Module "Files Need Update"'], ['3', 'dialog-cancel.png', 'Module "Files with Error"'], ['4', 'document-properties.png', 'Module "Files need Reviewed"'], ['5', 'view-media-playlist.png', 'Module "Pending Patch"']];
+                    storeData = [['1', 'go-home.png', 'Main'], ['2', 'edit-redo.png', 'Module "Files Need Update"'], ['3', 'dialog-cancel.png', 'Module "Files with Error"'], ['4', 'document-properties.png', 'Module "Files need Reviewed"'], ['5', 'view-list-tree.png', 'Module "All files"'], ['6', 'view-media-playlist.png', 'Module "Pending Patch"']];
                 }
                 
                 storeMenu = new Ext.data.SimpleStore({
@@ -2723,6 +2742,17 @@ var phpDoc = function(){
                                             this.confUpdate('conf_needupdate_scrollbars', f.getValue());
                                         }
                                     }
+                                },{
+                                    scope: this,
+                                    checked: (this.userConf.conf_needupdate_displaylog === "true") ? true : false,
+                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    name: 'conf_needupdate_displaylog',
+                                    listeners: {
+                                        scope: this,
+                                        check: function(f){
+                                            this.confUpdate('conf_needupdate_displaylog', f.getValue());
+                                        }
+                                    }
                                 }]
                             }]
                         
@@ -2769,6 +2799,17 @@ var phpDoc = function(){
                                             this.confUpdate('conf_error_scrollbars', f.getValue());
                                         }
                                     }
+                                },{
+                                    scope: this,
+                                    checked: (this.userConf.conf_error_displaylog === "true") ? true : false,
+                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    name: 'conf_error_displaylog',
+                                    listeners: {
+                                        scope: this,
+                                        check: function(f){
+                                            this.confUpdate('conf_error_displaylog', f.getValue());
+                                        }
+                                    }
                                 }]
                             }]
                         }, {
@@ -2794,10 +2835,46 @@ var phpDoc = function(){
                                             this.confUpdate('conf_reviewed_scrollbars', f.getValue());
                                         }
                                     }
+                                },{
+                                    scope: this,
+                                    checked: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
+                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    name: 'conf_reviewed_displaylog',
+                                    listeners: {
+                                        scope: this,
+                                        check: function(f){
+                                            this.confUpdate('conf_reviewed_displaylog', f.getValue());
+                                        }
+                                    }
                                 }]
                             }]
                         }, {
                             id: 'conf-card-5',
+                            xtype: 'form',
+                            bodyStyle: 'padding: 10px;',
+                            items: [{
+                                xtype: 'fieldset',
+                                title: 'Editor',
+                                autoHeight: true,
+                                defaults: {
+                                    hideLabel: true
+                                },
+                                defaultType: 'checkbox',
+                                items: [{
+                                    scope: this,
+                                    checked: (this.userConf.conf_allfiles_displaylog === "true") ? true : false,
+                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    name: 'conf_allfiles_displaylog',
+                                    listeners: {
+                                        scope: this,
+                                        check: function(f){
+                                            this.confUpdate('conf_allfiles_displaylog', f.getValue());
+                                        }
+                                    }
+                                }]
+                            }]
+                        }, {
+                            id: 'conf-card-6',
                             xtype: 'form',
                             bodyStyle: 'padding: 10px;',
                             items: [{
@@ -2817,6 +2894,17 @@ var phpDoc = function(){
                                         scope: this,
                                         check: function(f){
                                             this.confUpdate('conf_patch_scrollbars', f.getValue());
+                                        }
+                                    }
+                                }, {
+                                    scope: this,
+                                    checked: (this.userConf.conf_patch_displaylog === "true") ? true : false,
+                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    name: 'conf_patch_displaylog',
+                                    listeners: {
+                                        scope: this,
+                                        check: function(f){
+                                            this.confUpdate('conf_patch_displaylog', f.getValue());
                                         }
                                     }
                                 }]
@@ -2853,6 +2941,10 @@ var phpDoc = function(){
                     if (item === "conf_needupdate_scrollbars") {
                         this.userConf.conf_needupdate_scrollbars = "" + v + "";
                     }
+                    if (item === "conf_needupdate_displaylog") {
+                        this.userConf.conf_needupdate_displaylog = "" + v + "";
+                    }
+
                     if (item === "conf_error_skipnbliteraltag") {
                         this.userConf.conf_error_skipnbliteraltag = "" + v + "";
                         this.storeFilesError.reload();
@@ -2860,11 +2952,26 @@ var phpDoc = function(){
                     if (item === "conf_error_scrollbars") {
                         this.userConf.conf_error_scrollbars = "" + v + "";
                     }
+                    if (item === "conf_error_displaylog") {
+                        this.userConf.conf_error_displaylog = "" + v + "";
+                    }
+
                     if (item === "conf_reviewed_scrollbars") {
                         this.userConf.conf_reviewed_scrollbars = "" + v + "";
                     }
+                    if (item === "conf_reviewed_displaylog") {
+                        this.userConf.conf_reviewed_displaylog = "" + v + "";
+                    }
+
+                    if (item === "conf_allfiles_displaylog") {
+                        this.userConf.conf_allfiles_displaylog = "" + v + "";
+                    }
+
                     if (item === "conf_patch_scrollbars") {
                         this.userConf.conf_patch_scrollbars = "" + v + "";
+                    }
+                    if (item === "conf_patch_displaylog") {
+                        this.userConf.conf_patch_displaylog = "" + v + "";
                     }
                     
                 }
@@ -3096,7 +3203,7 @@ var phpDoc = function(){
                             
                             // We define the store and the grid for log information
                             storeLogLang = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_error_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -3131,7 +3238,7 @@ var phpDoc = function(){
                             storeLogLang.setDefaultSort('date', 'desc');
                             
                             storeLogEn = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_error_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -3250,6 +3357,14 @@ var phpDoc = function(){
                                         this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
                                         
                                     }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FE-PANEL-btn-refreshlogLang-' + FileID,
+                                    handler: function(){
+                                        storeLogLang.reload();
+                                    }
                                 }]
                             });
                             
@@ -3337,6 +3452,14 @@ var phpDoc = function(){
                                         
                                         this.winDiff('en' + FilePath, FileName, rev1, rev2);
                                         
+                                    }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FE-PANEL-btn-refreshlogEn-' + FileID,
+                                    handler: function(){
+                                        storeLogEn.reload();
                                     }
                                 }]
                             });
@@ -3838,7 +3961,7 @@ var phpDoc = function(){
                         
                             // We define the store and the grid for log information
                             storeLogLang = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_needupdate_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -3873,7 +3996,7 @@ var phpDoc = function(){
                             storeLogLang.setDefaultSort('date', 'desc');
                             
                             storeLogEn = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_needupdate_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -3992,6 +4115,14 @@ var phpDoc = function(){
                                         this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
                                         
                                     }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FNU-PANEL-btn-refreshlogLang-' + FileID,
+                                    handler: function(){
+                                        storeLogLang.reload();
+                                    }
                                 }]
                             });
                             
@@ -4079,6 +4210,14 @@ var phpDoc = function(){
                                         
                                         this.winDiff('en' + FilePath, FileName, rev1, rev2);
                                         
+                                    }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FNU-PANEL-btn-refreshlogEn-' + FileID,
+                                    handler: function(){
+                                        storeLogEn.reload();
                                     }
                                 }]
                             });
@@ -4476,11 +4615,11 @@ var phpDoc = function(){
                         
                         
                         // Render only if this tab don't exist yet
-                        if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
+                        if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
                         
                             // We define the store and the grid for log information
                             storeLog = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_patch_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -4598,6 +4737,14 @@ var phpDoc = function(){
                                         
                                         this.winDiff(FilePath, FileName, rev1, rev2);
                                         
+                                    }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'PP-PANEL-btn-refreshlog-' + FileID,
+                                    handler: function(){
+                                        storeLog.reload();
                                     }
                                 }]
                             });
@@ -4821,6 +4968,9 @@ var phpDoc = function(){
                             
                             
                         } // Render only if tab don't exist yet
+                        else {
+                            Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
+                        }
                     }
                 } // listeners
             });
@@ -5211,7 +5361,7 @@ var phpDoc = function(){
                         
                             // We define the store and the grid for log information
                             storeLogLang = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -5246,7 +5396,7 @@ var phpDoc = function(){
                             storeLogLang.setDefaultSort('date', 'desc');
                             
                             storeLogEn = new Ext.data.Store({
-                                autoLoad: true,
+                                autoLoad: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
                                 proxy: new Ext.data.HttpProxy({
                                     url: './php/controller.php'
                                 }),
@@ -5365,6 +5515,14 @@ var phpDoc = function(){
                                         this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
                                         
                                     }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FNR-PANEL-btn-refreshlogLang-' + FileID,
+                                    handler: function(){
+                                        storeLogLang.reload();
+                                    }
                                 }]
                             });
                             
@@ -5452,6 +5610,14 @@ var phpDoc = function(){
                                         
                                         this.winDiff('en' + FilePath, FileName, rev1, rev2);
                                         
+                                    }
+                                },{
+                                    scope: this,
+                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    iconCls: 'refresh',
+                                    id: 'FNR-PANEL-btn-refreshlogEn-' + FileID,
+                                    handler: function(){
+                                        storeLogEn.reload();
                                     }
                                 }]
                             });
@@ -6140,7 +6306,7 @@ var phpDoc = function(){
                                 
                                 // We define the store and the grid for log information
                                 storeLog = new Ext.data.Store({
-                                    autoLoad: true,
+                                    autoLoad: (this.userConf.conf_allfiles_displaylog === "true") ? true : false,
                                     proxy: new Ext.data.HttpProxy({
                                         url: './php/controller.php'
                                     }),
@@ -6259,6 +6425,14 @@ var phpDoc = function(){
                                             
                                             this.winDiff(FilePath, FileName, rev1, rev2);
                                             
+                                        }
+                                    },{
+                                        scope: this,
+                                        tooltip: '<b>Load/Refresh</b> revisions',
+                                        iconCls: 'refresh',
+                                        id: 'AF-PANEL-btn-refreshlog-' + FileID,
+                                        handler: function(){
+                                            storeLog.reload();
                                         }
                                     }]
                                 });
