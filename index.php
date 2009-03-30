@@ -14,6 +14,7 @@ if (!isset($_SESSION['userID'])) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
     echo jsLoadTemplate('js/extjs/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
+    echo jsLoadTemplate('js/login_override.js');
     echo jsLoadTemplate('js/login.js');
     echo footerTemplate();
     exit;
