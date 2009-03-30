@@ -44,8 +44,5 @@ JAVASCRIPT:
 USER INTERFACE:
 ===============
 
-* Login page
-  - Enable/disable the submit button regarding the Form validation state (bindForm: true?)
-
 * Main Interface
   - Get rid of the "Main Menu" and put the buttons on the header

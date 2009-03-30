@@ -12,7 +12,7 @@ var loginPage = function() {
 
     drawForm: function() {
 
-    var win, language;
+    var win;
 
 
 
@@ -141,6 +141,9 @@ var loginPage = function() {
                             disabled : false,
                             listeners: {
                               click: function() {
+
+                               if( Ext.getCmp('login-form').getForm().isValid() ) {
+
                                 Ext.getCmp('login-form').getForm().submit({
                                   method:'POST', 
                                   params: {
@@ -180,6 +183,9 @@ var loginPage = function() {
                                   }
 
                                 });
+
+                               } // validate
+
                               }
                             }
                         }]
