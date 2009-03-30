@@ -894,7 +894,7 @@ class phpDoc
      */
     function get_files_pending_patch() {
 
-        $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS by,
+        $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS \'by\',
         `uniqID`, `date` FROM `pendingPatch` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
         $r = $this->db->query($s) or die($this->db->error);
         $nb = $r->num_rows;
