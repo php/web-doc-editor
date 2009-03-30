@@ -6658,6 +6658,7 @@ var phpDoc = function(){
           id: 'main-panel',
           activeTab: 0,
           enableTabScroll: true,
+          layoutOnTabChange : true,
           plugins: new Ext.ux.TabCloseMenu(),
           listeners: {
             scope: this,
