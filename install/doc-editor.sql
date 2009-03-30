@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `conf_allfiles_displaylog` varchar(10) NOT NULL DEFAULT 'false',
   `conf_patch_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
   `conf_patch_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_theme` varchar(255) NOT NULL DEFAULT 'xtheme-default.css',
+  `conf_theme` varchar(255) NOT NULL DEFAULT 'themes/empty.css',
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

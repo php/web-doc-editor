@@ -21,12 +21,12 @@ if (!isset($_SESSION['userID'])) {
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('js/extjs/resources/css/ext-all.css');
-echo cssLoadTemplate('js/extjs/resources/css/xtheme-default.css', 'appTheme');
+echo cssLoadTemplate('js/extjs/resources/css/ext-all.css', 'extTheme');
+echo cssLoadTemplate('themes/empty.css', 'appTheme');
+echo cssLoadTemplate('themes/style.css');
 // Ext.ux Css files
 echo cssLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.css');
 echo cssLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.css');
-echo cssLoadTemplate('themes/style.css');
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
 echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
@@ -40,6 +40,7 @@ echo jsLoadTemplate('js/ux/md5/md5.js');
 echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/ux/Ext.ux.CodeMirror.js');
 echo jsLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js');
+// Main app
 echo jsLoadTemplate('js/main_override.js');
 echo jsLoadTemplate('js/main.js');
 

@@ -313,7 +313,7 @@ class phpDoc
                     "conf_patch_scrollbars"       => 'true',
                     "conf_patch_displaylog"       => 'false',
 
-                    "conf_theme"                  => 'xtheme-default.css'
+                    "conf_theme"                  => 'themes/empty.css'
                     );
 
                     $return['state'] = true;
@@ -418,7 +418,7 @@ class phpDoc
             "conf_patch_scrollbars"       => 'true',
             "conf_patch_displaylog"       => 'false',
 
-            "conf_theme"                  => 'xtheme-default.css'
+            "conf_theme"                  => 'themes/empty.css'
             );
 
             $this->updateLastConnect();
