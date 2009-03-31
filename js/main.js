@@ -2230,7 +2230,7 @@ var phpDoc = function(){
                     scope: scope,
                     url: './php/controller.php',
                     params: {
-                        task: 'update-repo'
+                        task: 'update-repository'
                     },
                     success: function(action){
                         // Normally, this never succes ! ;)
@@ -2265,7 +2265,6 @@ var phpDoc = function(){
                                         
                                         // Goto step2
                                         RefreshStep2(this);
-                                        
                                         
                                     }
                                     else {
