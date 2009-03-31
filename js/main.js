@@ -92,9 +92,8 @@ var phpDoc = function(){
                         
                         //For the theme, we apply this.
                         this.userConf.conf_theme = o.mess.userConf.conf_theme;
-                        Ext.util.CSS.swapStyleSheet("extTheme", 'js/extjs/resources/css/ext-all.css');
-                        Ext.util.CSS.swapStyleSheet("appTheme", this.userConf.conf_theme);
-                        
+                        Ext.get('appTheme').dom.href = this.userConf.conf_theme;
+
                         // Load datastore
                         this.loadDataStore();
                         
@@ -2675,9 +2674,9 @@ var phpDoc = function(){
                                     listeners: {
                                         scope: this,
                                         select: function(c, record, numIndex){
-                                            Ext.util.CSS.swapStyleSheet("extTheme", 'js/extjs/resources/css/ext-all.css');
-                                            Ext.util.CSS.swapStyleSheet("appTheme", c.getValue());
-                                            this.confUpdate('conf_theme', c.getValue());
+                                            var hrefTheme = c.getValue();
+                                            Ext.get('appTheme').dom.href = hrefTheme;
+                                            this.confUpdate('conf_theme', hrefTheme);
                                         }
                                     }
                                 
