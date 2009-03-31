@@ -5144,6 +5144,9 @@ var phpDoc = function(){
                                 text: 'Commit...',
                                 iconCls: 'iconCommitFileCvs',
                                 scope: this,
+                                handler: function(){
+                                    return false;
+                                },
                                 disabled: (this.userLogin === 'cvsread') ? true : false,
                                 menu: new Ext.menu.Menu({
                                     items: [{
