@@ -11,7 +11,7 @@
 set_time_limit(0);
 
 require_once dirname(__FILE__) . '/conf.inc.php';
-require_once './LockFile.php';
+require_once dirname(__FILE__) . '/LockFile.php';
 
 class phpDoc
 {
