@@ -729,16 +729,16 @@ class phpDoc
     function get_modified_files() {
 
         // Get Modified Files
-        $s = sprintf('SELECT id, path, name, CONCAT("1.", revision) AS revision,
-        CONCAT("1.", en_revision) AS en_revision, maintainer, reviewed FROM `pendingCommit` WHERE 
-        `lang`="%s" OR lang="en"', $this->cvsLang);
+        $s = sprintf('SELECT `id`, `lang`, `path`, `name`, CONCAT("1.", `revision`) AS `revision`,
+        CONCAT("1.", `en_revision`) AS `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE 
+        `lang`="%s" OR `lang`="en"', $this->cvsLang);
 
         $r = $this->db->query($s) or die($this->db->error);
 
         $node = array();
 
         while ($a = $r->fetch_assoc()) {
-            $node[$a->lang.$a->path.$a->name] = $a;
+            $node[$a['lang'].$a['path'].$a['name']] = $a;
         }
 
         return $node;
