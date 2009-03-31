@@ -39,6 +39,9 @@ PHP:
  
 * Implement i18n
 
+* Automatic upgrade
+  - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling)
+
 JAVASCRIPT:
 ===========
 
