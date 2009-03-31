@@ -83,7 +83,7 @@ class phpDoc
 
     /**
      * Apply the Revcheck tools recursively on all lang
-     * @param $dir The directory from witch we start.
+     * @param $dir The directory from which we start.
      * @param $idDir Directory id from the database.
      * @return Nothing.
      */
