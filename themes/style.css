@@ -297,6 +297,12 @@
         border: 1px solid #d7d7d7;
 }
 
+.check-build-content {
+    margin: 5px 5px;
+    font-family: tahoma,arial,helvetica,sans-serif;
+    font-size: 11px;
+}
+
 #confMenu { 
     background: white; 
     font: 11px Arial, Helvetica, sans-serif;

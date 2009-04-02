@@ -2436,23 +2436,21 @@ var phpDoc = function(){
                             this.TaskPing.delay(30000);
                             
                             // Display
-                            winStatus = new Ext.Window({
-                                title: 'Status',
-                                width: 450,
-                                height: 350,
-                                resizable: false,
-                                modal: true,
+                            if ( Ext.getCmp('main-panel').findById('check_build_panel') ) {
+                                Ext.getCmp('main-panel').remove('check_build_panel');
+                            }
+
+                            Ext.getCmp('main-panel').add({
+                                xtype: 'panel',
+                                id: 'check_build_panel',
+                                title: 'Check Build Result',
+                                closable: true,
                                 autoScroll: true,
-                                bodyStyle: 'background-color: white; padding: 5px;',
-                                html: o.mess,
-                                buttons: [{
-                                    text: 'Close',
-                                    handler: function(){
-                                        winStatus.close();
-                                    }
-                                }]
+                                iconCls: 'checkBuild',
+                                html: '<div class="check-build-content">'+o.mess+'</div>'
                             });
-                            winStatus.show();
+                            Ext.getCmp('main-panel').setActiveTab('check_build_panel');
+
                         }
                     }
                 });
@@ -2508,8 +2506,9 @@ var phpDoc = function(){
                                 
                                     // If this take over 30sec (max Keep-Alive time), we are on failure !
                                     
-                                    function checkLockFile(){
+                                    function checkLockFile(scope){
                                         Ext.Ajax.request({
+                                            scope: scope,
                                             url: './php/controller.php',
                                             params: {
                                                 task: 'check-lock-file',
@@ -2519,7 +2518,7 @@ var phpDoc = function(){
                                                 var o = Ext.util.JSON.decode(action.responseText);
                                                 if (!o.success) {
                                                     Ext.getBody().unmask();
-                                                    displayMess();
+                                                    displayMess(this);
                                                 }
                                                 else {
                                                     builcheckDelay.delay(5000);
@@ -2534,8 +2533,8 @@ var phpDoc = function(){
                                     
                                     // We check ever XX secondes if the check build is finish, or not.
                                     var builcheckDelay = new Ext.util.DelayedTask(function(){
-                                        checkLockFile();
-                                    });
+                                        checkLockFile(this);
+                                    }, this);
                                     builcheckDelay.delay(5000);
                                 }
                             });
