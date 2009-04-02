@@ -335,7 +335,7 @@ class ExtJsController
         }
 
         // Get EN content to check error with
-        $dirEN = $this->phpDoc->cvsDoc.'en'.$FilePath;
+        $dirEN = DOC_EDITOR_CVS_PATH.'/en'.$FilePath;
         $en_content = file_get_contents($dirEN.$FileName);
 
         // Do tools_error
