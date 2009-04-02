@@ -1796,10 +1796,12 @@ class phpDoc
      * @return The output log.
      */
     function checkBuild($enable_xml_details='false') {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error';
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang;
 
         if ($enable_xml_details == 'true' ) {
             $cmd .= ' --enable-xml-details';
+        } else {
+            $cmd .= ' --disable-segfault-error';
         }
 
         $cmd .= ';';
