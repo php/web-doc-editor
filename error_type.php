@@ -42,7 +42,7 @@ echo '</pre>';
 }
 
 td.micon {
-    background: #F9F9F9 url(/img/expand-bg.gif) repeat-y scroll right top;
+    background: #F9F9F9 url(./themes/img/expand-bg.gif) repeat-y scroll right top;
     border-right: 1px solid #D0D0D0;
     border-top: 1px solid #D0D0D0;
     padding: 0;
@@ -61,14 +61,14 @@ td.sig {
 }
 
 em.exi {
-    background: transparent url(/img/member-collapsed.gif) no-repeat scroll 5px 6px;
+    background: transparent url(./themes/img/member-collapsed.gif) no-repeat scroll 5px 6px;
     height: 30px;
     width: 98%;
     display: block;
 }
 
 th.sig-header {
-    background: #F9F9F9 url(/img/grid3-hrow.gif) repeat-x scroll 0 top;
+    background: #F9F9F9 url(./themes/img/grid3-hrow.gif) repeat-x scroll 0 top;
     padding: 3px;
     text-align: left;
     vertical-align: middle;
