@@ -3001,7 +3001,7 @@ var phpDoc = function(){
                         },
                         items: [{
                             title: 'About',
-                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + ' (c) 2008-2009, Yannick Torr&egrave;ss - <a href="mailto:yannick@php.net">yannick@php.net</a></div>'
+                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + ' (c) 2008-2009, Yannick Torr&egrave;s - <a href="mailto:yannick@php.net">yannick@php.net</a></div>'
                         }, {
                             title: 'Credits',
                             bodyStyle: 'padding:15px',
