@@ -1796,12 +1796,10 @@ class phpDoc
      * @return The output log.
      */
     function checkBuild($enable_xml_details='false') {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang;
+        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error';
 
         if ($enable_xml_details == 'true' ) {
             $cmd .= ' --enable-xml-details';
-        } else {
-            $cmd .= ' --disable-segfault-error';
         }
 
         $cmd .= ';';
@@ -2280,7 +2278,7 @@ class phpDoc
         //(\''.$lang.'\', \''.$path.'\',\''.$name.'\','.$maintainer.',\''.$this->db->real_escape_string($error[$i]['value_en']).'\',\''.$this->db->real_escape_string($error[$i]['value_lang']).'\',\''.$error[$i]['type'].'\')';
 
         foreach ($errors as $error) {
-            $sql .= sprintf($pattern, $lang, $path, $name, $maintainer, $this->db->real_escape_string($error['value_en']),
+            $sql .= sprintf($pattern, $lang, $path, $name, trim($maintainer,"'"), $this->db->real_escape_string($error['value_en']),
             $this->db->real_escape_string($error['value_lang']), $error['type']);
         }
 
