@@ -21,7 +21,7 @@
 .x-item-disabled .x-form-check-checked,.x-item-disabled .x-form-radio-checked{background-position:-39px -13px;}
 .x-form-check-wrap-inner input,.x-form-radio-wrap-inner input{position:absolute;-ms-filter:"alpha(opacity=0)";filter:alpha(opacity=0);-moz-opacity:0;opacity:0;}
 
-#phd-oe-about { text-align: center; margin: 70px 0px 80px 0; }
+#phd-oe-about { text-align: center; margin: 70px 0px 50px 0; }
 #phd-oe-about-info { font-size: 10px; text-align: center; color: #849090; }
 #phd-oe-credit ul { list-style: disc url(../themes/img/arrow_right2.png) inside; }
 #phd-oe-credit li { margin: 10px; padding: 0; }
