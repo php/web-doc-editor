@@ -28,7 +28,16 @@
 
 .phd-oe-credit-info { margin-left: 30px; padding-top: 7px; color: #849090; }
 
-.CodeMirror-line-numbers { width: 1.7em; background-color: #eee; text-align: right; padding-right: .3em; color: #aaa; font-size: 80%; }
+.CodeMirror-line-numbers {
+  width: 1.7em;
+  background-color: #eee;
+  text-align: right;
+  padding-right: .3em;
+  padding-top: .4em;
+  color: #aaa;
+  font-size: 10pt !important;
+  font-family: monospace;
+}
 
 .key        { background-image:url(../themes/img/key.png)    !important; }
 
