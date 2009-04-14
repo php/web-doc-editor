@@ -3320,7 +3320,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smLang,
@@ -3416,7 +3416,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smEn,
@@ -4076,7 +4076,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smLang,
@@ -4171,7 +4171,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smEn,
@@ -4698,7 +4698,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: sm,
@@ -5478,7 +5478,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smLang,
@@ -5574,7 +5574,7 @@ var phpDoc = function(){
                                     dataIndex: 'date',
                                     renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                 }],
-                                autoHeight: true,
+                                autoScroll: true,
                                 autoExpandColumn: 'content',
                                 bodyBorder: false,
                                 sm: smEn,
@@ -6389,7 +6389,7 @@ var phpDoc = function(){
                                         dataIndex: 'date',
                                         renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
                                     }],
-                                    autoHeight: true,
+                                    autoScroll: true,
                                     autoExpandColumn: 'content',
                                     bodyBorder: false,
                                     sm: sm,
