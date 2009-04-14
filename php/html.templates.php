@@ -58,16 +58,26 @@ function jsLoadTemplate($src)
 /**
  * Returns a javascript script loading element
  *
- * @param string $src The script url
  * @return string The script element
  */
 function jsLoadi18nTemplate()
 {
-    if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
+
+    $return='';
+
+    //i18n for ExtJs library
+    if( is_file('js/extjs/source/locale/ext-lang-'.strtolower($_SESSION['lang']).'.js') )
     {
-        return sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
+        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/extjs/source/locale/ext-lang-'.strtolower($_SESSION['lang']).'.js') . "\n";
     }
 
+    //i18n for the UI
+    if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
+    {
+        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
+    }
+
+    return $return;
 }
 
 /**
