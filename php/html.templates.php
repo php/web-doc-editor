@@ -55,6 +55,20 @@ function jsLoadTemplate($src)
     return sprintf('  <script type="text/javascript" src="%s"></script>', $src) . "\n";
 }
 
+/**
+ * Returns a javascript script loading element
+ *
+ * @param string $src The script url
+ * @return string The script element
+ */
+function jsLoadi18nTemplate()
+{
+    if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
+    {
+        return sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
+    }
+
+}
 
 /**
  * Returns a stylesheet loading element

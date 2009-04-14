@@ -1,3 +1,20 @@
+
+// i18n function
+function _(key){
+  try {
+      var str = i18n[key];
+
+      if (str === undefined){
+          str = key;
+          if( console ) { console.log("FIX ME : i18n not found for the string: "+key); }
+      };
+      return str;
+  }catch(e){
+      return key;
+  };
+};
+
+
 var phpDoc = function(){
     Ext.QuickTips.init();
     Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
@@ -103,9 +120,11 @@ var phpDoc = function(){
                     }
                 }
             });
+
         }, // init
+
         winForbidden: function(){
-            Ext.MessageBox.alert('Forbidden', 'You can\'t do this action as cvsread user.');
+            Ext.MessageBox.alert(_('Forbidden'), _('You can\'t do this action as cvsread user.'));
         },
         
         menuMarkupLANG: function(panel){
@@ -114,17 +133,13 @@ var phpDoc = function(){
             
             subMenu = new Ext.menu.Menu({
                 items: [{
-                    tooltip: 'Insert <b>Reviewed</b> tag',
-                    text: 'Reviewed tag',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Reviewed tag'),
                     handler: function(){
                         Ext.getCmp(panel).insertIntoLine(2, 'end', "\n<!-- Reviewed: no -->");
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Revcheck</b> tag',
-                    text: 'Revcheck tag',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Revcheck tag'),
                     handler: function(){
                         Ext.getCmp(panel).insertIntoLine(2, "end", "\n<!-- EN-Revision: 1.XX Maintainer: " + this.userLogin + " Status: ready -->");
                         Ext.getCmp(panel).focus();
@@ -133,7 +148,7 @@ var phpDoc = function(){
             });
             
             menu = {
-                text: 'MarkUp',
+                text: _('MarkUp'),
                 iconCls: 'iconInsertCode',
                 menu: subMenu
             };
@@ -145,9 +160,7 @@ var phpDoc = function(){
             
             subMenu = new Ext.menu.Menu({
                 items: [{
-                    tooltip: 'Insert <b>Description</b> section',
-                    text: 'Description section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Description section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -155,9 +168,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Parameters</b> section',
-                    text: 'Parameters section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Parameters section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -165,9 +176,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Return</b> section',
-                    text: 'Return section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Return section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -175,9 +184,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Error</b> section',
-                    text: 'Error section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Error section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -185,9 +192,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Unicode</b> section',
-                    text: 'Unicode section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Unicode section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -195,9 +200,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Changelog</b> section',
-                    text: 'Changelog section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Changelog section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -205,9 +208,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Examples</b> section',
-                    text: 'Examples section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Examples section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -215,9 +216,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>Notes</b> section',
-                    text: 'Notes section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('Notes section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -225,9 +224,7 @@ var phpDoc = function(){
                         Ext.getCmp(panel).focus();
                     }
                 }, {
-                    tooltip: 'Insert <b>SeeAlso</b> section',
-                    text: 'SeeAlso section',
-                    //iconCls: 'iconInsertCode',
+                    text: _('SeeAlso section'),
                     handler: function(){
                         var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
                         
@@ -238,7 +235,7 @@ var phpDoc = function(){
             });
             
             menu = {
-                text: 'MarkUp',
+                text: _('MarkUp'),
                 iconCls: 'iconInsertCode',
                 menu: subMenu
             };
@@ -878,8 +875,7 @@ var phpDoc = function(){
                                     });
                                     
                                     win = new Ext.Window({
-                                        title: 'Files',
-                                        //iconCls: 'patchAlert',
+                                        title: _('Files'),
                                         width: 450,
                                         height: 350,
                                         resizable: false,
@@ -1050,7 +1046,7 @@ var phpDoc = function(){
                     
                 } // btn = yes
             } // goRejectPatch
-            Ext.MessageBox.confirm('Confirm', 'This action will <b>reject</b> this patch, send an email to his author and close this tab.', goRejectPatch, scope);
+            Ext.MessageBox.confirm(_('Confirm'), 'This action will <b>reject</b> this patch, send an email to his author and close this tab.', goRejectPatch, scope);
             
         }, //rejectPatch
         saveFileViaPatch: function(FileID, FilePath, FileName, FileUniqID, rowIndex, scope){
@@ -1064,7 +1060,7 @@ var phpDoc = function(){
                     Ext.getCmp('PP-PATCH-PANEL-' + FileID).setTitle(Ext.getCmp('PP-PATCH-PANEL-' + FileID).originTitle);
                     Ext.getCmp('PP-' + FileID).setTitle(Ext.getCmp('PP-' + FileID).originTitle);
                     
-                    var msg = Ext.MessageBox.wait('Saving data...');
+                    var msg = Ext.MessageBox.wait(_('Saving data...'));
                     
                     // We save LANG File
                     Ext.Ajax.request({
@@ -1117,7 +1113,7 @@ var phpDoc = function(){
                 } // btn = yes
             }
             
-            Ext.MessageBox.confirm('Confirm', 'This action will accept this patch, send an email to his author, save the file and close this tab.', goAcceptPatch, scope);
+            Ext.MessageBox.confirm(_('Confirm'), 'This action will accept this patch, send an email to his author, save the file and close this tab.', goAcceptPatch, scope);
             
         }, //saveFileViaPatch
         saveEnFile: function(FileID, FilePath, FileName, Panel, rowIndex, scope){
@@ -1135,7 +1131,7 @@ var phpDoc = function(){
                 Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
             }
             
-            var msg = Ext.MessageBox.wait('Saving data...');
+            var msg = Ext.MessageBox.wait(_('Saving data...'));
             // We save LANG File
             Ext.Ajax.request({
                 scope: scope,
@@ -1205,7 +1201,7 @@ var phpDoc = function(){
             }
             
             winPatch = new Ext.Window({
-                title: 'Do you want to be alerted ?',
+                title: _('Do you want to be alerted ?'),
                 iconCls: 'patchAlert',
                 width: 350,
                 height: 150,
@@ -1219,24 +1215,24 @@ var phpDoc = function(){
                     xtype: 'panel',
                     baseCls: 'x-plain',
                     bodyStyle: 'padding-bottom: 10px;',
-                    html: 'If you want to be notified when your patch will be dealt with, thank you to leave an email address below.'
+                    html: _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
                 }, {
                     xtype: 'textfield',
-                    fieldLabel: 'Email',
+                    fieldLabel: _('Email'),
                     name: 'patch-email-alert',
                     anchor: '100%',
                     value: defaultPatchEmail
                 
                 }],
                 buttons: [{
-                    text: 'Save',
+                    text: _('Save'),
                     handler: function(){
                     
                         var patchEmail, msg;
                         
                         patchEmail = this.ownerCt.items.items[1].getValue();
                         
-                        msg = Ext.MessageBox.wait('Saving data as a patch...');
+                        msg = Ext.MessageBox.wait(_('Saving data as a patch...'));
                         
                         winPatch.close();
                         
@@ -1289,7 +1285,7 @@ var phpDoc = function(){
                         
                     }
                 }, {
-                    text: 'Cancel',
+                    text: _('Cancel'),
                     handler: function(){
                         winPatch.close();
                     }
@@ -1317,7 +1313,7 @@ var phpDoc = function(){
                         Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
                     }
                     
-                    var msg = Ext.MessageBox.wait('Saving data...');
+                    var msg = Ext.MessageBox.wait(_('Saving data...'));
                     
                     // We save LANG File
                     Ext.Ajax.request({
@@ -1372,7 +1368,7 @@ var phpDoc = function(){
                 else 
                     if (btn === 'yes') {
                     
-                        Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Checking for error. Please, wait...');
+                        Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Checking for error. Please, wait...'));
                         
                         Ext.getCmp(Panel + '-LANG-PANEL-btn-save-' + FileID).disable();
                         Ext.getCmp(Panel + '-' + FileID).isModifiedLang = false;
@@ -1420,8 +1416,8 @@ var phpDoc = function(){
                                     else {
                                         // If there is no error, we display an information message
                                         Ext.MessageBox.show({
-                                            title: 'Check for errors',
-                                            msg: 'There is no error.',
+                                            title: _('Check for errors'),
+                                            msg: _('There is no error.'),
                                             buttons: Ext.MessageBox.OK,
                                             icon: Ext.MessageBox.INFO
                                         });
@@ -1483,8 +1479,8 @@ var phpDoc = function(){
             
             Ext.MessageBox.show({
                 scope: scope,
-                title: 'Confirm',
-                msg: 'Do you want to check for error before saving ?',
+                title: _('Confirm'),
+                msg: _('Do you want to check for error before saving?'),
                 icon: Ext.MessageBox.INFO,
                 buttons: Ext.MessageBox.YESNOCANCEL,
                 fn: checkResponse
@@ -1494,7 +1490,7 @@ var phpDoc = function(){
         getFile: function(FileID, FilePath, FileName, Panel1, Panel2){
         
             // Mask the panel
-            Ext.get(Panel1 + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Loading...');
+            Ext.get(Panel1 + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Loading...'));
             
             // We load the File
             Ext.Ajax.request({
@@ -1624,7 +1620,7 @@ var phpDoc = function(){
             Ext.getCmp('main-panel').add({
                 xtype: 'iframepanel',
                 id: 'mifp_bugs_' + BugsId,
-                title: 'Loading...',
+                title: _('Loading...'),
                 tabTip: BugsTitle,
                 iconCls: 'iconBugs',
                 loadMask: true,
@@ -1642,7 +1638,7 @@ var phpDoc = function(){
             Ext.getCmp('main-panel').add({
                 xtype: 'iframepanel',
                 id: 'mifp_' + MailId,
-                title: 'Loading...',
+                title: _('Loading...'),
                 tabTip: MailTitle,
                 iconCls: 'home-mailing-title',
                 loadMask: true,
@@ -1658,7 +1654,7 @@ var phpDoc = function(){
         }, //NewTabMailing
         winDiff: function(FilePath, FileName, rev1, rev2){
         
-            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Finding the diff. Please, wait...');
+            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Finding the diff. Please, wait...'));
             
             // Load diff data
             Ext.Ajax.request({
@@ -1681,7 +1677,7 @@ var phpDoc = function(){
                         
                         // We display in diff window
                         winStatus = new Ext.Window({
-                            title: 'Diff between ' + rev1 + ' & ' + rev2,
+                            title: String.format(_('Diff between {0} & {1}'), rev1, rev2),
                             width: 650,
                             height: 350,
                             resizable: false,
@@ -1744,8 +1740,8 @@ var phpDoc = function(){
                 
                     Ext.Msg.show({
                         scope: this,
-                        title: 'Confirm',
-                        msg: 'This file has been modified without being saved.<br/>Do you really want to close?',
+                        title: _('Confirm'),
+                        msg: _('This file has been modified without being saved.<br/>Do you really want to close?'),
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         fn: function(btn, text){
@@ -1776,7 +1772,7 @@ var phpDoc = function(){
                 win = new Ext.Window({
                     scope: this,
                     id: 'winCvsCommit',
-                    title: 'CVS commit',
+                    title: _('CVS commit'),
                     closable: false,
                     layout: 'form',
                     width: 400,
@@ -1800,7 +1796,7 @@ var phpDoc = function(){
                     }, {
                         scope: this,
                         xtype: 'combo',
-                        fieldLabel: 'Older messages',
+                        fieldLabel: _('Older messages'),
                         editable: false,
                         name: 'first2',
                         anchor: '100%',
@@ -1821,7 +1817,7 @@ var phpDoc = function(){
                     }, {
                         xtype: 'textarea',
                         id: 'form-commit-message-log',
-                        fieldLabel: 'Log message',
+                        fieldLabel: _('Log message'),
                         name: 'first3',
                         anchor: '100%',
                         height: 150,
@@ -1830,7 +1826,7 @@ var phpDoc = function(){
                     tools: [{
                         scope: this,
                         id: 'gear',
-                        qtip: 'Configure this tools',
+                        qtip: _('Configure this tools'),
                         handler: function(){
                         
                             var textArea, cm, winManage;
@@ -1846,7 +1842,7 @@ var phpDoc = function(){
                             
                             cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
                                 id: 'GridManageLog',
-                                header: "Log Message",
+                                header: _('Log message'),
                                 dataIndex: 'text',
                                 renderer: formatText,
                                 editor: new Ext.Editor(textArea, {
@@ -1885,7 +1881,7 @@ var phpDoc = function(){
                             
                             //
                             winManage = new Ext.Window({
-                                title: 'Manage Log Message',
+                                title: _('Manage Log Message'),
                                 iconCls: 'winManageLog',
                                 width: 650,
                                 height: 350,
@@ -1911,7 +1907,7 @@ var phpDoc = function(){
                                             
                                             var menu = new Ext.menu.Menu({
                                                 items: [{
-                                                    text: 'Delete this Log Message',
+                                                    text: _('Delete this Log Message'),
                                                     iconCls: 'iconDelete',
                                                     scope: this,
                                                     handler: function(){
@@ -1942,7 +1938,7 @@ var phpDoc = function(){
                                     }
                                 }],
                                 buttons: [{
-                                    text: 'Close',
+                                    text: _('Close'),
                                     handler: function(){
                                         winManage.close();
                                     }
@@ -1960,7 +1956,7 @@ var phpDoc = function(){
                     }],
                     buttons: [{
                         scope: this,
-                        text: 'Submit',
+                        text: _('Submit'),
                         id: 'win-commit-btn-submit',
                         handler: function(){
                         
@@ -2016,13 +2012,13 @@ var phpDoc = function(){
                             if (NeedToBeClose.length > 0) {
                             
                                 for (i = 0; i < NeedToBeClose.length; i = i + 1) {
-                                    libelNeedToBeClose += NeedToBeClose[i][1] + '<br>';
+                                    libelNeedToBeClose += NeedToBeClose[i][1] + '<br/>';
                                 }
                                 
                                 Ext.MessageBox.show({
                                     scope: this,
                                     title: 'Warning',
-                                    msg: 'There is ' + NeedToBeClose.length + ' file' + ((NeedToBeClose.length > 1) ? 's' : '') + ' to close before commit.<br><br>' + libelNeedToBeClose + '<br><br>Would you like I close it for you ?',
+                                    msg: (NeedToBeClose.length > 1) ? String.format(_('There is {0} files to close before commit.<br><br>{1}<br/><br/>Would you like I close it for you ?'), NeedToBeClose.length, libelNeedToBeClose) : String.format(_('There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like I close it for you ?'), NeedToBeClose.length, libelNeedToBeClose),
                                     icon: Ext.MessageBox.INFO,
                                     buttons: Ext.MessageBox.YESNOCANCEL,
                                     fn: function(btn){
@@ -2048,7 +2044,7 @@ var phpDoc = function(){
                             
                         }
                     }, {
-                        text: 'Close',
+                        text: _('Close'),
                         id: 'win-commit-btn-close',
                         handler: function(){
                             win.close();
@@ -2070,12 +2066,9 @@ var phpDoc = function(){
                 
                 node = new Ext.tree.TreeNode({
                     id: 'need-commit-' + FileID,
-                    //originID    : FileID,
-                    //originStore : store,
                     text: FilePath + FileName,
                     FilePath: FilePath,
                     FileName: FileName,
-                    //fileLang    : FileLang,
                     leaf: true,
                     checked: true,
                     uiProvider: Ext.ux.tree.CheckTreeNodeUI
@@ -2119,7 +2112,7 @@ var phpDoc = function(){
         }, // WinCommit
         WinCommitLastStep: function(files, scope){
         
-            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait until commit...');
+            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait until commit...'));
             
             var nodes = [], node, tmp, LogMessage, i;
             
@@ -2167,7 +2160,7 @@ var phpDoc = function(){
                             bodyStyle: 'background-color: white; padding: 5px;',
                             html: o.mess.join("<br>"),
                             buttons: [{
-                                text: 'Close',
+                                text: _('Close'),
                                 handler: function(){
                                     winStatus.close();
                                 }
@@ -2205,9 +2198,6 @@ var phpDoc = function(){
                                 scope.storeSummary.reload();
                             }
                         });
-                    }
-                    else {
-                        //console.log(o);
                     }
                 }
             });
@@ -2357,7 +2347,7 @@ var phpDoc = function(){
                 
                 // Re-enable Finish button
                 Ext.getCmp('btn-start-refresh').setIconClass('finishRefresh');
-                Ext.getCmp('btn-start-refresh').setText('Finish !');
+                Ext.getCmp('btn-start-refresh').setText(_('Finish !'));
                 Ext.getCmp('btn-start-refresh').setHandler(function(){
                     win.close();
                 });
@@ -2374,7 +2364,7 @@ var phpDoc = function(){
             
             if (!win) {
                 win = new Ext.Window({
-                    title: 'Refresh all data',
+                    title: _('Refresh all data'),
                     layout: 'form',
                     width: 300,
                     height: 200,
@@ -2382,13 +2372,13 @@ var phpDoc = function(){
                     modal: true,
                     bodyStyle: 'padding:15px 15px 0',
                     iconCls: 'refresh',
-                    html: '<div id="wizard-step-1" class="wizard-step-before">Update all files from Cvs</div>' +
-                    '<div id="wizard-step-1.1" class="wizard-wait">This may take time. Thank you for your patience...</div>' +
-                    '<div id="wizard-step-2" class="wizard-step-before">Apply all tools</div>' +
-                    '<div id="wizard-step-3" class="wizard-step-before">Reload data</div>',
+                    html: '<div id="wizard-step-1" class="wizard-step-before">'+_('Update all files from Cvs')+'</div>' +
+                    '<div id="wizard-step-1.1" class="wizard-wait">'+_('This may take time. Thank you for your patience...')+'</div>' +
+                    '<div id="wizard-step-2" class="wizard-step-before">'+_('Apply all tools')+'</div>' +
+                    '<div id="wizard-step-3" class="wizard-step-before">'+_('Reload data')+'</div>',
                     buttons: [{
                         scope: this,
-                        text: 'Start',
+                        text: _('Start'),
                         id: 'btn-start-refresh',
                         iconCls: 'startRefresh',
                         handler: function(){
@@ -2443,7 +2433,7 @@ var phpDoc = function(){
                             Ext.getCmp('main-panel').add({
                                 xtype: 'panel',
                                 id: 'check_build_panel',
-                                title: 'Check Build Result',
+                                title: _('Check Build Result'),
                                 closable: true,
                                 autoScroll: true,
                                 iconCls: 'checkBuild',
@@ -2459,7 +2449,7 @@ var phpDoc = function(){
             
             if (!win) {
                 win = new Ext.Window({
-                    title: 'Check Build',
+                    title: _('Check Build'),
                     iconCls: 'checkBuild',
                     layout: 'form',
                     width: 350,
@@ -2470,14 +2460,14 @@ var phpDoc = function(){
                     labelAlign: 'top',
                     buttons: [{
                         scope: this,
-                        text: 'Go !',
+                        text: _('Go !'),
                         id: 'win-check-build-btn-submit',
                         handler: function(){
                         
                             var choice = Ext.getCmp('option-xml-details').checked;
                             
                             win.close();
-                            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait until the build is checked...');
+                            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait until the build is checked...'));
                             
                             // We need to stop pin test during this process
                             this.TaskPing.cancel();
@@ -2545,13 +2535,13 @@ var phpDoc = function(){
                         xtype: 'panel',
                         baseCls: 'x-plain',
                         bodyStyle: 'padding:5px 5px 0',
-                        html: 'You\'re about to check the build via this command :<br/><br/>/usr/bin/php configure.php --with-lang=' + this.userLang + '<br><br>',
+                        html: _('You\'re about to check the build via this command:')+'<br/><br/>/usr/bin/php configure.php --with-lang=' + this.userLang + '<br><br>',
                         modal: false
                     }, {
                         xtype: 'checkbox',
                         hideLabel: true,
                         checked: false,
-                        boxLabel: 'Enable detailed XML error messages',
+                        boxLabel: _('Enable detailed XML error messages'),
                         name: 'option-xml-details',
                         id: 'option-xml-details'
                     }]
@@ -2572,13 +2562,10 @@ var phpDoc = function(){
                 tplMenu.compile();
                 
                 if (this.userLang === 'en') {
-                
-                    storeData = [['1', 'go-home.png', 'Main'], ['5', 'view-list-tree.png', 'Module "All files"'], ['6', 'view-media-playlist.png', 'Module "Pending Patch"']];
-                    
+                    storeData = [['1', 'go-home.png', _('Main')], ['5', 'view-list-tree.png', _('Module "All files"')], ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]];
                 }
                 else {
-                
-                    storeData = [['1', 'go-home.png', 'Main'], ['2', 'edit-redo.png', 'Module "Files Need Update"'], ['3', 'dialog-cancel.png', 'Module "Files with Error"'], ['4', 'document-properties.png', 'Module "Files need Reviewed"'], ['5', 'view-list-tree.png', 'Module "All files"'], ['6', 'view-media-playlist.png', 'Module "Pending Patch"']];
+                    storeData = [['1', 'go-home.png', _('Main')], ['2', 'edit-redo.png', _('Module "Files Need Update"')], ['3', 'dialog-cancel.png', _('Module "Files with Error"')], ['4', 'document-properties.png', _('Module "Files need Reviewed"')], ['5', 'view-list-tree.png', _('Module "All files"')], ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]];
                 }
                 
                 storeMenu = new Ext.data.SimpleStore({
@@ -2614,7 +2601,7 @@ var phpDoc = function(){
                     height: 400,
                     iconCls: 'iconConf',
                     modal: true,
-                    title: 'Configuration',
+                    title: _('Configuration'),
                     plain: true,
                     closeAction: 'hide',
                     listeners: {
@@ -2638,7 +2625,7 @@ var phpDoc = function(){
                         frame: true,
                         activeItem: 0,
                         bbar: new Ext.StatusBar({
-                            defaultText: 'All changes take effect immediately',
+                            defaultText: _('All changes take effect immediately'),
                             defaultIconCls: 'confStatusBar'
                         }),
                         items: [{
@@ -2648,19 +2635,20 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Themes',
+                                title: _('Themes'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
                                 },
                                 items: [{
                                     xtype: 'combo',
+                                    id: 'conf-combo-theme',
                                     store: new Ext.data.SimpleStore({
                                         fields: ['themeFile', {
                                             name: 'themeName',
                                             type: 'string'
                                         }],
-                                        data: [['themes/black/css/xtheme-black.css', 'Black'], ['xtheme-default.css', 'Default'], ['themes/darkgray/css/xtheme-darkgray.css', 'DarkGray'], ['extjs/resources/css/xtheme-gray.css', 'Gray'], ['themes/gray-extend/css/xtheme-gray-extend.css', 'Gray Extend'], ['themes/indigo/css/xtheme-indigo.css', 'Indigo'], ['themes/midnight/css/xtheme-midnight.css', 'Midnight'], ['themes/olive/css/xtheme-olive.css', 'Olive'], ['themes/purple/css/xtheme-purple.css', 'Purple'], ['extjs/resources/css/xtheme-slate.css', 'Slate'], ['themes/silverCherry/css/xtheme-silverCherry.css', 'SilverCherry']]
+                                        data: [['themes/black/css/xtheme-black.css', _('Black')], ['xtheme-default.css', _('Default')], ['themes/darkgray/css/xtheme-darkgray.css', _('DarkGray')], ['js/extjs/resources/css/xtheme-gray.css', _('Gray')], ['themes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')], ['themes/indigo/css/xtheme-indigo.css', _('Indigo')], ['themes/midnight/css/xtheme-midnight.css', _('Midnight')], ['themes/olive/css/xtheme-olive.css', _('Olive')], ['themes/purple/css/xtheme-purple.css', _('Purple')], ['js/extjs/resources/css/xtheme-slate.css', _('Slate')], ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')]]
                                     }),
                                     valueField: 'themeFile',
                                     displayField: 'themeName',
@@ -2672,6 +2660,9 @@ var phpDoc = function(){
                                     value: this.userConf.conf_theme,
                                     listeners: {
                                         scope: this,
+                                        render: function() {
+                                            Ext.getCmp('conf-combo-theme').store.sort('themeName');
+                                        },
                                         select: function(c, record, numIndex){
                                             var hrefTheme = c.getValue();
                                             Ext.get('appTheme').dom.href = hrefTheme;
@@ -2688,7 +2679,7 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Diff view',
+                                title: _('Diff view'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2697,7 +2688,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_needupdate_diff === "using-viewvc") ? true : false,
-                                    boxLabel: 'Using ViewVc from php web site',
+                                    boxLabel: _('Using ViewVc from php web site'),
                                     name: 'conf_needupdate_diff',
                                     inputValue: 'using-viewvc',
                                     listeners: {
@@ -2710,7 +2701,7 @@ var phpDoc = function(){
                                     }
                                 }, {
                                     checked: (this.userConf.conf_needupdate_diff === "using-exec") ? true : false,
-                                    boxLabel: 'Using diff -kk -u command line',
+                                    boxLabel: _('Using diff -kk -u command line'),
                                     name: 'conf_needupdate_diff',
                                     inputValue: 'using-exec',
                                     listeners: {
@@ -2724,7 +2715,7 @@ var phpDoc = function(){
                                 }]
                             }, {
                                 xtype: 'fieldset',
-                                title: 'Editor',
+                                title: _('Editor'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2733,7 +2724,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_needupdate_scrollbars === "true") ? true : false,
-                                    boxLabel: 'Synchronize scroll bars',
+                                    boxLabel: _('Synchronize scroll bars'),
                                     name: 'conf_needupdate_scrollbars',
                                     listeners: {
                                         scope: this,
@@ -2744,7 +2735,7 @@ var phpDoc = function(){
                                 },{
                                     scope: this,
                                     checked: (this.userConf.conf_needupdate_displaylog === "true") ? true : false,
-                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    boxLabel: _('Automatically load the log when displaying the file'),
                                     name: 'conf_needupdate_displaylog',
                                     listeners: {
                                         scope: this,
@@ -2761,7 +2752,7 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Error type',
+                                title: _('Error type'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2770,7 +2761,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_error_skipnbliteraltag === "true") ? true : false,
-                                    boxLabel: 'Skip nbLiteralTag error',
+                                    boxLabel: _('Skip nbLiteralTag error'),
                                     name: 'conf_error_skipnbliteraltag',
                                     listeners: {
                                         scope: this,
@@ -2781,7 +2772,7 @@ var phpDoc = function(){
                                 }]
                             }, {
                                 xtype: 'fieldset',
-                                title: 'Editor',
+                                title: _('Editor'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2790,7 +2781,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_error_scrollbars === "true") ? true : false,
-                                    boxLabel: 'Synchronize scroll bars',
+                                    boxLabel: _('Synchronize scroll bars'),
                                     name: 'conf_error_scrollbars',
                                     listeners: {
                                         scope: this,
@@ -2801,7 +2792,7 @@ var phpDoc = function(){
                                 },{
                                     scope: this,
                                     checked: (this.userConf.conf_error_displaylog === "true") ? true : false,
-                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    boxLabel: _('Automatically load the log when displaying the file'),
                                     name: 'conf_error_displaylog',
                                     listeners: {
                                         scope: this,
@@ -2817,7 +2808,7 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Editor',
+                                title: _('Editor'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2826,7 +2817,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_reviewed_scrollbars === "true") ? true : false,
-                                    boxLabel: 'Synchronize scroll bars',
+                                    boxLabel: _('Synchronize scroll bars'),
                                     name: 'conf_reviewed_scrollbars',
                                     listeners: {
                                         scope: this,
@@ -2837,7 +2828,7 @@ var phpDoc = function(){
                                 },{
                                     scope: this,
                                     checked: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
-                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    boxLabel: _('Automatically load the log when displaying the file'),
                                     name: 'conf_reviewed_displaylog',
                                     listeners: {
                                         scope: this,
@@ -2853,7 +2844,7 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Editor',
+                                title: _('Editor'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2862,7 +2853,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_allfiles_displaylog === "true") ? true : false,
-                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    boxLabel: _('Automatically load the log when displaying the file'),
                                     name: 'conf_allfiles_displaylog',
                                     listeners: {
                                         scope: this,
@@ -2878,7 +2869,7 @@ var phpDoc = function(){
                             bodyStyle: 'padding: 10px;',
                             items: [{
                                 xtype: 'fieldset',
-                                title: 'Editor',
+                                title: _('Editor'),
                                 autoHeight: true,
                                 defaults: {
                                     hideLabel: true
@@ -2887,7 +2878,7 @@ var phpDoc = function(){
                                 items: [{
                                     scope: this,
                                     checked: (this.userConf.conf_patch_scrollbars === "true") ? true : false,
-                                    boxLabel: 'Synchronize scroll bars',
+                                    boxLabel: _('Synchronize scroll bars'),
                                     name: 'conf_patch_scrollbars',
                                     listeners: {
                                         scope: this,
@@ -2898,7 +2889,7 @@ var phpDoc = function(){
                                 }, {
                                     scope: this,
                                     checked: (this.userConf.conf_patch_displaylog === "true") ? true : false,
-                                    boxLabel: 'Automatically load the log when displaying the file',
+                                    boxLabel: _('Automatically load the log when displaying the file'),
                                     name: 'conf_patch_displaylog',
                                     listeners: {
                                         scope: this,
@@ -2911,7 +2902,7 @@ var phpDoc = function(){
                         }]
                     }],
                     buttons: [{
-                        text: 'Close',
+                        text: _('Close'),
                         handler: function(){
                             winConf.hide();
                         }
@@ -2988,7 +2979,7 @@ var phpDoc = function(){
                     height: 320,
                     iconCls: 'iconHelp',
                     modal: true,
-                    title: 'About ' + this.appName,
+                    title: String.format(_('About {0}'),this.appName),
                     closeAction: 'hide',
                     plain: true,
                     bodyStyle: 'color:#000',
@@ -3000,25 +2991,25 @@ var phpDoc = function(){
                             autoScroll: true
                         },
                         items: [{
-                            title: 'About',
-                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + '<br/> Copyright &copy; 2008-2009 The PHP Group<br/>Author : <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a></div>'
+                            title: _('About'),
+                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + '<br/> Copyright &copy; 2008-2009 The PHP Group<br/>'+_('Author:')+' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> '+ _('and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a>')+'</div>'
                         }, {
-                            title: 'Credits',
+                            title: _('Credits'),
                             bodyStyle: 'padding:15px',
                             html: '<div id="phd-oe-credit"><ul>' +
-                            '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">Javascript FrameWork</div></li>' +
-                            '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">Code editor</div></li>' +
-                            '<li><a href="http://famfamfam.com" target="_blank">famfamfam.com</a><div class="phd-oe-credit-info">Icon pack</div></li>' +
+                            '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">'+_('Javascript FrameWork')+'</div></li>' +
+                            '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">'+_('Code editor')+'</div></li>' +
+                            '<li><a href="http://famfamfam.com" target="_blank">famfamfam.com</a><div class="phd-oe-credit-info">'+_('Icon pack')+'</div></li>' +
                             '</ul></div>'
                         }, {
-                            title: 'License',
+                            title: _('License'),
                             autoLoad: {
                                 url: './LICENSE'
                             }
                         }]
                     }),
                     buttons: [{
-                        text: 'Close',
+                        text: _('Close'),
                         handler: function(){
                             winAbout.hide();
                         }
@@ -3038,13 +3029,13 @@ var phpDoc = function(){
                 defaultType: 'textfield',
                 
                 items: [{
-                    fieldLabel: 'Send To',
+                    fieldLabel: _('Send To'),
                     name: 'to',
                     readOnly: true,
                     anchor: '100%',
                     value: '"' + TranslatorName + '" <' + TranslatorEmail + '>'
                 }, {
-                    fieldLabel: 'Subject',
+                    fieldLabel: _('Subject'),
                     name: 'subject',
                     anchor: '100%'
                 }, {
@@ -3056,7 +3047,7 @@ var phpDoc = function(){
             });
             
             win = new Ext.Window({
-                title: 'Send an email',
+                title: _('Send an email'),
                 width: 500,
                 height: 300,
                 minWidth: 300,
@@ -3069,7 +3060,7 @@ var phpDoc = function(){
                 iconCls: 'iconSendEmail',
                 
                 buttons: [{
-                    text: 'Send',
+                    text: _('Send'),
                     handler: function(){
                     
                         var v = form.getForm().getValues();
@@ -3086,18 +3077,16 @@ var phpDoc = function(){
                                 var o = Ext.util.JSON.decode(r.responseText);
                                 if (o.success) {
                                     win.close();
-                                    Ext.MessageBox.alert('Status', 'Email sent to ' + TranslatorName + ' with success!');
+                                    Ext.MessageBox.alert(_('Status'), String.format(_('Email sent to {0} with success!'), TranslatorName));
                                 }
                             },
                             failure: function(){
                             }
                         });
-                        
-                        
-                        
+
                     }
                 }, {
-                    text: 'Cancel',
+                    text: _('Cancel'),
                     handler: function(){
                         win.close();
                     }
@@ -3140,28 +3129,28 @@ var phpDoc = function(){
                 loadMask: true,
                 columns: [{
                     id: 'name',
-                    header: "Files",
+                    header: _('Files'),
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: "Maintainer",
+                    header: _('Maintainer'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'maintainer'
                 }, {
-                    header: "Type",
+                    header: _('Type'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'type'
                 }, {
-                    header: "Path",
+                    header: _('Path'),
                     dataIndex: 'path',
                     'hidden': true
                 }],
                 view: new Ext.grid.GroupingView({
-                    emptyText: '<div style="text-align: center;">No files</div>',
+                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>',
                     forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "Files" : "File"]})',
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
                     getRowClass: function(record, numIndex, rowParams, store){
                         if (record.data.needcommit) {
                             return 'file-need-commit';
@@ -3310,22 +3299,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [smLang, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -3340,7 +3329,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FE-PANEL-btn-logLang-' + FileID,
                                     disabled: true,
@@ -3358,7 +3347,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FE-PANEL-btn-refreshlogLang-' + FileID,
                                     handler: function(){
@@ -3406,22 +3395,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [smEn, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -3436,7 +3425,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FE-PANEL-btn-logEn-' + FileID,
                                     disabled: true,
@@ -3454,7 +3443,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FE-PANEL-btn-refreshlogEn-' + FileID,
                                     handler: function(){
@@ -3467,7 +3456,7 @@ var phpDoc = function(){
                                 closable: true,
                                 title: FileName,
                                 originTitle: FileName,
-                                tabTip: 'File with error : in ' + FilePath,
+                                tabTip: String.format(_('File with error : in {0}', FilePath)),
                                 iconCls: 'iconTabError',
                                 id: 'FE-' + FileID,
                                 isModifiedLang: false,
@@ -3481,7 +3470,7 @@ var phpDoc = function(){
                                     xtype: 'panel',
                                     layout: 'fit',
                                     region: 'north',
-                                    title: 'Error description',
+                                    title: _('Error description'),
                                     id: 'FE-error-desc-' + FileID,
                                     height: 150,
                                     collapsed: true,
@@ -3517,8 +3506,8 @@ var phpDoc = function(){
                                         }]
                                     }
                                 }, {
-                                    title: this.userLang + ' File: ' + FilePath + FileName,
-                                    originTitle: this.userLang + ' File: ' + FilePath + FileName,
+                                    title: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
+                                    originTitle: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FE-LANG-PANEL-' + FileID,
                                     region: 'center',
@@ -3553,7 +3542,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FE-' + FileID).isModifiedLang) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FE-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FE-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FE-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FE-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FE-' + FileID).setTitle(Ext.getCmp('FE-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -3581,7 +3570,7 @@ var phpDoc = function(){
                                         xtype: 'checkbox',
                                         hideLabel: true,
                                         checked: (this.userConf.conf_error_scrollbars === "true") ? true : false,
-                                        boxLabel: 'Synchronize scroll bars',
+                                        boxLabel: _('Synchronize scroll bars'),
                                         name: 'conf_error_scrollbars',
                                         listeners: {
                                             scope: this,
@@ -3589,13 +3578,13 @@ var phpDoc = function(){
                                                 this.confUpdate('conf_error_scrollbars', c.getValue());
                                             },
                                             render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FE-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FE-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
+                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FE-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FE-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
                                             }
                                         }
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FE-LANG-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -3604,7 +3593,7 @@ var phpDoc = function(){
                                         }
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FE-LANG-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -3612,7 +3601,7 @@ var phpDoc = function(){
                                             this.savePatch(this.userLang, FileID, FilePath, FileName, 'FE', this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FE-LANG-' + FileID).reIndentAll();
@@ -3620,8 +3609,8 @@ var phpDoc = function(){
                                         
                                     }, this.menuMarkupLANG('FE-LANG-' + FileID)]
                                 }, {
-                                    title: 'En File: ' + FilePath + FileName,
-                                    originTitle: 'En File: ' + FilePath + FileName,
+                                    title: _('En File: ') + FilePath + FileName,
+                                    originTitle: _('En File: ') + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FE-EN-PANEL-' + FileID,
                                     region: 'east',
@@ -3652,7 +3641,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FE-' + FileID).isModifiedEn) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FE-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FE-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FE-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FE-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FE-' + FileID).setTitle(Ext.getCmp('FE-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -3687,11 +3676,11 @@ var phpDoc = function(){
                                         height: 21,
                                         baseCls: '',
                                         bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FE-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FE-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
+                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FE-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FE-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FE-EN-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -3701,7 +3690,7 @@ var phpDoc = function(){
                                         
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FE-EN-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -3709,7 +3698,7 @@ var phpDoc = function(){
                                             this.savePatch('en', FileID, FilePath, FileName, 'FE', this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FE-EN-' + FileID).reIndentAll();
@@ -3744,7 +3733,7 @@ var phpDoc = function(){
                         if (this.storeFilesError.getAt(rowIndex).data.needcommit) {
                         
                             subMenuDiff = {
-                                text: 'View Diff',
+                                text: _('View Diff'),
                                 iconCls: 'iconViewDiff',
                                 scope: this,
                                 handler: function(){
@@ -3753,8 +3742,8 @@ var phpDoc = function(){
                                     Ext.getCmp('main-panel').add({
                                         xtype: 'panel',
                                         id: 'diff_panel_' + rowIndex,
-                                        title: 'Diff',
-                                        tabTip: 'Diff',
+                                        title: _('Diff'),
+                                        tabTip: _('Diff'),
                                         closable: true,
                                         autoScroll: true,
                                         iconCls: 'iconTabLink',
@@ -3795,20 +3784,20 @@ var phpDoc = function(){
                         
                         menu = new Ext.menu.Menu({
                             items: [{
-                                text: '<b>Edit in a new Tab</b>',
+                                text: '<b>'+_('Edit in a new Tab')+'</b>',
                                 iconCls: 'FilesError',
                                 scope: this,
                                 handler: function(){
                                     gridFilesError.fireEvent('rowdblclick', grid, rowIndex, e);
                                 }
                             }, subMenuDiff, '-', {
-                                text: 'About error type',
+                                text: _('About error type'),
                                 iconCls: 'iconHelp',
                                 scope: this,
                                 handler: function(){
                                     Ext.getCmp('main-panel').add({
                                         closable: true,
-                                        title: 'About error type',
+                                        title: _('About error type'),
                                         iconCls: 'iconHelp',
                                         id: 'FE-help-' + FileID,
                                         autoScroll: true,
@@ -3829,32 +3818,32 @@ var phpDoc = function(){
                 loadMask: true,
                 columns: [{
                     id: 'name',
-                    header: "Files",
+                    header: _('Files'),
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: "EN revision",
+                    header: _('EN revision'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'en_revision'
                 }, {
-                    header: Ext.util.Format.uppercase(this.userLang) + " revision",
+                    header: String.format(_('{0} revision'), Ext.util.Format.uppercase(this.userLang)),
                     width: 45,
                     sortable: true,
                     dataIndex: 'revision'
                 }, {
-                    header: "Maintainer",
+                    header: _('Maintainer'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'maintainer'
                 }, {
-                    header: "Path",
+                    header: _('Path'),
                     dataIndex: 'path',
                     'hidden': true
                 }],
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "Files" : "File"]})',
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
                     getRowClass: function(record, numIndex, rowParams, store){
                         if (record.data.needcommit) {
                             return 'file-need-commit';
@@ -3863,7 +3852,7 @@ var phpDoc = function(){
                             return 'file-critical';
                         }
                     },
-                    emptyText: '<div style="text-align: center;">No Files</div>'
+                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>'
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -3890,8 +3879,8 @@ var phpDoc = function(){
                                     Ext.getCmp('main-panel').add({
                                         xtype: 'panel',
                                         id: 'diff_panel_' + rowIndex,
-                                        title: 'Diff',
-                                        tabTip: 'Diff',
+                                        title: _('Diff'),
+                                        tabTip: _('Diff'),
                                         closable: true,
                                         autoScroll: true,
                                         iconCls: 'iconTabLink',
@@ -3899,7 +3888,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -3923,15 +3912,13 @@ var phpDoc = function(){
                                         
                                         }
                                     });
-                                    
-                                    
                                 }
                             };
                         }
                         
                         menu = new Ext.menu.Menu({
                             items: [{
-                                text: '<b>Edit in a new Tab</b>',
+                                text: '<b>'+_('Edit in a new Tab')+'</b>',
                                 iconCls: 'iconTabNeedUpdate',
                                 scope: this,
                                 handler: function(){
@@ -4068,22 +4055,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [smLang, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -4098,25 +4085,24 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FNU-PANEL-btn-logLang-' + FileID,
                                     disabled: true,
                                     handler: function(){
-                                    
+
                                         var s, rev1, rev2;
-                                        
+
                                         // We get the 2 checked rev
                                         s = smLang.getSelections();
                                         rev1 = s[0].data.revision;
                                         rev2 = s[1].data.revision;
                                         
                                         this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
-                                        
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FNU-PANEL-btn-refreshlogLang-' + FileID,
                                     handler: function(){
@@ -4169,17 +4155,17 @@ var phpDoc = function(){
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -4194,7 +4180,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FNU-PANEL-btn-logEn-' + FileID,
                                     disabled: true,
@@ -4212,7 +4198,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FNU-PANEL-btn-refreshlogEn-' + FileID,
                                     handler: function(){
@@ -4227,7 +4213,7 @@ var phpDoc = function(){
                                     xtype: 'panel',
                                     layout: 'fit',
                                     region: 'north',
-                                    title: 'Diff From cvs',
+                                    title: _('Diff From cvs'),
                                     height: 150,
                                     collapsed: true,
                                     items: {
@@ -4246,7 +4232,7 @@ var phpDoc = function(){
                                         xtype: 'panel',
                                         layout: 'fit',
                                         region: 'north',
-                                        title: 'Diff From cvs',
+                                        title: _('Diff From cvs'),
                                         height: 150,
                                         autoScroll: true,
                                         collapsed: true,
@@ -4287,7 +4273,7 @@ var phpDoc = function(){
                                 closable: true,
                                 title: FileName,
                                 originTitle: FileName,
-                                tabTip: 'Need Update : in ' + FilePath,
+                                tabTip: String.format(_('Need Update: in {0}'), FilePath),
                                 iconCls: 'iconTabNeedUpdate',
                                 id: 'FNU-' + FileID,
                                 isModifiedLang: false,
@@ -4302,7 +4288,7 @@ var phpDoc = function(){
                                     xtype: 'panel',
                                     layout: 'fit',
                                     bodyBorder: false,
-                                    title: 'CvsLog',
+                                    title: _('CvsLog'),
                                     collapsed: true,
                                     width: 375,
                                     items: {
@@ -4324,8 +4310,8 @@ var phpDoc = function(){
                                     }
                                 }, {
                                     scope: this,
-                                    title: this.userLang + ' File: ' + FilePath + FileName,
-                                    originTitle: this.userLang + ' File: ' + FilePath + FileName,
+                                    title: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
+                                    originTitle: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FNU-LANG-PANEL-' + FileID,
                                     region: 'center',
@@ -4363,7 +4349,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FNU-' + FileID).isModifiedLang) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FNU-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FNU-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FNU-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FNU-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FNU-' + FileID).setTitle(Ext.getCmp('FNU-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -4390,7 +4376,7 @@ var phpDoc = function(){
                                         xtype: 'checkbox',
                                         hideLabel: true,
                                         checked: (this.userConf.conf_needupdate_scrollbars === "true") ? true : false,
-                                        boxLabel: 'Synchronize scroll bars',
+                                        boxLabel: _('Synchronize scroll bars'),
                                         name: 'conf_needupdate_scrollbars',
                                         listeners: {
                                             scope: this,
@@ -4398,13 +4384,13 @@ var phpDoc = function(){
                                                 this.confUpdate('conf_needupdate_scrollbars', c.getValue());
                                             },
                                             render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FNU-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FNU-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
+                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNU-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNU-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
                                             }
                                         }
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FNU-LANG-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -4413,7 +4399,7 @@ var phpDoc = function(){
                                         }
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FNU-LANG-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -4421,15 +4407,15 @@ var phpDoc = function(){
                                             this.savePatch(this.userLang, FileID, FilePath, FileName, 'FNU', this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FNU-LANG-' + FileID).reIndentAll();
                                         }
                                     }, this.menuMarkupLANG('FNU-LANG-' + FileID)]
                                 }, {
-                                    title: 'En File: ' + FilePath + FileName,
-                                    originTitle: 'En File: ' + FilePath + FileName,
+                                    title: _('En File: ') + FilePath + FileName,
+                                    originTitle: _('En File: ') + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FNU-EN-PANEL-' + FileID,
                                     region: 'east',
@@ -4459,7 +4445,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FNU-' + FileID).isModifiedEn) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FNU-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FNU-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FNU-' + FileID).setTitle(Ext.getCmp('FNU-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -4494,11 +4480,11 @@ var phpDoc = function(){
                                         height: 21,
                                         baseCls: '',
                                         bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FNU-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FNU-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
+                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNU-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNU-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FNU-EN-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -4508,7 +4494,7 @@ var phpDoc = function(){
                                         
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FNU-EN-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -4517,7 +4503,7 @@ var phpDoc = function(){
                                         }
                                         
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FNU-EN-' + FileID).reIndentAll();
@@ -4565,8 +4551,8 @@ var phpDoc = function(){
                 
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "Files" : "File"]})',
-                    emptyText: '<div style="text-align: center;">No pending Patch</div>'
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
+                    emptyText: '<div style="text-align: center;">'+_('No pending Patch')+'</div>'
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -4585,14 +4571,14 @@ var phpDoc = function(){
                         
                         menu = new Ext.menu.Menu({
                             items: [{
-                                text: '<b>Edit in a new Tab</b>',
+                                text: '<b>'+_('Edit in a new Tab')+'</b>',
                                 iconCls: 'PendingPatch',
                                 scope: this,
                                 handler: function(){
                                     gridPendingPatch.fireEvent('rowdblclick', grid, rowIndex, e);
                                 }
                             }, '-', {
-                                text: 'Reject this patch',
+                                text: _('Reject this patch'),
                                 iconCls: 'iconPageDelete',
                                 scope: this,
                                 handler: function(){
@@ -4691,22 +4677,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [sm, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -4721,7 +4707,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'PP-PANEL-btn-log-' + FileID,
                                     disabled: true,
@@ -4739,7 +4725,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'PP-PANEL-btn-refreshlog-' + FileID,
                                     handler: function(){
@@ -4752,7 +4738,7 @@ var phpDoc = function(){
                                 closable: true,
                                 title: FileName,
                                 originTitle: FileName,
-                                tabTip: 'Patch for ' + FilePath + FileName,
+                                tabTip: String.format(_('Patch for {0}'), FilePath + FileName),
                                 iconCls: 'PendingPatch',
                                 id: 'PP-' + FileID,
                                 layout: 'border',
@@ -4764,7 +4750,7 @@ var phpDoc = function(){
                                     xtype: 'panel',
                                     layout: 'fit',
                                     region: 'north',
-                                    title: 'Patch content',
+                                    title: _('Patch content'),
                                     id: 'PP-patch-desc-' + FileID,
                                     height: 150,
                                     autoScroll: true,
@@ -4801,7 +4787,7 @@ var phpDoc = function(){
                                     xtype: 'panel',
                                     layout: 'fit',
                                     bodyBorder: false,
-                                    title: 'CvsLog',
+                                    title: _('CvsLog'),
                                     collapsed: true,
                                     width: 375,
                                     items: {
@@ -4818,8 +4804,8 @@ var phpDoc = function(){
                                         }]
                                     }
                                 }, {
-                                    title: 'Proposed Patch for ' + FilePath + FileName,
-                                    originTitle: 'Proposed Patch for ' + FilePath + FileName,
+                                    title: String.format(_('Proposed Patch for {0}'), FilePath + FileName),
+                                    originTitle: String.format(_('Proposed Patch for {0}'), FilePath + FileName),
                                     collapsible: false,
                                     id: 'PP-PATCH-PANEL-' + FileID,
                                     region: 'center',
@@ -4855,7 +4841,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('PP-PATCH-' + FileID).isModified) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('PP-PATCH-PANEL-' + FileID).setTitle(Ext.getCmp('PP-PATCH-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('PP-PATCH-PANEL-' + FileID).setTitle(Ext.getCmp('PP-PATCH-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('PP-' + FileID).setTitle(Ext.getCmp('PP-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Mark as modified
@@ -4876,7 +4862,7 @@ var phpDoc = function(){
                                         xtype: 'checkbox',
                                         hideLabel: true,
                                         checked: (this.userConf.conf_patch_scrollbars === "true") ? true : false,
-                                        boxLabel: 'Synchronize scroll bars',
+                                        boxLabel: _('Synchronize scroll bars'),
                                         name: 'conf_patch_scrollbars',
                                         listeners: {
                                             scope: this,
@@ -4884,13 +4870,13 @@ var phpDoc = function(){
                                                 this.confUpdate('conf_patch_scrollbars', c.getValue());
                                             },
                                             render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"PP-PATCH-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"PP-PATCH-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
+                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"PP-PATCH-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"PP-PATCH-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
                                             }
                                         }
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Accept</b> this patch and <b>Save</b> the file',
+                                        tooltip: _('<b>Accept</b> this patch and <b>Save</b> the file'),
                                         iconCls: 'saveFile',
                                         id: 'PP-PATCH-PANEL-btn-save-' + FileID,
                                         handler: function(){
@@ -4898,14 +4884,14 @@ var phpDoc = function(){
                                         }
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Reject</b> this patch',
+                                        tooltip: _('<b>Reject</b> this patch'),
                                         iconCls: 'iconPageDelete',
                                         id: 'PP-PATCH-PANEL-btn-reject-' + FileID,
                                         handler: function(){
                                             this.rejectPatch(FileID, FilePath, FileName, FileUniqID, rowIndex, this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('PP-PATCH-' + FileID).reIndentAll();
@@ -4913,8 +4899,8 @@ var phpDoc = function(){
                                         
                                     }]
                                 }, {
-                                    title: 'Original File: ' + FilePath + FileName,
-                                    originTitle: 'Original File: ' + FilePath + FileName,
+                                    title: _('Original File: ') + FilePath + FileName,
+                                    originTitle: _('Original File: ') + FilePath + FileName,
                                     collapsible: false,
                                     id: 'PP-ORIGIN-PANEL-' + FileID,
                                     region: 'east',
@@ -4952,7 +4938,7 @@ var phpDoc = function(){
                                         height: 21,
                                         baseCls: '',
                                         bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"PP-ORIGIN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"PP-ORIGIN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
+                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"PP-ORIGIN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"PP-ORIGIN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
                                     }],
                                     tbar: [{}]
                                 }]
@@ -4980,29 +4966,29 @@ var phpDoc = function(){
                 loadMask: true,
                 columns: [{
                     id: 'name',
-                    header: "Files",
+                    header: _('Files'),
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: "Modified by",
+                    header: _('Modified by'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'by'
                 }, {
-                    header: "Date",
+                    header: _('Date'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'date'
                 }, {
-                    header: "Path",
+                    header: _('Path'),
                     dataIndex: 'path',
                     'hidden': true
                 }],
                 
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "Files" : "File"]})',
-                    emptyText: '<div style="text-align: center;">No pending for Commit</div>'
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
+                    emptyText: '<div style="text-align: center;">'+_('No pending for Commit')+'</div>'
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -5019,14 +5005,14 @@ var phpDoc = function(){
                         
                         menu = new Ext.menu.Menu({
                             items: [{
-                                text: '<b>Edit in a new Tab</b>',
+                                text: '<b>'+_('Edit in a new Tab')+'</b>',
                                 iconCls: 'PendingCommit',
                                 scope: this,
                                 handler: function(){
                                     gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
                                 }
                             }, '-', {
-                                text: 'View Diff',
+                                text: _('View Diff'),
                                 iconCls: 'iconViewDiff',
                                 scope: this,
                                 handler: function(){
@@ -5035,8 +5021,8 @@ var phpDoc = function(){
                                     Ext.getCmp('main-panel').add({
                                         xtype: 'panel',
                                         id: 'diff_panel_' + rowIndex,
-                                        title: 'Diff',
-                                        tabTip: 'Diff',
+                                        title: _('Diff'),
+                                        tabTip: _('Diff'),
                                         closable: true,
                                         autoScroll: true,
                                         iconCls: 'iconTabLink',
@@ -5044,7 +5030,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -5072,14 +5058,14 @@ var phpDoc = function(){
                                     
                                 }
                             }, {
-                                text: 'Download the diff as a patch',
+                                text: _('Download the diff as a patch'),
                                 iconCls: 'iconCommitFileCvs',
                                 scope: this,
                                 handler: function(){
                                     window.location.href = './php/controller.php?task=downloadPatch&FilePath=' + FilePath + '&FileName=' + FileName;
                                 }
                             }, '-', {
-                                text: 'Clear this change',
+                                text: _('Clear this change'),
                                 iconCls: 'iconPageDelete',
                                 disabled: (this.userLogin === 'cvsread') ? true : false,
                                 scope: this,
@@ -5137,10 +5123,10 @@ var phpDoc = function(){
                                         }
                                     }
                                     
-                                    Ext.MessageBox.confirm('Confirm', 'This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.', goClearChange, this);
+                                    Ext.MessageBox.confirm(_('Confirm'), _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'), goClearChange, this);
                                 }
                             }, '-', {
-                                text: 'Commit...',
+                                text: _('Commit...'),
                                 iconCls: 'iconCommitFileCvs',
                                 scope: this,
                                 handler: function(){
@@ -5149,21 +5135,21 @@ var phpDoc = function(){
                                 disabled: (this.userLogin === 'cvsread') ? true : false,
                                 menu: new Ext.menu.Menu({
                                     items: [{
-                                        text: '...this file',
+                                        text: _('...this file'),
                                         iconCls: 'iconCommitFileCvs',
                                         scope: this,
                                         handler: function(){
                                             this.WinCommit(true, rowIndex);
                                         }
                                     }, {
-                                        text: '...all files modified by me',
+                                        text: _('...all files modified by me'),
                                         iconCls: 'iconCommitFileCvs',
                                         scope: this,
                                         handler: function(){
                                             this.WinCommit(false, '', 'by me');
                                         }
                                     }, {
-                                        text: '...all files modified',
+                                        text: _('...all files modified'),
                                         iconCls: 'iconCommitFileCvs',
                                         scope: this,
                                         handler: function(){
@@ -5194,34 +5180,34 @@ var phpDoc = function(){
                 loadMask: true,
                 columns: [{
                     id: 'name',
-                    header: "Files",
+                    header: _('Files'),
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: "Reviewed",
+                    header: _('Reviewed'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'reviewed'
                 }, {
-                    header: "Maintainer",
+                    header: _('Maintainer'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'maintainer'
                 }, {
-                    header: "Path",
+                    header: _('Path'),
                     dataIndex: 'path',
                     'hidden': true
                 }],
                 
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "Files" : "File"]})',
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
                     getRowClass: function(record, numIndex, rowParams, store){
                         if (record.data.needcommit) {
                             return 'file-need-commit';
                         }
                     },
-                    emptyText: '<div style="text-align: center;">No files</div>'
+                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>'
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -5240,7 +5226,7 @@ var phpDoc = function(){
                         if (this.storeFilesNeedReviewed.getAt(rowIndex).data.needcommit) {
                         
                             subMenuDiff = {
-                                text: 'View Diff',
+                                text: _('View Diff'),
                                 iconCls: 'iconViewDiff',
                                 scope: this,
                                 handler: function(){
@@ -5249,8 +5235,8 @@ var phpDoc = function(){
                                     Ext.getCmp('main-panel').add({
                                         xtype: 'panel',
                                         id: 'diff_panel_' + rowIndex,
-                                        title: 'Diff',
-                                        tabTip: 'Diff',
+                                        title: _('Diff'),
+                                        tabTip: _('Diff'),
                                         closable: true,
                                         autoScroll: true,
                                         iconCls: 'iconTabLink',
@@ -5258,7 +5244,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -5293,12 +5279,12 @@ var phpDoc = function(){
                         if (group[1] === 'reference') {
                         
                             subMenuGroup = {
-                                text: 'Open all files about ' + group[2] + ' extension',
+                                text: String.format(_('Open all files about {0} extension'), group[2]),
                                 iconCls: 'iconViewDiff',
                                 scope: this,
                                 handler: function(){
                                 
-                                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Open all files about ' + group[2] + ' extension. Please, wait...');
+                                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+String.format(_('Open all files about {0} extension'), group[2])+'. '+_('Please, wait...'));
                                     
                                     Ext.Ajax.request({
                                         scope: this,
@@ -5335,7 +5321,7 @@ var phpDoc = function(){
                         menu = new Ext.menu.Menu({
                             scope: this,
                             items: [{
-                                text: '<b>Edit in a new Tab</b>',
+                                text: '<b>'+_('Edit in a new Tab')+'</b>',
                                 iconCls: 'FilesNeedReviewed',
                                 scope: this,
                                 handler: function(){
@@ -5471,22 +5457,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [smLang, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -5501,7 +5487,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FNR-PANEL-btn-logLang-' + FileID,
                                     disabled: true,
@@ -5519,7 +5505,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FNR-PANEL-btn-refreshlogLang-' + FileID,
                                     handler: function(){
@@ -5567,22 +5553,22 @@ var phpDoc = function(){
                                 loadMask: true,
                                 columns: [smEn, {
                                     id: 'id',
-                                    header: "Rev.",
+                                    header: _('Rev.'),
                                     width: 40,
                                     sortable: false,
                                     dataIndex: 'revision'
                                 }, {
-                                    header: "Content",
+                                    header: _('Content'),
                                     width: 130,
                                     sortable: true,
                                     dataIndex: 'content'
                                 }, {
-                                    header: "By",
+                                    header: _('By'),
                                     width: 50,
                                     sortable: true,
                                     dataIndex: 'author'
                                 }, {
-                                    header: "Date",
+                                    header: _('Date'),
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
@@ -5597,7 +5583,7 @@ var phpDoc = function(){
                                 }),
                                 tbar: [{
                                     scope: this,
-                                    tooltip: '<b>View</b> the diff',
+                                    tooltip: _('<b>View</b> the diff'),
                                     iconCls: 'iconViewDiff',
                                     id: 'FNR-PANEL-btn-logEn-' + FileID,
                                     disabled: true,
@@ -5615,7 +5601,7 @@ var phpDoc = function(){
                                     }
                                 },{
                                     scope: this,
-                                    tooltip: '<b>Load/Refresh</b> revisions',
+                                    tooltip: _('<b>Load/Refresh</b> revisions'),
                                     iconCls: 'refresh',
                                     id: 'FNR-PANEL-btn-refreshlogEn-' + FileID,
                                     handler: function(){
@@ -5665,8 +5651,8 @@ var phpDoc = function(){
                                         }]
                                     }
                                 }, {
-                                    title: this.userLang + ' File: ' + FilePath + FileName,
-                                    originTitle: this.userLang + ' File: ' + FilePath + FileName,
+                                    title: String.format(_('{0} File: '),this.userLang) + FilePath + FileName,
+                                    originTitle: String.format(_('{0} File: '),this.userLang) + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FNR-LANG-PANEL-' + FileID,
                                     region: 'center',
@@ -5704,7 +5690,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FNR-' + FileID).isModifiedLang) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FNR-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FNR-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FNR-' + FileID).setTitle(Ext.getCmp('FNR-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -5731,7 +5717,7 @@ var phpDoc = function(){
                                         xtype: 'checkbox',
                                         hideLabel: true,
                                         checked: (this.userConf.conf_reviewed_scrollbars === "true") ? true : false,
-                                        boxLabel: 'Synchronize scroll bars',
+                                        boxLabel: _('Synchronize scroll bars'),
                                         name: 'conf_reviewed_scrollbars',
                                         listeners: {
                                             scope: this,
@@ -5739,13 +5725,13 @@ var phpDoc = function(){
                                                 this.confUpdate('conf_reviewed_scrollbars', c.getValue());
                                             },
                                             render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FNR-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FNR-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
+                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNR-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNR-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
                                             }
                                         }
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FNR-LANG-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -5754,7 +5740,7 @@ var phpDoc = function(){
                                         } // Save handle
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FNR-LANG-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -5762,7 +5748,7 @@ var phpDoc = function(){
                                             this.savePatch(this.userLang, FileID, FilePath, FileName, 'FNR', this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FNR-LANG-' + FileID).reIndentAll();
@@ -5771,8 +5757,8 @@ var phpDoc = function(){
                                     }, this.menuMarkupLANG('FNR-LANG-' + FileID)]
                                 }, {
                                 
-                                    title: 'En File: ' + FilePath + FileName,
-                                    originTitle: 'En File: ' + FilePath + FileName,
+                                    title: _('En File: ') + FilePath + FileName,
+                                    originTitle: _('En File: ') + FilePath + FileName,
                                     collapsible: false,
                                     id: 'FNR-EN-PANEL-' + FileID,
                                     region: 'east',
@@ -5802,7 +5788,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('FNR-' + FileID).isModifiedEn) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('FNR-' + FileID).setTitle(Ext.getCmp('FNR-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -5837,11 +5823,11 @@ var phpDoc = function(){
                                         height: 21,
                                         baseCls: '',
                                         bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"FNR-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"FNR-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
+                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNR-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNR-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'FNR-EN-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -5851,7 +5837,7 @@ var phpDoc = function(){
                                         
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'FNR-EN-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -5860,7 +5846,7 @@ var phpDoc = function(){
                                         }
                                         
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('FNR-EN-' + FileID).reIndentAll();
@@ -5881,33 +5867,33 @@ var phpDoc = function(){
             });
             
             gridSummary = new Ext.grid.GridPanel({
-                title: 'Summary',
+                title: _('Summary'),
                 iconCls: 'flag-' + this.userLang,
                 store: this.storeSummary,
                 loadMask: true,
                 columns: [new Ext.grid.RowNumberer(), {
                     id: 'StatusType',
-                    header: "File status type",
+                    header: _('File status type'),
                     width: 180,
                     sortable: true,
                     dataIndex: 'libel'
                 }, {
-                    header: "Number of files",
+                    header: _('Number of files'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'nbFiles'
                 }, {
-                    header: "Percent of files",
+                    header: _('Percent of files'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'percentFiles'
                 }, {
-                    header: "Size of files (kB)",
+                    header: _('Size of files (kB)'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'sizeFiles'
                 }, {
-                    header: "Percent of size",
+                    header: _('Percent of size'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'percentSize'
@@ -5944,55 +5930,55 @@ var phpDoc = function(){
             });
             
             gridTranslators = new Ext.grid.GridPanel({
-                title: 'Translators',
+                title: _('Translators'),
                 iconCls: 'iconTranslator',
                 store: this.storeTranslators,
                 loadMask: true,
                 columns: [new Ext.grid.RowNumberer(), {
                     id: 'GridTransName',
-                    header: "Name",
+                    header: _('Name'),
                     sortable: true,
                     dataIndex: 'name',
                     summaryType: 'count',
                     summaryRenderer: this.rendererTotalTranslator
                 }, {
-                    header: "Email",
+                    header: _('Email'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'email'
                 }, {
-                    header: "Nick",
+                    header: _('Nick'),
                     width: 70,
                     sortable: true,
                     dataIndex: 'nick'
                 }, {
-                    header: "Cvs",
+                    header: _('Cvs'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'cvs'
                 }, {
-                    header: "UptoDate",
+                    header: _('UptoDate'),
                     width: 60,
                     sortable: true,
                     renderer: this.rendererNumUptodate,
                     dataIndex: 'uptodate',
                     summaryType: 'sum'
                 }, {
-                    header: "Old",
+                    header: _('Old'),
                     width: 45,
                     sortable: true,
                     renderer: this.rendererSum,
                     dataIndex: 'old',
                     summaryType: 'sum'
                 }, {
-                    header: "Critical",
+                    header: _('Critical'),
                     width: 60,
                     sortable: true,
                     renderer: this.rendererNumCritical,
                     dataIndex: 'critical',
                     summaryType: 'sum'
                 }, {
-                    header: "Sum",
+                    header: _('Sum'),
                     width: 50,
                     sortable: true,
                     renderer: this.rendererSum,
@@ -6033,14 +6019,14 @@ var phpDoc = function(){
                             id: 'submenu',
                             items: [{
                                 scope: this,
-                                text: '<b>Send an email to ' + TranslatorName + '</b>',
+                                text: '<b>'+String.format(_('Send an email to {0}'), TranslatorName) + '</b>',
                                 iconCls: 'iconSendEmail',
                                 handler: function(){
                                     this.sendEmail(TranslatorName, TranslatorEmail);
                                 }
                             }, '-', {
                                 scope: this,
-                                text: 'Send an email to the doc-' + this.userLang + '@lists.php.net',
+                                text: String.format(_('Send an email to the {0}'), 'doc-' + this.userLang + '@lists.php.net'),
                                 iconCls: 'iconSendEmail',
                                 handler: function(){
                                     this.sendEmail('Php Doc Team ' + this.userLang, 'doc-' + this.userLang + '@lists.php.net');
@@ -6055,21 +6041,21 @@ var phpDoc = function(){
             
             gridMailing = new Ext.grid.GridPanel({
                 store: this.storeMailing,
-                title: 'Mails from doc-' + this.userLang,
+                title: String.format(_('Mails from {0}'), 'doc-' + this.userLang),
                 iconCls: 'home-mailing-title',
                 loadMask: true,
                 columns: [new Ext.grid.RowNumberer(), {
                     id: 'GridMailingTitle',
-                    header: "Title",
+                    header: _('Title'),
                     sortable: true,
                     dataIndex: 'title'
                 }, {
-                    header: "By",
+                    header: _('By'),
                     width: 110,
                     sortable: true,
                     dataIndex: 'description'
                 }, {
-                    header: "Date",
+                    header: _('Date'),
                     width: 140,
                     sortable: true,
                     dataIndex: 'pubDate',
@@ -6084,7 +6070,7 @@ var phpDoc = function(){
                 }),
                 tbar: [{
                     scope: this,
-                    tooltip: 'Refresh this grid',
+                    tooltip: _('Refresh this grid'),
                     iconCls: 'refresh',
                     handler: function(){
                         this.storeMailing.reload();
@@ -6104,14 +6090,14 @@ var phpDoc = function(){
                         menu = new Ext.menu.Menu({
                             id: 'submenu',
                             items: [{
-                                text: '<b>Open in a new Tab</b>',
+                                text: '<b>'+_('Open in a new Tab')+'</b>',
                                 iconCls: 'openInTab',
                                 scope: this,
                                 handler: function(){
                                     gridMailing.fireEvent('rowdblclick', grid, rowIndex, e);
                                 }
                             }, '-', {
-                                text: 'Refresh this grid',
+                                text: _('Refresh this grid'),
                                 iconCls: 'refresh',
                                 scope: this,
                                 handler: function(){
@@ -6138,7 +6124,7 @@ var phpDoc = function(){
             
             gridBugs = new Ext.grid.GridPanel({
                 store: this.storeBugs,
-                title: 'Open bugs for doc-' + this.userLang,
+                title: String.format(_('Open bugs for {0}'), 'doc-' + this.userLang),
                 iconCls: 'iconBugs',
                 loadMask: true,
                 columns: [{
@@ -6150,7 +6136,7 @@ var phpDoc = function(){
                 stripeRows: true,
                 autoHeight: true,
                 viewConfig: {
-                    emptyText: 'No open Bugs',
+                    emptyText: _('No open Bugs'),
                     forceFit: true,
                     enableRowBody: true,
                     getRowClass: function(record, rowIndex, p, store){
@@ -6165,7 +6151,7 @@ var phpDoc = function(){
                 width: 800,
                 tbar: [{
                     scope: this,
-                    tooltip: 'Refresh this grid',
+                    tooltip: _('Refresh this grid'),
                     iconCls: 'refresh',
                     handler: function(){
                         this.storeBugs.reload();
@@ -6185,14 +6171,14 @@ var phpDoc = function(){
                         menu = new Ext.menu.Menu({
                             id: 'submenu',
                             items: [{
-                                text: '<b>Open in a new Tab</b>',
+                                text: '<b>'+_('Open in a new Tab')+'</b>',
                                 iconCls: 'openInTab',
                                 scope: this,
                                 handler: function(){
                                     gridBugs.fireEvent('rowdblclick', grid, rowIndex, e);
                                 }
                             }, '-', {
-                                text: 'Refresh this grid',
+                                text: _('Refresh this grid'),
                                 iconCls: 'refresh',
                                 scope: this,
                                 handler: function(){
@@ -6218,7 +6204,7 @@ var phpDoc = function(){
             });
             
             graphPanel = {
-                title: 'Graphics',
+                title: _('Graphics'),
                 layout: 'fit',
                 autoHeight: true,
                 iconCls: 'home-graphic-title',
@@ -6464,8 +6450,8 @@ var phpDoc = function(){
                                 };
                                 
                                 panelCenter = {
-                                    title: 'File: ' + FilePath + FileName,
-                                    originTitle: 'File: ' + FilePath + FileName,
+                                    title: _('File: ') + FilePath + FileName,
+                                    originTitle: _('File: ') + FilePath + FileName,
                                     collapsible: false,
                                     id: 'AF-PANEL-' + FileID,
                                     region: 'center',
@@ -6497,7 +6483,7 @@ var phpDoc = function(){
                                                 
                                                     if (!Ext.getCmp('AF-FILE-' + FileID).isModified) {
                                                         // Add an [modified] in title
-                                                        Ext.getCmp('AF-PANEL-' + FileID).setTitle(Ext.getCmp('AF-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">[modified]</span>');
+                                                        Ext.getCmp('AF-PANEL-' + FileID).setTitle(Ext.getCmp('AF-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
                                                         Ext.getCmp('AF-' + FileID).setTitle(Ext.getCmp('AF-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
                                                         
                                                         // Activate save button
@@ -6526,11 +6512,11 @@ var phpDoc = function(){
                                         height: 21,
                                         baseCls: '',
                                         bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">Line: <span id=\"AF-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">Col: <span id=\"AF-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
+                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"AF-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"AF-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
                                     }],
                                     tbar: [{
                                         scope: this,
-                                        tooltip: '<b>Save</b> this file',
+                                        tooltip: _('<b>Save</b> this file'),
                                         iconCls: 'saveFile',
                                         id: 'AF-PANEL-btn-save-' + FileID,
                                         disabled: true,
@@ -6541,7 +6527,7 @@ var phpDoc = function(){
                                             Ext.getCmp('AF-PANEL-' + FileID).setTitle(Ext.getCmp('AF-PANEL-' + FileID).originTitle);
                                             Ext.getCmp('AF-' + FileID).setTitle(Ext.getCmp('AF-' + FileID).originTitle);
                                             
-                                            var msg = Ext.MessageBox.wait('Saving data...');
+                                            var msg = Ext.MessageBox.wait(_('Saving data...'));
                                             // We save LANG File
                                             Ext.Ajax.request({
                                                 scope: this,
@@ -6577,7 +6563,7 @@ var phpDoc = function(){
                                         
                                     }, {
                                         scope: this,
-                                        tooltip: '<b>Save as</b> a patch',
+                                        tooltip: _('<b>Save as</b> a patch'),
                                         iconCls: 'saveAsFile',
                                         id: 'AF-PANEL-btn-saveas-' + FileID,
                                         disabled: true,
@@ -6585,7 +6571,7 @@ var phpDoc = function(){
                                             this.savePatch('all', FileID, FilePath, FileName, 'AF', this);
                                         }
                                     }, '-', {
-                                        tooltip: '<b>Re-indent</b> all this file',
+                                        tooltip: _('<b>Re-indent</b> all this file'),
                                         iconCls: 'iconIndent',
                                         handler: function(){
                                             Ext.getCmp('AF-FILE-' + FileID).reIndentAll();
@@ -6648,50 +6634,45 @@ var phpDoc = function(){
                 id: 'mainMenu',
                 items: [{
                     scope: this,
-                    text: 'Refresh all data',
+                    text: _('Refresh all data'),
                     disabled: (this.userLogin === 'cvsread') ? true : false,
                     iconCls: 'refresh',
-                    tooltip: '<b>Refresh all data</b><br>Cvs update & apply all tools',
                     handler: this.WinUpdate
                 }, {
                     scope: this,
-                    text: 'Check Build',
+                    text: _('Check Build'),
                     disabled: (this.userLogin === 'cvsread') ? true : false,
                     iconCls: 'checkBuild',
-                    tooltip: '<b>Check your build</b> using configure.php script',
                     handler: this.WinCheckBuild
                 }, {
                     scope: this,
-                    text: 'EN tools',
+                    text: _('EN tools'),
                     handler: function(){
                         return false;
                     },
-                    //iconCls: 'iconConf',
-                    tooltip: '<b>Configure</b> this tool',
                     menu: new Ext.menu.Menu({
                         items: [{
                             scope: this,
-                            text: 'Check doc',
+                            text: _('Script Check doc'),
                             iconCls: 'CheckDoc',
                             handler: this.newTabCheckDoc
                         }]
                     })
                 }, '-', {
                     scope: this,
-                    text: 'Configure',
+                    text: _('Configure'),
                     iconCls: 'iconConf',
                     tooltip: '<b>Configure</b> this tool',
                     id: 'winconf-btn',
                     handler: this.WinConf
                 }, '-', {
                     scope: this,
-                    text: 'Erase my personal data',
+                    text: _('Erase my personal data'),
                     disabled: (this.userLogin === 'cvsread') ? true : false,
                     iconCls: 'iconErasePersonalData',
-                    tooltip: '<b>Log out</b>',
                     handler: function(){
                     
-                        Ext.MessageBox.confirm('Confirm', 'This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?', function(btn){
+                        Ext.MessageBox.confirm(_('Confirm'), _('This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?'), function(btn){
                         
                             if (btn === 'yes') {
                             
@@ -6710,8 +6691,8 @@ var phpDoc = function(){
                                         var o = Ext.util.JSON.decode(action.responseText);
                                         if (o.success) {
                                             Ext.MessageBox.show({
-                                                title: 'Thanks !',
-                                                msg: 'Thank you for using this application !',
+                                                title: _('Thanks !'),
+                                                msg: _('Thank you for using this application !'),
                                                 icon: Ext.MessageBox.INFO,
                                                 buttons: Ext.MessageBox.OK,
                                                 fn: function(){
@@ -6731,11 +6712,10 @@ var phpDoc = function(){
                         }, this);
                     }
                 }, '-', {
-                    text: 'Log out',
+                    text: _('Log out'),
                     iconCls: 'iconLogOut',
-                    tooltip: '<b>Log out</b>',
                     handler: function(){
-                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', function(btn){
+                        Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to logout?'), function(btn){
                             if (btn === 'yes') {
                                 window.location.href = './php/controller.php?task=logout';
                             }
@@ -6744,9 +6724,8 @@ var phpDoc = function(){
                     }
                 }, '-', {
                     scope: this,
-                    text: 'About',
+                    text: _('About'),
                     iconCls: 'iconHelp',
-                    tooltip: '<b>About</b><br/>' + this.appName,
                     id: 'winabout-btn',
                     handler: function(){
                         this.WinAbout();
@@ -6786,12 +6765,12 @@ var phpDoc = function(){
                         bodyBorder: false,
                         border: false,
                         tbar: [{
-                            text: 'Main Menu',
+                            text: _('Main Menu'),
                             iconCls: 'MainMenu',
                             menu: mainMenu
                         }],
                         items: [{
-                            title: 'Files Need Update - <em id="acc-need-update-nb">0</em>',
+                            title: _('Files Need Update')+' - <em id="acc-need-update-nb">0</em>',
                             id: 'acc-need-update',
                             layout: 'fit',
                             iconCls: 'FilesNeedUpdate',
@@ -6799,7 +6778,7 @@ var phpDoc = function(){
                             items: [gridFilesNeedUpdate],
                             collapsed: true
                         }, {
-                            title: 'Error in current translation - <em id="acc-error-nb">0</em>',
+                            title: _('Error in current translation')+' - <em id="acc-error-nb">0</em>',
                             id: 'acc-error',
                             layout: 'fit',
                             iconCls: 'FilesError',
@@ -6807,7 +6786,7 @@ var phpDoc = function(){
                             items: [gridFilesError],
                             collapsed: true
                         }, {
-                            title: 'Files Need Reviewed - <em id="acc-need-reviewed-nb">0</em>',
+                            title: _('Files Need Reviewed')+' - <em id="acc-need-reviewed-nb">0</em>',
                             id: 'acc-need-reviewed',
                             layout: 'fit',
                             iconCls: 'FilesNeedReviewed',
@@ -6815,21 +6794,21 @@ var phpDoc = function(){
                             items: [gridFilesNeedReviewed],
                             collapsed: true
                         }, {
-                            title: 'All files',
+                            title: _('All files'),
                             id: 'acc-all-files',
                             layout: 'fit',
                             iconCls: 'AllFiles',
                             items: [this.treeAllFiles],
                             collapsed: true
                         }, {
-                            title: 'Pending for commit - <em id="acc-pendingCommit-nb">0</em>',
+                            title: _('Pending for commit')+' - <em id="acc-pendingCommit-nb">0</em>',
                             id: 'acc-need-pendingCommit',
                             layout: 'fit',
                             iconCls: 'PendingCommit',
                             items: [gridPendingCommit],
                             collapsed: true
                         }, {
-                            title: 'Pending Patch - <em id="acc-pendingPatch-nb">0</em>',
+                            title: _('Pending Patch')+' - <em id="acc-pendingPatch-nb">0</em>',
                             id: 'acc-need-pendingPatch',
                             layout: 'fit',
                             iconCls: 'PendingPatch',
@@ -6851,7 +6830,7 @@ var phpDoc = function(){
                         beforeremove: this.removeTabEvent
                     },
                     items: [{
-                        title: 'Home',
+                        title: _('Home'),
                         baseCls: 'MainInfoTabPanel',
                         xtype: 'panel',
                         autoScroll: true,
@@ -6862,9 +6841,9 @@ var phpDoc = function(){
                             border: false,
                             html: '<div class="res-block">' +
                             '<div class="res-block-inner">' +
-                            '<h3>Connected as <em>' +
-                            this.userLogin +
-                            '</em></h3>' +
+                            '<h3>'+
+                            String.format(_('Connected as <em>{0}</em>'), this.userLogin) +
+                            '</h3>' +
                             '</div>' +
                             '</div>'
                         }, {
@@ -6898,24 +6877,3 @@ var phpDoc = function(){
     }; // Return
 }();
 Ext.EventManager.onDocumentReady(phpDoc.init, phpDoc, true);
-
-/*
-
- Ext.util.Observable.prototype.fireEvent = Ext.util.Observable.prototype.fireEvent.createInterceptor(function() {
-
- // Catch Ajax request
-
- //if( arguments[0] == 'beforerequest' ) { console.log('start Ajax call'); console.log(arguments); }
-
- //if( arguments[0] == 'requestcomplete' ) { console.log('end Ajax call'); console.log(arguments); }
-
- //console.log(arguments[0]);
-
- console.log(arguments);
-
- return true;
-
- });
-
- */
-

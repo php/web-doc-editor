@@ -1,0 +1,216 @@
+/*
+This file must be encoded in UTF-8
+TODO: We must reorder the generic section
+*/
+
+var i18n = new Array();
+
+// Generic
+i18n["Close"] = "Fermer";
+i18n["Confirm"] = "Confirmation";
+i18n["Save"] = "Sauvegarder";
+i18n["Cancel"] = "Annuler";
+i18n["Send"] = "Envoyer";
+i18n["Status"] = "Statut";
+i18n["Title"] = "Titre";
+i18n["By"] = "Par";
+i18n["Date"] = "Date";
+i18n["Refresh this grid"] = "Rafraîchir ces données";
+i18n["Open in a new Tab"] = "Ouvrir dans un nouvel onglet";
+i18n["Edit in a new Tab"] = "Éditer dans un nouvel onglet";
+i18n["Files"] = "Fichiers";
+i18n["File"] = "Fichier";
+i18n["EN revision"] = "Version EN";
+i18n["{0} revision"] = "Version {0}";
+i18n["Maintainer"] = "Mainteneur";
+i18n["Path"] = "Chemin";
+i18n["No Files"] = "Aucun fichier";
+i18n["Please, Wait..."] = "Veuillez patienter...";
+i18n["Loading..."] = "Chargement...";
+i18n["Saving data..."] = "Enregistrement des données...";
+i18n["Rev."] = "Ver.";
+i18n["Content"] = "Contenu";
+i18n["Author"] = "Auteur";
+i18n["<b>View</b> the diff"] = "<b>Voir</b> les différences";
+i18n["<b>Load/Refresh</b> revisions"] = "<b>Charger/Rafraîchir</b> les versions";
+i18n["Diff From cvs"] = "Différence depuis Cvs";
+i18n["CvsLog"] = "Historique Cvs";
+i18n["{0} File: "] = "Fichier {0} : ";
+i18n["En File: "] = "Fichier En : ";
+i18n["File: "] = "Fichier : ";
+i18n["Line: "] = "Ligne : ";
+i18n["Col: "] = "Col. : ";
+i18n["<b>Save</b> this file"] = "<b>Sauvegarder</b> ce fichier";
+i18n["<b>Save as</b> a patch"] = "<b>Sauvegarder sous</b> la forme d'un patch";
+i18n["<b>Re-indent</b> all this file"] = "<b>Ré-indenter</b> tout le fichier";
+i18n["Reviewed tag"] = "Balise de relecture";
+i18n["Revcheck tag"] = "Balise Revcheck";
+i18n["MarkUp"] = "Balises";
+i18n["Description section"] = "Section \"Description\"";
+i18n["Parameters section"] = "Section \"Parameters\"";
+i18n["Return section"] = "Section \"Return\"";
+i18n["Error section"] = "Section \"Error\"";
+i18n["Unicode section"] = "Section \"Unicode\"";
+i18n["Changelog section"] = "Section \"Changelog\"";
+i18n["Examples section"] = "Section \"Examples\"";
+i18n["Notes section"] = "Section \"Notes\"";
+i18n["SeeAlso section"] = "Section \"SeeAlso\"";
+i18n["modified"] = "modifié";
+i18n["Do you want to check for error before saving?"] = "Voulez-vous vérifier si le fichier contient des erreurs avant de le sauvegarder ?";
+i18n["Checking for error. Please, wait..."] = "Vérification du fichier. Veuillez patienter...";
+i18n["Check for errors"] = "Vérification du fichier";
+i18n["There is no error."] = "Il n'y a aucune erreur.";
+i18n["Error description"] = "Description de l'erreur";
+i18n["File with error : in {0}"] = "Fichier contenant des erreurs : dans {0}";
+i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
+i18n["Clear this change"] = "Effacer cette modification";
+i18n["This action will clear your local modification and take back this file from his original stats.<br/>You need confirm."] = "Cette action va effacer la modification faite sur ce fichier et le restaurer à sa version originale.<br/>Vous devez confirmer.";
+i18n["Commit..."] = "Valider...";
+i18n["...this file"] = "...ce fichier";
+i18n["...all files modified by me"] = "...tous les fichiers que j'ai modifié";
+i18n["...all files modified"] = "...tous les fichiers modifiés";
+i18n["Reviewed"] = "Relu";
+i18n["No pending Patch"] = "Aucun patch en attente";
+i18n["Reject this patch"] = "Rejeter ce patch";
+i18n["Patch for {0}"] = "Patch pour {0}";
+i18n["Patch content"] = "Contenu du patch";
+i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
+i18n["<b>Accept</b> this patch and <b>Save</b> the file"] = "<b>Accepter</b> ce patch et <b>Sauvegarder</b> le fichier";
+i18n["<b>Reject</b> this patch"] = "<b>Rejeter</b> ce patch";
+i18n["Original File: "] = "Fichier original : ";
+i18n["Modified by"] = "Modifié par";
+i18n["No pending for Commit"] = "Aucun commit en attente";
+i18n["Diff"] = "Différence";
+i18n["Open all files about {0} extension"] = "Ouvrir tous les fichiers à propos de l'extension <b>{0}</b>";
+i18n["Saving data as a patch..."] = "Sauvegarde des données sous forme de patch";
+i18n["Finding the diff. Please, wait..."] = "Calcul de la différence. Veuillez patienter...";
+i18n["Diff between {0} & {1}"] = "Différence entre {0} et {1}";
+i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Ce fichier a été modifié sans être sauvegardé.<br/>Voulez-vous vraiment fermer cet onglet ?";
+i18n["CVS commit"] = "Commit Cvs";
+i18n["Older messages"] = "Anciens messages";
+i18n["Log message"] = "Message";
+i18n["Configure this tools"] = "Configurer cet utilitaire";
+i18n["Manage Log Message"] = "Gestion des messages d'historisation";
+i18n["Delete this Log Message"] = "Effacer ce message";
+i18n["Submit"] = "Envoyer";
+i18n["There is {0} files to close before commit.<br><br>{1}<br/><br/>Would you like I close it for you ?"] = "Il y a {0} fichiers à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
+i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like I close it for you ?"] = "Il y a {0} fichier à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
+i18n["Please, wait until commit..."] = "Veuillez patienter...";
+i18n["Type"] = "Type";
+i18n["View Diff"] = "Voir la différence";
+i18n["Forbidden"] = "Interdit";
+i18n["You can\'t do this action as cvsread user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur cvsread.";
+i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
+i18n["If you want to be notified when your patch will be dealt with, thank you to leave an email address below."] = "Si vous voulez être averti lors du traitement de votre patch, merci de laisser une adresse email ci-dessous.";
+i18n[""] = "";
+
+
+// Main Menu
+i18n["Main Menu"] = "Menu principal";
+
+i18n["Refresh all data"]                                       = "Rafraîchir les données";
+    i18n["Update all files from Cvs"]                          = "Mise à jour de tous les fichiers depuis Cvs";
+    i18n["This may take time. Thank you for your patience..."] = "Ceci peut prendre du temps. Merci de patienter.";
+    i18n["Apply all tools"]                                    = "Application des différents traitements";
+    i18n["Reload data"]                                        = "Rechargement des données";
+    i18n["Start"]                                              = "Commencer";
+    i18n["Finish !"]                                           = "Terminer !";
+
+i18n["Check Build"]                                           = "Vérifier la compilation";
+    i18n["Go !"]                                              = "Commencer !";
+    i18n["Please, wait until the build is checked..."]        = "Merci de patienter pendant la vérification.";
+    i18n["Check Build Result"]                                = "Résultat de la vérification";
+    i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";
+    i18n["Enable detailed XML error messages"]                = "Activer les messages d'erreur XML détaillés";
+
+i18n["EN tools"] = "Outils EN";
+    i18n["Script Check doc"] = "Script Check doc";
+
+i18n["Configure"] = "Configuration";
+    i18n["Main"] = "Principal";
+    i18n["Module \"Files Need Update\""] = 'Module "Fichiers à mettre à jour"';
+    i18n["Module \"Files with Error\""] = 'Module "Fichiers avec des erreurs"';
+    i18n["Module \"Files need Reviewed\""] = 'Module "À relire"';
+    i18n["Module \"All files\""] = 'Module "Tous les fichiers"';
+    i18n["Module \"Pending Patch\""] = 'Module "Patchs en attente"';
+    i18n["Configuration"] = "Configuration";
+    i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
+    i18n["Themes"] = "Thèmes";
+    i18n["Black"] = "Noir";
+    i18n["Default"] = "Par défault";
+    i18n["DarkGray"] = "Gris foncé";
+    i18n["Gray"] = "Gris";
+    i18n["Gray Extend"] = "Gris étendu";
+    i18n["Indigo"] = "Indigo";
+    i18n["Midnight"] = "Indigo foncé";
+    i18n["Olive"] = "Vert clair";
+    i18n["Purple"] = "Violet";
+    i18n["Slate"] = "Slate";
+    i18n["SilverCherry"] = "SilverCherry";
+    i18n["Diff view"] = "Visualisation de la différence";
+    i18n["Using ViewVc from php web site"] = "Utilisation de viewVc depuis le site web de Php";
+    i18n["Using diff -kk -u command line"] = "Utilisation de la ligne de commande \"$ diff -kk -u\"";
+    i18n["Editor"] = "Éditeur";
+    i18n["Synchronize scroll bars"] = "Synchroniser les barres de défilement";
+    i18n["Automatically load the log when displaying the file"] = "Charger automatiquement l'historique lors de l'édition d'un fichier";
+    i18n["Error type"] = "Type d'erreurs";
+    i18n["Skip nbLiteralTag error"] = "Ignorer les erreurs de type \"nbLiteralTag\"";
+
+i18n["Erase my personal data"] = "Effacer mes données personnelles";
+    i18n["This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?"] = "Cette action va effacer vos données personnelles. Toutes les données relatives à ce compte seront effacées définitivement de cette application. Êtes-vous sûr de vouloir faire cela ?";
+    i18n["Thanks !"] = "Merci !";
+    i18n["Thank you for using this application !"] = "Merci d'avoir utilisé cette application !";
+
+i18n["Log out"] = "Se déconnecter";
+    i18n["Are you sure you want to logout?"] = "êtes-vous sûr de vouloir vous déconnecter ?";
+    i18n[""] = "";
+    i18n[""] = "";
+
+i18n["About"] = "À propos";
+    i18n["About {0}"] = "À propos de {0}";
+    i18n["Author:"] = "Auteur :";
+    i18n["and <a href=\"http://cvs.php.net/viewvc.cgi/doc-editor/\" target=\"_blank\">others</a>"] = "et d'<a href=\"http://cvs.php.net/viewvc.cgi/doc-editor/\" target=\"_blank\">autres personnes</a>";
+    i18n["Credits"] = "Remerciements";
+    i18n["Javascript FrameWork"] = "Bibliothèque Javascript";
+    i18n["Code editor"] = "Éditeur de code";
+    i18n["Icon pack"] = "Les icones";
+    i18n["License"] = "Licence";
+
+// Home tab
+i18n["Home"] = "Accueil";
+    i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
+    i18n["Summary"] = "Résumé";
+        i18n["File status type"] = "Statut du fichier";
+        i18n["Number of files"] = "Nombre de fichiers";
+        i18n["Percent of files"] = "% de fichiers";
+        i18n["Size of files (kB)"] = "Taille des fichiers (kB)";
+        i18n["Percent of size"] = "% de la taille";
+    i18n["Translators"] = "Traducteurs";
+        i18n["Name"] = "Nom";
+        i18n["Email"] = "Email";
+        i18n["Nick"] = "Nick";
+        i18n["Cvs"] = "Cvs";
+        i18n["UptoDate"] = "À jour";
+        i18n["Old"] = "Ancien";
+        i18n["Critical"] = "Critique";
+        i18n["Sum"] = "Total";
+            i18n["Send an email to {0}"] = "Envoyer un email à {0}";
+            i18n["Send an email to the {0}"] = "Envoyer un email à la liste {0}";
+                i18n["Send an email"] = "Envoyer un email";
+                i18n["Send To"] = "À ";
+                i18n["Subject"] = "Sujet ";
+                i18n["Email sent to {0} with success!"] = "Email envoyé à {0} avec succès !";
+    i18n["Mails from {0}"] = "Emails depuis {0}";
+    i18n["Open bugs for {0}"] = "Bogues en cours pour {0}";
+        i18n["No open Bugs"] = "Aucun bogue ouvert actuellement";
+    i18n["Graphics"] = "Graphiques";
+
+// Module
+i18n["Files Need Update"] = "Fichiers à mettre à jour";
+    i18n["Need Update: in {0}"] = "Fichiers à mettre à jour : dans {0}";
+i18n["Error in current translation"] = "Fichiers avec des erreurs";
+    i18n["About error type"] = "À propos des types d'erreurs";
+i18n["Files Need Reviewed"] = "À relire";
+i18n["All files"] = "Tous les fichiers";
+i18n["Pending for commit"] = "Commit en attente";
+i18n["Pending Patch"] = "Patchs en attente";

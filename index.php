@@ -41,6 +41,7 @@ echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/ux/Ext.ux.CodeMirror.js');
 echo jsLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js');
 // Main app
+echo jsLoadi18nTemplate();
 echo jsLoadTemplate('js/main_override.js');
 echo jsLoadTemplate('js/main.js');
 
