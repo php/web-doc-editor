@@ -1898,7 +1898,7 @@ class phpDoc
         $output  = array();
         exec($cmd, $output);
 
-        $this->debug('commit cmd : '.$cmd);
+        //$this->debug('commit cmd : '.$cmd);
 
         return $this->highlightCommitLog($output);
     }
@@ -2004,7 +2004,7 @@ class phpDoc
                 $this->db->query($s) or die($this->db->error.'|'.$s);
             }
 
-            $this->debug('in updateRev() ; DB query : '.$s);
+            //$this->debug('in updateRev() ; DB query : '.$s);
 
         }
     }
@@ -2100,7 +2100,7 @@ class phpDoc
             ';
             $this->db->query($s) or die($this->db->error.'|'.$s);
 
-            $this->debug('in removeNeedCommit() ; DB query : '.$s);
+            //$this->debug('in removeNeedCommit() ; DB query : '.$s);
 
         }
 
