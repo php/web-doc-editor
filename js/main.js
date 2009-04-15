@@ -3133,15 +3133,15 @@ var phpDoc = function(){
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: _('Maintainer'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'maintainer'
-                }, {
                     header: _('Type'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'type'
+                }, {
+                    header: _('Maintainer'),
+                    width: 45,
+                    sortable: true,
+                    dataIndex: 'maintainer'
                 }, {
                     header: _('Path'),
                     dataIndex: 'path',
