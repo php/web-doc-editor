@@ -342,7 +342,7 @@ class ExtJsController
         //$error = $this->phpDoc->tools_error_check_all($fileContent, $en_content);
 
         // Update DB with this new Error (if any)
-        $anode[0] = array( 0 => $FilePath, 1 => $FileName, 2 => $FileLang);
+        $anode[0] = array( 0 => $FileLang.$FilePath, 1 => $FileName);
         $r = $this->phpDoc->updateFilesError($anode, 'nocommit', $FileContent, $en_content);
 
         return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));

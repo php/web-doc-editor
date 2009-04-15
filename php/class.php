@@ -2009,7 +2009,7 @@ class phpDoc
         }
     }
 
-    /** NEW
+    /**
      * Update error's informations about a file after his commit.
      * @param $anode        An array of files.
      * @param $action       Can be 'commit' or not.
@@ -2021,9 +2021,13 @@ class phpDoc
 
         for ($i = 0; $i < count($anode); $i++) {
 
-            $FilePath = $anode[$i][0];
+            $t = explode("/", $anode[$i][0]);
+
+            $FileLang = $t[0];
+            array_shift($t);
+
+            $FilePath = implode("/", $t);
             $FileName = $anode[$i][1];
-            $FileLang = $anode[$i][2];
 
             // Remove all row in errorfiles tables
             $s = 'DELETE FROM errorfiles WHERE lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
