@@ -66,9 +66,9 @@ function jsLoadi18nTemplate()
     $return='';
 
     //i18n for ExtJs library
-    if( is_file('js/extjs/source/locale/ext-lang-'.strtolower($_SESSION['lang']).'.js') )
+    if( is_file('js/extjs/source/locale/ext-lang-'.$_SESSION['lang'].'.js') )
     {
-        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/extjs/source/locale/ext-lang-'.strtolower($_SESSION['lang']).'.js') . "\n";
+        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/extjs/source/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
     }
 
     //i18n for the UI
