@@ -2026,7 +2026,7 @@ class phpDoc
             $FileLang = $t[0];
             array_shift($t);
 
-            $FilePath = implode("/", $t);
+            $FilePath = '/'.implode("/", $t);
             $FileName = $anode[$i][1];
 
             // Remove all row in errorfiles tables
