@@ -3795,15 +3795,22 @@ var phpDoc = function(){
                                 iconCls: 'iconHelp',
                                 scope: this,
                                 handler: function(){
-                                    Ext.getCmp('main-panel').add({
-                                        closable: true,
-                                        title: _('About error type'),
-                                        iconCls: 'iconHelp',
-                                        id: 'FE-help-' + FileID,
-                                        autoScroll: true,
-                                        autoLoad: './error_type.php'
-                                    });
-                                    Ext.getCmp('main-panel').setActiveTab('FE-help-' + FileID);
+
+                                    if (!Ext.getCmp('main-panel').findById('FE-help')) {
+
+                                        Ext.getCmp('main-panel').add({
+                                            closable: true,
+                                            title: _('About error type'),
+                                            iconCls: 'iconHelp',
+                                            id: 'FE-help',
+                                            autoScroll: true,
+                                            autoLoad: './error_type.php'
+                                        });
+                                        Ext.getCmp('main-panel').setActiveTab('FE-help');
+
+                                    } else {
+                                        Ext.getCmp('main-panel').setActiveTab('FE-help');
+                                    }
                                 }
                             }]
                         });
