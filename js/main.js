@@ -1008,7 +1008,7 @@ var phpDoc = function(){
             
                 if (btn === 'yes') {
                 
-                    var msg = Ext.MessageBox.wait('Please, wait...');
+                    var msg = Ext.MessageBox.wait(_('Please, wait...'));
                     
                     Ext.Ajax.request({
                         scope: scope,
@@ -2151,7 +2151,7 @@ var phpDoc = function(){
                         
                         // Display commit output message
                         winStatus = new Ext.Window({
-                            title: 'Status',
+                            title: _('Status'),
                             width: 450,
                             height: 350,
                             resizable: false,
@@ -3751,7 +3751,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, Wait...');
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -6676,7 +6676,7 @@ var phpDoc = function(){
                         
                             if (btn === 'yes') {
                             
-                                Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> Please, wait...');
+                                Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
                                 //
                                 Ext.Ajax.request({
                                     scope: this,
