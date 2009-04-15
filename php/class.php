@@ -1844,7 +1844,7 @@ class phpDoc
         @unlink($doc);
 
         // We need check for error in this file
-        $anode[0] = array( 0 => $path, 1 => $file, 2 => $lang);
+        $anode[0] = array( 0 => $lang.$path, 1 => $file);
         $error = $this->updateFilesError($anode, 'nocommit');
 
         // We need reload original lang_revision
