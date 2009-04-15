@@ -255,6 +255,10 @@ opacity:
     background-image: url(../themes/img/arrow_refresh.png) !important;
 } .iconDelete {
     background-image: url(../themes/img/delete.png) !important;
+} .iconFolderOpen {
+    background-image: url(../themes/img/folder-open.gif) !important;
+} .iconFolderClose {
+    background-image: url(../themes/img/folder.gif) !important;
 } .iconTabNeedReviewed {
     background-image: url(../themes/img/page_edit.png) !important;
 } .iconTabError {

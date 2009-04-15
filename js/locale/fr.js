@@ -102,9 +102,10 @@ i18n["Forbidden"] = "Interdit";
 i18n["You can\'t do this action as cvsread user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur cvsread.";
 i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
 i18n["If you want to be notified when your patch will be dealt with, thank you to leave an email address below."] = "Si vous voulez être averti lors du traitement de votre patch, merci de laisser une adresse email ci-dessous.";
-i18n[""] = "";
-
-
+i18n["Collapse"] = "Plier ce dossier";
+i18n["Expand"] = "Déplier ce dossier";
+i18n["Open the same file in <b>{0}</b>"] = "Ouvrir le même fichier en <b>{0}</b>";
+i18n["Repository"] = "Dépôt Cvs";
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
 

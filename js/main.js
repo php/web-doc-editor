@@ -6258,6 +6258,81 @@ var phpDoc = function(){
                 bodyBorder: false,
                 listeners: {
                     scope: this,
+                    contextmenu: function(node, e){
+
+                        var menu, expandSubMenu, FileName, FilePath, t, FileLang, OtherFileLibel, OtherFilePath;
+                        node.select();
+
+                        if (node.attributes.type === 'folder' || node.isRoot ) {
+
+                            if( node.isExpanded() ) {
+                                expandSubMenu = {
+                                    text: '<b>'+_('Collapse')+'</b>',
+                                    iconCls: 'iconFolderClose',
+                                    scope: this,
+                                    handler: function() { node.collapse(); }
+                                };
+                            }
+                            else {
+                                expandSubMenu = {
+                                    text: '<b>'+_('Expand')+'</b>',
+                                    iconCls: 'iconFolderClose',
+                                    scope: this,
+                                    handler: function() { node.expand(); }
+                                };
+                            }
+
+                            menu = new Ext.menu.Menu({
+                                items: [expandSubMenu]
+                            });
+                            menu.showAt(e.getXY());
+
+                        } else if (node.attributes.type === 'file') {
+
+                            FileName = node.attributes.text;
+                            FilePath = node.attributes.id;
+
+                            // CleanUp the path
+                            t = FilePath.split('/');
+                            t.shift();
+                            t.shift();
+                            t.pop();
+                            
+                            FileLang = t[0];
+                            t.shift();
+
+                            FilePath = t.join('/') + '/';
+
+                            if( FileLang === 'en' ) {
+                                OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), this.userLang);
+                                OtherFilePath = this.userLang+FilePath;
+
+                            } else {
+                                OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), 'en');
+                                OtherFilePath = 'en'+FilePath;
+                            }
+
+                            menu = new Ext.menu.Menu({
+                                items: [{
+                                    text: '<b>'+_('Edit in a new Tab')+'</b>',
+                                    iconCls: 'iconTabNeedReviewed',
+                                    scope: this,
+                                    handler: function() {
+                                      this.treeAllFiles.fireEvent('dblclick', node);
+                                    }
+                                },{
+                                    text: OtherFileLibel,
+                                    iconCls: 'iconTabNeedReviewed',
+                                    scope: this,
+                                    handler: function() {
+                                      this.openFile(OtherFilePath, FileName);
+                                    }
+                                }]
+                            });
+                            menu.showAt(e.getXY());
+
+                        }
+                    },
                     dblclick: function(node, e){
                     
                         var FileLang, FileName, FilePath, FileID, t, parserFile, storeLog, sm, gridLog, panelWest, panelCenter, menuMarkUp = '';
@@ -6631,7 +6706,7 @@ var phpDoc = function(){
             
             // set the root node
             this.treeAllFilesRoot = new Ext.tree.AsyncTreeNode({
-                text: 'Repository',
+                text: _('Repository'),
                 draggable: false, // disable root node dragging
                 id: '/'
             });
