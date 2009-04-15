@@ -127,7 +127,7 @@ var phpDoc = function(){
             Ext.MessageBox.alert(_('Forbidden'), _('You can\'t do this action as cvsread user.'));
         },
         
-        menuMarkupLANG: function(panel){
+        menuMarkupLANG: function(panel, scope){
         
             var menu, subMenu;
             
@@ -141,7 +141,7 @@ var phpDoc = function(){
                 }, {
                     text: _('Revcheck tag'),
                     handler: function(){
-                        Ext.getCmp(panel).insertIntoLine(2, "end", "\n<!-- EN-Revision: 1.XX Maintainer: " + this.userLogin + " Status: ready -->");
+                        Ext.getCmp(panel).insertIntoLine(2, "end", "\n<!-- EN-Revision: 1.XX Maintainer: " + scope.userLogin + " Status: ready -->");
                         Ext.getCmp(panel).focus();
                     }
                 }]
@@ -3607,7 +3607,7 @@ var phpDoc = function(){
                                             Ext.getCmp('FE-LANG-' + FileID).reIndentAll();
                                         }
                                         
-                                    }, this.menuMarkupLANG('FE-LANG-' + FileID)]
+                                    }, this.menuMarkupLANG('FE-LANG-' + FileID, this)]
                                 }, {
                                     title: _('En File: ') + FilePath + FileName,
                                     originTitle: _('En File: ') + FilePath + FileName,
@@ -4412,7 +4412,7 @@ var phpDoc = function(){
                                         handler: function(){
                                             Ext.getCmp('FNU-LANG-' + FileID).reIndentAll();
                                         }
-                                    }, this.menuMarkupLANG('FNU-LANG-' + FileID)]
+                                    }, this.menuMarkupLANG('FNU-LANG-' + FileID, this)]
                                 }, {
                                     title: _('En File: ') + FilePath + FileName,
                                     originTitle: _('En File: ') + FilePath + FileName,
@@ -5754,7 +5754,7 @@ var phpDoc = function(){
                                             Ext.getCmp('FNR-LANG-' + FileID).reIndentAll();
                                         }
                                         
-                                    }, this.menuMarkupLANG('FNR-LANG-' + FileID)]
+                                    }, this.menuMarkupLANG('FNR-LANG-' + FileID, this)]
                                 }, {
                                 
                                     title: _('En File: ') + FilePath + FileName,
@@ -6275,7 +6275,7 @@ var phpDoc = function(){
                                 FilePath = t.join('/') + '/';
                                 
                                 if (FileLang !== 'en') {
-                                    menuMarkUp = this.menuMarkupLANG('AF-FILE-' + FileID);
+                                    menuMarkUp = this.menuMarkupLANG('AF-FILE-' + FileID, this);
                                 }
                                 else {
                                     menuMarkUp = this.menuMarkupEN('AF-FILE-' + FileID);
