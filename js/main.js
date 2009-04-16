@@ -4603,21 +4603,21 @@ var phpDoc = function(){
                 loadMask: true,
                 columns: [{
                     id: 'name',
-                    header: "Files",
+                    header: _('Files'),
                     sortable: true,
                     dataIndex: 'name'
                 }, {
-                    header: "Posted by",
+                    header: _('Posted by'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'by'
                 }, {
-                    header: "Date",
+                    header: _('Date'),
                     width: 45,
                     sortable: true,
                     dataIndex: 'date'
                 }, {
-                    header: "Path",
+                    header: _('Path'),
                     dataIndex: 'path',
                     'hidden': true
                 }],

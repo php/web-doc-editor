@@ -117,7 +117,7 @@ i18n["Critical files"] = "Fichiers critiques";
 i18n["Files without revision tag"] = "Fichiers sans balise revcheck";
 i18n["Files available for translation"] = "Fichiers à traduire";
 i18n["Total"] = "Total";
-i18n[""] = "";
+i18n["Posted by"] = "Proposé par";
 
 
 // Main Menu
