@@ -6692,6 +6692,7 @@ var phpDoc = function(){
                                                     if (o.success) {
                                                     
                                                         // Update our store
+                                                        node.getUI().addClass('modified');
                                                         
                                                         // Add this files into storePendingCommit
                                                         this.addToPendingCommit(FilePath, FileName);
