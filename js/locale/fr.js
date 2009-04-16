@@ -110,7 +110,7 @@ i18n["Last data update: <em id=\"lastUpdateTime\">{0}</em>"] = "Dernière mise �
 i18n["update in progress..."] = "Mise en jour en cours...";
 i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l\'état de la mise à jour. Merci de patienter...";
 i18n["There is currently an update in progress.<br/>You can\'t perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l\'effectuer maintenant";
-i18n[""] = "";
+i18n["in {0}"] = "dans le dossier {0}";
 i18n[""] = "";
 i18n[""] = "";
 

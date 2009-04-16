@@ -1697,7 +1697,7 @@ var phpDoc = function(){
             
             PanType = tab.id.split('-');
             
-            if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP') && PanType[1] !== 'help') {
+            if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF') && PanType[1] !== 'help') {
             
                 if (PanType[0] === 'FE') {
                     stateLang = Ext.getCmp('FE-' + PanType[1]).isModifiedLang;
@@ -1721,6 +1721,10 @@ var phpDoc = function(){
                 
                 if (PanType[0] === 'PP') {
                     state = Ext.getCmp('PP-PATCH-' + PanType[1]).isModified;
+                }
+                
+                if (PanType[0] === 'AF') {
+                    state = Ext.getCmp('AF-FILE-' + PanType[1]).isModified;
                 }
                 
                 if (stateEn || stateLang || state) {
@@ -6742,7 +6746,7 @@ var phpDoc = function(){
                                     closable: true,
                                     title: FileName,
                                     originTitle: FileName,
-                                    tabTip: 'in ' + FilePath,
+                                    tabTip: String.format(_('in {0}'), FilePath),
                                     iconCls: 'AllFiles',
                                     id: 'AF-' + FileID,
                                     layout: 'border',
