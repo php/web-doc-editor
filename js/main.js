@@ -3151,10 +3151,10 @@ var phpDoc = function(){
                     }
                 });
                 
-                this.TaskPing.delay(3000);
+                this.TaskPing.delay(30000);
             }, this);
             
-            this.TaskPing.delay(3000); // start after 1 minute.
+            this.TaskPing.delay(30000); // start after 1 minute.
             // Grid : Files in Error
             gridFilesError = new Ext.grid.GridPanel({
                 store: this.storeFilesError,
