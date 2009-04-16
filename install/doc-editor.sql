@@ -13,6 +13,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `commitMessage` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `text` text NOT NULL,
   `userID` int(10) unsigned NOT NULL,
   KEY `id` (`id`)
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `commitMessage` (
 
 CREATE TABLE IF NOT EXISTS `dirs` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `parentDir` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   KEY `id` (`id`)
@@ -39,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `dirs` (
 
 CREATE TABLE IF NOT EXISTS `errorfiles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `path` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -57,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `errorfiles` (
 
 CREATE TABLE IF NOT EXISTS `files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `xmlid` varchar(255) DEFAULT NULL,
   `dir` int(11) unsigned NOT NULL,
@@ -91,6 +95,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 
 CREATE TABLE IF NOT EXISTS `pendingCommit` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `path` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -111,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `pendingCommit` (
 
 CREATE TABLE IF NOT EXISTS `pendingPatch` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `path` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -124,11 +130,26 @@ CREATE TABLE IF NOT EXISTS `pendingPatch` (
 -- --------------------------------------------------------
 
 --
+-- Structure of table `project`
+--
+
+CREATE TABLE IF NOT EXISTS `project` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `lastupdate` datetime NOT NULL,
+  `by` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure of table `translators`
 --
 
 CREATE TABLE IF NOT EXISTS `translators` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `lang` varchar(255) NOT NULL,
   `nick` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,

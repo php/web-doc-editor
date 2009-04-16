@@ -925,19 +925,6 @@ var phpDoc = function(){
                                         }]
                                     });
                                     win.show();
-                                    /*
-                                     var o, i;
-                                     
-                                     o = Ext.util.JSON.decode(action.responseText);
-                                     this.filePendingOpen = [];
-                                     
-                                     for (i = 0; i < o.files.length; i = i + 1) {
-                                     this.filePendingOpen[i] = ['en' + path, o.files[i].name];
-                                     }
-                                     
-                                     // Start the first
-                                     this.openFile(this.filePendingOpen[0][0], this.filePendingOpen[0][1]);
-                                     */
                                 }
                             });
                             
@@ -2389,6 +2376,9 @@ var phpDoc = function(){
                             // Desable the close button for this win
                             win.tools.close.setVisible(false);
                             
+                            // Set 'in progress'
+                            Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
+
                             // Start Step 1
                             RefreshStep1(this);
                             
@@ -2397,7 +2387,37 @@ var phpDoc = function(){
                 });
             }
             
-            win.show(btn);
+
+            // We test if there is an update in progress or not
+            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Verify if there is an update in progress. Please, wait...'));
+
+            Ext.Ajax.request({
+                url: './php/controller.php',
+                params: {
+                    task: 'get-last-update'
+                },
+                success: function(r){
+                
+                    // Remove wait msg
+                    Ext.getBody().unmask();
+
+                    var o = Ext.util.JSON.decode(r.responseText);
+
+                    if( o.lastupdate === 'in_progress' ) {
+                        Ext.MessageBox.show({
+                            title: _('Status'),
+                            msg: _('There is currently an update in progress.<br/>You can\'t perform an update now.'),
+                            buttons: Ext.MessageBox.OK,
+                            icon: Ext.MessageBox.INFO
+                        });
+                    } else {
+                        win.show(btn);
+                    }
+
+
+                }
+            });
+
         }, // Winupdate
         WinCheckBuild: function(){
         
@@ -3110,8 +3130,20 @@ var phpDoc = function(){
                     },
                     success: function(r){
                     
-                        if (r.responseText !== 'pong') {
+                        var o = Ext.util.JSON.decode(r.responseText);
+                        if (o.ping !== 'pong') {
                             window.location.href = './';
+                        } else {
+
+                            if( o.lastupdate === 'in_progress' ) {
+                                Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
+                            } else {
+                                var dt = Date.parseDate(o.lastupdate, "Y-m-d H:i:s");
+
+                                // We update the lastupdate date/time
+                                Ext.getDom('lastUpdateTime').innerHTML = dt.format('Y-m-d, H:i');
+                            }
+
                         }
                     },
                     failure: function(){
@@ -3119,10 +3151,10 @@ var phpDoc = function(){
                     }
                 });
                 
-                this.TaskPing.delay(30000);
+                this.TaskPing.delay(3000);
             }, this);
             
-            this.TaskPing.delay(30000); // start after 1 minute.
+            this.TaskPing.delay(3000); // start after 1 minute.
             // Grid : Files in Error
             gridFilesError = new Ext.grid.GridPanel({
                 store: this.storeFilesError,
@@ -6066,7 +6098,7 @@ var phpDoc = function(){
                     width: 140,
                     sortable: true,
                     dataIndex: 'pubDate',
-                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                    renderer: Ext.util.Format.dateRenderer('d/m/Y, H:i')
                 }],
                 autoScroll: true,
                 height: 400,
@@ -6925,6 +6957,8 @@ var phpDoc = function(){
                             '<div class="res-block-inner">' +
                             '<h3>'+
                             String.format(_('Connected as <em>{0}</em>'), this.userLogin) +
+                            '<br/><br/>'+
+                            String.format(_('Last data update: <em id="lastUpdateTime">{0}</em>'), '-') +
                             '</h3>' +
                             '</div>' +
                             '</div>'

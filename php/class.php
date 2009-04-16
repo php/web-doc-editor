@@ -4078,4 +4078,50 @@ EOD;
         return $node;
     } // get_Check_Doc_Files
 
+    /**
+      * Get the last update datetime
+      * @return The last update datetime or "in_progress" if the update is in progress
+      */
+    function get_last_update()
+    {
+        // Test is there is an update in progress
+        $lock_update = new LockFile('lock_update_repository');
+        $lock_apply = new LockFile('lock_apply_tools');
+
+        if( $lock_update->isLocked() || $lock_apply->isLocked() ) { return array('lastupdate'=>'in_progress', 'by'=>'-'); }
+        else {
+
+            $s = 'SELECT lastupdate, `by` FROM `project` WHERE `name`="php"';
+            $r = $this->db->query($s);
+            $a = $r->fetch_assoc();
+
+            return $a;
+
+        }
+
+
+    } // get_last_update
+
+    /**
+      * Set the last update datetime into DB
+      * @return Nothing
+      */
+    function set_last_update()
+    {
+
+        $s = 'SELECT lastupdate, `by` FROM `project` WHERE `name`="php"';
+        $r = $this->db->query($s);
+        $nb = $r->num_rows;
+
+        if( $nb == 0 ) {
+            $s = 'INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), \''.( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ).'\')';
+        } else {
+            $s = 'UPDATE `project` SET `lastupdate`=now(), `by`=\''.( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ).'\' WHERE `name`=\'php\'';
+        }
+        $r = $this->db->query($s);
+
+        return;
+
+    } // get_last_update
+
 } // End of class

@@ -106,6 +106,15 @@ i18n["Collapse"] = "Plier ce dossier";
 i18n["Expand"] = "Déplier ce dossier";
 i18n["Open the same file in <b>{0}</b>"] = "Ouvrir le même fichier en <b>{0}</b>";
 i18n["Repository"] = "Dépôt Cvs";
+i18n["Last data update: <em id=\"lastUpdateTime\">{0}</em>"] = "Dernière mise à jour : <em id=\"lastUpdateTime\">{0}</em>";
+i18n["update in progress..."] = "Mise en jour en cours...";
+i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l\'état de la mise à jour. Merci de patienter...";
+i18n["There is currently an update in progress.<br/>You can\'t perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l\'effectuer maintenant";
+i18n[""] = "";
+i18n[""] = "";
+i18n[""] = "";
+
+
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
 

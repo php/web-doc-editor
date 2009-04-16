@@ -44,6 +44,10 @@ flush();
 // Parse translators
 $phpDoc->rev_parse_translation();
 
+// We update the last update date/time into DB
+$phpDoc->set_last_update();
+
+
 if ($isCLI) {
     echo "\n\nInstallation completed!\n";
 } else {

@@ -162,6 +162,9 @@ class ExtJsController
             // Parse translators
             $this->phpDoc->rev_parse_translation();
 
+            // Set lastUpdate date/time
+            $this->phpDoc->set_last_update();
+
             // Check errors in files
             //        $tool = new ToolsError($_SESSION['lang']);
             //       $tool->run('/');
@@ -219,7 +222,13 @@ class ExtJsController
      */
     public function ping()
     {
-        return !isset($_SESSION['userID']) ? 'false' : 'pong';
+        $this->phpDoc->isLogged();
+        $r = $this->phpDoc->get_last_update();
+
+        $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
+
+        return $this->getResponse(array('ping' => $response, 'lastupdate' => $r['lastupdate'], 'by' => $r['by']));
+
     }
 
     //NEW
@@ -847,6 +856,14 @@ class ExtJsController
         $graph->Stroke();
 
         return '';
+    }
+
+    public function get_last_update() {
+
+        $this->phpDoc->isLogged();
+        $r = $this->phpDoc->get_last_update();
+
+        return $this->getResponse(array('success' => true, 'lastupdate' => $r['lastupdate']));
     }
 
 }
