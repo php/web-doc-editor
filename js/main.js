@@ -3783,7 +3783,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -3927,7 +3927,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -5069,7 +5069,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
@@ -5118,6 +5118,8 @@ var phpDoc = function(){
                                     function goClearChange(btn){
                                         if (btn === 'yes') {
                                         
+                                            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
+
                                             // Before clear local change, we close the file if there is open
                                             if (Ext.getCmp('main-panel').findById('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName))) {
                                                 Ext.getCmp('main-panel').remove('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName));
@@ -5136,6 +5138,8 @@ var phpDoc = function(){
                                                     var o = Ext.util.JSON.decode(action.responseText);
                                                     if (o.success) {
                                                     
+                                                        var node;
+
                                                         if (this.userLang === 'en') {
                                                             // We reload all store
                                                             this.storeFilesNeedUpdate.reload();
@@ -5148,9 +5152,39 @@ var phpDoc = function(){
                                                         
                                                         // We fire event add to update the file count
                                                         this.storePendingCommit.fireEvent('add', this.storePendingCommit);
-                                                        
+
+                                                        // We try to search in others stores if this file is marked as needCommit
+
+                                                        // trow storeFilesNeedReviewed
+                                                        this.storeFilesNeedReviewed.each(function(record){
+                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                                                record.set('needcommit', false);
+                                                            }
+                                                        }, this);
+
+                                                        // trow storeFilesNeedUpdate
+                                                        this.storeFilesNeedUpdate.each(function(record){
+                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                                                record.set('needcommit', false);
+                                                            }
+                                                        }, this);
+
+                                                        // trow FileError
+                                                        this.storeFilesError.each(function(record){
+                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                                                record.set('needcommit', false);
+                                                            }
+                                                        }, this);
+
+                                                        // find open node in All Files modules
+                                                        node = this.treeAllFiles.getNodeById('//'+FilePath+FileName);
+                                                        if( node ) {
+                                                          node.getUI().removeClass('modified');
+                                                        }
+                                                        Ext.getBody().unmask();
                                                     }
                                                     else {
+                                                        Ext.getBody().unmask();
                                                         this.winForbidden();
                                                     }
                                                     
@@ -5283,7 +5317,7 @@ var phpDoc = function(){
                                     });
                                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                     
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, Wait...'));
+                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
                                     
                                     // Load diff data
                                     Ext.Ajax.request({
