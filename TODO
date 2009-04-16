@@ -46,7 +46,6 @@ JAVASCRIPT:
 ===========
 
 * Clean up the namespaces
-* Implement i18n
 * Split main.js to several objects & files (to be discussed)
 * Implement RTL where appropriate
 
