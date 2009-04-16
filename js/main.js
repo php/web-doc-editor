@@ -6001,8 +6001,16 @@ var phpDoc = function(){
                     scope: this,
                     render: function(grid){
                         grid.store.load.defer(20, grid.store);
+                    },
+                    rowdblclick: function ( Grid, rowIndex, e ) {
+                      var id = this.storeSummary.getAt(rowIndex).data.id;
+
+                      //Up to date files, Old files, Criticals files
+                      if( id === 1 || id === 2 || id === 3) {
+                          Ext.getCmp('acc-need-update').expand();
+                      }
+
                     }
-                    
                 }
             });
             
