@@ -641,6 +641,36 @@ var phpDoc = function(){
                     mapping: 'percentSize'
                 }])
             });
+
+            this.storeSummary.on('load', function() {
+
+                this.storeSummary.each(function(record) {
+
+                    if( record.id === 1 ) {
+                        record.set('libel', _('Up to date files'));
+                    }
+                    if( record.id === 2 ) {
+                        record.set('libel', _('Old files'));
+                    }
+                    if( record.id === 3 ) {
+                        record.set('libel', _('Critical files'));
+                    }
+                    if( record.id === 4 ) {
+                        record.set('libel', _('Files without revision tag'));
+                    }
+                    if( record.id === 5 ) {
+                        record.set('libel', _('Files available for translation'));
+                    }
+                    if( record.id === 6 ) {
+                        record.set('libel', _('Total'));
+                    }
+                    record.commit();
+
+                }, this);
+
+
+            }, this);
+
             
         }, // loadDataStore
         newTabCheckDoc: function(){
@@ -6002,8 +6032,8 @@ var phpDoc = function(){
                     render: function(grid){
                         grid.store.load.defer(20, grid.store);
                     },
-                    rowdblclick: function ( Grid, rowIndex, e ) {
-                      var id = this.storeSummary.getAt(rowIndex).data.id;
+                    rowdblclick: function ( grid, rowIndex, e ) {
+                      var id = grid.store.getAt(rowIndex).data.id;
 
                       //Up to date files, Old files, Criticals files
                       if( id === 1 || id === 2 || id === 3) {
