@@ -10,7 +10,9 @@ $phpDoc->isLogged();
 if (isset($_GET['dir']) && isset($_GET['file'])) {
 
     // We retrieve all this error from DB to display the value.
-    $error_to_display = $phpDoc->tools_error_getInfo($_GET['dir'], $_GET['file']);
+    $errorTools = new ToolsError($phpDoc->db);
+    $errorTools->setParams('', '', $phpDoc->cvsLang, $_GET['dir'], $_GET['file'], '');
+    $error_to_display = $errorTools->getInfo();
 
     $fileLibel = $_GET['dir'] . $_GET['file'];
 

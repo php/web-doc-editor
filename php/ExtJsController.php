@@ -248,7 +248,15 @@ class ExtJsController
     // NEW
     public function GetFilesError() {
         $this->phpDoc->isLogged();
-        $r = $this->phpDoc->get_files_error();
+
+        
+        $errorTools = new ToolsError($this->phpDoc->db);
+        $errorTools->setParams('', '', $this->phpDoc->cvsLang, '', '', '');
+        $r = $errorTools->getFilesError($this->phpDoc->get_modified_files());
+
+        //$r = $this->phpDoc->get_files_error();
+
+
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
@@ -351,8 +359,13 @@ class ExtJsController
         //$error = $this->phpDoc->tools_error_check_all($fileContent, $en_content);
 
         // Update DB with this new Error (if any)
-        $anode[0] = array( 0 => $FileLang.$FilePath, 1 => $FileName);
-        $r = $this->phpDoc->updateFilesError($anode, 'nocommit', $FileContent, $en_content);
+        $info = $this->phpDoc->getInfoFromContent($FileContent);
+        $anode[0] = array( 0 => $FileLang.$FilePath, 1 => $FileName, 2 => $en_content, 3 => $FileContent, 4 => $info['maintainer']);
+
+        $errorTools = new ToolsError($this->phpDoc->db);
+        $r = $errorTools->updateFilesError($anode, 'nocommit');
+
+        //$r = $this->phpDoc->updateFilesError($anode, 'nocommit');
 
         return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
     }
@@ -603,7 +616,30 @@ class ExtJsController
         $this->phpDoc->updateRev($anode);
 
         // Update FilesError for all this files
-        $this->phpDoc->updateFilesError($anode);
+        for ($i = 0; $i < count($anode); $i++) {
+
+            $t = explode("/", $anode[$i][0]);
+
+            $FileLang = $t[0];
+            array_shift($t);
+
+            $FilePath = '/'.implode("/", $t);
+            $FileName = $anode[$i][1];
+
+            $en_content     = file_get_contents(DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName);
+            $lang_content   = file_get_contents(DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName);
+
+            $info = $this->phpDoc->getInfoFromContent($lang_content);
+
+            $anode[$i][2] = $en_content;
+            $anode[$i][3] = $lang_content;
+            $anode[$i][4] = $info['maintainer'];
+        }
+
+        $errorTools = new ToolsError($this->phpDoc->db);
+        $errorTools->updateFilesError($anode);
+
+        //$this->phpDoc->updateFilesError($anode);
 
         // Remove all this files in needcommit
         $this->phpDoc->removeNeedCommit($anode);
