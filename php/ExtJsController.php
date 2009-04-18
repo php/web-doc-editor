@@ -298,8 +298,8 @@ class ExtJsController
 
         $this->phpDoc->isLogged();
 
-        $bugs = new NewsReader($this->phpDoc->cvsLang);
-        $r = $bugs->getLastNews();
+        $news = new NewsReader($this->phpDoc->cvsLang);
+        $r = $news->getLastNews();
 
         return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
     }
