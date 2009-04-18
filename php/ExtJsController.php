@@ -294,7 +294,7 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => count($summary), 'Items' => $summary));
     }
 
-    public function get_mailing_info() {
+    public function get_last_news() {
 
         $this->phpDoc->isLogged();
 
