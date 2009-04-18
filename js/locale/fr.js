@@ -5,6 +5,9 @@ TODO: We must reorder the generic section
 
 var i18n = new Array();
 
+// Date/Time
+i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
+
 // Generic
 i18n["Close"] = "Fermer";
 i18n["Confirm"] = "Confirmation";
@@ -118,7 +121,8 @@ i18n["Files without revision tag"] = "Fichiers sans balise revcheck";
 i18n["Files available for translation"] = "Fichiers à traduire";
 i18n["Total"] = "Total";
 i18n["Posted by"] = "Proposé par";
-
+i18n["This action will <b>reject</b> this patch, send an email to his author and close this tab."] = "Cette action va <b>rejeter</b> ce patch, envoyer un email à son auteur et fermer cet onglet.";
+i18n["This action will accept this patch, send an email to his author, save the file and close this tab."] = "Cette action va accepter ce patch, envoyer un email à son auteur et fermer cet onglet.";
 
 // Main Menu
 i18n["Main Menu"] = "Menu principal";

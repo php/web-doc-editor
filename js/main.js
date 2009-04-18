@@ -437,7 +437,9 @@ var phpDoc = function(){
                     mapping: 'by'
                 }, {
                     name: 'date',
-                    mapping: 'date'
+                    mapping: 'date',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
                 }]),
                 sortInfo: {
                     field: 'path',
@@ -484,7 +486,9 @@ var phpDoc = function(){
                     mapping: 'uniqID'
                 }, {
                     name: 'date',
-                    mapping: 'date'
+                    mapping: 'date',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
                 }]),
                 sortInfo: {
                     field: 'path',
@@ -1063,7 +1067,7 @@ var phpDoc = function(){
                     
                 } // btn = yes
             } // goRejectPatch
-            Ext.MessageBox.confirm(_('Confirm'), 'This action will <b>reject</b> this patch, send an email to his author and close this tab.', goRejectPatch, scope);
+            Ext.MessageBox.confirm(_('Confirm'), _('This action will <b>reject</b> this patch, send an email to his author and close this tab.'), goRejectPatch, scope);
             
         }, //rejectPatch
         saveFileViaPatch: function(FileID, FilePath, FileName, FileUniqID, rowIndex, scope){
@@ -1130,7 +1134,7 @@ var phpDoc = function(){
                 } // btn = yes
             }
             
-            Ext.MessageBox.confirm(_('Confirm'), 'This action will accept this patch, send an email to his author, save the file and close this tab.', goAcceptPatch, scope);
+            Ext.MessageBox.confirm(_('Confirm'), _('This action will accept this patch, send an email to his author, save the file and close this tab.'), goAcceptPatch, scope);
             
         }, //saveFileViaPatch
         saveEnFile: function(FileID, FilePath, FileName, Panel, rowIndex, scope){
@@ -1571,7 +1575,7 @@ var phpDoc = function(){
                 name: FileName,
                 by: this.userLogin,
                 uniqID: uniqID,
-                date: dt.format("Y-m-d H:i:s")
+                date: dt
             });
             this.storePendingPatch.insert(0, r);
             
@@ -1599,7 +1603,7 @@ var phpDoc = function(){
                     path: FilePath,
                     name: FileName,
                     by: this.userLogin,
-                    date: dt.format("Y-m-d H:i:s")
+                    date: dt
                 });
                 this.storePendingCommit.insert(0, r1);
             }
@@ -3175,7 +3179,7 @@ var phpDoc = function(){
                                 var dt = Date.parseDate(o.lastupdate, "Y-m-d H:i:s");
 
                                 // We update the lastupdate date/time
-                                Ext.getDom('lastUpdateTime').innerHTML = dt.format('Y-m-d, H:i');
+                                Ext.getDom('lastUpdateTime').innerHTML = dt.format(_('Y-m-d, H:i'));
                             }
 
                         }
@@ -3384,7 +3388,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -3480,7 +3484,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -4147,7 +4151,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -4242,7 +4246,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -4615,7 +4619,8 @@ var phpDoc = function(){
                     header: _('Date'),
                     width: 45,
                     sortable: true,
-                    dataIndex: 'date'
+                    dataIndex: 'date',
+                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                 }, {
                     header: _('Path'),
                     dataIndex: 'path',
@@ -4769,7 +4774,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -5051,7 +5056,8 @@ var phpDoc = function(){
                     header: _('Date'),
                     width: 45,
                     sortable: true,
-                    dataIndex: 'date'
+                    dataIndex: 'date',
+                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                 }, {
                     header: _('Path'),
                     dataIndex: 'path',
@@ -5583,7 +5589,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -5679,7 +5685,7 @@ var phpDoc = function(){
                                     width: 85,
                                     sortable: true,
                                     dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                 }],
                                 autoScroll: true,
                                 autoExpandColumn: 'content',
@@ -6174,7 +6180,7 @@ var phpDoc = function(){
                     width: 140,
                     sortable: true,
                     dataIndex: 'pubDate',
-                    renderer: Ext.util.Format.dateRenderer('d/m/Y, H:i')
+                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                 }],
                 autoScroll: true,
                 height: 400,
@@ -6577,7 +6583,7 @@ var phpDoc = function(){
                                         width: 85,
                                         sortable: true,
                                         dataIndex: 'date',
-                                        renderer: Ext.util.Format.dateRenderer('Y/m/d, H:i')
+                                        renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                                     }],
                                     autoScroll: true,
                                     autoExpandColumn: 'content',
