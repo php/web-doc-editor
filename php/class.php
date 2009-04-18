@@ -1991,52 +1991,68 @@ class phpDoc
 
     }
 
-    function getAllFiles($node) {
+    function getAllFiles($node, $search='') {
 
         // Get Files Need Commit
         $ModifiedFiles = $this->getModifiedFiles();
 
-        // Security
-        $node = str_replace('..', '', $node);
+        if( $search == '' ) {
 
-        $d = dir(DOC_EDITOR_CVS_PATH.$node);
+            // Security
+            $node = str_replace('..', '', $node);
 
-        $nodes = array();
-        while($f = $d->read()){
+            $d = dir(DOC_EDITOR_CVS_PATH.$node);
 
-            // We display only 'en' and 'LANG' tree
-            if ($node == '/' && $f != 'en' && $f != $this->cvsLang ) {
-                continue;
-            }
+            $nodes = array();
+            while($f = $d->read()){
 
-
-            if ($f == '.'  ||
-            $f == '..' ||
-            substr($f, 0, 1)  == '.' || // skip hidden files
-            substr($f, -4)    == '.new' || // skip pendingCommit files
-            substr($f, -6)    == '.patch' || // skip pendingPatch files
-            $f == 'CVS'
-
-            ) continue;
-
-            if (is_dir(DOC_EDITOR_CVS_PATH . $node . '/' . $f)) {
-                $nodes[] = array('text' => $f, 'id' => $node . '/' . $f, 'cls' => 'folder', 'type' => 'folder');
-            } else {
-
-                if (isset($ModifiedFiles[substr($node, 2, (strlen($node)-1)).'/'.$f])) {
-                    $cls = 'file modified';
-                } else {
-                    $cls = 'file';
+                // We display only 'en' and 'LANG' tree
+                if ($node == '/' && $f != 'en' && $f != $this->cvsLang ) {
+                    continue;
                 }
 
-                // Get extension
-                $t       = explode('.',$f);
+
+                if ($f == '.'  ||
+                $f == '..' ||
+                substr($f, 0, 1)  == '.' || // skip hidden files
+                substr($f, -4)    == '.new' || // skip pendingCommit files
+                substr($f, -6)    == '.patch' || // skip pendingPatch files
+                $f == 'CVS'
+
+                ) continue;
+
+                if (is_dir(DOC_EDITOR_CVS_PATH . $node . '/' . $f)) {
+                    $nodes[] = array('text' => $f, 'id' => $node . '/' . $f, 'cls' => 'folder', 'type' => 'folder');
+                } else {
+
+                    if (isset($ModifiedFiles[substr($node, 2, (strlen($node)-1)).'/'.$f])) {
+                        $cls = 'file modified';
+                    } else {
+                        $cls = 'file';
+                    }
+
+                    // Get extension
+                    $t       = explode('.',$f);
+                    $ext     = $t[count($t)-1];
+                    $nodes[] = array('text'=>$f, 'id'=>$node.'/'.$f, 'leaf'=>true, 'cls'=>$cls, 'extension'=>$ext, 'type'=>'file');
+
+                }
+            }
+            $d->close();
+
+        } else {
+
+            $s = 'SELECT lang, path, name FROM files WHERE (lang=\''.$this->cvsLang.'\' OR lang=\'en\') AND name LIKE \'%'.$search.'%\' ORDER BY lang, path, name';
+            $r = $this->db->query($s) or die($this->db->error.'|'.$s);
+            while ($a = $r->fetch_object()) {
+
+                $t       = explode('.',$a->name);
                 $ext     = $t[count($t)-1];
-                $nodes[] = array('text'=>$f, 'id'=>$node.'/'.$f, 'leaf'=>true, 'cls'=>$cls, 'extension'=>$ext, 'type'=>'file');
+                $nodes[] = array('text'=>$a->lang.$a->path.$a->name, 'id'=>'//'.$a->lang.$a->path.$a->name, 'leaf'=>true, 'cls'=>'file', 'extension'=>$ext, 'type'=>'file');
 
             }
+
         }
-        $d->close();
         return $nodes;
     }
 

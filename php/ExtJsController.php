@@ -660,8 +660,9 @@ class ExtJsController
         $this->phpDoc->isLogged();
 
         $node  = $this->getRequestVariable('node');
+        $search  = $this->getRequestVariable('search');
 
-        $files = $this->phpDoc->getAllFiles($node);
+        $files = $this->phpDoc->getAllFiles($node, $search);
 
         return $this->getResponse($files);
     }

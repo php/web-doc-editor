@@ -6371,16 +6371,52 @@ var phpDoc = function(){
                 containerScroll: true,
                 bodyBorder: false,
                 tbar:[
-                    'Search: ', ' ',
+                    _('Search: '), ' ',
                     new Ext.form.TwinTriggerField({
+                        id: 'AF-search',
                         validationEvent:false,
                         validateOnBlur:false,
                         trigger1Class:'x-form-clear-trigger',
                         trigger2Class:'x-form-search-trigger',
                         hideTrigger1:true,
                         width:180,
-                        hasSearch : false,
-                        paramName : 'query',
+                        scope: this,
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function(field, e){
+                                if (e.getKey() == e.ENTER) {
+                                    this.onTrigger2Click();
+                                }
+                            }
+                        },
+                        onTrigger1Click: function() {
+
+                            this.setValue('');
+                            this.triggers[0].hide();
+                            this.scope.treeAllFiles.root.setText(_('Repository'));
+                            this.scope.treeAllFiles.loader = new Ext.tree.TreeLoader({
+                                baseParams:{task: 'getAllFiles'},
+                                dataUrl: './php/controller.php'
+                            });
+                            this.scope.treeAllFiles.root.reload();
+
+                        },
+                        onTrigger2Click: function() {
+
+                            var v = this.getValue();
+
+                            if( v == '' || v.length < 3) { return; }
+
+                            this.triggers[0].show();
+                            this.scope.treeAllFiles.root.setText(_('Search result'));
+
+                            this.scope.treeAllFiles.loader = new Ext.tree.TreeLoader({
+                              baseParams:{search:v, task: 'getAllFiles'},
+                              dataUrl: './php/controller.php'
+                            });
+                            this.scope.treeAllFiles.root.reload();
+
+                        }
                     })
                 ],
                 listeners: {
@@ -6467,10 +6503,9 @@ var phpDoc = function(){
                         // Only for files
                         if (node.attributes.type === 'file') {
                         
-                            FileName = node.attributes.text;
                             FilePath = node.attributes.id;
-                            FileID = Ext.util.md5('AF-' + FilePath + FileName);
-                            
+                            FileID = Ext.util.md5('AF-' + FilePath);
+
                             // Render only if this tab don't exist yet
                             if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
                             
@@ -6478,11 +6513,14 @@ var phpDoc = function(){
                                 t = FilePath.split('/');
                                 t.shift();
                                 t.shift();
+
+                                FileName = t[t.length - 1];
+
                                 t.pop();
-                                
+
                                 FileLang = t[0];
                                 FilePath = t.join('/') + '/';
-                                
+
                                 if (FileLang !== 'en') {
                                     menuMarkUp = this.menuMarkupLANG('AF-FILE-' + FileID, this);
                                 }
@@ -7009,7 +7047,14 @@ var phpDoc = function(){
                             layout: 'fit',
                             iconCls: 'AllFiles',
                             items: [this.treeAllFiles],
-                            collapsed: true
+                            collapsed: true,
+                            listeners: {
+                                expand: function(panel) {
+                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
+                                    Ext.getCmp('AF-search').wrap.setWidth(200);
+                                }
+                            }
+
                         }, {
                             title: _('Pending for commit')+' - <em id="acc-pendingCommit-nb">0</em>',
                             id: 'acc-need-pendingCommit',
