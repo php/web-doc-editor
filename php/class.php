@@ -250,7 +250,7 @@ class phpDoc
      * Part of the revcheck tools. Start the Revcheck tools.
      * @return Nothing.
      */
-    function rev_start() {
+    function revStart() {
 
         $this->db->query("INSERT INTO dirs (parentDir, name) VALUES (0, '/');");
         $firstDir = $this->db->insert_id;
@@ -604,7 +604,7 @@ class phpDoc
      * @param $tags_attrs The string to parse.
      * @return An associated array who key are the name of the attribut, and value, the value of the attribut.
      */
-    function rev_parse_attr_string($tags_attrs) {
+    function revParseAttrString($tags_attrs) {
         $tag_attrs_processed = array();
 
         // Go through the tag attributes
@@ -626,7 +626,7 @@ class phpDoc
         return $tag_attrs_processed;
     }
 
-    function rev_check_old_files($dir = '') {
+    function revCheckOldFiles($dir = '') {
 
         if ($dh = opendir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir)) {
 
@@ -674,7 +674,7 @@ class phpDoc
             // Directories..
             if (!empty($entriesDir)) {
                 foreach ($entriesDir as $Edir) {
-                    $this->rev_check_old_files($dir . '/' . $Edir);
+                    $this->revCheckOldFiles($dir . '/' . $Edir);
                 }
             }
         }
@@ -685,7 +685,7 @@ class phpDoc
      * Part of the revcheck tools. Parse the translation's file witch hold all informations about all translators and put it into database.
      * @return Nothing.
      */
-    function rev_parse_translation() {
+    function revParseTranslation() {
 
         reset($this->availableLanguage);
         while (list(, $lang) = each($this->availableLanguage)) {
@@ -706,7 +706,7 @@ class phpDoc
                 $matches = array();
                 if (preg_match_all('!<person (.+)/\\s?>!U', $txml, $matches)) {
                     $default = array('cvs' => 'n/a', 'nick' => 'n/a', 'editor' => 'n/a', 'email' => 'n/a', 'name' => 'n/a');
-                    $persons = $this->rev_parse_attr_string($matches[1]);
+                    $persons = $this->revParseAttrString($matches[1]);
 
                     $charset = $this->getFileEncoding($txml, 'content');
 
@@ -731,7 +731,7 @@ class phpDoc
      * Get all modified files.
      * @return An associated array containing all informations about modified files.
      */
-    function get_modified_files() {
+    function getModifiedFiles() {
 
         // Get Modified Files
         $s = sprintf('SELECT `id`, `lang`, `path`, `name`, CONCAT("1.", `revision`) AS `revision`,
@@ -754,10 +754,10 @@ class phpDoc
      * Get all files witch need to be updated.
      * @return An associated array containing all informations about files witch need to be updated.
      */
-    function get_files_need_update() {
+    function getFilesNeedUpdate() {
 
         // Get Files Need Commit
-        $ModifiedFiles = $this->get_modified_files();
+        $ModifiedFiles = $this->getModifiedFiles();
 
         $s = 'SELECT * FROM `files` WHERE `lang` = \''.$this->cvsLang.'\' AND `revision` != `en_revision`';
         $r = $this->db->query($s);
@@ -811,10 +811,10 @@ class phpDoc
      * Get all files witch need to be reviewed.
      * @return An associated array containing all informations about files witch need to be reviewed.
      */
-    function get_files_need_reviewed() {
+    function getFilesNeedReviewed() {
 
         // Get Files Need Commit
-        $ModifiedFiles = $this->get_modified_files();
+        $ModifiedFiles = $this->getModifiedFiles();
 
         $s = 'SELECT * FROM `files` WHERE `lang` = \''.$this->cvsLang.'\' AND `revision` = `en_revision` AND reviewed != \'yes\' LIMIT 100';
         $r = $this->db->query($s);
@@ -859,7 +859,7 @@ class phpDoc
      * Get all pending patch.
      * @return An associated array containing all informations about pending patch.
      */
-    function get_files_pending_patch() {
+    function getFilesPendingPatch() {
 
         $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS \'by\',
         `uniqID`, `date` FROM `pendingPatch` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
@@ -879,7 +879,7 @@ class phpDoc
      * Get all files pending for commit.
      * @return An associated array containing all informations about files pending for commit.
      */
-    function get_files_pending_commit() {
+    function getFilesPendingCommit() {
 
         $s = 'SELECT * FROM `pendingCommit` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
         $r = $this->db->query($s) or die($this->db->error);
@@ -923,7 +923,7 @@ class phpDoc
      * Get all statistiques about translators.
      * @return An indexed array containing all statistiques about translators (nb uptodate files, nb old files, etc...)
      */
-    function get_translators_info() {
+    function getTranslatorsInfo() {
 
         $translators = $this->get_translators();
         $uptodate    = $this->translator_get_uptodate();
@@ -947,17 +947,17 @@ class phpDoc
      * Get summary of all statistiques.
      * @return An indexed array containing all statistiques for the summary
      */
-    function get_summary_info() {
+    function getSummaryInfo() {
 
-        $nbFiles     = $this->get_nb_files();
+        $nbFiles     = $this->getNbFiles();
 
-        $uptodate    = $this->get_nb_files_Translated();
-        $old         = $this->get_stats_old();
-        $critical    = $this->get_stats_critical();
+        $uptodate    = $this->getNbFilesTranslated();
+        $old         = $this->getStatsOld();
+        $critical    = $this->getStatsCritical();
 
-        $missFiles = $this->get_stats_notrans();
+        $missFiles = $this->getStatsNoTrans();
 
-        $withoutRevTag = $this->get_stats_notag();
+        $withoutRevTag = $this->getStatsNoTag();
 
         $nbFiles[1] = $uptodate[1]+$old[1]+$critical[1]+$withoutRevTag[1]+$missFiles[1];
 
@@ -1110,7 +1110,7 @@ class phpDoc
      * Get number of files.
      * @return An indexed array.
      */
-    function get_nb_files() {
+    function getNbFiles() {
         $sql = '
             SELECT
                 COUNT(*) AS total,
@@ -1131,7 +1131,7 @@ class phpDoc
      * Get number of translated files.
      * @return Number of translated files.
      */
-    function get_nb_files_Translated() {
+    function getNbFilesTranslated() {
 
         $sql = 'SELECT
                 COUNT(name) AS total,
@@ -1154,7 +1154,7 @@ class phpDoc
      * Get statistic about critical files witch need to be updated.
      * @return An associated array (total=>nb files, total_size=>size of this files).
      */
-    function get_stats_critical() {
+    function getStatsCritical() {
         $sql = 'SELECT
                 COUNT(name) AS total,
                 SUM(size) AS total_size
@@ -1182,7 +1182,7 @@ class phpDoc
      * Get statistic about old files witch need to be deleted from LANG tree.
      * @return An associated array (total=>nb files, total_size=>size of this files).
      */
-    function get_stats_old()
+    function getStatsOld()
     {
         $sql = 'SELECT
                 COUNT(name) AS total,
@@ -1214,7 +1214,7 @@ class phpDoc
      * Get statistic about files witch need to be translated.
      * @return An associated array (total=>nb files, size=>size of this files).
      */
-    function get_stats_notrans()
+    function getStatsNoTrans()
     {
         $sql = 'SELECT
                 COUNT(a.name) as total, 
@@ -1249,7 +1249,7 @@ class phpDoc
      * Get statistic about missed files witch need to be added to LANG tree.
      * @return An array of missed files (size=>size of the file, file=>name of the file).
      */
-    function get_missfiles()
+    function getMissFiles()
     {
         $sql = 'SELECT
                 b.size as size, 
@@ -1290,7 +1290,7 @@ class phpDoc
      * Get statistic about files witch haven't revcheck's tags.
      * @return An associated array (total=>nb files, size=>size of this files).
      */
-    function get_stats_notag()
+    function getStatsNoTag()
     {
         $sql = 'SELECT
                 COUNT(a.name) as total,
@@ -1338,7 +1338,7 @@ class phpDoc
 
         $match = array();
         preg_match('!<\?xml(.+)\?>!U', $txml, $match);
-        $xmlinfo = $this->rev_parse_attr_string($match);
+        $xmlinfo = $this->revParseAttrString($match);
 
         $charset = (isset($xmlinfo[1]['encoding'])) ? strtolower($xmlinfo[1]['encoding']) : 'iso-8859-1';
 
@@ -1360,7 +1360,7 @@ class phpDoc
         $file = $FilePath.$FileName;
 
         // Is this file modified ?
-        $ModifiedFiles = $this->get_modified_files();
+        $ModifiedFiles = $this->getModifiedFiles();
 
         if (isset($ModifiedFiles[$file])) { $extension = '.new'; }
         else { $extension = ''; }
@@ -1994,7 +1994,7 @@ class phpDoc
     function getAllFiles($node) {
 
         // Get Files Need Commit
-        $ModifiedFiles = $this->get_modified_files();
+        $ModifiedFiles = $this->getModifiedFiles();
 
         // Security
         $node = str_replace('..', '', $node);
@@ -2052,7 +2052,7 @@ class phpDoc
         $this->db->query($s) or die($this->db->error);
     }
 
-    function allFilesExtension($ExtName) {
+    function getAllFilesAboutExtension($ExtName) {
 
         $s = 'SELECT `path`, `name` FROM `files` WHERE `path` LIKE \'/reference/'.$ExtName.'/%\' AND lang=\''.$this->cvsLang.'\' ORDER BY `path`, `name`';
         $r = $this->db->query($s) or die($this->db->error);
@@ -2333,7 +2333,7 @@ EOD;
 
     } // check_doc
 
-    function get_Check_Doc_Data() {
+    function getCheckDocData() {
 
         $node = array();
 
@@ -2388,9 +2388,9 @@ EOD;
 
         return array('nb' => $nb, 'node' => $node);
 
-    } //get_Check_Doc_Data
+    } //getCheckDocData
 
-    function get_Check_Doc_Files($path, $errorType)
+    function getCheckDocFiles($path, $errorType)
     {
         $s = sprintf('SELECT name FROM `files` WHERE `lang`="en" AND `path`="%s" AND `%s`=1', $path, $errorType);
         $r = $this->db->query($s);
@@ -2406,7 +2406,7 @@ EOD;
       * Get the last update datetime
       * @return The last update datetime or "in_progress" if the update is in progress
       */
-    function get_last_update()
+    function getLastUpdate()
     {
         // Test is there is an update in progress
         $lock_update = new LockFile('lock_update_repository');
@@ -2430,7 +2430,7 @@ EOD;
       * Set the last update datetime into DB
       * @return Nothing
       */
-    function set_last_update()
+    function setLastUpdate()
     {
 
         $s = 'SELECT lastupdate, `by` FROM `project` WHERE `name`="php"';
@@ -2446,6 +2446,6 @@ EOD;
 
         return;
 
-    } // get_last_update
+    } // 
 
 } // End of class

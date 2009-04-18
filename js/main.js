@@ -82,7 +82,7 @@ var phpDoc = function(){
                 scope: this,
                 url: './php/controller.php',
                 params: {
-                    task: 'get-conf'
+                    task: 'getConf'
                 },
                 success: function(action){
                     var o = Ext.util.JSON.decode(action.responseText);
@@ -250,7 +250,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-commit-log-message'
+                    task: 'getCommitLogMessage'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -272,7 +272,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'GetFilesError'
+                    task: 'getFilesError'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -322,7 +322,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'GetFilesNeedUpdate'
+                    task: 'getFilesNeedUpdate'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -372,7 +372,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'GetFilesNeedReviewed'
+                    task: 'getFilesNeedReviewed'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -417,7 +417,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'GetFilesPendingCommit'
+                    task: 'getFilesPendingCommit'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -463,7 +463,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'GetFilesPendingPatch'
+                    task: 'getFilesPendingPatch'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -512,7 +512,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-last-news'
+                    task: 'getLastNews'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -545,7 +545,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-open-bugs'
+                    task: 'getOpenBugs'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -572,7 +572,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-translator-info'
+                    task: 'getTranslatorInfo'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -619,7 +619,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-summary-info'
+                    task: 'getSummaryInfo'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -687,7 +687,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-check-doc-data'
+                    task: 'getCheckDocData'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
@@ -845,7 +845,7 @@ var phpDoc = function(){
                                 scope: this,
                                 url: './php/controller.php',
                                 params: {
-                                    task: 'get-check-doc-files',
+                                    task: 'getCheckDocFiles',
                                     path: path,
                                     errorType: errorType
                                 },
@@ -1035,7 +1035,7 @@ var phpDoc = function(){
                         scope: scope,
                         url: './php/controller.php',
                         params: {
-                            task: 'after-patch-reject',
+                            task: 'afterPatchReject',
                             PatchUniqID: FileUniqID
                         },
                         success: function(action){
@@ -1088,7 +1088,7 @@ var phpDoc = function(){
                         scope: scope,
                         url: './php/controller.php',
                         params: {
-                            task: 'save-file',
+                            task: 'saveFile',
                             filePath: FilePath,
                             fileName: FileName,
                             fileLang: 'all',
@@ -1112,7 +1112,7 @@ var phpDoc = function(){
                                     scope: scope,
                                     url: './php/controller.php',
                                     params: {
-                                        task: 'after-patch-accept',
+                                        task: 'afterPatchAccept',
                                         PatchUniqID: FileUniqID
                                     }
                                 });
@@ -1158,7 +1158,7 @@ var phpDoc = function(){
                 scope: scope,
                 url: './php/controller.php',
                 params: {
-                    task: 'save-file',
+                    task: 'saveFile',
                     filePath: FilePath,
                     fileName: FileName,
                     fileLang: 'en',
@@ -1279,7 +1279,7 @@ var phpDoc = function(){
                             scope: scope,
                             url: './php/controller.php',
                             params: {
-                                task: 'save-file',
+                                task: 'saveFile',
                                 filePath: FilePath,
                                 fileName: FileName,
                                 fileLang: FileLang,
@@ -1341,7 +1341,7 @@ var phpDoc = function(){
                         scope: this,
                         url: './php/controller.php',
                         params: {
-                            task: 'save-file',
+                            task: 'saveFile',
                             filePath: FilePath,
                             fileName: FileName,
                             fileLang: this.userLang,
@@ -1404,7 +1404,7 @@ var phpDoc = function(){
                             scope: this,
                             url: './php/controller.php',
                             params: {
-                                task: 'check-file-error',
+                                task: 'checkFileError',
                                 FilePath: FilePath,
                                 FileName: FileName,
                                 FileLang: this.userLang,
@@ -1449,7 +1449,7 @@ var phpDoc = function(){
                                         scope: this,
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'save-file',
+                                            task: 'saveFile',
                                             filePath: FilePath,
                                             fileName: FileName,
                                             fileLang: this.userLang,
@@ -1518,7 +1518,7 @@ var phpDoc = function(){
                 scope: this,
                 url: './php/controller.php',
                 params: {
-                    task: 'get-file',
+                    task: 'getFile',
                     FilePath: FilePath,
                     FileName: FileName
                 },
@@ -1681,7 +1681,7 @@ var phpDoc = function(){
             Ext.Ajax.request({
                 url: './php/controller.php',
                 params: {
-                    task: 'get-diff2',
+                    task: 'getDiff2',
                     FilePath: FilePath,
                     FileName: FileName,
                     Rev1: rev1,
@@ -1884,7 +1884,7 @@ var phpDoc = function(){
                                                 scope: this,
                                                 url: './php/controller.php',
                                                 params: {
-                                                    task: 'save-LogMessage',
+                                                    task: 'saveLogMessage',
                                                     messID: messID,
                                                     mess: newValue
                                                 },
@@ -1942,7 +1942,7 @@ var phpDoc = function(){
                                                             scope: this,
                                                             url: './php/controller.php',
                                                             params: {
-                                                                task: 'delete-LogMessage',
+                                                                task: 'deleteLogMessage',
                                                                 messID: this.storeCommitLogMessage.getAt(rowIndex).data.id
                                                             },
                                                             success: function(action, form){
@@ -2161,7 +2161,7 @@ var phpDoc = function(){
             Ext.Ajax.request({
                 url: './php/controller.php',
                 params: {
-                    task: 'cvs-commit',
+                    task: 'cvsCommit',
                     nodes: Ext.util.JSON.encode(nodes),
                     logMessage: LogMessage
                 },
@@ -2197,7 +2197,7 @@ var phpDoc = function(){
                         Ext.Ajax.request({
                             url: './php/controller.php',
                             params: {
-                                task: 'on-succes-commit',
+                                task: 'onSuccesCommit',
                                 nodes: Ext.util.JSON.encode(nodes),
                                 logMessage: LogMessage
                             },
@@ -2244,7 +2244,7 @@ var phpDoc = function(){
                     scope: scope,
                     url: './php/controller.php',
                     params: {
-                        task: 'update-repository'
+                        task: 'updateRepository'
                     },
                     success: function(action){
                         // Normally, this never succes ! ;)
@@ -2268,7 +2268,7 @@ var phpDoc = function(){
                                 scope: scope,
                                 url: './php/controller.php',
                                 params: {
-                                    task: 'check-lock-file',
+                                    task: 'checkLockFile',
                                     lockFile: 'lock_update_repository'
                                 },
                                 success: function(action){
@@ -2308,7 +2308,7 @@ var phpDoc = function(){
                     scope: scope,
                     url: './php/controller.php',
                     params: {
-                        task: 'apply-tools'
+                        task: 'applyTools'
                     },
                     success: function(action){
                         var o = Ext.util.JSON.decode(action.responseText);
@@ -2327,7 +2327,7 @@ var phpDoc = function(){
                                 scope: scope,
                                 url: './php/controller.php',
                                 params: {
-                                    task: 'check-lock-file',
+                                    task: 'checkLockFile',
                                     lockFile: 'lock_apply_tools'
                                 },
                                 success: function(action){
@@ -2432,7 +2432,7 @@ var phpDoc = function(){
             Ext.Ajax.request({
                 url: './php/controller.php',
                 params: {
-                    task: 'get-last-update'
+                    task: 'getLastUpdate'
                 },
                 success: function(r){
                 
@@ -2469,7 +2469,7 @@ var phpDoc = function(){
                     scope: scope,
                     url: './php/controller.php',
                     params: {
-                        task: 'get-logfile',
+                        task: 'getLogFile',
                         file: 'log_check_build'
                     },
                     success: function(action){
@@ -2534,7 +2534,7 @@ var phpDoc = function(){
                                 scope: this,
                                 url: './php/controller.php',
                                 params: {
-                                    task: 'check-build',
+                                    task: 'checkBuild',
                                     xmlDetails: choice
                                 },
                                 success: function(action){
@@ -2559,7 +2559,7 @@ var phpDoc = function(){
                                             scope: scope,
                                             url: './php/controller.php',
                                             params: {
-                                                task: 'check-lock-file',
+                                                task: 'checkLockFile',
                                                 lockFile: 'lock_check_build'
                                             },
                                             success: function(action){
@@ -2976,7 +2976,7 @@ var phpDoc = function(){
                 scope: this,
                 url: './php/controller.php',
                 params: {
-                    task: 'conf-update',
+                    task: 'confUpdate',
                     item: item,
                     value: v
                 },
@@ -3126,7 +3126,7 @@ var phpDoc = function(){
                         Ext.Ajax.request({
                             url: './php/controller.php',
                             params: {
-                                task: 'send-email',
+                                task: 'sendEmail',
                                 to: v.to,
                                 subject: v.subject,
                                 msg: v.msg
@@ -3266,7 +3266,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: this.userLang + FilePath,
                                     File: FileName
                                 },
@@ -3301,7 +3301,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: 'en' + FilePath,
                                     File: FileName
                                 },
@@ -3828,7 +3828,7 @@ var phpDoc = function(){
                                         scope: this,
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'get-diff',
+                                            task: 'getDiff',
                                             FilePath: this.userLang + FilePath,
                                             FileName: FileName
                                         },
@@ -3971,7 +3971,7 @@ var phpDoc = function(){
                                     Ext.Ajax.request({
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'get-diff',
+                                            task: 'getDiff',
                                             FilePath: this.userLang + FilePath,
                                             FileName: FileName
                                         },
@@ -4029,7 +4029,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: this.userLang + FilePath,
                                     File: FileName
                                 },
@@ -4064,7 +4064,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: 'en' + FilePath,
                                     File: FileName
                                 },
@@ -4321,7 +4321,7 @@ var phpDoc = function(){
                                                 Ext.Ajax.request({
                                                     url: './php/controller.php',
                                                     params: {
-                                                        task: 'get-diff2',
+                                                        task: 'getDiff2',
                                                         FilePath: 'en' + FilePath,
                                                         FileName: FileName,
                                                         Rev2: revision,
@@ -4687,7 +4687,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: FilePath,
                                     File: FileName
                                 },
@@ -4841,7 +4841,7 @@ var phpDoc = function(){
                                                 scope: this,
                                                 url: './php/controller.php',
                                                 params: {
-                                                    task: 'get-diff',
+                                                    task: 'getDiff',
                                                     FilePath: FilePath,
                                                     FileName: FileName,
                                                     type: 'patch',
@@ -5115,7 +5115,7 @@ var phpDoc = function(){
                                     Ext.Ajax.request({
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'get-diff',
+                                            task: 'getDiff',
                                             FilePath: FilePath,
                                             FileName: FileName
                                         },
@@ -5170,7 +5170,7 @@ var phpDoc = function(){
                                                 scope: this,
                                                 url: './php/controller.php',
                                                 params: {
-                                                    task: 'clear-local-change',
+                                                    task: 'clearLocalChange',
                                                     FilePath: FilePath,
                                                     FileName: FileName
                                                 },
@@ -5364,7 +5364,7 @@ var phpDoc = function(){
                                         scope: this,
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'get-diff',
+                                            task: 'getDiff',
                                             FilePath: this.userLang + FilePath,
                                             FileName: FileName
                                         },
@@ -5403,7 +5403,7 @@ var phpDoc = function(){
                                         scope: this,
                                         url: './php/controller.php',
                                         params: {
-                                            task: 'all-files-about-extension',
+                                            task: 'getAllFilesAboutExtension',
                                             ExtName: group[2]
                                         },
                                         success: function(action, form){
@@ -5467,7 +5467,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: this.userLang + FilePath,
                                     File: FileName
                                 },
@@ -5502,7 +5502,7 @@ var phpDoc = function(){
                                     url: './php/controller.php'
                                 }),
                                 baseParams: {
-                                    task: 'get-log',
+                                    task: 'getLog',
                                     Path: 'en' + FilePath,
                                     File: FileName
                                 },
@@ -6370,6 +6370,19 @@ var phpDoc = function(){
                 enableDD: false,
                 containerScroll: true,
                 bodyBorder: false,
+                tbar:[
+                    'Search: ', ' ',
+                    new Ext.form.TwinTriggerField({
+                        validationEvent:false,
+                        validateOnBlur:false,
+                        trigger1Class:'x-form-clear-trigger',
+                        trigger2Class:'x-form-search-trigger',
+                        hideTrigger1:true,
+                        width:180,
+                        hasSearch : false,
+                        paramName : 'query',
+                    })
+                ],
                 listeners: {
                     scope: this,
                     contextmenu: function(node, e){
@@ -6495,7 +6508,7 @@ var phpDoc = function(){
                                         url: './php/controller.php'
                                     }),
                                     baseParams: {
-                                        task: 'get-log',
+                                        task: 'getLog',
                                         Path: FilePath,
                                         File: FileName
                                     },
@@ -6729,7 +6742,7 @@ var phpDoc = function(){
                                                 scope: this,
                                                 url: './php/controller.php',
                                                 params: {
-                                                    task: 'save-file',
+                                                    task: 'saveFile',
                                                     filePath: FilePath,
                                                     fileName: FileName,
                                                     fileLang: 'all',
@@ -6879,7 +6892,7 @@ var phpDoc = function(){
                                     scope: this,
                                     url: './php/controller.php',
                                     params: {
-                                        task: 'erase-personal-data'
+                                        task: 'erasePersonalData'
                                     },
                                     success: function(action){
                                     

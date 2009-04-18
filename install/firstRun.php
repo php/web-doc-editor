@@ -32,7 +32,7 @@ if ($isCLI) {
 }
 flush();
 //We apply all tools for all language
-$phpDoc->rev_start();
+$phpDoc->revStart();
 
 if ($isCLI) {
     echo "\n * Parsing translation data...";
@@ -42,10 +42,10 @@ if ($isCLI) {
 flush();
 
 // Parse translators
-$phpDoc->rev_parse_translation();
+$phpDoc->revParseTranslation();
 
 // We update the last update date/time into DB
-$phpDoc->set_last_update();
+$phpDoc->setLastUpdate();
 
 
 if ($isCLI) {
