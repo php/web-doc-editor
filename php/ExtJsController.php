@@ -11,6 +11,7 @@
 require_once './class.php';
 require_once './LockFile.php';
 require_once './BugReader.php';
+require_once './NewsReader.php';
 
 /**
  * Ext JS controller class
@@ -296,7 +297,10 @@ class ExtJsController
     public function get_mailing_info() {
 
         $this->phpDoc->isLogged();
-        $r = $this->phpDoc->get_last_mailing();
+
+        $bugs = new NewsReader($this->phpDoc->cvsLang);
+        $r = $bugs->getLastNews();
+
         return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
     }
 

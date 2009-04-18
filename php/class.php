@@ -1321,35 +1321,6 @@ class phpDoc
     }
 
     /**
-     * Get all mail from documentation's LANG mailing list.
-     * @return An indexed array (id, title, description, link, pubDate).
-     */
-    function get_last_mailing() {
-
-        $url = 'http://news.php.net/group.php?format=rss&group=php.doc';
-
-        if ($this->cvsLang != 'en') {
-            $url .= '.' . strtolower(str_replace('_', '-', $this->cvsLang));
-        }
-
-        $xml = new SimpleXMLElement(file_get_contents($url));
-
-        $channel = $xml->channel;
-
-        $i = 0;
-        foreach ($channel->item as $item) {
-            $result[$i]['id'] = $i;
-            $result[$i]['title'] = (string) $item->title;
-            $result[$i]['description'] = preg_replace('/(<a href[^>]+">)([^>]+)(<\/a>)/', "$2", (string) $item->description);
-            $result[$i]['link'] = (string) $item->link;
-            $result[$i]['pubDate'] = date('Y/m/d H:i:s', strtotime((string) $item->pubDate));
-            $i++;
-        }
-        return $result;
-
-    }
-
-    /**
      * Get encoding of a file, regarding his XML's header.
      * @param $file The file to get encoding from.
      * @param $mode The mode. Must be 'file' if $file is a path to the file, or 'content' if $file is the content of the file.

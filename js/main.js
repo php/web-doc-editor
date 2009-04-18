@@ -512,7 +512,7 @@ var phpDoc = function(){
                     url: './php/controller.php'
                 }),
                 baseParams: {
-                    task: 'get-mailing-info'
+                    task: 'get-last-news'
                 },
                 reader: new Ext.data.JsonReader({
                     root: 'Items',
