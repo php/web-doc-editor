@@ -10,6 +10,7 @@
  */
 require_once './class.php';
 require_once './LockFile.php';
+require_once './BugReader.php';
 
 /**
  * Ext JS controller class
@@ -302,7 +303,10 @@ class ExtJsController
     public function get_open_bugs() {
 
         $this->phpDoc->isLogged();
-        $r = $this->phpDoc->get_last_bugs();
+
+        $bugs = new BugReader($this->phpDoc->cvsLang);
+        $r = $bugs->getLastBugs();
+
         return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
     }
 

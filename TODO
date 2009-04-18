@@ -26,7 +26,6 @@ PHP:
     the en/ tree (and other languages? we _should_ be able to rely on TranslationStatus
     on its own
   - Create a CvsClient class to handle all the CVS operations (fsockopen() and exec())
-  - Create a BugReader class
   - Create a NewsReader class
 
 * Controller
