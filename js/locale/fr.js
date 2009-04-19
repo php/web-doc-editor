@@ -126,6 +126,9 @@ i18n["This action will accept this patch, send an email to his author, save the 
 i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
 i18n["Search: "] = "Recherche : ";
 i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
+i18n["Filter: "] = "Filtrer : ";
+i18n["Your filter must contain at least 3 characters"] = "Votre filtre doit comporter au moins 3 caractères";
+
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
 

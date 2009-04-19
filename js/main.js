@@ -3933,6 +3933,49 @@ var phpDoc = function(){
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
+                tbar:[
+                    _('Filter: '), ' ',
+                    new Ext.form.TwinTriggerField({
+                        id: 'FNU-filter',
+                        validationEvent:false,
+                        validateOnBlur:false,
+                        trigger1Class:'x-form-clear-trigger',
+                        trigger2Class:'x-form-search-trigger',
+                        hideTrigger1:true,
+                        width:180,
+                        scope: this,
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function(field, e){
+                                if (e.getKey() == e.ENTER) {
+                                    this.onTrigger2Click();
+                                }
+                            }
+                        },
+                        onTrigger1Click: function() {
+
+                            this.setValue('');
+                            this.triggers[0].hide();
+
+                            this.scope.storeFilesNeedUpdate.clearFilter();
+                        },
+                        onTrigger2Click: function() {
+
+                            var v = this.getValue();
+
+                            if( v == '' || v.length < 3) {
+                                this.markInvalid(_('Your filter must contain at least 3 characters'));
+                                return;
+                            }
+                            this.clearInvalid();
+
+                            this.triggers[0].show();
+
+                            this.scope.storeFilesNeedUpdate.filter('maintainer', v);
+
+                        }
+                    })
+                ],
                 listeners: {
                     scope: this,
                     'rowcontextmenu': function(grid, rowIndex, e){
@@ -7041,7 +7084,13 @@ var phpDoc = function(){
                             iconCls: 'FilesNeedUpdate',
                             hidden: (this.userLang === 'en') ? true : false,
                             items: [gridFilesNeedUpdate],
-                            collapsed: true
+                            collapsed: true,
+                            listeners: {
+                                expand: function(panel) {
+                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
+                                    Ext.getCmp('FNU-filter').wrap.setWidth(200);
+                                }
+                            }
                         }, {
                             title: _('Error in current translation')+' - <em id="acc-error-nb">0</em>',
                             id: 'acc-error',
