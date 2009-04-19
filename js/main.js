@@ -3229,6 +3229,49 @@ var phpDoc = function(){
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
+                tbar:[
+                    _('Filter: '), ' ',
+                    new Ext.form.TwinTriggerField({
+                        id: 'FE-filter',
+                        validationEvent:false,
+                        validateOnBlur:false,
+                        trigger1Class:'x-form-clear-trigger',
+                        trigger2Class:'x-form-search-trigger',
+                        hideTrigger1:true,
+                        width:180,
+                        scope: this,
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function(field, e){
+                                if (e.getKey() == e.ENTER) {
+                                    this.onTrigger2Click();
+                                }
+                            }
+                        },
+                        onTrigger1Click: function() {
+
+                            this.setValue('');
+                            this.triggers[0].hide();
+
+                            this.scope.storeFilesError.clearFilter();
+                        },
+                        onTrigger2Click: function() {
+
+                            var v = this.getValue();
+
+                            if( v == '' || v.length < 3) {
+                                this.markInvalid(_('Your filter must contain at least 3 characters'));
+                                return;
+                            }
+                            this.clearInvalid();
+
+                            this.triggers[0].show();
+
+                            this.scope.storeFilesError.filter('maintainer', v);
+
+                        }
+                    })
+                ],
                 listeners: {
                     scope: this,
                     'render': function(grid){
@@ -5354,7 +5397,6 @@ var phpDoc = function(){
                     dataIndex: 'path',
                     'hidden': true
                 }],
-                
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
                     groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
@@ -5367,6 +5409,49 @@ var phpDoc = function(){
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
+                tbar:[
+                    _('Filter: '), ' ',
+                    new Ext.form.TwinTriggerField({
+                        id: 'FNR-filter',
+                        validationEvent:false,
+                        validateOnBlur:false,
+                        trigger1Class:'x-form-clear-trigger',
+                        trigger2Class:'x-form-search-trigger',
+                        hideTrigger1:true,
+                        width:180,
+                        scope: this,
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function(field, e){
+                                if (e.getKey() == e.ENTER) {
+                                    this.onTrigger2Click();
+                                }
+                            }
+                        },
+                        onTrigger1Click: function() {
+
+                            this.setValue('');
+                            this.triggers[0].hide();
+
+                            this.scope.storeFilesNeedReviewed.clearFilter();
+                        },
+                        onTrigger2Click: function() {
+
+                            var v = this.getValue();
+
+                            if( v == '' || v.length < 3) {
+                                this.markInvalid(_('Your filter must contain at least 3 characters'));
+                                return;
+                            }
+                            this.clearInvalid();
+
+                            this.triggers[0].show();
+
+                            this.scope.storeFilesNeedReviewed.filter('maintainer', v);
+
+                        }
+                    })
+                ],
                 listeners: {
                     scope: this,
                     'rowcontextmenu': function(grid, rowIndex, e){
@@ -7098,7 +7183,13 @@ var phpDoc = function(){
                             iconCls: 'FilesError',
                             hidden: (this.userLang === 'en') ? true : false,
                             items: [gridFilesError],
-                            collapsed: true
+                            collapsed: true,
+                            listeners: {
+                                expand: function(panel) {
+                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
+                                    Ext.getCmp('FE-filter').wrap.setWidth(200);
+                                }
+                            }
                         }, {
                             title: _('Files Need Reviewed')+' - <em id="acc-need-reviewed-nb">0</em>',
                             id: 'acc-need-reviewed',
@@ -7106,7 +7197,13 @@ var phpDoc = function(){
                             iconCls: 'FilesNeedReviewed',
                             hidden: (this.userLang === 'en') ? true : false,
                             items: [gridFilesNeedReviewed],
-                            collapsed: true
+                            collapsed: true,
+                            listeners: {
+                                expand: function(panel) {
+                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
+                                    Ext.getCmp('FNR-filter').wrap.setWidth(200);
+                                }
+                            }
                         }, {
                             title: _('All files'),
                             id: 'acc-all-files',
