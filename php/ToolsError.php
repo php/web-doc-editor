@@ -327,6 +327,7 @@ class ToolsError {
         $this->nbMemberInSeeAlso();
         $this->nbNoteTag();
         $this->nbParaTag();
+        $this->nbTipTag(); //
         $this->nbVarnameTag();
         $this->spaceOrPeriodRefpurposeTags();
 
@@ -1285,6 +1286,37 @@ class ToolsError {
                 "value_en"   => $en_chapter,
                 "value_lang" => $lang_chapter,
                 "type"       => "nbChapterTags"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <tip> tags
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbTipTag()
+    {
+
+        $reg = '/<tip>/s';
+
+        $en_tip = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_tip = count($match[0]);
+        }
+
+        $lang_tip = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_tip = count($match[0]);
+        }
+
+        if ($en_tip != $lang_tip ) {
+            $this->addError(array(
+                "value_en"   => $en_tip,
+                "value_lang" => $lang_tip,
+                "type"       => "nbTipTags"
             ));
         }
     }
