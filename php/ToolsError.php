@@ -194,7 +194,7 @@ class ToolsError {
     function getFilesError($ModifiedFiles) {
 
         if ($_SESSION['userConf']['conf_error_skipnbliteraltag'] == 'true' ) {
-            $type = ' type != \'nbLiteralTags\' AND ';
+            $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
         }
@@ -304,41 +304,47 @@ class ToolsError {
     function run()
     {
 
-        $this->attributAppendixTags();
-        $this->attributBookTags();
-        $this->attributChapterTags();
-        $this->attributLinkTags();
-        $this->attributPrefaceTags();
-        $this->attributQandaentryTags();
-        $this->attributRefsec1Tags();
-        $this->attributRefentryTags();
-        $this->attributReferenceTags();
-        $this->attributSect1Tags();
-        $this->attributSectionTags();
-        $this->attributVarlistentryTags();
+        $this->attributAppendixTag();
+        $this->attributBookTag();
+        $this->attributChapterTag();
+        $this->attributLinkTag();
+        $this->attributPrefaceTag();
+        $this->attributQandaentryTag();
+        $this->attributRefsec1Tag();
+        $this->attributRefentryTag();
+        $this->attributReferenceTag();
+        $this->attributSect1Tag();
+        $this->attributSectionTag();
+        $this->attributVarlistentryTag();
         $this->classsynopsis();
         $this->methodsynopsis();
-        $this->nbCdataTags();
+        $this->nbAcronymTag();
+        $this->nbCautionTag();
+        $this->nbCdataTag();
         $this->nbChapterTag();
         $this->nbCommandTag();
+        $this->nbConstantTag();
         $this->nbElInTable();
         $this->nbEmphasisTag();
+        $this->nbFilenameTag();
         $this->nbLiteralTag();
         $this->nbMemberInSeeAlso();
         $this->nbNoteTag();
         $this->nbParaTag();
-        $this->nbTipTag(); //
+        $this->nbSimparaTag();
+        $this->nbTipTag();
         $this->nbVarnameTag();
-        $this->spaceOrPeriodRefpurposeTags();
+        $this->nbWarningTag();
+        $this->spaceOrPeriodRefpurposeTag();
 
     }
 
     /**
-     * Check attributs in chapter tags
+     * Check attributs in chapter tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributChapterTags()
+    function attributChapterTag()
     {
 
         $reg = '/<chapter\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?(version="(.*?)"\s*?)?>/s';
@@ -400,11 +406,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in appendix tags
+     * Check attributs in appendix tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributAppendixTags()
+    function attributAppendixTag()
     {
 
         $reg = '/<appendix\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -448,11 +454,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in qandaentry tags
+     * Check attributs in qandaentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributQandaentryTags()
+    function attributQandaentryTag()
     {
 
         $reg = '/<qandaentry\s*?xml:id="(.*?)"\s*?>/s';
@@ -488,11 +494,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Link tags
+     * Check attributs in Link tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributLinkTags()
+    function attributLinkTag()
     {
 
         $reg = '/<link\s*?xlink:href="(.*?)">/s';
@@ -550,11 +556,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Sect1 tags
+     * Check attributs in Sect1 tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributSect1Tags()
+    function attributSect1Tag()
     {
 
         $reg = '/<sect1\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -606,11 +612,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Book tags
+     * Check attributs in Book tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributBookTags()
+    function attributBookTag()
     {
 
         $reg = '/<book\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -661,11 +667,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Preface tags
+     * Check attributs in Preface tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributPrefaceTags()
+    function attributPrefaceTag()
     {
 
         $reg = '/<preface\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -722,11 +728,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Section tags
+     * Check attributs in Section tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributSectionTags()
+    function attributSectionTag()
     {
 
         $reg = '/<section\s*?xml:id=("|\')(.*?)("|\')\s*?(xmlns=("|\')(.*?)("|\'))?\s*?(xmlns:xlink=("|\')(.*?)("|\')\s*?)?>/s';
@@ -787,11 +793,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Varlistentry tags
+     * Check attributs in Varlistentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributVarlistentryTags()
+    function attributVarlistentryTag()
     {
 
         $reg = '/<varlistentry\s*?xml:id=("|\')(.*?)("|\')\s*?>/s';
@@ -826,11 +832,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Reference tags
+     * Check attributs in Reference tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributReferenceTags()
+    function attributReferenceTag()
     {
 
         $reg = '/<reference\s*?xml:id="(.*?)"\s*?xmlns="(.*?)"\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -894,11 +900,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Refentry tags
+     * Check attributs in Refentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributRefentryTags()
+    function attributRefentryTag()
     {
 
         $reg = '/<refentry\s*?xml:id="(.*?)"\s*?xmlns="(.*?)"\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -963,11 +969,11 @@ class ToolsError {
     }
 
     /**
-     * Check attributs in Refsec1 tags
+     * Check attributs in Refsec1 tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributRefsec1Tags()
+    function attributRefsec1Tag()
     {
 
         $reg = '/<refsect1\s*?role="(.*?)"\s*?>/s';
@@ -994,11 +1000,11 @@ class ToolsError {
     }
 
     /**
-     * Check Space or period at the end of Refpurpose tags
+     * Check Space or period at the end of Refpurpose tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function spaceOrPeriodRefpurposeTags()
+    function spaceOrPeriodRefpurposeTag()
     {
 
         $reg = '/<refpurpose>.*([^A-Za-z1-9 ])<\/refpurpose>/s';
@@ -1019,11 +1025,11 @@ class ToolsError {
     }
 
     /**
-     * Check Nb <![CDATA tags
+     * Check Nb <![CDATA tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function nbCdataTags()
+    function nbCdataTag()
     {
 
         $reg = '/<!\[CDATA\[(.*?)\]\]>/s';
@@ -1044,13 +1050,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_cdataSection,
                 "value_lang" => $lang_cdataSection,
-                "type"       => "nbCdataTags"
+                "type"       => "nbCdataTag"
             ));
         }
     }
 
     /**
-     * Check error in <classsynopsis> tags
+     * Check error in <classsynopsis> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1200,7 +1206,7 @@ class ToolsError {
     }
 
     /**
-     * Check Nb <para> tags
+     * Check Nb <para> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1221,14 +1227,14 @@ class ToolsError {
             $this->addError(array(
                 'value_en'   => $en_para,
                 'value_lang' => $lang_para,
-                'type'       => 'nbParaTags'
+                'type'       => 'nbParaTag'
             ));
 
         }
     }
 
     /**
-     * Check Nb <note> tags
+     * Check Nb <note> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1253,14 +1259,14 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_note,
                 "value_lang" => $lang_note,
-                "type"       => "nbNoteTags"
+                "type"       => "nbNoteTag"
             ));
 
         }
     }
 
     /**
-     * Check Nb <chapter> tags
+     * Check Nb <chapter> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1285,13 +1291,199 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_chapter,
                 "value_lang" => $lang_chapter,
-                "type"       => "nbChapterTags"
+                "type"       => "nbChapterTag"
             ));
         }
     }
 
     /**
-     * Check Nb <tip> tags
+     * Check Nb <caution> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbCautionTag()
+    {
+
+        $reg = '/<caution>/s';
+
+        $en_Caution = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_Caution = count($match[0]);
+        }
+
+        $lang_Caution = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_Caution = count($match[0]);
+        }
+
+        if ($en_Caution != $lang_Caution ) {
+            $this->addError(array(
+                "value_en"   => $en_Caution,
+                "value_lang" => $lang_Caution,
+                "type"       => "nbCautionTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <filename> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbFilenameTag()
+    {
+
+        $reg = '/<filename>/s';
+
+        $en_filename = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_filename = count($match[0]);
+        }
+
+        $lang_filename = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_filename = count($match[0]);
+        }
+
+        if ($en_filename != $lang_filename ) {
+            $this->addError(array(
+                "value_en"   => $en_filename,
+                "value_lang" => $lang_filename,
+                "type"       => "nbFilenameTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <acronym> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbAcronymTag()
+    {
+
+        $reg = '/<constant>/s';
+
+        $en_acronym = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_acronym = count($match[0]);
+        }
+
+        $lang_acronym = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_acronym = count($match[0]);
+        }
+
+        if ($en_acronym != $lang_acronym ) {
+            $this->addError(array(
+                "value_en"   => $en_acronym,
+                "value_lang" => $lang_acronym,
+                "type"       => "nbAcronymTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <constant> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbConstantTag()
+    {
+
+        $reg = '/<constant>/s';
+
+        $en_constant = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_constant = count($match[0]);
+        }
+
+        $lang_constant = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_constant = count($match[0]);
+        }
+
+        if ($en_constant != $lang_constant ) {
+            $this->addError(array(
+                "value_en"   => $en_constant,
+                "value_lang" => $lang_constant,
+                "type"       => "nbConstantTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <warning> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbWarningTag()
+    {
+
+        $reg = '/<warning>/s';
+
+        $en_warning = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_warning = count($match[0]);
+        }
+
+        $lang_warning = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_warning = count($match[0]);
+        }
+
+        if ($en_warning != $lang_warning ) {
+            $this->addError(array(
+                "value_en"   => $en_warning,
+                "value_lang" => $lang_warning,
+                "type"       => "nbWarningTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <simpara> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbSimparaTag()
+    {
+
+        $reg = '/<simpara>/s';
+
+        $en_simpara = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_simpara = count($match[0]);
+        }
+
+        $lang_simpara = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_simpara = count($match[0]);
+        }
+
+        if ($en_simpara != $lang_simpara ) {
+            $this->addError(array(
+                "value_en"   => $en_simpara,
+                "value_lang" => $lang_simpara,
+                "type"       => "nbSimparaTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <tip> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1316,13 +1508,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_tip,
                 "value_lang" => $lang_tip,
-                "type"       => "nbTipTags"
+                "type"       => "nbTipTag"
             ));
         }
     }
 
     /**
-     * Check Nb <varname> tags
+     * Check Nb <varname> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1347,13 +1539,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_varname,
                 "value_lang" => $lang_varname,
-                "type"       => "nbVarnameTags"
+                "type"       => "nbVarnameTag"
             ));
         }
     }
 
     /**
-     * Check Nb <emphasis> tags
+     * Check Nb <emphasis> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1378,13 +1570,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_emphasis,
                 "value_lang" => $lang_emphasis,
-                "type"       => "nbEmphasisTags"
+                "type"       => "nbEmphasisTag"
             ));
         }
     }
 
     /**
-     * Check Nb <command> tags
+     * Check Nb <command> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1409,13 +1601,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_command,
                 "value_lang" => $lang_command,
-                "type"       => "nbCommandTags"
+                "type"       => "nbCommandTag"
             ));
         }
     }
 
     /**
-     * Check Nb <literal> tags
+     * Check Nb <literal> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1440,13 +1632,13 @@ class ToolsError {
             $this->addError(array(
                 "value_en"   => $en_literal,
                 "value_lang" => $lang_literal,
-                "type"       => "nbLiteralTags"
+                "type"       => "nbLiteralTag"
             ));
         }
     }
 
     /**
-     * Check attr in <row> tags
+     * Check attr in <row> tag
      * Add an entry into the error's stack if an error is found
      *
      */
@@ -1507,7 +1699,7 @@ class ToolsError {
                 $this->addError(array(
                     'value_en'   => $en_tag,
                     'value_lang' => $lang_tag,
-                    'type'       => 'nb' . ucfirst($tag) . 'Tags'
+                    'type'       => 'nb' . ucfirst($tag) . 'Tag'
                 ));
             }
         }
