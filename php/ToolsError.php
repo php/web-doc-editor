@@ -320,11 +320,14 @@ class ToolsError {
         $this->methodsynopsis();
         $this->nbCdataTags();
         $this->nbChapterTag();
+        $this->nbCommandTag();
         $this->nbElInTable();
+        $this->nbEmphasisTag();
         $this->nbLiteralTag();
         $this->nbMemberInSeeAlso();
         $this->nbNoteTag();
         $this->nbParaTag();
+        $this->nbVarnameTag();
         $this->spaceOrPeriodRefpurposeTags();
 
     }
@@ -1282,6 +1285,99 @@ class ToolsError {
                 "value_en"   => $en_chapter,
                 "value_lang" => $lang_chapter,
                 "type"       => "nbChapterTags"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <varname> tags
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbVarnameTag()
+    {
+
+        $reg = '/<varname>/s';
+
+        $en_varname = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_varname = count($match[0]);
+        }
+
+        $lang_varname = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_varname = count($match[0]);
+        }
+
+        if ($en_varname != $lang_varname ) {
+            $this->addError(array(
+                "value_en"   => $en_varname,
+                "value_lang" => $lang_varname,
+                "type"       => "nbVarnameTags"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <emphasis> tags
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbEmphasisTag()
+    {
+
+        $reg = '/<emphasis>/s';
+
+        $en_emphasis = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_emphasis = count($match[0]);
+        }
+
+        $lang_emphasis = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_emphasis = count($match[0]);
+        }
+
+        if ($en_emphasis != $lang_emphasis ) {
+            $this->addError(array(
+                "value_en"   => $en_emphasis,
+                "value_lang" => $lang_emphasis,
+                "type"       => "nbEmphasisTags"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <command> tags
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbCommandTag()
+    {
+
+        $reg = '/<command>/s';
+
+        $en_command = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_command = count($match[0]);
+        }
+
+        $lang_command = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_command = count($match[0]);
+        }
+
+        if ($en_command != $lang_command ) {
+            $this->addError(array(
+                "value_en"   => $en_command,
+                "value_lang" => $lang_command,
+                "type"       => "nbCommandTags"
             ));
         }
     }

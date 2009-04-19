@@ -120,10 +120,17 @@ $error['attributVersionChapter']['desc'] = 'Throw if the value of the attribut <
 $error['nbChapterTags']['head'] = 'Chapter tags';
 $error['nbChapterTags']['desc'] = 'Throw if the number of <b>chapter</b> tags is different from english version.';
 
-
-
 $error['nbEntryTags']['head'] = 'Entry tags';
 $error['nbEntryTags']['desc'] = 'Throw if the number of <b>entry</b> tags is different from english version.';
+
+$error['nbCommandTags']['head'] = 'Command tags';
+$error['nbCommandTags']['desc'] = 'Throw if the number of <b>command</b> tags is different from english version.';
+
+$error['nbEmphasisTags']['head'] = 'Entry tags';
+$error['nbEmphasisTags']['desc'] = 'Throw if the number of <b>emphasis</b> tags is different from english version.';
+
+$error['nbVarnameTags']['head'] = 'Entry tags';
+$error['nbVarnameTags']['desc'] = 'Throw if the number of <b>varname</b> tags is different from english version.';
 
 $error['errorFieldsynopsisInitializer']['head'] = 'Fieldsynopsis tags';
 $error['errorFieldsynopsisInitializer']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different from english version.';
