@@ -1398,7 +1398,7 @@ class ToolsError {
     function nbAcronymTag()
     {
 
-        $reg = '/<constant>/s';
+        $reg = '/<acronym>/s';
 
         $en_acronym = 0;
         $match = array();
