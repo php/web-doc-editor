@@ -1430,9 +1430,7 @@ var phpDoc = function(){
                                         });
                                         
                                         Ext.getCmp('main-panel').setActiveTab('FE-help-' + FileID);
-                                        
-                                        this.storeFilesError.reload();
-                                        
+
                                     }
                                     else {
                                         // If there is no error, we display an information message
