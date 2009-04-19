@@ -870,7 +870,7 @@ class ExtJsController
     public function getLastUpdate() {
 
         $this->phpDoc->isLogged();
-        $r = $this->phpDoc->get_last_update();
+        $r = $this->phpDoc->getLastUpdate();
 
         return $this->getResponse(array('success' => true, 'lastupdate' => $r['lastupdate']));
     }
