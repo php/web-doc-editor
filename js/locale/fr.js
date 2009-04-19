@@ -123,8 +123,9 @@ i18n["Total"] = "Total";
 i18n["Posted by"] = "Proposé par";
 i18n["This action will <b>reject</b> this patch, send an email to his author and close this tab."] = "Cette action va <b>rejeter</b> ce patch, envoyer un email à son auteur et fermer cet onglet.";
 i18n["This action will accept this patch, send an email to his author, save the file and close this tab."] = "Cette action va accepter ce patch, envoyer un email à son auteur et fermer cet onglet.";
-i18n["Search result"] = "Résultat de la recherche";
+i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
 i18n["Search: "] = "Recherche : ";
+i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
 

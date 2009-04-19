@@ -6405,16 +6405,25 @@ var phpDoc = function(){
 
                             var v = this.getValue();
 
-                            if( v == '' || v.length < 3) { return; }
+                            if( v == '' || v.length < 3) {
+                                this.markInvalid(_('Your search must contain at least 3 characters'));
+                                return;
+                            }
+
+                            this.clearInvalid();
 
                             this.triggers[0].show();
-                            this.scope.treeAllFiles.root.setText(_('Search result'));
 
                             this.scope.treeAllFiles.loader = new Ext.tree.TreeLoader({
                               baseParams:{search:v, task: 'getAllFiles'},
                               dataUrl: './php/controller.php'
                             });
-                            this.scope.treeAllFiles.root.reload();
+
+                            this.scope.treeAllFiles.root.reload(function() {
+
+                              this.phpDoc.treeAllFiles.root.setText(String.format(_('Search result: {0}'), this.phpDoc.treeAllFiles.root.childNodes.length));
+
+                            });
 
                         }
                     })
@@ -6423,7 +6432,7 @@ var phpDoc = function(){
                     scope: this,
                     contextmenu: function(node, e){
 
-                        var menu, expandSubMenu, FileName, FilePath, t, FileLang, OtherFileLibel, OtherFilePath;
+                        var menu, expandSubMenu, FileName, FilePath, t, FileLang, OtherFileSubMenu, OtherFileLibel, OtherFilePath;
                         node.select();
 
                         if (node.attributes.type === 'folder' || node.isRoot ) {
@@ -6452,27 +6461,42 @@ var phpDoc = function(){
 
                         } else if (node.attributes.type === 'file') {
 
-                            FileName = node.attributes.text;
-                            FilePath = node.attributes.id;
+                            if( node.attributes.from !== 'search' ) {
 
-                            // CleanUp the path
-                            t = FilePath.split('/');
-                            t.shift();
-                            t.shift();
-                            t.pop();
-                            
-                            FileLang = t[0];
-                            t.shift();
+                                FileName = node.attributes.text;
+                                FilePath = node.attributes.id;
 
-                            FilePath = t.join('/') + '/';
+                                // CleanUp the path
+                                t = FilePath.split('/');
+                                t.shift();
+                                t.shift();
+                                t.pop();
+                                
+                                FileLang = t[0];
+                                t.shift();
 
-                            if( FileLang === 'en' ) {
-                                OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), this.userLang);
-                                OtherFilePath = this.userLang+FilePath;
+                                FilePath = t.join('/') + '/';
+
+                                if( FileLang === 'en' ) {
+                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), this.userLang);
+                                    OtherFilePath = this.userLang+FilePath;
+
+                                } else {
+                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), 'en');
+                                    OtherFilePath = 'en'+FilePath;
+                                }
+
+                                OtherFileSubMenu = {
+                                    text: OtherFileLibel,
+                                    iconCls: 'iconTabNeedReviewed',
+                                    scope: this,
+                                    handler: function() {
+                                      this.openFile(OtherFilePath, FileName);
+                                    }
+                                };
 
                             } else {
-                                OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), 'en');
-                                OtherFilePath = 'en'+FilePath;
+                                OtherFileSubMenu='';
                             }
 
                             menu = new Ext.menu.Menu({
@@ -6483,14 +6507,7 @@ var phpDoc = function(){
                                     handler: function() {
                                       this.treeAllFiles.fireEvent('dblclick', node);
                                     }
-                                },{
-                                    text: OtherFileLibel,
-                                    iconCls: 'iconTabNeedReviewed',
-                                    scope: this,
-                                    handler: function() {
-                                      this.openFile(OtherFilePath, FileName);
-                                    }
-                                }]
+                                },OtherFileSubMenu]
                             });
                             menu.showAt(e.getXY());
 
