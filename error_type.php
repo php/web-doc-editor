@@ -166,6 +166,9 @@ $error['attributXlinkLink']['desc'] = 'Throw if the value of the attribut <b>xli
 $error['nbLiteralTag']['head'] = 'Literal tag';
 $error['nbLiteralTag']['desc'] = 'Throw if the number of <b>literal</b> tags is different from english version.';
 
+$error['nbAbbrevTag']['head'] = 'Abbrev tag';
+$error['nbAbbrevTag']['desc'] = 'Throw if the number of <b>abbrev</b> tags is different from english version.';
+
 $error['errorRoleMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorRoleMethodsynopsis']['desc'] = 'Throw if the value of the attribut <b>role</b> is different from english version.';
 $error['errorOptionalMethodsynopsis']['head'] = 'Methodsynopsis tag';

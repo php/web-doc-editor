@@ -319,6 +319,7 @@ class ToolsError {
         $this->classsynopsis();
         $this->methodsynopsis();
         $this->nbAcronymTag();
+        $this->nbAbbrevTag();
         $this->nbCautionTag();
         $this->nbCdataTag();
         $this->nbChapterTag();
@@ -1354,6 +1355,37 @@ class ToolsError {
                 "value_en"   => $en_filename,
                 "value_lang" => $lang_filename,
                 "type"       => "nbFilenameTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <abbrev> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbAbbrevTag()
+    {
+
+        $reg = '/<abbrev>/s';
+
+        $en_abbrev = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_abbrev = count($match[0]);
+        }
+
+        $lang_abbrev = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_abbrev = count($match[0]);
+        }
+
+        if ($en_abbrev != $lang_abbrev ) {
+            $this->addError(array(
+                "value_en"   => $en_abbrev,
+                "value_lang" => $lang_abbrev,
+                "type"       => "nbAbbrevTag"
             ));
         }
     }
