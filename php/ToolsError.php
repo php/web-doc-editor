@@ -332,6 +332,7 @@ class ToolsError {
         $this->nbMemberInSeeAlso();
         $this->nbNoteTag();
         $this->nbParaTag();
+        $this->nbProductnameTag();
         $this->nbSimparaTag();
         $this->nbTipTag();
         $this->nbVarnameTag();
@@ -1386,6 +1387,37 @@ class ToolsError {
                 "value_en"   => $en_abbrev,
                 "value_lang" => $lang_abbrev,
                 "type"       => "nbAbbrevTag"
+            ));
+        }
+    }
+
+    /**
+     * Check Nb <productname> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function nbProductnameTag()
+    {
+
+        $reg = '/<productname>/s';
+
+        $en_productname = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->en_content, $match)) {
+            $en_productname = count($match[0]);
+        }
+
+        $lang_productname = 0;
+        $match = array();
+        if (preg_match_all($reg, $this->lang_content, $match)) {
+            $lang_productname = count($match[0]);
+        }
+
+        if ($en_productname != $lang_productname ) {
+            $this->addError(array(
+                "value_en"   => $en_productname,
+                "value_lang" => $lang_productname,
+                "type"       => "nbProductnameTag"
             ));
         }
     }

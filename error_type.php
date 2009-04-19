@@ -166,6 +166,9 @@ $error['attributXlinkLink']['desc'] = 'Throw if the value of the attribut <b>xli
 $error['nbLiteralTag']['head'] = 'Literal tag';
 $error['nbLiteralTag']['desc'] = 'Throw if the number of <b>literal</b> tags is different from english version.';
 
+$error['nbProductnameTag']['head'] = 'Productname tag';
+$error['nbProductnameTag']['desc'] = 'Throw if the number of <b>productname</b> tags is different from english version.';
+
 $error['nbFilenameTag']['head'] = 'Filename tag';
 $error['nbFilenameTag']['desc'] = 'Throw if the number of <b>filename</b> tags is different from english version.';
 
