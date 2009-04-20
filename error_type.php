@@ -242,7 +242,7 @@ $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribu
 
 $to_display = array();
 
-// If $error_to_display is an emty array, we add it all errors (default page)
+// If $error_to_display is an empty array, we add it all errors (default page)
 if( empty($error_to_display) ) {
     while (list($k, $v) = each($error)) {
         $type[] = $k;
