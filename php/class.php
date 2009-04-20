@@ -89,7 +89,7 @@ class phpDoc
      * @param $idDir Directory id from the database.
      * @return Nothing.
      */
-    function rev_do_revcheck( $dir = '', $idDir ) {
+    function revDoRevCheck( $dir = '', $idDir ) {
         if ($dh = opendir(DOC_EDITOR_CVS_PATH . 'en/' . $dir)) {
 
             $entriesDir = array();
@@ -142,10 +142,29 @@ class phpDoc
                     $ToolsCheckDocResult = $ToolsCheckDoc->checkDoc($infoEN['content'], $dir);
 
                     // Sql insert.
-                    $s = "INSERT INTO files (lang, xmlid, dir, path, name, revision, size, mdate, maintainer, status, check_oldstyle,  check_undoc, check_roleerror, check_badorder, check_noseealso, check_noreturnvalues, check_noparameters, check_noexamples,check_noerrors)
-                        VALUES ('en', $xmlid, '$idDir', '$dir/', '$file', $en_revision, $en_size,$en_date, NULL, NULL, ".$ToolsCheckDocResult['check_oldstyle'].", ".$ToolsCheckDocResult['check_undoc'].", ".$ToolsCheckDocResult['check_roleerror'].", ".$ToolsCheckDocResult['check_badorder'].", ".$ToolsCheckDocResult['check_noseealso'].", ".$ToolsCheckDocResult['check_noreturnvalues'].", ".$ToolsCheckDocResult['check_noparameters'].", ".$ToolsCheckDocResult['check_noexamples'].", ".$ToolsCheckDocResult['check_noerrors'].")";
+                    $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `dir`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    "'en'",
+                    $xmlid,
+                    "'$idDir'",
+                    "'$dir/'",
+                    "'$file'",
+                    $en_revision,
+                    $en_size,
+                    $en_date,
+                    "NULL",
+                    "NULL",
+                    $ToolsCheckDocResult['check_oldstyle'],
+                    $ToolsCheckDocResult['check_undoc'],
+                    $ToolsCheckDocResult['check_roleerror'],
+                    $ToolsCheckDocResult['check_badorder'],
+                    $ToolsCheckDocResult['check_noseealso'],
+                    $ToolsCheckDocResult['check_noreturnvalues'],
+                    $ToolsCheckDocResult['check_noparameters'],
+                    $ToolsCheckDocResult['check_noexamples'],
+                    $ToolsCheckDocResult['check_noerrors']
+                    );
 
-                    $this->db->query($s) or die('Error: '.$this->db->error);
+                    $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
                     reset($this->availableLanguage);
 
@@ -170,27 +189,23 @@ class phpDoc
                             $xmlid      = ($infoLANG['xmlid'] == 'NULL') ? 'NULL' : "'".$infoLANG['xmlid']."'";
                             $reviewed   = ($infoLANG['reviewed'] == 'NULL') ? 'NULL' : "'".$infoLANG['reviewed']."'";
 
-                            $s = "INSERT INTO files
-                                (lang, xmlid, dir, path, name, revision, en_revision, reviewed, size, size_diff, mdate, mdate_diff, maintainer, status)
-                                VALUES
-                                (
-                                    '".$lang."',
-                                    $xmlid,
-                                    '$idDir',
-                                    '$dir/',
-                                    '$file',
-                                    $revision,
-                                    $en_revision,
-                                    $reviewed,
-                                    $size,
-                                    $size_diff,
-                                    $date,
-                                    $date_diff,
-                                    $maintainer,
-                                    $status
-                                )";
-
-                            $this->db->query($s) or die('Error: '.$this->db->error);
+                            $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `dir`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                            "'$lang'",
+                            $xmlid,
+                            "'$idDir'",
+                            "'$dir/'",
+                            "'$file'",
+                            $revision,
+                            $en_revision,
+                            $reviewed,
+                            $size,
+                            $size_diff,
+                            $date,
+                            $date_diff,
+                            $maintainer,
+                            $status
+                            );
+                            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
                             // Check for error in this file ONLY if this file is uptodate
                             if ($revision == $en_revision ) {
@@ -203,7 +218,20 @@ class phpDoc
                             }
 
                         } else {
-                            $this->db->query("INSERT INTO files (lang, dir, path, name, revision, size, mdate, maintainer, status) VALUES ('".$lang."', '$idDir', '$dir/', '$file', NULL, NULL, NULL, NULL, NULL);") or die('Error: '.$this->db->error);
+
+                            $s = sprintf('INSERT INTO `files` (`lang`, `dir`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                            "'$lang'",
+                            "'$idDir'",
+                            "'$dir/'",
+                            "'$file'",
+                            "NULL",
+                            "NULL",
+                            "NULL",
+                            "NULL",
+                            "NULL"
+                            );
+                            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
                         }
 
                     }
@@ -222,9 +250,12 @@ class phpDoc
 
                     $path = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $Edir;
 
-                    $this->db->query("INSERT INTO dirs (parentDir, name) VALUES (" . $idDir . ", '$Edir');") or die('Error: '.$this->db->error);
+                    $s = sprintf('INSERT INTO `dirs` (`parentDir`, `name`) VALUES (%s, "%s")', $idDir, $Edir);
+
+                    $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
                     $last_id = $this->db->insert_id;
-                    $this->rev_do_revcheck($dir . '/' . $Edir, $last_id);
+                    $this->revDoRevCheck($dir . '/' . $Edir, $last_id);
 
                 }
             }
@@ -238,9 +269,11 @@ class phpDoc
      */
     function revStart() {
 
-        $this->db->query("INSERT INTO dirs (parentDir, name) VALUES (0, '/');");
+        $s = sprintf('INSERT INTO `dirs` (`parentDir`, `name`) VALUES (%s, "/")', 0);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
         $firstDir = $this->db->insert_id;
-        $this->rev_do_revcheck('', $firstDir);
+        $this->revDoRevCheck('', $firstDir);
 
     }
 
@@ -256,8 +289,9 @@ class phpDoc
         $return = array(); // Value return
 
         // Is this user already exist on this server ? database check
-        $s = 'SELECT * FROM users WHERE cvs_login=\''.$cvsLogin.'\' AND cvs_passwd=\''.$cvsPasswd.'\'';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT * FROM `users` WHERE `cvs_login`="%s" AND `cvs_passwd`="%s"', $cvsLogin, $cvsPasswd);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
         $n = $r->num_rows;
 
         if ($n == 0 ) {
@@ -267,8 +301,9 @@ class phpDoc
             $this->cvsPasswd = $cvsPasswd;
             $this->cvsLang   = $lang;
 
-            $s = 'SELECT * FROM users WHERE cvs_login=\''.$cvsLogin.'\'';
-            $r = $this->db->query($s) or die($this->db->error);
+            $s = sprintf('SELECT * FROM `users` WHERE `cvs_login`="%s"', $cvsLogin);
+            $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
             $n = $r->num_rows;
             if ($n == 0 ) {
 
@@ -279,7 +314,7 @@ class phpDoc
                 if ($r === TRUE ) {
 
                     // We register this new valid user
-                    $userID = $this->register_user();
+                    $userID = $this->registerUser();
 
                     //Store in session
                     $_SESSION['userID']    = $userID;
@@ -374,8 +409,8 @@ class phpDoc
      */
     function updateLastConnect() {
 
-        $s = 'UPDATE users SET last_connect=now() WHERE userID=\''.$this->userID.'\'';
-        $this->db->query($s);
+        $s = sprintf('UPDATE `users` SET `last_connect`=now() WHERE `userID`="%s"', $this->userID);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
     }
 
@@ -427,10 +462,10 @@ class phpDoc
      * @todo The CVS password is stored in plain text into the database for later use. We need to find something better
      * @return int The database insert id
      */
-    function register_user()
+    function registerUser()
     {
-        $s = sprintf('INSERT INTO users (`cvs_login`, `cvs_passwd`) VALUES ("%s", "%s")', $this->cvsLogin, $this->cvsPasswd);
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('INSERT INTO `users` (`cvs_login`, `cvs_passwd`) VALUES ("%s", "%s")', $this->cvsLogin, $this->cvsPasswd);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         return $this->db->insert_id;
     }
 
@@ -461,7 +496,7 @@ class phpDoc
     {
         // We cleanUp the database before update Cvs and apply again all tools
         foreach (array('dirs', 'files', 'translators', 'errorfiles') as $table) {
-            $this->db->query(sprintf('TRUNCATE TABLE %s', $table)) or die($this->db->error);
+            $this->db->query(sprintf('TRUNCATE TABLE %s', $table)) or die('Error: '.$this->db->error.'|'.$s);
         }
     }
 
@@ -652,7 +687,10 @@ class phpDoc
 
                     if (!@is_file($path_en)) {
                         $size = intval(filesize($path) / 1024);
-                        $this->db->query("INSERT INTO old_files (lang, dir, file, size, userID) VALUES ('$lang', '$dir', '$file', '$size', ".$this->userID.");") or die('Error: '.$this->db->error);
+
+                        $s = sprintf('INSERT INTO `old_files` (`lang`, `dir`, `file`, `size`, `userID`) VALUES ("%s", "%s", "%s", "%s", %s)', $lang, $dir, $file, $size, $this->userID);
+
+                        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
                     }
                 }
             }
@@ -705,13 +743,22 @@ class phpDoc
                         }
 
                         $person = array_merge($default, $person);
-                        $s = "INSERT INTO translators (`lang`, `nick`, `name`, `mail`, `cvs`, `editor`) VALUES ('".$lang."', '" . $this->db->real_escape_string($person['nick']) . "', '" . $this->db->real_escape_string($name) . "', '" . $this->db->real_escape_string($person['email']) . "', '" . $this->db->real_escape_string($person['cvs']) . "', '" . $this->db->real_escape_string($person['editor']) . "')";
-                        $this->db->query($s) or die($this->db->error);
+
+                        $s = sprintf('INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `cvs`, `editor`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
+                        $lang,
+                        $this->db->real_escape_string($person['nick']),
+                        $this->db->real_escape_string($name),
+                        $this->db->real_escape_string($person['email']),
+                        $this->db->real_escape_string($person['cvs']),
+                        $this->db->real_escape_string($person['editor'])
+                        );
+
+                        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
                     }
                 }
             }
         }
-    } // parse_translation
+    }
 
     /**
      * Get all modified files.
@@ -724,7 +771,7 @@ class phpDoc
         CONCAT("1.", `en_revision`) AS `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE 
         `lang`="%s" OR `lang`="en"', $this->cvsLang);
 
-        $r = $this->db->query($s) or die($this->db->error);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         $node = array();
 
@@ -745,8 +792,9 @@ class phpDoc
         // Get Files Need Commit
         $ModifiedFiles = $this->getModifiedFiles();
 
-        $s = 'SELECT * FROM `files` WHERE `lang` = \''.$this->cvsLang.'\' AND `revision` != `en_revision`';
+        $s = sprintf('SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`', $this->cvsLang);
         $r = $this->db->query($s);
+
         $nb = $r->num_rows;
 
         $node = array();
@@ -802,8 +850,8 @@ class phpDoc
         // Get Files Need Commit
         $ModifiedFiles = $this->getModifiedFiles();
 
-        $s = 'SELECT * FROM `files` WHERE `lang` = \''.$this->cvsLang.'\' AND `revision` = `en_revision` AND reviewed != \'yes\' LIMIT 100';
-        $r = $this->db->query($s);
+        $s = sprintf('SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` = `en_revision` AND reviewed != \'yes\' LIMIT 100', $this->cvsLang);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $nb = $r->num_rows;
 
         $node = array();
@@ -847,9 +895,9 @@ class phpDoc
      */
     function getFilesPendingPatch() {
 
-        $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS \'by\',
-        `uniqID`, `date` FROM `pendingPatch` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'', $this->cvsLang);
+
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $nb = $r->num_rows;
 
         $node = array();
@@ -867,8 +915,8 @@ class phpDoc
      */
     function getFilesPendingCommit() {
 
-        $s = 'SELECT * FROM `pendingCommit` WHERE `lang`=\''.$this->cvsLang.'\' OR `lang`=\'en\'';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT * FROM `pendingCommit` WHERE `lang`="%s" OR `lang`=\'en\'', $this->cvsLang);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $nb = $r->num_rows;
 
         $node = array();
@@ -894,9 +942,9 @@ class phpDoc
      */
     function get_translators()
     {
-        $sql = sprintf('SELECT id, nick, name, mail, cvs FROM translators WHERE lang="%s"', $this->cvsLang);
+        $sql = sprintf('SELECT `id`, `nick`, `name`, `mail`, `cvs` FROM `translators` WHERE `lang`="%s"', $this->cvsLang);
         $persons = array();
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
 
         while ($r = $result->fetch_array()) {
             $persons[$r['nick']] = array('id'=>$r['id'], 'name' => utf8_encode($r['name']), 'mail' => $r['mail'], 'cvs' => $r['cvs']);
@@ -1002,21 +1050,21 @@ class phpDoc
      */
     function translator_get_uptodate()
     {
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                maintainer
+        $sql = sprintf('SELECT
+                COUNT(`name`) AS total,
+                `maintainer`
             FROM
-                files
+                `files`
             WHERE
-                lang="' . $this->cvsLang . '"
+                `lang`="%s"
             AND 
-                revision = en_revision
+                `revision` = `en_revision`
             GROUP BY
-                maintainer
+                `maintainer`
             ORDER BY
-                maintainer';
+                `maintainer`', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $tmp = array();
         while ($r = $result->fetch_array()) {
             $tmp[$r['maintainer']] = $r['total'];
@@ -1030,29 +1078,29 @@ class phpDoc
      */
     function translator_get_old()
     {
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                maintainer
+        $sql = sprintf('SELECT
+                COUNT(`name`) AS total,
+                `maintainer`
             FROM
-                files
+                `files`
             WHERE
-                lang="' . $this->cvsLang . '"
+                `lang`="%s"
             AND
-                en_revision != revision
+                `en_revision` != `revision`
             AND
-                en_revision - revision < 10
+                `en_revision` - `revision` < 10
             AND
-                size_diff < 3 
+                `size_diff` < 3 
             AND 
-                mdate_diff > -30
+                `mdate_diff` > -30
             AND
-                size is not NULL
+                `size` is not NULL
             GROUP BY
-                maintainer
+                `maintainer`
             ORDER BY
-                maintainer';
+                `maintainer`', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $tmp = array();
         while ($r = $result->fetch_array()) {
             $tmp[$r['maintainer']] = $r['total'];
@@ -1066,25 +1114,25 @@ class phpDoc
      */
     function translator_get_critical()
     {
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                maintainer
+        $sql = sprintf('SELECT
+                COUNT(`name`) AS total,
+                `maintainer`
             FROM
-                files
+                `files`
             WHERE
-                lang="' . $this->cvsLang . '"
+                `lang`="%s"
             AND
-                ( en_revision - revision >= 10  OR
-                ( en_revision != revision  AND
-                    ( size_diff >= 3 OR mdate_diff <= -30 )
+                ( `en_revision` - `revision` >= 10  OR
+                ( `en_revision` != `revision`  AND
+                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
                 ))
             AND
-                size is not NULL
+                `size` is not NULL
             GROUP BY
-                maintainer
+                `maintainer`
             ORDER BY
-                maintainer';
-        $result = $this->db->query($sql) or die($this->db->error);
+                `maintainer`', $this->cvsLang);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $tmp = array();
         while ($r = $result->fetch_array()) {
             $tmp[$r['maintainer']] = $r['total'];
@@ -1097,17 +1145,16 @@ class phpDoc
      * @return An indexed array.
      */
     function getNbFiles() {
-        $sql = '
-            SELECT
-                COUNT(*) AS total,
-                SUM(size)   AS total_size
-            FROM
-                files
-            WHERE
-                lang = \''.$this->cvsLang.'\'
-            ';
+        $sql = sprintf('SELECT
+                    COUNT(*) AS total,
+                    SUM(`size`) AS total_size
+                FROM
+                    `files`
+                WHERE
+                    `lang` = "%s"
+            ', $this->cvsLang);
 
-        $res = $this->db->query($sql) or die($this->db->error);
+        $res = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $r = $res->fetch_array();
         $result = array($r['total'], $r['total_size']);
         return $result;
@@ -1130,7 +1177,7 @@ class phpDoc
                 revision = en_revision
            ';
 
-        $res = $this->db->query($sql) or die($this->db->error);
+        $res = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $r = $res->fetch_array();
         $result = array($r['total'], $r['total_size']);
         return $result;
@@ -1141,23 +1188,24 @@ class phpDoc
      * @return An associated array (total=>nb files, total_size=>size of this files).
      */
     function getStatsCritical() {
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                SUM(size) AS total_size
+
+        $s = sprintf('SELECT
+                COUNT(`name`) AS total,
+                SUM(`size`) AS total_size
             FROM
-                files
+                `files`
             WHERE
-                lang="' . $this->cvsLang . '"
+                `lang`="%s"
             AND
-                ( en_revision - revision >= 10  OR
-                ( en_revision != revision  AND
-                    ( size_diff >= 3 OR mdate_diff <= -30 )
+                ( `en_revision` - `revision` >= 10  OR
+                ( `en_revision` != `revision`  AND
+                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
                 ))
             AND
-                size is not NULL
-           ';
+                `size` is not NULL
+           ', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         $r = $result->fetch_array();
         $result = array($r['total'], $r['total_size']);
@@ -1170,26 +1218,26 @@ class phpDoc
      */
     function getStatsOld()
     {
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                SUM(size)   AS total_size
+        $sql = sprintf('SELECT
+                COUNT(`name`) AS total,
+                SUM(`size`)   AS total_size
             FROM
-                files
+                `files`
             WHERE
-                lang="' . $this->cvsLang . '"
+                `lang`="%s"
             AND
-                en_revision != revision
+                `en_revision` != `revision`
             AND
-                en_revision - revision < 10
+                `en_revision` - `revision` < 10
             AND
-                size_diff < 3 
+                `size_diff` < 3 
             AND 
-                mdate_diff > -30
+                `mdate_diff` > -30
             AND
-                size is not NULL
-           ';
+                `size` is not NULL
+           ', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
 
         $r = $result->fetch_array();
         $result = array($r['total'], $r['total_size']);
@@ -1202,27 +1250,27 @@ class phpDoc
      */
     function getStatsNoTrans()
     {
-        $sql = 'SELECT
+        $sql = sprintf('SELECT
                 COUNT(a.name) as total, 
                 sum(b.size) as size 
             FROM
-                files a
+                `files` a
             LEFT JOIN
-                files b
+                `files` b
             ON 
                 a.dir = b.dir 
             AND
                 a.name = b.name
             WHERE
-                a.lang="' . $this->cvsLang . '" 
+                a.lang="%s" 
             AND
                 b.lang="en"
             AND
                 a.revision is NULL
             AND
-                a.size is NULL';
+                a.size is NULL', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error.'<pre>'.$sql.'</pre>');
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         if ($result->num_rows) {
             $r = $result->fetch_array();
             return array($r['total'], $r['size']);
@@ -1237,28 +1285,27 @@ class phpDoc
      */
     function getMissFiles()
     {
-        $sql = 'SELECT
+        $sql = sprintf('SELECT
                 b.size as size, 
                 a.name as file 
             FROM
-                files a
+                `files` a
             LEFT JOIN
-                files b 
+                `files` b 
             ON 
                 a.dir = b.dir 
             AND
                 a.name = b.name 
             WHERE 
-                a.lang="' . $this->cvsLang . '" 
+                a.lang="%s" 
             AND
                 b.lang="en" 
             AND
                 a.revision is NULL 
             AND
-                a.size is NULL 
-           ';
+                a.size is NULL', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error.'<pre>'.$sql.'</pre>');
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
         $num = $result->num_rows;
         if ($num == 0) {
             // only 'null' will produce a 0 with sizeof()
@@ -1278,28 +1325,27 @@ class phpDoc
      */
     function getStatsNoTag()
     {
-        $sql = 'SELECT
+        $sql = sprintf('SELECT
                 COUNT(a.name) as total,
                 sum(b.size) as size
             FROM
-                files a
+                `files` a
             LEFT JOIN
-                files b 
+                `files` b 
             ON 
                 a.dir = b.dir 
             AND
                 a.name = b.name
             WHERE
-                a.lang="' . $this->cvsLang .'" 
+                a.lang="%s" 
             AND
                 b.lang="en"
             AND
                 a.revision is NULL
             AND
-                a.size is not NULL
-           ';
+                a.size is not NULL', $this->cvsLang);
 
-        $result = $this->db->query($sql) or die($this->db->error);
+        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
 
         $r = $result->fetch_array();
         $result = array($r['total'], $r['size']);
@@ -1399,19 +1445,22 @@ class phpDoc
      */
     function registerAsPendingCommit($lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer) {
 
-        $s = 'SELECT id FROM pendingCommit WHERE lang=\''.$lang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
+        $s = sprintf('SELECT id FROM `pendingCommit` WHERE `lang`="%s" AND `path`="%s" AND `name`="%s"', $lang, $FilePath, $FileName);
         $r = $this->db->query($s);
+
         $nb = $r->num_rows;
 
         // We insert or update the pendingCommit table
         if ($nb == 0 ) {
-            $s = 'INSERT into pendingCommit (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`) VALUES (\''.$lang.'\', \''.$FilePath.'\', \''.$FileName.'\', \''.$revision.'\', \''.$en_revision.'\', \''.$reviewed.'\', \''.$maintainer.'\', \''.$this->cvsLogin.'\', now())';
-            $this->db->query($s) or die($this->db->error);
+
+            $s = sprintf('INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now())', $lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $this->cvsLogin);
+            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
             $fileID = $this->db->insert_id;
         } else {
             $a = $r->fetch_object();
-            $s = 'UPDATE pendingCommit SET `revision`=\''.$revision.'\', `en_revision`=\''.$en_revision.'\', `reviewed`=\''.$reviewed.'\', `maintainer`=\''.$maintainer.'\' WHERE id=\''.$a->id.'\'';
-            $this->db->query($s) or die($this->db->error);
+
+            $s = sprintf('UPDATE `pendingCommit` SET `revision`="%s", `en_revision`="%s", `reviewed`="%s", `maintainer`="%s" WHERE id="%s"', $revision, $en_revision, $reviewed, $maintainer, $a->id);
+            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
             $fileID = $a->id;
         }
 
@@ -1428,8 +1477,8 @@ class phpDoc
 
         $uniqID = md5(uniqid(rand(), true));
 
-        $s = 'INSERT into pendingPatch (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES (\''.$lang.'\', \''.$FilePath.'\', \''.$FileName.'\', \''.$this->cvsLogin.'\', now(), \''.$emailAlert.'\', \''.$uniqID.'\')';
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('INSERT into `pendingPatch` (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", now(), "%s", "%s")', $lang, $FilePath, $FileName, $this->cvsLogin, $emailAlert, $uniqID);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         return $uniqID;
 
@@ -1610,8 +1659,8 @@ class phpDoc
     {
         $result = array();
 
-        $s = sprintf('SELECT id, text FROM commitMessage WHERE userID="%s"', $this->userID);
-        $r = $this->db->query($s);
+        $s = sprintf('SELECT `id`, `text` FROM `commitMessage` WHERE userID="%s"', $this->userID);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         while ($a = $r->fetch_assoc()) {
             $result[] = $a;
         }
@@ -1681,13 +1730,13 @@ class phpDoc
         $path = '/'.implode('/', $t);
 
         // We need delete row from pendingCommit table
-        $s = 'SELECT id FROM pendingCommit WHERE lang=\''.$lang.'\' AND path=\''.$path.'\' AND name=\''.$file.'\'';
+        $s = sprintf('SELECT `id` FROM `pendingCommit` WHERE `lang`="%s" AND `path`="%s" AND name="%s"', $lang, $path, $file);
         $r = $this->db->query($s);
         $a = $r->fetch_object();
 
         // We need delete row from pendingCommit table
-        $s = 'DELETE FROM pendingCommit WHERE id=\''.$a->id.'\'';
-        $this->db->query($s);
+        $s = sprintf('DELETE FROM `pendingCommit` WHERE `id`="%s"', $a->id);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         // We need delete file on filesystem
         $doc = DOC_EDITOR_CVS_PATH.$lang.$path.$file.".new";
@@ -1707,8 +1756,8 @@ class phpDoc
         $error = $errorTools->updateFilesError($anode, 'nocommit');
 
         // We need reload original lang_revision
-        $s = 'SELECT revision, maintainer, reviewed FROM files WHERE lang=\''.$lang.'\' AND path=\''.$path.'\' AND name=\''.$file.'\'';
-        $r = $this->db->query($s);
+        $s = sprintf('SELECT `revision`, `maintainer`, `reviewed` FROM `files` WHERE `lang`="%s" AND `path`="%s" AND `name`="%s"', $lang, $path, $file);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $a = $r->fetch_object();
 
         $info = array();
@@ -1802,29 +1851,29 @@ class phpDoc
                 $date    = filemtime($path);
 
                 // For the EN file
-                $s = 'UPDATE files
+                $s = sprintf('UPDATE `files`
                  SET
-                   revision = \''.$info['rev'].'\',
-                   size     = \''.$size.'\',
-                   mdate    = \''.$date.'\'
+                   `revision` = "%s",
+                   `size`     = "%s",
+                   `mdate`    = "%s"
 
                  WHERE
-                   lang=\''.$FileLang.'\' AND
-                   path=\'/'.$FilePath.'\' AND
-                   name=\''.$FileName.'\'
-               ';
+                   `lang` = "%s" AND
+                   `path` = \'/%s\' AND
+                   `name` = "%s"
+               ',$info['rev'], $size, $date, $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
 
                 // For all LANG file
-                $s = 'UPDATE files
+                $s = sprintf('UPDATE `files`
                  SET
-                   en_revision = \''.$info['rev'].'\'
+                   `en_revision` = "%s"
 
                  WHERE
-                   lang != \''.$FileLang.'\' AND
-                   path  = \'/'.$FilePath.'\' AND
-                   name  = \''.$FileName.'\'
-               ';
+                   `lang` != "%s" AND
+                   `path`  = \'/%s\' AND
+                   `name`  = "%s"
+               ', $info['rev'], $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
 
 
@@ -1844,22 +1893,22 @@ class phpDoc
                 $size_diff = $sizeEN - $size;
                 $date_diff = (intval((time() - $dateEN) / 86400)) - (intval((time() - $date) / 86400));
 
-                $s = 'UPDATE files
+                $s = sprintf('UPDATE `files`
                  SET
-                   revision   = \''.$info['en-rev'].'\',
-                   reviewed   = \''.$info['reviewed'].'\',
-                   size       = \''.$size.'\',
-                   mdate      = \''.$date.'\',
-                   maintainer = \''.$info['maintainer'].'\',
-                   status     = \''.$info['status'].'\',
-                   size_diff  = \''.$size_diff.'\',
-                   mdate_diff = \''.$date_diff.'\'
+                   `revision`   = "%s",
+                   `reviewed`   = "%s",
+                   `size`       = "%s",
+                   `mdate`      = "%s",
+                   `maintainer` = "%s",
+                   `status`     = "%s",
+                   `size_diff`  = "%s",
+                   `mdate_diff` = "%s"
 
                  WHERE
-                   lang=\''.$FileLang.'\' AND
-                   path=\'/'.$FilePath.'\' AND
-                   name=\''.$FileName.'\'
-               ';
+                   `lang`="%s" AND
+                   `path`=\'/%s\' AND
+                   `name`="%s"
+               ',$info['en-rev'], $info['reviewed'], $size, $date, $info['maintainer'], $info['status'], $size_diff, $date_diff, $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
             }
 
@@ -1885,13 +1934,13 @@ class phpDoc
             $FilePath = implode("/", $t);
             $FileName = $anode[$i][1];
 
-            $s = 'DELETE FROM pendingCommit
-
+            $s = sprintf('DELETE FROM `pendingCommit`
               WHERE
-                 lang = \''.$FileLang.'\' AND
-                 path = \'/'.$FilePath.'\' AND
-                 name = \''.$FileName.'\'
-            ';
+                 `lang` = "%s" AND
+                 `path` = \'/%s\' AND
+                 `name` = "%s"
+            ', $FileLang, $FilePath, $FileName);
+
             $this->db->query($s) or die($this->db->error.'|'.$s);
 
             //$this->debug('in removeNeedCommit() ; DB query : '.$s);
@@ -1917,13 +1966,13 @@ class phpDoc
      */
     function manageLogMessage($logMessage) {
 
-        $s = 'SELECT id FROM commitMessage WHERE text=\''.$this->db->real_escape_string($logMessage).'\' AND userID=\''.$this->userID.'\'';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT id FROM `commitMessage` WHERE `text`="%s" AND `userID`="%s"', $this->db->real_escape_string($logMessage), $this->userID);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $nb = $r->num_rows;
 
         if ($nb == 0 ) {
-            $s = 'INSERT INTO commitMessage (`text`,`userID`) VALUES (\''.$this->db->real_escape_string($logMessage).'\', \''.$this->userID.'\')';
-            $this->db->query($s) or die($this->db->error);
+            $s = sprintf('INSERT INTO `commitMessage` (`text`,`userID`) VALUES ("%s", "%s")', $this->db->real_escape_string($logMessage), $this->userID);
+            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         }
 
     }
@@ -1952,9 +2001,9 @@ class phpDoc
     function updateConf($item, $value)
     {
 
-        $s = sprintf('UPDATE users SET %s="%s" WHERE cvs_login="%s"', $item, $value, $this->cvsLogin);
+        $s = sprintf('UPDATE `users` SET `%s`="%s" WHERE `cvs_login`="%s"', $item, $value, $this->cvsLogin);
 
-        $this->db->query($s) or die($this->db->error);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         // In session
         $this->userConf[$item] = $value;
@@ -1970,8 +2019,11 @@ class phpDoc
     function erasePersonalData()
     {
 
-        $this->db->query(sprintf('DELETE FROM commitMessage WHERE userID="%s"', $this->userID));
-        $this->db->query(sprintf('DELETE FROM users WHERE userID="%s"', $this->userID));
+        $s = sprintf('DELETE FROM `commitMessage` WHERE `userID`="%s"', $this->userID);
+        $this->db->query($s);
+
+        $s = sprintf('DELETE FROM `users` WHERE `userID`="%s"', $this->userID);
+        $this->db->query($s);
 
         return;
 
@@ -2028,7 +2080,7 @@ class phpDoc
 
         } else {
 
-            $s = 'SELECT lang, path, name FROM files WHERE (lang=\''.$this->cvsLang.'\' OR lang=\'en\') AND name LIKE \'%'.$search.'%\' ORDER BY lang, path, name';
+            $s = sprintf('SELECT `lang`, `path`, `name` FROM `files` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name` LIKE \'%%%s%%\' ORDER BY `lang`, `path`, `name`', $this->cvsLang, $search);
             $r = $this->db->query($s) or die($this->db->error.'|'.$s);
             while ($a = $r->fetch_object()) {
 
@@ -2044,20 +2096,20 @@ class phpDoc
 
     function saveLogMessage($messID, $mess)
     {
-        $s = sprintf('UPDATE commitMessage SET text="%s" WHERE id="%s"', $this->db->real_escape_string($mess), $messID);
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('UPDATE `commitMessage` SET `text`="%s" WHERE `id`="%s"', $this->db->real_escape_string($mess), $messID);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
     }
 
     function deleteLogMessage($messID)
     {
-        $s = sprintf('DELETE FROM commitMessage WHERE id="%s"', $messID);
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('DELETE FROM `commitMessage` WHERE `id`="%s"', $messID);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
     }
 
     function getAllFilesAboutExtension($ExtName) {
 
-        $s = 'SELECT `path`, `name` FROM `files` WHERE `path` LIKE \'/reference/'.$ExtName.'/%\' AND lang=\''.$this->cvsLang.'\' ORDER BY `path`, `name`';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT `path`, `name` FROM `files` WHERE `path` LIKE \'/reference/%s/%%\' AND `lang`="%s" ORDER BY `path`, `name`',$ExtName, $this->cvsLang);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $node = array();
 
         $i=0;
@@ -2075,8 +2127,8 @@ class phpDoc
 
     function afterPatchAccept($PatchUniqID) {
 
-        $s = 'SELECT * FROM `pendingPatch` WHERE uniqID = \''.$PatchUniqID.'\'';
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT * FROM `pendingPatch` WHERE `uniqID` = "%s"', $PatchUniqID);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $a = $r->fetch_object();
 
         // We need to send an email ?
@@ -2103,15 +2155,15 @@ EOD;
         @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         
         // ... and from DB
-        $s = 'DELETE FROM `pendingPatch` WHERE id=\''.$a->id.'\'';
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
     }
 
     function afterPatchReject($PatchUniqID) {
 
-        $s = sprintf('SELECT * FROM `pendingPatch` WHERE uniqID = "%s"', $PatchUniqID);
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT * FROM `pendingPatch` WHERE `uniqID` = "%s"', $PatchUniqID);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $a = $r->fetch_object();
 
         // We need to send an email ?
@@ -2134,15 +2186,15 @@ EOD;
         @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         
         // ... and from DB
-        $s = sprintf('DELETE FROM `pendingPatch` WHERE id="%s"', $a->id);
-        $this->db->query($s) or die($this->db->error);
+        $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
     }
 
     function searchXmlID($lang, $fileID)
     {
-        $s = sprintf('SELECT lang, path, name FROM files WHERE lang="%s" AND xmlid LIKE "%' . $fileID . '%"', $lang);
-        $r = $this->db->query($s) or die($this->db->error);
+        $s = sprintf('SELECT `lang`, `path`, `name` FROM `files` WHERE `lang` = "%s" AND `xmlid` LIKE "%' . $fileID . '%"', $lang);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         return $r->fetch_object();
     }
 
@@ -2159,7 +2211,7 @@ EOD;
         if( $lock_update->isLocked() || $lock_apply->isLocked() ) { return array('lastupdate'=>'in_progress', 'by'=>'-'); }
         else {
 
-            $s = 'SELECT lastupdate, `by` FROM `project` WHERE `name`="php"';
+            $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
             $r = $this->db->query($s);
             $a = $r->fetch_assoc();
 
@@ -2177,16 +2229,16 @@ EOD;
     function setLastUpdate()
     {
 
-        $s = 'SELECT lastupdate, `by` FROM `project` WHERE `name`="php"';
-        $r = $this->db->query($s);
+        $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
         $nb = $r->num_rows;
 
         if( $nb == 0 ) {
-            $s = 'INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), \''.( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ).'\')';
+            $s = sprintf('INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), "%s")', ( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ));
         } else {
-            $s = 'UPDATE `project` SET `lastupdate`=now(), `by`=\''.( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ).'\' WHERE `name`=\'php\'';
+            $s = sprintf('UPDATE `project` SET `lastupdate`=now(), `by`="%s" WHERE `name`=\'php\'', ( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ));
         }
-        $r = $this->db->query($s);
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
         return;
 
