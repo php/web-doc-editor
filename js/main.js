@@ -2704,7 +2704,7 @@ var phpDoc = function(){
                                             name: 'themeName',
                                             type: 'string'
                                         }],
-                                        data: [['themes/black/css/xtheme-black.css', _('Black')], ['xtheme-default.css', _('Default')], ['themes/darkgray/css/xtheme-darkgray.css', _('DarkGray')], ['js/extjs/resources/css/xtheme-gray.css', _('Gray')], ['themes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')], ['themes/indigo/css/xtheme-indigo.css', _('Indigo')], ['themes/midnight/css/xtheme-midnight.css', _('Midnight')], ['themes/olive/css/xtheme-olive.css', _('Olive')], ['themes/purple/css/xtheme-purple.css', _('Purple')], ['js/extjs/resources/css/xtheme-slate.css', _('Slate')], ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')]]
+                                        data: [['themes/black/css/xtheme-black.css', _('Black')], ['themes/empty.css', _('Default')], ['themes/darkgray/css/xtheme-darkgray.css', _('DarkGray')], ['js/extjs/resources/css/xtheme-gray.css', _('Gray')], ['themes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')], ['themes/indigo/css/xtheme-indigo.css', _('Indigo')], ['themes/midnight/css/xtheme-midnight.css', _('Midnight')], ['themes/olive/css/xtheme-olive.css', _('Olive')], ['themes/purple/css/xtheme-purple.css', _('Purple')], ['js/extjs/resources/css/xtheme-slate.css', _('Slate')], ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')]]
                                     }),
                                     valueField: 'themeFile',
                                     displayField: 'themeName',
