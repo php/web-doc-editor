@@ -1222,7 +1222,7 @@ class ToolsError {
 
         foreach ($tags as $tag => $label) {
 
-            $reg = '/<' . $tag . ' /s';
+            $reg = '/<' . $tag . '(\s*|>)/s';
 
             $nb_en = 0;
             $match = array();
