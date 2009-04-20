@@ -736,7 +736,8 @@ class ExtJsController
 
         $this->phpDoc->isLogged();
 
-        $r = $this->phpDoc->getCheckDocData();
+        $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
+        $r = $ToolsCheckDoc->getCheckDocData();
 
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
@@ -748,7 +749,8 @@ class ExtJsController
         $path      = $this->getRequestVariable('path');
         $errorType = $this->getRequestVariable('errorType');
 
-        $r = $this->phpDoc->getCheckDocFiles($path, $errorType);
+        $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
+        $r = $ToolsCheckDoc->getCheckDocFiles($path, $errorType);
 
         return $this->getResponse(array('success' => true, 'files' => $r));
     }
