@@ -318,25 +318,10 @@ class ToolsError {
         $this->attributVarlistentryTag();
         $this->classsynopsis();
         $this->methodsynopsis();
-        $this->nbAcronymTag();
-        $this->nbAbbrevTag();
-        $this->nbCautionTag();
         $this->nbCdataTag();
-        $this->nbChapterTag();
-        $this->nbCommandTag();
-        $this->nbConstantTag();
         $this->nbElInTable();
-        $this->nbEmphasisTag();
-        $this->nbFilenameTag();
-        $this->nbLiteralTag();
         $this->nbMemberInSeeAlso();
-        $this->nbNoteTag();
-        $this->nbParaTag();
-        $this->nbProductnameTag();
-        $this->nbSimparaTag();
-        $this->nbTipTag();
-        $this->nbVarnameTag();
-        $this->nbWarningTag();
+        $this->nbTag();
         $this->spaceOrPeriodRefpurposeTag();
 
     }
@@ -1208,497 +1193,59 @@ class ToolsError {
     }
 
     /**
-     * Check Nb <para> tag
+     * Check Nb <*> tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function nbParaTag()
+    function nbTag()
     {
 
-        $reg = '/<para(( )(.*?))?>/s';
+        // When you add a new tag here, you must add it too into error_type.php files (array => tags)
+        $tags = array(
+            'abbrev'      => 'Abbrev',
+            'acronym'     => 'Acronym',
+            'caution'     => 'Caution',
+            'command'     => 'Command',
+            'chapter'     => 'Chapter',
+            'constant'    => 'Constant',
+            'emphasis'    => 'Emphasis',
+            'filename'    => 'Filename',
+            'literal'     => 'Literal',
+            'note'        => 'Note',
+            'para'        => 'Para',
+            'productname' => 'Productname',
+            'simpara'     => 'Simpara',
+            'tip'         => 'Tip',
+            'varname'     => 'Varname',
+            'warning'     => 'Warning'
+        );
+
+        foreach ($tags as $tag => $label) {
+
+            $reg = '/<' . $tag . ' /s';
+
+            $nb_en = 0;
+            $match = array();
+            if (preg_match_all($reg, $this->en_content, $match)) {
+                $nb_en = count($match[0]);
+            }
+
+            $nb_lang = 0;
+            $match = array();
+            if (preg_match_all($reg, $this->lang_content, $match)) {
+                $nb_lang = count($match[0]);
+            }
+
+            if ($nb_en != $nb_lang ) {
+                $this->addError(array(
+                    "value_en"   => $nb_en,
+                    "value_lang" => $nb_lang,
+                    "type"       => "nb" . $label . "Tag"
+                ));
+            }
+
+        } // foreach
 
-        $match = array();
-        preg_match_all($reg, $this->en_content, $match);
-        $en_para = count($match[0]);
-
-        $match = array();
-        preg_match_all($reg, $this->lang_content, $match);
-        $lang_para = count($match[0]);
-
-        if ($en_para != $lang_para) {
-            $this->addError(array(
-                'value_en'   => $en_para,
-                'value_lang' => $lang_para,
-                'type'       => 'nbParaTag'
-            ));
-
-        }
-    }
-
-    /**
-     * Check Nb <note> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbNoteTag()
-    {
-
-        $reg = '/<note>/s';
-
-        $en_note = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_note = count($match[0]);
-        }
-
-        $lang_note = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_note = count($match[0]);
-        }
-
-        if ($en_note != $lang_note) {
-            $this->addError(array(
-                "value_en"   => $en_note,
-                "value_lang" => $lang_note,
-                "type"       => "nbNoteTag"
-            ));
-
-        }
-    }
-
-    /**
-     * Check Nb <chapter> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbChapterTag()
-    {
-
-        $reg = '/<chapter /s';
-
-        $en_chapter = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_chapter = count($match[0]);
-        }
-
-        $lang_chapter = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_chapter = count($match[0]);
-        }
-
-        if ($en_chapter != $lang_chapter ) {
-            $this->addError(array(
-                "value_en"   => $en_chapter,
-                "value_lang" => $lang_chapter,
-                "type"       => "nbChapterTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <caution> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbCautionTag()
-    {
-
-        $reg = '/<caution>/s';
-
-        $en_Caution = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_Caution = count($match[0]);
-        }
-
-        $lang_Caution = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_Caution = count($match[0]);
-        }
-
-        if ($en_Caution != $lang_Caution ) {
-            $this->addError(array(
-                "value_en"   => $en_Caution,
-                "value_lang" => $lang_Caution,
-                "type"       => "nbCautionTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <filename> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbFilenameTag()
-    {
-
-        $reg = '/<filename>/s';
-
-        $en_filename = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_filename = count($match[0]);
-        }
-
-        $lang_filename = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_filename = count($match[0]);
-        }
-
-        if ($en_filename != $lang_filename ) {
-            $this->addError(array(
-                "value_en"   => $en_filename,
-                "value_lang" => $lang_filename,
-                "type"       => "nbFilenameTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <abbrev> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbAbbrevTag()
-    {
-
-        $reg = '/<abbrev>/s';
-
-        $en_abbrev = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_abbrev = count($match[0]);
-        }
-
-        $lang_abbrev = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_abbrev = count($match[0]);
-        }
-
-        if ($en_abbrev != $lang_abbrev ) {
-            $this->addError(array(
-                "value_en"   => $en_abbrev,
-                "value_lang" => $lang_abbrev,
-                "type"       => "nbAbbrevTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <productname> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbProductnameTag()
-    {
-
-        $reg = '/<productname>/s';
-
-        $en_productname = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_productname = count($match[0]);
-        }
-
-        $lang_productname = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_productname = count($match[0]);
-        }
-
-        if ($en_productname != $lang_productname ) {
-            $this->addError(array(
-                "value_en"   => $en_productname,
-                "value_lang" => $lang_productname,
-                "type"       => "nbProductnameTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <acronym> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbAcronymTag()
-    {
-
-        $reg = '/<acronym>/s';
-
-        $en_acronym = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_acronym = count($match[0]);
-        }
-
-        $lang_acronym = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_acronym = count($match[0]);
-        }
-
-        if ($en_acronym != $lang_acronym ) {
-            $this->addError(array(
-                "value_en"   => $en_acronym,
-                "value_lang" => $lang_acronym,
-                "type"       => "nbAcronymTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <constant> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbConstantTag()
-    {
-
-        $reg = '/<constant>/s';
-
-        $en_constant = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_constant = count($match[0]);
-        }
-
-        $lang_constant = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_constant = count($match[0]);
-        }
-
-        if ($en_constant != $lang_constant ) {
-            $this->addError(array(
-                "value_en"   => $en_constant,
-                "value_lang" => $lang_constant,
-                "type"       => "nbConstantTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <warning> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbWarningTag()
-    {
-
-        $reg = '/<warning>/s';
-
-        $en_warning = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_warning = count($match[0]);
-        }
-
-        $lang_warning = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_warning = count($match[0]);
-        }
-
-        if ($en_warning != $lang_warning ) {
-            $this->addError(array(
-                "value_en"   => $en_warning,
-                "value_lang" => $lang_warning,
-                "type"       => "nbWarningTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <simpara> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbSimparaTag()
-    {
-
-        $reg = '/<simpara>/s';
-
-        $en_simpara = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_simpara = count($match[0]);
-        }
-
-        $lang_simpara = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_simpara = count($match[0]);
-        }
-
-        if ($en_simpara != $lang_simpara ) {
-            $this->addError(array(
-                "value_en"   => $en_simpara,
-                "value_lang" => $lang_simpara,
-                "type"       => "nbSimparaTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <tip> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbTipTag()
-    {
-
-        $reg = '/<tip>/s';
-
-        $en_tip = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_tip = count($match[0]);
-        }
-
-        $lang_tip = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_tip = count($match[0]);
-        }
-
-        if ($en_tip != $lang_tip ) {
-            $this->addError(array(
-                "value_en"   => $en_tip,
-                "value_lang" => $lang_tip,
-                "type"       => "nbTipTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <varname> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbVarnameTag()
-    {
-
-        $reg = '/<varname>/s';
-
-        $en_varname = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_varname = count($match[0]);
-        }
-
-        $lang_varname = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_varname = count($match[0]);
-        }
-
-        if ($en_varname != $lang_varname ) {
-            $this->addError(array(
-                "value_en"   => $en_varname,
-                "value_lang" => $lang_varname,
-                "type"       => "nbVarnameTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <emphasis> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbEmphasisTag()
-    {
-
-        $reg = '/<emphasis>/s';
-
-        $en_emphasis = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_emphasis = count($match[0]);
-        }
-
-        $lang_emphasis = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_emphasis = count($match[0]);
-        }
-
-        if ($en_emphasis != $lang_emphasis ) {
-            $this->addError(array(
-                "value_en"   => $en_emphasis,
-                "value_lang" => $lang_emphasis,
-                "type"       => "nbEmphasisTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <command> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbCommandTag()
-    {
-
-        $reg = '/<command>/s';
-
-        $en_command = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_command = count($match[0]);
-        }
-
-        $lang_command = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_command = count($match[0]);
-        }
-
-        if ($en_command != $lang_command ) {
-            $this->addError(array(
-                "value_en"   => $en_command,
-                "value_lang" => $lang_command,
-                "type"       => "nbCommandTag"
-            ));
-        }
-    }
-
-    /**
-     * Check Nb <literal> tag
-     * Add an entry into the error's stack if an error is found
-     *
-     */
-    function nbLiteralTag()
-    {
-
-        $reg = '/<literal>/s';
-
-        $en_literal = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->en_content, $match)) {
-            $en_literal = count($match[0]);
-        }
-
-        $lang_literal = 0;
-        $match = array();
-        if (preg_match_all($reg, $this->lang_content, $match)) {
-            $lang_literal = count($match[0]);
-        }
-
-        if ($en_literal != $lang_literal ) {
-            $this->addError(array(
-                "value_en"   => $en_literal,
-                "value_lang" => $lang_literal,
-                "type"       => "nbLiteralTag"
-            ));
-        }
     }
 
     /**
@@ -1784,6 +1331,7 @@ class ToolsError {
         $match = array();
         $en_seeAlsoMember = 0;
         preg_match($reg, $this->en_content, $match);
+
         if (isset($match[1])) {
             $match2 = array();
             preg_match_all($reg2, $match[1], $match2);
@@ -1795,6 +1343,7 @@ class ToolsError {
         $match = array();
         $lang_seeAlsoMember = 0;
         preg_match($reg, $this->lang_content, $match);
+
         if (isset($match[1])) {
             $match2 = array();
             preg_match_all($reg2, $match[1], $match2);

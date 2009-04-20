@@ -21,12 +21,6 @@ if (isset($_GET['dir']) && isset($_GET['file'])) {
     $fileLibel = NULL;
 }
 
-/*
-echo '<pre>';
-print_r($error_to_display);
-echo '</pre>';
-*/
-
 ?>
 <style type="text/css">
 
@@ -87,6 +81,33 @@ h1.error-type-title {
 
 <?php
 
+// Commun number of tags check
+
+$tags = array(
+    'abbrev'      => 'Abbrev',
+    'acronym'     => 'Acronym',
+    'caution'     => 'Caution',
+    'command'     => 'Command',
+    'chapter'     => 'Chapter',
+    'constant'    => 'Constant',
+    'emphasis'    => 'Emphasis',
+    'filename'    => 'Filename',
+    'literal'     => 'Literal',
+    'note'        => 'Note',
+    'para'        => 'Para',
+    'productname' => 'Productname',
+    'simpara'     => 'Simpara',
+    'tip'         => 'Tip',
+    'varname'     => 'Varname',
+    'warning'     => 'Warning'
+);
+
+foreach ($tags as $tag => $label)
+{
+    $error['nb' . $label . 'Tag']['head'] = $label . ' tag';
+    $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different from english version.';   
+}
+
 $error['-No error-']['head'] = '- No error -';
 $error['-No error-']['desc'] = 'There is no more error in this file.';
 
@@ -117,35 +138,8 @@ $error['attributXmlIdChapter']['desc'] = 'Throw if the value of the attribut <b>
 $error['attributVersionChapter']['head'] = 'Chapter tag';
 $error['attributVersionChapter']['desc'] = 'Throw if the value of the attribut <b>version</b> is different from english version.';
 
-$error['nbChapterTag']['head'] = 'Chapter tag';
-$error['nbChapterTag']['desc'] = 'Throw if the number of <b>chapter</b> tags is different from english version.';
-
-$error['nbSimparaTag']['head'] = 'Simpara tag';
-$error['nbSimparaTag']['desc'] = 'Throw if the number of <b>simpara</b> tags is different from english version.';
-
-$error['nbCautionTag']['head'] = 'Caution tag';
-$error['nbCautionTag']['desc'] = 'Throw if the number of <b>caution</b> tags is different from english version.';
-
-$error['nbAcronymTag']['head'] = 'Acronym tag';
-$error['nbAcronymTag']['desc'] = 'Throw if the number of <b>acronym</b> tags is different from english version.';
-
-$error['nbConstantTag']['head'] = 'Constant tag';
-$error['nbConstantTag']['desc'] = 'Throw if the number of <b>constant</b> tags is different from english version.';
-
-$error['nbTipTag']['head'] = 'Tip tag';
-$error['nbTipTag']['desc'] = 'Throw if the number of <b>tip</b> tags is different from english version.';
-
 $error['nbEntryTag']['head'] = 'Entry tag';
 $error['nbEntryTag']['desc'] = 'Throw if the number of <b>entry</b> tags is different from english version.';
-
-$error['nbCommandTag']['head'] = 'Command tag';
-$error['nbCommandTag']['desc'] = 'Throw if the number of <b>command</b> tags is different from english version.';
-
-$error['nbEmphasisTag']['head'] = 'Emphasis tag';
-$error['nbEmphasisTag']['desc'] = 'Throw if the number of <b>emphasis</b> tags is different from english version.';
-
-$error['nbVarnameTag']['head'] = 'Varname tag';
-$error['nbVarnameTag']['desc'] = 'Throw if the number of <b>varname</b> tags is different from english version.';
 
 $error['errorFieldsynopsisInitializer']['head'] = 'Fieldsynopsis tag';
 $error['errorFieldsynopsisInitializer']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different from english version.';
@@ -162,18 +156,6 @@ $error['attributLinkendLink']['head'] = 'Linkend and xlink tags';
 $error['attributLinkendLink']['desc'] = 'Throw if the value of the attribut <b>linkend</b> is different from english version.';
 $error['attributXlinkLink']['head'] = 'Linkend and xlink tags';
 $error['attributXlinkLink']['desc'] = 'Throw if the value of the attribut <b>xlink:href</b> is different from english version.';
-
-$error['nbLiteralTag']['head'] = 'Literal tag';
-$error['nbLiteralTag']['desc'] = 'Throw if the number of <b>literal</b> tags is different from english version.';
-
-$error['nbProductnameTag']['head'] = 'Productname tag';
-$error['nbProductnameTag']['desc'] = 'Throw if the number of <b>productname</b> tags is different from english version.';
-
-$error['nbFilenameTag']['head'] = 'Filename tag';
-$error['nbFilenameTag']['desc'] = 'Throw if the number of <b>filename</b> tags is different from english version.';
-
-$error['nbAbbrevTag']['head'] = 'Abbrev tag';
-$error['nbAbbrevTag']['desc'] = 'Throw if the number of <b>abbrev</b> tags is different from english version.';
 
 $error['errorRoleMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorRoleMethodsynopsis']['desc'] = 'Throw if the value of the attribut <b>role</b> is different from english version.';
@@ -192,16 +174,10 @@ $error['errorTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</
 $error['errorMethodnameMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorMethodnameMethodsynopsis']['desc'] = 'Throw if the value of the <b>methodname</b> tags is different from english version.';
 
-$error['nbNoteTag']['head'] = 'Note tag';
-$error['nbNoteTag']['desc'] = 'Throw if the number of <b>note</b> tags is different from english version.';
-
 $error['errorNbOoclassClassname']['head'] = 'Ooclass tag';
 $error['errorNbOoclassClassname']['desc'] = 'Throw if the number of <b>classname</b> tags is different from english version.';
 $error['errorOoclassClassname']['head'] = 'Ooclass tag';
 $error['errorOoclassClassname']['desc'] = 'Throw if the value of the <b>classname</b> tags is different from english version.';
-
-$error['nbParaTag']['head'] = 'Para tag';
-$error['nbParaTag']['desc'] = 'Throw if the number of <b>para</b> tags is different from english version.';
 
 $error['attributXmlNsXlinkPreface']['head'] = 'Preface tag';
 $error['attributXmlNsXlinkPreface']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
@@ -247,9 +223,9 @@ $error['attributXmlIdSect1']['desc'] = 'Throw if the value of the attribut <b>xm
 
 $error['attributXmlNsXlinkSection']['head'] = 'Section tag';
 $error['attributXmlNsXlinkSection']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsSection']['head'] = 'section tag';
+$error['attributXmlNsSection']['head'] = 'Section tag';
 $error['attributXmlNsSection']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdSection']['head'] = 'section tag';
+$error['attributXmlIdSection']['head'] = 'Section tag';
 $error['attributXmlIdSection']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
 
 $error['nbSeeAlsoMember']['head'] = 'SeeAlso section';
@@ -261,12 +237,12 @@ $error['nbTbodyTag']['desc'] = 'Throw if the number of <b>tbody</b> tags is diff
 $error['nbTheadTag']['head'] = 'Thead tag';
 $error['nbTheadTag']['desc'] = 'Throw if the number of <b>thead</b> tags is different from english version.';
 
-$error['attributXmlIdVarlistentry']['head'] = 'varlistentry tag';
+$error['attributXmlIdVarlistentry']['head'] = 'Varlistentry tag';
 $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
 
 $to_display = array();
 
-// Si $error_to_display est un array vide, on lui attribut toutes les erreurs (page par d�faut)
+// If $error_to_display is an emty array, we add it all errors (default page)
 if( empty($error_to_display) ) {
     while (list($k, $v) = each($error)) {
         $type[] = $k;
@@ -279,12 +255,14 @@ if( empty($error_to_display) ) {
 
 for( $i=0; $i < count($type); $i++ ) {
     $to_display[$error[$type[$i]]['head']][$type[$i]]['desc'] = $error[$type[$i]]['desc'];
-} // Fin for
+}
 
 // Display title
 if( $fileLibel ) {
     echo '<h1 class="error-type-title">Check for errors in '.$fileLibel.'</h1>';
 }
+
+ksort($to_display);
 
 while (list($k, $v) = each($to_display)) {
 
