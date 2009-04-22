@@ -345,10 +345,15 @@ class ExtJsController
 
         // Get EN content to check error with
         $dirEN = DOC_EDITOR_CVS_PATH.'/en'.$FilePath;
-        $en_content = file_get_contents($dirEN.$FileName);
 
-        // Do tools_error
-        //$error = $this->phpDoc->tools_error_check_all($fileContent, $en_content);
+        if( $this->phpDoc->isModifiedFile('en', $FilePath, $FileName) ) {
+            // We get the modified file
+            $en_content = file_get_contents($dirEN.$FileName.'.new');
+        } else {
+            // We get the original file
+            $en_content = file_get_contents($dirEN.$FileName);
+        }
+
 
         // Update DB with this new Error (if any)
         $info = $this->phpDoc->getInfoFromContent($FileContent);
@@ -359,7 +364,7 @@ class ExtJsController
 
         //$r = $this->phpDoc->updateFilesError($anode, 'nocommit');
 
-        return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
+        return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first'], 'tmp'=>$tmp));
     }
 
     // NEW

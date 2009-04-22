@@ -42,6 +42,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
+        uiRevision: '$Revision: 1.50 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -2193,7 +2194,9 @@ var phpDoc = function(){
                             }]
                         });
                         winStatus.show();
-                        
+
+                        Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
+
                         // Apply modification
                         Ext.Ajax.request({
                             url: './php/controller.php',
@@ -2222,6 +2225,8 @@ var phpDoc = function(){
                                 
                                 // Reload summary data
                                 scope.storeSummary.reload();
+
+                                Ext.getBody().unmask();
                             }
                         });
                     }
@@ -3051,7 +3056,7 @@ var phpDoc = function(){
                         },
                         items: [{
                             title: _('About'),
-                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + '<br/> Copyright &copy; 2008-2009 The PHP Group<br/>'+_('Author:')+' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> '+ _('and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a>')+'</div>'
+                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + '<br/>UI: ' + this.uiRevision + '<br/> Copyright &copy; 2008-2009 The PHP Group<br/>'+_('Author:')+' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> '+ _('and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a>')+'</div>'
                         }, {
                             title: _('Credits'),
                             bodyStyle: 'padding:15px',
