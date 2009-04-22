@@ -1787,7 +1787,7 @@ var phpDoc = function(){
         }, //removeTabEvent
         WinCommit: function(singleFile, rowIndex, choice){
         
-            var win, btn, FileID, FilePath, FileName, node;
+            var win, btn, FileID, FilePath, FileName, node, TreeSorter;
             
             btn = Ext.get('acc-need-update');
             
@@ -2128,7 +2128,10 @@ var phpDoc = function(){
                     }
                     
                 }, this);
-                
+
+                // We sort the node alphabetically
+                TreeSorter = new Ext.tree.TreeSorter(Ext.getCmp('tree-panel'), {});
+                TreeSorter.doSort(Ext.getCmp('tree-panel').getRootNode());
             }
             
             
