@@ -42,7 +42,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.50 $',
+        uiRevision: '$Revision: 1.51 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -1356,6 +1356,7 @@ var phpDoc = function(){
                                     // Update our store
                                     this.storeFilesError.getAt(rowIndex).set('needcommit', true);
                                     this.storeFilesError.getAt(rowIndex).set('maintainer', o.maintainer);
+                                    this.storeFilesError.getAt(rowIndex).commit();
                                 }
                                 
                                 if (Panel === 'FNU') {
@@ -1363,6 +1364,7 @@ var phpDoc = function(){
                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('revision', '1.' + o.new_revision);
                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('needcommit', true);
                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('maintainer', o.maintainer);
+                                    this.storeFilesNeedUpdate.getAt(rowIndex).commit();
                                 }
                                 
                                 if (Panel === 'FNR') {
@@ -1370,6 +1372,7 @@ var phpDoc = function(){
                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('needcommit', true);
                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('maintainer', o.maintainer);
                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('reviewed', o.reviewed);
+                                    this.storeFilesNeedReviewed.getAt(rowIndex).commit();
                                 }
                                 
                                 // Add this files into storePendingCommit
@@ -1462,6 +1465,7 @@ var phpDoc = function(){
                                                     // Update our store
                                                     this.storeFilesError.getAt(rowIndex).set('needcommit', true);
                                                     this.storeFilesError.getAt(rowIndex).set('maintainer', o.maintainer);
+                                                    this.storeFilesError.getAt(rowIndex).commit();
                                                 }
                                                 
                                                 if (Panel === 'FNU') {
@@ -1469,6 +1473,7 @@ var phpDoc = function(){
                                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('revision', '1.' + o.new_revision);
                                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('needcommit', true);
                                                     this.storeFilesNeedUpdate.getAt(rowIndex).set('maintainer', o.maintainer);
+                                                    this.storeFilesNeedUpdate.getAt(rowIndex).commit();
                                                 }
                                                 
                                                 if (Panel === 'FNR') {
@@ -1476,6 +1481,7 @@ var phpDoc = function(){
                                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('needcommit', true);
                                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('maintainer', o.maintainer);
                                                     this.storeFilesNeedReviewed.getAt(rowIndex).set('reviewed', o.reviewed);
+                                                    this.storeFilesNeedReviewed.getAt(rowIndex).commit();
                                                 }
                                                 
                                                 // Add this files into storePendingCommit
