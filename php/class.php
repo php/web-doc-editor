@@ -1839,7 +1839,7 @@ class phpDoc
      */
     function highlightCommitLog($message) {
 
-        $reg = array("/(COMMITINFO)/", "/(LOGINFO)/", "/(Checking in)/", "/(done)/", "/(bailing)/", "/(Mailing the commit email to)/");
+        $reg = array("/(COMMITINFO)/", "/(LOGINFO)/", "/(Checking in)/", "/(done)/", "/(bailing)/", "/(Mailing the commit email to)/", "/(Logging in to)/","(new revision)");
         return preg_replace($reg, "<span style=\"color: #15428B; font-weight: bold;\">\\1</span>", $message);
 
     }
