@@ -364,7 +364,7 @@ class ExtJsController
 
         //$r = $this->phpDoc->updateFilesError($anode, 'nocommit');
 
-        return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first'], 'tmp'=>$tmp));
+        return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
     }
 
     // NEW
