@@ -158,18 +158,18 @@ class ExtJsController
         $lock = new LockFile('lock_apply_tools');
 
         if ($lock->lock()) {
+
             // Start Revcheck
-            $this->phpDoc->revStart();
+            $this->phpDoc->revDoRevCheck();
+
+            // Search for Old Files
+            $this->phpDoc->checkOldFiles();
 
             // Parse translators
             $this->phpDoc->revParseTranslation();
 
             // Set lastUpdate date/time
             $this->phpDoc->setLastUpdate();
-
-            // Check errors in files
-            //        $tool = new ToolsError($_SESSION['lang']);
-            //       $tool->run('/');
 
         }
         $lock->release();

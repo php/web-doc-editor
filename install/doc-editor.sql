@@ -22,20 +22,6 @@ CREATE TABLE IF NOT EXISTS `commitMessage` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `dirs`
---
-
-CREATE TABLE IF NOT EXISTS `dirs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `project` varchar(255) NOT NULL,
-  `parentDir` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Structure of table `errorfiles`
 --
 
@@ -63,7 +49,6 @@ CREATE TABLE IF NOT EXISTS `files` (
   `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `xmlid` varchar(255) DEFAULT NULL,
-  `dir` int(11) unsigned NOT NULL,
   `path` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `revision` int(11) unsigned DEFAULT NULL,

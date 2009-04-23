@@ -82,33 +82,49 @@ class phpDoc
         $lock->release();
     }
 
+    /**
+     * Check is the File/Folder must be parsed or not.
+     *
+     * @param $lang The lang for this File/Folder.
+     * @param $dir The checked Folder.
+     * @param $file The checked File.
+     * @return Booleen TRUE if the File/Folder must be parsed, FALSE otherwise.
+     */
+    function isParsed($lang, $dir, $file) {
+
+        if (
+        (!is_dir(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
+        || strpos($file, 'entities.') === 0
+        || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
+        || $file == 'contributors.ent' || $file == 'contributors.xml'
+        || ($dir == '/appendices' && ($file == 'reserved.constants.xml' || $file == 'extensions.xml'))
+        || $file == 'README'
+        || $file == 'DO_NOT_TRANSLATE'
+        || $file == 'rsusi.txt'
+        || $file == 'missing-ids.xml'
+        || $file == 'license.xml'
+        || $file == 'versions.xml'
+        ) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
 
     /**
      * Apply the Revcheck tools recursively on all lang
      * @param $dir The directory from which we start.
-     * @param $idDir Directory id from the database.
      * @return Nothing.
      */
-    function revDoRevCheck( $dir = '', $idDir ) {
-        if ($dh = opendir(DOC_EDITOR_CVS_PATH . 'en/' . $dir)) {
+    function revDoRevCheck( $dir = '' ) {
+        if ($dh = @opendir(DOC_EDITOR_CVS_PATH . 'en/' . $dir)) {
 
             $entriesDir = array();
             $entriesFiles = array();
 
             while (($file = readdir($dh)) !== false) {
-                if (
-                (!is_dir(DOC_EDITOR_CVS_PATH . 'en' . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
-                || strpos($file, 'entities.') === 0
-                || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
-                || $file == 'contributors.ent' || $file == 'contributors.xml'
-                || ($dir == '/appendices' && ($file == 'reserved.constants.xml' || $file == 'extensions.xml'))
-                || $file == 'README'
-                || $file == 'DO_NOT_TRANSLATE'
-                || $file == 'rsusi.txt'
-                || $file == 'missing-ids.xml'
-                || $file == 'license.xml'
-                || $file == 'versions.xml'
-                ) {
+
+                if ( !$this->isParsed('en', $dir, $file) ) {
                     continue;
                 }
 
@@ -142,10 +158,9 @@ class phpDoc
                     $ToolsCheckDocResult = $ToolsCheckDoc->checkDoc($infoEN['content'], $dir);
 
                     // Sql insert.
-                    $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `dir`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     "'en'",
                     $xmlid,
-                    "'$idDir'",
                     "'$dir/'",
                     "'$file'",
                     $en_revision,
@@ -189,10 +204,9 @@ class phpDoc
                             $xmlid      = ($infoLANG['xmlid'] == 'NULL') ? 'NULL' : "'".$infoLANG['xmlid']."'";
                             $reviewed   = ($infoLANG['reviewed'] == 'NULL') ? 'NULL' : "'".$infoLANG['reviewed']."'";
 
-                            $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `dir`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                            $s = sprintf('INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                             "'$lang'",
                             $xmlid,
-                            "'$idDir'",
                             "'$dir/'",
                             "'$file'",
                             $revision,
@@ -219,9 +233,8 @@ class phpDoc
 
                         } else {
 
-                            $s = sprintf('INSERT INTO `files` (`lang`, `dir`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                            $s = sprintf('INSERT INTO `files` (`lang`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                             "'$lang'",
-                            "'$idDir'",
                             "'$dir/'",
                             "'$file'",
                             "NULL",
@@ -248,33 +261,12 @@ class phpDoc
 
                 foreach ($entriesDir as $Edir) {
 
-                    $path = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $Edir;
-
-                    $s = sprintf('INSERT INTO `dirs` (`parentDir`, `name`) VALUES (%s, "%s")', $idDir, $Edir);
-
-                    $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-                    $last_id = $this->db->insert_id;
-                    $this->revDoRevCheck($dir . '/' . $Edir, $last_id);
+                    $this->revDoRevCheck($dir . '/' . $Edir);
 
                 }
             }
         }
-        closedir($dh);
-    }
-
-    /**
-     * Part of the revcheck tools. Start the Revcheck tools.
-     * @return Nothing.
-     */
-    function revStart() {
-
-        $s = sprintf('INSERT INTO `dirs` (`parentDir`, `name`) VALUES (%s, "/")', 0);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        $firstDir = $this->db->insert_id;
-        $this->revDoRevCheck('', $firstDir);
-
+        @closedir($dh);
     }
 
     /**
@@ -647,33 +639,32 @@ class phpDoc
         return $tag_attrs_processed;
     }
 
-    function revCheckOldFiles($dir = '') {
+    function checkOldFiles() {
 
-        if ($dh = opendir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir)) {
+        while (list(, $lang) = each($this->availableLanguage)) {
+
+            $this->doCheckOldFiles('', $lang);
+
+        }
+    }
+
+    function doCheckOldFiles($dir = '', $lang) {
+
+        if ($dh = @opendir(DOC_EDITOR_CVS_PATH . $lang . $dir)) {
 
             $entriesDir = array();
             $entriesFiles = array();
 
             while (($file = readdir($dh)) !== false) {
-                if (
-                (!is_dir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
-                || strpos($file, 'entities.') === 0
-                || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
-                || $file == 'contributors.ent' || $file == 'contributors.xml'
-                || ($dir == '/appendices' && ($file == 'reserved.constants.xml' || $file == 'extensions.xml'))
-                || $file == 'README'
-                || $file == 'DO_NOT_TRANSLATE'
-                || $file == 'rsusi.txt'
-                || $file == 'missing-ids.xml'
-                ) {
+                if ( !$this->isParsed($lang, $dir, $file) ) {
                     continue;
                 }
 
                 if ($file != '.' && $file != '..' && $file != 'CVS' && $dir != '/functions') {
 
-                    if (is_dir(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file)) {
+                    if (is_dir(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file)) {
                         $entriesDir[] = $file;
-                    } elseif (is_file(DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir.'/' .$file)) {
+                    } elseif (is_file(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file)) {
                         $entriesFiles[] = $file;
                     }
                 }
@@ -683,13 +674,17 @@ class phpDoc
             if (!empty($entriesFiles)) {
                 foreach($entriesFiles as $file) {
                     $path_en = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $file;
-                    $path = DOC_EDITOR_CVS_PATH . $this->cvsLang . $dir . '/' . $file;
+                    $path = DOC_EDITOR_CVS_PATH . $lang . $dir . '/' . $file;
 
                     if (!@is_file($path_en)) {
                         $size = intval(filesize($path) / 1024);
-
-                        $s = sprintf('INSERT INTO `old_files` (`lang`, `dir`, `file`, `size`, `userID`) VALUES ("%s", "%s", "%s", "%s", %s)', $lang, $dir, $file, $size, $this->userID);
-
+                        
+                        $s = sprintf('INSERT INTO `files` (`lang`, `path`, `name`, `status`) VALUES (%s, %s, %s, %s)',
+                        "'".$lang."'",
+                        "'$dir/'",
+                        "'$file'",
+                        "'NotInEN'"
+                        );
                         $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
                     }
                 }
@@ -698,11 +693,11 @@ class phpDoc
             // Directories..
             if (!empty($entriesDir)) {
                 foreach ($entriesDir as $Edir) {
-                    $this->revCheckOldFiles($dir . '/' . $Edir);
+                    $this->doCheckOldFiles($dir . '/' . $Edir, $lang);
                 }
             }
         }
-        closedir($dh);
+        @closedir($dh);
     }
 
     /**
@@ -1278,7 +1273,7 @@ class phpDoc
             LEFT JOIN
                 `files` b
             ON 
-                a.dir = b.dir 
+                a.path = b.path 
             AND
                 a.name = b.name
             WHERE
@@ -1313,7 +1308,7 @@ class phpDoc
             LEFT JOIN
                 `files` b 
             ON 
-                a.dir = b.dir 
+                a.path = b.path 
             AND
                 a.name = b.name 
             WHERE 
@@ -1353,7 +1348,7 @@ class phpDoc
             LEFT JOIN
                 `files` b 
             ON 
-                a.dir = b.dir 
+                a.path = b.path 
             AND
                 a.name = b.name
             WHERE

@@ -32,7 +32,10 @@ if ($isCLI) {
 }
 flush();
 //We apply all tools for all language
-$phpDoc->revStart();
+$phpDoc->revDoRevCheck();
+
+// Search for Old Files
+$phpDoc->checkOldFiles();
 
 if ($isCLI) {
     echo "\n * Parsing translation data...";
