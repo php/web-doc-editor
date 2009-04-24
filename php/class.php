@@ -487,7 +487,7 @@ class phpDoc
     function cleanUp()
     {
         // We cleanUp the database before update Cvs and apply again all tools
-        foreach (array('dirs', 'files', 'translators', 'errorfiles') as $table) {
+        foreach (array('files', 'translators', 'errorfiles') as $table) {
             $this->db->query(sprintf('TRUNCATE TABLE %s', $table)) or die('Error: '.$this->db->error.'|'.$s);
         }
     }
