@@ -68,7 +68,6 @@ class phpDoc
      * Checkout the phpdoc-all repository.
      * This method must be call ONLY by the /firstRun.php script.
      */
-
     function checkoutRepository() {
 
         $lock = new LockFile('lock_checkout_repository');
@@ -114,6 +113,7 @@ class phpDoc
 
     /**
      * Apply the Revcheck tools recursively on all lang
+     *
      * @param $dir The directory from which we start.
      * @return Nothing.
      */
@@ -272,6 +272,7 @@ class phpDoc
 
     /**
      * Log into this application.
+     *
      * @param $cvsLogin  The login use to identify this user into PHP CVS server.
      * @param $cvsPasswd The password, in plain text, to identify this user into PHP CVS server.
      * @param $lang      The language we want to access.
@@ -398,7 +399,7 @@ class phpDoc
 
     /**
      * Update the date/time about the lastConnexion for this user, in DB
-     * @return Nothing.
+     *
      */
     function updateLastConnect() {
 
@@ -409,6 +410,7 @@ class phpDoc
 
     /**
      * Check if there is an authentificated session or not
+     *
      * @return TRUE if there is an authentificated session, FALSE otherwise.
      */
     function isLogged() {
@@ -495,6 +497,7 @@ class phpDoc
 
     /**
      * Use to encode Cvs Password when we try to identify the user into PHP CVS Server.
+     *
      * @param $pass The password to encode.
      * @param $letter The password to encode.
      * @return string The encoded password
@@ -556,6 +559,7 @@ class phpDoc
 
     /**
      * Get Cvs log of a specified file.
+     *
      * @param $Path The path of the file.
      * @param $File The name of the file.
      * @return An array containing all Cvs log informations.
@@ -611,10 +615,9 @@ class phpDoc
         return $final;
     }
 
-    /* Methods for the revcheck */
-
     /**
      * Parse a string to find all attributs.
+     *
      * @param $tags_attrs The string to parse.
      * @return An associated array who key are the name of the attribut, and value, the value of the attribut.
      */
@@ -640,6 +643,10 @@ class phpDoc
         return $tag_attrs_processed;
     }
 
+    /**
+     * List all available language to run doCheckOldFiles() on it.
+     * 
+     */
     function checkOldFiles() {
 
         reset($this->availableLanguage);
@@ -649,6 +656,13 @@ class phpDoc
         }
     }
 
+    /**
+     * Analyse all files to check if the LANG files is present into EN tree or not.
+     * 
+     * @param $dir The analysed dir.
+     * @param $lang The tested lang.
+     *
+     */
     function doCheckOldFiles($dir = '', $lang) {
 
         if ($dh = @opendir(DOC_EDITOR_CVS_PATH . $lang . $dir)) {
@@ -702,8 +716,7 @@ class phpDoc
     }
 
     /**
-     * Part of the revcheck tools. Parse the translation's file witch hold all informations about all translators and put it into database.
-     * @return Nothing.
+     * Parse the translation's file witch hold all informations about all translators and put it into database.
      */
     function revParseTranslation() {
 
@@ -778,6 +791,7 @@ class phpDoc
 
     /**
      * Get all modified files.
+     *
      * @return An associated array containing all informations about modified files.
      */
     function getModifiedFiles() {
@@ -801,6 +815,7 @@ class phpDoc
 
     /**
      * Get all files witch need to be updated.
+     *
      * @return An associated array containing all informations about files witch need to be updated.
      */
     function getFilesNeedUpdate() {
@@ -859,6 +874,7 @@ class phpDoc
 
     /**
      * Get all files witch need to be reviewed.
+     *
      * @return An associated array containing all informations about files witch need to be reviewed.
      */
     function getFilesNeedReviewed() {
@@ -907,6 +923,7 @@ class phpDoc
 
     /**
      * Get all witch are not in EN tree.
+     *
      * @return An associated array containing all informations about files witch are not in EN tree
      */
     function getFilesNotInEn() {
@@ -927,6 +944,7 @@ class phpDoc
 
     /**
      * Get all pending patch.
+     *
      * @return An associated array containing all informations about pending patch.
      */
     function getFilesPendingPatch() {
@@ -947,6 +965,7 @@ class phpDoc
 
     /**
      * Get all files pending for commit.
+     *
      * @return An associated array containing all informations about files pending for commit.
      */
     function getFilesPendingCommit() {
@@ -975,9 +994,10 @@ class phpDoc
 
     /**
      * Get all translators informations.
+     *
      * @return An associated array containing all informations about translators.
      */
-    function get_translators()
+    function getTranslators()
     {
         $sql = sprintf('SELECT `id`, `nick`, `name`, `mail`, `cvs` FROM `translators` WHERE `lang`="%s"', $this->cvsLang);
         $persons = array();
@@ -992,14 +1012,15 @@ class phpDoc
 
     /**
      * Get all statistiques about translators.
+     *
      * @return An indexed array containing all statistiques about translators (nb uptodate files, nb old files, etc...)
      */
     function getTranslatorsInfo() {
 
-        $translators = $this->get_translators();
-        $uptodate    = $this->translator_get_uptodate();
-        $old         = $this->translator_get_old();
-        $critical    = $this->translator_get_critical();
+        $translators = $this->getTranslators();
+        $uptodate    = $this->translatorGetUptodate();
+        $old         = $this->translatorGetOld();
+        $critical    = $this->translatorGetCritical();
 
         $i=0; $persons=array();
         foreach($translators as $nick => $data) {
@@ -1016,6 +1037,7 @@ class phpDoc
 
     /**
      * Get summary of all statistiques.
+     *
      * @return An indexed array containing all statistiques for the summary
      */
     function getSummaryInfo() {
@@ -1083,9 +1105,10 @@ class phpDoc
 
     /**
      * Get number of uptodate files per translators.
+     *
      * @return An associated array (key=>translator's nick, value=>nb files).
      */
-    function translator_get_uptodate()
+    function translatorGetUptodate()
     {
         $sql = sprintf('SELECT
                 COUNT(`name`) AS total,
@@ -1111,9 +1134,10 @@ class phpDoc
 
     /**
      * Get number of old files per translators.
+     *
      * @return An associated array (key=>translator's nick, value=>nb files).
      */
-    function translator_get_old()
+    function translatorGetOld()
     {
         $sql = sprintf('SELECT
                 COUNT(`name`) AS total,
@@ -1147,9 +1171,10 @@ class phpDoc
 
     /**
      * Get number of critical files per translators.
+     *
      * @return An associated array (key=>translator's nick, value=>nb files).
      */
-    function translator_get_critical()
+    function translatorGetCritical()
     {
         $sql = sprintf('SELECT
                 COUNT(`name`) AS total,
@@ -1178,7 +1203,8 @@ class phpDoc
     }
 
     /**
-     * Get number of files.
+     * Get number/size of all files.
+     *
      * @return An indexed array.
      */
     function getNbFiles() {
@@ -1199,6 +1225,7 @@ class phpDoc
 
     /**
      * Get number of translated files.
+     *
      * @return Number of translated files.
      */
     function getNbFilesTranslated() {
@@ -1222,6 +1249,7 @@ class phpDoc
 
     /**
      * Get statistic about critical files witch need to be updated.
+     *
      * @return An associated array (total=>nb files, total_size=>size of this files).
      */
     function getStatsCritical() {
@@ -1250,7 +1278,8 @@ class phpDoc
     }
 
     /**
-     * Get statistic about old files witch need to be deleted from LANG tree.
+     * Get statistic about old files witch need to be uptadeted from LANG tree.
+     *
      * @return An associated array (total=>nb files, total_size=>size of this files).
      */
     function getStatsOld()
@@ -1283,6 +1312,7 @@ class phpDoc
 
     /**
      * Get statistic about files witch need to be translated.
+     *
      * @return An associated array (total=>nb files, size=>size of this files).
      */
     function getStatsNoTrans()
@@ -1318,6 +1348,7 @@ class phpDoc
 
     /**
      * Get statistic about missed files witch need to be added to LANG tree.
+     *
      * @return An array of missed files (size=>size of the file, file=>name of the file).
      */
     function getMissFiles()
@@ -1358,6 +1389,7 @@ class phpDoc
 
     /**
      * Get statistic about files witch haven't revcheck's tags.
+     *
      * @return An associated array (total=>nb files, size=>size of this files).
      */
     function getStatsNoTag()
@@ -1391,6 +1423,7 @@ class phpDoc
 
     /**
      * Get encoding of a file, regarding his XML's header.
+     *
      * @param $file The file to get encoding from.
      * @param $mode The mode. Must be 'file' if $file is a path to the file, or 'content' if $file is the content of the file.
      * @return The charset as a string.
@@ -1416,8 +1449,9 @@ class phpDoc
 
     /**
      * Get the content of a file.
-     * @param $FilePath The path for the file we want to retreive.
-     * @param $lang The lang of the file we want to retreive. Either 'en' or current LANG.
+     *
+     * @param $FilePath The path of the file.
+     * @param $FileName The name of the file.
      * @return An associated array (content=> content of the file, charset=>the charset of the file).
      */
     function getFileContent($FilePath, $FileName) {
@@ -1446,6 +1480,7 @@ class phpDoc
 
     /**
      * Save a file after modification.
+     *
      * @param $FilePath The path for the file we want to save.
      * @param $content The new content.
      * @param $lang The lang of the file we want to save. Either 'en' or current LANG.
@@ -1471,6 +1506,7 @@ class phpDoc
 
     /**
      * Register a file as need to be commited, into the database.
+     *
      * @param $lang        The path for the file witch need to be commited.
      * @param $FilePath    The path for the file witch need to be commited.
      * @param $FileName    The name of the file witch need to be commited.
@@ -1478,8 +1514,7 @@ class phpDoc
      * @param $en_revision The EN revision of this file.
      * @param $reviewed    The stats of the reviewed tag.
      * @param $maintainer  The maintainer.
-     * @param $type        The type of commit. Can be 'new' for new file, 'update' for an uptaded file or 'delete' for a file marked as delete
-     * @return Nothing.
+     * @param $type        The type of commit. Can be 'new' for new file, 'update' for an uptaded file or 'delete' for a file marked as delete.
      */
     function registerAsPendingCommit($lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $type='update') {
 
@@ -1506,9 +1541,11 @@ class phpDoc
 
     /**
      * Register a new patch, into the database.
+     *
      * @param $lang     The lang.
      * @param $FilePath The path for the file.
      * @param $FileName The name of the file.
+     * @param $emailAlert The email of the user how propose this patch.
      * @return Nothing.
      */
     function registerAsPendingPatch($lang, $FilePath, $FileName, $emailAlert) {
@@ -1524,8 +1561,9 @@ class phpDoc
 
     /**
      * Get the information from the content of a file.
+     *
      * @param $content The content of the file.
-     * @return The revision as a 2 digits number, or 0 if revision wasn't found.
+     * @return An associated array of informations.
      */
     function getInfoFromContent($content) {
 
@@ -1562,16 +1600,26 @@ class phpDoc
         return $info;
     }
 
-    function getInfoFromFile($file) {
-        $content = file_get_contents($file);
+    /**
+     * Same as getInfoFromContent() but with a file instead of a content of a file.
+     *
+     * @param $FilePath The path of the file.
+     * @see getInfoFromContent
+     * @return An associated array of informations.
+     */
+    function getInfoFromFile($FilePath) {
+        $content = file_get_contents($FilePath);
         return $this->getInfoFromContent($content);
     }
 
     /**
      * Get the diff of a file with his modified version.
+     *
      * @param $path The path to the file.
      * @param $file The name of the file.
-     * @return The diff a the file with his modified version, as HTML, reday to be display.
+     * @param $type The type is blank, $file is a modified file, else, this is a patch.
+     * @param $uniqID The uniq ID of the patch, if $type != ''.
+     * @return The diff of the file with his modified version, as HTML, ready to be display.
      */
     function getDiffFromFiles($path, $file, $type='', $uniqID='') {
         include "./class.fileDiff.php";
@@ -1590,6 +1638,7 @@ class phpDoc
 
     /**
      * Get a raw diff between a file and a modified file.
+     *
      * @param $path The path to the file.
      * @param $file The name of the file.
      * @return The diff of the file with his modified version.
@@ -1604,8 +1653,9 @@ class phpDoc
 
     }
 
-    /** NEW
+    /**
      * Get the diff of a file with his modified version.
+     *
      * @param $path The path to the file.
      * @param $file The name of the file.
      * @param $rev1 Frist revison.
@@ -1689,8 +1739,9 @@ class phpDoc
 
     /**
      * Get all commit message.
-        *
+     *
      * Each time we commit, we store in DB the commit message to be use later. This method get all this message from DB.
+     *
      * @return An indexed array of commit message.
      */
     function getCommitLogMessage()
@@ -1708,6 +1759,7 @@ class phpDoc
 
     /**
      * Save Output message into a log file.
+     *
      * @param $file The name of the file.
      * @param $output The output message.
      * @return Nothing.
@@ -1721,6 +1773,7 @@ class phpDoc
 
     /**
      * Get the content of a log file.
+     *
      * @param $file The name of the file.
      * @return $content The content.
      */
@@ -1731,6 +1784,7 @@ class phpDoc
     /**
      * Check the build of your file (using configure.php script).
      * PHP binary should be in /usr/bin
+     *
      * @return The output log.
      */
     function checkBuild($enable_xml_details='false') {
@@ -1753,6 +1807,7 @@ class phpDoc
 
     /**
      * Delete local change of a file.
+     *
      * @param $path The path of the file.
      * @param $file The name of the file.
      * @return An array witch contain informations about this file.
@@ -1818,6 +1873,7 @@ class phpDoc
 
     /**
      * Commit some files to Cvs server.
+     *
      * @param $anode An array of files to be commited.
      * @param $log The message log to use with this commit.
      * @return The message from Cvs server after this commit.
@@ -1851,7 +1907,7 @@ class phpDoc
 
     /**
      * Highlights the given commit log
-        *
+     *
      * @param $message The commit log
      * @return The output message, more beautiful than before!
      */
@@ -1864,8 +1920,8 @@ class phpDoc
 
     /**
      * Update information about a file after his commit (update informations added with revcheck tools).
+     *
      * @param $anode An array of files.
-     * @return Nothing.
      */
     function updateRev($anode) {
 
@@ -1957,8 +2013,8 @@ class phpDoc
 
     /**
      * Remove the mark "needCommit" into DB for a set of files.
+     *
      * @param $anode An array of files.
-     * @return Nothing.
      */
     function removeNeedCommit($anode) {
 
@@ -1987,6 +2043,11 @@ class phpDoc
 
     }
 
+    /**
+     * Print debug information into a file (.debug) into data folder.
+     *
+     * @param $mess The debug message.
+     */
     function debug($mess) {
 
         $mess = '['.date("d/m:Y H:i:s").'] by '.$this->cvsLogin.' : '.$mess."\n";
@@ -1999,6 +2060,7 @@ class phpDoc
 
     /**
      * Add (or not) a log message to the DB.
+     *
      * @param $logMessage The log message to be added if it don't exist yet.
      * @return Nothing.
      */
@@ -2017,10 +2079,10 @@ class phpDoc
 
     /**
      * Send an email.
+     *
      * @param $to The Receiver.
      * @param $subject The subject of the email.
      * @param $msg The content of the email. Don't use HTML here ; only plain text.
-     * @return Nothing.
      */
     function sendEmail($to, $subject, $msg) {
 
@@ -2031,11 +2093,11 @@ class phpDoc
     }
 
     /**
-      * Update an option in user configuration database
-      * @param $item The name of the option.
-      * @param $value The value of the option.
-      * @return Nothing
-      */
+     * Update an option in user configuration database
+     *
+     * @param $item The name of the option.
+     * @param $value The value of the option.
+     */
     function updateConf($item, $value)
     {
 
@@ -2051,9 +2113,8 @@ class phpDoc
     }
 
     /**
-      * Erase personal data. Delete all reference into the DB for this user.
-      * @return Nothing
-      */
+     * Erase personal data. Delete all reference into the DB for this user.
+     */
     function erasePersonalData()
     {
 
@@ -2067,6 +2128,12 @@ class phpDoc
 
     }
 
+    /**
+     * Get all files from the local copy.
+     *
+     * @param $node The start folder to retrieve files/folders from.
+     * @param $search The search value.
+     */
     function getAllFiles($node, $search='') {
 
         // Get Files Need Commit
@@ -2132,18 +2199,35 @@ class phpDoc
         return $nodes;
     }
 
+    /**
+     * Save an existing log message into DB.
+     *
+     * @param $messID The ID of the log message.
+     * @param $mess The message.
+     */
     function saveLogMessage($messID, $mess)
     {
         $s = sprintf('UPDATE `commitMessage` SET `text`="%s" WHERE `id`="%s"', $this->db->real_escape_string($mess), $messID);
         $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
     }
 
+    /**
+     * Delete a log message into DB.
+     *
+     * @param $messID The ID of the log message.
+     */
     function deleteLogMessage($messID)
     {
         $s = sprintf('DELETE FROM `commitMessage` WHERE `id`="%s"', $messID);
         $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
     }
 
+    /**
+     * Get all files for a given php's extension.
+     *
+     * @param $ExtName The name of the extension.
+     * @return An array of files
+     */
     function getAllFilesAboutExtension($ExtName) {
 
         $s = sprintf('SELECT `path`, `name` FROM `files` WHERE `path` LIKE \'/reference/%s/%%\' AND `lang`="%s" ORDER BY `path`, `name`',$ExtName, $this->cvsLang);
@@ -2163,6 +2247,11 @@ class phpDoc
 
     }
 
+    /**
+     * All we must do after a patch have been accepted.
+     *
+     * @param $PatchUniqID ID of the accepted patch.
+     */
     function afterPatchAccept($PatchUniqID) {
 
         $s = sprintf('SELECT * FROM `pendingPatch` WHERE `uniqID` = "%s"', $PatchUniqID);
@@ -2198,6 +2287,11 @@ EOD;
 
     }
 
+    /**
+     * All we must do after a patch have been rejected.
+     *
+     * @param $PatchUniqID ID of the accepted patch.
+     */
     function afterPatchReject($PatchUniqID) {
 
         $s = sprintf('SELECT * FROM `pendingPatch` WHERE `uniqID` = "%s"', $PatchUniqID);
@@ -2229,6 +2323,13 @@ EOD;
 
     }
 
+    /**
+     * Search a file regarding his file's ID.
+     *
+     * @TODO Better description here...
+     * @param $lang The lang of the searched file.
+     * @param $fileID The ID of the searched file.
+     */
     function searchXmlID($lang, $fileID)
     {
         $s = sprintf('SELECT `lang`, `path`, `name` FROM `files` WHERE `lang` = "%s" AND `xmlid` LIKE "%' . $fileID . '%"', $lang);
@@ -2237,9 +2338,10 @@ EOD;
     }
 
     /**
-      * Get the last update datetime
-      * @return The last update datetime or "in_progress" if the update is in progress
-      */
+     * Get the last update datetime
+     *
+     * @return The last update datetime or "in_progress" if the update is in progress
+     */
     function getLastUpdate()
     {
         // Test is there is an update in progress
@@ -2261,9 +2363,8 @@ EOD;
     } // get_last_update
 
     /**
-      * Set the last update datetime into DB
-      * @return Nothing
-      */
+     * Set the last update datetime into DB
+     */
     function setLastUpdate()
     {
 
