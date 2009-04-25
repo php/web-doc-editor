@@ -128,6 +128,9 @@ i18n["Search: "] = "Recherche : ";
 i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
 i18n["Filter: "] = "Filtrer : ";
 i18n["Your filter must contain at least 3 characters"] = "Votre filtre doit comporter au moins 3 caractères";
+i18n["Not in EN tree"] = "Non présent en EN";
+i18n["Remove this file"] = "Supprimer ce fichier";
+
 
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
