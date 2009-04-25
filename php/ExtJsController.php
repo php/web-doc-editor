@@ -215,27 +215,24 @@ class ExtJsController
 
     }
 
-    //NEW
     public function getFilesNeedUpdate() {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNeedUpdate();
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    //NEW
     public function getFilesNotInEn() {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNotInEn();
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
-    // NEW
+
     public function getFilesNeedReviewed() {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNeedReviewed();
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    // NEW
     public function getFilesError() {
         $this->phpDoc->isLogged();
         
@@ -246,7 +243,6 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    // NEW
     public function getFilesPendingCommit() {
         $this->phpDoc->isLogged();
 
@@ -255,7 +251,6 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    // NEW
     public function getFilesPendingPatch() {
         $this->phpDoc->isLogged();
 
@@ -264,7 +259,6 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    //NEW
     public function getTranslatorInfo() {
 
         $this->phpDoc->isLogged();
@@ -274,7 +268,6 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => count($translators), 'Items' => $translators));
     }
 
-    //NEW
     public function getSummaryInfo() {
 
         $this->phpDoc->isLogged();
@@ -325,8 +318,6 @@ class ExtJsController
         return $this->getResponse($return);
     }
 
-
-    // NEW
     public function checkFileError() {
 
         $this->phpDoc->isLogged();
@@ -373,7 +364,6 @@ class ExtJsController
         return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
     }
 
-    // NEW
     public function saveFile() {
 
         $this->phpDoc->isLogged();
@@ -444,7 +434,6 @@ class ExtJsController
 
     }
 
-    // NEW
     public function getLog() {
 
         $this->phpDoc->isLogged();
@@ -471,7 +460,6 @@ class ExtJsController
         ));
     }
 
-    //NEW
     public function getDiff2() {
 
         $this->phpDoc->isLogged();
@@ -509,7 +497,6 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
     }
 
-    //NEW
     public function clearLocalChange() {
         $this->phpDoc->isLogged();
 
