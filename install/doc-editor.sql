@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `pendingCommit` (
   `maintainer` varchar(255) NOT NULL,
   `modified_by` varchar(50) NOT NULL,
   `date` datetime NOT NULL,
+  `type` enum('new','delete','update') NOT NULL,
   KEY `id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 

@@ -101,6 +101,7 @@ class phpDoc
         || $file == 'README'
         || $file == 'DO_NOT_TRANSLATE'
         || $file == 'rsusi.txt'
+        || $file == 'translation.xml'
         || $file == 'missing-ids.xml'
         || $file == 'license.xml'
         || $file == 'versions.xml'
@@ -641,10 +642,10 @@ class phpDoc
 
     function checkOldFiles() {
 
+        reset($this->availableLanguage);
+
         while (list(, $lang) = each($this->availableLanguage)) {
-
             $this->doCheckOldFiles('', $lang);
-
         }
     }
 
@@ -678,7 +679,7 @@ class phpDoc
 
                     if (!@is_file($path_en)) {
                         $size = intval(filesize($path) / 1024);
-                        
+
                         $s = sprintf('INSERT INTO `files` (`lang`, `path`, `name`, `status`) VALUES (%s, %s, %s, %s)',
                         "'".$lang."'",
                         "'$dir/'",
@@ -905,6 +906,26 @@ class phpDoc
     }
 
     /**
+     * Get all witch are not in EN tree.
+     * @return An associated array containing all informations about files witch are not in EN tree
+     */
+    function getFilesNotInEn() {
+
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $this->cvsLang);
+
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+        $nb = $r->num_rows;
+
+        $node = array();
+
+        while ($row = $r->fetch_assoc()) {
+            $node[] = $row;
+        }
+
+        return array('nb' => $nb, 'node' => $node);
+    }
+
+    /**
      * Get all pending patch.
      * @return An associated array containing all informations about pending patch.
      */
@@ -943,7 +964,8 @@ class phpDoc
             "path"        => $a->lang.$a->path,
             "name"        => $a->name,
             "by"          => $a->modified_by,
-            "date"        => $a->date
+            "date"        => $a->date,
+            "type"        => $a->type
             );
 
         }
@@ -1456,9 +1478,10 @@ class phpDoc
      * @param $en_revision The EN revision of this file.
      * @param $reviewed    The stats of the reviewed tag.
      * @param $maintainer  The maintainer.
+     * @param $type        The type of commit. Can be 'new' for new file, 'update' for an uptaded file or 'delete' for a file marked as delete
      * @return Nothing.
      */
-    function registerAsPendingCommit($lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer) {
+    function registerAsPendingCommit($lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $type='update') {
 
         $s = sprintf('SELECT id FROM `pendingCommit` WHERE `lang`="%s" AND `path`="%s" AND `name`="%s"', $lang, $FilePath, $FileName);
         $r = $this->db->query($s);
@@ -1468,7 +1491,7 @@ class phpDoc
         // We insert or update the pendingCommit table
         if ($nb == 0 ) {
 
-            $s = sprintf('INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now())', $lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $this->cvsLogin);
+            $s = sprintf('INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")', $lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $this->cvsLogin, $type);
             $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
             $fileID = $this->db->insert_id;
         } else {

@@ -222,6 +222,12 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
+    //NEW
+    public function getFilesNotInEn() {
+        $this->phpDoc->isLogged();
+        $r = $this->phpDoc->getFilesNotInEn();
+        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+    }
     // NEW
     public function getFilesNeedReviewed() {
         $this->phpDoc->isLogged();
@@ -418,7 +424,7 @@ class ExtJsController
         if ($type == 'file') {
 
             $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'file');
-            $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']);
+            $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'update');
             return $this->getResponse(array(
             'success' => true,
             'en_revision' => $info['rev'],

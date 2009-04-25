@@ -29,6 +29,7 @@ var phpDoc = function(){
         storeFilesError: '', //
         storeFilesNeedUpdate: '',
         storeFilesNeedReviewed: '',
+        storeNotInEn: '',
         storePendingCommit: '',
         storePendingPatch: '',
         
@@ -42,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.51 $',
+        uiRevision: '$Revision: 1.52 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -409,8 +410,45 @@ var phpDoc = function(){
                     }
                 }
             });
-            
-            
+                
+            // Store : Not In En tree
+            this.storeNotInEn = new Ext.data.GroupingStore({
+                autoLoad: true,
+                proxy: new Ext.data.HttpProxy({
+                    url: './php/controller.php'
+                }),
+                baseParams: {
+                    task: 'getFilesNotInEn'
+                },
+                reader: new Ext.data.JsonReader({
+                    root: 'Items',
+                    totalProperty: 'nbItems',
+                    id: 'id'
+                }, [{
+                    name: 'id',
+                    mapping: 'id'
+                }, {
+                    name: 'path',
+                    mapping: 'path'
+                }, {
+                    name: 'name',
+                    mapping: 'name'
+                }]),
+                sortInfo: {
+                    field: 'path',
+                    direction: "ASC"
+                },
+                groupField: 'path',
+                listeners: {
+                    datachanged: function(ds){
+                        Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
+                    },
+                    add: function(ds){
+                        Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
+                    }
+                }
+            });
+                
             // Store : 
             this.storePendingCommit = new Ext.data.GroupingStore({
                 autoLoad: true,
@@ -441,6 +479,9 @@ var phpDoc = function(){
                     mapping: 'date',
                     type: 'date',
                     dateFormat: 'Y-m-d H:i:s'
+                }, {
+                    name: 'type',
+                    mapping: 'type'
                 }]),
                 sortInfo: {
                     field: 'path',
@@ -1100,7 +1141,7 @@ var phpDoc = function(){
                             if (o.success) {
                             
                                 // Add this files into storePendingCommit
-                                this.addToPendingCommit(FilePath, FileName);
+                                this.addToPendingCommit(FilePath, FileName, 'update');
                                 
                                 // Remove this patch from the PendingPatchStore
                                 this.storePendingPatch.remove(this.storePendingPatch.getAt(rowIndex));
@@ -1186,7 +1227,7 @@ var phpDoc = function(){
                         }
                         
                         // Add this files into storePendingCommit
-                        this.addToPendingCommit("en" + FilePath, FileName);
+                        this.addToPendingCommit("en" + FilePath, FileName, 'update');
                         
                         // Remove wait msg
                         msg.hide();
@@ -1376,7 +1417,7 @@ var phpDoc = function(){
                                 }
                                 
                                 // Add this files into storePendingCommit
-                                this.addToPendingCommit(this.userLang + FilePath, FileName);
+                                this.addToPendingCommit(this.userLang + FilePath, FileName, 'update');
                                 
                                 // Remove wait msg
                                 msg.hide();
@@ -1485,7 +1526,7 @@ var phpDoc = function(){
                                                 }
                                                 
                                                 // Add this files into storePendingCommit
-                                                this.addToPendingCommit(this.userLang + FilePath, FileName);
+                                                this.addToPendingCommit(this.userLang + FilePath, FileName, 'update');
                                             }
                                             else {
                                                 this.winForbidden();
@@ -1585,7 +1626,7 @@ var phpDoc = function(){
             this.storePendingPatch.insert(0, r);
             
         }, //addToPendingPatch
-        addToPendingCommit: function(FilePath, FileName){
+        addToPendingCommit: function(FilePath, FileName, type){
         
             var alReady, dt, r1;
             
@@ -1608,7 +1649,8 @@ var phpDoc = function(){
                     path: FilePath,
                     name: FileName,
                     by: this.userLogin,
-                    date: dt
+                    date: dt,
+                    type: type
                 });
                 this.storePendingCommit.insert(0, r1);
             }
@@ -3168,7 +3210,7 @@ var phpDoc = function(){
         }, //sendEmail
         drawInterface: function(){
         
-            var gridFilesError, gridFilesNeedUpdate, gridPendingPatch, gridPendingCommit, gridFilesNeedReviewed, gridSummary, gridTranslators, gridMailing, gridBugs, graphPanel, mainMenu, MainWindow, mainContent;
+            var gridFilesError, gridFilesNeedUpdate, gridPendingPatch, gridPendingCommit, gridFilesNeedReviewed, gridSummary, gridTranslators, gridMailing, gridNotInEn, gridBugs, graphPanel, mainMenu, MainWindow, mainContent;
             
             // We keel alive our session by sending a ping every minute
             this.TaskPing = new Ext.util.DelayedTask(function(){
@@ -3205,6 +3247,7 @@ var phpDoc = function(){
             }, this);
             
             this.TaskPing.delay(30000); // start after 1 minute.
+
             // Grid : Files in Error
             gridFilesError = new Ext.grid.GridPanel({
                 store: this.storeFilesError,
@@ -5135,7 +5178,50 @@ var phpDoc = function(){
                     }
                 } // listeners
             });
-            
+
+            // Grid : Not In En tree
+            gridNotInEn = new Ext.grid.GridPanel({
+                store: this.storeNotInEn,
+                loadMask: true,
+                columns: [{
+                    id: 'name',
+                    header: _('Files'),
+                    sortable: true,
+                    dataIndex: 'name'
+                }, {
+                    header: _('Path'),
+                    dataIndex: 'path',
+                    'hidden': true
+                }],
+                view: new Ext.grid.GroupingView({
+                    forceFit: true,
+                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
+                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>'
+                }),
+                autoExpandColumn: 'name',
+                bodyBorder: false,
+                listeners: {
+                    scope: this,
+                    rowcontextmenu: function(grid, rowIndex, e){
+
+                        grid.getSelectionModel().selectRow(rowIndex);
+                        
+                        var menu = new Ext.menu.Menu({
+                            items: [{
+                                text: _('Remove this file'),
+                                iconCls: 'iconDelete',
+                                scope: this,
+                                handler: function(){
+                                
+                                }
+                            }]
+                        });
+                        menu.showAt(e.getXY());
+
+                    }
+                }
+            });
+
             // Grid : Pending for commit
             gridPendingCommit = new Ext.grid.GridPanel({
                 store: this.storePendingCommit,
@@ -5165,7 +5251,18 @@ var phpDoc = function(){
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
                     groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    emptyText: '<div style="text-align: center;">'+_('No pending for Commit')+'</div>'
+                    emptyText: '<div style="text-align: center;">'+_('No pending for Commit')+'</div>',
+                    getRowClass: function(record, numIndex, rowParams, store){
+                        if ( record.data.type === 'update' ) {
+                            return 'file-needcommit-update';
+                        }
+                        if ( record.data.type === 'delete' ) {
+                            return 'file-needcommit-delete';
+                        }
+                        if ( record.data.type === 'new' ) {
+                            return 'file-needcommit-new';
+                        }
+                    }
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -6951,7 +7048,7 @@ var phpDoc = function(){
                                                         node.getUI().addClass('modified');
                                                         
                                                         // Add this files into storePendingCommit
-                                                        this.addToPendingCommit(FilePath, FileName);
+                                                        this.addToPendingCommit(FilePath, FileName, 'update');
                                                         
                                                         // Remove wait msg
                                                         msg.hide();
@@ -7216,6 +7313,13 @@ var phpDoc = function(){
                                     Ext.getCmp('FNR-filter').wrap.setWidth(200);
                                 }
                             }
+                        }, {
+                            title: _('Not in EN tree')+' - <em id="acc-notInEn-nb">0</em>',
+                            id: 'acc-notInEn',
+                            layout: 'fit',
+                            iconCls: 'NotInEn',
+                            items: [gridNotInEn],
+                            collapsed: true
                         }, {
                             title: _('All files'),
                             id: 'acc-all-files',
