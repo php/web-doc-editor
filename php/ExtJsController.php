@@ -354,12 +354,16 @@ class ExtJsController
 
         // Update DB with this new Error (if any)
         $info = $this->phpDoc->getInfoFromContent($FileContent);
-        $anode[0] = array( 0 => $FileLang.$FilePath, 1 => $FileName, 2 => $en_content, 3 => $FileContent, 4 => $info['maintainer']);
+        $anode[0] = array( 'lang' => $FileLang,
+                           'path' => $FilePath,
+                           'name' => $FileName,
+                           'en_content' => $en_content,
+                           'lang_content' => $FileContent,
+                           'maintainer' => $info['maintainer']
+        );
 
         $errorTools = new ToolsError($this->phpDoc->db);
         $r = $errorTools->updateFilesError($anode, 'nocommit');
-
-        //$r = $this->phpDoc->updateFilesError($anode, 'nocommit');
 
         return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
     }
@@ -414,9 +418,11 @@ class ExtJsController
         if ($type == 'file') {
 
             $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'file');
-            $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'update');
+            $r = $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'update');
+
             return $this->getResponse(array(
             'success' => true,
+            'id' => $r,
             'en_revision' => $info['rev'],
             'new_revision' => $info['en-rev'],
             'maintainer' => $info['maintainer'],
@@ -504,10 +510,11 @@ class ExtJsController
             return $this->getFailure();
         }
 
+        $FileType = $this->getRequestVariable('FileType');
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $info = $this->phpDoc->clearLocalChange($FilePath, $FileName);
+        $info = $this->phpDoc->clearLocalChange($FileType, $FilePath, $FileName);
 
         $return = array('success' => true);
         $return['revision']   = $info['rev'];
@@ -584,35 +591,31 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
+        $nodes = $this->phpDoc->getModifiedFilesById($anode);
+
         // Update revision & reviewed for all this files
-        $this->phpDoc->updateRev($anode);
+        $this->phpDoc->updateRev($nodes);
 
         // Update FilesError for all this files
-        for ($i = 0; $i < count($anode); $i++) {
+        for ($i = 0; $i < count($nodes); $i++) {
 
-            $t = explode("/", $anode[$i][0]);
-
-            $FileLang = $t[0];
-            array_shift($t);
-
-            $FilePath = '/'.implode("/", $t);
-            $FileName = $anode[$i][1];
+            $FileLang = $nodes[$i]['lang'];
+            $FilePath = $nodes[$i]['path'];
+            $FileName = $nodes[$i]['name'];
 
             $en_content     = file_get_contents(DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName);
             $lang_content   = file_get_contents(DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName);
 
-            $info = $this->phpDoc->getInfoFromContent($lang_content);
+            $nodes[$i]['en_content'] = $en_content;
+            $nodes[$i]['lang_content'] = $lang_content;
 
-            $anode[$i][2] = $en_content;
-            $anode[$i][3] = $lang_content;
-            $anode[$i][4] = $info['maintainer'];
         }
 
         $errorTools = new ToolsError($this->phpDoc->db);
-        $errorTools->updateFilesError($anode);
+        $errorTools->updateFilesError($nodes);
 
         // Remove all this files in needcommit
-        $this->phpDoc->removeNeedCommit($anode);
+        $this->phpDoc->removeNeedCommit($nodes);
 
         // Manage this logMessage
         $this->phpDoc->manageLogMessage($logMessage);
@@ -873,6 +876,19 @@ class ExtJsController
         $r = $this->phpDoc->getLastUpdate();
 
         return $this->getResponse(array('success' => true, 'lastupdate' => $r['lastupdate']));
+    }
+
+    public function markAsNeedDelete() {
+
+        $this->phpDoc->isLogged();
+
+        $FilePath = $this->getRequestVariable('FilePath');
+        $FileName = $this->getRequestVariable('FileName');
+
+        $r = $this->phpDoc->markAsNeedDelete($FilePath, $FileName);
+
+        return $this->getResponse(array('success' => true, 'id' => $r['id'], 'by' => $r['by'], 'date' => $r['date']));
+
     }
 
 }

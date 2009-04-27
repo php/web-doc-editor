@@ -814,6 +814,33 @@ class phpDoc
     }
 
     /**
+     * Get modified files by ID.
+     * @param $id Can be a single ID or an array of id
+     * @return An associated array containing all informations about modified files.
+     */
+    function getModifiedFilesById($id) {
+
+        if( is_array($id) ) {
+            $ids = implode($id, ',');
+        } else {
+            $ids = $id;
+        }
+
+        $s = sprintf('SELECT * FROM `pendingCommit` WHERE 
+                      (`lang`="%s" OR `lang`="en") AND `id` IN (%s)', $this->cvsLang, $ids);
+
+        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
+        $nodes = array();
+
+        while ($a = $r->fetch_assoc()) {
+            $nodes[] = $a;
+        }
+
+        return $nodes;
+    }
+
+    /**
      * Get all files witch need to be updated.
      *
      * @return An associated array containing all informations about files witch need to be updated.
@@ -922,11 +949,14 @@ class phpDoc
     }
 
     /**
-     * Get all witch are not in EN tree.
+     * Get all files witch are not in EN tree.
      *
      * @return An associated array containing all informations about files witch are not in EN tree
      */
     function getFilesNotInEn() {
+
+        // Get Files Need Commit
+        $ModifiedFiles = $this->getModifiedFiles();
 
         $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $this->cvsLang);
 
@@ -935,8 +965,15 @@ class phpDoc
 
         $node = array();
 
-        while ($row = $r->fetch_assoc()) {
-            $node[] = $row;
+        while ($a = $r->fetch_object()) {
+
+            $node[] = array(
+            "id"          => $a->id,
+            "path"        => $a->path,
+            "name"        => $a->name,
+            "needcommit"  => ( isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name]) ) ? true : false
+            );
+
         }
 
         return array('nb' => $nb, 'node' => $node);
@@ -1536,7 +1573,7 @@ class phpDoc
             $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
             $fileID = $a->id;
         }
-
+        return $fileID;
     }
 
     /**
@@ -1808,11 +1845,12 @@ class phpDoc
     /**
      * Delete local change of a file.
      *
+     * @param $type The type of the file. Can be 'update', 'delete' or new'
      * @param $path The path of the file.
      * @param $file The name of the file.
      * @return An array witch contain informations about this file.
      */
-    function clearLocalChange($path, $file) {
+    function clearLocalChange($type, $path, $file) {
 
         // Extract the lang
         $t = explode('/',$path);
@@ -1831,6 +1869,11 @@ class phpDoc
         $s = sprintf('DELETE FROM `pendingCommit` WHERE `id`="%s"', $a->id);
         $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
 
+        // If type == delete or new, we stop here and return
+        if( $type == 'delete' || $type == 'new' ) {
+            return;
+        }
+
         // We need delete file on filesystem
         $doc = DOC_EDITOR_CVS_PATH.$lang.$path.$file.".new";
 
@@ -1843,7 +1886,13 @@ class phpDoc
 
         $info = $this->getInfoFromContent($lang_content);
 
-        $anode[0] = array( 0 => $lang.$path, 1 => $file, 2 => $en_content, 3 => $lang_content, 4 => $info['maintainer']);
+        $anode[0] = array( 'lang' => $lang,
+                           'path' => $path,
+                           'name' => $file,
+                           'en_content' => $en_content,
+                           'lang_content' => $lang_content,
+                           'maintainer' => $info['maintainer']
+        );
 
         $errorTools = new ToolsError($this->db);
         $error = $errorTools->updateFilesError($anode, 'nocommit');
@@ -1880,27 +1929,69 @@ class phpDoc
      */
     function cvsCommit($anode, $log) {
 
-        $files = '';
+        $filesUpdate = array();
+        $filesDelete = array();
+        $filesNew    = array();
 
-        for ($i = 0; $i < count($anode); $i++ ) {
+        $cmdUpdate = '';
+        $cmdDelete = '';
+        $cmdNew    = '';
 
-            // We need move .new file into the real file
-            @unlink( DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1]);
-            @copy(   DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1].'.new', DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1]);
-            @unlink( DOC_EDITOR_CVS_PATH.$anode[$i][0].$anode[$i][1].'.new');
+        $nodes = $this->getModifiedFilesById($anode);
 
-            $files .= $anode[$i][0].$anode[$i][1].' ';
+        // Loop over $nodes to find files to be delete, update, or new
+        reset($nodes);
+        for( $i=0; $i < count($nodes); $i++) {
 
+            $fullPath = $nodes[$i]['lang'].$nodes[$i]['path'].$nodes[$i]['name'];
+
+            if( $nodes[$i]['type'] == 'delete' ) {
+                $filesDelete[] = $fullPath;
+            }
+
+            if( $nodes[$i]['type'] == 'update' ) {
+
+                $filesUpdate[] = $fullPath;
+
+                // Pre-commit : We need move .new file into the real file
+                @unlink( DOC_EDITOR_CVS_PATH.$fullPath);
+                @copy(   DOC_EDITOR_CVS_PATH.$fullPath.'.new', DOC_EDITOR_CVS_PATH.$fullPath);
+                @unlink( DOC_EDITOR_CVS_PATH.$fullPath.'.new');
+
+            }
+
+            if( $nodes[$i]['type'] == 'new' ) {
+                $filesNew[] = $fullPath;
+            }
         }
+
+        // Linearization
+        $filesDelete = implode($filesDelete, ' ');
+        $filesUpdate = implode($filesUpdate, ' ');
+        $filesNew    = implode($filesNew, ' ');
+
+        // Buil the command line
+        if( trim($filesDelete) != '' ) {
+            $cmdDelete = 'cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f remove -f '.$filesDelete.' && ';
+        }
+        if( trim($filesNew) != '' ) {
+            $cmdNew = 'cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f add '.$filesNew.' && ';
+        }
+
         // Escape single quote
         $log = str_replace("'", "\\'", $log);
 
-        // First, login into Cvs
-        $cmd = 'export CVS_PASSFILE='.realpath(DOC_EDITOR_DATA_PATH).'/.cvspass && cd '.DOC_EDITOR_CVS_PATH.' && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository login && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f commit -l -m \''.$log.'\' '.$files;
-        $output  = array();
-        exec($cmd, $output);
+        $cmd = $cmdDelete.
+               $cmdNew.
+               'cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository -f commit -l -m \''.$log.'\' '.$filesUpdate.' '.$filesDelete.' '.$filesNew;
 
-        //$this->debug('commit cmd : '.$cmd);
+        // First, login into Cvs
+        $fullCmd = 'export CVS_PASSFILE='.realpath(DOC_EDITOR_DATA_PATH).'/.cvspass && cd '.DOC_EDITOR_CVS_PATH.' && cvs -d :pserver:'.$this->cvsLogin.':'.$this->cvsPasswd.'@cvs.php.net:/repository login && '.$cmd;
+
+        $output  = array();
+        exec($fullCmd, $output);
+
+        //$this->debug('commit cmd : '.$fullCmd);
 
         return $this->highlightCommitLog($output);
     }
@@ -1921,24 +2012,21 @@ class phpDoc
     /**
      * Update information about a file after his commit (update informations added with revcheck tools).
      *
-     * @param $anode An array of files.
+     * @param $nodes An array of files.
      */
-    function updateRev($anode) {
+    function updateRev($nodes) {
 
-        for ($i = 0; $i < count($anode); $i++ ) {
+        for ($i = 0; $i < count($nodes); $i++ ) {
 
-            $t = explode("/", $anode[$i][0]);
+            $FileLang = $nodes[$i]['lang'];
 
-            $FileLang = $t[0];
-            array_shift($t);
-
-            $FilePath = implode("/", $t);
-            $FileName = $anode[$i][1];
+            $FilePath = $nodes[$i]['path'];
+            $FileName = $nodes[$i]['name'];
 
             //En file ?
             if ($FileLang == 'en' ) {
 
-                $path    = DOC_EDITOR_CVS_PATH.'en/'.$FilePath.$FileName;
+                $path    = DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName;
                 $content = file_get_contents($path);
                 $info    = $this->getInfoFromContent($content);
                 $size    = intval(filesize($path) / 1024);
@@ -1953,7 +2041,7 @@ class phpDoc
 
                  WHERE
                    `lang` = "%s" AND
-                   `path` = \'/%s\' AND
+                   `path` = "%s" AND
                    `name` = "%s"
                ',$info['rev'], $size, $date, $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
@@ -1965,7 +2053,7 @@ class phpDoc
 
                  WHERE
                    `lang` != "%s" AND
-                   `path`  = \'/%s\' AND
+                   `path`  = "%s" AND
                    `name`  = "%s"
                ', $info['rev'], $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
@@ -1973,14 +2061,14 @@ class phpDoc
 
             } else {
 
-                $path    = DOC_EDITOR_CVS_PATH.$FileLang.'/'.$FilePath.$FileName;
+                $path    = DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName;
                 $content = file_get_contents($path);
                 $info    = $this->getInfoFromContent($content);
                 $size    = intval(filesize($path) / 1024);
                 $date    = filemtime($path);
 
 
-                $pathEN    = DOC_EDITOR_CVS_PATH.'en/'.$FilePath.$FileName;
+                $pathEN    = DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName;
                 $sizeEN    = intval(filesize($pathEN) / 1024);
                 $dateEN    = filemtime($pathEN);
 
@@ -1999,9 +2087,9 @@ class phpDoc
                    `mdate_diff` = "%s"
 
                  WHERE
-                   `lang`="%s" AND
-                   `path`=\'/%s\' AND
-                   `name`="%s"
+                   `lang` = "%s" AND
+                   `path` = "%s" AND
+                   `name` = "%s"
                ',$info['en-rev'], $info['reviewed'], $size, $date, $info['maintainer'], $info['status'], $size_diff, $date_diff, $FileLang, $FilePath, $FileName);
                 $this->db->query($s) or die($this->db->error.'|'.$s);
             }
@@ -2014,24 +2102,20 @@ class phpDoc
     /**
      * Remove the mark "needCommit" into DB for a set of files.
      *
-     * @param $anode An array of files.
+     * @param $nodes An array of files.
      */
-    function removeNeedCommit($anode) {
+    function removeNeedCommit($nodes) {
 
-        for ($i = 0; $i < count($anode); $i++ ) {
+        for ($i = 0; $i < count($nodes); $i++ ) {
 
-            $t = explode("/", $anode[$i][0]);
-
-            $FileLang = $t[0];
-            array_shift($t);
-
-            $FilePath = implode("/", $t);
-            $FileName = $anode[$i][1];
+            $FileLang = $nodes[$i]['lang'];
+            $FilePath = $nodes[$i]['path'];
+            $FileName = $nodes[$i]['name'];
 
             $s = sprintf('DELETE FROM `pendingCommit`
               WHERE
                  `lang` = "%s" AND
-                 `path` = \'/%s\' AND
+                 `path` = "%s" AND
                  `name` = "%s"
             ', $FileLang, $FilePath, $FileName);
 
@@ -2381,6 +2465,26 @@ EOD;
 
         return;
 
-    } // 
+    }
+
+    /**
+     * Mark a file as need delete.
+     *
+     * @param $FilePath
+     * @param $FileName
+     * @return 
+     */
+    function markAsNeedDelete($FilePath, $FileName)
+    {
+
+        $date = date("Y-m-d H:i:s");
+
+        $s = sprintf('INSERT INTO `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s","%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")', $this->cvsLang, $FilePath, $FileName, $this->cvsLogin, $date);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
+        return Array('id'=>$this->db->insert_id, 'by'=>$this->cvsLogin, 'date'=>$date);
+
+    }
+
 
 } // End of class

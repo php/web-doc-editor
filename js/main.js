@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.52 $',
+        uiRevision: '$Revision: 1.53 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -433,6 +433,9 @@ var phpDoc = function(){
                 }, {
                     name: 'name',
                     mapping: 'name'
+                }, {
+                    name: 'needcommit',
+                    mapping: 'needcommit'
                 }]),
                 sortInfo: {
                     field: 'path',
@@ -1060,6 +1063,107 @@ var phpDoc = function(){
             
             GoToNode(this.treeAllFilesRoot, this);
         }, //openFile
+
+        clearLocalChange: function(FileType, FilePath, FileName, rowIndex, scope) {
+
+            if (scope.userLogin === 'cvsread') {
+                scope.winForbidden();
+                return;
+            }
+            
+            function goClearChange(btn){
+                if (btn === 'yes') {
+                
+                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
+
+                    // Before clear local change, we close the file if there is open
+                    if (Ext.getCmp('main-panel').findById('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName))) {
+                        Ext.getCmp('main-panel').remove('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName));
+                    }
+                    
+                    // 
+                    Ext.Ajax.request({
+                        scope: scope,
+                        url: './php/controller.php',
+                        params: {
+                            task: 'clearLocalChange',
+                            FileType: FileType,
+                            FilePath: FilePath,
+                            FileName: FileName
+                        },
+                        success: function(a){
+                            var o = Ext.util.JSON.decode(a.responseText);
+                            if (o.success) {
+                            
+                                var node;
+
+                                if (this.userLang === 'en') {
+                                    // We reload all store
+                                    this.storeFilesNeedUpdate.reload();
+                                    this.storeFilesError.reload();
+                                    this.storeFilesNeedReviewed.reload();
+                                }
+                                
+                                // We delete from this store
+                                this.storePendingCommit.remove(this.storePendingCommit.getAt(rowIndex));
+                                
+                                // We fire event add to update the file count
+                                this.storePendingCommit.fireEvent('add', this.storePendingCommit);
+
+                                // We try to search in others stores if this file is marked as needCommit
+
+                                // trow storeNotInEn
+                                this.storeNotInEn.each(function(record){
+                                    if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
+                                // trow storeFilesNeedReviewed
+                                this.storeFilesNeedReviewed.each(function(record){
+                                    if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
+                                // trow storeFilesNeedUpdate
+                                this.storeFilesNeedUpdate.each(function(record){
+                                    if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
+                                // trow FileError
+                                this.storeFilesError.each(function(record){
+                                    if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
+                                // find open node in All Files modules
+                                node = this.treeAllFiles.getNodeById('//'+FilePath+FileName);
+                                if( node ) {
+                                  node.getUI().removeClass('modified');
+                                }
+                                Ext.getBody().unmask();
+                            }
+                            else {
+                                Ext.getBody().unmask();
+                                this.winForbidden();
+                            }
+                            
+                        },
+                        failure: function(){
+                        
+                        }
+                    });
+                }
+            }
+            
+            Ext.MessageBox.confirm(_('Confirm'), _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'), goClearChange, scope);
+
+        }, //clearLocalChange
+
         rejectPatch: function(FileID, FilePath, FileName, FileUniqID, rowIndex, scope){
         
             if (scope.userLogin === 'cvsread') {
@@ -1141,7 +1245,7 @@ var phpDoc = function(){
                             if (o.success) {
                             
                                 // Add this files into storePendingCommit
-                                this.addToPendingCommit(FilePath, FileName, 'update');
+                                this.addToPendingCommit(o.id, FilePath, FileName, 'update');
                                 
                                 // Remove this patch from the PendingPatchStore
                                 this.storePendingPatch.remove(this.storePendingPatch.getAt(rowIndex));
@@ -1227,7 +1331,7 @@ var phpDoc = function(){
                         }
                         
                         // Add this files into storePendingCommit
-                        this.addToPendingCommit("en" + FilePath, FileName, 'update');
+                        this.addToPendingCommit(o.id, "en" + FilePath, FileName, 'update');
                         
                         // Remove wait msg
                         msg.hide();
@@ -1417,7 +1521,7 @@ var phpDoc = function(){
                                 }
                                 
                                 // Add this files into storePendingCommit
-                                this.addToPendingCommit(this.userLang + FilePath, FileName, 'update');
+                                this.addToPendingCommit(o.id, this.userLang + FilePath, FileName, 'update');
                                 
                                 // Remove wait msg
                                 msg.hide();
@@ -1526,7 +1630,7 @@ var phpDoc = function(){
                                                 }
                                                 
                                                 // Add this files into storePendingCommit
-                                                this.addToPendingCommit(this.userLang + FilePath, FileName, 'update');
+                                                this.addToPendingCommit(o.id, this.userLang + FilePath, FileName, 'update');
                                             }
                                             else {
                                                 this.winForbidden();
@@ -1626,7 +1730,7 @@ var phpDoc = function(){
             this.storePendingPatch.insert(0, r);
             
         }, //addToPendingPatch
-        addToPendingCommit: function(FilePath, FileName, type){
+        addToPendingCommit: function(FileID, FilePath, FileName, type){
         
             var alReady, dt, r1;
             
@@ -1645,7 +1749,7 @@ var phpDoc = function(){
                 dt = new Date();
                 
                 r1 = new this.storePendingCommit.recordType({
-                    id: Ext.id('', ''),
+                    id: FileID,
                     path: FilePath,
                     name: FileName,
                     by: this.userLogin,
@@ -1653,6 +1757,7 @@ var phpDoc = function(){
                     type: type
                 });
                 this.storePendingCommit.insert(0, r1);
+                this.storePendingCommit.groupBy('path', true);
             }
             
         }, //addToPendingCommit
@@ -1836,7 +1941,7 @@ var phpDoc = function(){
         }, //removeTabEvent
         WinCommit: function(singleFile, rowIndex, choice){
         
-            var win, btn, FileID, FilePath, FileName, node, TreeSorter;
+            var win, btn, FileDBID, FileID, FilePath, FileName, node, TreeSorter;
             
             btn = Ext.get('acc-need-update');
             
@@ -2050,9 +2155,7 @@ var phpDoc = function(){
                             NeedToBeClose = [];
                             
                             for (i = 0; i < files.length; i = i + 1) {
-                            
-                                //var checkNode, paneID_FE, paneID_FNU, paneID_FNR, tmp = [], paneID, libelNeedToBeClose = '';
-                                
+
                                 checkNode = Ext.getCmp('tree-panel').getNodeById(files[i]).attributes;
                                 
                                 paneID_FE = 'FE-' + Ext.util.md5('FE-' + checkNode.FilePath + checkNode.FileName);
@@ -2132,6 +2235,7 @@ var phpDoc = function(){
             
                 // Just the current file
                 
+                FileDBID = this.storePendingCommit.getAt(rowIndex).data.id;
                 FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
                 FileName = this.storePendingCommit.getAt(rowIndex).data.name;
                 FileID = Ext.util.md5(FilePath + FileName);
@@ -2139,6 +2243,7 @@ var phpDoc = function(){
                 node = new Ext.tree.TreeNode({
                     id: 'need-commit-' + FileID,
                     text: FilePath + FileName,
+                    FileDBID: FileDBID,
                     FilePath: FilePath,
                     FileName: FileName,
                     leaf: true,
@@ -2158,6 +2263,7 @@ var phpDoc = function(){
                     }
                     else {
                     
+                        FileDBID = record.data.id;
                         FilePath = record.data.path;
                         FileName = record.data.name;
                         FileID = Ext.util.md5(FilePath + FileName);
@@ -2165,9 +2271,9 @@ var phpDoc = function(){
                         node = new Ext.tree.TreeNode({
                             id: 'need-commit-' + FileID,
                             text: FilePath + FileName,
+                            FileDBID: FileDBID,
                             FilePath: FilePath,
                             FileName: FileName,
-                            //fileLang   : this.userLang,
                             leaf: true,
                             checked: true,
                             uiProvider: Ext.ux.tree.CheckTreeNodeUI
@@ -2189,17 +2295,13 @@ var phpDoc = function(){
         
             Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait until commit...'));
             
-            var nodes = [], node, tmp, LogMessage, i;
+            var nodes = [], node, LogMessage, i;
             
             // Go for Cvs commit
             for (i = 0; i < files.length; i = i + 1) {
             
                 node = Ext.getCmp('tree-panel').getNodeById(files[i]);
-                tmp = [];
-                
-                tmp[0] = node.attributes.FilePath;
-                tmp[1] = node.attributes.FileName;
-                nodes.push(tmp);
+                nodes.push(node.attributes.FileDBID);
             }
             
             // Get log message
@@ -2233,7 +2335,7 @@ var phpDoc = function(){
                             modal: true,
                             autoScroll: true,
                             bodyStyle: 'background-color: white; padding: 5px;',
-                            html: o.mess.join("<br>"),
+                            html: o.mess.join("<br/>"),
                             buttons: [{
                                 text: _('Close'),
                                 handler: function(){
@@ -5196,7 +5298,12 @@ var phpDoc = function(){
                 view: new Ext.grid.GroupingView({
                     forceFit: true,
                     groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>'
+                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>',
+                    getRowClass: function(record, numIndex, rowParams, store){
+                        if (record.data.needcommit) {
+                            return 'file-need-commit';
+                        }
+                    }
                 }),
                 autoExpandColumn: 'name',
                 bodyBorder: false,
@@ -5205,19 +5312,56 @@ var phpDoc = function(){
                     rowcontextmenu: function(grid, rowIndex, e){
 
                         grid.getSelectionModel().selectRow(rowIndex);
-                        
-                        var menu = new Ext.menu.Menu({
-                            items: [{
-                                text: _('Remove this file'),
-                                iconCls: 'iconDelete',
-                                scope: this,
-                                handler: function(){
-                                
-                                }
-                            }]
-                        });
-                        menu.showAt(e.getXY());
 
+                        if( !this.storeNotInEn.getAt(rowIndex).data.needcommit ) {
+
+                            var menu = new Ext.menu.Menu({
+                                items: [{
+                                    text: _('Remove this file'),
+                                    iconCls: 'iconDelete',
+                                    scope: this,
+                                    handler: function(){
+                                        gridNotInEn.fireEvent('rowdblclick', grid, rowIndex, e);
+                                    }
+                                }]
+                            });
+                            menu.showAt(e.getXY());
+
+                        }
+
+                    },
+                    rowdblclick: function(grid, rowIndex, e){
+
+                        var FilePath, FileName, FileID;
+
+                        FilePath = this.storeNotInEn.getAt(rowIndex).data.path;
+                        FileName = this.storeNotInEn.getAt(rowIndex).data.name;
+
+                        function goMarkAsDelete(btn){
+                            if (btn === 'yes') {
+                                Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
+
+                                Ext.Ajax.request({
+                                    scope: this,
+                                    url: './php/controller.php',
+                                    params: {
+                                        task: 'markAsNeedDelete',
+                                        FilePath: FilePath,
+                                        FileName: FileName
+                                    },
+                                    success: function(action){
+                                        var o = Ext.util.JSON.decode(action.responseText);
+                                        if (o.success) {
+                                            Ext.getBody().unmask();
+                                            this.addToPendingCommit( o.id, this.userLang + FilePath, FileName, 'delete' );
+                                            this.storeNotInEn.getAt(rowIndex).set('needcommit', true);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        Ext.MessageBox.confirm(_('Confirm'), _('This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action.'), goMarkAsDelete, this);
                     }
                 }
             });
@@ -5270,214 +5414,155 @@ var phpDoc = function(){
                     scope: this,
                     'rowcontextmenu': function(grid, rowIndex, e){
                     
-                        var FilePath, FileName, menu;
+                        var FileType, FilePath, FileName, menu, subMenuCommit;
                         
+                        FileType = this.storePendingCommit.getAt(rowIndex).data.type;
                         FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
                         FileName = this.storePendingCommit.getAt(rowIndex).data.name;
                         
                         grid.getSelectionModel().selectRow(rowIndex);
                         
-                        menu = new Ext.menu.Menu({
-                            items: [{
-                                text: '<b>'+_('Edit in a new Tab')+'</b>',
-                                iconCls: 'PendingCommit',
-                                scope: this,
-                                handler: function(){
-                                    gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, '-', {
-                                text: _('View Diff'),
-                                iconCls: 'iconViewDiff',
-                                scope: this,
-                                handler: function(){
-                                
-                                    // Add tab for the diff
-                                    Ext.getCmp('main-panel').add({
-                                        xtype: 'panel',
-                                        id: 'diff_panel_' + rowIndex,
-                                        title: _('Diff'),
-                                        tabTip: _('Diff'),
-                                        closable: true,
-                                        autoScroll: true,
-                                        iconCls: 'iconTabLink',
-                                        html: '<div id="diff_content_' + rowIndex + '" class="diff-content"></div>'
-                                    });
-                                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
-                                    
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-                                    
-                                    // Load diff data
-                                    Ext.Ajax.request({
-                                        url: './php/controller.php',
-                                        params: {
-                                            task: 'getDiff',
-                                            FilePath: FilePath,
-                                            FileName: FileName
-                                        },
-                                        success: function(action){
-                                            var o = Ext.util.JSON.decode(action.responseText);
-                                            if (o.success) {
-                                                // We display in diff div
-                                                Ext.get('diff_content_' + rowIndex).dom.innerHTML = o.content;
-                                                Ext.get('diff_panel_' + rowIndex).unmask();
-                                                
-                                            }
-                                            
-                                        },
-                                        failure: function(){
-                                        
-                                        }
-                                    });
-                                    
-                                    
-                                }
-                            }, {
-                                text: _('Download the diff as a patch'),
-                                iconCls: 'iconCommitFileCvs',
-                                scope: this,
-                                handler: function(){
-                                    window.location.href = './php/controller.php?task=downloadPatch&FilePath=' + FilePath + '&FileName=' + FileName;
-                                }
-                            }, '-', {
-                                text: _('Clear this change'),
-                                iconCls: 'iconPageDelete',
-                                disabled: (this.userLogin === 'cvsread') ? true : false,
-                                scope: this,
-                                handler: function(){
-                                
-                                    if (this.userLogin === 'cvsread') {
-                                        this.winForbidden();
-                                        return;
+                        subMenuCommit = {
+                            text: _('Commit...'),
+                            iconCls: 'iconCommitFileCvs',
+                            scope: this,
+                            handler: function(){
+                                return false;
+                            },
+                            disabled: (this.userLogin === 'cvsread') ? true : false,
+                            menu: new Ext.menu.Menu({
+                                items: [{
+                                    text: _('...this file'),
+                                    iconCls: 'iconCommitFileCvs',
+                                    scope: this,
+                                    handler: function(){
+                                        this.WinCommit(true, rowIndex);
                                     }
+                                }, {
+                                    text: _('...all files modified by me'),
+                                    iconCls: 'iconCommitFileCvs',
+                                    scope: this,
+                                    handler: function(){
+                                        this.WinCommit(false, '', 'by me');
+                                    }
+                                }, {
+                                    text: _('...all files modified'),
+                                    iconCls: 'iconCommitFileCvs',
+                                    scope: this,
+                                    handler: function(){
+                                        this.WinCommit(false);
+                                    }
+                                }]
+                            })
+                        };
+
+                        if( FileType === 'delete' ) {
+
+                            menu = new Ext.menu.Menu({
+                                items: [{
+                                    text: '<b>' + _('Cancel') + '<b>',
+                                    iconCls: 'iconPageDelete',
+                                    disabled: (this.userLogin === 'cvsread') ? true : false,
+                                    scope: this,
+                                    handler: function(){
+                                        gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
+                                    }
+                                }, '-', subMenuCommit]
+                            });
+                        }
+
+                        if( FileType === 'update' ) {
+                            menu = new Ext.menu.Menu({
+                                items: [{
+                                    text: '<b>'+_('Edit in a new Tab')+'</b>',
+                                    iconCls: 'PendingCommit',
+                                    scope: this,
+                                    handler: function(){
+                                        gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
+                                    }
+                                }, '-', {
+                                    text: _('View Diff'),
+                                    iconCls: 'iconViewDiff',
+                                    scope: this,
+                                    handler: function(){
                                     
-                                    function goClearChange(btn){
-                                        if (btn === 'yes') {
+                                        // Add tab for the diff
+                                        Ext.getCmp('main-panel').add({
+                                            xtype: 'panel',
+                                            id: 'diff_panel_' + rowIndex,
+                                            title: _('Diff'),
+                                            tabTip: _('Diff'),
+                                            closable: true,
+                                            autoScroll: true,
+                                            iconCls: 'iconTabLink',
+                                            html: '<div id="diff_content_' + rowIndex + '" class="diff-content"></div>'
+                                        });
+                                        Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
                                         
-                                            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                                            // Before clear local change, we close the file if there is open
-                                            if (Ext.getCmp('main-panel').findById('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName))) {
-                                                Ext.getCmp('main-panel').remove('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName));
-                                            }
-                                            
-                                            // 
-                                            Ext.Ajax.request({
-                                                scope: this,
-                                                url: './php/controller.php',
-                                                params: {
-                                                    task: 'clearLocalChange',
-                                                    FilePath: FilePath,
-                                                    FileName: FileName
-                                                },
-                                                success: function(action){
-                                                    var o = Ext.util.JSON.decode(action.responseText);
-                                                    if (o.success) {
+                                        Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
+                                        
+                                        // Load diff data
+                                        Ext.Ajax.request({
+                                            url: './php/controller.php',
+                                            params: {
+                                                task: 'getDiff',
+                                                FilePath: FilePath,
+                                                FileName: FileName
+                                            },
+                                            success: function(action){
+                                                var o = Ext.util.JSON.decode(action.responseText);
+                                                if (o.success) {
+                                                    // We display in diff div
+                                                    Ext.get('diff_content_' + rowIndex).dom.innerHTML = o.content;
+                                                    Ext.get('diff_panel_' + rowIndex).unmask();
                                                     
-                                                        var node;
-
-                                                        if (this.userLang === 'en') {
-                                                            // We reload all store
-                                                            this.storeFilesNeedUpdate.reload();
-                                                            this.storeFilesError.reload();
-                                                            this.storeFilesNeedReviewed.reload();
-                                                        }
-                                                        
-                                                        // We delete from this store
-                                                        this.storePendingCommit.remove(this.storePendingCommit.getAt(rowIndex));
-                                                        
-                                                        // We fire event add to update the file count
-                                                        this.storePendingCommit.fireEvent('add', this.storePendingCommit);
-
-                                                        // We try to search in others stores if this file is marked as needCommit
-
-                                                        // trow storeFilesNeedReviewed
-                                                        this.storeFilesNeedReviewed.each(function(record){
-                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
-                                                                record.set('needcommit', false);
-                                                            }
-                                                        }, this);
-
-                                                        // trow storeFilesNeedUpdate
-                                                        this.storeFilesNeedUpdate.each(function(record){
-                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
-                                                                record.set('needcommit', false);
-                                                            }
-                                                        }, this);
-
-                                                        // trow FileError
-                                                        this.storeFilesError.each(function(record){
-                                                            if ((this.userLang+record.data.path) === FilePath && record.data.name === FileName) {
-                                                                record.set('needcommit', false);
-                                                            }
-                                                        }, this);
-
-                                                        // find open node in All Files modules
-                                                        node = this.treeAllFiles.getNodeById('//'+FilePath+FileName);
-                                                        if( node ) {
-                                                          node.getUI().removeClass('modified');
-                                                        }
-                                                        Ext.getBody().unmask();
-                                                    }
-                                                    else {
-                                                        Ext.getBody().unmask();
-                                                        this.winForbidden();
-                                                    }
-                                                    
-                                                },
-                                                failure: function(){
-                                                
                                                 }
-                                            });
-                                        }
+                                                
+                                            },
+                                            failure: function(){
+                                            
+                                            }
+                                        });
+                                        
                                     }
-                                    
-                                    Ext.MessageBox.confirm(_('Confirm'), _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'), goClearChange, this);
-                                }
-                            }, '-', {
-                                text: _('Commit...'),
-                                iconCls: 'iconCommitFileCvs',
-                                scope: this,
-                                handler: function(){
-                                    return false;
-                                },
-                                disabled: (this.userLogin === 'cvsread') ? true : false,
-                                menu: new Ext.menu.Menu({
-                                    items: [{
-                                        text: _('...this file'),
-                                        iconCls: 'iconCommitFileCvs',
-                                        scope: this,
-                                        handler: function(){
-                                            this.WinCommit(true, rowIndex);
-                                        }
-                                    }, {
-                                        text: _('...all files modified by me'),
-                                        iconCls: 'iconCommitFileCvs',
-                                        scope: this,
-                                        handler: function(){
-                                            this.WinCommit(false, '', 'by me');
-                                        }
-                                    }, {
-                                        text: _('...all files modified'),
-                                        iconCls: 'iconCommitFileCvs',
-                                        scope: this,
-                                        handler: function(){
-                                            this.WinCommit(false);
-                                        }
-                                    }]
-                                })
-                            }]
-                        });
+                                }, {
+                                    text: _('Download the diff as a patch'),
+                                    iconCls: 'iconCommitFileCvs',
+                                    scope: this,
+                                    handler: function(){
+                                        window.location.href = './php/controller.php?task=downloadPatch&FilePath=' + FilePath + '&FileName=' + FileName;
+                                    }
+                                }, '-', {
+                                    text: _('Clear this change'),
+                                    iconCls: 'iconPageDelete',
+                                    disabled: (this.userLogin === 'cvsread') ? true : false,
+                                    scope: this,
+                                    handler: function(){
+                                        this.clearLocalChange(FileType, FilePath, FileName, rowIndex, this);
+                                    }
+                                }, '-', subMenuCommit]
+                            });
+
+                        }
+
                         menu.showAt(e.getXY());
                     },
                     'rowdblclick': function(grid, rowIndex, e){
                     
-                        var FilePath, FileName;
+                        var FileType, FilePath, FileName;
                         
+                        FileType = this.storePendingCommit.getAt(rowIndex).data.type;
                         FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
                         FileName = this.storePendingCommit.getAt(rowIndex).data.name;
-                        
-                        this.openFile(FilePath, FileName);
-                        
+
+                        if( FileType === 'update' ) {
+                            this.openFile(FilePath, FileName);
+                        }
+
+                        if( FileType === 'delete' ) {
+                            this.clearLocalChange(FileType, FilePath, FileName, rowIndex, this);
+                        }
+
                     } //rowdblclick
                 } //listeners
             });
@@ -7048,7 +7133,7 @@ var phpDoc = function(){
                                                         node.getUI().addClass('modified');
                                                         
                                                         // Add this files into storePendingCommit
-                                                        this.addToPendingCommit(FilePath, FileName, 'update');
+                                                        this.addToPendingCommit(o.id, FilePath, FileName, 'update');
                                                         
                                                         // Remove wait msg
                                                         msg.hide();

@@ -97,28 +97,24 @@ class ToolsError {
 
     /**
      * Update error's informations about a file after his commit.
-     * @param array  $anode        An array of files.
+     * @param array  $nodes        An array of files.
      * @param string $action       Can be 'commit' or not if we call this method after a commit action or not
      * @return An array of information
      */
-    function updateFilesError($anode, $action='commit') {
+    function updateFilesError($nodes, $action='commit') {
 
-        for ($i = 0; $i < count($anode); $i++) {
+        for ($i = 0; $i < count($nodes); $i++) {
 
-            $t = explode("/", $anode[$i][0]);
-
-            $FileLang = $t[0];
-            array_shift($t);
-
-            $FilePath = '/'.implode("/", $t);
-            $FileName = $anode[$i][1];
+            $FileLang = $nodes[$i]['lang'];
+            $FilePath = $nodes[$i]['path'];
+            $FileName = $nodes[$i]['name'];
 
             // Remove all row in errorfiles tables
             $s = 'DELETE FROM errorfiles WHERE lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
 
             $this->db->query($s) or die($this->db->error.'|'.$s);
 
-            $this->setParams($anode[$i][2], $anode[$i][3], $FileLang, $FilePath, $FileName, $anode[$i][4]);
+            $this->setParams($nodes[$i]['en_content'], $nodes[$i]['lang_content'], $FileLang, $FilePath, $FileName, $nodes[$i]['maintainer']);
             $this->clearError();
             $this->run();
 
