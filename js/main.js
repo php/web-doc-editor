@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.53 $',
+        uiRevision: '$Revision: 1.54 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -413,7 +413,7 @@ var phpDoc = function(){
                 
             // Store : Not In En tree
             this.storeNotInEn = new Ext.data.GroupingStore({
-                autoLoad: true,
+                autoLoad: (this.userLang === 'en') ? false : true,
                 proxy: new Ext.data.HttpProxy({
                     url: './php/controller.php'
                 }),
@@ -7403,6 +7403,7 @@ var phpDoc = function(){
                             id: 'acc-notInEn',
                             layout: 'fit',
                             iconCls: 'NotInEn',
+                            hidden: (this.userLang === 'en') ? true : false,
                             items: [gridNotInEn],
                             collapsed: true
                         }, {
