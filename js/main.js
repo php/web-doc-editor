@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.54 $',
+        uiRevision: '$Revision: 1.55 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -872,8 +872,8 @@ var phpDoc = function(){
                 bodyBorder: false,
                 listeners: {
                     scope: this,
-                    render: function(){
-                        ds.load();
+                    render: function(grid){
+                        grid.store.load.defer(20, grid.store);
                     },
                     celldblclick: function(grid, rowIndex, columnIndex, e){
                     
