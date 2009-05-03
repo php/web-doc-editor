@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.55 $',
+        uiRevision: '$Revision: 1.56 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -3442,7 +3442,7 @@ var phpDoc = function(){
                         FileName = this.storeFilesError.getAt(rowIndex).data.name;
                         FileID = Ext.util.md5('FE-' + this.userLang + FilePath + FileName);
                         needcommit = this.storeFilesError.getAt(rowIndex).data.needcommit;
-                        
+
                         // Render only if this tab don't exist yet
                         if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
                         
@@ -3721,12 +3721,12 @@ var phpDoc = function(){
                                     }
                                 }]
                             });
-                            
+
                             Ext.getCmp('main-panel').add({
                                 closable: true,
                                 title: FileName,
                                 originTitle: FileName,
-                                tabTip: String.format(_('File with error : in {0}', FilePath)),
+                                tabTip: String.format(_('File with error : in {0}'), FilePath),
                                 iconCls: 'iconTabError',
                                 id: 'FE-' + FileID,
                                 isModifiedLang: false,
@@ -6050,7 +6050,7 @@ var phpDoc = function(){
                                 closable: true,
                                 title: FileName,
                                 originTitle: FileName,
-                                tabTip: 'Need Reviewed : in ' + FilePath,
+                                tabTip: String.format(_('Need Reviewed in: {0}'), FilePath),
                                 iconCls: 'iconTabNeedReviewed',
                                 id: 'FNR-' + FileID,
                                 isModifiedLang: false,

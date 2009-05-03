@@ -238,6 +238,7 @@ i18n["Files Need Update"] = "Fichiers à mettre à jour";
 i18n["Error in current translation"] = "Fichiers avec des erreurs";
     i18n["About error type"] = "À propos des types d'erreurs";
 i18n["Files Need Reviewed"] = "À relire";
+i18n["Need Reviewed in: {0}"] = "À relire dans : {0}";
 i18n["All files"] = "Tous les fichiers";
 i18n["Pending for commit"] = "Commit en attente";
 i18n["Pending Patch"] = "Patchs en attente";
