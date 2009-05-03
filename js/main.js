@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.56 $',
+        uiRevision: '$Revision: 1.57 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -6800,12 +6800,12 @@ var phpDoc = function(){
                                 FilePath = t.join('/') + '/';
 
                                 if( FileLang === 'en' ) {
-                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), this.userLang);
-                                    OtherFilePath = this.userLang+FilePath;
+                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(this.userLang));
+                                    OtherFilePath = this.userLang+'/'+FilePath;
 
                                 } else {
-                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), 'en');
-                                    OtherFilePath = 'en'+FilePath;
+                                    OtherFileLibel = String.format(_('Open the same file in <b>{0}</b>'), 'EN');
+                                    OtherFilePath = 'en/'+FilePath;
                                 }
 
                                 OtherFileSubMenu = {
