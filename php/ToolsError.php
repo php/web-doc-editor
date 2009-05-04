@@ -1212,6 +1212,7 @@ class ToolsError {
             'productname' => 'Productname',
             'simpara'     => 'Simpara',
             'tip'         => 'Tip',
+            'userinput'   => 'Userinput',
             'varname'     => 'Varname',
             'warning'     => 'Warning'
         );
