@@ -484,7 +484,7 @@ class ToolsError {
     function attributLinkTag()
     {
 
-        $reg = '/<link\s*?xlink:href="(.*?)">/s';
+        $reg = '/<link\s*?xlink:href=\s*?"(.[^"]*?)"(\s*|\s*?\/)?>/s';
 
         $match = $en_xlink = array();
         preg_match_all($reg, $this->en_content, $match);
@@ -496,10 +496,10 @@ class ToolsError {
 
         for ($i = 0; $i < count($en_xlink); $i++) {
 
-            if (!isset($en_xlink[$i]) )   { $en_xlink[$i] = ''; }
-            if (!isset($lang_xlink[$i])) { $lang_xlink[$i] = ''; }
+            if( !in_array($en_xlink[$i], $lang_xlink) ) {
 
-            if ($en_xlink[$i] != $lang_xlink[$i] ) {
+                if (!isset($lang_xlink[$i])) { $lang_xlink[$i] = ''; }
+
                 $this->addError(array(
                     "value_en"   => $en_xlink[$i],
                     "value_lang" => $lang_xlink[$i],
@@ -507,7 +507,19 @@ class ToolsError {
                 ));
 
             }
+
         }
+
+        if( count($en_xlink) < count($lang_xlink) ) {
+
+                $this->addError(array(
+                    "value_en"   => count($en_xlink),
+                    "value_lang" => count($lang_xlink),
+                    "type"       => "NbLink"
+                ));
+
+        }
+
 
         $reg = '/<link\s*?linkend=("|\')(.*?)("|\')\s*?>/s';
 
