@@ -40,7 +40,7 @@ This email is send automatically by the PhpDocumentation Online Editor.
         'X-Mailer: PhpDocumentation Online Editor' . "\r\n" .
         'Content-Type: text/plain; charset="utf-8"'."\n";
 
-        mail("yannick.torres@keliglia.com", $subject, $msg, $headers);
+        mail($to, $subject, $msg, $headers);
 
     }
 
