@@ -170,3 +170,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `buildLog`
+--
+CREATE TABLE IF NOT EXISTS `buildLog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(50) NOT NULL,
+  `lang` varchar(10) NOT NULL,
+  `status` enum('0','1') NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

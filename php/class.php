@@ -2486,5 +2486,20 @@ EOD;
 
     }
 
+    /**
+     * Save buildLog status.
+     *
+     * @param $lang The lang checked
+     * @param $status The status of the build. 0 if the build is broken, 1 otherwise.
+     */
+    function buildLog($lang, $status)
+    {
+
+        $s = sprintf('INSERT INTO `buildLog` (`project`, `lang`, `status`, `date`) VALUES ("php","%s", "%s", now())', $lang, $status);
+        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+
+        return;
+
+    }
 
 } // End of class
