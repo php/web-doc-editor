@@ -76,7 +76,15 @@ opacity:
     color: #aaa;
     font-size: 10pt !important;
     font-family: monospace;
-} .key {
+} 
+
+.flag {
+    background-repeat: no-repeat ! important;
+    background-position: 3px 50% ! important;
+    padding-left: 24px ! important;
+}
+
+.key {
     background-image: url(../themes/img/key.png) !important;
 } .flag-ar {
     background-image: url(../themes/img/flags/ar.png) !important;
@@ -214,6 +222,8 @@ opacity:
     background: transparent url(../themes/img/page_edit.png) no-repeat 0 0;
 } .CheckDoc {
     background-image: url(../themes/img/lightbulb_add.png) !important;
+} .BuildStatus {
+    background-image: url(../themes/img/error_delete.png) !important;
 } .AllFiles {
     background: transparent url(../themes/img/application_side_tree.png) no-repeat 0 0;
 } .PendingCommit {

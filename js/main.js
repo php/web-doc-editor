@@ -43,7 +43,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.57 $',
+        uiRevision: '$Revision: 1.58 $',
         
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -1023,6 +1023,101 @@ var phpDoc = function(){
             });
             Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
         }, // newTabCheckDoc
+        newTabBuildStatus: function(){
+        
+            var ds, grid;
+            
+            // The store
+            ds = new Ext.data.Store({
+                proxy: new Ext.data.HttpProxy({
+                    url: './php/controller.php'
+                }),
+                baseParams: {
+                    task: 'getBuildStatusData'
+                },
+                reader: new Ext.data.JsonReader({
+                    root: 'Items',
+                    totalProperty: 'nbItems',
+                    id: 'id'
+                }, [{
+                    name: 'id',
+                    mapping: 'id'
+                }, {
+                    name: 'lang',
+                    mapping: 'lang'
+                }, {
+                    name: 'date',
+                    mapping: 'date',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
+                }, {
+                    name: 'status',
+                    mapping: 'status',
+                    type: 'int'
+                }])
+            });
+            ds.setDefaultSort('date', 'desc');
+            
+            // The grid
+
+            function rendererLanguage(val) {
+                return '<div class="flag flag-' + val + '">' + val + '</div>';
+            }
+            function rendererStatus(val) {
+                if( val === 0 ) return 'Nok';
+                else return 'Ok';
+            }
+
+            grid = new Ext.grid.GridPanel({
+                store: ds,
+                loadMask: true,
+                columns: [{
+                    id: 'date',
+                    header: _("Date"),
+                    sortable: true,
+                    dataIndex: 'date',
+                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+                }, {
+                    header: _("Language"),
+                    width: 45,
+                    sortable: true,
+                    dataIndex: 'lang',
+                    renderer: rendererLanguage
+                }, {
+                    header: _("Status"),
+                    width: 45,
+                    sortable: true,
+                    dataIndex: 'status',
+                    renderer: rendererStatus
+                }],
+                view: new Ext.grid.GridView({
+                    forceFit: true,
+                    getRowClass: function(record, numIndex, rowParams, store){
+                        if (record.data.status === 0) {
+                            return 'summary_3';
+                        }
+                    }
+                }),
+                autoExpandColumn: 'date',
+                bodyBorder: false,
+                listeners: {
+                    scope: this,
+                    render: function(grid){
+                        grid.store.load.defer(20, grid.store);
+                    }
+                }
+            });
+            
+            Ext.getCmp('main-panel').add({
+                closable: true,
+                title: _('Translation build status'),
+                iconCls: 'BuildStatus',
+                id: 'tab-build-status',
+                layout: 'fit',
+                items: [grid]
+            });
+            Ext.getCmp('main-panel').setActiveTab('tab-build-status');
+        }, // newTabBuildStatus
         openFile: function(FilePath, FileName){
         
             Ext.getCmp('acc-all-files').expand();
@@ -7239,6 +7334,11 @@ var phpDoc = function(){
                     },
                     menu: new Ext.menu.Menu({
                         items: [{
+                            scope: this,
+                            text: _('Translation build status'),
+                            iconCls: 'BuildStatus',
+                            handler: this.newTabBuildStatus
+                        },{
                             scope: this,
                             text: _('Script Check doc'),
                             iconCls: 'CheckDoc',

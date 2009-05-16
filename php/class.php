@@ -2502,4 +2502,26 @@ EOD;
 
     }
 
+    /**
+     * Get buildLog data.
+     *
+     */
+    function getBuildStatusData()
+    {
+
+        $node = array();
+
+        $s = 'SELECT `id`, `lang`, `status`, `date` FROM `buildLog`';
+
+        $r    = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
+        $nb   = $r->num_rows;
+
+        while ($a = $r->fetch_assoc()) {
+            $node[] = $a;
+        }
+
+        return array('nb' => $nb, 'node' => $node);
+
+    }    
+
 } // End of class

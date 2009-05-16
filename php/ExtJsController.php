@@ -743,6 +743,15 @@ class ExtJsController
         return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
+    public function getBuildStatusData() {
+
+        $this->phpDoc->isLogged();
+
+        $r = $this->phpDoc->getBuildStatusData();
+
+        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+    }
+
     public function getCheckDocFiles() {
 
         $this->phpDoc->isLogged();
