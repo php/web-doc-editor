@@ -304,6 +304,7 @@ class ToolsError {
         $this->attributBookTag();
         $this->attributChapterTag();
         $this->attributLinkTag();
+        $this->attributXrefTag();
         $this->attributPrefaceTag();
         $this->attributQandaentryTag();
         $this->attributRefsec1Tag();
@@ -477,6 +478,46 @@ class ToolsError {
     }
 
     /**
+     * Check attributs in Xref tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function attributXrefTag()
+    {
+
+        $reg = '/<xref\s*?linkend=\s*?"(.[^"]*?)"\s*\/>/s';
+
+        $match = $en_xref = array();
+        preg_match_all($reg, $this->en_content, $match);
+        $en_xref = $match[1];
+
+        $match = $lang_xref = array();
+        preg_match_all($reg, $this->lang_content, $match);
+        $lang_xref = $match[1];
+
+        for ($i = 0; $i < count($en_xref); $i++) {
+
+            if (!isset($lang_xref[$i])) { $lang_xref[$i] = ''; }
+
+            if( !in_array($en_xref[$i], $lang_xref) || $lang_xref[$i] == '' ) {
+                $this->addError(array(
+                    "value_en"   => $en_xref[$i],
+                    "value_lang" => $lang_xref[$i],
+                    "type"       => "attributLinkendXref"
+                ));
+            }
+        }
+
+        if( count($en_xref) < count($lang_xref) ) {
+                $this->addError(array(
+                    "value_en"   => count($en_xref),
+                    "value_lang" => count($lang_xref),
+                    "type"       => "NbXref"
+                ));
+        }
+    }
+
+    /**
      * Check attributs in Link tag
      * Add an entry into the error's stack if an error is found
      *
@@ -515,7 +556,7 @@ class ToolsError {
                 $this->addError(array(
                     "value_en"   => count($en_xlink),
                     "value_lang" => count($lang_xlink),
-                    "type"       => "NbLink"
+                    "type"       => "NbXlinkLink"
                 ));
 
         }

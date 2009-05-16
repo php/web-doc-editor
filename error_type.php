@@ -158,8 +158,13 @@ $error['attributLinkendLink']['desc'] = 'Throw if the value of the attribut <b>l
 $error['attributXlinkLink']['head'] = 'Linkend and xlink tags';
 $error['attributXlinkLink']['desc'] = 'Throw if the value of the attribut <b>xlink:href</b> is different from english version.';
 
-$error['NbLink']['head'] = 'Linkend and xlink tags';
-$error['NbLink']['desc'] = 'Throw if the number of <b>Link</b> tags is different from english version.';
+$error['NbXlinkLink']['head'] = 'Linkend and xlink tags';
+$error['NbXlinkLink']['desc'] = 'Throw if the number of <b>Link</b> tags is different from english version.';
+
+$error['NbXref']['head'] = 'Xref tags';
+$error['NbXref']['desc'] = 'Throw if the number of <b>Xref</b> tags is different from english version.';
+$error['attributLinkendXref']['head'] = 'Xref tags';
+$error['attributLinkendXref']['desc'] = 'Throw if the value of the attribut <b>linkend</b> is different from english version.';
 
 $error['errorRoleMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorRoleMethodsynopsis']['desc'] = 'Throw if the value of the attribut <b>role</b> is different from english version.';
