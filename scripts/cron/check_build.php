@@ -14,7 +14,7 @@ $phpDoc = new phpDoc();
 // For all language, we check the build
 while (list(, $lang) = each($phpDoc->availableLanguage)) {
 
-    $cmd = 'cd '.dirname(__FILE__).'/../'.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
+    $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
     $output = array();
     exec($cmd, $output);
 

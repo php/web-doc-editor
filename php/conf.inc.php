@@ -1,6 +1,14 @@
 <?php
 
 /**
+ * WWW user
+ */
+define('DOC_EDITOR_WWW_USER', 'www-data');
+/**
+ * WWW group
+ */
+define('DOC_EDITOR_WWW_GROUP', 'www-data');
+/**
  * MySQL server
  */
 define('DOC_EDITOR_SQL_HOST', 'localhost');
@@ -46,7 +54,7 @@ define('DOC_EDITOR_CVS_MODULE', 'phpdoc-all');
 /**
  * Data path
  */
-define('DOC_EDITOR_DATA_PATH', '../' . 'data/');
+define('DOC_EDITOR_DATA_PATH', dirname(__FILE__).'/../' . 'data/');
 /**
  * CVS checkout path
  */
