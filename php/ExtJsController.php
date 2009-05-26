@@ -1,7 +1,7 @@
 <?php
 /**
  * Ext JS controller class definition file
- * 
+ *
  * @todo Add inline documentation for each controller task
  */
 
@@ -34,7 +34,7 @@ class ExtJsController
 
     /**
      * Initializes the controller
-     * 
+     *
      * @param array $request An associative array of request variables
      */
     public function __construct($request)
@@ -56,27 +56,36 @@ class ExtJsController
 
     /**
      * Gets the failure response
-     * @package string $message An optional error message
+     * @param mixed $value The value being encoded. Can be any type except a resource.
      *
      * @return string The failure string.
      */
-    public function getFailure($message = false)
+    public function getFailure($value = false)
     {
-        $return = array('success' => false);
-        if ($message) {
-            $return['msg'] = $message;
+        if ($value) {
+            $value['success'] = false;
+        } else {
+            $value = array('success' => false);
         }
-        return $this->getResponse($return);
+
+        return json_encode($value);
     }
 
     /**
      * Gets the success response
+     * @param mixed $value The value being encoded. Can be any type except a resource.
      *
      * @return string The success string.
      */
-    public function getSuccess()
+    public function getSuccess($value = false)
     {
-        return $this->getResponse(array('success' => true));
+        if ($value) {
+            $value['success'] = true;
+        } else {
+            $value = array('success' => true);
+        }
+
+        return json_encode($value);
     }
 
     /**
@@ -87,7 +96,9 @@ class ExtJsController
      */
     public function getRequestVariable($name)
     {
-        return $this->hasRequestVariable($name) ? $this->requestVariables[$name] : false;
+        return $this->hasRequestVariable($name)
+                ? $this->requestVariables[$name]
+                : false;
     }
 
     /**
@@ -119,7 +130,7 @@ class ExtJsController
             return $this->getSuccess();
         } elseif ($response['state'] === false) {
             // This user is unknow from this server
-            return $this->getFailure($response['msg']);
+            return $this->getFailure(array('msg' => $response['msg']));
         } else {
             return $this->getFailure();
         }
@@ -140,7 +151,6 @@ class ExtJsController
 
     public function checkLockFile()
     {
-
         $lockFile = $this->getRequestVariable('lockFile');
         $lock = new LockFile($lockFile);
 
@@ -185,7 +195,6 @@ class ExtJsController
      */
     public function testCvsLogin()
     {
-
         $cvsLogin  = $this->getRequestVariable('cvsLogin');
         $cvsPasswd = $this->getRequestVariable('cvsPasswd');
 
@@ -195,7 +204,7 @@ class ExtJsController
         if ($r === true) {
             return $this->getSuccess();
         } else {
-            return $this->getFailure(str_replace("\n", "", nl2br($r)));
+            return $this->getFailure(array('msg' => str_replace("\n", "", nl2br($r))));
         }
     }
 
@@ -211,93 +220,102 @@ class ExtJsController
 
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
-        return $this->getResponse(array('ping' => $response, 'lastupdate' => $r['lastupdate'], 'by' => $r['by']));
-
+        return $this->getSuccess(array('ping' => $response, 'lastupdate' => $r['lastupdate'], 'by' => $r['by']));
     }
 
-    public function getFilesNeedUpdate() {
+    public function getFilesNeedUpdate()
+    {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNeedUpdate();
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getFilesNotInEn() {
+    public function getFilesNotInEn()
+    {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNotInEn();
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getFilesNeedReviewed() {
+    public function getFilesNeedReviewed()
+    {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getFilesNeedReviewed();
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getFilesError() {
+    public function getFilesError()
+    {
         $this->phpDoc->isLogged();
-        
+
         $errorTools = new ToolsError($this->phpDoc->db);
         $errorTools->setParams('', '', $this->phpDoc->cvsLang, '', '', '');
         $r = $errorTools->getFilesError($this->phpDoc->getModifiedFiles());
 
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getFilesPendingCommit() {
+    public function getFilesPendingCommit()
+    {
         $this->phpDoc->isLogged();
 
         $r = $this->phpDoc->getFilesPendingCommit();
 
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getFilesPendingPatch() {
+    public function getFilesPendingPatch()
+    {
         $this->phpDoc->isLogged();
 
         $r = $this->phpDoc->getFilesPendingPatch();
 
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getTranslatorInfo() {
-
+    public function getTranslatorInfo()
+    {
         $this->phpDoc->isLogged();
 
         $translators = $this->phpDoc->getTranslatorsInfo();
 
-        return $this->getResponse(array('nbItems' => count($translators), 'Items' => $translators));
+        return $this->getSuccess(array('nbItems' => count($translators), 'Items' => $translators));
     }
 
-    public function getSummaryInfo() {
-
+    public function getSummaryInfo()
+    {
         $this->phpDoc->isLogged();
 
         $summary = $this->phpDoc->getSummaryInfo();
 
-        return $this->getResponse(array('nbItems' => count($summary), 'Items' => $summary));
+        return $this->getSuccess(array('nbItems' => count($summary), 'Items' => $summary));
     }
 
-    public function getLastNews() {
-
+    public function getLastNews()
+    {
         $this->phpDoc->isLogged();
 
         $news = new NewsReader($this->phpDoc->cvsLang);
         $r = $news->getLastNews();
 
-        return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
+        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
     }
 
-    public function getOpenBugs() {
-
+    public function getOpenBugs()
+    {
         $this->phpDoc->isLogged();
 
         $bugs = new BugReader($this->phpDoc->cvsLang);
         $r = $bugs->getOpenBugs();
 
-        return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
+        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
     }
 
-    public function getFile() {
+    public function getFile()
+    {
         $this->phpDoc->isLogged();
 
         $FilePath = $this->getRequestVariable('FilePath');
@@ -308,18 +326,19 @@ class ExtJsController
 
         $file = $this->phpDoc->getFileContent($FilePath, $FileName);
 
-        $return = array('success' => true);
+        $return = array();
 
         if (strtoupper($file['charset']) == 'UTF-8') {
             $return['content'] = $file['content'];
         } else {
             $return['content'] = iconv($file['charset'], "UTF-8", $file['content']);
         }
-        return $this->getResponse($return);
+
+        return $this->getSuccess($return);
     }
 
-    public function checkFileError() {
-
+    public function checkFileError()
+    {
         $this->phpDoc->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -365,11 +384,11 @@ class ExtJsController
         $errorTools = new ToolsError($this->phpDoc->db);
         $r = $errorTools->updateFilesError($anode, 'nocommit');
 
-        return $this->getResponse(array('success' => true, 'error' => $r['state'], 'error_first' => $r['first']));
+        return $this->getSuccess(array('error' => $r['state'], 'error_first' => $r['first']));
     }
 
-    public function saveFile() {
-
+    public function saveFile()
+    {
         $this->phpDoc->isLogged();
 
         $filePath   = $this->getRequestVariable('filePath');
@@ -420,38 +439,37 @@ class ExtJsController
             $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'file');
             $r = $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'update');
 
-            return $this->getResponse(array(
-            'success' => true,
-            'id' => $r,
-            'en_revision' => $info['rev'],
-            'new_revision' => $info['en-rev'],
-            'maintainer' => $info['maintainer'],
-            'reviewed' => $info['reviewed']
+            return $this->getSuccess(array(
+                'id'           => $r,
+                'en_revision'  => $info['rev'],
+                'new_revision' => $info['en-rev'],
+                'maintainer'   => $info['maintainer'],
+                'reviewed'     => $info['reviewed']
             ));
 
         } else {
             $uniqID = $this->phpDoc->registerAsPendingPatch($fileLang, $filePath, $fileName, $emailAlert);
             $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'patch', $uniqID);
-            return $this->getResponse(array(
-            'success' => true,
-            'uniqId' => $uniqID,
+
+            return $this->getSuccess(array(
+                'uniqId' => $uniqID
             ));
         }
-
     }
 
-    public function getLog() {
-
+    public function getLog()
+    {
         $this->phpDoc->isLogged();
         $Path = $this->getRequestVariable('Path');
         $File = $this->getRequestVariable('File');
 
         $r = $this->phpDoc->cvsGetLog($Path, $File);
-        return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
+
+        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
     }
 
-    public function getDiff() {
-
+    public function getDiff()
+    {
         $this->phpDoc->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -459,15 +477,15 @@ class ExtJsController
         $uniqID   = $this->getRequestVariable('uniqID') ? $this->getRequestVariable('uniqID') : '';
 
         $info = $this->phpDoc->getDiffFromFiles($FilePath, $FileName, $type, $uniqID);
-        return $this->getResponse(array(
-        'success' => true,
-        'content' => $info['content'],
-        'encoding' => $info['charset'],
+
+        return $this->getSuccess(array(
+            'content'  => $info['content'],
+            'encoding' => $info['charset']
         ));
     }
 
-    public function getDiff2() {
-
+    public function getDiff2()
+    {
         $this->phpDoc->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -476,15 +494,13 @@ class ExtJsController
 
         $r = $this->phpDoc->getDiffFromExec($FilePath, $FileName, $Rev1, $Rev2);
 
-        return $this->getResponse(array(
-        'success' => true,
-        'content' => $r,
+        return $this->getSuccess(array(
+             'content' => $r
         ));
-
     }
 
-    public function erasePersonalData() {
-
+    public function erasePersonalData()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -492,18 +508,20 @@ class ExtJsController
         }
 
         $this->phpDoc->erasePersonalData();
-        return $this->getSuccess();
 
+        return $this->getSuccess();
     }
 
-    public function getCommitLogMessage() {
-
+    public function getCommitLogMessage()
+    {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getCommitLogMessage();
-        return $this->getResponse(array('nbItems' => count($r), 'Items' => $r));
+
+        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
     }
 
-    public function clearLocalChange() {
+    public function clearLocalChange()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -516,30 +534,27 @@ class ExtJsController
 
         $info = $this->phpDoc->clearLocalChange($FileType, $FilePath, $FileName);
 
-        $return = array('success' => true);
-        $return['revision']   = $info['rev'];
-        $return['maintainer'] = $info['maintainer'];
-        $return['error']      = $info['errorFirst'];
-        $return['reviewed']   = $info['reviewed'];
-        return $this->getResponse($return);
+        return $this->getSuccess(array(
+            'revision'   => $info['rev'],
+            'maintainer' => $info['maintainer'],
+            'error'      => $info['errorFirst'],
+            'reviewed'   => $info['reviewed']
+        ));
     }
 
     public function getLogFile()
     {
-
         $this->phpDoc->isLogged();
 
         $file = $this->getRequestVariable('file');
 
         $content = $this->phpDoc->getOutputLogFile($file);
 
-        return $this->getResponse(array('success' => true, 'mess' => $content));
-
+        return $this->getSuccess(array('mess' => $content));
     }
 
     public function checkBuild()
     {
-
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -558,10 +573,12 @@ class ExtJsController
 
         // Send output into a log file
         $this->phpDoc->saveOutputLogFile('log_check_build', $output);
+
         return $this->getSuccess();
     }
 
-    public function cvsCommit() {
+    public function cvsCommit()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -575,11 +592,11 @@ class ExtJsController
 
         $r = $this->phpDoc->cvsCommit($anode, $logMessage);
 
-        return $this->getResponse(array('success' => true, 'mess' => $r));
+        return $this->getSuccess(array('mess' => $r));
     }
 
-    public function onSuccesCommit() {
-
+    public function onSuccesCommit()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -619,22 +636,22 @@ class ExtJsController
 
         // Manage this logMessage
         $this->phpDoc->manageLogMessage($logMessage);
-        return $this->getSuccess();
 
+        return $this->getSuccess();
     }
 
-    public function getConf() {
-
+    public function getConf()
+    {
         $this->phpDoc->isLogged();
         $r['userLang']  = $this->phpDoc->cvsLang;
         $r['userLogin'] = $this->phpDoc->cvsLogin;
         $r['userConf']  = $this->phpDoc->userConf;
 
-        return $this->getResponse(array('success' => true, 'mess' => $r));
+        return $this->getSuccess(array('mess' => $r));
     }
 
-    public function sendEmail() {
-
+    public function sendEmail()
+    {
         $this->phpDoc->isLogged();
 
         $to      = $this->getRequestVariable('to');
@@ -645,31 +662,35 @@ class ExtJsController
         return $this->getSuccess();
     }
 
-    public function confUpdate() {
-
+    public function confUpdate()
+    {
         $this->phpDoc->isLogged();
 
         $item      = $this->getRequestVariable('item');
         $value     = $this->getRequestVariable('value');
 
         $r = $this->phpDoc->updateConf($item, $value);
-        return $this->getResponse(array('success' => true, 'msg' => $r));
+
+        return $this->getSuccess(array('msg' => $r));
     }
 
-    public function getAllFiles() {
-
+    public function getAllFiles()
+    {
         $this->phpDoc->isLogged();
 
         $node  = $this->getRequestVariable('node');
         $search  = $this->getRequestVariable('search');
 
         $files = $this->phpDoc->getAllFiles($node, $search);
-
+// for extjs.TreeLoader, Loader must accept TreeNode objects only
         return $this->getResponse($files);
+/*
+        return $this->getSuccess($files);
+*/
     }
 
-    public function saveLogMessage() {
-
+    public function saveLogMessage()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -680,11 +701,12 @@ class ExtJsController
         $mess   = stripslashes($this->getRequestVariable('mess'));
 
         $this->phpDoc->saveLogMessage($messID, $mess);
+
         return $this->getSuccess();
     }
 
-    public function deleteLogMessage() {
-
+    public function deleteLogMessage()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -694,32 +716,34 @@ class ExtJsController
         $messID = $this->getRequestVariable('messID');
 
         $this->phpDoc->deleteLogMessage($messID);
+
         return $this->getSuccess();
     }
 
-    public function getAllFilesAboutExtension() {
-
+    public function getAllFilesAboutExtension()
+    {
         $this->phpDoc->isLogged();
 
         $ExtName = $this->getRequestVariable('ExtName');
 
         $r = $this->phpDoc->getAllFilesAboutExtension($ExtName);
 
-        return $this->getResponse(array('success' => true, 'files' => $r));
+        return $this->getSuccess(array('files' => $r));
     }
 
-    public function afterPatchAccept() {
-
+    public function afterPatchAccept()
+    {
         $this->phpDoc->isLogged();
 
         $PatchUniqID = $this->getRequestVariable('PatchUniqID');
 
         $this->phpDoc->afterPatchAccept($PatchUniqID);
+
         return $this->getSuccess();
     }
 
-    public function afterPatchReject() {
-
+    public function afterPatchReject()
+    {
         $this->phpDoc->isLogged();
 
         if ($this->phpDoc->cvsLogin == 'cvsread') {
@@ -733,27 +757,27 @@ class ExtJsController
         return $this->getSuccess();
     }
 
-    public function getCheckDocData() {
-
+    public function getCheckDocData()
+    {
         $this->phpDoc->isLogged();
 
         $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
         $r = $ToolsCheckDoc->getCheckDocData();
 
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getBuildStatusData() {
-
+    public function getBuildStatusData()
+    {
         $this->phpDoc->isLogged();
 
         $r = $this->phpDoc->getBuildStatusData();
 
-        return $this->getResponse(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
     }
 
-    public function getCheckDocFiles() {
-
+    public function getCheckDocFiles()
+    {
         $this->phpDoc->isLogged();
 
         $path      = $this->getRequestVariable('path');
@@ -762,12 +786,11 @@ class ExtJsController
         $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
         $r = $ToolsCheckDoc->getCheckDocFiles($path, $errorType);
 
-        return $this->getResponse(array('success' => true, 'files' => $r));
+        return $this->getSuccess(array('files' => $r));
     }
 
     public function downloadPatch()
     {
-
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
@@ -783,18 +806,17 @@ class ExtJsController
         header("Expires: 0");
         header("Cache-Control: no-cache, must-revalidate");
         header("Pragma: no-cache");
+
         return $patch;
     }
 
     public function logout()
     {
-
         $_SESSION = array();
         setcookie(session_name(), '', time()-42000, '/');
         session_destroy();
         header("Location: ../");
         exit;
-
     }
 
     public function translationGraph()
@@ -879,16 +901,16 @@ class ExtJsController
         return '';
     }
 
-    public function getLastUpdate() {
-
+    public function getLastUpdate()
+    {
         $this->phpDoc->isLogged();
         $r = $this->phpDoc->getLastUpdate();
 
-        return $this->getResponse(array('success' => true, 'lastupdate' => $r['lastupdate']));
+        return $this->getSuccess(array('success' => true, 'lastupdate' => $r['lastupdate']));
     }
 
-    public function markAsNeedDelete() {
-
+    public function markAsNeedDelete()
+    {
         $this->phpDoc->isLogged();
 
         $FilePath = $this->getRequestVariable('FilePath');
@@ -896,8 +918,7 @@ class ExtJsController
 
         $r = $this->phpDoc->markAsNeedDelete($FilePath, $FileName);
 
-        return $this->getResponse(array('success' => true, 'id' => $r['id'], 'by' => $r['by'], 'date' => $r['date']));
-
+        return $this->getSuccess(array('id' => $r['id'], 'by' => $r['by'], 'date' => $r['date']));
     }
 
 }
