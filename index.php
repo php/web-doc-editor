@@ -14,6 +14,7 @@ if (!isset($_SESSION['userID'])) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
     echo jsLoadTemplate('js/extjs/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
+    echo jsLoadTemplate('js/util.js'); // TODO: REMOVE AFTER USING YUI-COMPRESSOR
     echo jsLoadTemplate('js/login_override.js');
     echo jsLoadTemplate('js/login.js');
     echo footerTemplate();
@@ -43,7 +44,8 @@ echo jsLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js');
 // Main app
 echo jsLoadi18nTemplate();
 echo jsLoadTemplate('js/main_override.js');
-echo jsLoadTemplate('js/main.js');
+//~ echo jsLoadTemplate('js/main.js');
+echo jsLoadTemplate('js/main_min.js');
 
 if (isset($_SESSION['directAccess']) && is_object($_SESSION['directAccess'])) {
     $directAccess = 'var directAccess = {"lang":"'.$_SESSION['directAccess']->lang.'", "path":"'.$_SESSION['directAccess']->path.'", "name":"'.$_SESSION['directAccess']->name.'"}';
@@ -54,3 +56,4 @@ if (isset($_SESSION['directAccess']) && is_object($_SESSION['directAccess'])) {
 echo jsCallTemplate($directAccess);
 
 echo footerTemplate();
+

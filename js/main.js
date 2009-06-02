@@ -26,7 +26,7 @@ var phpDoc = function(){
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.59 $',
+        uiRevision: '$Revision: 1.60 $',
 
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -103,8 +103,12 @@ var phpDoc = function(){
             });
         }, // init
 
-        winForbidden: function(){
-            Ext.MessageBox.alert(_('Forbidden'), _('You can\'t do this action as cvsread user.'));
+        winForbidden: function()
+        {
+            Ext.MessageBox.alert(
+                _('Forbidden'),
+                _('You can\'t do this action as cvsread user.')
+            );
         },
 
         menuMarkupLANG: function(panel, scope){
@@ -699,408 +703,63 @@ var phpDoc = function(){
             }, this);
 
 
-        }, // loadDataStore
-        newTabCheckDoc: function(){
+        },// loadDataStore
 
-            var ds, grid, renderer;
+        newTabCheckDoc : function()
+        {
+            var tab = Ext.getCmp('tab-check-doc');
 
-            // The store
-            ds = new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getCheckDocData'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'extension',
-                    mapping: 'extension'
-                }, {
-                    name: 'check_oldstyle',
-                    mapping: 'check_oldstyle',
-                    type: 'int'
-                }, {
-                    name: 'check_undoc',
-                    mapping: 'check_undoc',
-                    type: 'int'
-                }, {
-                    name: 'check_roleerror',
-                    mapping: 'check_roleerror',
-                    type: 'int'
-                }, {
-                    name: 'check_badorder',
-                    mapping: 'check_badorder',
-                    type: 'int'
-                }, {
-                    name: 'check_noseealso',
-                    mapping: 'check_noseealso',
-                    type: 'int'
-                }, {
-                    name: 'check_noreturnvalues',
-                    mapping: 'check_noreturnvalues',
-                    type: 'int'
-                }, {
-                    name: 'check_noparameters',
-                    mapping: 'check_noparameters',
-                    type: 'int'
-                }, {
-                    name: 'check_noexamples',
-                    mapping: 'check_noexamples',
-                    type: 'int'
-                }, {
-                    name: 'check_noerrors',
-                    mapping: 'check_noerrors',
-                    type: 'int'
-                }])
-            });
-            ds.setDefaultSort('extension', 'asc');
-
-            renderer = function(value, metadata, record, rowIndex, colIndex, store){
-                if (value > 0) {
-                    metadata.css = 'check_doc_cell';
-                    return value;
-                }
-                else {
-                    return;
-                }
+            if (tab === undefined) {
+                // if tab not exist, create new tab
+                Ext.getCmp('main-panel').add({
+                    id       : 'tab-check-doc',
+                    title    : 'Check Doc',
+                    iconCls  : 'CheckDoc',
+                    layout   : 'fit',
+                    closable : true,
+                    html     : 'nothing'
+                });
+                tab = Ext.getCmp('tab-check-doc');
             }
 
+            if (tab.items) tab.removeAll(true);
+            tab.add(new ui.component.CheckDoc());
+            tab.doLayout(); // render the grid
 
-            // The grid
-            grid = new Ext.grid.GridPanel({
-                store: ds,
-                loadMask: true,
-                sm: new Ext.grid.CellSelectionModel({
-                    singleSelect: true
-                }),
-                columns: [new Ext.grid.RowNumberer(), {
-                    id: 'extension',
-                    header: "Extension",
-                    sortable: true,
-                    dataIndex: 'extension'
-                }, {
-                    header: "Not documented",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_undoc',
-                    renderer: renderer
-                }, {
-                    header: "Old style",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_oldstyle',
-                    renderer: renderer
-                }, {
-                    header: "Bad refsect1 order",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_badorder',
-                    renderer: renderer
-                }, {
-                    header: "No parameters",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_noparameters',
-                    renderer: renderer
-                }, {
-                    header: "No return values",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_noreturnvalues',
-                    renderer: renderer
-                }, {
-                    header: "No examples",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_noexamples',
-                    renderer: renderer
-                }, {
-                    header: "No errors section",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_noerrors',
-                    renderer: renderer
-                }, {
-                    header: "No see also",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_noseealso',
-                    renderer: renderer
-                }, {
-                    header: "Refsect1 role error",
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'check_roleerror',
-                    renderer: renderer
-                }],
-                view: new Ext.grid.GridView({
-                    forceFit: true
-                }),
-                autoExpandColumn: 'extension',
-                bodyBorder: false,
-                listeners: {
-                    scope: this,
-                    render: function(grid){
-                        grid.store.load.defer(20, grid.store);
-                    },
-                    celldblclick: function(grid, rowIndex, columnIndex, e){
-
-                        var record, errorType, data, path;
-
-                        record = grid.getStore().getAt(rowIndex);
-                        errorType = grid.getColumnModel().getDataIndex(columnIndex);
-                        data = record.get(errorType);
-                        path = record.data.path;
-
-                        if (Ext.num(data, false) && data != 0) {
-
-                            // open checkdoc grid
-                            XHR({
-                                url      : './php/controller.php',
-                                params   : {
-                                    task      : 'getCheckDocFiles',
-                                    path      : path,
-                                    errorType : errorType
-                                },
-                                scope   : this,
-                                success : function(response)
-                                {
-                                    // Must choose the file
-                                    var o = Ext.decode(response.responseText);
-
-                                    // store
-                                    var storeFiles = new Ext.data.SimpleStore({
-                                        fields: [ {
-                                            name: 'id'
-                                        }, {
-                                            name: 'file'
-                                        } ]
-                                    });
-
-                                    for (var i = 0; i < o.files.length; ++i) {
-
-                                        var r = new storeFiles.recordType({
-                                            id   : i,
-                                            file : o.files[i].name
-                                        });
-                                        storeFiles.insert(0, r);
-                                    }
-                                    storeFiles.sort('file', 'asc');
-
-                                    // Grid
-                                    var gridFiles = new Ext.grid.GridPanel({
-                                        store    : storeFiles,
-                                        loadMask : true,
-                                        sm       : new Ext.grid.RowSelectionModel({
-                                            listeners : {
-                                                rowselect : function(sm, rowIndex, record)
-                                                {
-                                                    Ext.getCmp('check-doc-btn-open-selected-files').enable();
-                                                }
-                                            }
-                                        }),
-                                        columns: [ new Ext.grid.RowNumberer(), {
-                                            id        : 'file',
-                                            header    : "Files",
-                                            sortable  : true,
-                                            dataIndex : 'file'
-                                        } ],
-                                        autoExpandColumn : 'file',
-                                        bodyBorder       : false,
-                                        listeners : {
-                                            scope : this,
-                                            rowcontextmenu : function(grid, rowIndex, e)
-                                            {
-                                                grid.getSelectionModel().selectRow(rowIndex);
-                                            },
-                                            rowdblclick: function(grid, rowIndex, e)
-                                            {
-                                                var name = storeFiles.getAt(rowIndex).data.file;
-                                                win.close();
-                                                this.openFile('en' + path, name);
-                                            }
-                                        }
-                                    });
-
-                                    win = new Ext.Window({
-                                        title      : _('Files'),
-                                        width      : 450,
-                                        height     : 350,
-                                        resizable  : false,
-                                        modal      : true,
-                                        autoScroll : true,
-                                        labelWidth : 50,
-                                        layout     : 'fit',
-                                        items      : [gridFiles],
-                                        buttons    : [{
-                                            scope   : this,
-                                            text    : 'Open all files',
-                                            handler : function()
-                                            {
-                                                win.close();
-
-                                                this.filePendingOpen = [];
-
-                                                for (i = 0; i < o.files.length; i = i + 1) {
-                                                    this.filePendingOpen[i] = ['en' + path, o.files[i].name];
-                                                }
-
-                                                // Start the first
-                                                this.openFile(this.filePendingOpen[0][0], this.filePendingOpen[0][1]);
-                                            }
-                                        }, {
-                                            scope    : this,
-                                            text     : 'Open selected files',
-                                            id       : 'check-doc-btn-open-selected-files',
-                                            disabled : true,
-                                            handler  : function()
-                                            {
-                                                win.close();
-
-                                                this.filePendingOpen = [];
-
-                                                var r = gridFiles.getSelectionModel().getSelections();
-
-                                                for (i = 0; i < r.length; i = i + 1) {
-                                                    this.filePendingOpen[i] = ['en' + path, r[i].data.file];
-                                                }
-
-                                                // Start the first
-                                                this.openFile(this.filePendingOpen[0][0], this.filePendingOpen[0][1]);
-                                            }
-                                        }]
-                                    });
-                                    win.show();
-                                }
-                            });
-                        } // data is not empty
-                    }
-
-                }
-            });
-
-            Ext.getCmp('main-panel').add({
-                closable: true,
-                title: 'Check Doc',
-                iconCls: 'CheckDoc',
-                id: 'tab-check-doc',
-                layout: 'fit',
-                items: [grid]
-            });
             Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
-        }, // newTabCheckDoc
-        newTabBuildStatus: function(){
+        },
 
-            var ds, grid;
+        newTabBuildStatus : function()
+        {
+            var tab = Ext.getCmp('tab-build-status');
 
-            // The store
-            ds = new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getBuildStatusData'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'lang',
-                    mapping: 'lang'
-                }, {
-                    name: 'date',
-                    mapping: 'date',
-                    type: 'date',
-                    dateFormat: 'Y-m-d H:i:s'
-                }, {
-                    name: 'status',
-                    mapping: 'status',
-                    type: 'int'
-                }])
-            });
-            ds.setDefaultSort('date', 'desc');
-
-            // The grid
-
-            function rendererLanguage(val) {
-                return '<div class="flag flag-' + val + '">' + val + '</div>';
-            }
-            function rendererStatus(val) {
-                if( val === 0 ) return 'Nok';
-                else return 'Ok';
+            if (tab === undefined ) {
+                // if tab not exist, create new tab
+                Ext.getCmp('main-panel').add({
+                    id       : 'tab-build-status',
+                    title    : _('Translation build status'),
+                    iconCls  : 'BuildStatus',
+                    layout   : 'fit',
+                    closable : true,
+                    html     : 'nothing'
+                });
+                tab = Ext.getCmp('tab-build-status');
             }
 
-            grid = new Ext.grid.GridPanel({
-                store: ds,
-                loadMask: true,
-                columns: [{
-                    id: 'date',
-                    header: _("Date"),
-                    sortable: true,
-                    dataIndex: 'date',
-                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                }, {
-                    header: _("Language"),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'lang',
-                    renderer: rendererLanguage
-                }, {
-                    header: _("Status"),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'status',
-                    renderer: rendererStatus
-                }],
-                view: new Ext.grid.GridView({
-                    forceFit: true,
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if (record.data.status === 0) {
-                            return 'summary_3';
-                        }
-                    }
-                }),
-                autoExpandColumn: 'date',
-                bodyBorder: false,
-                listeners: {
-                    scope: this,
-                    render: function(grid){
-                        grid.store.load.defer(20, grid.store);
-                    }
-                }
-            });
+            if (tab.items) tab.removeAll(true);
+            tab.add(new ui.component.BuildStatus());
+            tab.doLayout(); // render the grid
 
-            Ext.getCmp('main-panel').add({
-                closable: true,
-                title: _('Translation build status'),
-                iconCls: 'BuildStatus',
-                id: 'tab-build-status',
-                layout: 'fit',
-                items: [grid]
-            });
             Ext.getCmp('main-panel').setActiveTab('tab-build-status');
-        }, // newTabBuildStatus
-        openFile: function(FilePath, FileName){
+        },
 
+        openFile: function(FilePath, FileName)
+        {
             Ext.getCmp('acc-all-files').expand();
 
             var t = FilePath.split('/');
 
-            function GoToNode(node, scope){
+            function GoToNode(node, scope) {
 
                 node.expand(false, true, function(node){
 
@@ -1120,6 +779,7 @@ var phpDoc = function(){
                     }
                     else {
                         // walk into childs
+                        // leaf node
                         for (i = 0; i < node.childNodes.length; i = i + 1) {
                             if (node.childNodes[i].text === FileName) {
                                 node.childNodes[i].ensureVisible();
@@ -1734,8 +1394,8 @@ var phpDoc = function(){
             });
 
         }, //saveLangFile
-        getFile: function(FileID, FilePath, FileName, Panel1, Panel2){
-
+        getFile: function(FileID, FilePath, FileName, Panel1, Panel2)
+        {
             // Mask the panel
             Ext.get(Panel1 + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Loading...'));
 
@@ -1779,7 +1439,6 @@ var phpDoc = function(){
                             }
                         }
                     }
-
                 }
             });
 
@@ -2817,367 +2476,16 @@ var phpDoc = function(){
 
 
         }, //WinCheckBuild
-        WinConf: function(){
 
-            var winConf, viewMenu, storeMenu, storeData, tplMenu;
+        WinConf : function()
+        {
+            new ui.component.EditorConf()
+                .show(Ext.get('winconf-btn'));
 
-            if (!winConf) {
-
-                tplMenu = new Ext.XTemplate('<tpl for=".">', '<div class="thumb-wrap" id="tplMenu-{id}">', '<div class="thumb"><img src="themes/img/{img}" title=""></div>', '<span>{label}</span></div>', '</tpl>');
-                tplMenu.compile();
-
-                if (this.userLang === 'en') {
-                    storeData = [['1', 'go-home.png', _('Main')], ['5', 'view-list-tree.png', _('Module "All files"')], ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]];
-                }
-                else {
-                    storeData = [['1', 'go-home.png', _('Main')], ['2', 'edit-redo.png', _('Module "Files Need Update"')], ['3', 'dialog-cancel.png', _('Module "Files with Error"')], ['4', 'document-properties.png', _('Module "Files need Reviewed"')], ['5', 'view-list-tree.png', _('Module "All files"')], ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]];
-                }
-
-                storeMenu = new Ext.data.SimpleStore({
-                    id: 0,
-                    fields: [{
-                        name: 'id'
-                    }, {
-                        name: 'img'
-                    }, {
-                        name: 'label'
-                    }]
-                });
-                storeMenu.loadData(storeData);
-
-                viewMenu = new Ext.DataView({
-                    tpl: tplMenu,
-                    singleSelect: true,
-                    overClass: 'x-view-over',
-                    itemSelector: 'div.thumb-wrap',
-                    store: storeMenu,
-                    listeners: {
-                        selectionchange: function(view, selec){
-                            var r = view.getSelectedRecords();
-                            Ext.getCmp('confCard').layout.setActiveItem('conf-card-' + r[0].data.id);
-                        }
-                    }
-                });
-
-                winConf = new Ext.Window({
-                    scope: this,
-                    layout: 'border',
-                    width: 550,
-                    height: 400,
-                    iconCls: 'iconConf',
-                    modal: true,
-                    title: _('Configuration'),
-                    plain: true,
-                    closeAction: 'hide',
-                    listeners: {
-                        show: function(){
-                            viewMenu.select(viewMenu.getNode(0));
-                        }
-                    },
-                    items: [{
-                        scope: this,
-                        region: 'west',
-                        width: 190,
-                        id: 'confMenu',
-                        autoScroll: true,
-                        items: viewMenu
-                    }, {
-                        scope: this,
-                        layout: 'slide',
-                        region: 'center',
-                        id: 'confCard',
-                        width: 375,
-                        frame: true,
-                        activeItem: 0,
-                        bbar: new Ext.StatusBar({
-                            defaultText: _('All changes take effect immediately'),
-                            defaultIconCls: 'confStatusBar'
-                        }),
-                        items: [{
-                            scope: this,
-                            id: 'conf-card-1',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Themes'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                items: [{
-                                    xtype: 'combo',
-                                    id: 'conf-combo-theme',
-                                    store: new Ext.data.SimpleStore({
-                                        fields: ['themeFile', {
-                                            name: 'themeName',
-                                            type: 'string'
-                                        }],
-                                        data: [['themes/black/css/xtheme-black.css', _('Black')], ['themes/empty.css', _('Default')], ['themes/darkgray/css/xtheme-darkgray.css', _('DarkGray')], ['js/extjs/resources/css/xtheme-gray.css', _('Gray')], ['themes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')], ['themes/indigo/css/xtheme-indigo.css', _('Indigo')], ['themes/midnight/css/xtheme-midnight.css', _('Midnight')], ['themes/olive/css/xtheme-olive.css', _('Olive')], ['themes/purple/css/xtheme-purple.css', _('Purple')], ['js/extjs/resources/css/xtheme-slate.css', _('Slate')], ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')]]
-                                    }),
-                                    valueField: 'themeFile',
-                                    displayField: 'themeName',
-                                    triggerAction: 'all',
-                                    mode: 'local',
-                                    forceSelection: true,
-                                    editable: false,
-                                    fieldLabel: 'fieldlabel',
-                                    value: this.userConf.conf_theme,
-                                    listeners: {
-                                        scope: this,
-                                        render: function() {
-                                            Ext.getCmp('conf-combo-theme').store.sort('themeName');
-                                        },
-                                        select: function(c, record, numIndex){
-                                            var hrefTheme = c.getValue();
-                                            Ext.get('appTheme').dom.href = hrefTheme;
-                                            this.confUpdate('conf_theme', hrefTheme);
-                                        }
-                                    }
-
-                                }]
-                            }]
-                        }, {
-                            scope: this,
-                            id: 'conf-card-2',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Diff view'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'radio',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_needupdate_diff === "using-viewvc") ? true : false,
-                                    boxLabel: _('Using ViewVc from php web site'),
-                                    name: 'conf_needupdate_diff',
-                                    inputValue: 'using-viewvc',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            if (f.checked) {
-                                                this.confUpdate('conf_needupdate_diff', f.getRawValue());
-                                            }
-                                        }
-                                    }
-                                }, {
-                                    checked: (this.userConf.conf_needupdate_diff === "using-exec") ? true : false,
-                                    boxLabel: _('Using diff -kk -u command line'),
-                                    name: 'conf_needupdate_diff',
-                                    inputValue: 'using-exec',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            if (f.checked) {
-                                                this.confUpdate('conf_needupdate_diff', f.getRawValue());
-                                            }
-                                        }
-                                    }
-                                }]
-                            }, {
-                                xtype: 'fieldset',
-                                title: _('Editor'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_needupdate_scrollbars === "true") ? true : false,
-                                    boxLabel: _('Synchronize scroll bars'),
-                                    name: 'conf_needupdate_scrollbars',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_needupdate_scrollbars', f.getValue());
-                                        }
-                                    }
-                                },{
-                                    scope: this,
-                                    checked: (this.userConf.conf_needupdate_displaylog === "true") ? true : false,
-                                    boxLabel: _('Automatically load the log when displaying the file'),
-                                    name: 'conf_needupdate_displaylog',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_needupdate_displaylog', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }]
-
-                        }, {
-                            id: 'conf-card-3',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Error type'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_error_skipnbliteraltag === "true") ? true : false,
-                                    boxLabel: _('Skip nbLiteralTag error'),
-                                    name: 'conf_error_skipnbliteraltag',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_error_skipnbliteraltag', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }, {
-                                xtype: 'fieldset',
-                                title: _('Editor'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_error_scrollbars === "true") ? true : false,
-                                    boxLabel: _('Synchronize scroll bars'),
-                                    name: 'conf_error_scrollbars',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_error_scrollbars', f.getValue());
-                                        }
-                                    }
-                                },{
-                                    scope: this,
-                                    checked: (this.userConf.conf_error_displaylog === "true") ? true : false,
-                                    boxLabel: _('Automatically load the log when displaying the file'),
-                                    name: 'conf_error_displaylog',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_error_displaylog', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }]
-                        }, {
-                            id: 'conf-card-4',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Editor'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_reviewed_scrollbars === "true") ? true : false,
-                                    boxLabel: _('Synchronize scroll bars'),
-                                    name: 'conf_reviewed_scrollbars',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_reviewed_scrollbars', f.getValue());
-                                        }
-                                    }
-                                },{
-                                    scope: this,
-                                    checked: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
-                                    boxLabel: _('Automatically load the log when displaying the file'),
-                                    name: 'conf_reviewed_displaylog',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_reviewed_displaylog', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }]
-                        }, {
-                            id: 'conf-card-5',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Editor'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_allfiles_displaylog === "true") ? true : false,
-                                    boxLabel: _('Automatically load the log when displaying the file'),
-                                    name: 'conf_allfiles_displaylog',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_allfiles_displaylog', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }]
-                        }, {
-                            id: 'conf-card-6',
-                            xtype: 'form',
-                            bodyStyle: 'padding: 10px;',
-                            items: [{
-                                xtype: 'fieldset',
-                                title: _('Editor'),
-                                autoHeight: true,
-                                defaults: {
-                                    hideLabel: true
-                                },
-                                defaultType: 'checkbox',
-                                items: [{
-                                    scope: this,
-                                    checked: (this.userConf.conf_patch_scrollbars === "true") ? true : false,
-                                    boxLabel: _('Synchronize scroll bars'),
-                                    name: 'conf_patch_scrollbars',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_patch_scrollbars', f.getValue());
-                                        }
-                                    }
-                                }, {
-                                    scope: this,
-                                    checked: (this.userConf.conf_patch_displaylog === "true") ? true : false,
-                                    boxLabel: _('Automatically load the log when displaying the file'),
-                                    name: 'conf_patch_displaylog',
-                                    listeners: {
-                                        scope: this,
-                                        check: function(f){
-                                            this.confUpdate('conf_patch_displaylog', f.getValue());
-                                        }
-                                    }
-                                }]
-                            }]
-                        }]
-                    }],
-                    buttons: [{
-                        text: _('Close'),
-                        handler: function(){
-                            winConf.hide();
-                        }
-                    }]
-                });
-            }
-            winConf.show(Ext.get('winconf-btn'));
         }, //WinConf
-        confUpdate: function(item, v){
 
+        confUpdate: function(item, v)
+        {
             // Apply modification in DB
             XHR({
                 scope   : this,
@@ -3190,6 +2498,9 @@ var phpDoc = function(){
                 success : function(response)
                 {
                     // Update userConf object
+                    if (item === "conf_theme") {
+                        this.userConf.conf_theme = v;
+                    }
                     if (item === "conf_needupdate_diff") {
                         this.userConf.conf_needupdate_diff = v;
                     }
@@ -3230,8 +2541,8 @@ var phpDoc = function(){
                     }
                 }
             });
-
         }, //confUpdate
+
         WinAbout: function(){
 
             var winAbout;
