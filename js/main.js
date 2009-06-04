@@ -16,17 +16,12 @@ var phpDoc = function(){
         storePendingCommit: '',
         storePendingPatch: '',
 
-        storeMailing: '',
-        storeBugs: '',
-        storeTranslators: '',
-        storeSummary: '',
-
         // Variable
         userLogin: '',
         userLang: '',
         appName: 'PhpDocumentation Online Editor',
         appVer: '0.2',
-        uiRevision: '$Revision: 1.60 $',
+        uiRevision: '$Revision: 1.61 $',
 
         userConf: {
             'conf_needupdate_diff': 'using-exec',
@@ -55,8 +50,8 @@ var phpDoc = function(){
 
         filePendingOpen: '',
 
-        init: function(){
-
+        init : function()
+        {
             // Stop default contextmenu on all this app
             Ext.getBody().on('contextmenu', function(e){
                 e.stopEvent();
@@ -531,178 +526,6 @@ var phpDoc = function(){
                     }
                 }
             });
-
-            // Store : Mailing with Informations about phpdoc-LANG mailing
-            this.storeMailing = new Ext.data.Store({
-                //autoLoad: true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getLastNews'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'title',
-                    mapping: 'title'
-                }, {
-                    name: 'link',
-                    mapping: 'link'
-                }, {
-                    name: 'description',
-                    mapping: 'description'
-                }, {
-                    name: 'pubDate',
-                    mapping: 'pubDate',
-                    type: 'date',
-                    dateFormat: 'Y/m/d H:i:s'
-                }])
-            });
-            this.storeMailing.setDefaultSort('pubDate', 'desc');
-
-            // Store : All open bugs for documentation
-            this.storeBugs = new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getOpenBugs'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'title',
-                    mapping: 'title'
-                }, {
-                    name: 'link',
-                    mapping: 'link'
-                }, {
-                    name: 'description',
-                    mapping: 'description'
-                }])
-            });
-
-            // Store : Translator with Informations like Revcheck first table
-            this.storeTranslators = new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getTranslatorInfo'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'email',
-                    mapping: 'mail'
-                }, {
-                    name: 'nick',
-                    mapping: 'nick'
-                }, {
-                    name: 'cvs',
-                    mapping: 'cvs'
-                }, {
-                    name: 'uptodate',
-                    mapping: 'uptodate',
-                    type: 'int'
-                }, {
-                    name: 'old',
-                    mapping: 'old',
-                    type: 'int'
-                }, {
-                    name: 'critical',
-                    mapping: 'critical',
-                    type: 'int'
-                }, {
-                    name: 'sum',
-                    mapping: 'sum',
-                    type: 'int'
-                }])
-            });
-            this.storeTranslators.setDefaultSort('nick', 'asc');
-
-            // Store : storeSummary with Informations like Revcheck second table
-            this.storeSummary = new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getSummaryInfo'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'libel',
-                    mapping: 'libel'
-                }, {
-                    name: 'nbFiles',
-                    mapping: 'nbFiles'
-                }, {
-                    name: 'percentFiles',
-                    mapping: 'percentFiles'
-                }, {
-                    name: 'sizeFiles',
-                    mapping: 'sizeFiles'
-                }, {
-                    name: 'percentSize',
-                    mapping: 'percentSize'
-                }])
-            });
-
-            this.storeSummary.on('load', function() {
-
-                this.storeSummary.each(function(record) {
-
-                    if( record.id === 1 ) {
-                        record.set('libel', _('Up to date files'));
-                    }
-                    if( record.id === 2 ) {
-                        record.set('libel', _('Old files'));
-                    }
-                    if( record.id === 3 ) {
-                        record.set('libel', _('Critical files'));
-                    }
-                    if( record.id === 4 ) {
-                        record.set('libel', _('Files without revision tag'));
-                    }
-                    if( record.id === 5 ) {
-                        record.set('libel', _('Files available for translation'));
-                    }
-                    if( record.id === 6 ) {
-                        record.set('libel', _('Total'));
-                    }
-                    record.commit();
-
-                }, this);
-
-
-            }, this);
-
-
         },// loadDataStore
 
         newTabCheckDoc : function()
@@ -1492,53 +1315,29 @@ var phpDoc = function(){
             }
 
         }, //addToPendingCommit
-        // Custom renderer
-        rendererNumUptodate: function(val){
-            if (val === '0') {
-                return;
-            }
-            else {
-                return '<span style="color:green; font-weight: bold;">' + val + '</span>';
-            }
-        },
 
-        rendererNumCritical: function(val){
-            if (val === '0') {
-                return;
-            }
-            else {
-                return '<span style="color:red; font-weight: bold;">' + val + '</span>';
-            }
-        },
-
-        rendererTotalTranslator: function(v, params, data){
-            return v ? ((v === 0 || v > 1) ? '(' + v + ' Translators)' : '(1 Translator)') : '';
-        },
-
-        rendererSum: function(v){
-            return (v === '0') ? '' : v;
-        },
-
-        NewTabBugs: function(BugsId, BugsUrl, BugsTitle){
-
+        NewTabBugs : function(BugsId, BugsUrl, BugsTitle)
+        {
             Ext.getCmp('main-panel').add({
-                xtype: 'iframepanel',
-                id: 'mifp_bugs_' + BugsId,
-                title: _('Loading...'),
-                tabTip: BugsTitle,
-                iconCls: 'iconBugs',
-                loadMask: true,
-                defaultSrc: BugsUrl,
-                listeners: {
-                    'documentloaded': function(frame){
+                id         : 'mifp_bugs_' + BugsId,
+                xtype      : 'iframepanel',
+                title      : _('Loading...'),
+                tabTip     : BugsTitle,
+                iconCls    : 'iconBugs',
+                loadMask   : true,
+                defaultSrc : BugsUrl,
+                listeners : {
+                    'documentloaded' : function(frame)
+                    {
                         frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
                     }
                 }
             });
             Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
-        }, //NewTabBugs
-        NewTabMailing: function(MailId, MailUrl, MailTitle){
+        },
 
+        NewTabMailing: function(MailId, MailUrl, MailTitle)
+        {
             Ext.getCmp('main-panel').add({
                 xtype: 'iframepanel',
                 id: 'mifp_' + MailId,
@@ -2088,10 +1887,10 @@ var phpDoc = function(){
                             scope.storePendingCommit.reload();
 
                             // Reload translators data
-                            scope.storeTranslators.reload();
+                            ui.component.TranslatorGrid.reload();
 
                             // Reload summary data
-                            scope.storeSummary.reload();
+                            ui.component.SummaryGrid.reload();
 
                             Ext.getBody().unmask();
                         }
@@ -2237,7 +2036,7 @@ var phpDoc = function(){
                 if (scope.userLang != 'en') {
                     // Reload all data on this page
                     scope.storeFilesNeedUpdate.reload();
-                    scope.storeTranslators.reload();
+                    ui.component.TranslatorGrid.reload();
                     scope.storeFilesError.reload();
                 }
 
@@ -2543,56 +2342,12 @@ var phpDoc = function(){
             });
         }, //confUpdate
 
-        WinAbout: function(){
-
-            var winAbout;
-
-            if (!winAbout) {
-                winAbout = new Ext.Window({
-                    layout: 'fit',
-                    width: 515,
-                    height: 320,
-                    iconCls: 'iconHelp',
-                    modal: true,
-                    title: String.format(_('About {0}'),this.appName),
-                    closeAction: 'hide',
-                    plain: true,
-                    bodyStyle: 'color:#000',
-                    items: new Ext.TabPanel({
-                        autoTabs: true,
-                        activeTab: 0,
-                        border: false,
-                        defaults: {
-                            autoScroll: true
-                        },
-                        items: [{
-                            title: _('About'),
-                            html: '<div id="phd-oe-about"><img src="themes/img/logo.png" alt="' + this.appName + '" /></div><div id="phd-oe-about-info">' + this.appName + ' ver ' + this.appVer + '<br/>UI: ' + this.uiRevision + '<br/> Copyright &copy; 2008-2009 The PHP Group<br/>'+_('Author:')+' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> '+ _('and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a>')+'</div>'
-                        }, {
-                            title: _('Credits'),
-                            bodyStyle: 'padding:15px',
-                            html: '<div id="phd-oe-credit"><ul>' +
-                            '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">'+_('Javascript FrameWork')+'</div></li>' +
-                            '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">'+_('Code editor')+'</div></li>' +
-                            '<li><a href="http://famfamfam.com" target="_blank">famfamfam.com</a><div class="phd-oe-credit-info">'+_('Icon pack')+'</div></li>' +
-                            '</ul></div>'
-                        }, {
-                            title: _('License'),
-                            autoLoad: {
-                                url: './LICENSE'
-                            }
-                        }]
-                    }),
-                    buttons: [{
-                        text: _('Close'),
-                        handler: function(){
-                            winAbout.hide();
-                        }
-                    }]
-                });
-            }
-            winAbout.show(Ext.get('winabout-btn'));
+        WinAbout : function()
+        {
+            new ui.component.About()
+                .show(Ext.get('winabout-btn'));
         }, //WinAbout
+
         sendEmail: function(TranslatorName, TranslatorEmail){
 
             var form, win;
@@ -2667,43 +2422,13 @@ var phpDoc = function(){
             win.show();
 
         }, //sendEmail
-        drawInterface: function(){
 
+        drawInterface: function()
+        {
             var gridFilesError, gridFilesNeedUpdate, gridPendingPatch, gridPendingCommit, gridFilesNeedReviewed, gridSummary, gridTranslators, gridMailing, gridNotInEn, gridBugs, graphPanel, mainMenu, MainWindow, mainContent;
 
             // We keel alive our session by sending a ping every minute
-            this.TaskPing = new Ext.util.DelayedTask(function(){
-
-                XHR({
-                    url     : './php/controller.php',
-                    params  : {
-                        task : 'ping'
-                    },
-                    success : function(response)
-                    {
-                        var o = Ext.util.JSON.decode(response.responseText);
-                        if (o.ping !== 'pong') {
-                            window.location.href = './';
-                        } else {
-
-                            if( o.lastupdate === 'in_progress' ) {
-                                Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
-                            } else {
-                                var dt = Date.parseDate(o.lastupdate, "Y-m-d H:i:s");
-
-                                // We update the lastupdate date/time
-                                Ext.getDom('lastUpdateTime').innerHTML = dt.format(_('Y-m-d, H:i'));
-                            }
-                        }
-                    },
-                    failure: function()
-                    {
-                        window.location.href = './';
-                    }
-                });
-
-                this.TaskPing.delay(30000);
-            }, this);
+            this.TaskPing = new ui.PingTask();
 
             this.TaskPing.delay(30000); // start after 1 minute.
 
@@ -5625,383 +5350,11 @@ var phpDoc = function(){
                 }
             });
 
-            gridSummary = new Ext.grid.GridPanel({
-                title: _('Summary'),
-                iconCls: 'flag-' + this.userLang,
-                store: this.storeSummary,
-                loadMask: true,
-                columns: [new Ext.grid.RowNumberer(), {
-                    id: 'StatusType',
-                    header: _('File status type'),
-                    width: 180,
-                    sortable: true,
-                    dataIndex: 'libel'
-                }, {
-                    header: _('Number of files'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'nbFiles'
-                }, {
-                    header: _('Percent of files'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'percentFiles'
-                }, {
-                    header: _('Size of files (kB)'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'sizeFiles'
-                }, {
-                    header: _('Percent of size'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'percentSize'
-                }],
-                autoScroll: true,
-                height: 400,
-                width: 800,
-                view: new Ext.grid.GridView({
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if (record.data.id === 1) {
-                            return 'summary_1';
-                        }
-                        if (record.data.id === 2) {
-                            return 'summary_2';
-                        }
-                        if (record.data.id === 3) {
-                            return 'summary_3';
-                        }
-                        if (record.data.id === 4) {
-                            return 'summary_4';
-                        }
-                        if (record.data.id === 5) {
-                            return 'summary_5';
-                        }
-                    }
-                }),
-                listeners: {
-                    scope: this,
-                    render: function(grid){
-                        grid.store.load.defer(20, grid.store);
-                    },
-                    rowdblclick: function ( grid, rowIndex, e ) {
-                      var id = grid.store.getAt(rowIndex).data.id;
-
-                      //Up to date files, Old files, Criticals files
-                      if( id === 1 || id === 2 || id === 3) {
-                          Ext.getCmp('acc-need-update').expand();
-                      }
-
-                    }
-                }
-            });
-
-            gridTranslators = new Ext.grid.GridPanel({
-                title: _('Translators'),
-                iconCls: 'iconTranslator',
-                store: this.storeTranslators,
-                loadMask: true,
-                columns: [new Ext.grid.RowNumberer(), {
-                    id: 'GridTransName',
-                    header: _('Name'),
-                    sortable: true,
-                    dataIndex: 'name',
-                    summaryType: 'count',
-                    summaryRenderer: this.rendererTotalTranslator
-                }, {
-                    header: _('Email'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'email'
-                }, {
-                    header: _('Nick'),
-                    width: 70,
-                    sortable: true,
-                    dataIndex: 'nick'
-                }, {
-                    header: _('Cvs'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'cvs'
-                }, {
-                    header: _('UptoDate'),
-                    width: 60,
-                    sortable: true,
-                    renderer: this.rendererNumUptodate,
-                    dataIndex: 'uptodate',
-                    summaryType: 'sum'
-                }, {
-                    header: _('Old'),
-                    width: 45,
-                    sortable: true,
-                    renderer: this.rendererSum,
-                    dataIndex: 'old',
-                    summaryType: 'sum'
-                }, {
-                    header: _('Critical'),
-                    width: 60,
-                    sortable: true,
-                    renderer: this.rendererNumCritical,
-                    dataIndex: 'critical',
-                    summaryType: 'sum'
-                }, {
-                    header: _('Sum'),
-                    width: 50,
-                    sortable: true,
-                    renderer: this.rendererSum,
-                    dataIndex: 'sum',
-                    summaryType: 'sum'
-                }],
-                plugins: [new Ext.ux.grid.GridSummary()],
-                autoScroll: true,
-                autoExpandColumn: 'GridTransName',
-                height: 400,
-                width: 800,
-                listeners: {
-                    scope: this,
-                    render: function(){
-                        this.storeTranslators.load.defer(20, this.storeTranslators);
-                    },
-                    rowdblclick: function(grid, rowIndex, e){
-
-                        var TranslatorEmail, TranslatorName;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        TranslatorEmail = this.storeTranslators.getAt(rowIndex).data.email;
-                        TranslatorName = this.storeTranslators.getAt(rowIndex).data.name;
-
-                        this.sendEmail(TranslatorName, TranslatorEmail);
-                    },
-                    rowcontextmenu: function(grid, rowIndex, e){
-
-                        var TranslatorEmail, TranslatorName, menu;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        TranslatorEmail = this.storeTranslators.getAt(rowIndex).data.email;
-                        TranslatorName = this.storeTranslators.getAt(rowIndex).data.name;
-
-                        menu = new Ext.menu.Menu({
-                            id: 'submenu',
-                            items: [{
-                                scope: this,
-                                text: '<b>'+String.format(_('Send an email to {0}'), TranslatorName) + '</b>',
-                                iconCls: 'iconSendEmail',
-                                handler: function(){
-                                    this.sendEmail(TranslatorName, TranslatorEmail);
-                                }
-                            }, '-', {
-                                scope: this,
-                                text: String.format(_('Send an email to the {0}'), 'doc-' + this.userLang + '@lists.php.net'),
-                                iconCls: 'iconSendEmail',
-                                handler: function(){
-                                    this.sendEmail('Php Doc Team ' + this.userLang, 'doc-' + this.userLang + '@lists.php.net');
-                                }
-                            }]
-                        });
-
-                        menu.showAt(e.getXY());
-                    }
-                }
-            });
-
-            gridMailing = new Ext.grid.GridPanel({
-                store: this.storeMailing,
-                title: String.format(_('Mails from {0}'), 'doc-' + this.userLang),
-                iconCls: 'home-mailing-title',
-                loadMask: true,
-                columns: [new Ext.grid.RowNumberer(), {
-                    id: 'GridMailingTitle',
-                    header: _('Title'),
-                    sortable: true,
-                    dataIndex: 'title'
-                }, {
-                    header: _('By'),
-                    width: 110,
-                    sortable: true,
-                    dataIndex: 'description'
-                }, {
-                    header: _('Date'),
-                    width: 140,
-                    sortable: true,
-                    dataIndex: 'pubDate',
-                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                }],
-                autoScroll: true,
-                height: 400,
-                width: 800,
-                autoExpandColumn: 'GridMailingTitle',
-                sm: new Ext.grid.RowSelectionModel({
-                    singleSelect: true
-                }),
-                tbar: [{
-                    scope: this,
-                    tooltip: _('Refresh this grid'),
-                    iconCls: 'refresh',
-                    handler: function(){
-                        this.storeMailing.reload();
-                    }
-                }],
-                listeners: {
-                    scope: this,
-                    render: function(){
-                        this.storeMailing.load.defer(20, this.storeMailing);
-                    },
-                    rowcontextmenu: function(grid, rowIndex, e){
-
-                        var menu;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        menu = new Ext.menu.Menu({
-                            id: 'submenu',
-                            items: [{
-                                text: '<b>'+_('Open in a new Tab')+'</b>',
-                                iconCls: 'openInTab',
-                                scope: this,
-                                handler: function(){
-                                    gridMailing.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, '-', {
-                                text: _('Refresh this grid'),
-                                iconCls: 'refresh',
-                                scope: this,
-                                handler: function(){
-                                    this.storeMailing.reload();
-                                }
-                            }]
-                        });
-
-                        menu.showAt(e.getXY());
-
-                    },
-                    rowdblclick: function(grid, rowIndex, e){
-
-                        var MailId, MailUrl, MailTitle;
-
-                        MailId = this.storeMailing.getAt(rowIndex).data.pubDate;
-                        MailUrl = this.storeMailing.getAt(rowIndex).data.link;
-                        MailTitle = this.storeMailing.getAt(rowIndex).data.title;
-
-                        this.NewTabMailing(MailId, MailUrl, MailTitle);
-                    }
-                }
-            });
-
-            gridBugs = new Ext.grid.GridPanel({
-                store: this.storeBugs,
-                title: String.format(_('Open bugs for {0}'), 'doc-' + this.userLang),
-                iconCls: 'iconBugs',
-                loadMask: true,
-                columns: [{
-                    id: 'GridBugTitle',
-                    header: "Title",
-                    sortable: true,
-                    dataIndex: 'title'
-                }],
-                stripeRows: true,
-                autoHeight: true,
-                viewConfig: {
-                    emptyText: _('No open Bugs'),
-                    forceFit: true,
-                    enableRowBody: true,
-                    getRowClass: function(record, rowIndex, p, store){
-                        p.body = '<p class="bug-desc">' + record.data.description + '</p>';
-                        return 'x-grid3-row-expanded';
-                    }
-                },
-                autoExpandColumn: 'GridBugTitle',
-                sm: new Ext.grid.RowSelectionModel({
-                    singleSelect: true
-                }),
-                width: 800,
-                tbar: [{
-                    scope: this,
-                    tooltip: _('Refresh this grid'),
-                    iconCls: 'refresh',
-                    handler: function(){
-                        this.storeBugs.reload();
-                    }
-                }],
-                listeners: {
-                    scope: this,
-                    render: function(){
-                        this.storeBugs.load.defer(20, this.storeBugs);
-                    },
-                    rowcontextmenu: function(grid, rowIndex, e){
-
-                        var menu;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        menu = new Ext.menu.Menu({
-                            id: 'submenu',
-                            items: [{
-                                text: '<b>'+_('Open in a new Tab')+'</b>',
-                                iconCls: 'openInTab',
-                                scope: this,
-                                handler: function(){
-                                    gridBugs.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, '-', {
-                                text: _('Refresh this grid'),
-                                iconCls: 'refresh',
-                                scope: this,
-                                handler: function(){
-                                    this.storeBugs.reload();
-                                }
-                            }]
-                        });
-
-                        menu.showAt(e.getXY());
-
-                    },
-                    rowdblclick: function(grid, rowIndex, e){
-
-                        var BugsId, BugsUrl, BugsTitle;
-
-                        BugsId = this.storeBugs.getAt(rowIndex).data.id;
-                        BugsUrl = this.storeBugs.getAt(rowIndex).data.link;
-                        BugsTitle = this.storeBugs.getAt(rowIndex).data.title;
-
-                        this.NewTabBugs(BugsId, BugsUrl, BugsTitle);
-                    }
-                }
-            });
-
-            graphPanel = {
-                title: _('Graphics'),
-                layout: 'fit',
-                autoHeight: true,
-                iconCls: 'home-graphic-title',
-                html: '<div align="center" id="graph_container" style="width: 530px; height: 302px">' +
-                '<img id="graph_picture" src="" height="300">' +
-                '</div>',
-                listeners: {
-                    afterlayout: function(){
-
-                        var img, imgdiv, loadMask;
-
-                        img = Ext.get('graph_picture');
-                        imgdiv = Ext.get('graph_container');
-                        img.setVisibilityMode(Ext.Element.VISIBILITY);
-                        loadMask = new Ext.LoadMask(imgdiv);
-
-                        img.on('load', function(){
-                            img.stopFx();
-                            loadMask.hide();
-                            img.fadeIn({
-                                duration: 2
-                            });
-                        });
-
-                        loadMask.show();
-                        img.hide();
-                        img.dom.src = "./php/controller.php?task=translationGraph";
-                    } //AfterLayout
-                } // Listeners
-            };
+            gridSummary     = new ui.component.SummaryGrid();
+            gridTranslators = new ui.component.TranslatorGrid();
+            gridMailing     = new ui.component.LocalMailGrid();
+            gridBugs        = new ui.component.BugsGrid();
+            graphPanel      = new ui.component.TranslationGraph();
 
             this.treeAllFiles = new Ext.tree.TreePanel({
                 animate: true,
@@ -6806,6 +6159,7 @@ var phpDoc = function(){
                             defaults: {
                                 border: true
                             },
+                            layoutOnTabChange : true,
                             items: mainContent
                         }]
                     }]

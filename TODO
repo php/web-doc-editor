@@ -47,6 +47,7 @@ JAVASCRIPT:
 * Split main.js to several objects & files (to be discussed)
 * Use Object in FilePendingOpen Queue instead of Array
 * Implement RTL where appropriate
+* Decide whether XHR abstraction could be used (refer bug report from yannick)
 
 USER INTERFACE:
 ===============

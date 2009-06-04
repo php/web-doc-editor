@@ -3,6 +3,7 @@
 == Requirements ==
 * PHP 5.2.0+
 * The MySQLi extension
+* The PHP-GDLib module
 * Shell exec privileges
 
 == Configuration ==
