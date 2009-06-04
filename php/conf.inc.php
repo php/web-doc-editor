@@ -3,11 +3,11 @@
 /**
  * WWW user
  */
-define('DOC_EDITOR_WWW_USER', 'www-data');
+define('DOC_EDITOR_WWW_USER', 'apache');
 /**
  * WWW group
  */
-define('DOC_EDITOR_WWW_GROUP', 'www-data');
+define('DOC_EDITOR_WWW_GROUP', 'apache');
 /**
  * MySQL server
  */
@@ -15,7 +15,7 @@ define('DOC_EDITOR_SQL_HOST', 'localhost');
 /**
  * MySQL user
  */
-define('DOC_EDITOR_SQL_USER', 'root');
+define('DOC_EDITOR_SQL_USER', 'nobody');
 /**
  * MySQL password
  */
@@ -23,7 +23,7 @@ define('DOC_EDITOR_SQL_PASS', '');
 /**
  * MySQL database
  */
-define('DOC_EDITOR_SQL_BASE', 'doc-editor');
+define('DOC_EDITOR_SQL_BASE', 'doc_editor');
 
 /**
  * CVS server
