@@ -151,7 +151,7 @@ ui.component._CheckDoc.fs = new Ext.data.SimpleStore({
 });
 
 // CheckDoc Internal File-Win Grid
-//  config::filepath - path to files in File-Win
+//  config - {fpath}
 ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
 {
     id               : 'check-doc-file-grid',
@@ -183,7 +183,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
         rowdblclick : function(grid, rowIndex, e)
         {
             phpDoc.openFile(
-                'en' + grid.filepath,
+                'en' + grid.fpath,
                 grid.store.getAt(rowIndex).data.file
             );
 
@@ -193,7 +193,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // CheckDoc Internal File-Win
-//  config::filepath - path to files in File-Win
+//  config - {fpath}
 ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
 {
     id         : 'check-doc-file-win',
@@ -218,7 +218,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
 
             for (var i = 0; i < store.getCount(); ++i) {
                 phpDoc.filePendingOpen[i] = [
-                    'en' + win.filepath,
+                    'en' + win.fpath,
                     store.getAt(i).data.file
                 ];
             }
@@ -246,7 +246,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
 
             for (var i = 0; i < r.length; ++i) {
                 phpDoc.filePendingOpen[i] = [
-                    'en' + win.filepath,
+                    'en' + win.fpath,
                     r[i].data.file
                 ];
             }
@@ -285,7 +285,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
             var record    = grid.getStore().getAt(rowIndex),
                 errorType = grid.getColumnModel().getDataIndex(columnIndex),
                 data      = record.get(errorType),
-                filepath  = record.data.path;
+                fpath     = record.data.path;
 
             if (Ext.num(data, false) && data != 0) {
                 // get checkdoc file via XHR
@@ -295,7 +295,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                     url      : './php/controller.php',
                     params   : {
                         task      : 'getCheckDocFiles',
-                        path      : filepath,
+                        path      : fpath,
                         errorType : errorType
                     },
                     success : function(response)
@@ -317,10 +317,10 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                         ui.component._CheckDoc.fs.sort('file', 'asc');
 
                         new ui.component._CheckDoc.FileWin({
-                            filepath : filepath,
-                            items    : [
+                            fpath : fpath,
+                            items : [
                                 new ui.component._CheckDoc.FileGrid({
-                                    filepath : filepath
+                                    fpath : fpath
                                 })
                             ]
                         }).show();

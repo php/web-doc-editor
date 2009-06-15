@@ -1,6 +1,6 @@
-Ext.namespace('ui');
+Ext.namespace('ui', 'ui.task');
 
-ui.PingTask = function()
+ui.task.PingTask = function()
 {
     this.task = new Ext.util.DelayedTask(function()
     {

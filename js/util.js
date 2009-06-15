@@ -1,7 +1,7 @@
-// firebug logging wrapper
-function log(msg)
+// javascript debug-logging wrapper
+function log()
 {
-    if(console) console.log(msg);
+    if(console) console.log.apply(this, arguments);
 }
 
 // i18n function
@@ -25,9 +25,9 @@ function _(key)
 // config - Ext.ajax.request config
 function XHR(config)
 {
-    var success_cb  = config.success;
-    var failure_cb  = config.failure;
-    var original_cb = config.callback;
+    var success_cb  = config.success,
+        failure_cb  = config.failure,
+        original_cb = config.callback;
 
     config.failure  = config.success = Ext.emptyFn;
     config.callback = function(options, success, response)

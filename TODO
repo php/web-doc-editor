@@ -40,6 +40,9 @@ PHP:
 * Automatic upgrade
   - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling)
 
+* ClearLocalChange
+  - clear local change attempt to open en file which may not exist (class.php line 1884). JSON response would contain the php-warning message.
+
 JAVASCRIPT:
 ===========
 
@@ -48,6 +51,9 @@ JAVASCRIPT:
 * Use Object in FilePendingOpen Queue instead of Array
 * Implement RTL where appropriate
 * Decide whether XHR abstraction could be used (refer bug report from yannick)
+* Remove dependency on '-ALL-' id token for 'AF' panel in removetab handler
+* Merge SaveEnFile with SaveLangFile if possible
+* Move repositoryContextMenu from main.js to ui/component/RepositoryTree
 
 USER INTERFACE:
 ===============

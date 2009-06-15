@@ -56,7 +56,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
        this.obj.ownerCt.fireEvent('resize', this);
 
       // Fire the initialize event
-      this.obj.fireEvent('initialize', obj);
+      this.obj.fireEvent('initialize', this.obj);
       this.obj.initialised = true;
 
       var obj;
