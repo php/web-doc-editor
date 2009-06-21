@@ -1,50 +1,49 @@
-var phpDoc = function(){
+var phpDoc = function()
+{
     Ext.QuickTips.init();
     Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
 
     return {
-
         // Task
-        TaskPing: '',
+        TaskPing : '',
 
         // Store
         storeCommitLogMessage: '', //
-        storeFilesError: '', //
-        storeFilesNeedReviewed: '',
-        storeNotInEn: '',
-        storePendingCommit: '',
-        storePendingPatch: '',
 
         // Variable
-        userLogin: '',
-        userLang: '',
-        appName: 'PhpDocumentation Online Editor',
-        appVer: '0.2',
-        uiRevision: '$Revision: 1.62 $',
+        userLogin  : '',
+        userLang   : '',
+        appName    : 'PhpDocumentation Online Editor',
+        appVer     : '0.2',
+        uiRevision : '$Revision: 1.63 $',
 
         userConf: {
-            'conf_needupdate_diff': 'using-exec',
-            'conf_needupdate_scrollbars': true,
-            'conf_needupdate_displaylog': false,
+            'conf_needupdate_diff'       : 'using-exec',
+            'conf_needupdate_scrollbars' : true,
+            'conf_needupdate_displaylog' : false,
 
-            'conf_error_skipnbliteraltag': true,
-            'conf_error_scrollbars': true,
-            'conf_error_displaylog': false,
+            'conf_error_skipnbliteraltag' : true,
+            'conf_error_scrollbars'       : true,
+            'conf_error_displaylog'       : false,
 
-            'conf_reviewed_scrollbars': true,
-            'conf_reviewed_displaylog': false,
+            'conf_reviewed_scrollbars' : true,
+            'conf_reviewed_displaylog' : false,
 
-            'conf_allfiles_displaylog': false,
+            'conf_allfiles_displaylog' : false,
 
-            'conf_patch_scrollbars': true,
-            'conf_patch_displaylog': false,
+            'conf_patch_scrollbars' : true,
+            'conf_patch_displaylog' : false,
 
-            'conf_theme': 'themes/empty.css'
+            'conf_theme' : 'themes/empty.css'
         },
 
         // Accordin contents
-        treeAllFiles: '',
-        staleFileGrid : '',
+        treeAllFiles      : '',
+        staleFileGrid     : '',
+        errorFileGrid     : '',
+        pendingPatchGrid  : '',
+        pendingCommitGrid : '',
+        pendingReviewGrid : '',
 
         filePendingOpen: '',
 
@@ -242,238 +241,6 @@ var phpDoc = function(){
                 }])
             });
 
-            // Store : Files Error
-            this.storeFilesError = new Ext.data.GroupingStore({
-                autoLoad: (this.userLang === 'en') ? false : true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getFilesError'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'maintainer',
-                    mapping: 'maintainer'
-                }, {
-                    name: 'type',
-                    mapping: 'type'
-                }, {
-                    name: 'value_en',
-                    mapping: 'value_en'
-                }, {
-                    name: 'value_lang',
-                    mapping: 'value_lang'
-                }, {
-                    name: 'needcommit',
-                    mapping: 'needcommit'
-                }]),
-                sortInfo: {
-                    field: 'path',
-                    direction: "ASC"
-                },
-                groupField: 'path',
-                listeners: {
-                    datachanged: function(ds){
-                        Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
-                    }
-                }
-            });
-
-            // Store : Files Need Update
-            this.storeFilesNeedReviewed = new Ext.data.GroupingStore({
-                autoLoad: (this.userLang === 'en') ? false : true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getFilesNeedReviewed'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'reviewed',
-                    mapping: 'reviewed'
-                }, {
-                    name: 'maintainer',
-                    mapping: 'maintainer'
-                }, {
-                    name: 'needcommit',
-                    mapping: 'needcommit'
-                }]),
-                sortInfo: {
-                    field: 'path',
-                    direction: "ASC"
-                },
-                groupField: 'path',
-                listeners: {
-                    datachanged: function(ds){
-                        Ext.getDom('acc-need-reviewed-nb').innerHTML = ds.getCount();
-                    }
-                }
-            });
-
-            // Store : Not In En tree
-            this.storeNotInEn = new Ext.data.GroupingStore({
-                autoLoad: (this.userLang === 'en') ? false : true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getFilesNotInEn'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'needcommit',
-                    mapping: 'needcommit'
-                }]),
-                sortInfo: {
-                    field: 'path',
-                    direction: "ASC"
-                },
-                groupField: 'path',
-                listeners: {
-                    datachanged: function(ds){
-                        Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
-                    },
-                    add: function(ds){
-                        Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
-                    }
-                }
-            });
-
-            // Store :
-            this.storePendingCommit = new Ext.data.GroupingStore({
-                autoLoad: true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getFilesPendingCommit'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'by',
-                    mapping: 'by'
-                }, {
-                    name: 'date',
-                    mapping: 'date',
-                    type: 'date',
-                    dateFormat: 'Y-m-d H:i:s'
-                }, {
-                    name: 'type',
-                    mapping: 'type'
-                }]),
-                sortInfo: {
-                    field: 'path',
-                    direction: "ASC"
-                },
-                groupField: 'path',
-                listeners: {
-                    datachanged: function(ds){
-                        Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
-                    },
-                    add: function(ds){
-                        Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
-                    }
-                }
-            });
-
-            // Store :
-            this.storePendingPatch = new Ext.data.GroupingStore({
-                autoLoad: true,
-                proxy: new Ext.data.HttpProxy({
-                    url: './php/controller.php'
-                }),
-                baseParams: {
-                    task: 'getFilesPendingPatch'
-                },
-                reader: new Ext.data.JsonReader({
-                    root: 'Items',
-                    totalProperty: 'nbItems',
-                    id: 'id'
-                }, [{
-                    name: 'id',
-                    mapping: 'id'
-                }, {
-                    name: 'path',
-                    mapping: 'path'
-                }, {
-                    name: 'name',
-                    mapping: 'name'
-                }, {
-                    name: 'by',
-                    mapping: 'by'
-                }, {
-                    name: 'uniqID',
-                    mapping: 'uniqID'
-                }, {
-                    name: 'date',
-                    mapping: 'date',
-                    type: 'date',
-                    dateFormat: 'Y-m-d H:i:s'
-                }]),
-                sortInfo: {
-                    field: 'path',
-                    direction: "ASC"
-                },
-                groupField: 'path',
-                listeners: {
-                    datachanged: function(ds){
-                        Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
-                    },
-                    add: function(ds){
-                        Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
-                    }
-                }
-            });
         },// loadDataStore
 
         newTabCheckDoc : function()
@@ -565,500 +332,10 @@ var phpDoc = function(){
             GoToNode(this.treeAllFiles.root, this);
         }, //openFile
 
-        clearLocalChange: function(FileType, FilePath, FileName, rowIndex, scope) {
-
-            if (scope.userLogin === 'cvsread') {
-                scope.winForbidden();
-                return;
-            }
-
-            function goClearChange(btn){
-                if (btn === 'yes') {
-
-                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                    // Before clear local change, we close the file if there is open
-                    if (Ext.getCmp('main-panel').findById('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName))) {
-                        Ext.getCmp('main-panel').remove('FNU-' + Ext.util.md5('FNU-' + FilePath + FileName));
-                    }
-
-                    XHR({
-                        url     : './php/controller.php',
-                        params  : {
-                            task     : 'clearLocalChange',
-                            FileType : FileType,
-                            FilePath : FilePath,
-                            FileName : FileName
-                        },
-                        scope   : scope,
-                        success : function(response)
-                        {
-                            // clear local change success
-
-                            if (this.userLang === 'en') {
-                                // We reload all store
-                                this.staleFileGrid.store.reload();
-                                this.storeFilesError.reload();
-                                this.storeFilesNeedReviewed.reload();
-                            }
-
-                            // We delete from this store
-                            this.storePendingCommit.remove(this.storePendingCommit.getAt(rowIndex));
-
-                            // We fire event add to update the file count
-                            this.storePendingCommit.fireEvent('add', this.storePendingCommit);
-
-                            // We try to search in others stores if this file is marked as needCommit
-
-                            // trow storeNotInEn
-                            this.storeNotInEn.each(
-                                function(record)
-                                {
-                                    if ((this.userLang+record.data.path) === FilePath
-                                        && record.data.name === FileName
-                                    ) {
-                                        record.set('needcommit', false);
-                                    }
-                                },
-                                this
-                            );
-
-                            // trow storeFilesNeedReviewed
-                            this.storeFilesNeedReviewed.each(
-                                function(record)
-                                {
-                                    if ((this.userLang+record.data.path) === FilePath
-                                        && record.data.name === FileName
-                                    ) {
-                                        record.set('needcommit', false);
-                                    }
-                                },
-                                this
-                            );
-
-                            // trow StaleFile store
-                            this.staleFileGrid.store.each(
-                                function(record)
-                                {
-                                    if ((this.userLang+record.data.path) === FilePath
-                                        && record.data.name === FileName
-                                    ) {
-                                        record.set('needcommit', false);
-                                    }
-                                },
-                                this
-                            );
-
-                            // trow FileError
-                            this.storeFilesError.each(
-                                function(record)
-                                {
-                                    if ((this.userLang+record.data.path) === FilePath
-                                        && record.data.name === FileName
-                                    ) {
-                                        record.set('needcommit', false);
-                                    }
-                                },
-                                this
-                            );
-
-                            // find open node in All Files modules
-                            var node = this.treeAllFiles.getNodeById('//'+FilePath+FileName);
-                            if (node) {
-                              node.getUI().removeClass('modified');
-                            }
-                            Ext.getBody().unmask();
-                        },
-                        failure : function(response)
-                        {
-                            // clear local change failure
-                            Ext.getBody().unmask();
-                            this.winForbidden();
-                        }
-                    });
-                }
-            }
-
-            Ext.MessageBox.confirm(_('Confirm'), _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'), goClearChange, scope);
-
-        }, //clearLocalChange
-
-        rejectPatch: function(FileID, FilePath, FileName, FileUniqID, rowIndex, scope){
-
-            if (scope.userLogin === 'cvsread') {
-                this.winForbidden();
-                return;
-            }
-
-            function goRejectPatch(btn){
-
-                if (btn === 'yes') {
-
-                    var msg = Ext.MessageBox.wait(_('Please, wait...'));
-
-                    XHR({
-                        scope  : scope,
-                        url    : './php/controller.php',
-                        params : {
-                            task        : 'afterPatchReject',
-                            PatchUniqID : FileUniqID
-                        },
-                        success : function(response)
-                        {
-                            // Remove this patch from the PendingPatchStore
-                            this.storePendingPatch.remove(this.storePendingPatch.getAt(rowIndex));
-
-                            // We fire event add to update the file count
-                            this.storePendingPatch.fireEvent('add', this.storePendingPatch);
-
-                            // Remove this tab
-                            Ext.getCmp('main-panel').remove('PP-' + FileID);
-
-                            // Remove wait msg
-                            msg.hide();
-                        },
-                        failure : function(response)
-                        {
-                            // Remove wait msg
-                            msg.hide();
-                            this.winForbidden();
-                        }
-                    });
-
-                } // btn = yes
-            } // goRejectPatch
-            Ext.MessageBox.confirm(_('Confirm'), _('This action will <b>reject</b> this patch, send an email to his author and close this tab.'), goRejectPatch, scope);
-
-        }, //rejectPatch
-        saveFileViaPatch: function(FileID, FilePath, FileName, FileUniqID, rowIndex, scope){
-
-            function goAcceptPatch(btn){
-
-                if (btn === 'yes') {
-
-                    Ext.getCmp('PP-PATCH-PANEL-btn-save-' + FileID).disable();
-                    Ext.getCmp('PP-PATCH-' + FileID).isModified = false;
-                    Ext.getCmp('PP-PATCH-PANEL-' + FileID).setTitle(Ext.getCmp('PP-PATCH-PANEL-' + FileID).originTitle);
-                    Ext.getCmp('PP-' + FileID).setTitle(Ext.getCmp('PP-' + FileID).originTitle);
-
-                    var msg = Ext.MessageBox.wait(_('Saving data...'));
-
-                    // We save LANG File
-                    XHR({
-                        scope  : scope,
-                        url    : './php/controller.php',
-                        params : {
-                            task        : 'saveFile',
-                            filePath    : FilePath,
-                            fileName    : FileName,
-                            fileLang    : 'all',
-                            fileContent : Ext.getCmp('PP-PATCH-' + FileID).getCode()
-                        },
-                        success : function(response)
-                        {
-                            var o = Ext.util.JSON.decode(response.responseText);
-
-                            // Add this files into storePendingCommit
-                            this.addToPendingCommit(o.id, FilePath, FileName, 'update');
-
-                            // Remove this patch from the PendingPatchStore
-                            this.storePendingPatch.remove(this.storePendingPatch.getAt(rowIndex));
-
-                            // We fire event add to update the file count
-                            this.storePendingPatch.fireEvent('add', this.storePendingPatch);
-
-                            // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
-                            XHR({
-                                scope  : scope,
-                                url    : './php/controller.php',
-                                params : {
-                                    task        : 'afterPatchAccept',
-                                    PatchUniqID : FileUniqID
-                                }
-                            });
-
-                            // Remove wait msg
-                            msg.hide();
-
-                            // Remove this tab
-                            Ext.getCmp('main-panel').remove('PP-' + FileID);
-                        },
-                        failure : function(response) {
-                            // Remove wait msg
-                            msg.hide();
-                            this.winForbidden();
-                        }
-                    });
-                } // btn = yes
-            }
-
-            Ext.MessageBox.confirm(_('Confirm'), _('This action will accept this patch, send an email to his author, save the file and close this tab.'), goAcceptPatch, scope);
-
-        }, //saveFileViaPatch
-
-        _saveEnFile: function(prefix, ftype, fid, fpath, fname, record)
-        {
-            var id_prefix = prefix + '-' + ftype;
-
-            if (this.userLogin === 'cvsread') {
-                this.winForbidden();
-                return;
-            }
-
-            // reset file
-            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + fid).disable();
-            Ext.getCmp(id_prefix + '-FILE-' + fid).isModified = false;
-            Ext.getCmp(id_prefix + '-PANEL-' + fid).setTitle(
-                Ext.getCmp(id_prefix + '-PANEL-' + fid).originTitle
-            );
-            if (ftype === 'ALL' || !Ext.getCmp(prefix + '-LANG-FILE-' + fid).isModified) {
-                // reset tab-panel
-                Ext.getCmp(prefix + '-' + fid).setTitle(
-                    Ext.getCmp(prefix + '-' + fid).originTitle
-                );
-            }
-
-            new ui.task.SaveENFileTask({
-                prefix      : prefix,
-                ftype       : ftype,
-                fid         : fid,
-                fpath       : fpath,
-                fname       : fname,
-                storeRecord : record
-            }).run();
-
-        }, //saveEnFile
-
-        saveEnFile: function(FileID, FilePath, FileName, Panel, rowIndex, scope){
-
-            if (scope.userLogin === 'cvsread') {
-                scope.winForbidden();
-                return;
-            }
-
-            Ext.getCmp(Panel + '-EN-PANEL-btn-save-' + FileID).disable();
-            Ext.getCmp(Panel + '-' + FileID).isModifiedEn = false;
-            Ext.getCmp(Panel + '-EN-PANEL-' + FileID).setTitle(Ext.getCmp(Panel + '-EN-PANEL-' + FileID).originTitle);
-
-            if (!Ext.getCmp(Panel + '-' + FileID).isModifiedEn && !Ext.getCmp(Panel + '-' + FileID).isModifiedLang) {
-                Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
-            }
-
-            var msg = Ext.MessageBox.wait(_('Saving data...'));
-            // We save LANG File
-            XHR({
-                scope  : scope,
-                url    : './php/controller.php',
-                params : {
-                    task        : 'saveFile',
-                    filePath    : FilePath,
-                    fileName    : FileName,
-                    fileLang    : 'en',
-                    fileContent : Ext.getCmp(Panel + '-EN-' + FileID).getCode()
-                },
-                success : function(response)
-                {
-                    var o = Ext.util.JSON.decode(response.responseText);
-
-                    if (Panel === 'FNU') {
-                        // Update our store
-                        this.staleFileGrid.store.getAt(rowIndex).set('en_revision', '1.' + o.en_revision);
-                        this.staleFileGrid.store.getAt(rowIndex).set('needcommit', true);
-                    }
-
-                    if (Panel === 'FE') {
-                        // Update our store
-                        this.storeFilesError.getAt(rowIndex).set('needcommit', true);
-                    }
-
-                    if (Panel === 'FNR') {
-                        // Update our store
-                        this.storeFilesNeedReviewed.getAt(rowIndex).set('needcommit', true);
-                    }
-
-                    // Add this files into storePendingCommit
-                    this.addToPendingCommit(o.id, "en" + FilePath, FileName, 'update');
-
-                    // Remove wait msg
-                    msg.hide();
-                },
-                failure : function(response)
-                {
-                    // Remove wait msg
-                    msg.hide();
-                    this.winForbidden();
-                }
-            });
-
-        }, //saveEnFile
-
-        _savePatch: function(prefix, ftype, fid, fpath, fname, lang)
-        {
-            new ui.component.PatchPrompt({
-                prefix : prefix,
-                ftype  : ftype,
-                fid    : fid,
-                fpath  : fpath,
-                fname  : fname,
-                lang   : lang,
-                defaultEmail : (this.userLogin !== 'cvsread')
-                               ? this.userLogin + '@php.net' : ''
-            }).show();
-
-        }, //savePatch
-
-        savePatch: function(FileLang, FileID, FilePath, FileName, Panel, scope)
-        {
-            var PanelLang, defaultPatchEmail, winPatch;
-
-            if (FileLang === 'en') {
-                PanelLang = '-EN';
-            } else {
-                if (FileLang === 'all') {
-                    PanelLang = '';
-                } else {
-                    PanelLang = '-LANG';
-                }
-            }
-
-            if (scope.userLogin !== 'cvsread') {
-                defaultPatchEmail = scope.userLogin + '@php.net';
-            }
-
-            winPatch = new Ext.Window({
-                title: _('Do you want to be alerted ?'),
-                iconCls: 'patchAlert',
-                width: 350,
-                height: 150,
-                resizable: false,
-                modal: true,
-                autoScroll: true,
-                bodyStyle: 'padding: 5px;',
-                layout: 'form',
-                labelWidth: 50,
-                items: [{
-                    xtype: 'panel',
-                    baseCls: 'x-plain',
-                    bodyStyle: 'padding-bottom: 10px;',
-                    html: _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
-                }, {
-                    xtype: 'textfield',
-                    fieldLabel: _('Email'),
-                    name: 'patch-email-alert',
-                    anchor: '100%',
-                    value: defaultPatchEmail
-
-                }],
-                buttons: [{
-                    text: _('Save'),
-                    handler: function(){
-
-                        var patchEmail, msg;
-
-                        patchEmail = this.ownerCt.items.items[1].getValue();
-
-                        msg = Ext.MessageBox.wait(_('Saving data as a patch...'));
-
-                        winPatch.close();
-
-                        if (FileLang !== 'all') {
-
-                            Ext.getCmp(Panel + PanelLang + '-PANEL-btn-saveas-' + FileID).disable();
-                            Ext.getCmp(Panel + PanelLang + '-' + FileID).isModifiedLang = false;
-                            Ext.getCmp(Panel + PanelLang + '-PANEL-' + FileID).setTitle(Ext.getCmp(Panel + PanelLang + '-PANEL-' + FileID).originTitle);
-                            Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
-
-                        }
-                        else {
-
-                            Ext.getCmp('AF-PANEL-btn-saveas-' + FileID).disable();
-                            Ext.getCmp('AF-FILE-' + FileID).isModified = false;
-                            Ext.getCmp('AF-PANEL-' + FileID).setTitle(Ext.getCmp('AF-PANEL-' + FileID).originTitle);
-                            Ext.getCmp('AF-' + FileID).setTitle(Ext.getCmp('AF-' + FileID).originTitle);
-
-                        }
-
-                        // We save this patch
-                        XHR({
-                            scope  : scope,
-                            url    : './php/controller.php',
-                            params : {
-                                task        : 'saveFile',
-                                filePath    : FilePath,
-                                fileName    : FileName,
-                                fileLang    : FileLang,
-                                fileContent : (FileLang !== 'all')
-                                              ? Ext.getCmp(Panel + PanelLang + '-' + FileID).getCode()
-                                              : Ext.getCmp('AF-FILE-' + FileID).getCode(),
-                                type        : 'patch',
-                                emailAlert  : patchEmail
-                            },
-                            success : function(response)
-                            {
-                                var o = Ext.util.JSON.decode(response.responseText);
-
-                                // Add this files into storePendingPatch
-                                if (FileLang !== 'all') {
-                                    this.addToPendingPatch(FileLang + FilePath, FileName, o.uniqId);
-                                } else {
-                                    this.addToPendingPatch(FilePath, FileName, o.uniqId);
-                                }
-                                // Remove wait msg
-                                msg.hide();
-                            }
-                        });
-
-                    }
-                }, {
-                    text    : _('Cancel'),
-                    handler : function()
-                    {
-                        winPatch.close();
-                    }
-                }]
-            });
-            winPatch.show();
-
-        }, //savePatch
-
-        _saveLangFile: function(prefix, ftype, fid, fpath, fname, lang, record, skipPrompt)
+        saveLangFile: function(prefix, ftype, fid, fpath, fname, lang, record)
         {
             if (this.userLogin === 'cvsread') {
                 this.winForbidden();
-                return;
-            }
-
-            var resetModification = function()
-            {
-                var id_prefix = prefix + '-' + ftype;
-
-                // reset file
-                Ext.getCmp(id_prefix + '-PANEL-btn-save-' + fid).disable();
-                Ext.getCmp(id_prefix + '-FILE-' + fid).isModified = false;
-                Ext.getCmp(id_prefix + '-PANEL-' + fid).setTitle(
-                    Ext.getCmp(id_prefix + '-PANEL-' + fid).originTitle
-                );
-                if (ftype === 'ALL' || !Ext.getCmp(prefix + '-EN-FILE-' + fid).isModified) {
-                    // reset tab-panel
-                    Ext.getCmp(prefix + '-' + fid).setTitle(
-                        Ext.getCmp(prefix + '-' + fid).originTitle
-                    );
-                }
-            }
-
-            if (skipPrompt) {
-                resetModification();
-
-                new ui.task.SaveLangFileTask({
-                    prefix      : prefix,
-                    ftype       : ftype,
-                    fid         : fid,
-                    fpath       : fpath,
-                    fname       : fname,
-                    lang        : lang,
-                    storeRecord : record
-                }).run();
-
                 return;
             }
 
@@ -1069,10 +346,6 @@ var phpDoc = function(){
                 buttons : Ext.MessageBox.YESNOCANCEL,
                 fn      : function (btn)
                 {
-                    if (btn === 'yes' || btn === 'no') {
-                        resetModification();
-                    }
-
                     if (btn === 'no') {
 
                         new ui.task.SaveLangFileTask({
@@ -1100,207 +373,16 @@ var phpDoc = function(){
                 }
             });
 
-        }, //saveLangFile
-
-        saveLangFile: function(FileID, FilePath, FileName, Panel, rowIndex, scope){
-
-            if (scope.userLogin === 'cvsread') {
-                scope.winForbidden();
-                return;
-            }
-
-            function checkResponse(btn){
-
-                if (btn === 'no') {
-
-                    Ext.getCmp(Panel + '-LANG-PANEL-btn-save-' + FileID).disable();
-                    Ext.getCmp(Panel + '-' + FileID).isModifiedLang = false;
-                    Ext.getCmp(Panel + '-LANG-PANEL-' + FileID).setTitle(Ext.getCmp(Panel + '-LANG-PANEL-' + FileID).originTitle);
-
-                    if (!Ext.getCmp(Panel + '-' + FileID).isModifiedEn && !Ext.getCmp(Panel + '-' + FileID).isModifiedLang) {
-                        Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
-                    }
-
-                    var msg = Ext.MessageBox.wait(_('Saving data...'));
-
-                    // We save LANG File
-                    XHR({
-                        scope  : this,
-                        url    : './php/controller.php',
-                        params : {
-                            task        : 'saveFile',
-                            filePath    : FilePath,
-                            fileName    : FileName,
-                            fileLang    : this.userLang,
-                            fileContent : Ext.getCmp(Panel + '-LANG-' + FileID).getCode()
-                        },
-                        success : function(response)
-                        {
-                            var o = Ext.util.JSON.decode(response.responseText);
-
-                            if (Panel === 'FE') {
-                                // Update our store
-                                this.storeFilesError.getAt(rowIndex).set('needcommit', true);
-                                this.storeFilesError.getAt(rowIndex).set('maintainer', o.maintainer);
-                                this.storeFilesError.getAt(rowIndex).commit();
-                            }
-
-                            if (Panel === 'FNU') {
-                                // Update our store
-                                this.staleFileGrid.store.getAt(rowIndex).set('revision', '1.' + o.new_revision);
-                                this.staleFileGrid.store.getAt(rowIndex).set('needcommit', true);
-                                this.staleFileGrid.store.getAt(rowIndex).set('maintainer', o.maintainer);
-                                this.staleFileGrid.store.getAt(rowIndex).commit();
-                            }
-
-                            if (Panel === 'FNR') {
-                                // Update our store
-                                this.storeFilesNeedReviewed.getAt(rowIndex).set('needcommit', true);
-                                this.storeFilesNeedReviewed.getAt(rowIndex).set('maintainer', o.maintainer);
-                                this.storeFilesNeedReviewed.getAt(rowIndex).set('reviewed', o.reviewed);
-                                this.storeFilesNeedReviewed.getAt(rowIndex).commit();
-                            }
-
-                            // Add this files into storePendingCommit
-                            this.addToPendingCommit(o.id, this.userLang + FilePath, FileName, 'update');
-
-                            // Remove wait msg
-                            msg.hide();
-                        },
-                        failure : function(response)
-                        {
-                            // Remove wait msg
-                            msg.hide();
-                            this.winForbidden();
-                        }
-                    });
-
-                }
-                else
-                    if (btn === 'yes') {
-
-                        Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Checking for error. Please, wait...'));
-
-                        Ext.getCmp(Panel + '-LANG-PANEL-btn-save-' + FileID).disable();
-                        Ext.getCmp(Panel + '-' + FileID).isModifiedLang = false;
-                        Ext.getCmp(Panel + '-LANG-PANEL-' + FileID).setTitle(Ext.getCmp(Panel + '-LANG-PANEL-' + FileID).originTitle);
-
-                        if (!Ext.getCmp(Panel + '-' + FileID).isModifiedEn && !Ext.getCmp(Panel + '-' + FileID).isModifiedLang) {
-                            Ext.getCmp(Panel + '-' + FileID).setTitle(Ext.getCmp(Panel + '-' + FileID).originTitle);
-                        }
-
-                        // We check for error
-                        XHR({
-                            scope  : this,
-                            url    : './php/controller.php',
-                            params : {
-                                task        : 'checkFileError',
-                                FilePath    : FilePath,
-                                FileName    : FileName,
-                                FileLang    : this.userLang,
-                                FileContent : Ext.getCmp(Panel + '-LANG-' + FileID).getCode()
-                            },
-                            success : function(response)
-                            {
-                                Ext.getBody().unmask();
-
-                                var o = Ext.util.JSON.decode(response.responseText);
-
-                                // If there is some errors, we display this
-                                if (o.error && o.error_first !== '-No error-') {
-
-                                    Ext.getCmp('main-panel').add({
-                                        closable   : true,
-                                        title      : 'Error in ' + FileName,
-                                        iconCls    : 'FilesError',
-                                        id         : 'FE-help-' + FileID,
-                                        autoScroll : true,
-                                        autoLoad   : './error_type.php?dir=' + FilePath + '&file=' + FileName
-                                    });
-
-                                    Ext.getCmp('main-panel').setActiveTab('FE-help-' + FileID);
-
-                                } else {
-                                    // If there is no error, we display an information message
-                                    Ext.MessageBox.show({
-                                        title   : _('Check for errors'),
-                                        msg     : _('There is no error.'),
-                                        buttons : Ext.MessageBox.OK,
-                                        icon    : Ext.MessageBox.INFO
-                                    });
-                                }
-
-                                // Now, We save LANG File
-                                XHR({
-                                    scope  : this,
-                                    url    : './php/controller.php',
-                                    params : {
-                                        task        : 'saveFile',
-                                        filePath    : FilePath,
-                                        fileName    : FileName,
-                                        fileLang    : this.userLang,
-                                        fileContent : Ext.getCmp(Panel + '-LANG-' + FileID).getCode()
-                                    },
-                                    success : function(response)
-                                    {
-                                        var o = Ext.util.JSON.decode(response.responseText);
-
-                                        if (Panel === 'FE') {
-                                            // Update our store
-                                            this.storeFilesError.getAt(rowIndex).set('needcommit', true);
-                                            this.storeFilesError.getAt(rowIndex).set('maintainer', o.maintainer);
-                                            this.storeFilesError.getAt(rowIndex).commit();
-                                        }
-
-                                        if (Panel === 'FNU') {
-                                            // Update our store
-                                            this.staleFileGrid.store.getAt(rowIndex).set('revision', '1.' + o.new_revision);
-                                            this.staleFileGrid.store.getAt(rowIndex).set('needcommit', true);
-                                            this.staleFileGrid.store.getAt(rowIndex).set('maintainer', o.maintainer);
-                                            this.staleFileGrid.store.getAt(rowIndex).commit();
-                                        }
-
-                                        if (Panel === 'FNR') {
-                                            // Update our store
-                                            this.storeFilesNeedReviewed.getAt(rowIndex).set('needcommit', true);
-                                            this.storeFilesNeedReviewed.getAt(rowIndex).set('maintainer', o.maintainer);
-                                            this.storeFilesNeedReviewed.getAt(rowIndex).set('reviewed', o.reviewed);
-                                            this.storeFilesNeedReviewed.getAt(rowIndex).commit();
-                                        }
-
-                                        // Add this files into storePendingCommit
-                                        this.addToPendingCommit(o.id, this.userLang + FilePath, FileName, 'update');
-                                    },
-                                    failure : function(response)
-                                    {
-                                        this.winForbidden();
-                                    }
-                                }); // Save LANG FILE
-
-                                if (Panel === 'FE') {
-                                    // We must reload the iframe of error description
-                                    Ext.getCmp(Panel + '-error-type-' + FileID).setSrc('./error_type.php?dir=' + FilePath + '&file=' + FileName + '&nocache=' + new Date().getTime());
-                                }
-                            }
-                        }); //Check for Err
-                    } // if yes
-            }
-
-            Ext.MessageBox.show({
-                scope   : scope,
-                title   : _('Confirm'),
-                msg     : _('Do you want to check for error before saving?'),
-                icon    : Ext.MessageBox.INFO,
-                buttons : Ext.MessageBox.YESNOCANCEL,
-                fn      : checkResponse
-            });
-
-        }, //saveLangFile
+        },
 
         getFile: function(FileID, FilePath, FileName, Panel1, Panel2)
         {
             // Mask the panel
-            Ext.get(Panel1 + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Loading...'));
+            Ext.get(Panel1 + FileID).mask(
+                '<img src="themes/img/loading.gif" ' +
+                    'style="vertical-align: middle;" /> '+
+                _('Loading...')
+            );
 
             // We load the File
             XHR({
@@ -1315,21 +397,8 @@ var phpDoc = function(){
                 {
                     var o = Ext.util.JSON.decode(response.responseText);
 
-                    // We display in window
                     Ext.getCmp(Panel2 + FileID).setCode(o.content);
-
-                    // We unmask
                     Ext.get(Panel1 + FileID).unmask();
-
-                    if (Panel1 === 'FE-LANG-PANEL-' || Panel1 === 'FNR-LANG-PANEL-' || Panel1 === 'FNR-EN-PANEL-' || Panel1 === 'AF-PANEL-') {
-
-                        // We must fake a resize event to extend the frame
-                        var size = Ext.getCmp(Panel1 + FileID).getSize();
-                        size.height = size.height + 1;
-                        Ext.getCmp(Panel1 + FileID).setSize(size);
-                        Ext.getCmp(Panel1 + FileID).fireEvent('resize');
-
-                    }
                 },
                 callback : function()
                 {
@@ -1344,16 +413,16 @@ var phpDoc = function(){
                     }
                 }
             });
-
         }, // getFile
-        addToPendingPatch: function(FilePath, FileName, uniqID){
 
+        addToPendingPatch : function(FilePath, FileName, uniqID)
+        {
             var dt, r;
 
             // Add this files into storePendingCommit
             dt = new Date();
 
-            r = new this.storePendingPatch.recordType({
+            r = new this.pendingPatchGrid.store.recordType({
                 id: Ext.id('', ''),
                 path: FilePath,
                 name: FileName,
@@ -1361,16 +430,17 @@ var phpDoc = function(){
                 uniqID: uniqID,
                 date: dt
             });
-            this.storePendingPatch.insert(0, r);
+            this.pendingPatchGrid.store.insert(0, r);
 
         }, //addToPendingPatch
-        addToPendingCommit: function(FileID, FilePath, FileName, type){
 
+        addToPendingCommit : function(FileID, FilePath, FileName, type)
+        {
             var alReady, dt, r1;
 
             alReady = false;
             // Check if this file is not already into this store
-            this.storePendingCommit.each(function(r){
+            this.pendingCommitGrid.store.each(function(r){
 
                 if (r.data.path === FilePath && r.data.name === FileName) {
                     alReady = true;
@@ -1382,7 +452,7 @@ var phpDoc = function(){
                 // Add this files into storePendingCommit
                 dt = new Date();
 
-                r1 = new this.storePendingCommit.recordType({
+                r1 = new this.pendingCommitGrid.store.recordType({
                     id: FileID,
                     path: FilePath,
                     name: FileName,
@@ -1390,8 +460,8 @@ var phpDoc = function(){
                     date: dt,
                     type: type
                 });
-                this.storePendingCommit.insert(0, r1);
-                this.storePendingCommit.groupBy('path', true);
+                this.pendingCommitGrid.store.insert(0, r1);
+                this.pendingCommitGrid.store.groupBy('path', true);
             }
 
         }, //addToPendingCommit
@@ -1435,8 +505,9 @@ var phpDoc = function(){
             Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
 
         }, //NewTabMailing
-        winDiff: function(FilePath, FileName, rev1, rev2){
 
+        winDiff : function(FilePath, FileName, rev1, rev2)
+        {
             Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Finding the diff. Please, wait...'));
 
             // Load diff data
@@ -1480,7 +551,7 @@ var phpDoc = function(){
         }, //winDiff
 
         // Need confirm if we want to close a tab and the content have been modified.
-        removeTabEvent: function(tabpanel, tab)
+        removeTabEvent : function(tabpanel, tab)
         {
             var stateLang, stateEn, state, PanType;
 
@@ -1489,27 +560,27 @@ var phpDoc = function(){
             if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF') && PanType[1] !== 'help') {
 
                 if (PanType[0] === 'FE') {
-                    stateLang = Ext.getCmp('FE-' + PanType[1]).isModifiedLang;
+                    stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
                 }
                 if (PanType[0] === 'FNU') {
                     stateLang = Ext.getCmp('FNU-LANG-FILE-' + PanType[1]).isModified;
                 }
                 if (PanType[0] === 'FNR') {
-                    stateLang = Ext.getCmp('FNR-' + PanType[1]).isModifiedLang;
+                    stateLang = Ext.getCmp('FNR-LANG-FILE-' + PanType[1]).isModified;
                 }
 
                 if (PanType[0] === 'FE') {
-                    stateEn = Ext.getCmp('FE-' + PanType[1]).isModifiedEn;
+                    stateEn = Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
                 }
                 if (PanType[0] === 'FNU') {
                     stateEn = Ext.getCmp('FNU-EN-FILE-' + PanType[1]).isModified;
                 }
                 if (PanType[0] === 'FNR') {
-                    stateEn = Ext.getCmp('FNR-' + PanType[1]).isModifiedEn;
+                    stateEn = Ext.getCmp('FNR-EN-FILE-' + PanType[1]).isModified;
                 }
 
                 if (PanType[0] === 'PP') {
-                    state = Ext.getCmp('PP-PATCH-' + PanType[1]).isModified;
+                    state = Ext.getCmp('PP-PATCH-FILE-' + PanType[1]).isModified;
                 }
 
                 if (PanType[0] === 'AF') {
@@ -1541,8 +612,8 @@ var phpDoc = function(){
             }
         }, //removeTabEvent
 
-        WinCommit: function(singleFile, rowIndex, choice){
-
+        WinCommit : function(singleFile, rowIndex, choice)
+        {
             var win, btn, FileDBID, FileID, FilePath, FileName, node, TreeSorter;
 
             btn = Ext.get('acc-need-update');
@@ -1833,9 +904,9 @@ var phpDoc = function(){
 
                 // Just the current file
 
-                FileDBID = this.storePendingCommit.getAt(rowIndex).data.id;
-                FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
-                FileName = this.storePendingCommit.getAt(rowIndex).data.name;
+                FileDBID = this.pendingCommitGrid.store.getAt(rowIndex).data.id;
+                FilePath = this.pendingCommitGrid.store.getAt(rowIndex).data.path;
+                FileName = this.pendingCommitGrid.store.getAt(rowIndex).data.name;
                 FileID = Ext.util.md5(FilePath + FileName);
 
                 node = new Ext.tree.TreeNode({
@@ -1855,7 +926,7 @@ var phpDoc = function(){
             else {
 
                 // in files Need Update
-                this.storePendingCommit.each(function(record){
+                this.pendingCommitGrid.store.each(function(record){
 
                     if (choice && choice === 'by me' && record.data.by !== this.userLogin) {
                     }
@@ -1889,8 +960,9 @@ var phpDoc = function(){
 
 
         }, // WinCommit
-        WinCommitLastStep: function(files, scope){
 
+        WinCommitLastStep : function(files, scope)
+        {
             Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait until commit...'));
 
             var nodes = [], node, LogMessage, i;
@@ -1955,16 +1027,16 @@ var phpDoc = function(){
                         {
                             if (scope.userLang != 'en') {
                                 // Reload Files error data
-                                scope.storeFilesError.reload();
+                                scope.errorFileGrid.store.reload();
 
                                 // Reload Files Need reviewed
-                                scope.storeFilesNeedReviewed.reload();
+                                scope.pendingReviewGrid.store.reload();
 
                                 // Reload Files Need Update
                                 scope.staleFileGrid.store.reload();
                             }
 
-                            scope.storePendingCommit.reload();
+                            scope.pendingCommitGrid.store.reload();
 
                             // Reload translators data
                             ui.component.TranslatorGrid.reload();
@@ -2117,7 +1189,7 @@ var phpDoc = function(){
                     // Reload all data on this page
                     phpDoc.staleFileGrid.store.reload();
                     ui.component.TranslatorGrid.reload();
-                    phpDoc.storeFilesError.reload();
+                    phpDoc.errorFileGrid.store.reload();
                 }
 
                 Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
@@ -2392,7 +1464,7 @@ var phpDoc = function(){
 
                     if (item === "conf_error_skipnbliteraltag") {
                         this.userConf.conf_error_skipnbliteraltag = "" + v + "";
-                        this.storeFilesError.reload();
+                        this.errorFileGrid.store.reload();
                     }
                     if (item === "conf_error_scrollbars") {
                         this.userConf.conf_error_scrollbars = "" + v + "";
@@ -2428,8 +1500,8 @@ var phpDoc = function(){
                 .show(Ext.get('winabout-btn'));
         }, //WinAbout
 
-        sendEmail: function(TranslatorName, TranslatorEmail){
-
+        sendEmail : function(TranslatorName, TranslatorEmail)
+        {
             var form, win;
 
             form = new Ext.form.FormPanel({
@@ -2506,7 +1578,7 @@ var phpDoc = function(){
         repositoryContextMenu : function(node)
         {
             // repository tree context menu handler
-            var t, FileName, FilePath, FileLang, subMenu;
+            var t, FileName, FilePath, FileLang;
 
             if (node.attributes.type === 'folder' || node.isRoot) {
 
@@ -2526,21 +1598,29 @@ var phpDoc = function(){
 
             } else if (node.attributes.type === 'file') {
 
-                if (node.attributes.from !== 'search') {
+                FileName = node.attributes.text;
+                FilePath = node.attributes.id;
 
-                    FileName = node.attributes.text;
-                    FilePath = node.attributes.id;
+                // CleanUp the path
+                t = FilePath.split('/');
+                t.shift();
+                t.shift();
+                t.pop();
 
-                    // CleanUp the path
-                    t = FilePath.split('/');
-                    t.shift();
-                    t.shift();
-                    t.pop();
+                FileLang = t.shift();
+                FilePath = t.join('/') + '/';
 
-                    FileLang = t.shift();
-                    FilePath = t.join('/') + '/';
-
-                    subMenu = {
+                return new Ext.menu.Menu({
+                    items: [{
+                        scope   : this,
+                        text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                        iconCls : 'iconTabNeedReviewed',
+                        handler : function()
+                        {
+                            phpDoc.treeAllFiles.fireEvent('dblclick', node);
+                        }
+                    }, {
+                        hidden  : (node.attributes.from === 'search'),
                         scope   : this,
                         text    : (FileLang === 'en')
                                 ? String.format(
@@ -2557,2218 +1637,33 @@ var phpDoc = function(){
                                 this.openFile('en/' + FilePath, FileName);
                             }
                         }
-                    };
-
-                } else {
-                    subMenu = '';
-                }
-
-                return new Ext.menu.Menu({
-                    items: [{
-                        scope   : this,
-                        text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                        iconCls : 'iconTabNeedReviewed',
-                        handler : function()
-                        {
-                            phpDoc.treeAllFiles.fireEvent('dblclick', node);
-                        }
-                    }, subMenu]
+                    }]
                 });
             }
         },
 
         drawInterface: function()
         {
-            var gridFilesError, gridFilesNeedUpdate, gridPendingPatch, gridPendingCommit, gridFilesNeedReviewed, gridSummary, gridTranslators, gridMailing, gridNotInEn, gridBugs, graphPanel, mainMenu, MainWindow, mainContent;
+            var gridSummary, gridTranslators, gridMailing, gridBugs, graphPanel, MainWindow, mainMenu, mainContent;
 
             // We keel alive our session by sending a ping every minute
             phpDoc.TaskPing = new ui.task.PingTask();
             phpDoc.TaskPing.delay(30000); // start after 1 minute.
 
-            // Grid : Files in Error
-            gridFilesError = new Ext.grid.GridPanel({
-                store: this.storeFilesError,
-                loadMask: true,
-                columns: [{
-                    id: 'name',
-                    header: _('Files'),
-                    sortable: true,
-                    dataIndex: 'name'
-                }, {
-                    header: _('Type'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'type'
-                }, {
-                    header: _('Maintainer'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'maintainer'
-                }, {
-                    header: _('Path'),
-                    dataIndex: 'path',
-                    'hidden': true
-                }],
-                view: new Ext.grid.GroupingView({
-                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>',
-                    forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if (record.data.needcommit) {
-                            return 'file-need-commit';
-                        }
-                    }
-                }),
-                autoExpandColumn: 'name',
-                bodyBorder: false,
-                tbar:[
-                    _('Filter: '), ' ',
-                    new Ext.form.TwinTriggerField({
-                        id: 'FE-filter',
-                        validationEvent:false,
-                        validateOnBlur:false,
-                        trigger1Class:'x-form-clear-trigger',
-                        trigger2Class:'x-form-search-trigger',
-                        hideTrigger1:true,
-                        width:180,
-                        scope: this,
-                        enableKeyEvents: true,
-                        listeners: {
-                            keypress: function(field, e){
-                                if (e.getKey() == e.ENTER) {
-                                    this.onTrigger2Click();
-                                }
-                            }
-                        },
-                        onTrigger1Click: function() {
-
-                            this.setValue('');
-                            this.triggers[0].hide();
-
-                            this.scope.storeFilesError.clearFilter();
-                        },
-                        onTrigger2Click: function() {
-
-                            var v = this.getValue();
-
-                            if( v == '' || v.length < 3) {
-                                this.markInvalid(_('Your filter must contain at least 3 characters'));
-                                return;
-                            }
-                            this.clearInvalid();
-
-                            this.triggers[0].show();
-
-                            this.scope.storeFilesError.filter('maintainer', v);
-
-                        }
-                    })
-                ],
-                listeners: {
-                    scope: this,
-                    'render': function(grid){
-                        gridFilesError.view.refresh();
-                    },
-                    'rowdblclick': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileID, needcommit, error, storeLogLang, storeLogEn, smLang, gridLogLang, smEn, gridLogEn;
-
-                        FilePath = this.storeFilesError.getAt(rowIndex).data.path;
-                        FileName = this.storeFilesError.getAt(rowIndex).data.name;
-                        FileID = Ext.util.md5('FE-' + this.userLang + FilePath + FileName);
-                        needcommit = this.storeFilesError.getAt(rowIndex).data.needcommit;
-
-                        // Render only if this tab don't exist yet
-                        if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
-
-                            // Find all error for this file to pass to error_type.php page
-                            error = [];
-
-                            this.storeFilesError.each(function(record){
-
-                                if (record.data.path === FilePath && record.data.name === FileName) {
-                                    if (!error[record.data.type]) {
-                                        error.push(record.data.type);
-                                    }
-                                }
-
-                            });
-
-                            // We define the store and the grid for log information
-                            storeLogLang = new Ext.data.Store({
-                                autoLoad: (this.userConf.conf_error_displaylog === "true") ? true : false,
-                                proxy: new Ext.data.HttpProxy({
-                                    url: './php/controller.php'
-                                }),
-                                baseParams: {
-                                    task: 'getLog',
-                                    Path: this.userLang + FilePath,
-                                    File: FileName
-                                },
-                                reader: new Ext.data.JsonReader({
-                                    root: 'Items',
-                                    totalProperty: 'nbItems',
-                                    id: 'id'
-                                }, [{
-                                    name: 'id',
-                                    mapping: 'id'
-                                }, {
-                                    name: 'revision',
-                                    mapping: 'revision'
-                                }, {
-                                    name: 'date',
-                                    mapping: 'date',
-                                    type: 'date',
-                                    dateFormat: 'Y/m/d H:i:s'
-                                }, {
-                                    name: 'author',
-                                    mapping: 'author'
-                                }, {
-                                    name: 'content',
-                                    mapping: 'content'
-                                }])
-                            });
-                            storeLogLang.setDefaultSort('date', 'desc');
-
-                            storeLogEn = new Ext.data.Store({
-                                autoLoad: (this.userConf.conf_error_displaylog === "true") ? true : false,
-                                proxy: new Ext.data.HttpProxy({
-                                    url: './php/controller.php'
-                                }),
-                                baseParams: {
-                                    task: 'getLog',
-                                    Path: 'en' + FilePath,
-                                    File: FileName
-                                },
-                                reader: new Ext.data.JsonReader({
-                                    root: 'Items',
-                                    totalProperty: 'nbItems',
-                                    id: 'id'
-                                }, [{
-                                    name: 'id',
-                                    mapping: 'id'
-                                }, {
-                                    name: 'revision',
-                                    mapping: 'revision'
-                                }, {
-                                    name: 'date',
-                                    mapping: 'date',
-                                    type: 'date',
-                                    dateFormat: 'Y/m/d H:i:s'
-                                }, {
-                                    name: 'author',
-                                    mapping: 'author'
-                                }, {
-                                    name: 'content',
-                                    mapping: 'content'
-                                }])
-                            });
-                            storeLogEn.setDefaultSort('date', 'desc');
-
-                            smLang = new Ext.grid.CheckboxSelectionModel({
-                                singleSelect: false,
-                                width: 22,
-                                header: '',
-                                listeners: {
-                                    beforerowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            return false;
-                                        }
-                                    },
-                                    rowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FE-PANEL-btn-logLang-' + FileID).enable();
-                                            Ext.get('FE-PANEL-btn-logLang-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FE-PANEL-btn-logLang-' + FileID).disable();
-                                        }
-                                    },
-                                    rowdeselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FE-PANEL-btn-logLang-' + FileID).enable();
-                                            Ext.get('FE-PANEL-btn-logLang-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FE-PANEL-btn-logLang-' + FileID).disable();
-                                        }
-                                    }
-                                }
-                            });
-
-                            gridLogLang = new Ext.grid.GridPanel({
-                                store: storeLogLang,
-                                loadMask: true,
-                                columns: [smLang, {
-                                    id: 'id',
-                                    header: _('Rev.'),
-                                    width: 40,
-                                    sortable: false,
-                                    dataIndex: 'revision'
-                                }, {
-                                    header: _('Content'),
-                                    width: 130,
-                                    sortable: true,
-                                    dataIndex: 'content'
-                                }, {
-                                    header: _('By'),
-                                    width: 50,
-                                    sortable: true,
-                                    dataIndex: 'author'
-                                }, {
-                                    header: _('Date'),
-                                    width: 85,
-                                    sortable: true,
-                                    dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                                }],
-                                autoScroll: true,
-                                autoExpandColumn: 'content',
-                                bodyBorder: false,
-                                sm: smLang,
-                                view: new Ext.grid.GridView({
-                                    forceFit: true
-                                }),
-                                tbar: [{
-                                    scope: this,
-                                    tooltip: _('<b>View</b> the diff'),
-                                    iconCls: 'iconViewDiff',
-                                    id: 'FE-PANEL-btn-logLang-' + FileID,
-                                    disabled: true,
-                                    handler: function(){
-
-                                        var s, rev1, rev2;
-
-                                        // We get the 2 checked rev
-                                        s = smLang.getSelections();
-                                        rev1 = s[0].data.revision;
-                                        rev2 = s[1].data.revision;
-
-                                        this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
-
-                                    }
-                                },{
-                                    scope: this,
-                                    tooltip: _('<b>Load/Refresh</b> revisions'),
-                                    iconCls: 'refresh',
-                                    id: 'FE-PANEL-btn-refreshlogLang-' + FileID,
-                                    handler: function(){
-                                        storeLogLang.reload();
-                                    }
-                                }]
-                            });
-
-                            smEn = new Ext.grid.CheckboxSelectionModel({
-                                singleSelect: false,
-                                width: 22,
-                                header: '',
-                                listeners: {
-                                    beforerowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            return false;
-                                        }
-                                    },
-                                    rowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FE-PANEL-btn-logEn-' + FileID).enable();
-                                            Ext.get('FE-PANEL-btn-logEn-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FE-PANEL-btn-logEn-' + FileID).disable();
-                                        }
-                                    },
-                                    rowdeselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FE-PANEL-btn-logEn-' + FileID).enable();
-                                            Ext.get('FE-PANEL-btn-logEn-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FE-PANEL-btn-logEn-' + FileID).disable();
-                                        }
-                                    }
-                                }
-                            });
-
-                            gridLogEn = new Ext.grid.GridPanel({
-                                store: storeLogEn,
-                                loadMask: true,
-                                columns: [smEn, {
-                                    id: 'id',
-                                    header: _('Rev.'),
-                                    width: 40,
-                                    sortable: false,
-                                    dataIndex: 'revision'
-                                }, {
-                                    header: _('Content'),
-                                    width: 130,
-                                    sortable: true,
-                                    dataIndex: 'content'
-                                }, {
-                                    header: _('By'),
-                                    width: 50,
-                                    sortable: true,
-                                    dataIndex: 'author'
-                                }, {
-                                    header: _('Date'),
-                                    width: 85,
-                                    sortable: true,
-                                    dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                                }],
-                                autoScroll: true,
-                                autoExpandColumn: 'content',
-                                bodyBorder: false,
-                                sm: smEn,
-                                view: new Ext.grid.GridView({
-                                    forceFit: true
-                                }),
-                                tbar: [{
-                                    scope: this,
-                                    tooltip: _('<b>View</b> the diff'),
-                                    iconCls: 'iconViewDiff',
-                                    id: 'FE-PANEL-btn-logEn-' + FileID,
-                                    disabled: true,
-                                    handler: function(){
-
-                                        var s, rev1, rev2;
-
-                                        // We get the 2 checked rev
-                                        s = smEn.getSelections();
-                                        rev1 = s[0].data.revision;
-                                        rev2 = s[1].data.revision;
-
-                                        this.winDiff('en' + FilePath, FileName, rev1, rev2);
-
-                                    }
-                                },{
-                                    scope: this,
-                                    tooltip: _('<b>Load/Refresh</b> revisions'),
-                                    iconCls: 'refresh',
-                                    id: 'FE-PANEL-btn-refreshlogEn-' + FileID,
-                                    handler: function(){
-                                        storeLogEn.reload();
-                                    }
-                                }]
-                            });
-
-                            Ext.getCmp('main-panel').add({
-                                closable: true,
-                                title: FileName,
-                                originTitle: FileName,
-                                tabTip: String.format(_('File with error : in {0}'), FilePath),
-                                iconCls: 'iconTabError',
-                                id: 'FE-' + FileID,
-                                isModifiedLang: false,
-                                isModifiedEn: false,
-                                layout: 'border',
-                                defaults: {
-                                    collapsible: true,
-                                    split: true
-                                },
-                                items: [{
-                                    xtype: 'panel',
-                                    layout: 'fit',
-                                    region: 'north',
-                                    title: _('Error description'),
-                                    id: 'FE-error-desc-' + FileID,
-                                    height: 150,
-                                    collapsed: true,
-                                    items: {
-                                        xtype: 'iframepanel',
-                                        id: 'FE-error-type-' + FileID,
-                                        loadMask: true,
-                                        defaultSrc: './error_type.php?dir=' + FilePath + '&file=' + FileName
-                                    }
-                                }, {
-                                    region: 'west',
-                                    xtype: 'panel',
-                                    layout: 'fit',
-                                    bodyBorder: false,
-                                    title: 'CvsLog',
-                                    collapsed: true,
-                                    width: 375,
-                                    items: {
-                                        xtype: 'tabpanel',
-                                        activeTab: 0,
-                                        tabPosition: 'bottom',
-                                        defaults: {
-                                            autoScroll: true
-                                        },
-                                        items: [{
-                                            layout: 'fit',
-                                            title: this.userLang,
-                                            items: [gridLogLang]
-                                        }, {
-                                            layout: 'fit',
-                                            title: 'En',
-                                            items: [gridLogEn]
-                                        }]
-                                    }
-                                }, {
-                                    title: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
-                                    originTitle: String.format(_('{0} File: '), this.userLang) + FilePath + FileName,
-                                    collapsible: false,
-                                    id: 'FE-LANG-PANEL-' + FileID,
-                                    region: 'center',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 'auto',
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'FE-LANG-' + FileID,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(obj){
-                                                this.getFile(FileID, this.userLang + FilePath, FileName, 'FE-LANG-PANEL-', 'FE-LANG-');
-                                            },
-                                            cmcursormove: function(){
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FE-LANG-' + FileID).getCursorPosition());
-
-                                                Ext.get('FE-LANG-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FE-LANG-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            },
-                                            cmchange: function(keyCode, charCode, e){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FE-LANG-' + FileID).getCursorPosition());
-
-                                                Ext.get('FE-LANG-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FE-LANG-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-
-                                                // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right; 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT
-                                                // 67 = CTRL+C
-
-                                                if (keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67) {
-
-                                                    if (!Ext.getCmp('FE-' + FileID).isModifiedLang) {
-                                                        // Add an [modified] in title
-                                                        Ext.getCmp('FE-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FE-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
-                                                        Ext.getCmp('FE-' + FileID).setTitle(Ext.getCmp('FE-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
-
-                                                        // Activate save button
-                                                        Ext.getCmp('FE-LANG-PANEL-btn-save-' + FileID).enable();
-                                                        Ext.get('FE-LANG-PANEL-btn-save-' + FileID).frame("3F8538");
-
-                                                        Ext.getCmp('FE-LANG-PANEL-btn-saveas-' + FileID).enable();
-                                                        Ext.get('FE-LANG-PANEL-btn-saveas-' + FileID).frame("3F8538");
-
-                                                        // Mark as modified
-                                                        Ext.getCmp('FE-' + FileID).isModifiedLang = true;
-                                                    }
-
-                                                }
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_error_scrollbars === "true") {
-                                                    Ext.getCmp('FE-EN-' + FileID).scrollTo(scrollY);
-                                                }
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'checkbox',
-                                        hideLabel: true,
-                                        checked: (this.userConf.conf_error_scrollbars === "true") ? true : false,
-                                        boxLabel: _('Synchronize scroll bars'),
-                                        name: 'conf_error_scrollbars',
-                                        listeners: {
-                                            scope: this,
-                                            check: function(c){
-                                                this.confUpdate('conf_error_scrollbars', c.getValue());
-                                            },
-                                            render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FE-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FE-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
-                                            }
-                                        }
-                                    }],
-                                    tbar: [{
-                                        scope: this,
-                                        tooltip: _('<b>Save</b> this file'),
-                                        iconCls: 'saveFile',
-                                        id: 'FE-LANG-PANEL-btn-save-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.saveLangFile(FileID, FilePath, FileName, 'FE', rowIndex, this);
-                                        }
-                                    }, {
-                                        scope: this,
-                                        tooltip: _('<b>Save as</b> a patch'),
-                                        iconCls: 'saveAsFile',
-                                        id: 'FE-LANG-PANEL-btn-saveas-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.savePatch(this.userLang, FileID, FilePath, FileName, 'FE', this);
-                                        }
-                                    }, '-', {
-                                        tooltip: _('<b>Re-indent</b> all this file'),
-                                        iconCls: 'iconIndent',
-                                        handler: function(){
-                                            Ext.getCmp('FE-LANG-' + FileID).reIndentAll();
-                                        }
-
-                                    }, this.menuMarkupLANG('FE-LANG-' + FileID, this)]
-                                }, {
-                                    title: _('En File: ') + FilePath + FileName,
-                                    originTitle: _('En File: ') + FilePath + FileName,
-                                    collapsible: false,
-                                    id: 'FE-EN-PANEL-' + FileID,
-                                    region: 'east',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 575,
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'FE-EN-' + FileID,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(obj){
-
-                                                this.getFile(FileID, 'en' + FilePath, FileName, 'FE-EN-PANEL-', 'FE-EN-');
-
-                                            },
-                                            cmchange: function(keyCode, charCode, obj){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FE-EN-' + FileID).getCursorPosition());
-
-                                                Ext.get('FE-EN-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FE-EN-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-
-                                                // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right; 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT
-                                                // 67 = CTRL+C
-
-                                                if (keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67) {
-
-                                                    if (!Ext.getCmp('FE-' + FileID).isModifiedEn) {
-                                                        // Add an [modified] in title
-                                                        Ext.getCmp('FE-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FE-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
-                                                        Ext.getCmp('FE-' + FileID).setTitle(Ext.getCmp('FE-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
-
-                                                        // Activate save button
-                                                        Ext.getCmp('FE-EN-PANEL-btn-save-' + FileID).enable();
-                                                        Ext.get('FE-EN-PANEL-btn-save-' + FileID).frame("3F8538");
-
-                                                        Ext.getCmp('FE-EN-PANEL-btn-saveas-' + FileID).enable();
-                                                        Ext.get('FE-EN-PANEL-btn-saveas-' + FileID).frame("3F8538");
-
-                                                        // Mark as modified
-                                                        Ext.getCmp('FE-' + FileID).isModifiedEn = true;
-                                                    }
-                                                }
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_error_scrollbars === "true") {
-                                                    Ext.getCmp('FE-LANG-' + FileID).scrollTo(scrollY);
-                                                }
-                                            },
-                                            cmcursormove: function(a){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FE-EN-' + FileID).getCursorPosition());
-
-                                                Ext.get('FE-EN-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FE-EN-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'panel',
-                                        height: 21,
-                                        baseCls: '',
-                                        bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FE-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FE-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
-                                    }],
-                                    tbar: [{
-                                        scope: this,
-                                        tooltip: _('<b>Save</b> this file'),
-                                        iconCls: 'saveFile',
-                                        id: 'FE-EN-PANEL-btn-save-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.saveEnFile(FileID, FilePath, FileName, 'FE', rowIndex, this);
-                                        }
-
-                                    }, {
-                                        scope: this,
-                                        tooltip: _('<b>Save as</b> a patch'),
-                                        iconCls: 'saveAsFile',
-                                        id: 'FE-EN-PANEL-btn-saveas-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.savePatch('en', FileID, FilePath, FileName, 'FE', this);
-                                        }
-                                    }, '-', {
-                                        tooltip: _('<b>Re-indent</b> all this file'),
-                                        iconCls: 'iconIndent',
-                                        handler: function(){
-                                            Ext.getCmp('FE-EN-' + FileID).reIndentAll();
-                                        }
-                                    }, this.menuMarkupEN('FE-EN-' + FileID)]
-                                }]
-                            });
-
-                            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
-
-                            // Set the bg image for north collapsed el
-                            if (Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl) {
-                                Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl.addClass('x-layout-collapsed-east-error-desc');
-                            }
-
-                        }
-                        else {
-                            // This tab already exist. We focus it.
-                            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
-                        }
-
-                    }, // end rowdblclick
-                    'rowcontextmenu': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileID, subMenuDiff = '', menu;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-                        FilePath = this.storeFilesError.getAt(rowIndex).data.path;
-                        FileName = this.storeFilesError.getAt(rowIndex).data.name;
-                        FileID = Ext.util.md5('FE-' + FilePath + FileName);
-
-                        if (this.storeFilesError.getAt(rowIndex).data.needcommit) {
-
-                            subMenuDiff = {
-                                text: _('View Diff'),
-                                iconCls: 'iconViewDiff',
-                                scope: this,
-                                handler: function(){
-
-                                    // Add tab for the diff
-                                    Ext.getCmp('main-panel').add({
-                                        xtype: 'panel',
-                                        id: 'diff_panel_' + rowIndex,
-                                        title: _('Diff'),
-                                        tabTip: _('Diff'),
-                                        closable: true,
-                                        autoScroll: true,
-                                        iconCls: 'iconTabLink',
-                                        html: '<div id="diff_content_' + rowIndex + '" class="diff-content"></div>'
-                                    });
-                                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
-
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                                    // Load diff data
-                                    XHR({
-                                        scope   : this,
-                                        url     : './php/controller.php',
-                                        params  : {
-                                            task     : 'getDiff',
-                                            FilePath : this.userLang + FilePath,
-                                            FileName : FileName
-                                        },
-                                        success : function(response)
-                                        {
-                                            var o = Ext.util.JSON.decode(response.responseText);
-                                            // We display in diff div
-                                            Ext.get('diff_content_' + rowIndex).dom.innerHTML = o.content;
-                                            Ext.get('diff_panel_' + rowIndex).unmask();
-                                        }
-                                    });
-                                }
-                            };
-                        }
-
-                        menu = new Ext.menu.Menu({
-                            items: [{
-                                text: '<b>'+_('Edit in a new Tab')+'</b>',
-                                iconCls: 'FilesError',
-                                scope: this,
-                                handler: function(){
-                                    gridFilesError.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, subMenuDiff, '-', {
-                                text: _('About error type'),
-                                iconCls: 'iconHelp',
-                                scope: this,
-                                handler: function(){
-
-                                    if (!Ext.getCmp('main-panel').findById('FE-help')) {
-
-                                        Ext.getCmp('main-panel').add({
-                                            closable: true,
-                                            title: _('About error type'),
-                                            iconCls: 'iconHelp',
-                                            id: 'FE-help',
-                                            autoScroll: true,
-                                            autoLoad: './error_type.php'
-                                        });
-                                        Ext.getCmp('main-panel').setActiveTab('FE-help');
-
-                                    } else {
-                                        Ext.getCmp('main-panel').setActiveTab('FE-help');
-                                    }
-                                }
-                            }]
-                        });
-                        menu.showAt(e.getXY());
-                    } // End rowcontextmenu
-                }
-            });
-
-            // Grid : Files need update
-            this.staleFileGrid = gridFilesNeedUpdate = new ui.component.StaleFileGrid();
-
-            // Grid : Pending for Patch
-            gridPendingPatch = new Ext.grid.GridPanel({
-                store: this.storePendingPatch,
-                loadMask: true,
-                columns: [{
-                    id: 'name',
-                    header: _('Files'),
-                    sortable: true,
-                    dataIndex: 'name'
-                }, {
-                    header: _('Posted by'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'by'
-                }, {
-                    header: _('Date'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'date',
-                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                }, {
-                    header: _('Path'),
-                    dataIndex: 'path',
-                    'hidden': true
-                }],
-
-                view: new Ext.grid.GroupingView({
-                    forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    emptyText: '<div style="text-align: center;">'+_('No pending Patch')+'</div>'
-                }),
-                autoExpandColumn: 'name',
-                bodyBorder: false,
-                listeners: {
-                    scope: this,
-                    'rowcontextmenu': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileUniqID, FileID, menu;
-
-                        FilePath = this.storePendingPatch.getAt(rowIndex).data.path;
-                        FileName = this.storePendingPatch.getAt(rowIndex).data.name;
-                        FileUniqID = this.storePendingPatch.getAt(rowIndex).data.uniqID;
-                        FileID = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        menu = new Ext.menu.Menu({
-                            items: [{
-                                text: '<b>'+_('Edit in a new Tab')+'</b>',
-                                iconCls: 'PendingPatch',
-                                scope: this,
-                                handler: function(){
-                                    gridPendingPatch.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, '-', {
-                                text: _('Reject this patch'),
-                                iconCls: 'iconPageDelete',
-                                scope: this,
-                                handler: function(){
-                                    this.rejectPatch(FileID, FilePath, FileName, FileUniqID, rowIndex, this);
-                                }
-                            }]
-                        });
-                        menu.showAt(e.getXY());
-
-                    },
-                    'rowdblclick': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileUniqID, FileID, storeLog, sm, gridLog;
-
-                        FilePath = this.storePendingPatch.getAt(rowIndex).data.path;
-                        FileName = this.storePendingPatch.getAt(rowIndex).data.name;
-                        FileUniqID = this.storePendingPatch.getAt(rowIndex).data.uniqID;
-                        FileID = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
-
-
-                        // Render only if this tab don't exist yet
-                        if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
-
-                            // We define the store and the grid for log information
-                            storeLog = new Ext.data.Store({
-                                autoLoad: (this.userConf.conf_patch_displaylog === "true") ? true : false,
-                                proxy: new Ext.data.HttpProxy({
-                                    url: './php/controller.php'
-                                }),
-                                baseParams: {
-                                    task: 'getLog',
-                                    Path: FilePath,
-                                    File: FileName
-                                },
-                                reader: new Ext.data.JsonReader({
-                                    root: 'Items',
-                                    totalProperty: 'nbItems',
-                                    id: 'id'
-                                }, [{
-                                    name: 'id',
-                                    mapping: 'id'
-                                }, {
-                                    name: 'revision',
-                                    mapping: 'revision'
-                                }, {
-                                    name: 'date',
-                                    mapping: 'date',
-                                    type: 'date',
-                                    dateFormat: 'Y/m/d H:i:s'
-                                }, {
-                                    name: 'author',
-                                    mapping: 'author'
-                                }, {
-                                    name: 'content',
-                                    mapping: 'content'
-                                }])
-                            });
-                            storeLog.setDefaultSort('date', 'desc');
-
-                            sm = new Ext.grid.CheckboxSelectionModel({
-                                singleSelect: false,
-                                width: 22,
-                                header: '',
-                                listeners: {
-                                    beforerowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            return false;
-                                        }
-                                    },
-                                    rowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('PP-PANEL-btn-log-' + FileID).enable();
-                                            Ext.get('PP-PANEL-btn-log-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('PP-PANEL-btn-log-' + FileID).disable();
-                                        }
-                                    },
-                                    rowdeselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('PP-PANEL-btn-log-' + FileID).enable();
-                                            Ext.get('PP-PANEL-btn-log-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('PP-PANEL-btn-log-' + FileID).disable();
-                                        }
-                                    }
-                                }
-                            });
-
-                            gridLog = new Ext.grid.GridPanel({
-                                store: storeLog,
-                                loadMask: true,
-                                columns: [sm, {
-                                    id: 'id',
-                                    header: _('Rev.'),
-                                    width: 40,
-                                    sortable: false,
-                                    dataIndex: 'revision'
-                                }, {
-                                    header: _('Content'),
-                                    width: 130,
-                                    sortable: true,
-                                    dataIndex: 'content'
-                                }, {
-                                    header: _('By'),
-                                    width: 50,
-                                    sortable: true,
-                                    dataIndex: 'author'
-                                }, {
-                                    header: _('Date'),
-                                    width: 85,
-                                    sortable: true,
-                                    dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                                }],
-                                autoScroll: true,
-                                autoExpandColumn: 'content',
-                                bodyBorder: false,
-                                sm: sm,
-                                view: new Ext.grid.GridView({
-                                    forceFit: true
-                                }),
-                                tbar: [{
-                                    scope: this,
-                                    tooltip: _('<b>View</b> the diff'),
-                                    iconCls: 'iconViewDiff',
-                                    id: 'PP-PANEL-btn-log-' + FileID,
-                                    disabled: true,
-                                    handler: function(){
-
-                                        var s, rev1, rev2;
-
-                                        // We get the 2 checked rev
-                                        s = sm.getSelections();
-                                        rev1 = s[0].data.revision;
-                                        rev2 = s[1].data.revision;
-
-                                        this.winDiff(FilePath, FileName, rev1, rev2);
-
-                                    }
-                                },{
-                                    scope: this,
-                                    tooltip: _('<b>Load/Refresh</b> revisions'),
-                                    iconCls: 'refresh',
-                                    id: 'PP-PANEL-btn-refreshlog-' + FileID,
-                                    handler: function(){
-                                        storeLog.reload();
-                                    }
-                                }]
-                            });
-
-                            Ext.getCmp('main-panel').add({
-                                closable: true,
-                                title: FileName,
-                                originTitle: FileName,
-                                tabTip: String.format(_('Patch for {0}'), FilePath + FileName),
-                                iconCls: 'PendingPatch',
-                                id: 'PP-' + FileID,
-                                layout: 'border',
-                                defaults: {
-                                    collapsible: true,
-                                    split: true
-                                },
-                                items: [{
-                                    xtype: 'panel',
-                                    layout: 'fit',
-                                    region: 'north',
-                                    title: _('Patch content'),
-                                    id: 'PP-patch-desc-' + FileID,
-                                    height: 150,
-                                    autoScroll: true,
-                                    collapsed: true,
-                                    html: '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
-                                    listeners: {
-                                        render: function(){
-                                            // Load diff data
-                                            XHR({
-                                                scope   : this,
-                                                url     : './php/controller.php',
-                                                params  : {
-                                                    task     : 'getDiff',
-                                                    FilePath : FilePath,
-                                                    FileName : FileName,
-                                                    type     : 'patch',
-                                                    uniqID   : FileUniqID
-                                                },
-                                                success : function(response)
-                                                {
-                                                    var o = Ext.util.JSON.decode(response.responseText);
-                                                    // We display in diff div
-                                                    Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
-                                                }
-                                            });
-                                        }
-                                    }
-                                }, {
-                                    region: 'west',
-                                    xtype: 'panel',
-                                    layout: 'fit',
-                                    bodyBorder: false,
-                                    title: _('CvsLog'),
-                                    collapsed: true,
-                                    width: 375,
-                                    items: {
-                                        xtype: 'tabpanel',
-                                        activeTab: 0,
-                                        tabPosition: 'bottom',
-                                        defaults: {
-                                            autoScroll: true
-                                        },
-                                        items: [{
-                                            layout: 'fit',
-                                            title: 'Log',
-                                            items: [gridLog]
-                                        }]
-                                    }
-                                }, {
-                                    title: String.format(_('Proposed Patch for {0}'), FilePath + FileName),
-                                    originTitle: String.format(_('Proposed Patch for {0}'), FilePath + FileName),
-                                    collapsible: false,
-                                    id: 'PP-PATCH-PANEL-' + FileID,
-                                    region: 'center',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 'auto',
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'PP-PATCH-' + FileID,
-                                        isModified: false,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(obj){
-                                                this.getFile(FileID, FilePath, FileName + '.' + FileUniqID + '.patch', 'PP-PATCH-PANEL-', 'PP-PATCH-');
-                                            },
-                                            cmcursormove: function(){
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('PP-PATCH-' + FileID).getCursorPosition());
-
-                                                Ext.get('PP-PATCH-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('PP-PATCH-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            },
-                                            cmchange: function(keyCode, charCode, e){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('PP-PATCH-' + FileID).getCursorPosition());
-
-                                                Ext.get('PP-PATCH-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('PP-PATCH-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-
-                                                // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right; 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT
-                                                // 67 = CTRL+C
-
-                                                if (keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67) {
-
-                                                    if (!Ext.getCmp('PP-PATCH-' + FileID).isModified) {
-                                                        // Add an [modified] in title
-                                                        Ext.getCmp('PP-PATCH-PANEL-' + FileID).setTitle(Ext.getCmp('PP-PATCH-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
-                                                        Ext.getCmp('PP-' + FileID).setTitle(Ext.getCmp('PP-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
-
-                                                        // Mark as modified
-                                                        Ext.getCmp('PP-PATCH-' + FileID).isModified = true;
-                                                    }
-
-                                                }
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_patch_scrollbars === "true") {
-                                                    Ext.getCmp('PP-ORIGIN-' + FileID).scrollTo(scrollY);
-                                                }
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'checkbox',
-                                        hideLabel: true,
-                                        checked: (this.userConf.conf_patch_scrollbars === "true") ? true : false,
-                                        boxLabel: _('Synchronize scroll bars'),
-                                        name: 'conf_patch_scrollbars',
-                                        listeners: {
-                                            scope: this,
-                                            check: function(c){
-                                                this.confUpdate('conf_patch_scrollbars', c.getValue());
-                                            },
-                                            render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"PP-PATCH-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"PP-PATCH-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
-                                            }
-                                        }
-                                    }],
-                                    tbar: [{
-                                        scope: this,
-                                        tooltip: _('<b>Accept</b> this patch and <b>Save</b> the file'),
-                                        iconCls: 'saveFile',
-                                        id: 'PP-PATCH-PANEL-btn-save-' + FileID,
-                                        handler: function(){
-                                            this.saveFileViaPatch(FileID, FilePath, FileName, FileUniqID, rowIndex, this);
-                                        }
-                                    }, {
-                                        scope: this,
-                                        tooltip: _('<b>Reject</b> this patch'),
-                                        iconCls: 'iconPageDelete',
-                                        id: 'PP-PATCH-PANEL-btn-reject-' + FileID,
-                                        handler: function(){
-                                            this.rejectPatch(FileID, FilePath, FileName, FileUniqID, rowIndex, this);
-                                        }
-                                    }, '-', {
-                                        tooltip: _('<b>Re-indent</b> all this file'),
-                                        iconCls: 'iconIndent',
-                                        handler: function(){
-                                            Ext.getCmp('PP-PATCH-' + FileID).reIndentAll();
-                                        }
-
-                                    }]
-                                }, {
-                                    title: _('Original File: ') + FilePath + FileName,
-                                    originTitle: _('Original File: ') + FilePath + FileName,
-                                    collapsible: false,
-                                    id: 'PP-ORIGIN-PANEL-' + FileID,
-                                    region: 'east',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 575,
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'PP-ORIGIN-' + FileID,
-                                        readOnly: true,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(obj){
-
-                                                this.getFile(FileID, FilePath, FileName, 'PP-ORIGIN-PANEL-', 'PP-ORIGIN-');
-
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_patch_scrollbars === "true") {
-                                                    Ext.getCmp('PP-PATCH-' + FileID).scrollTo(scrollY);
-                                                }
-                                            },
-                                            cmcursormove: function(a){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('PP-ORIGIN-' + FileID).getCursorPosition());
-
-                                                Ext.get('PP-ORIGIN-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('PP-ORIGIN-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'panel',
-                                        height: 21,
-                                        baseCls: '',
-                                        bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"PP-ORIGIN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"PP-ORIGIN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
-                                    }],
-                                    tbar: [{}]
-                                }]
-                            });
-
-                            Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
-
-                            // Set the bg image for north collapsed el
-                            if (Ext.getCmp('PP-' + FileID).getLayout().north.collapsedEl) {
-                                Ext.getCmp('PP-' + FileID).getLayout().north.collapsedEl.addClass('x-layout-collapsed-east-patch-desc');
-                            }
-
-
-                        } // Render only if tab don't exist yet
-                        else {
-                            Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
-                        }
-                    }
-                } // listeners
-            });
-
-            // Grid : Not In En tree
-            gridNotInEn = new Ext.grid.GridPanel({
-                store: this.storeNotInEn,
-                loadMask: true,
-                columns: [{
-                    id: 'name',
-                    header: _('Files'),
-                    sortable: true,
-                    dataIndex: 'name'
-                }, {
-                    header: _('Path'),
-                    dataIndex: 'path',
-                    'hidden': true
-                }],
-                view: new Ext.grid.GroupingView({
-                    forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>',
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if (record.data.needcommit) {
-                            return 'file-need-commit';
-                        }
-                    }
-                }),
-                autoExpandColumn: 'name',
-                bodyBorder: false,
-                listeners: {
-                    scope: this,
-                    rowcontextmenu: function(grid, rowIndex, e){
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        if( !this.storeNotInEn.getAt(rowIndex).data.needcommit ) {
-
-                            var menu = new Ext.menu.Menu({
-                                items: [{
-                                    text: _('Remove this file'),
-                                    iconCls: 'iconDelete',
-                                    scope: this,
-                                    handler: function(){
-                                        gridNotInEn.fireEvent('rowdblclick', grid, rowIndex, e);
-                                    }
-                                }]
-                            });
-                            menu.showAt(e.getXY());
-
-                        }
-
-                    },
-                    rowdblclick: function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileID;
-
-                        FilePath = this.storeNotInEn.getAt(rowIndex).data.path;
-                        FileName = this.storeNotInEn.getAt(rowIndex).data.name;
-
-                        function goMarkAsDelete(btn){
-                            if (btn === 'yes') {
-                                Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                                XHR({
-                                    scope   : this,
-                                    url     : './php/controller.php',
-                                    params  : {
-                                        task     : 'markAsNeedDelete',
-                                        FilePath : FilePath,
-                                        FileName : FileName
-                                    },
-                                    success : function(response)
-                                    {
-                                        var o = Ext.util.JSON.decode(response.responseText);
-
-                                        Ext.getBody().unmask();
-                                        this.addToPendingCommit( o.id, this.userLang + FilePath, FileName, 'delete' );
-                                        this.storeNotInEn.getAt(rowIndex).set('needcommit', true);
-                                    }
-                                });
-                            }
-                        }
-
-                        Ext.MessageBox.confirm(_('Confirm'), _('This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action.'), goMarkAsDelete, this);
-                    }
-                }
-            });
-
-            // Grid : Pending for commit
-            gridPendingCommit = new Ext.grid.GridPanel({
-                store: this.storePendingCommit,
-                loadMask: true,
-                columns: [{
-                    id: 'name',
-                    header: _('Files'),
-                    sortable: true,
-                    dataIndex: 'name'
-                }, {
-                    header: _('Modified by'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'by'
-                }, {
-                    header: _('Date'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'date',
-                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                }, {
-                    header: _('Path'),
-                    dataIndex: 'path',
-                    'hidden': true
-                }],
-
-                view: new Ext.grid.GroupingView({
-                    forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    emptyText: '<div style="text-align: center;">'+_('No pending for Commit')+'</div>',
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if ( record.data.type === 'update' ) {
-                            return 'file-needcommit-update';
-                        }
-                        if ( record.data.type === 'delete' ) {
-                            return 'file-needcommit-delete';
-                        }
-                        if ( record.data.type === 'new' ) {
-                            return 'file-needcommit-new';
-                        }
-                    }
-                }),
-                autoExpandColumn: 'name',
-                bodyBorder: false,
-                listeners: {
-                    scope: this,
-                    'rowcontextmenu': function(grid, rowIndex, e){
-
-                        var FileType, FilePath, FileName, menu, subMenuCommit;
-
-                        FileType = this.storePendingCommit.getAt(rowIndex).data.type;
-                        FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
-                        FileName = this.storePendingCommit.getAt(rowIndex).data.name;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        subMenuCommit = {
-                            text: _('Commit...'),
-                            iconCls: 'iconCommitFileCvs',
-                            scope: this,
-                            handler: function(){
-                                return false;
-                            },
-                            disabled: (this.userLogin === 'cvsread') ? true : false,
-                            menu: new Ext.menu.Menu({
-                                items: [{
-                                    text: _('...this file'),
-                                    iconCls: 'iconCommitFileCvs',
-                                    scope: this,
-                                    handler: function(){
-                                        this.WinCommit(true, rowIndex);
-                                    }
-                                }, {
-                                    text: _('...all files modified by me'),
-                                    iconCls: 'iconCommitFileCvs',
-                                    scope: this,
-                                    handler: function(){
-                                        this.WinCommit(false, '', 'by me');
-                                    }
-                                }, {
-                                    text: _('...all files modified'),
-                                    iconCls: 'iconCommitFileCvs',
-                                    scope: this,
-                                    handler: function(){
-                                        this.WinCommit(false);
-                                    }
-                                }]
-                            })
-                        };
-
-                        if( FileType === 'delete' ) {
-
-                            menu = new Ext.menu.Menu({
-                                items: [{
-                                    text: '<b>' + _('Cancel') + '<b>',
-                                    iconCls: 'iconPageDelete',
-                                    disabled: (this.userLogin === 'cvsread') ? true : false,
-                                    scope: this,
-                                    handler: function(){
-                                        gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
-                                    }
-                                }, '-', subMenuCommit]
-                            });
-                        }
-
-                        if( FileType === 'update' ) {
-                            menu = new Ext.menu.Menu({
-                                items: [{
-                                    text: '<b>'+_('Edit in a new Tab')+'</b>',
-                                    iconCls: 'PendingCommit',
-                                    scope: this,
-                                    handler: function(){
-                                        gridPendingCommit.fireEvent('rowdblclick', grid, rowIndex, e);
-                                    }
-                                }, '-', {
-                                    text: _('View Diff'),
-                                    iconCls: 'iconViewDiff',
-                                    scope: this,
-                                    handler: function(){
-
-                                        // Add tab for the diff
-                                        Ext.getCmp('main-panel').add({
-                                            xtype: 'panel',
-                                            id: 'diff_panel_' + rowIndex,
-                                            title: _('Diff'),
-                                            tabTip: _('Diff'),
-                                            closable: true,
-                                            autoScroll: true,
-                                            iconCls: 'iconTabLink',
-                                            html: '<div id="diff_content_' + rowIndex + '" class="diff-content"></div>'
-                                        });
-                                        Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
-
-                                        Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                                        // Load diff data
-                                        XHR({
-                                            url     : './php/controller.php',
-                                            params  : {
-                                                task     : 'getDiff',
-                                                FilePath : FilePath,
-                                                FileName : FileName
-                                            },
-                                            success : function(response)
-                                            {
-                                                var o = Ext.util.JSON.decode(response.responseText);
-
-                                                // We display in diff div
-                                                Ext.get('diff_content_' + rowIndex).dom.innerHTML = o.content;
-                                                Ext.get('diff_panel_' + rowIndex).unmask();
-
-                                            }
-                                        });
-
-                                    }
-                                }, {
-                                    text: _('Download the diff as a patch'),
-                                    iconCls: 'iconCommitFileCvs',
-                                    scope: this,
-                                    handler: function(){
-                                        window.location.href = './php/controller.php?task=downloadPatch&FilePath=' + FilePath + '&FileName=' + FileName;
-                                    }
-                                }, '-', {
-                                    text: _('Clear this change'),
-                                    iconCls: 'iconPageDelete',
-                                    disabled: (this.userLogin === 'cvsread') ? true : false,
-                                    scope: this,
-                                    handler: function(){
-                                        this.clearLocalChange(FileType, FilePath, FileName, rowIndex, this);
-                                    }
-                                }, '-', subMenuCommit]
-                            });
-
-                        }
-
-                        menu.showAt(e.getXY());
-                    },
-                    'rowdblclick': function(grid, rowIndex, e){
-
-                        var FileType, FilePath, FileName;
-
-                        FileType = this.storePendingCommit.getAt(rowIndex).data.type;
-                        FilePath = this.storePendingCommit.getAt(rowIndex).data.path;
-                        FileName = this.storePendingCommit.getAt(rowIndex).data.name;
-
-                        if( FileType === 'update' ) {
-                            this.openFile(FilePath, FileName);
-                        }
-
-                        if( FileType === 'delete' ) {
-                            this.clearLocalChange(FileType, FilePath, FileName, rowIndex, this);
-                        }
-
-                    } //rowdblclick
-                } //listeners
-            });
-
-            // Grid : Files need update
-            gridFilesNeedReviewed = new Ext.grid.GridPanel({
-                store: this.storeFilesNeedReviewed,
-                loadMask: true,
-                columns: [{
-                    id: 'name',
-                    header: _('Files'),
-                    sortable: true,
-                    dataIndex: 'name'
-                }, {
-                    header: _('Reviewed'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'reviewed'
-                }, {
-                    header: _('Maintainer'),
-                    width: 45,
-                    sortable: true,
-                    dataIndex: 'maintainer'
-                }, {
-                    header: _('Path'),
-                    dataIndex: 'path',
-                    'hidden': true
-                }],
-                view: new Ext.grid.GroupingView({
-                    forceFit: true,
-                    groupTextTpl: '{[values.rs[0].data["path"]]} ({[values.rs.length]} {[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-                    getRowClass: function(record, numIndex, rowParams, store){
-                        if (record.data.needcommit) {
-                            return 'file-need-commit';
-                        }
-                    },
-                    emptyText: '<div style="text-align: center;">'+_('No Files')+'</div>'
-                }),
-                autoExpandColumn: 'name',
-                bodyBorder: false,
-                tbar:[
-                    _('Filter: '), ' ',
-                    new Ext.form.TwinTriggerField({
-                        id: 'FNR-filter',
-                        validationEvent:false,
-                        validateOnBlur:false,
-                        trigger1Class:'x-form-clear-trigger',
-                        trigger2Class:'x-form-search-trigger',
-                        hideTrigger1:true,
-                        width:180,
-                        scope: this,
-                        enableKeyEvents: true,
-                        listeners: {
-                            keypress: function(field, e){
-                                if (e.getKey() == e.ENTER) {
-                                    this.onTrigger2Click();
-                                }
-                            }
-                        },
-                        onTrigger1Click: function() {
-
-                            this.setValue('');
-                            this.triggers[0].hide();
-
-                            this.scope.storeFilesNeedReviewed.clearFilter();
-                        },
-                        onTrigger2Click: function() {
-
-                            var v = this.getValue();
-
-                            if( v == '' || v.length < 3) {
-                                this.markInvalid(_('Your filter must contain at least 3 characters'));
-                                return;
-                            }
-                            this.clearInvalid();
-
-                            this.triggers[0].show();
-
-                            this.scope.storeFilesNeedReviewed.filter('maintainer', v);
-
-                        }
-                    })
-                ],
-                listeners: {
-                    scope: this,
-                    'rowcontextmenu': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, FileID, subMenuDiff = '', subMenuGroup = '', group, menu;
-
-                        grid.getSelectionModel().selectRow(rowIndex);
-
-                        FilePath = this.storeFilesNeedReviewed.getAt(rowIndex).data.path;
-                        FileName = this.storeFilesNeedReviewed.getAt(rowIndex).data.name;
-                        FileID = Ext.util.md5('FNR-' + this.userLang + FilePath + FileName);
-
-                        if (this.storeFilesNeedReviewed.getAt(rowIndex).data.needcommit) {
-
-                            subMenuDiff = {
-                                text: _('View Diff'),
-                                iconCls: 'iconViewDiff',
-                                scope: this,
-                                handler: function(){
-
-                                    // Add tab for the diff
-                                    Ext.getCmp('main-panel').add({
-                                        xtype: 'panel',
-                                        id: 'diff_panel_' + rowIndex,
-                                        title: _('Diff'),
-                                        tabTip: _('Diff'),
-                                        closable: true,
-                                        autoScroll: true,
-                                        iconCls: 'iconTabLink',
-                                        html: '<div id="diff_content_' + rowIndex + '" class="diff-content"></div>'
-                                    });
-                                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + rowIndex);
-
-                                    Ext.get('diff_panel_' + rowIndex).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait...'));
-
-                                    // Load diff data
-                                    XHR({
-                                        scope   : this,
-                                        url     : './php/controller.php',
-                                        params  : {
-                                            task     : 'getDiff',
-                                            FilePath : this.userLang + FilePath,
-                                            FileName : FileName
-                                        },
-                                        success : function(response)
-                                        {
-                                            var o = Ext.util.JSON.decode(response.responseText);
-
-                                            // We display in diff div
-                                            Ext.get('diff_content_' + rowIndex).dom.innerHTML = o.content;
-                                            Ext.get('diff_panel_' + rowIndex).unmask();
-
-                                        }
-                                    });
-                                }
-                            };
-                        }
-
-                        // Is this item is part of a group of function ?
-                        group = FilePath.split('/');
-
-                        if (group[1] === 'reference') {
-
-                            subMenuGroup = {
-                                text: String.format(_('Open all files about {0} extension'), group[2]),
-                                iconCls: 'iconViewDiff',
-                                scope: this,
-                                handler: function(){
-
-                                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+String.format(_('Open all files about {0} extension'), group[2])+'. '+_('Please, wait...'));
-
-                                    XHR({
-                                        scope   : this,
-                                        url     : './php/controller.php',
-                                        params  : {
-                                            task    : 'getAllFilesAboutExtension',
-                                            ExtName : group[2]
-                                        },
-                                        success : function(response)
-                                        {
-                                            var o = Ext.util.JSON.decode(response.responseText);
-
-                                            this.filePendingOpen = [];
-
-                                            for (var i = 0; i < o.files.length; i = i + 1) {
-                                                this.filePendingOpen[i] = [this.userLang + o.files[i].path, o.files[i].name];
-                                            }
-
-                                            // Start the first
-                                            this.openFile(this.filePendingOpen[0][0], this.filePendingOpen[0][1]);
-
-                                            Ext.getBody().unmask();
-
-                                        }
-                                    });
-
-                                } // handler
-                            };
-
-                        }
-
-                        menu = new Ext.menu.Menu({
-                            scope: this,
-                            items: [{
-                                text: '<b>'+_('Edit in a new Tab')+'</b>',
-                                iconCls: 'FilesNeedReviewed',
-                                scope: this,
-                                handler: function(){
-                                    gridFilesNeedReviewed.fireEvent('rowdblclick', grid, rowIndex, e);
-                                }
-                            }, subMenuDiff, '-', subMenuGroup]
-                        });
-
-                        menu.showAt(e.getXY());
-
-                    }, // End event rowcontextmenu
-                    'rowdblclick': function(grid, rowIndex, e){
-
-                        var FilePath, FileName, reviewed, needcommit, FileID, storeLogLang, storeLogEn, smLang, gridLogLang, smEn, gridLogEn;
-
-                        FilePath = this.storeFilesNeedReviewed.getAt(rowIndex).data.path;
-                        FileName = this.storeFilesNeedReviewed.getAt(rowIndex).data.name;
-                        reviewed = this.storeFilesNeedReviewed.getAt(rowIndex).data.reviewed;
-                        needcommit = this.storeFilesNeedReviewed.getAt(rowIndex).data.needcommit;
-
-                        FileID = Ext.util.md5('FNR-' + this.userLang + FilePath + FileName);
-
-                        // Render only if this tab don't exist yet
-                        if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
-
-                            // We define the store and the grid for log information
-                            storeLogLang = new Ext.data.Store({
-                                autoLoad: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
-                                proxy: new Ext.data.HttpProxy({
-                                    url: './php/controller.php'
-                                }),
-                                baseParams: {
-                                    task: 'getLog',
-                                    Path: this.userLang + FilePath,
-                                    File: FileName
-                                },
-                                reader: new Ext.data.JsonReader({
-                                    root: 'Items',
-                                    totalProperty: 'nbItems',
-                                    id: 'id'
-                                }, [{
-                                    name: 'id',
-                                    mapping: 'id'
-                                }, {
-                                    name: 'revision',
-                                    mapping: 'revision'
-                                }, {
-                                    name: 'date',
-                                    mapping: 'date',
-                                    type: 'date',
-                                    dateFormat: 'Y/m/d H:i:s'
-                                }, {
-                                    name: 'author',
-                                    mapping: 'author'
-                                }, {
-                                    name: 'content',
-                                    mapping: 'content'
-                                }])
-                            });
-                            storeLogLang.setDefaultSort('date', 'desc');
-
-                            storeLogEn = new Ext.data.Store({
-                                autoLoad: (this.userConf.conf_reviewed_displaylog === "true") ? true : false,
-                                proxy: new Ext.data.HttpProxy({
-                                    url: './php/controller.php'
-                                }),
-                                baseParams: {
-                                    task: 'getLog',
-                                    Path: 'en' + FilePath,
-                                    File: FileName
-                                },
-                                reader: new Ext.data.JsonReader({
-                                    root: 'Items',
-                                    totalProperty: 'nbItems',
-                                    id: 'id'
-                                }, [{
-                                    name: 'id',
-                                    mapping: 'id'
-                                }, {
-                                    name: 'revision',
-                                    mapping: 'revision'
-                                }, {
-                                    name: 'date',
-                                    mapping: 'date',
-                                    type: 'date',
-                                    dateFormat: 'Y/m/d H:i:s'
-                                }, {
-                                    name: 'author',
-                                    mapping: 'author'
-                                }, {
-                                    name: 'content',
-                                    mapping: 'content'
-                                }])
-                            });
-                            storeLogEn.setDefaultSort('date', 'desc');
-
-                            smLang = new Ext.grid.CheckboxSelectionModel({
-                                singleSelect: false,
-                                width: 22,
-                                header: '',
-                                listeners: {
-                                    beforerowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            return false;
-                                        }
-                                    },
-                                    rowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FNR-PANEL-btn-logLang-' + FileID).enable();
-                                            Ext.get('FNR-PANEL-btn-logLang-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FNR-PANEL-btn-logLang-' + FileID).disable();
-                                        }
-                                    },
-                                    rowdeselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FNR-PANEL-btn-logLang-' + FileID).enable();
-                                            Ext.get('FNR-PANEL-btn-logLang-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FNR-PANEL-btn-logLang-' + FileID).disable();
-                                        }
-                                    }
-                                }
-                            });
-
-                            gridLogLang = new Ext.grid.GridPanel({
-                                store: storeLogLang,
-                                loadMask: true,
-                                columns: [smLang, {
-                                    id: 'id',
-                                    header: _('Rev.'),
-                                    width: 40,
-                                    sortable: false,
-                                    dataIndex: 'revision'
-                                }, {
-                                    header: _('Content'),
-                                    width: 130,
-                                    sortable: true,
-                                    dataIndex: 'content'
-                                }, {
-                                    header: _('By'),
-                                    width: 50,
-                                    sortable: true,
-                                    dataIndex: 'author'
-                                }, {
-                                    header: _('Date'),
-                                    width: 85,
-                                    sortable: true,
-                                    dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                                }],
-                                autoScroll: true,
-                                autoExpandColumn: 'content',
-                                bodyBorder: false,
-                                sm: smLang,
-                                view: new Ext.grid.GridView({
-                                    forceFit: true
-                                }),
-                                tbar: [{
-                                    scope: this,
-                                    tooltip: _('<b>View</b> the diff'),
-                                    iconCls: 'iconViewDiff',
-                                    id: 'FNR-PANEL-btn-logLang-' + FileID,
-                                    disabled: true,
-                                    handler: function(){
-
-                                        var s, rev1, rev2;
-
-                                        // We get the 2 checked rev
-                                        s = smLang.getSelections();
-                                        rev1 = s[0].data.revision;
-                                        rev2 = s[1].data.revision;
-
-                                        this.winDiff(this.userLang + FilePath, FileName, rev1, rev2);
-
-                                    }
-                                },{
-                                    scope: this,
-                                    tooltip: _('<b>Load/Refresh</b> revisions'),
-                                    iconCls: 'refresh',
-                                    id: 'FNR-PANEL-btn-refreshlogLang-' + FileID,
-                                    handler: function(){
-                                        storeLogLang.reload();
-                                    }
-                                }]
-                            });
-
-                            smEn = new Ext.grid.CheckboxSelectionModel({
-                                singleSelect: false,
-                                width: 22,
-                                header: '',
-                                listeners: {
-                                    beforerowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            return false;
-                                        }
-                                    },
-                                    rowselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FNR-PANEL-btn-logEn-' + FileID).enable();
-                                            Ext.get('FNR-PANEL-btn-logEn-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FNR-PANEL-btn-logEn-' + FileID).disable();
-                                        }
-                                    },
-                                    rowdeselect: function(sm){
-                                        var nbRowsSelected = sm.getCount();
-                                        if (nbRowsSelected === 2) {
-                                            Ext.getCmp('FNR-PANEL-btn-logEn-' + FileID).enable();
-                                            Ext.get('FNR-PANEL-btn-logEn-' + FileID).frame("3F8538");
-                                        }
-                                        else {
-                                            Ext.getCmp('FNR-PANEL-btn-logEn-' + FileID).disable();
-                                        }
-                                    }
-                                }
-                            });
-
-                            gridLogEn = new Ext.grid.GridPanel({
-                                store: storeLogEn,
-                                loadMask: true,
-                                columns: [smEn, {
-                                    id: 'id',
-                                    header: _('Rev.'),
-                                    width: 40,
-                                    sortable: false,
-                                    dataIndex: 'revision'
-                                }, {
-                                    header: _('Content'),
-                                    width: 130,
-                                    sortable: true,
-                                    dataIndex: 'content'
-                                }, {
-                                    header: _('By'),
-                                    width: 50,
-                                    sortable: true,
-                                    dataIndex: 'author'
-                                }, {
-                                    header: _('Date'),
-                                    width: 85,
-                                    sortable: true,
-                                    dataIndex: 'date',
-                                    renderer: Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-                                }],
-                                autoScroll: true,
-                                autoExpandColumn: 'content',
-                                bodyBorder: false,
-                                sm: smEn,
-                                view: new Ext.grid.GridView({
-                                    forceFit: true
-                                }),
-                                tbar: [{
-                                    scope: this,
-                                    tooltip: _('<b>View</b> the diff'),
-                                    iconCls: 'iconViewDiff',
-                                    id: 'FNR-PANEL-btn-logEn-' + FileID,
-                                    disabled: true,
-                                    handler: function(){
-
-                                        var s, rev1, rev2;
-
-                                        // We get the 2 checked rev
-                                        s = smEn.getSelections();
-                                        rev1 = s[0].data.revision;
-                                        rev2 = s[1].data.revision;
-
-                                        this.winDiff('en' + FilePath, FileName, rev1, rev2);
-
-                                    }
-                                },{
-                                    scope: this,
-                                    tooltip: _('<b>Load/Refresh</b> revisions'),
-                                    iconCls: 'refresh',
-                                    id: 'FNR-PANEL-btn-refreshlogEn-' + FileID,
-                                    handler: function(){
-                                        storeLogEn.reload();
-                                    }
-                                }]
-                            });
-
-
-                            Ext.getCmp('main-panel').add({
-                                closable: true,
-                                title: FileName,
-                                originTitle: FileName,
-                                tabTip: String.format(_('Need Reviewed in: {0}'), FilePath),
-                                iconCls: 'iconTabNeedReviewed',
-                                id: 'FNR-' + FileID,
-                                isModifiedLang: false,
-                                isModifiedEn: false,
-                                layout: 'border',
-                                defaults: {
-                                    collapsible: true,
-                                    split: true
-                                },
-                                items: [{
-                                    region: 'west',
-                                    xtype: 'panel',
-                                    layout: 'fit',
-                                    bodyBorder: false,
-                                    title: 'CvsLog',
-                                    collapsed: true,
-                                    width: 375,
-                                    items: {
-                                        xtype: 'tabpanel',
-                                        activeTab: 0,
-                                        tabPosition: 'bottom',
-                                        defaults: {
-                                            autoScroll: true
-                                        },
-                                        items: [{
-                                            layout: 'fit',
-                                            title: this.userLang,
-                                            items: [gridLogLang]
-                                        }, {
-                                            layout: 'fit',
-                                            title: 'En',
-                                            items: [gridLogEn]
-                                        }]
-                                    }
-                                }, {
-                                    title: String.format(_('{0} File: '),this.userLang) + FilePath + FileName,
-                                    originTitle: String.format(_('{0} File: '),this.userLang) + FilePath + FileName,
-                                    collapsible: false,
-                                    id: 'FNR-LANG-PANEL-' + FileID,
-                                    region: 'center',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 'auto',
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'FNR-LANG-' + FileID,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(){
-                                                this.getFile(FileID, this.userLang + FilePath, FileName, 'FNR-LANG-PANEL-', 'FNR-LANG-');
-                                            },
-
-                                            cmcursormove: function(a){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FNR-LANG-' + FileID).getCursorPosition());
-
-                                                Ext.get('FNR-LANG-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FNR-LANG-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            },
-
-                                            cmchange: function(keyCode, charCode, obj){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FNR-LANG-' + FileID).getCursorPosition());
-
-                                                Ext.get('FNR-LANG-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FNR-LANG-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-
-                                                // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right; 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT
-                                                // 67 = CTRL+C
-
-                                                if (keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67) {
-
-                                                    if (!Ext.getCmp('FNR-' + FileID).isModifiedLang) {
-                                                        // Add an [modified] in title
-                                                        Ext.getCmp('FNR-LANG-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-LANG-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
-                                                        Ext.getCmp('FNR-' + FileID).setTitle(Ext.getCmp('FNR-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
-
-                                                        // Activate save button
-                                                        Ext.getCmp('FNR-LANG-PANEL-btn-save-' + FileID).enable();
-                                                        Ext.get('FNR-LANG-PANEL-btn-save-' + FileID).frame("3F8538");
-
-                                                        Ext.getCmp('FNR-LANG-PANEL-btn-saveas-' + FileID).enable();
-                                                        Ext.get('FNR-LANG-PANEL-btn-saveas-' + FileID).frame("3F8538");
-
-                                                        // Mark as modified
-                                                        Ext.getCmp('FNR-' + FileID).isModifiedLang = true;
-                                                    }
-                                                }
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_reviewed_scrollbars === "true") {
-                                                    Ext.getCmp('FNR-EN-' + FileID).scrollTo(scrollY);
-                                                }
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'checkbox',
-                                        hideLabel: true,
-                                        checked: (this.userConf.conf_reviewed_scrollbars === "true") ? true : false,
-                                        boxLabel: _('Synchronize scroll bars'),
-                                        name: 'conf_reviewed_scrollbars',
-                                        listeners: {
-                                            scope: this,
-                                            check: function(c){
-                                                this.confUpdate('conf_reviewed_scrollbars', c.getValue());
-                                            },
-                                            render: function(c){
-                                                Ext.DomHelper.insertHtml("beforeBegin", c.el.dom, "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNR-LANG-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNR-LANG-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;");
-                                            }
-                                        }
-                                    }],
-                                    tbar: [{
-                                        scope: this,
-                                        tooltip: _('<b>Save</b> this file'),
-                                        iconCls: 'saveFile',
-                                        id: 'FNR-LANG-PANEL-btn-save-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.saveLangFile(FileID, FilePath, FileName, 'FNR', rowIndex, this);
-                                        } // Save handle
-                                    }, {
-                                        scope: this,
-                                        tooltip: _('<b>Save as</b> a patch'),
-                                        iconCls: 'saveAsFile',
-                                        id: 'FNR-LANG-PANEL-btn-saveas-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.savePatch(this.userLang, FileID, FilePath, FileName, 'FNR', this);
-                                        }
-                                    }, '-', {
-                                        tooltip: _('<b>Re-indent</b> all this file'),
-                                        iconCls: 'iconIndent',
-                                        handler: function(){
-                                            Ext.getCmp('FNR-LANG-' + FileID).reIndentAll();
-                                        }
-
-                                    }, this.menuMarkupLANG('FNR-LANG-' + FileID, this)]
-                                }, {
-
-                                    title: _('En File: ') + FilePath + FileName,
-                                    originTitle: _('En File: ') + FilePath + FileName,
-                                    collapsible: false,
-                                    id: 'FNR-EN-PANEL-' + FileID,
-                                    region: 'east',
-                                    xtype: 'form',
-                                    height: 'auto',
-                                    width: 575,
-                                    items: [{
-                                        xtype: 'codemirror',
-                                        id: 'FNR-EN-' + FileID,
-                                        listeners: {
-                                            scope: this,
-                                            initialize: function(){
-
-                                                this.getFile(FileID, 'en' + FilePath, FileName, 'FNR-EN-PANEL-', 'FNR-EN-');
-                                            },
-                                            cmchange: function(keyCode, charCode, obj){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FNR-EN-' + FileID).getCursorPosition());
-
-                                                Ext.get('FNR-EN-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FNR-EN-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-
-                                                // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right; 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT
-                                                // 67 = CTRL+C
-
-                                                if (keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67) {
-
-                                                    if (!Ext.getCmp('FNR-' + FileID).isModifiedEn) {
-                                                        // Add an [modified] in title
-                                                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setTitle(Ext.getCmp('FNR-EN-PANEL-' + FileID).originTitle + ' <span style="color:#ff0000; font-weight: bold;">['+_('modified')+']</span>');
-                                                        Ext.getCmp('FNR-' + FileID).setTitle(Ext.getCmp('FNR-' + FileID).originTitle + ' <t style="color:#ff0000; font-weight: bold;">*</t>');
-
-                                                        // Activate save button
-                                                        Ext.getCmp('FNR-EN-PANEL-btn-save-' + FileID).enable();
-                                                        Ext.get('FNR-EN-PANEL-btn-save-' + FileID).frame("3F8538");
-
-                                                        Ext.getCmp('FNR-EN-PANEL-btn-saveas-' + FileID).enable();
-                                                        Ext.get('FNR-EN-PANEL-btn-saveas-' + FileID).frame("3F8538");
-
-                                                        // Mark as modified
-                                                        Ext.getCmp('FNR-' + FileID).isModifiedEn = true;
-                                                    }
-                                                }
-                                            },
-                                            cmscroll: function(scrollY){
-                                                if (this.userConf.conf_reviewed_scrollbars === "true") {
-                                                    Ext.getCmp('FNR-LANG-' + FileID).scrollTo(scrollY);
-                                                }
-                                            },
-                                            cmcursormove: function(a){
-
-                                                var cursorPosition = Ext.util.JSON.decode(Ext.getCmp('FNR-EN-' + FileID).getCursorPosition());
-
-                                                Ext.get('FNR-EN-status-line-' + FileID).dom.innerHTML = cursorPosition.line;
-                                                Ext.get('FNR-EN-status-col-' + FileID).dom.innerHTML = cursorPosition.caracter;
-                                            }
-                                        }
-                                    }],
-                                    bbar: [{
-                                        scope: this,
-                                        xtype: 'panel',
-                                        height: 21,
-                                        baseCls: '',
-                                        bodyStyle: 'padding-top:5px;',
-                                        html: "<div style=\"display: inline;\" class=\"x-statusbar\"><span class=\"x-status-text-panel\">"+_('Line: ')+"<span id=\"FNR-EN-status-line-" + FileID + "\">-</span></span>&nbsp;&nbsp;<span class=\"x-status-text-panel\">"+_('Col: ')+"<span id=\"FNR-EN-status-col-" + FileID + "\">-</span></span></div>&nbsp;&nbsp;"
-                                    }],
-                                    tbar: [{
-                                        scope: this,
-                                        tooltip: _('<b>Save</b> this file'),
-                                        iconCls: 'saveFile',
-                                        id: 'FNR-EN-PANEL-btn-save-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.saveEnFile(FileID, FilePath, FileName, 'FNR', rowIndex, this);
-                                        }
-
-                                    }, {
-                                        scope: this,
-                                        tooltip: _('<b>Save as</b> a patch'),
-                                        iconCls: 'saveAsFile',
-                                        id: 'FNR-EN-PANEL-btn-saveas-' + FileID,
-                                        disabled: true,
-                                        handler: function(){
-                                            this.savePatch('en', FileID, FilePath, FileName, 'FNR', this);
-                                        }
-
-                                    }, '-', {
-                                        tooltip: _('<b>Re-indent</b> all this file'),
-                                        iconCls: 'iconIndent',
-                                        handler: function(){
-                                            Ext.getCmp('FNR-EN-' + FileID).reIndentAll();
-                                        }
-                                    }, this.menuMarkupEN('FNR-EN-' + FileID)]
-                                }]
-                            });
-
-                            Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
-
-                        } // End tab don't exist
-                        else {
-                            // This tab already exist. We focus it.
-                            Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
-                        }
-                    } // End listeners rowdblclick
-                }
-            });
+            this.staleFileGrid     = new ui.component.StaleFileGrid();
+            this.errorFileGrid     = new ui.component.ErrorFileGrid();
+            this.pendingPatchGrid  = new ui.component.PendingPatchGrid();
+            this.notInENGrid       = new ui.component.NotInENGrid();
+            this.pendingCommitGrid = new ui.component.PendingCommitGrid();
+            this.pendingReviewGrid = new ui.component.PendingReviewGrid();
+            this.treeAllFiles      = new ui.component.RepositoryTree();
 
             gridSummary     = new ui.component.SummaryGrid();
             gridTranslators = new ui.component.TranslatorGrid();
             gridMailing     = new ui.component.LocalMailGrid();
             gridBugs        = new ui.component.BugsGrid();
             graphPanel      = new ui.component.TranslationGraph();
-            this.treeAllFiles = new ui.component.RepositoryTree();
-            mainMenu = new ui.component.MainMenu();
+            mainMenu        = new ui.component.MainMenu();
 
             if (this.userLang === 'en') {
                 mainContent = [gridMailing];
@@ -4778,156 +1673,163 @@ var phpDoc = function(){
 
             // Our main window as a viewport
             MainWindow = new Ext.Viewport({
-                layout: 'border',
-                items: [{
-                    region: 'north',
-                    html: '<h1 class="x-panel-header"><img src="themes/img/mini_php.png" style="vertical-align: middle;" />&nbsp;&nbsp;' + this.appName + '</h1>',
-                    autoHeight: true,
-                    border: false,
-                    margins: '0 0 5 0'
+                layout : 'border',
+                items : [{
+                    // logo
+                    region     : 'north',
+                    html       : '<h1 class="x-panel-header">' +
+                                    '<img src="themes/img/mini_php.png" ' +
+                                        'style="vertical-align: middle;" />&nbsp;&nbsp;' +
+                                    this.appName +
+                                 '</h1>',
+                    autoHeight : true,
+                    border     : false,
+                    margins    : '0 0 5 0'
                 }, {
-                    region: 'west',
-                    collapsible: true,
-                    collapseMode: 'mini',
-                    animate: true,
-                    split: true,
-                    layout: 'fit',
-                    width: 300,
-                    autoScroll: true,
-                    items: [{
-                        layout: 'accordion',
-                        animate: true,
-                        bodyBorder: false,
-                        border: false,
-                        tbar: [{
-                            text: _('Main Menu'),
-                            iconCls: 'MainMenu',
-                            menu: mainMenu
+                    // accordion
+                    region       : 'west',
+                    collapsible  : true,
+                    collapseMode : 'mini',
+                    animate      : true,
+                    split        : true,
+                    layout       : 'fit',
+                    width        : 300,
+                    autoScroll   : true,
+                    items : [{
+                        layout     : 'accordion',
+                        animate    : true,
+                        bodyBorder : false,
+                        border     : false,
+                        tbar : [{
+                            text    : _('Main Menu'),
+                            iconCls : 'MainMenu',
+                            menu    : mainMenu
                         }],
-                        items: [{
-                            title: _('Files Need Update')+' - <em id="acc-need-update-nb">0</em>',
-                            id: 'acc-need-update',
-                            layout: 'fit',
-                            iconCls: 'FilesNeedUpdate',
-                            hidden: (this.userLang === 'en') ? true : false,
-                            items: [gridFilesNeedUpdate],
-                            collapsed: true,
-                            listeners: {
-                                expand: function(panel) {
+                        items : [{
+                            id        : 'acc-need-update',
+                            title     : _('Files Need Update') + ' - <em id="acc-need-update-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'FilesNeedUpdate',
+                            hidden    : (this.userLang === 'en'),
+                            items     : [this.staleFileGrid],
+                            collapsed : true,
+                            listeners : {
+                                expand : function(panel)
+                                {
                                     //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
                                     Ext.getCmp('FNU-filter').wrap.setWidth(200);
                                 }
                             }
                         }, {
-                            title: _('Error in current translation')+' - <em id="acc-error-nb">0</em>',
-                            id: 'acc-error',
-                            layout: 'fit',
-                            iconCls: 'FilesError',
-                            hidden: (this.userLang === 'en') ? true : false,
-                            items: [gridFilesError],
-                            collapsed: true,
-                            listeners: {
-                                expand: function(panel) {
+                            id        : 'acc-error',
+                            title     : _('Error in current translation') + ' - <em id="acc-error-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'FilesError',
+                            hidden    : (this.userLang === 'en'),
+                            items     : [this.errorFileGrid],
+                            collapsed : true,
+                            listeners : {
+                                expand : function(panel)
+                                {
                                     //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
                                     Ext.getCmp('FE-filter').wrap.setWidth(200);
                                 }
                             }
                         }, {
-                            title: _('Files Need Reviewed')+' - <em id="acc-need-reviewed-nb">0</em>',
-                            id: 'acc-need-reviewed',
-                            layout: 'fit',
-                            iconCls: 'FilesNeedReviewed',
-                            hidden: (this.userLang === 'en') ? true : false,
-                            items: [gridFilesNeedReviewed],
-                            collapsed: true,
-                            listeners: {
-                                expand: function(panel) {
+                            id        : 'acc-need-reviewed',
+                            title     : _('Files Need Reviewed') + ' - <em id="acc-need-reviewed-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'FilesNeedReviewed',
+                            hidden    : (this.userLang === 'en'),
+                            items     : [this.pendingReviewGrid],
+                            collapsed : true,
+                            listeners : {
+                                expand : function(panel)
+                                {
                                     //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
                                     Ext.getCmp('FNR-filter').wrap.setWidth(200);
                                 }
                             }
                         }, {
-                            title: _('Not in EN tree')+' - <em id="acc-notInEn-nb">0</em>',
-                            id: 'acc-notInEn',
-                            layout: 'fit',
-                            iconCls: 'NotInEn',
-                            hidden: (this.userLang === 'en') ? true : false,
-                            items: [gridNotInEn],
-                            collapsed: true
+                            id        : 'acc-notInEn',
+                            title     : _('Not in EN tree') + ' - <em id="acc-notInEn-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'NotInEn',
+                            hidden    : (this.userLang === 'en'),
+                            items     : [this.notInENGrid],
+                            collapsed : true
                         }, {
-                            title: _('All files'),
-                            id: 'acc-all-files',
-                            layout: 'fit',
-                            iconCls: 'AllFiles',
-                            items: [this.treeAllFiles],
-                            collapsed: true,
-                            listeners: {
-                                expand: function(panel) {
+                            id        : 'acc-all-files',
+                            title     : _('All files'),
+                            layout    : 'fit',
+                            iconCls   : 'AllFiles',
+                            items     : [this.treeAllFiles],
+                            collapsed : true,
+                            listeners : {
+                                expand : function(panel)
+                                {
                                     //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
                                     Ext.getCmp('AF-search').wrap.setWidth(200);
                                 }
                             }
-
                         }, {
-                            title: _('Pending for commit')+' - <em id="acc-pendingCommit-nb">0</em>',
-                            id: 'acc-need-pendingCommit',
-                            layout: 'fit',
-                            iconCls: 'PendingCommit',
-                            items: [gridPendingCommit],
-                            collapsed: true
+                            id        : 'acc-need-pendingCommit',
+                            title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'PendingCommit',
+                            items     : [this.pendingCommitGrid],
+                            collapsed : true
                         }, {
-                            title: _('Pending Patch')+' - <em id="acc-pendingPatch-nb">0</em>',
-                            id: 'acc-need-pendingPatch',
-                            layout: 'fit',
-                            iconCls: 'PendingPatch',
-                            items: [gridPendingPatch],
-                            collapsed: true
+                            id        : 'acc-need-pendingPatch',
+                            title     : _('Pending Patch') + ' - <em id="acc-pendingPatch-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'PendingPatch',
+                            items     : [this.pendingPatchGrid],
+                            collapsed : true
                         }]
                     }]
-
                 }, {
-                    region: 'center',
-                    xtype: 'tabpanel',
-                    id: 'main-panel',
-                    activeTab: 0,
-                    enableTabScroll: true,
-                    layoutOnTabChange: true,
-                    plugins: new Ext.ux.TabCloseMenu(),
-                    listeners: {
-                        scope: this,
-                        beforeremove: this.removeTabEvent
+                    // main panel
+                    xtype             : 'tabpanel',
+                    id                : 'main-panel',
+                    region            : 'center',
+                    activeTab         : 0,
+                    enableTabScroll   : true,
+                    layoutOnTabChange : true,
+                    plugins           : new Ext.ux.TabCloseMenu(),
+                    listeners : {
+                        scope : this,
+                        beforeremove : this.removeTabEvent
                     },
-                    items: [{
-                        title: _('Home'),
-                        baseCls: 'MainInfoTabPanel',
-                        xtype: 'panel',
-                        autoScroll: true,
-                        id: 'MainInfoTabPanel',
-                        plain: true,
-                        items: [{
-                            xtype: 'panel',
-                            border: false,
-                            html: '<div class="res-block">' +
-                            '<div class="res-block-inner">' +
-                            '<h3>'+
-                            String.format(_('Connected as <em>{0}</em>'), this.userLogin) +
-                            '<br/><br/>'+
-                            String.format(_('Last data update: <em id="lastUpdateTime">{0}</em>'), '-') +
-                            '</h3>' +
-                            '</div>' +
-                            '</div>'
+                    items : [{
+                        xtype      : 'panel',
+                        id         : 'MainInfoTabPanel',
+                        title      : _('Home'),
+                        baseCls    : 'MainInfoTabPanel',
+                        autoScroll : true,
+                        plain      : true,
+                        items : [{
+                            xtype  : 'panel',
+                            border : false,
+                            html   : '<div class="res-block">' +
+                                        '<div class="res-block-inner">' +
+                                            '<h3>' +
+                                                String.format(_('Connected as <em>{0}</em>'), this.userLogin) +
+                                                '<br/><br/>' +
+                                                String.format(_('Last data update: <em id="lastUpdateTime">{0}</em>'), '-') +
+                                            '</h3>' +
+                                        '</div>' +
+                                     '</div>'
                         }, {
-                            xtype: 'tabpanel',
-                            activeTab: 0,
-                            plain: true,
-                            autoScroll: true,
-                            height: 400,
-                            border: false,
-                            defaults: {
-                                border: true
-                            },
-                            layoutOnTabChange : true,
-                            items: mainContent
+                            xtype      : 'tabpanel',
+                            activeTab  : 0,
+                            plain      : true,
+                            autoScroll : true,
+                            height     : 400,
+                            border     : false,
+                            items      : mainContent,
+                            defaults   : { border: true },
+                            layoutOnTabChange : true
                         }]
                     }]
                 }]
@@ -4935,15 +1837,12 @@ var phpDoc = function(){
 
             // Remove the global loading message
             Ext.get('loading').remove();
-            Ext.fly('loading-mask').fadeOut({
-                remove: true
-            });
+            Ext.fly('loading-mask').fadeOut({ remove : true });
 
             // Direct access to a file as cvsread
             if (directAccess) {
                 this.openFile(directAccess.lang + directAccess.path, directAccess.name);
             }
-
         } // drawInterface
     }; // Return
 }();

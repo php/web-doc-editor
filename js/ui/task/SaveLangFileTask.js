@@ -7,7 +7,8 @@ ui.task.SaveLangFileTask = function(config)
 
     this.run = function()
     {
-        var msg = Ext.MessageBox.wait(_('Saving data...'));
+        var id_prefix = this.prefix + '-' + this.ftype,
+            msg       = Ext.MessageBox.wait(_('Saving data...'));
 
         XHR({
             scope  : this,
@@ -26,9 +27,9 @@ ui.task.SaveLangFileTask = function(config)
 
                 if (this.prefix === 'FE') {
                     // Update our store
-                    phpDoc.storeFilesError.getAt(this.storeIdx).set('needcommit', true);
-                    phpDoc.storeFilesError.getAt(this.storeIdx).set('maintainer', o.maintainer);
-                    phpDoc.storeFilesError.getAt(this.storeIdx).commit();
+                    this.storeRecord.set('needcommit', true);
+                    this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.commit();
                 }
 
                 if (this.prefix === 'FNU') {
@@ -41,10 +42,10 @@ ui.task.SaveLangFileTask = function(config)
 
                 if (this.prefix === 'FNR') {
                     // Update our store
-                    phpDoc.storeFilesNeedReviewed.getAt(this.storeIdx).set('needcommit', true);
-                    phpDoc.storeFilesNeedReviewed.getAt(this.storeIdx).set('maintainer', o.maintainer);
-                    phpDoc.storeFilesNeedReviewed.getAt(this.storeIdx).set('reviewed', o.reviewed);
-                    phpDoc.storeFilesNeedReviewed.getAt(this.storeIdx).commit();
+                    this.storeRecord.set('needcommit', true);
+                    this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('reviewed', o.reviewed);
+                    this.storeRecord.commit();
                 }
 
                 if (this.prefix === 'AF') {
@@ -53,6 +54,19 @@ ui.task.SaveLangFileTask = function(config)
 
                 // Add this files into storePendingCommit
                 phpDoc.addToPendingCommit(o.id, this.lang + this.fpath, this.fname, 'update');
+
+                // reset file
+                Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).disable();
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+                );
+                if (this.ftype === 'ALL' || !Ext.getCmp(this.prefix + '-EN-FILE-' + this.fid).isModified) {
+                    // reset tab-panel
+                    Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                        Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                    );
+                }
 
                 // Remove wait msg
                 msg.hide();

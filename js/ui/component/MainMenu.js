@@ -67,8 +67,6 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     {
                                         Ext.getBody().unmask();
 
-                                        var o = Ext.util.JSON.decode(response.responseText);
-
                                         Ext.MessageBox.show({
                                             title   : _('Thanks !'),
                                             msg     : _('Thank you for using this application !'),

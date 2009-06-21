@@ -7,7 +7,14 @@ ui.task.SaveENFileTask = function(config)
 
     this.run = function()
     {
-        var msg = Ext.MessageBox.wait(_('Saving data...'));
+        var id_prefix = this.prefix + '-' + this.ftype,
+            msg       = Ext.MessageBox.wait(_('Saving data...'));
+
+        if (phpDoc.userLogin === 'cvsread') {
+            msg.hide();
+            phpDoc.winForbidden();
+            return;
+        }
 
         XHR({
             scope  : this,
@@ -32,12 +39,12 @@ ui.task.SaveENFileTask = function(config)
 
                 if (this.prefix === 'FE') {
                     // Update our store
-                    phpDoc.storeFilesError.getAt(this.storeIdx).set('needcommit', true);
+                    this.storeRecord.set('needcommit', true);
                 }
 
                 if (this.prefix === 'FNR') {
                     // Update our store
-                    phpDoc.storeFilesNeedReviewed.getAt(this.storeIdx).set('needcommit', true);
+                    this.storeRecord.set('needcommit', true);
                 }
 
                 if (this.prefix === 'AF') {
@@ -46,6 +53,19 @@ ui.task.SaveENFileTask = function(config)
 
                 // Add this files into storePendingCommit
                 phpDoc.addToPendingCommit(o.id, 'en' + this.fpath, this.fname, 'update');
+
+                // reset file
+                Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).disable();
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+                );
+                if (this.ftype === 'ALL' || !Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid).isModified) {
+                    // reset tab-panel
+                    Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                        Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                    );
+                }
 
                 // Remove wait msg
                 msg.hide();

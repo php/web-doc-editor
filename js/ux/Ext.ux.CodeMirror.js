@@ -47,8 +47,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
         obj = this;
     },
 
-    resize: function(height) {
-      this.mirror.frame.style.height = (height-79)+"px";
+    resize: function() {
+      this.mirror.frame.style.height = this.ownerCt.lastSize.height+"px";
     },
 
     onInit: function() {
@@ -85,6 +85,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
      this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
        textWrapping: false,
        width: '100%',
+       height: this.ownerCt.lastSize.height,
        readOnly: this.readOnly,
        content: this.value,
        parserfile: this.parserFile,
@@ -103,15 +104,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
      var scope = this;
 
      if( this.autoResize ) {
-
-       // First, fix the initial size
-       var ownerCtHeight = this.ownerCt.getInnerHeight();
-
-       this.resize(ownerCtHeight);
-
-       // Then, call resize when 'resize' event is fire
        this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
-          this.resize(rawH);
+          this.resize();
        }, this);
      }
 

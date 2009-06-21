@@ -1,8 +1,10 @@
-Ext.namespace('ui','ui.component','ui.component._StaleFileGrid');
+Ext.namespace('ui','ui.component','ui.component._ErrorFileGrid');
 
 //------------------------------------------------------------------------------
-// StaleFileGrid data store
-ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
+// ErrorFileGrid internals
+
+// ErrorFileGrid store
+ui.component._ErrorFileGrid.store = Ext.extend(Ext.data.GroupingStore,
 {
     reader : new Ext.data.JsonReader(
         {
@@ -20,20 +22,20 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
                 name    : 'name',
                 mapping : 'name'
             }, {
-                name    : 'revision',
-                mapping : 'revision'
-            }, {
-                name    : 'en_revision',
-                mapping : 'en_revision'
-            }, {
                 name    : 'maintainer',
                 mapping : 'maintainer'
             }, {
+                name    : 'type',
+                mapping : 'type'
+            }, {
+                name    : 'value_en',
+                mapping : 'value_en'
+            }, {
+                name    : 'value_lang',
+                mapping : 'value_lang'
+            }, {
                 name    : 'needcommit',
                 mapping : 'needcommit'
-            }, {
-                name    : 'isCritical',
-                mapping : 'isCritical'
             }
         ])
     ),
@@ -45,76 +47,66 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
     listeners : {
         datachanged : function(ds)
         {
-            Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
+            Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
         }
     }
 });
 
-// StaleFileGrid view
-ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
+// ErrorFileGrid columns definition
+ui.component._ErrorFileGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Type'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'type'
+}, {
+    header    : _('Maintainer'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'maintainer'
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    'hidden'  : true
+}];
+
+// ErrorFileGrid view
+ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
+    emptyText    : '<div style="text-align: center;">'+_('No Files')+'</div>',
     forceFit     : true,
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    getRowClass : function(record, numIndex, rowParams, store)
+                   '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
+    getRowClass  : function(record, numIndex, rowParams, store)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
-        if (record.data.isCritical) {
-            return 'file-critical';
-        }
-    },
-    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    }
 });
 
-// StaleFileGrid columns definition
-ui.component._StaleFileGrid.columns = [
-    {
-        id        : 'name',
-        header    : _('Files'),
-        sortable  : true,
-        dataIndex : 'name'
-    }, {
-        header    : _('EN revision'),
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'en_revision'
-    }, {
-        header    : '', // bounded in StaleFileGrid.initComponent
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'revision'
-    }, {
-        header    : _('Maintainer'),
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'maintainer'
-    }, {
-        header    : _('Path'),
-        dataIndex : 'path',
-        'hidden'  : true
-    }
-];
-
-// StaleFileGrid context menu
+// ErrorFileGrid context menu
 // config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.component._StaleFileGrid.menu = function(config)
+ui.component._ErrorFileGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
+    ui.component._ErrorFileGrid.menu.superclass.constructor.call(this);
 }
-Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
+Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
         Ext.apply(this,
         {
-            items: [{
+            items : [{
                 scope   : this,
                 text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconTabNeedUpdate',
+                iconCls : 'FilesError',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',
@@ -124,7 +116,7 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 hidden  : this.hideCommit,
-                text    : _('View Diff'),
+                text    : ('View Diff'),
                 iconCls : 'iconViewDiff',
                 handler : function()
                 {
@@ -137,8 +129,8 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                         closable   : true,
                         autoScroll : true,
                         iconCls    : 'iconTabLink',
-                        html: '<div id="diff_content_' + this.rowIdx +
-                              '" class="diff-content"></div>'
+                        html       : '<div id="diff_content_' + this.rowIdx +
+                                     '" class="diff-content"></div>'
                     });
                     Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
 
@@ -166,21 +158,48 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                         }
                     });
                 }
+            }, '-', {
+                text    : _('About error type'),
+                iconCls : 'iconHelp',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('FE-help')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'FE-help',
+                            title      : _('About error type'),
+                            iconCls    : 'iconHelp',
+                            closable   : true,
+                            autoScroll : true,
+                            autoLoad   : './error_type.php'
+                        });
+                        Ext.getCmp('main-panel').setActiveTab('FE-help');
+
+                    } else {
+                        Ext.getCmp('main-panel').setActiveTab('FE-help');
+                    }
+                }
             }]
         });
     }
 });
 
-
 //------------------------------------------------------------------------------
-// StaleFileGrid
-ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
+// ErrorFileGrid
+ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
-    view             : ui.component._StaleFileGrid.view,
     loadMask         : true,
-    autoExpandColumn : 'name',
     bodyBorder       : false,
-    listeners        : {
+    autoExpandColumn : 'name',
+
+    view    : ui.component._ErrorFileGrid.view,
+    columns : ui.component._ErrorFileGrid.columns,
+
+    listeners : {
+        render : function(grid)
+        {
+            grid.view.refresh();
+        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
             var FilePath = grid.store.getAt(rowIndex).data.path,
@@ -188,7 +207,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._StaleFileGrid.menu({
+            new ui.component._ErrorFileGrid.menu({
                 hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
                 grid       : grid,
                 event      : e,
@@ -203,43 +222,53 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
-                en_revision = storeRecord.data.en_revision,
-                revision    = storeRecord.data.revision,
-                FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
-                diff        = '';
+                FileID      = Ext.util.md5('FE-' + phpDoc.userLang + FilePath + FileName),
+                error       = [];
 
             // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
+            if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
 
-                if (phpDoc.userConf.conf_needupdate_diff === "using-viewvc") {
-                    diff = ui.component.ViewVCDiff;
-                } else if (phpDoc.userConf.conf_needupdate_diff === "using-exec") {
-                    diff = ui.component.ExecDiff;
-                }
+                // Find all error for this file to pass to error_type.php page
+                error = [];
 
-                Ext.getCmp('main-panel').add(
+                grid.store.each(function(record)
                 {
-                    id             : 'FNU-' + FileID,
-                    layout         : 'border',
-                    title          : FileName,
-                    originTitle    : FileName,
-                    iconCls        : 'iconTabNeedUpdate',
-                    closable       : true,
-                    defaults       : { split : true },
-                    tabTip         : String.format(
-                        _('Need Update: in {0}'), FilePath
+                    if (   record.data.path === FilePath
+                        && record.data.name === FileName
+                        && !error[record.data.type]
+                    ) {
+                        error.push(record.data.type);
+                    }
+                });
+
+                Ext.getCmp('main-panel').add({
+                    id          : 'FE-' + FileID,
+                    title       : FileName,
+                    layout      : 'border',
+                    iconCls     : 'iconTabError',
+                    closable    : true,
+                    originTitle : FileName,
+                    defaults    : { split : true },
+                    tabTip      : String.format(
+                        _('File with error : in {0}'), FilePath
                     ),
                     items : [
-                        new diff({
+                        {
+                            xtype       : 'panel',
+                            id          : 'FE-error-desc-' + FileID,
                             region      : 'north',
+                            layout      : 'fit',
+                            title       : _('Error description'),
+                            height      : 150,
                             collapsible : true,
-                            prefix      : 'FNU',
-                            fid         : FileID,
-                            fpath       : FilePath,
-                            fname       : FileName,
-                            rev1        : revision,
-                            rev2        : en_revision
-                        }), {
+                            collapsed   : true,
+                            items : {
+                                xtype      : 'iframepanel',
+                                id         : 'FE-error-type-' + FileID,
+                                loadMask   : true,
+                                defaultSrc : './error_type.php?dir=' + FilePath + '&file=' + FileName
+                            }
+                        }, {
                             region      : 'west',
                             xtype       : 'panel',
                             title       : _('CvsLog'),
@@ -252,34 +281,34 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 xtype       : 'tabpanel',
                                 activeTab   : 0,
                                 tabPosition : 'bottom',
-                                defaults    : { autoScroll: true },
+                                defaults    : { autoScroll : true },
                                 items       : [
                                     new ui.component.CVSLogGrid({
                                         layout    : 'fit',
                                         title     : phpDoc.userLang,
-                                        prefix    : 'FNU-LANG',
+                                        prefix    : 'FE-LANG',
                                         fid       : FileID,
                                         fpath     : phpDoc.userLang + FilePath,
                                         fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                        loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
                                     }),
                                     new ui.component.CVSLogGrid({
                                         layout    : 'fit',
                                         title     : 'en',
-                                        prefix    : 'FNU-EN',
+                                        prefix    : 'FE-EN',
                                         fid       : FileID,
                                         fpath     : 'en' + FilePath,
                                         fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                        loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
                                     })
                                 ]
                             }
                         }, new ui.component.FilePanel(
                         {
-                            id             : 'FNU-LANG-PANEL-' + FileID,
+                            id             : 'FE-LANG-PANEL-' + FileID,
                             region         : 'center',
                             title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
-                            prefix         : 'FNU',
+                            prefix         : 'FE',
                             ftype          : 'LANG',
                             fid            : FileID,
                             fpath          : FilePath,
@@ -289,14 +318,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             storeRecord    : storeRecord,
                             syncScrollCB   : true,
                             syncScroll     : true,
-                            syncScrollConf : 'conf_needupdate_scrollbars'
+                            syncScrollConf : 'conf_error_scrollbars'
                         }), new ui.component.FilePanel(
                         {
-                            id             : 'FNU-EN-PANEL-' + FileID,
+                            id             : 'FE-EN-PANEL-' + FileID,
                             region         : 'east',
                             width          : 575,
                             title          : _('en File: ') + FilePath + FileName,
-                            prefix         : 'FNU',
+                            prefix         : 'FE',
                             ftype          : 'EN',
                             fid            : FileID,
                             fpath          : FilePath,
@@ -305,46 +334,51 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             parser         : 'xml',
                             storeRecord    : storeRecord,
                             syncScroll     : true,
-                            syncScrollConf : 'conf_needupdate_scrollbars'
+                            syncScrollConf : 'conf_error_scrollbars'
                         })
                     ]
                 });
-                Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+                Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
+
+                // Set the bg image for north collapsed el
+                if (Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl) {
+                    Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl.addClass(
+                        'x-layout-collapsed-east-error-desc'
+                    );
+                }
 
             } else {
                 // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+                Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
             }
         }
     },
 
     initComponent : function()
     {
-        ui.component._StaleFileGrid.columns[2].header = String.format(
-            _('{0} revision'), Ext.util.Format.uppercase(phpDoc.userLang)
-        );
-
         Ext.apply(this,
         {
-            columns : ui.component._StaleFileGrid.columns,
-            store   : new ui.component._StaleFileGrid.store({
+            store : new ui.component._ErrorFileGrid.store({
                 autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
                     url : './php/controller.php'
                 }),
-                baseParams : { task : 'getFilesNeedUpdate' }
+                baseParams : { task : 'getFilesError' }
             }),
-            tbar:[
+            tbar : [
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({
-                    id              : 'FNU-filter',
+                    id              : 'FE-filter',
                     width           : 180,
                     hideTrigger1    : true,
                     enableKeyEvents : true,
-                    validateOnBlur  : false,
+
+                    validateOnBlur  :  false,
                     validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
+
+                    trigger1Class : 'x-form-clear-trigger',
+                    trigger2Class : 'x-form-search-trigger',
+
                     listeners : {
                         keypress : function(field, e)
                         {
@@ -353,13 +387,13 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             }
                         }
                     },
-                    onTrigger1Click: function()
+                    onTrigger1Click : function()
                     {
                         this.setValue('');
                         this.triggers[0].hide();
-                        phpDoc.staleFileGrid.store.clearFilter();
+                        phpDoc.errorFileGrid.store.clearFilter();
                     },
-                    onTrigger2Click: function()
+                    onTrigger2Click : function()
                     {
                         var v = this.getValue();
 
@@ -371,11 +405,11 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
-                        phpDoc.staleFileGrid.store.filter('maintainer', v);
+                        phpDoc.errorFileGrid.store.filter('maintainer', v);
                     }
                 })
             ]
         });
-        ui.component.StaleFileGrid.superclass.initComponent.call(this);
+        ui.component.ErrorFileGrid.superclass.initComponent.call(this);
     }
 });

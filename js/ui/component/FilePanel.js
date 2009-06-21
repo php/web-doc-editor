@@ -5,6 +5,8 @@ Ext.namespace('ui','ui.component');
 // config - {
 //    id, title, prefix, ftype {'EN' | 'LANG'},
 //    fid, fpath, fname, lang,
+//    readOnly,                    indicate this file is readonly
+//    isPatch, fuid,               pending patch file config
 //    parser, storeRecord,
 //    syncScrollCB {true | false}, display sync-scroll checkbox
 //    syncScroll {true | false},   indicate whether sync the scroll with corresponding file
@@ -12,8 +14,6 @@ Ext.namespace('ui','ui.component');
 // }
 ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
-    height       : 'auto',
-    width        : 'auto',
     activeScroll : false,  // scroll lock
 
     initComponent : function()
@@ -58,22 +58,129 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         '</div>&nbsp;&nbsp;'
         }];
 
+        if (!this.readOnly) {
+            this.tbar = (this.isPatch) ? [{
+                id       : id_prefix + '-PANEL-btn-save-' + this.fid,
+                scope    : this,
+                tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file'),
+                iconCls  : 'saveFile',
+                handler  : function()
+                {
+                    new ui.task.AcceptPatchTask({
+                        fid         : this.fid,
+                        fpath       : this.fpath,
+                        fname       : this.fname,
+                        fuid        : this.fuid,
+                        storeRecord : this.storeRecord
+                    }).run();
+                }
+            }, {
+                id       : id_prefix + '-PANEL-btn-reject-' + this.fid,
+                scope    : this,
+                tooltip  : _('<b>Reject</b> this patch'),
+                iconCls  : 'iconPageDelete',
+                handler  : function()
+                {
+                    new ui.task.RejectPatchTask({
+                        fid         : this.fid,
+                        fuid        : this.fuid,
+                        storeRecord : this.storeRecord
+                    }).run();
+                }
+            }, '-', {
+                scope   : this,
+                tooltip : _('<b>Re-indent</b> all this file'),
+                iconCls : 'iconIndent',
+                handler : function()
+                {
+                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+                }
+            }] : [{
+                id       : id_prefix + '-PANEL-btn-save-' + this.fid,
+                scope    : this,
+                tooltip  : _('<b>Save</b> this file'),
+                iconCls  : 'saveFile',
+                disabled : true,
+                handler  : function()
+                {
+                    if (this.lang === 'en') {
+
+                        new ui.task.SaveENFileTask({
+                            prefix      : this.prefix,
+                            ftype       : this.ftype,
+                            fid         : this.fid,
+                            fpath       : this.fpath,
+                            fname       : this.fname,
+                            storeRecord : this.storeRecord
+                        }).run();
+
+                    } else {
+
+                        phpDoc.saveLangFile(
+                            this.prefix, this.ftype, this.fid, this.fpath, this.fname,
+                            this.lang, this.storeRecord, (this.prefix === 'AF')
+                        );
+                    }
+                }
+            }, {
+                id       : id_prefix + '-PANEL-btn-saveas-' + this.fid,
+                scope    : this,
+                tooltip  : _('<b>Save as</b> a patch'),
+                iconCls  : 'saveAsFile',
+                disabled : true,
+                handler  : function()
+                {
+                    new ui.component.PatchPrompt({
+                        prefix : this.prefix,
+                        ftype  : this.ftype,
+                        fid    : this.fid,
+                        fpath  : this.fpath,
+                        fname  : this.fname,
+                        lang   : this.lang,
+                        defaultEmail : (phpDoc.userLogin !== 'cvsread')
+                                       ? phpDoc.userLogin + '@php.net' : ''
+                    }).show();
+                }
+            }, '-', {
+                scope   : this,
+                tooltip : _('<b>Re-indent</b> all this file'),
+                iconCls : 'iconIndent',
+                handler : function()
+                {
+                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+                }
+            }, (this.lang === 'en')
+                ? phpDoc.menuMarkupEN(id_prefix + '-FILE-' + this.fid)
+                : phpDoc.menuMarkupLANG(id_prefix + '-FILE-' + this.fid, phpDoc)
+            ];
+        } else {
+            this.tbar = [{}]; // empty tbar for readonly file
+        }
+
         Ext.apply(this,
         {
             originTitle : this.title,
             items : [{
                 xtype      : 'codemirror',
                 id         : id_prefix + '-FILE-' + this.fid,
+                readOnly   : this.readOnly,
                 parser     : this.parser,
                 isModified : false,
                 listeners  : {
                     scope  : this,
                     initialize : function()
                     {
-                        phpDoc.getFile(
-                            this.fid, this.lang + this.fpath, this.fname,
-                            id_prefix + '-PANEL-', id_prefix + '-FILE-'
-                        );
+                        if (this.isPatch) {
+                            phpDoc.getFile(
+                                this.fid, this.fpath, this.fname + '.' + this.fuid + '.patch',
+                                id_prefix + '-PANEL-', id_prefix + '-FILE-'
+                            );
+                        } else {
+                            phpDoc.getFile(
+                                this.fid, this.lang + this.fpath, this.fname,
+                                id_prefix + '-PANEL-', id_prefix + '-FILE-'
+                            );
+                        }
                     },
                     cmchange : function(keyCode, charCode, obj)
                     {
@@ -116,8 +223,13 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).enable();
                                 Ext.get(id_prefix + '-PANEL-btn-save-' + this.fid).frame("3F8538");
 
-                                Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
-                                Ext.get(id_prefix + '-PANEL-btn-saveas-' + this.fid).frame("3F8538");
+                                if (this.isPatch) {
+                                    Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).enable();
+                                    Ext.get(id_prefix + '-PANEL-btn-reject-' + this.fid).frame("3F8538");
+                                } else {
+                                    Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
+                                    Ext.get(id_prefix + '-PANEL-btn-saveas-' + this.fid).frame("3F8538");
+                                }
 
                                 // Mark as modified
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;
@@ -136,8 +248,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     cmscroll : function(scrollY)
                     {
                         if (this.syncScroll && phpDoc.userConf[this.syncScrollConf] === 'true') {
-                            var opp_prefix = (this.ftype === 'EN') ? this.prefix + '-LANG' : this.prefix + '-EN',
-                                opp_panel  = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
+                            var opp_prefix;
+                            switch (this.ftype) {
+                                case 'EN':     opp_prefix = this.prefix + '-LANG';   break;
+                                case 'LANG':   opp_prefix = this.prefix + '-EN';     break;
+                                case 'PATCH':  opp_prefix = this.prefix + '-ORIGIN'; break;
+                                case 'ORIGIN': opp_prefix = this.prefix + '-PATCH';  break;
+                            }
+                            var opp_panel  = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
                                 opp_file   = Ext.getCmp(opp_prefix + '-FILE-' + this.fid);
 
                             // scroll lock logic:
@@ -155,57 +273,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }
-            }],
-            tbar : [{
-                id       : id_prefix + '-PANEL-btn-save-' + this.fid,
-                scope    : this,
-                tooltip  : _('<b>Save</b> this file'),
-                iconCls  : 'saveFile',
-                disabled : true,
-                handler  : function()
-                {
-                    if (this.lang === 'en') {
-                        // TODO: replace "_saveEnFile" with "saveEnFile"
-                        // when no FilePanel depends on deprecated function
-                        phpDoc._saveEnFile(
-                            this.prefix, this.ftype, this.fid, this.fpath,
-                            this.fname, this.storeRecord
-                        );
-                    } else {
-                        // TODO: replace "_saveLangFile" with "saveLangFile"
-                        // when no FilePanel depends on deprecated function
-                        phpDoc._saveLangFile(
-                            this.prefix, this.ftype, this.fid, this.fpath, this.fname,
-                            this.lang, this.storeRecord, (this.prefix === 'AF')
-                        );
-                    }
-                }
-            }, {
-                id       : id_prefix + '-PANEL-btn-saveas-' + this.fid,
-                scope    : this,
-                tooltip  : _('<b>Save as</b> a patch'),
-                iconCls  : 'saveAsFile',
-                disabled : true,
-                handler  : function()
-                {
-                    // TODO: replace "_savePatch" with "savePatch"
-                    // when no FilePanel depends on deprecated function
-                    phpDoc._savePatch(
-                        this.prefix, this.ftype, this.fid, this.fpath,
-                        this.fname, this.lang
-                    );
-                }
-            }, '-', {
-                tooltip : _('<b>Re-indent</b> all this file'),
-                iconCls : 'iconIndent',
-                handler : function()
-                {
-                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
-                }
-            }, (this.lang === 'en')
-                ? phpDoc.menuMarkupEN(id_prefix + '-FILE-' + this.fid)
-                : phpDoc.menuMarkupLANG(id_prefix + '-FILE-' + this.fid, phpDoc)
-            ]
+            }]
         });
         ui.component.FilePanel.superclass.initComponent.call(this);
     }
