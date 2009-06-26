@@ -236,7 +236,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                             ftype       : 'update',
                             fpath       : this.fpath,
                             fname       : this.fname
-                        }).run();
+                        });
                     }
                 }, '-', new ui.component._PendingCommitGrid.menu.common({
                     rowIdx : this.rowIdx
@@ -327,7 +327,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 FileName    = storeRecord.data.name;
 
             if (FileType === 'update') {
-                phpDoc.openFile(FilePath, FileName);
+                ui.component.RepositoryTree.instance.openFile(FilePath, FileName);
             }
 
             if (FileType === 'delete') {
@@ -336,13 +336,14 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                     ftype       : FileType,
                     fpath       : FilePath,
                     fname       : FileName
-                }).run();
+                });
             }
         }
     },
 
     initComponent : function()
     {
+        ui.component.PendingCommitGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._PendingCommitGrid.store({
@@ -354,5 +355,33 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             })
         });
         ui.component.PendingCommitGrid.superclass.initComponent.call(this);
+    },
+
+    addRecord : function(fid, fpath, fname, type)
+    {
+        var exist = false;
+
+        this.store.each(function(r)
+        {
+            if (r.data.path === fpath && r.data.name === fname) {
+                exist = true;
+            }
+        });
+
+        if (!exist) {
+            // if not exist, add to store
+            this.store.insert(0,
+                new this.store.recordType({
+                    id   : fid,
+                    path : fpath,
+                    name : fname,
+                    by   : phpDoc.userLogin,
+                    date : new Date(),
+                    type : type
+                })
+            );
+            this.store.groupBy('path', true); // regroup
+        }
     }
 });
+ui.component.PendingCommitGrid.prototype.instance = null;

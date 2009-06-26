@@ -18,12 +18,12 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 text     : _('Refresh all data'),
                 disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
                 iconCls  : 'refresh',
-                handler  : phpDoc.WinUpdate
+                handler  : phpDoc.WinUpdate // TODO
             }, {
                 text     : _('Check Build'),
                 disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
                 iconCls  : 'checkBuild',
-                handler  : phpDoc.WinCheckBuild
+                handler  : phpDoc.WinCheckBuild // TODO
             }, {
                 text    : _('EN tools'),
                 handler : function() { return false },
@@ -31,11 +31,55 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     items : [{
                         text    : _('Translation build status'),
                         iconCls : 'BuildStatus',
-                        handler : phpDoc.newTabBuildStatus
+                        handler : function()
+                        {
+                            var tab = Ext.getCmp('tab-build-status');
+
+                            if (tab === undefined ) {
+                                // if tab not exist, create new tab
+                                Ext.getCmp('main-panel').add({
+                                    id       : 'tab-build-status',
+                                    title    : _('Translation build status'),
+                                    iconCls  : 'BuildStatus',
+                                    layout   : 'fit',
+                                    closable : true,
+                                    html     : 'nothing'
+                                });
+                                tab = Ext.getCmp('tab-build-status');
+                            }
+
+                            if (tab.items) tab.removeAll(true);
+                            tab.add(new ui.component.BuildStatus());
+                            tab.doLayout(); // render the grid
+
+                            Ext.getCmp('main-panel').setActiveTab('tab-build-status');
+                        }
                     }, {
                         text    : _('Script Check doc'),
                         iconCls : 'CheckDoc',
-                        handler : phpDoc.newTabCheckDoc
+                        handler : function()
+                        {
+                            var tab = Ext.getCmp('tab-check-doc');
+
+                            if (tab === undefined) {
+                                // if tab not exist, create new tab
+                                Ext.getCmp('main-panel').add({
+                                    id       : 'tab-check-doc',
+                                    title    : 'Check Doc',
+                                    iconCls  : 'CheckDoc',
+                                    layout   : 'fit',
+                                    closable : true,
+                                    html     : 'nothing'
+                                });
+                                tab = Ext.getCmp('tab-check-doc');
+                            }
+
+                            if (tab.items) tab.removeAll(true);
+                            tab.add(new ui.component.CheckDoc());
+                            tab.doLayout(); // render the grid
+
+                            Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
+                        }
                     }]
                 })
             }, '-', {
@@ -43,7 +87,10 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls : 'iconConf',
                 tooltip : '<b>Configure</b> this tool',
                 id      : 'winconf-btn',
-                handler : phpDoc.WinConf
+                handler : function()
+                {
+                    new ui.component.EditorConf().show(Ext.get('winconf-btn'));
+                }
             }, '-', {
                 text     : _('Erase my personal data'),
                 disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
@@ -108,7 +155,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls : 'iconHelp',
                 handler : function()
                 {
-                    phpDoc.WinAbout();
+                    new ui.component.About().show(Ext.get('winabout-btn'));
                 }
             }]
         });

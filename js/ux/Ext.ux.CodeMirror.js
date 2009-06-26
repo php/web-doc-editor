@@ -48,7 +48,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
     },
 
     resize: function() {
-      this.mirror.frame.style.height = this.ownerCt.lastSize.height+"px";
+      this.mirror.frame.style.height = this.ownerCt.lastSize.height - 79 +"px";
     },
 
     onInit: function() {

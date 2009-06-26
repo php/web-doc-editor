@@ -356,6 +356,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
+        ui.component.ErrorFileGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._ErrorFileGrid.store({
@@ -391,7 +392,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         this.setValue('');
                         this.triggers[0].hide();
-                        phpDoc.errorFileGrid.store.clearFilter();
+                        ui.component.ErrorFileGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
                     {
@@ -405,7 +406,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
-                        phpDoc.errorFileGrid.store.filter('maintainer', v);
+                        ui.component.ErrorFileGrid.instance.store.filter('maintainer', v);
                     }
                 })
             ]
@@ -413,3 +414,4 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.ErrorFileGrid.superclass.initComponent.call(this);
     }
 });
+ui.component.ErrorFileGrid.prototype.instance = null;

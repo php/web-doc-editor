@@ -4,20 +4,17 @@ var phpDoc = function()
     Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
 
     return {
-        // Task
-        TaskPing : '',
-
         // Store
         storeCommitLogMessage: '', //
 
         // Variable
-        userLogin  : '',
-        userLang   : '',
+        userLogin  : null,
+        userLang   : null,
         appName    : 'PhpDocumentation Online Editor',
         appVer     : '0.2',
-        uiRevision : '$Revision: 1.63 $',
+        uiRevision : '$Revision: 1.64 $',
 
-        userConf: {
+        userConf : {
             'conf_needupdate_diff'       : 'using-exec',
             'conf_needupdate_scrollbars' : true,
             'conf_needupdate_displaylog' : false,
@@ -37,65 +34,20 @@ var phpDoc = function()
             'conf_theme' : 'themes/empty.css'
         },
 
-        // Accordin contents
-        treeAllFiles      : '',
-        staleFileGrid     : '',
-        errorFileGrid     : '',
-        pendingPatchGrid  : '',
-        pendingCommitGrid : '',
-        pendingReviewGrid : '',
-
-        filePendingOpen: '',
+        filePendingOpen : '',
 
         init : function()
         {
             // Stop default contextmenu on all this app
-            Ext.getBody().on('contextmenu', function(e){
+            Ext.getBody().on('contextmenu', function(e) {
                 e.stopEvent();
             }, this);
 
             // We load the configuration for this user
-            XHR({
-                url     : './php/controller.php',
-                params  : { task : 'getConf' },
-                scope   : this,
-                success : function(response)
-                {
-                    var o = Ext.decode(response.responseText);
+            new ui.task.LoadConfigTask();
+        },
 
-                    this.userLogin = o.mess.userLogin;
-                    this.userLang  = o.mess.userLang;
-
-                    this.userConf.conf_needupdate_diff       = o.mess.userConf.conf_needupdate_diff;
-                    this.userConf.conf_needupdate_scrollbars = o.mess.userConf.conf_needupdate_scrollbars;
-                    this.userConf.conf_needupdate_displaylog = o.mess.userConf.conf_needupdate_displaylog;
-
-                    this.userConf.conf_error_skipnbliteraltag = o.mess.userConf.conf_error_skipnbliteraltag;
-                    this.userConf.conf_error_scrollbars       = o.mess.userConf.conf_error_scrollbars;
-                    this.userConf.conf_error_displaylog       = o.mess.userConf.conf_error_displaylog;
-
-                    this.userConf.conf_reviewed_scrollbars = o.mess.userConf.conf_reviewed_scrollbars;
-                    this.userConf.conf_reviewed_displaylog = o.mess.userConf.conf_reviewed_displaylog;
-
-                    this.userConf.conf_allfiles_displaylog = o.mess.userConf.conf_allfiles_displaylog;
-
-                    this.userConf.conf_patch_scrollbars = o.mess.userConf.conf_patch_scrollbars;
-                    this.userConf.conf_patch_displaylog = o.mess.userConf.conf_patch_displaylog;
-
-                    //For the theme, we apply this.
-                    this.userConf.conf_theme     = o.mess.userConf.conf_theme;
-                    Ext.get('appTheme').dom.href = this.userConf.conf_theme;
-
-                    // Load datastore
-                    this.loadDataStore();
-
-                    // Draw the interface
-                    this.drawInterface();
-                }
-            });
-        }, // init
-
-        winForbidden: function()
+        winForbidden : function()
         {
             Ext.MessageBox.alert(
                 _('Forbidden'),
@@ -103,122 +55,8 @@ var phpDoc = function()
             );
         },
 
-        menuMarkupLANG: function(panel, scope){
-
-            var menu, subMenu;
-
-            subMenu = new Ext.menu.Menu({
-                items: [{
-                    text: _('Reviewed tag'),
-                    handler: function(){
-                        Ext.getCmp(panel).insertIntoLine(2, 'end', "\n<!-- Reviewed: no -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Revcheck tag'),
-                    handler: function(){
-                        Ext.getCmp(panel).insertIntoLine(2, "end", "\n<!-- EN-Revision: 1.XX Maintainer: " + scope.userLogin + " Status: ready -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }]
-            });
-
-            menu = {
-                text: _('MarkUp'),
-                iconCls: 'iconInsertCode',
-                menu: subMenu
-            };
-            return menu;
-        }, // menuMarkupLANG
-        menuMarkupEN: function(panel){
-
-            var menu, subMenu;
-
-            subMenu = new Ext.menu.Menu({
-                items: [{
-                    text: _('Description section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, " <refsect1 role=\"description\"><!-- {{{ -->\r\n  &reftitle.description;\r\n  <methodsynopsis>\r\n   <!-- Example: All functions have this -->\r\n   <type>thereturned type</type><methodname>func_name</methodname>\r\n   <!-- Example: Required parameter -->\r\n   <methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   <!-- Example: Optional parameter, also by reference -->\r\n   <methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   <!-- Example: If no methodparams exist (void), use this -->\r\n   <void />\r\n  </methodsynopsis>\r\n  <para>\r\n   The function description goes here.\r\n  </para>\r\n </refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Parameters section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n&reftitle.parameters;\r\n<para>\r\n<variablelist>\r\n<varlistentry>\r\n<term><parameter>firstparameter</parameter></term>\r\n<listitem>\r\n<para>\r\nIts description\r\n</para>\r\n</listitem>\r\n</varlistentry>\r\n<varlistentry>\r\n<term>\r\n<parameter>secondparameter</parameter>\r\n</term>\r\n<listitem>\r\n<para>\r\nIts description\r\n</para>\r\n</listitem>\r\n</varlistentry>\r\n</variablelist>\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Return section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n&reftitle.returnvalues;\r\n<para>\r\nWhat this function returns, first on success, then failure.\r\nIf simply true on success and false on failure, just use &return.success; here.\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Error section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n&reftitle.errors;\r\n<para>\r\nWhen does this function issue E_* level errors, and/or throw exceptions.\r\n</para>\r\n</refsect1><!-- }}} -->\r\n");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Unicode section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n&reftitle.unicode;\r\n<para>\r\nInformation specific to unicode, from the PHP 6 changes.\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Changelog section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n&reftitle.changelog;\r\n<para>\r\n<informaltable>\r\n<tgroup cols=\"2\">\r\n<thead>\r\n<row>\r\n<entry>&Version;</entry>\r\n<entry>&Description;</entry>\r\n</row>\r\n</thead>\r\n<tbody>\r\n<row>\r\n<entry>Enter the version of change here</entry>\r\n<entry>\r\nDescribe the change\r\n</entry>\r\n</row>\r\n</tbody>\r\n</tgroup>\r\n</informaltable>\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Examples section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n&reftitle.examples;\r\n<para>\r\n<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n<title><function>function-name</function> example</title>\r\n<para>\r\nAny text that describes the purpose of the example, or what\r\ngoes on in the example should be here. (Inside the <example> tag, not out).\r\n</para>\r\n<programlisting role=\"php\">\r\n<![CDATA[\r\n<?php\r\nif ($anexample === true) {\r\necho 'Use the PEAR Coding standards';\r\n}\r\nif ($thereisoutput === 'and it is multiple lines') {\r\necho 'Use a screen like we did below';\r\n}\r\n?>\r\n]]>\r\n</programlisting>\r\n&example.outputs.similar;\r\n<screen>\r\n<![CDATA[\r\nUse the PEAR Coding standards\r\nUse a screen like we did below\r\n]]>\r\n</screen>\r\n</example><!-- }}} -->\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('Notes section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n&reftitle.notes;\r\n<caution>\r\n<para>\r\nAny notes that don't fit anywhere else should go here.\r\n90% of the time, notes, warnings or cautions are better placed in the\r\nparameters section. Consider that before using this section!\r\n</para>\r\n</caution>\r\n&note.language-construct;\r\n&note.not-bin-safe;\r\n&note.registerglobals;\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }, {
-                    text: _('SeeAlso section'),
-                    handler: function(){
-                        var position = Ext.util.JSON.decode(Ext.getCmp(panel).getCursorPosition());
-
-                        Ext.getCmp(panel).insertIntoLine(position.line, 0, "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n&reftitle.seealso;\r\n<para>\r\n<simplelist>\r\n<member><function>somefunc</function></member>\r\n<member><function>another_func</function></member>\r\n<member>The <link linkend=\"something\">something appendix</link></member>\r\n</simplelist>\r\n</para>\r\n</refsect1><!-- }}} -->");
-                        Ext.getCmp(panel).focus();
-                    }
-                }]
-            });
-
-            menu = {
-                text: _('MarkUp'),
-                iconCls: 'iconInsertCode',
-                menu: subMenu
-            };
-            return menu;
-        }, // menuMarkupEN
-        loadDataStore: function(){
-
+        loadDataStore: function()
+        {
             // Store : Commit log
             this.storeCommitLogMessage = new Ext.data.Store({
                 //autoLoad: true,
@@ -241,101 +79,25 @@ var phpDoc = function()
                 }])
             });
 
-        },// loadDataStore
-
-        newTabCheckDoc : function()
-        {
-            var tab = Ext.getCmp('tab-check-doc');
-
-            if (tab === undefined) {
-                // if tab not exist, create new tab
-                Ext.getCmp('main-panel').add({
-                    id       : 'tab-check-doc',
-                    title    : 'Check Doc',
-                    iconCls  : 'CheckDoc',
-                    layout   : 'fit',
-                    closable : true,
-                    html     : 'nothing'
-                });
-                tab = Ext.getCmp('tab-check-doc');
-            }
-
-            if (tab.items) tab.removeAll(true);
-            tab.add(new ui.component.CheckDoc());
-            tab.doLayout(); // render the grid
-
-            Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
         },
 
-        newTabBuildStatus : function()
-        {
-            var tab = Ext.getCmp('tab-build-status');
-
-            if (tab === undefined ) {
-                // if tab not exist, create new tab
-                Ext.getCmp('main-panel').add({
-                    id       : 'tab-build-status',
-                    title    : _('Translation build status'),
-                    iconCls  : 'BuildStatus',
-                    layout   : 'fit',
-                    closable : true,
-                    html     : 'nothing'
-                });
-                tab = Ext.getCmp('tab-build-status');
-            }
-
-            if (tab.items) tab.removeAll(true);
-            tab.add(new ui.component.BuildStatus());
-            tab.doLayout(); // render the grid
-
-            Ext.getCmp('main-panel').setActiveTab('tab-build-status');
-        },
-
-        openFile: function(FilePath, FileName)
-        {
-            Ext.getCmp('acc-all-files').expand();
-
-            var t = FilePath.split('/');
-
-            function GoToNode(node, scope) {
-
-                node.expand(false, true, function(node){
-
-                    var i;
-
-                    node.ensureVisible();
-                    if (t[0] && t[0] !== '') {
-                        // walk into childs
-                        for (i = 0; i < node.childNodes.length; i = i + 1) {
-
-                            if (node.childNodes[i].text === t[0]) {
-                                t.shift();
-                                GoToNode(node.childNodes[i], scope);
-                            }
-                        }
-
-                    }
-                    else {
-                        // walk into childs
-                        // leaf node
-                        for (i = 0; i < node.childNodes.length; i = i + 1) {
-                            if (node.childNodes[i].text === FileName) {
-                                node.childNodes[i].ensureVisible();
-                                node.childNodes[i].ui.highlight();
-                                scope.treeAllFiles.fireEvent('dblclick', node.childNodes[i]);
-                            }
-                        }
-                    }
-                });
-            }
-
-            GoToNode(this.treeAllFiles.root, this);
-        }, //openFile
-
-        saveLangFile: function(prefix, ftype, fid, fpath, fname, lang, record)
+        saveLangFile : function(prefix, ftype, fid, fpath, fname, lang, record)
         {
             if (this.userLogin === 'cvsread') {
                 this.winForbidden();
+                return;
+            }
+
+            if (prefix === 'AF') {
+                new ui.task.SaveLangFileTask({
+                    prefix      : prefix,
+                    ftype       : ftype,
+                    fid         : fid,
+                    fpath       : fpath,
+                    fname       : fname,
+                    lang        : lang,
+                    storeRecord : record
+                });
                 return;
             }
 
@@ -356,7 +118,7 @@ var phpDoc = function()
                             fname       : fname,
                             lang        : lang,
                             storeRecord : record
-                        }).run();
+                        });
 
                     } else if (btn === 'yes') {
 
@@ -368,194 +130,17 @@ var phpDoc = function()
                             fname       : fname,
                             lang        : lang,
                             storeRecord : record
-                        }).run(); // include SaveLangFileTask when no err
+                        }); // include SaveLangFileTask when no err
                     }
                 }
             });
 
         },
-
-        getFile: function(FileID, FilePath, FileName, Panel1, Panel2)
-        {
-            // Mask the panel
-            Ext.get(Panel1 + FileID).mask(
-                '<img src="themes/img/loading.gif" ' +
-                    'style="vertical-align: middle;" /> '+
-                _('Loading...')
-            );
-
-            // We load the File
-            XHR({
-                scope  : this,
-                url    : './php/controller.php',
-                params : {
-                    task     : 'getFile',
-                    FilePath : FilePath,
-                    FileName : FileName
-                },
-                success : function(response)
-                {
-                    var o = Ext.util.JSON.decode(response.responseText);
-
-                    Ext.getCmp(Panel2 + FileID).setCode(o.content);
-                    Ext.get(Panel1 + FileID).unmask();
-                },
-                callback : function()
-                {
-                    // Reviewed function to open all files of an extension
-                    if (this.filePendingOpen[0]) {
-                        this.filePendingOpen.shift();
-                        if (this.filePendingOpen[0]) {
-                            if (this.filePendingOpen[0][0]) {
-                                this.openFile(this.filePendingOpen[0][0], this.filePendingOpen[0][1]);
-                            }
-                        }
-                    }
-                }
-            });
-        }, // getFile
-
-        addToPendingPatch : function(FilePath, FileName, uniqID)
-        {
-            var dt, r;
-
-            // Add this files into storePendingCommit
-            dt = new Date();
-
-            r = new this.pendingPatchGrid.store.recordType({
-                id: Ext.id('', ''),
-                path: FilePath,
-                name: FileName,
-                by: this.userLogin,
-                uniqID: uniqID,
-                date: dt
-            });
-            this.pendingPatchGrid.store.insert(0, r);
-
-        }, //addToPendingPatch
-
-        addToPendingCommit : function(FileID, FilePath, FileName, type)
-        {
-            var alReady, dt, r1;
-
-            alReady = false;
-            // Check if this file is not already into this store
-            this.pendingCommitGrid.store.each(function(r){
-
-                if (r.data.path === FilePath && r.data.name === FileName) {
-                    alReady = true;
-                }
-
-            });
-
-            if (!alReady) {
-                // Add this files into storePendingCommit
-                dt = new Date();
-
-                r1 = new this.pendingCommitGrid.store.recordType({
-                    id: FileID,
-                    path: FilePath,
-                    name: FileName,
-                    by: this.userLogin,
-                    date: dt,
-                    type: type
-                });
-                this.pendingCommitGrid.store.insert(0, r1);
-                this.pendingCommitGrid.store.groupBy('path', true);
-            }
-
-        }, //addToPendingCommit
-
-        NewTabBugs : function(BugsId, BugsUrl, BugsTitle)
-        {
-            Ext.getCmp('main-panel').add({
-                id         : 'mifp_bugs_' + BugsId,
-                xtype      : 'iframepanel',
-                title      : _('Loading...'),
-                tabTip     : BugsTitle,
-                iconCls    : 'iconBugs',
-                loadMask   : true,
-                defaultSrc : BugsUrl,
-                listeners : {
-                    'documentloaded' : function(frame)
-                    {
-                        frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
-                    }
-                }
-            });
-            Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
-        },
-
-        NewTabMailing: function(MailId, MailUrl, MailTitle)
-        {
-            Ext.getCmp('main-panel').add({
-                xtype: 'iframepanel',
-                id: 'mifp_' + MailId,
-                title: _('Loading...'),
-                tabTip: MailTitle,
-                iconCls: 'home-mailing-title',
-                loadMask: true,
-                defaultSrc: MailUrl,
-                listeners: {
-                    'documentloaded': function(frame){
-                        frame.ownerCt.setTitle(Ext.util.Format.substr(MailTitle, 0, 20) + '...');
-                    }
-                }
-            });
-            Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
-
-        }, //NewTabMailing
-
-        winDiff : function(FilePath, FileName, rev1, rev2)
-        {
-            Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Finding the diff. Please, wait...'));
-
-            // Load diff data
-            XHR({
-                url    : './php/controller.php',
-                params : {
-                    task     : 'getDiff2',
-                    FilePath : FilePath,
-                    FileName : FileName,
-                    Rev1     : rev1,
-                    Rev2     : rev2
-                },
-                success : function(response)
-                {
-                    var o = Ext.util.JSON.decode(response.responseText);
-
-                    Ext.getBody().unmask();
-
-                    // We display in diff window
-                    var winStatus = new Ext.Window({
-                        title      : String.format(_('Diff between {0} & {1}'), rev1, rev2),
-                        width      : 650,
-                        height     : 350,
-                        resizable  : false,
-                        modal      : true,
-                        autoScroll : true,
-                        bodyStyle  : 'background-color: white; padding: 5px;',
-                        html       : '<div class="diff-content">' + o.content + '</div>',
-                        buttons : [{
-                            text    : 'Close',
-                            handler : function()
-                            {
-                                winStatus.close();
-                            }
-                        }]
-                    });
-                    winStatus.show();
-                }
-            });
-
-        }, //winDiff
 
         // Need confirm if we want to close a tab and the content have been modified.
         removeTabEvent : function(tabpanel, tab)
         {
-            var stateLang, stateEn, state, PanType;
-
-            PanType = tab.id.split('-');
+            var stateLang, stateEn, state, PanType = tab.id.split('-');
 
             if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF') && PanType[1] !== 'help') {
 
@@ -588,14 +173,15 @@ var phpDoc = function()
                 }
 
                 if (stateEn || stateLang || state) {
-
                     Ext.Msg.show({
-                        scope: this,
-                        title: _('Confirm'),
-                        msg: _('This file has been modified without being saved.<br/>Do you really want to close?'),
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        fn: function(btn, text){
+                        scope   : this,
+                        title   : _('Confirm'),
+                        msg     : _('This file has been modified without being saved.<br/>' +
+                                    'Do you really want to close?'),
+                        buttons : Ext.Msg.YESNO,
+                        icon    : Ext.Msg.QUESTION,
+                        fn : function(btn, text)
+                        {
                             if (btn === 'yes') {
                                 tabpanel.un('beforeremove', this.removeTabEvent, this);
                                 tabpanel.remove(tab);
@@ -603,14 +189,14 @@ var phpDoc = function()
                             }
                         }
                     });
+                    return false;
                 } else {
                     return true;
                 }
-                return false;
             } else {
                 return true;
             }
-        }, //removeTabEvent
+        },
 
         WinCommit : function(singleFile, rowIndex, choice)
         {
@@ -899,14 +485,13 @@ var phpDoc = function()
 
             win.show(btn);
 
+            var grid = ui.component.PendingCommitGrid.instance;
             // Load files to commit
             if (singleFile) {
-
                 // Just the current file
-
-                FileDBID = this.pendingCommitGrid.store.getAt(rowIndex).data.id;
-                FilePath = this.pendingCommitGrid.store.getAt(rowIndex).data.path;
-                FileName = this.pendingCommitGrid.store.getAt(rowIndex).data.name;
+                FileDBID = grid.store.getAt(rowIndex).data.id;
+                FilePath = grid.store.getAt(rowIndex).data.path;
+                FileName = grid.store.getAt(rowIndex).data.name;
                 FileID = Ext.util.md5(FilePath + FileName);
 
                 node = new Ext.tree.TreeNode({
@@ -922,11 +507,10 @@ var phpDoc = function()
 
                 Ext.getCmp('tree-panel').getRootNode().appendChild(node);
 
-            }
-            else {
+            } else {
 
                 // in files Need Update
-                this.pendingCommitGrid.store.each(function(record){
+                grid.store.each(function(record){
 
                     if (choice && choice === 'by me' && record.data.by !== this.userLogin) {
                     }
@@ -1027,16 +611,16 @@ var phpDoc = function()
                         {
                             if (scope.userLang != 'en') {
                                 // Reload Files error data
-                                scope.errorFileGrid.store.reload();
+                                ui.component.ErrorFileGrid.instance.store.reload();
 
                                 // Reload Files Need reviewed
-                                scope.pendingReviewGrid.store.reload();
+                                ui.component.PendingReviewGrid.instance.store.reload();
 
                                 // Reload Files Need Update
-                                scope.staleFileGrid.store.reload();
+                                ui.component.StaleFileGrid.instance.store.reload();
                             }
 
-                            scope.pendingCommitGrid.store.reload();
+                            ui.component.PendingCommitGrid.instance.store.reload();
 
                             // Reload translators data
                             ui.component.TranslatorGrid.reload();
@@ -1051,15 +635,16 @@ var phpDoc = function()
             });
 
         }, // WinCommitLastStep
-        WinUpdate: function(){
 
+        WinUpdate : function()
+        {
             // Update of Cvs and apply all tools.
             var win, btn;
 
             function RefreshStep1(scope){
 
                 // We need to stop pin test during this update
-                phpDoc.TaskPing.cancel();
+                ui.task.PingTask.instance.cancel();
 
                 Ext.get('wizard-step-1').replaceClass('wizard-step-before', 'wizard-step-working');
                 Ext.get('wizard-step-1.1').replaceClass('wizard-wait', 'wizard-show');
@@ -1187,9 +772,9 @@ var phpDoc = function()
 
                 if (phpDoc.userLang != 'en') {
                     // Reload all data on this page
-                    phpDoc.staleFileGrid.store.reload();
+                    ui.component.StaleFileGrid.instance.store.reload();
                     ui.component.TranslatorGrid.reload();
-                    phpDoc.errorFileGrid.store.reload();
+                    ui.component.ErrorFileGrid.instance.store.reload();
                 }
 
                 Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
@@ -1203,7 +788,7 @@ var phpDoc = function()
                 Ext.getCmp('btn-start-refresh').enable();
 
                 // Re-enable TaskPing
-                phpDoc.TaskPing.delay(30000);
+                ui.task.PingTask.instance.delay(30000);
 
                 // Re-enable win's close button
                 win.tools.close.setVisible(true);
@@ -1279,8 +864,9 @@ var phpDoc = function()
             });
 
         }, // Winupdate
-        WinCheckBuild: function(){
 
+        WinCheckBuild : function()
+        {
             var win, btn;
 
             btn = Ext.get('acc-need-update');
@@ -1299,7 +885,7 @@ var phpDoc = function()
                         var o = Ext.util.JSON.decode(response.responseText);
 
                         // Re-enable TaskPing
-                        phpDoc.TaskPing.delay(30000);
+                        ui.task.PingTask.instance.delay(30000);
 
                         // Display
                         if ( Ext.getCmp('main-panel').findById('check_build_panel') ) {
@@ -1343,7 +929,7 @@ var phpDoc = function()
                             Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Please, wait until the build is checked...'));
 
                             // We need to stop pin test during this process
-                            phpDoc.TaskPing.cancel();
+                            ui.task.PingTask.instance.cancel();
 
                             XHR({
                                 scope   : this,
@@ -1363,7 +949,7 @@ var phpDoc = function()
 
                                     if (o && o.success === false) {
                                         // Re-enable TaskPing
-                                        phpDoc.TaskPing.delay(30000);
+                                        ui.task.PingTask.instance.delay(30000);
                                         Ext.getBody().unmask();
                                         this.winForbidden();
                                     } else {
@@ -1427,78 +1013,6 @@ var phpDoc = function()
 
 
         }, //WinCheckBuild
-
-        WinConf : function()
-        {
-            new ui.component.EditorConf()
-                .show(Ext.get('winconf-btn'));
-
-        }, //WinConf
-
-        confUpdate: function(item, v)
-        {
-            // Apply modification in DB
-            XHR({
-                scope   : this,
-                url     : './php/controller.php',
-                params  : {
-                    task  : 'confUpdate',
-                    item  : item,
-                    value : v
-                },
-                success : function(response)
-                {
-                    // Update userConf object
-                    if (item === "conf_theme") {
-                        this.userConf.conf_theme = v;
-                    }
-                    if (item === "conf_needupdate_diff") {
-                        this.userConf.conf_needupdate_diff = v;
-                    }
-                    if (item === "conf_needupdate_scrollbars") {
-                        this.userConf.conf_needupdate_scrollbars = "" + v + "";
-                    }
-                    if (item === "conf_needupdate_displaylog") {
-                        this.userConf.conf_needupdate_displaylog = "" + v + "";
-                    }
-
-                    if (item === "conf_error_skipnbliteraltag") {
-                        this.userConf.conf_error_skipnbliteraltag = "" + v + "";
-                        this.errorFileGrid.store.reload();
-                    }
-                    if (item === "conf_error_scrollbars") {
-                        this.userConf.conf_error_scrollbars = "" + v + "";
-                    }
-                    if (item === "conf_error_displaylog") {
-                        this.userConf.conf_error_displaylog = "" + v + "";
-                    }
-
-                    if (item === "conf_reviewed_scrollbars") {
-                        this.userConf.conf_reviewed_scrollbars = "" + v + "";
-                    }
-                    if (item === "conf_reviewed_displaylog") {
-                        this.userConf.conf_reviewed_displaylog = "" + v + "";
-                    }
-
-                    if (item === "conf_allfiles_displaylog") {
-                        this.userConf.conf_allfiles_displaylog = "" + v + "";
-                    }
-
-                    if (item === "conf_patch_scrollbars") {
-                        this.userConf.conf_patch_scrollbars = "" + v + "";
-                    }
-                    if (item === "conf_patch_displaylog") {
-                        this.userConf.conf_patch_displaylog = "" + v + "";
-                    }
-                }
-            });
-        }, //confUpdate
-
-        WinAbout : function()
-        {
-            new ui.component.About()
-                .show(Ext.get('winabout-btn'));
-        }, //WinAbout
 
         sendEmail : function(TranslatorName, TranslatorEmail)
         {
@@ -1617,7 +1131,7 @@ var phpDoc = function()
                         iconCls : 'iconTabNeedReviewed',
                         handler : function()
                         {
-                            phpDoc.treeAllFiles.fireEvent('dblclick', node);
+                            ui.component.RepositoryTree.instance.fireEvent('dblclick', node);
                         }
                     }, {
                         hidden  : (node.attributes.from === 'search'),
@@ -1644,35 +1158,20 @@ var phpDoc = function()
 
         drawInterface: function()
         {
-            var gridSummary, gridTranslators, gridMailing, gridBugs, graphPanel, MainWindow, mainMenu, mainContent;
-
             // We keel alive our session by sending a ping every minute
-            phpDoc.TaskPing = new ui.task.PingTask();
-            phpDoc.TaskPing.delay(30000); // start after 1 minute.
+            new ui.task.PingTask().delay(30000); // start after 1 minute.
 
-            this.staleFileGrid     = new ui.component.StaleFileGrid();
-            this.errorFileGrid     = new ui.component.ErrorFileGrid();
-            this.pendingPatchGrid  = new ui.component.PendingPatchGrid();
-            this.notInENGrid       = new ui.component.NotInENGrid();
-            this.pendingCommitGrid = new ui.component.PendingCommitGrid();
-            this.pendingReviewGrid = new ui.component.PendingReviewGrid();
-            this.treeAllFiles      = new ui.component.RepositoryTree();
-
-            gridSummary     = new ui.component.SummaryGrid();
-            gridTranslators = new ui.component.TranslatorGrid();
-            gridMailing     = new ui.component.LocalMailGrid();
-            gridBugs        = new ui.component.BugsGrid();
-            graphPanel      = new ui.component.TranslationGraph();
-            mainMenu        = new ui.component.MainMenu();
-
-            if (this.userLang === 'en') {
-                mainContent = [gridMailing];
-            } else {
-                mainContent = [gridSummary, gridTranslators, gridMailing, gridBugs, graphPanel];
-            }
-
-            // Our main window as a viewport
-            MainWindow = new Ext.Viewport({
+            var mainMenu    = new ui.component.MainMenu(),
+                mainContent = (this.userLang === 'en') ? [
+                    new ui.component.LocalMailGrid()
+                ] : [
+                    new ui.component.SummaryGrid(),
+                    new ui.component.TranslatorGrid(),
+                    new ui.component.LocalMailGrid(),
+                    new ui.component.BugsGrid(),
+                    new ui.component.TranslationGraph()
+                ];
+            new Ext.Viewport({
                 layout : 'border',
                 items : [{
                     // logo
@@ -1711,7 +1210,7 @@ var phpDoc = function()
                             layout    : 'fit',
                             iconCls   : 'FilesNeedUpdate',
                             hidden    : (this.userLang === 'en'),
-                            items     : [this.staleFileGrid],
+                            items     : [ new ui.component.StaleFileGrid() ],
                             collapsed : true,
                             listeners : {
                                 expand : function(panel)
@@ -1726,7 +1225,7 @@ var phpDoc = function()
                             layout    : 'fit',
                             iconCls   : 'FilesError',
                             hidden    : (this.userLang === 'en'),
-                            items     : [this.errorFileGrid],
+                            items     : [ new ui.component.ErrorFileGrid() ],
                             collapsed : true,
                             listeners : {
                                 expand : function(panel)
@@ -1741,7 +1240,7 @@ var phpDoc = function()
                             layout    : 'fit',
                             iconCls   : 'FilesNeedReviewed',
                             hidden    : (this.userLang === 'en'),
-                            items     : [this.pendingReviewGrid],
+                            items     : [ new ui.component.PendingReviewGrid() ],
                             collapsed : true,
                             listeners : {
                                 expand : function(panel)
@@ -1756,14 +1255,14 @@ var phpDoc = function()
                             layout    : 'fit',
                             iconCls   : 'NotInEn',
                             hidden    : (this.userLang === 'en'),
-                            items     : [this.notInENGrid],
+                            items     : [ new ui.component.NotInENGrid() ],
                             collapsed : true
                         }, {
                             id        : 'acc-all-files',
                             title     : _('All files'),
                             layout    : 'fit',
                             iconCls   : 'AllFiles',
-                            items     : [this.treeAllFiles],
+                            items     : [ new ui.component.RepositoryTree() ],
                             collapsed : true,
                             listeners : {
                                 expand : function(panel)
@@ -1777,14 +1276,14 @@ var phpDoc = function()
                             title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
                             layout    : 'fit',
                             iconCls   : 'PendingCommit',
-                            items     : [this.pendingCommitGrid],
+                            items     : [ new ui.component.PendingCommitGrid() ],
                             collapsed : true
                         }, {
                             id        : 'acc-need-pendingPatch',
                             title     : _('Pending Patch') + ' - <em id="acc-pendingPatch-nb">0</em>',
                             layout    : 'fit',
                             iconCls   : 'PendingPatch',
-                            items     : [this.pendingPatchGrid],
+                            items     : [ new ui.component.PendingPatchGrid() ],
                             collapsed : true
                         }]
                     }]
@@ -1841,7 +1340,10 @@ var phpDoc = function()
 
             // Direct access to a file as cvsread
             if (directAccess) {
-                this.openFile(directAccess.lang + directAccess.path, directAccess.name);
+                this.openFile(
+                    directAccess.lang + directAccess.path,
+                    directAccess.name
+                );
             }
         } // drawInterface
     }; // Return

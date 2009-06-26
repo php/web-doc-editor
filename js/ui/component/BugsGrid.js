@@ -82,11 +82,7 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'openInTab',
                     handler : function()
                     {
-                        var BugsId    = grid.store.getAt(rowIndex).data.id,
-                            BugsUrl   = grid.store.getAt(rowIndex).data.link,
-                            BugsTitle = grid.store.getAt(rowIndex).data.title;
-
-                        phpDoc.NewTabBugs(BugsId, BugsUrl, BugsTitle);
+                        grid.fireEvent('rowdblclick', grid, rowIndex, e);
                     }
                 }, '-', {
                     text    : _('Refresh this grid'),
@@ -104,7 +100,22 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
                 BugsUrl   = grid.store.getAt(rowIndex).data.link,
                 BugsTitle = grid.store.getAt(rowIndex).data.title;
 
-            phpDoc.NewTabBugs(BugsId, BugsUrl, BugsTitle);
+            Ext.getCmp('main-panel').add({
+                id         : 'mifp_bugs_' + BugsId,
+                xtype      : 'iframepanel',
+                title      : _('Loading...'),
+                tabTip     : BugsTitle,
+                iconCls    : 'iconBugs',
+                loadMask   : true,
+                defaultSrc : BugsUrl,
+                listeners : {
+                    documentloaded : function(frame)
+                    {
+                        frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
+                    }
+                }
+            });
+            Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
         }
     },
 

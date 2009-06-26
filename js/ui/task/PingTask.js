@@ -2,6 +2,7 @@ Ext.namespace('ui', 'ui.task');
 
 ui.task.PingTask = function()
 {
+    ui.task.PingTask.instance = this;
     this.task = new Ext.util.DelayedTask(function()
     {
         XHR({
@@ -44,3 +45,4 @@ ui.task.PingTask = function()
         this.task.cancel();
     };
 }
+ui.task.PingTask.prototype.instance = null;

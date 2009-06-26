@@ -182,7 +182,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            phpDoc.openFile(
+            ui.component.RepositoryTree.instance.openFile(
                 'en' + grid.fpath,
                 grid.store.getAt(rowIndex).data.file
             );
@@ -206,32 +206,29 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
     autoScroll : true,
     layout     : 'fit',
     buttons    : [{
-        /* scope   : this, Note: scope does not work here */
         text    : 'Open all files',
         handler : function()
         {
             var win   = Ext.getCmp('check-doc-file-win'),
                 store = ui.component._CheckDoc.fs;
 
-            //~ TODO - use Object in FilePendingOpen-Queue instead of Array
-            phpDoc.filePendingOpen = [];
+            phpDoc.filePendingOpen = new Array();
 
             for (var i = 0; i < store.getCount(); ++i) {
-                phpDoc.filePendingOpen[i] = [
-                    'en' + win.fpath,
-                    store.getAt(i).data.file
-                ];
+                phpDoc.filePendingOpen[i] = {
+                    fpath : 'en' + win.fpath,
+                    fname : store.getAt(i).data.file
+                };
             }
 
-            phpDoc.openFile(
-                phpDoc.filePendingOpen[0][0],
-                phpDoc.filePendingOpen[0][1]
+            ui.component.RepositoryTree.instance.openFile(
+                phpDoc.filePendingOpen[0].fpath,
+                phpDoc.filePendingOpen[0].fname
             );
 
             win.close();
         }
     }, {
-        /* scope   : this, Note: scope does not work here */
         text     : 'Open selected files',
         id       : 'check-doc-btn-open-selected-files',
         disabled : true,
@@ -242,18 +239,18 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                     .getSelectionModel()
                     .getSelections();
 
-            phpDoc.filePendingOpen = [];
+            phpDoc.filePendingOpen = new Array();
 
             for (var i = 0; i < r.length; ++i) {
-                phpDoc.filePendingOpen[i] = [
-                    'en' + win.fpath,
-                    r[i].data.file
-                ];
+                phpDoc.filePendingOpen[i] = {
+                    fpath : 'en' + win.fpath,
+                    fname : r[i].data.file
+                };
             }
 
-            phpDoc.openFile(
-                phpDoc.filePendingOpen[0][0],
-                phpDoc.filePendingOpen[0][1]
+            ui.component.RepositoryTree.instance.openFile(
+                phpDoc.filePendingOpen[0].fpath,
+                phpDoc.filePendingOpen[0].fname
             );
 
             win.close();

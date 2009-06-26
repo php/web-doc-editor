@@ -118,7 +118,10 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                             var hrefTheme = c.getValue();
 
                             Ext.get('appTheme').dom.href = hrefTheme;
-                            phpDoc.confUpdate('conf_theme', hrefTheme);
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_theme',
+                                value : hrefTheme
+                            });
                         }
                     }
                 }]
@@ -155,7 +158,10 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         check : function(field)
                         {
                             if (field.checked) {
-                                phpDoc.confUpdate('conf_needupdate_diff', field.getRawValue());
+                                new ui.task.UpdateConfTask({
+                                    item  : 'conf_needupdate_diff',
+                                    value : field.getRawValue()
+                                });
                             }
                         }
                     }
@@ -170,7 +176,10 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         check : function(field)
                         {
                             if (field.checked) {
-                                phpDoc.confUpdate('conf_needupdate_diff', field.getRawValue());
+                                new ui.task.UpdateConfTask({
+                                    item  : 'conf_needupdate_diff',
+                                    value : field.getRawValue()
+                                });
                             }
                         }
                     }
@@ -190,7 +199,10 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_needupdate_scrollbars', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_needupdate_scrollbars',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }, {
@@ -202,7 +214,10 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_needupdate_displaylog', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_needupdate_displaylog',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]
@@ -237,7 +252,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_error_skipnbliteraltag', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_error_skipnbliteraltag',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]
@@ -256,7 +274,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_error_scrollbars', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_error_scrollbars',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }, {
@@ -268,7 +289,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_error_displaylog', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_error_displaylog',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]
@@ -303,7 +327,10 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_reviewed_scrollbars', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_reviewed_scrollbars',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }, {
@@ -315,7 +342,10 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_reviewed_displaylog', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_reviewed_displaylog',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]
@@ -350,7 +380,10 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_allfiles_displaylog', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_allfiles_displaylog',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]
@@ -385,7 +418,10 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_patch_scrollbars', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_patch_scrollbars',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }, {
@@ -397,7 +433,10 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                     listeners : {
                         check : function(field)
                         {
-                            phpDoc.confUpdate('conf_patch_displaylog', field.getValue());
+                            new ui.task.UpdateConfTask({
+                                item  : 'conf_patch_displaylog',
+                                value : field.getValue()
+                            });
                         }
                     }
                 }]

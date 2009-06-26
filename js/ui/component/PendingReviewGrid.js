@@ -184,16 +184,16 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                         phpDoc.filePendingOpen = new Array();
 
                         for (var i = 0; i < o.files.length; i = i + 1) {
-                            phpDoc.filePendingOpen[i] = [
-                                phpDoc.userLang + o.files[i].path,
-                                o.files[i].name
-                            ];
+                            phpDoc.filePendingOpen[i] = {
+                                fpath : phpDoc.userLang + o.files[i].path,
+                                fname : o.files[i].name
+                            };
                         }
 
                         // Start the first
-                        phpDoc.openFile(
-                            phpDoc.filePendingOpen[0][0],
-                            phpDoc.filePendingOpen[0][1]
+                        ui.component.RepositoryTree.instance.openFile(
+                            phpDoc.filePendingOpen[0].fpath,
+                            phpDoc.filePendingOpen[0].fname
                         );
 
                         Ext.getBody().unmask();
@@ -376,6 +376,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
+        ui.component.PendingReviewGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._PendingReviewGrid.store({
@@ -408,7 +409,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         this.setValue('');
                         this.triggers[0].hide();
-                        phpDoc.pendingReviewGrid.store.clearFilter();
+                        ui.component.PendingReviewGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
                     {
@@ -422,7 +423,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
-                        phpDoc.pendingReviewGrid.store.filter('maintainer', v);
+                        ui.component.PendingReviewGrid.instance.store.filter('maintainer', v);
                     }
                 })
             ]
@@ -430,3 +431,4 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.PendingReviewGrid.superclass.initComponent.call(this);
     }
 });
+ui.component.PendingReviewGrid.prototype.instance = null;

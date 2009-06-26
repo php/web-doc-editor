@@ -141,6 +141,18 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                 } else {
                     // This tab already exist. We focus it.
                     Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
+                    // if opening multiple files, dequeue and continue
+                    if (phpDoc.filePendingOpen[0]) {
+                        log(phpDoc.filePendingOpen.shift());
+                        if (phpDoc.filePendingOpen[0]) {
+                            if (phpDoc.filePendingOpen[0].fpath) {
+                                this.openFile(
+                                    phpDoc.filePendingOpen[0].fpath,
+                                    phpDoc.filePendingOpen[0].fname
+                                );
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -148,6 +160,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
 
     initComponent : function()
     {
+        ui.component.RepositoryTree.instance = this;
         Ext.apply(this,
         {
             tbar:[
@@ -171,17 +184,19 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     },
                     onTrigger1Click : function()
                     {
+                        var instance = ui.component.RepositoryTree.instance;
                         this.setValue('');
                         this.triggers[0].hide();
-                        phpDoc.treeAllFiles.root.setText(_('Repository'));
+                        instance.root.setText(_('Repository'));
 
                         // clear search
-                        delete phpDoc.treeAllFiles.loader.baseParams.search;
-                        phpDoc.treeAllFiles.root.reload();
+                        delete instance.loader.baseParams.search;
+                        instance.root.reload();
                     },
                     onTrigger2Click: function()
                     {
-                        var v = this.getValue();
+                        var instance = ui.component.RepositoryTree.instance,
+                            v        = this.getValue();
 
                         if( v == '' || v.length < 3) {
                             this.markInvalid(_('Your search must contain at least 3 characters'));
@@ -192,13 +207,13 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         this.triggers[0].show();
 
                         // carry search
-                        phpDoc.treeAllFiles.loader.baseParams.search = v;
-                        phpDoc.treeAllFiles.root.reload(function()
+                        instance.loader.baseParams.search = v;
+                        instance.root.reload(function()
                         {
-                            phpDoc.treeAllFiles.root.setText(
+                            instance.root.setText(
                                 String.format(
                                     _('Search result: {0}'),
-                                    phpDoc.treeAllFiles.root.childNodes.length
+                                    instance.root.childNodes.length
                                 )
                             );
                         });
@@ -212,5 +227,42 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
         new Ext.tree.TreeSorter(this, {
             folderSort : true
         });
+    },
+
+    openFile : function(fpath, fname)
+    {
+        Ext.getBody().mask(
+            '<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" /> ' +
+            _('Please, wait...')
+        );
+        Ext.getCmp('acc-all-files').expand();
+
+        var t = fpath.split('/'), cb = function(node)
+        {
+            node.ensureVisible();
+            if (t[0] && t[0] !== '') {
+                // walk into childs
+                for (var i = 0; i < node.childNodes.length; ++i) {
+                    if (node.childNodes[i].text === t[0]) {
+                        t.shift();
+                        node.childNodes[i].expand(false, true, cb.createDelegate(this));
+                    }
+                }
+            } else {
+                // leaf node
+                for (var i = 0; i < node.childNodes.length; ++i) {
+                    if (node.childNodes[i].text === fname) {
+                        node.childNodes[i].ensureVisible();
+                        node.childNodes[i].ui.highlight();
+                        this.fireEvent('dblclick', node.childNodes[i]);
+                        Ext.getBody().unmask();
+                    }
+                }
+            }
+        }
+        this.root.expand(false, true, cb.createDelegate(this));
     }
 });
+ui.component.RepositoryTree.prototype.instance = null;
+

@@ -37,48 +37,14 @@ ui.component.PatchPrompt = Ext.extend(Ext.Window,
                 text    : _('Save'),
                 handler : function()
                 {
-                    var email     = Ext.getCmp('patch-email-alert').getValue(),
-                        msg       = Ext.MessageBox.wait(_('Saving data as a patch...'))
-                        id_prefix = this.prefix + '-' + this.ftype;
-
-                    Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).disable();
-                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
-                    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-                        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
-                    );
-
-                    if (   (this.prefix === 'AF')
-                        || (this.lang === 'en' && Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified === false)
-                        || (this.lang !== 'en' && Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified === false)
-                    ) {
-                        Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-                            Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                        );
-                    }
-
-                    // We save this patch
-                    XHR({
-                        scope  : this,
-                        url    : './php/controller.php',
-                        params : {
-                            task        : 'saveFile',
-                            filePath    : this.fpath,
-                            fileName    : this.fname,
-                            fileLang    : this.lang,
-                            fileContent : Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCode(),
-                            type        : 'patch',
-                            emailAlert  : email
-                        },
-                        success : function(response)
-                        {
-                            var o = Ext.util.JSON.decode(response.responseText);
-
-                            // Add this files into storePendingPatch
-                            phpDoc.addToPendingPatch(this.lang + this.fpath, this.fname, o.uniqId);
-
-                            // Remove wait msg
-                            msg.hide();
-                        }
+                    new ui.task.SavePatchTask({
+                        prefix : this.prefix,
+                        fid    : this.fid,
+                        ftype  : this.ftype,
+                        lang   : this.lang,
+                        fpath  : this.fpath,
+                        fname  : this.fname,
+                        email  : Ext.getCmp('patch-email-alert').getValue()
                     });
 
                     this.close();

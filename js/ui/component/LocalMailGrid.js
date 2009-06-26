@@ -80,10 +80,6 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowcontextmenu : function(grid, rowIndex, e)
         {
-            var MailId    = grid.store.getAt(rowIndex).data.pubDate,
-                MailUrl   = grid.store.getAt(rowIndex).data.link,
-                MailTitle = grid.store.getAt(rowIndex).data.title;
-
             grid.getSelectionModel().selectRow(rowIndex);
 
             new Ext.menu.Menu({
@@ -93,7 +89,7 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'openInTab',
                     handler : function()
                     {
-                        phpDoc.NewTabMailing(MailId, MailUrl, MailTitle);
+                        grid.fireEvent('rowdblclick', grid, rowIndex, e);
                     }
                 }, '-', {
                     text    : _('Refresh this grid'),
@@ -111,7 +107,24 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
                 MailUrl   = grid.store.getAt(rowIndex).data.link,
                 MailTitle = grid.store.getAt(rowIndex).data.title;
 
-            phpDoc.NewTabMailing(MailId, MailUrl, MailTitle);
+            Ext.getCmp('main-panel').add({
+                xtype      : 'iframepanel',
+                id         : 'mifp_' + MailId,
+                title      : _('Loading...'),
+                tabTip     : MailTitle,
+                iconCls    : 'home-mailing-title',
+                loadMask   : true,
+                defaultSrc : MailUrl,
+                listeners : {
+                    documentloaded : function(frame)
+                    {
+                        frame.ownerCt.setTitle(
+                            Ext.util.Format.substr(MailTitle, 0, 20) + '...'
+                        );
+                    }
+                }
+            });
+            Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
         }
     },
 

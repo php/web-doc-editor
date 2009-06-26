@@ -130,12 +130,13 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                 fpath       : FilePath,
                 fname       : FileName,
                 storeRecord : storeRecord
-            }).run();
+            });
         }
     },
 
     initComponent : function()
     {
+        ui.component.NotInENGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._NotInENGrid.store({
@@ -149,3 +150,4 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.NotInENGrid.superclass.initComponent.call(this);
     }
 });
+ui.component.NotInENGrid.prototype.instance = null;

@@ -155,7 +155,45 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
                         rev1 = s[0].data.revision,
                         rev2 = s[1].data.revision;
 
-                    phpDoc.winDiff(this.fpath, this.fname, rev1, rev2);
+                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Finding the diff. Please, wait...'));
+
+                    // Load diff data
+                    XHR({
+                        url    : './php/controller.php',
+                        params : {
+                            task     : 'getDiff2',
+                            FilePath : this.fpath,
+                            FileName : this.fname,
+                            Rev1     : rev1,
+                            Rev2     : rev2
+                        },
+                        success : function(response)
+                        {
+                            var o = Ext.util.JSON.decode(response.responseText);
+
+                            Ext.getBody().unmask();
+
+                            // We display in diff window
+                            var winStatus = new Ext.Window({
+                                title      : String.format(_('Diff between {0} & {1}'), rev1, rev2),
+                                width      : 650,
+                                height     : 350,
+                                resizable  : false,
+                                modal      : true,
+                                autoScroll : true,
+                                bodyStyle  : 'background-color: white; padding: 5px;',
+                                html       : '<div class="diff-content">' + o.content + '</div>',
+                                buttons : [{
+                                    text    : 'Close',
+                                    handler : function()
+                                    {
+                                        winStatus.close();
+                                    }
+                                }]
+                            });
+                            winStatus.show();
+                        }
+                    });
                 }
             }, {
                 scope   : this,

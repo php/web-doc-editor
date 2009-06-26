@@ -34,7 +34,7 @@ PHP:
 * Translation Status
   - At the current time, the french translation graph is useless/unreadable. We need to find
     a better way to display the information
- 
+
 * Implement i18n
 
 * Automatic upgrade
@@ -48,12 +48,13 @@ JAVASCRIPT:
 
 * Clean up the namespaces
 * Split main.js to several objects & files (to be discussed)
-* Use Object in FilePendingOpen Queue instead of Array
 * Implement RTL where appropriate
 * Decide whether XHR abstraction could be used (refer bug report from yannick)
 * Remove dependency on '-ALL-' id token for 'AF' panel in removetab handler
 * Merge SaveEnFile with SaveLangFile if possible
 * Move repositoryContextMenu from main.js to ui/component/RepositoryTree
+* Generalize Diff?? cvs-log-diff, cvs-file-diff, patch-file-diff, pending-commit-file-diff
+* adjust diff-panel id convention to prevent mixing different diff-panel
 
 USER INTERFACE:
 ===============
