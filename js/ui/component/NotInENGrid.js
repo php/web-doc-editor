@@ -136,7 +136,6 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component.NotInENGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._NotInENGrid.store({
@@ -150,4 +149,14 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.NotInENGrid.superclass.initComponent.call(this);
     }
 });
-ui.component.NotInENGrid.prototype.instance = null;
+
+// singleton
+ui.component._NotInENGrid.instance = null;
+ui.component.NotInENGrid.getInstance = function(config)
+{
+    if (!ui.component._NotInENGrid.instance) {
+        if (!config) config = {};
+        ui.component._NotInENGrid.instance = new ui.component.NotInENGrid(config);
+    }
+    return ui.component._NotInENGrid.instance;
+}

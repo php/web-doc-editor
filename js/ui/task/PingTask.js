@@ -1,8 +1,7 @@
-Ext.namespace('ui', 'ui.task');
+Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
 
 ui.task.PingTask = function()
 {
-    ui.task.PingTask.instance = this;
     this.task = new Ext.util.DelayedTask(function()
     {
         XHR({
@@ -32,17 +31,24 @@ ui.task.PingTask = function()
         });
         this.task.delay(30000);
     }, this);
-
-    // delegate
-    this.delay = function(delay, newFn, newScope, newArgs)
-    {
-        this.task.delay(delay, newFn, newScope, newArgs);
-    };
-
-    // delegate
-    this.cancel = function()
-    {
-        this.task.cancel();
-    };
 }
-ui.task.PingTask.prototype.instance = null;
+
+// delegates
+ui.task.PingTask.prototype.delay = function(delay, newFn, newScope, newArgs)
+{
+    this.task.delay(delay, newFn, newScope, newArgs);
+};
+ui.task.PingTask.prototype.cancel = function()
+{
+    this.task.cancel();
+};
+
+// singleton
+ui.task._PingTask.instance = null;
+ui.task.PingTask.getInstance = function()
+{
+    if (!ui.task._PingTask.instance) {
+        ui.task._PingTask.instance = new ui.task.PingTask();
+    }
+    return ui.task._PingTask.instance;
+}

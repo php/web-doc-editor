@@ -16,6 +16,97 @@ ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
     baseParams : { task : 'getAllFiles' }
 });
 
+Ext.namespace('ui.component._RepositoryTree.menu');
+// RepositoryTree folder context menu
+// config - { node }
+ui.component._RepositoryTree.menu.folder = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._RepositoryTree.menu.folder.superclass.constructor.call(this);
+}
+Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                text    : (this.node.isExpanded())
+                        ? '<b>' + _('Collapse') + '</b>'
+                        : '<b>' + _('Expand') + '</b>',
+                iconCls : 'iconFolderClose',
+                scope   : this,
+                handler : function()
+                {
+                    if (this.node.isExpanded()) this.node.collapse();
+                    else                        this.node.expand();
+                }
+            }]
+        });
+    }
+});
+
+// RepositoryTree file context menu
+// config - { node }
+ui.component._RepositoryTree.menu.file = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._RepositoryTree.menu.file.superclass.constructor.call(this);
+}
+Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
+{
+    init : function()
+    {
+        var FileName = this.node.attributes.text,
+            t        = this.node.attributes.id.split('/'),
+            FileLang, FilePath;
+
+            t.shift();
+            t.shift();
+            t.pop();
+
+            FileLang = t.shift();
+            FilePath = t.join('/') + '/';
+
+        Ext.apply(this,
+        {
+            items : [{
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconTabNeedReviewed',
+                scope   : this,
+                handler : function()
+                {
+                    ui.component._RepositoryTree.instance.fireEvent('dblclick', this.node);
+                }
+            }, {
+                hidden  : (this.node.attributes.from === 'search'),
+                text    : (FileLang === 'en')
+                        ? String.format(
+                            _('Open the same file in <b>{0}</b>'),
+                            Ext.util.Format.uppercase(phpDoc.userLang))
+                        : String.format(
+                            _('Open the same file in <b>{0}</b>'), 'EN'),
+                iconCls : 'iconTabNeedReviewed',
+                scope   : this,
+                handler : function()
+                {
+                    if (FileLang === 'en') {
+                        ui.component._RepositoryTree.instance.openFile(
+                            phpDoc.userLang + '/' + FilePath, FileName
+                        );
+                    } else {
+                        ui.component._RepositoryTree.instance.openFile(
+                            'en/' + FilePath, FileName
+                        );
+                    }
+                }
+            }]
+        });
+    }
+});
+
 //------------------------------------------------------------------------------
 // RepositoryTree
 ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
@@ -34,7 +125,16 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
         contextmenu : function(node, e)
         {
             node.select();
-            phpDoc.repositoryContextMenu(node).showAt(e.getXY());
+
+            if (node.attributes.type === 'folder' || node.isRoot) {
+                new ui.component._RepositoryTree.menu.folder({
+                    node : node
+                }).showAt(e.getXY());
+            } else if (node.attributes.type === 'file') {
+                new ui.component._RepositoryTree.menu.file({
+                    node : node
+                }).showAt(e.getXY());
+            }
         },
         dblclick : function(node, e)
         {
@@ -143,7 +243,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
                     // if opening multiple files, dequeue and continue
                     if (phpDoc.filePendingOpen[0]) {
-                        log(phpDoc.filePendingOpen.shift());
                         if (phpDoc.filePendingOpen[0]) {
                             if (phpDoc.filePendingOpen[0].fpath) {
                                 this.openFile(
@@ -160,7 +259,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
 
     initComponent : function()
     {
-        ui.component.RepositoryTree.instance = this;
         Ext.apply(this,
         {
             tbar:[
@@ -184,7 +282,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     },
                     onTrigger1Click : function()
                     {
-                        var instance = ui.component.RepositoryTree.instance;
+                        var instance = ui.component._RepositoryTree.instance;
                         this.setValue('');
                         this.triggers[0].hide();
                         instance.root.setText(_('Repository'));
@@ -195,7 +293,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     },
                     onTrigger2Click: function()
                     {
-                        var instance = ui.component.RepositoryTree.instance,
+                        var instance = ui.component._RepositoryTree.instance,
                             v        = this.getValue();
 
                         if( v == '' || v.length < 3) {
@@ -231,11 +329,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
 
     openFile : function(fpath, fname)
     {
-        Ext.getBody().mask(
-            '<img src="themes/img/loading.gif" ' +
-                'style="vertical-align: middle;" /> ' +
-            _('Please, wait...')
-        );
         Ext.getCmp('acc-all-files').expand();
 
         var t = fpath.split('/'), cb = function(node)
@@ -256,7 +349,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         node.childNodes[i].ensureVisible();
                         node.childNodes[i].ui.highlight();
                         this.fireEvent('dblclick', node.childNodes[i]);
-                        Ext.getBody().unmask();
                     }
                 }
             }
@@ -264,5 +356,14 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
         this.root.expand(false, true, cb.createDelegate(this));
     }
 });
-ui.component.RepositoryTree.prototype.instance = null;
 
+// singleton
+ui.component._RepositoryTree.instance = null;
+ui.component.RepositoryTree.getInstance = function(config)
+{
+    if (!ui.component._RepositoryTree.instance) {
+        if (!config) config = {};
+        ui.component._RepositoryTree.instance = new ui.component.RepositoryTree(config);
+    }
+    return ui.component._RepositoryTree.instance;
+}

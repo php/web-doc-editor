@@ -50,7 +50,7 @@ ui.task.SaveENFileTask = function(config)
             }
 
             // Add this files into storePendingCommit
-            ui.component.PendingCommitGrid.instance.addRecord(
+            ui.component.PendingCommitGrid.getInstance().addRecord(
                 o.id, 'en' + this.fpath, this.fname, 'update'
             );
 

@@ -182,7 +182,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            ui.component.RepositoryTree.instance.openFile(
+            ui.component.RepositoryTree.getInstance().openFile(
                 'en' + grid.fpath,
                 grid.store.getAt(rowIndex).data.file
             );
@@ -221,7 +221,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 };
             }
 
-            ui.component.RepositoryTree.instance.openFile(
+            ui.component.RepositoryTree.getInstance().openFile(
                 phpDoc.filePendingOpen[0].fpath,
                 phpDoc.filePendingOpen[0].fname
             );
@@ -248,7 +248,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 };
             }
 
-            ui.component.RepositoryTree.instance.openFile(
+            ui.component.RepositoryTree.getInstance().openFile(
                 phpDoc.filePendingOpen[0].fpath,
                 phpDoc.filePendingOpen[0].fname
             );

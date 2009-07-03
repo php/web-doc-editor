@@ -191,7 +191,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                         }
 
                         // Start the first
-                        ui.component.RepositoryTree.instance.openFile(
+                        ui.component.RepositoryTree.getInstance().openFile(
                             phpDoc.filePendingOpen[0].fpath,
                             phpDoc.filePendingOpen[0].fname
                         );
@@ -376,7 +376,6 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component.PendingReviewGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._PendingReviewGrid.store({
@@ -409,7 +408,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         this.setValue('');
                         this.triggers[0].hide();
-                        ui.component.PendingReviewGrid.instance.store.clearFilter();
+                        ui.component._PendingReviewGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
                     {
@@ -423,7 +422,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
-                        ui.component.PendingReviewGrid.instance.store.filter('maintainer', v);
+                        ui.component._PendingReviewGrid.instance.store.filter('maintainer', v);
                     }
                 })
             ]
@@ -431,4 +430,14 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.PendingReviewGrid.superclass.initComponent.call(this);
     }
 });
-ui.component.PendingReviewGrid.prototype.instance = null;
+
+// singleton
+ui.component._PendingReviewGrid.instance = null;
+ui.component.PendingReviewGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingReviewGrid.instance) {
+        if (!config) config = {};
+        ui.component._PendingReviewGrid.instance = new ui.component.PendingReviewGrid(config);
+    }
+    return ui.component._PendingReviewGrid.instance;
+}

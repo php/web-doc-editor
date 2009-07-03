@@ -29,7 +29,7 @@ ui.task.MarkDeleteTask = function(config)
                         var o = Ext.util.JSON.decode(response.responseText);
 
                         Ext.getBody().unmask();
-                        ui.component.PendingCommitGrid.instance.addRecord(
+                        ui.component.PendingCommitGrid.getInstance().addRecord(
                             o.id, phpDoc.userLang + this.fpath, this.fname, 'delete'
                         );
                         this.storeRecord.set('needcommit', true);

@@ -1,0 +1,104 @@
+Ext.namespace('ui','ui.component');
+
+// config - { files: {fid, fpath, fname, fdbid} }
+ui.component.CommitPrompt = Ext.extend(Ext.Window,
+{
+    id         : 'winCvsCommit',
+    layout     : 'form',
+    title      : _('CVS commit'),
+    closable   : false,
+    width      : 400,
+    height     : 480,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelAlign : 'top',
+
+    tools: [{
+        id      : 'gear',
+        qtip    : _('Configure this tools'),
+        handler : function()
+        {
+            new ui.component.CommitLogPrompt().show();
+        }
+    }],
+    buttons : [{
+        id      : 'win-commit-btn-submit',
+        text    : _('Submit'),
+        handler : function()
+        {
+            new ui.task.CVSCommitTask();
+        }
+    }, {
+        id      : 'win-commit-btn-close',
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('winCvsCommit').close();
+        }
+    }],
+    initComponent : function()
+    {
+        var root = new Ext.tree.TreeNode({
+            text     : 'root',
+            expanded : true
+        });
+
+        for (var i = 0; i < this.files.length; ++i) {
+            root.appendChild(
+                new Ext.tree.TreeNode({
+                    id         : 'need-commit-' + this.files[i].fid,
+                    text       : this.files[i].fpath + this.files[i].fname,
+                    FileDBID   : this.files[i].fdbid,
+                    FilePath   : this.files[i].fpath,
+                    FileName   : this.files[i].fname,
+                    leaf       : true,
+                    checked    : true
+                })
+            );
+        }
+
+        Ext.apply(this,
+        {
+            items : [{
+                xtype       : 'checktreepanel',
+                id          : 'commit-tree-panel',
+                anchor      : '100%',
+                height      : 180,
+                autoScroll  : true,
+                rootVisible : false,
+                root        : root
+            }, {
+                xtype         : 'combo',
+                name          : 'first2',
+                fieldLabel    : _('Older messages'),
+                editable      : false,
+                anchor        : '100%',
+                store         : ui.component.CommitLogPrompt.store,
+                triggerAction : 'all',
+                tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
+                valueField    : 'id',
+                displayField  : 'text',
+                listeners : {
+                    render : function(combo)
+                    {
+                        combo.store.load();
+                    },
+                    select : function(combo, record, numIndex)
+                    {
+                        Ext.getCmp('form-commit-message-log').setValue(record.data.text);
+                    }
+                }
+            }, {
+                xtype      : 'textarea',
+                id         : 'form-commit-message-log',
+                name       : 'first3',
+                fieldLabel : _('Log message'),
+                anchor     : '100%',
+                height     : 150,
+                value      : ''
+            }]
+        });
+        ui.component.CommitPrompt.superclass.initComponent.call(this);
+    }
+});

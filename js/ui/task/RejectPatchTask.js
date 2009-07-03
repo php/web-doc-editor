@@ -27,7 +27,7 @@ ui.task.RejectPatchTask = function(config)
                     },
                     success : function(response)
                     {
-                        var grid = ui.component.PendingPatchGrid.instance;
+                        var grid = ui.component.PendingPatchGrid.getInstance();
                         // Remove this patch from the PendingPatchStore
                         grid.store.remove(this.storeRecord);
 

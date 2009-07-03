@@ -34,9 +34,6 @@ ui.task.LoadConfigTask = function(config)
             phpDoc.userConf.conf_theme   = o.mess.userConf.conf_theme;
             Ext.get('appTheme').dom.href = phpDoc.userConf.conf_theme;
 
-            // Load datastore
-            phpDoc.loadDataStore();
-
             // Draw the interface
             phpDoc.drawInterface();
         }

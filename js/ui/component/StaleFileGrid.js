@@ -320,7 +320,6 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component.StaleFileGrid.instance = this;
         ui.component._StaleFileGrid.columns[2].header = String.format(
             _('{0} revision'), Ext.util.Format.uppercase(phpDoc.userLang)
         );
@@ -358,7 +357,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         this.setValue('');
                         this.triggers[0].hide();
-                        ui.component.StaleFileGrid.instance.store.clearFilter();
+                        ui.component._StaleFileGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click: function()
                     {
@@ -372,7 +371,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
-                        ui.component.StaleFileGrid.instance.store.filter('maintainer', v);
+                        ui.component._StaleFileGrid.instance.store.filter('maintainer', v);
                     }
                 })
             ]
@@ -380,4 +379,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.StaleFileGrid.superclass.initComponent.call(this);
     }
 });
-ui.component.StaleFileGrid.prototype.instance = null;
+
+// singleton
+ui.component._StaleFileGrid.instance = null;
+ui.component.StaleFileGrid.getInstance = function(config)
+{
+    if (!ui.component._StaleFileGrid.instance) {
+        if (!config) config = {};
+        ui.component._StaleFileGrid.instance = new ui.component.StaleFileGrid(config);
+    }
+    return ui.component._StaleFileGrid.instance;
+}

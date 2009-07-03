@@ -286,7 +286,6 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component.PendingPatchGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._PendingPatchGrid.store({
@@ -300,4 +299,14 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.PendingPatchGrid.superclass.initComponent.call(this);
     }
 });
-ui.component.PendingPatchGrid.prototype.instance = null;
+
+// singleton
+ui.component._PendingPatchGrid.instance = null;
+ui.component.PendingPatchGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingPatchGrid.instance) {
+        if (!config) config = {};
+        ui.component._PendingPatchGrid.instance = new ui.component.PendingPatchGrid(config);
+    }
+    return ui.component._PendingPatchGrid.instance;
+}

@@ -18,12 +18,48 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 text     : _('Refresh all data'),
                 disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
                 iconCls  : 'refresh',
-                handler  : phpDoc.WinUpdate // TODO
+                handler  : function()
+                {
+                    // We test if there is an update in progress or not
+                    Ext.getBody().mask(
+                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                        _('Verify if there is an update in progress. Please, wait...')
+                    );
+
+                    XHR({
+                        url     : './php/controller.php',
+                        params  : { task : 'getLastUpdate' },
+                        success : function(response)
+                        {
+                            // Remove wait msg
+                            Ext.getBody().unmask();
+
+                            var o = Ext.util.JSON.decode(response.responseText);
+
+                            if( o.lastupdate === 'in_progress' ) {
+                                Ext.MessageBox.show({
+                                    title   : _('Status'),
+                                    msg     : _('There is currently an update in progress.<br/>' +
+                                                'You can\'t perform an update now.'),
+                                    buttons : Ext.MessageBox.OK,
+                                    icon    : Ext.MessageBox.INFO
+                                });
+                            } else {
+                                new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
+                            }
+                        }
+                    });
+                }
             }, {
                 text     : _('Check Build'),
                 disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
                 iconCls  : 'checkBuild',
-                handler  : phpDoc.WinCheckBuild // TODO
+                handler  : function()
+                {
+                    new ui.component.CheckBuildPrompt().show(
+                        Ext.get('acc-need-update')
+                    );
+                }
             }, {
                 text    : _('EN tools'),
                 handler : function() { return false },

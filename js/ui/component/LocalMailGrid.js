@@ -146,7 +146,13 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component.LocalMailGrid.reload = function()
+// singleton
+ui.component._LocalMailGrid.instance = null;
+ui.component.LocalMailGrid.getInstance = function(config)
 {
-    ui.component._LocalMailGrid.store.reload();
+    if (!ui.component._LocalMailGrid.instance) {
+        if (!config) config = {};
+        ui.component._LocalMailGrid.instance = new ui.component.LocalMailGrid(config);
+    }
+    return ui.component._LocalMailGrid.instance;
 }

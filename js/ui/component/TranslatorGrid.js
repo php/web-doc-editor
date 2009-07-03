@@ -171,7 +171,10 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            phpDoc.sendEmail(TranslatorName, TranslatorEmail);
+            new ui.component.EmailPrompt({
+                name  : TranslatorName,
+                email : TranslatorEmail
+            }).show();
         },
         rowcontextmenu: function(grid, rowIndex, e)
         {
@@ -187,14 +190,20 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        phpDoc.sendEmail(TranslatorName, TranslatorEmail);
+                        new ui.component.EmailPrompt({
+                            name  : TranslatorName,
+                            email : TranslatorEmail
+                        }).show();
                     }
                 }, '-', {
                     text    : String.format(_('Send an email to the {0}'), 'doc-' + phpDoc.userLang + '@lists.php.net'),
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        phpDoc.sendEmail('Php Doc Team ' + phpDoc.userLang, 'doc-' + phpDoc.userLang + '@lists.php.net');
+                        new ui.component.EmailPrompt({
+                            name  : 'Php Doc Team ' + phpDoc.userLang,
+                            email : 'doc-' + phpDoc.userLang + '@lists.php.net'
+                        }).show();
                     }
                 }]
             }).showAt(e.getXY());
@@ -202,7 +211,13 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component.TranslatorGrid.reload = function()
+// singleton
+ui.component._TranslatorGrid.instance = null;
+ui.component.TranslatorGrid.getInstance = function(config)
 {
-    ui.component._TranslatorGrid.store.reload();
+    if (!ui.component._TranslatorGrid.instance) {
+        if (!config) config = {};
+        ui.component._TranslatorGrid.instance = new ui.component.TranslatorGrid(config);
+    }
+    return ui.component._TranslatorGrid.instance;
 }

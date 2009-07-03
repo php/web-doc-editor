@@ -137,7 +137,14 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component.BugsGrid.reload = function()
+// singleton
+ui.component._BugsGrid.instance = null;
+ui.component.BugsGrid.getInstance = function(config)
 {
-    ui.component._BugsGrid.store.reload();
+    if (!ui.component._BugsGrid.instance) {
+        if (!config) config = {};
+        ui.component._BugsGrid.instance = new ui.component.BugsGrid(config);
+    }
+    return ui.component._BugsGrid.instance;
 }
+

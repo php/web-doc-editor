@@ -36,7 +36,7 @@ ui.task.GetFileTask = function(config)
                 phpDoc.filePendingOpen.shift();
                 if (phpDoc.filePendingOpen[0]) {
                     if (phpDoc.filePendingOpen[0].fpath) {
-                        ui.component.RepositoryTree.instance.openFile(
+                        ui.component.RepositoryTree.getInstance().openFile(
                             phpDoc.filePendingOpen[0].fpath,
                             phpDoc.filePendingOpen[0].fname
                         );

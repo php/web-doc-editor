@@ -40,23 +40,24 @@ ui.task.ClearLocalChangeTask = function(config)
                         // clear local change success
                         if (phpDoc.userLang === 'en') {
                             // We reload all store
-                            ui.component.StaleFileGrid.instance.store.reload();
-                            ui.component.ErrorFileGrid.instance.store.reload();
-                            ui.component.PendingReviewGrid.instance.store.reload();
+                            ui.component.StaleFileGrid.getInstance().store.reload();
+                            ui.component.ErrorFileGrid.getInstance().store.reload();
+                            ui.component.PendingReviewGrid.getInstance().store.reload();
                         }
 
+                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance();
                         // We delete from this store
-                        ui.component.PendingCommitGrid.instance.store.remove(this.storeRecord);
+                        pending_commit_grid.store.remove(this.storeRecord);
 
                         // We fire event add to update the file count
-                        ui.component.PendingCommitGrid.instance.store.fireEvent(
-                            'add', ui.component.PendingCommitGrid.instance.store
+                        pending_commit_grid.store.fireEvent(
+                            'add', pending_commit_grid.store
                         );
 
                         // We try to search in others stores if this file is marked as needCommit
 
                         // trow storeNotInEn
-                        ui.component.NotInENGrid.instance.store.each(
+                        ui.component.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((phpDoc.userLang+record.data.path) === this.fpath
@@ -69,7 +70,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         );
 
                         // trow storeFilesNeedReviewed
-                        ui.component.PendingReviewGrid.instance.store.each(
+                        ui.component.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((phpDoc.userLang+record.data.path) === this.fpath
@@ -82,7 +83,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         );
 
                         // trow StaleFile store
-                        ui.component.StaleFileGrid.instance.store.each(
+                        ui.component.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((phpDoc.userLang+record.data.path) === this.fpath
@@ -95,7 +96,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         );
 
                         // trow FileError
-                        ui.component.ErrorFileGrid.instance.store.each(
+                        ui.component.ErrorFileGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((phpDoc.userLang+record.data.path) === this.fpath
@@ -108,7 +109,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         );
 
                         // find open node in All Files modules
-                        var node = ui.component.RepositoryTree.instance.getNodeById('//'+this.fpath+this.fname);
+                        var node = ui.component.RepositoryTree.getInstance().getNodeById('//'+this.fpath+this.fname);
                         if (node) {
                           node.getUI().removeClass('modified');
                         }

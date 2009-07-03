@@ -5,6 +5,11 @@ ui.task.SaveLangFileTask = function(config)
 {
     Ext.apply(this, config);
 
+    if (phpDoc.userLogin === 'cvsread') {
+        phpDoc.winForbidden();
+        return;
+    }
+
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
 
@@ -51,7 +56,7 @@ ui.task.SaveLangFileTask = function(config)
             }
 
             // Add this files into storePendingCommit
-            ui.component.PendingCommitGrid.instance.addRecord(
+            ui.component.PendingCommitGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );
 

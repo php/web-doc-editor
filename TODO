@@ -40,19 +40,11 @@ PHP:
 * Automatic upgrade
   - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling)
 
-* ClearLocalChange
-  - clear local change attempt to open en file which may not exist (class.php line 1884). JSON response would contain the php-warning message.
-
 JAVASCRIPT:
 ===========
 
-* Clean up the namespaces
-* Split main.js to several objects & files (to be discussed)
 * Implement RTL where appropriate
 * Decide whether XHR abstraction could be used (refer bug report from yannick)
-* Remove dependency on '-ALL-' id token for 'AF' panel in removetab handler
-* Merge SaveEnFile with SaveLangFile if possible
-* Move repositoryContextMenu from main.js to ui/component/RepositoryTree
 * Generalize Diff?? cvs-log-diff, cvs-file-diff, patch-file-diff, pending-commit-file-diff
 * adjust diff-panel id convention to prevent mixing different diff-panel
 
@@ -66,3 +58,20 @@ USER INTERFACE:
   - DocBook
   - ReST
   - PO files (gettext)
+
+BUGS:
+=====
+
+* ClearLocalChange
+  - clear local change attempt to open en file which may not exist (class.php line 1884).
+    JSON response would contain the php-warning message that breaks javascript.
+
+* onSuccesCommit
+  - when committing file, the function attempt to open en file which may not exist (ExtJsController.php line 623).
+    JSON response would contain the php-warning message that breaks javascript.
+
+* Saving patch / file
+  - when a file is saved, file.new is created. when a patch is saved, file.new is replaced by file.###.patch
+    Some ui component may issue a diff between file & file.new but sometimes file.new is removed as .patch
+
+* reopening file-diff (context-menu diff) in main-panel tab crashes extjs

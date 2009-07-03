@@ -74,22 +74,24 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            " <refsect1 role=\"description\"><!-- {{{ -->\r\n  " +
-                                "&reftitle.description;\r\n  " +
-                                "<methodsynopsis>\r\n   " +
-                                    "<!-- Example: All functions have this -->\r\n   " +
-                                    "<type>thereturned type</type><methodname>func_name</methodname>\r\n   " +
-                                    "<!-- Example: Required parameter -->\r\n   " +
-                                    "<methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   " +
-                                    "<!-- Example: Optional parameter, also by reference -->\r\n   " +
-                                    "<methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   " +
-                                    "<!-- Example: If no methodparams exist (void), use this -->\r\n   " +
-                                    "<void />\r\n  " +
-                                "</methodsynopsis>\r\n  " +
-                                "<para>\r\n   " +
-                                    "The function description goes here.\r\n  " +
-                                "</para>\r\n " +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                " <refsect1 role=\"description\"><!-- {{{ -->\r\n  ",
+                                    "&reftitle.description;\r\n  ",
+                                    "<methodsynopsis>\r\n   ",
+                                        "<!-- Example: All functions have this -->\r\n   ",
+                                        "<type>thereturned type</type><methodname>func_name</methodname>\r\n   ",
+                                        "<!-- Example: Required parameter -->\r\n   ",
+                                        "<methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   ",
+                                        "<!-- Example: Optional parameter, also by reference -->\r\n   ",
+                                        "<methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   ",
+                                        "<!-- Example: If no methodparams exist (void), use this -->\r\n   ",
+                                        "<void />\r\n  ",
+                                    "</methodsynopsis>\r\n  ",
+                                    "<para>\r\n   ",
+                                        "The function description goes here.\r\n  ",
+                                    "</para>\r\n ",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -102,31 +104,33 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n" +
-                                "&reftitle.parameters;\r\n" +
-                                "<para>\r\n" +
-                                    "<variablelist>\r\n" +
-                                        "<varlistentry>\r\n" +
-                                            "<term><parameter>firstparameter</parameter></term>\r\n" +
-                                            "<listitem>\r\n" +
-                                                "<para>\r\n" +
-                                                    "Its description\r\n" +
-                                                "</para>\r\n" +
-                                            "</listitem>\r\n" +
-                                        "</varlistentry>\r\n" +
-                                        "<varlistentry>\r\n" +
-                                            "<term>\r\n" +
-                                                "<parameter>secondparameter</parameter>\r\n" +
-                                            "</term>\r\n" +
-                                            "<listitem>\r\n" +
-                                                "<para>\r\n" +
-                                                    "Its description\r\n" +
-                                                "</para>\r\n" +
-                                            "</listitem>\r\n" +
-                                        "</varlistentry>\r\n" +
-                                    "</variablelist>\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n",
+                                    "&reftitle.parameters;\r\n",
+                                    "<para>\r\n",
+                                        "<variablelist>\r\n",
+                                            "<varlistentry>\r\n",
+                                                "<term><parameter>firstparameter</parameter></term>\r\n",
+                                                "<listitem>\r\n",
+                                                    "<para>\r\n",
+                                                        "Its description\r\n",
+                                                    "</para>\r\n",
+                                                "</listitem>\r\n",
+                                            "</varlistentry>\r\n",
+                                            "<varlistentry>\r\n",
+                                                "<term>\r\n",
+                                                    "<parameter>secondparameter</parameter>\r\n",
+                                                "</term>\r\n",
+                                                "<listitem>\r\n",
+                                                    "<para>\r\n",
+                                                        "Its description\r\n",
+                                                    "</para>\r\n",
+                                                "</listitem>\r\n",
+                                            "</varlistentry>\r\n",
+                                        "</variablelist>\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -139,13 +143,15 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n" +
-                                "&reftitle.returnvalues;\r\n" +
-                                "<para>\r\n" +
-                                    "What this function returns, first on success, then failure.\r\n" +
-                                    "If simply true on success and false on failure, just use &return.success; here.\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n",
+                                    "&reftitle.returnvalues;\r\n",
+                                    "<para>\r\n",
+                                        "What this function returns, first on success, then failure.\r\n",
+                                        "If simply true on success and false on failure, just use &return.success; here.\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -158,12 +164,14 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n" +
-                                "&reftitle.errors;\r\n" +
-                                "<para>\r\n" +
-                                    "When does this function issue E_* level errors, and/or throw exceptions.\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->\r\n"
+                            [
+                                "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n",
+                                    "&reftitle.errors;\r\n",
+                                    "<para>\r\n",
+                                        "When does this function issue E_* level errors, and/or throw exceptions.\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->\r\n"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -176,12 +184,14 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n" +
-                                "&reftitle.unicode;\r\n" +
-                                "<para>\r\n" +
-                                    "Information specific to unicode, from the PHP 6 changes.\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n",
+                                    "&reftitle.unicode;\r\n",
+                                    "<para>\r\n",
+                                        "Information specific to unicode, from the PHP 6 changes.\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -194,29 +204,31 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n" +
-                                "&reftitle.changelog;\r\n" +
-                                "<para>\r\n" +
-                                    "<informaltable>\r\n" +
-                                        "<tgroup cols=\"2\">\r\n" +
-                                            "<thead>\r\n" +
-                                                "<row>\r\n" +
-                                                    "<entry>&Version;</entry>\r\n" +
-                                                    "<entry>&Description;</entry>\r\n" +
-                                                "</row>\r\n" +
-                                            "</thead>\r\n" +
-                                            "<tbody>\r\n" +
-                                                "<row>\r\n" +
-                                                    "<entry>Enter the version of change here</entry>\r\n" +
-                                                    "<entry>\r\n" +
-                                                        "Describe the change\r\n" +
-                                                    "</entry>\r\n" +
-                                                "</row>\r\n" +
-                                            "</tbody>\r\n" +
-                                        "</tgroup>\r\n" +
-                                    "</informaltable>\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n",
+                                    "&reftitle.changelog;\r\n",
+                                    "<para>\r\n",
+                                        "<informaltable>\r\n",
+                                            "<tgroup cols=\"2\">\r\n",
+                                                "<thead>\r\n",
+                                                    "<row>\r\n",
+                                                        "<entry>&Version;</entry>\r\n",
+                                                        "<entry>&Description;</entry>\r\n",
+                                                    "</row>\r\n",
+                                                "</thead>\r\n",
+                                                "<tbody>\r\n",
+                                                    "<row>\r\n",
+                                                        "<entry>Enter the version of change here</entry>\r\n",
+                                                        "<entry>\r\n",
+                                                            "Describe the change\r\n",
+                                                        "</entry>\r\n",
+                                                    "</row>\r\n",
+                                                "</tbody>\r\n",
+                                            "</tgroup>\r\n",
+                                        "</informaltable>\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -229,37 +241,39 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n" +
-                                "&reftitle.examples;\r\n" +
-                                "<para>\r\n" +
-                                    "<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n" +
-                                        "<title><function>function-name</function> example</title>\r\n" +
-                                        "<para>\r\n" +
-                                            "Any text that describes the purpose of the example, or what\r\n" +
-                                            "goes on in the example should be here. (Inside the <example> tag, not out).\r\n" +
-                                        "</para>\r\n" +
-                                        "<programlisting role=\"php\">\r\n" +
-                                            "<![CDATA[\r\n" +
-                                                "<?php\r\n" +
-                                                    "if ($anexample === true) {\r\n" +
-                                                        "echo 'Use the PEAR Coding standards';\r\n" +
-                                                    "}\r\n" +
-                                                    "if ($thereisoutput === 'and it is multiple lines') {\r\n" +
-                                                        "echo 'Use a screen like we did below';\r\n" +
-                                                    "}\r\n" +
-                                                "?>\r\n" +
-                                            "]]>\r\n" +
-                                        "</programlisting>\r\n" +
-                                        "&example.outputs.similar;\r\n" +
-                                        "<screen>\r\n" +
-                                            "<![CDATA[\r\n" +
-                                                "Use the PEAR Coding standards\r\n" +
-                                                "Use a screen like we did below\r\n" +
-                                            "]]>\r\n" +
-                                        "</screen>\r\n" +
-                                    "</example><!-- }}} -->\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n",
+                                    "&reftitle.examples;\r\n",
+                                    "<para>\r\n",
+                                        "<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n",
+                                            "<title><function>function-name</function> example</title>\r\n",
+                                            "<para>\r\n",
+                                                "Any text that describes the purpose of the example, or what\r\n",
+                                                "goes on in the example should be here. (Inside the <example> tag, not out).\r\n",
+                                            "</para>\r\n",
+                                            "<programlisting role=\"php\">\r\n",
+                                                "<![CDATA[\r\n",
+                                                    "<?php\r\n",
+                                                        "if ($anexample === true) {\r\n",
+                                                            "echo 'Use the PEAR Coding standards';\r\n",
+                                                        "}\r\n",
+                                                        "if ($thereisoutput === 'and it is multiple lines') {\r\n",
+                                                            "echo 'Use a screen like we did below';\r\n",
+                                                        "}\r\n",
+                                                    "?>\r\n",
+                                                "]]>\r\n",
+                                            "</programlisting>\r\n",
+                                            "&example.outputs.similar;\r\n",
+                                            "<screen>\r\n",
+                                                "<![CDATA[\r\n",
+                                                    "Use the PEAR Coding standards\r\n",
+                                                    "Use a screen like we did below\r\n",
+                                                "]]>\r\n",
+                                            "</screen>\r\n",
+                                        "</example><!-- }}} -->\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -272,19 +286,21 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n" +
-                                "&reftitle.notes;\r\n" +
-                                "<caution>\r\n" +
-                                    "<para>\r\n" +
-                                        "Any notes that don't fit anywhere else should go here.\r\n" +
-                                        "90% of the time, notes, warnings or cautions are better placed in the\r\n" +
-                                        "parameters section. Consider that before using this section!\r\n" +
-                                    "</para>\r\n" +
-                                "</caution>\r\n" +
-                                "&note.language-construct;\r\n" +
-                                "&note.not-bin-safe;\r\n" +
-                                "&note.registerglobals;\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n",
+                                    "&reftitle.notes;\r\n",
+                                    "<caution>\r\n",
+                                        "<para>\r\n",
+                                            "Any notes that don't fit anywhere else should go here.\r\n",
+                                            "90% of the time, notes, warnings or cautions are better placed in the\r\n",
+                                            "parameters section. Consider that before using this section!\r\n",
+                                        "</para>\r\n",
+                                    "</caution>\r\n",
+                                    "&note.language-construct;\r\n",
+                                    "&note.not-bin-safe;\r\n",
+                                    "&note.registerglobals;\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -297,16 +313,18 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
-                            "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n" +
-                                "&reftitle.seealso;\r\n" +
-                                "<para>\r\n" +
-                                    "<simplelist>\r\n" +
-                                        "<member><function>somefunc</function></member>\r\n" +
-                                        "<member><function>another_func</function></member>\r\n" +
-                                        "<member>The <link linkend=\"something\">something appendix</link></member>\r\n" +
-                                    "</simplelist>\r\n" +
-                                "</para>\r\n" +
-                            "</refsect1><!-- }}} -->"
+                            [
+                                "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n",
+                                    "&reftitle.seealso;\r\n",
+                                    "<para>\r\n",
+                                        "<simplelist>\r\n",
+                                            "<member><function>somefunc</function></member>\r\n",
+                                            "<member><function>another_func</function></member>\r\n",
+                                            "<member>The <link linkend=\"something\">something appendix</link></member>\r\n",
+                                        "</simplelist>\r\n",
+                                    "</para>\r\n",
+                                "</refsect1><!-- }}} -->"
+                            ].join('')
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -352,12 +370,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 {
                     Ext.DomHelper.insertHtml(
                         'beforeBegin', c.el.dom,
-                        '<div style="display: inline;" class="x-statusbar">' +
-                            '<span class="x-status-text-panel">' + _('Line: ') +
-                            '<span id="' + id_prefix + '-status-line-' + this.fid + '">-</span></span>' +
-                            '&nbsp;&nbsp;<span class="x-status-text-panel">' + _('Col: ') +
-                            '<span id="' + id_prefix + '-status-col-' + this.fid + '">-</span></span>' +
-                        '</div>&nbsp;&nbsp;'
+                        [
+                            '<div style="display: inline;" class="x-statusbar">',
+                                '<span class="x-status-text-panel">', _('Line: '),
+                                '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+                                '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+                                '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+                            '</div>&nbsp;&nbsp;'
+                        ].join('')
                     );
                 }
             }
@@ -366,12 +386,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             height    : 21,
             baseCls   : '',
             bodyStyle : 'padding-top:5px;',
-            html      : '<div style="display: inline;" class="x-statusbar">' +
-                            '<span class="x-status-text-panel">' + _('Line: ') +
-                            '<span id="' + id_prefix + '-status-line-' + this.fid + '">-</span></span>' +
-                            '&nbsp;&nbsp;<span class="x-status-text-panel">' + _('Col: ') +
-                            '<span id="' + id_prefix + '-status-col-' + this.fid + '">-</span></span>' +
-                        '</div>&nbsp;&nbsp;'
+            html      : [
+                            '<div style="display: inline;" class="x-statusbar">',
+                                '<span class="x-status-text-panel">', _('Line: '),
+                                '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+                                '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+                                '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+                            '</div>&nbsp;&nbsp;'
+                        ].join('')
         }];
 
         if (!this.readOnly) {
@@ -437,10 +459,52 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                         } else {
 
-                            phpDoc.saveLangFile(
-                                this.prefix, this.ftype, this.fid, this.fpath, this.fname,
-                                this.lang, this.storeRecord
-                            );
+                            if (this.prefix === 'AF') {
+                                new ui.task.SaveLangFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                });
+                                return;
+                            }
+                            Ext.MessageBox.show({
+                                title   : _('Confirm'),
+                                msg     : _('Do you want to check for error before saving?'),
+                                icon    : Ext.MessageBox.INFO,
+                                buttons : Ext.MessageBox.YESNOCANCEL,
+                                scope   : this,
+                                fn      : function (btn)
+                                {
+                                    if (btn === 'no') {
+
+                                        new ui.task.SaveLangFileTask({
+                                            prefix      : this.prefix,
+                                            ftype       : this.ftype,
+                                            fid         : this.fid,
+                                            fpath       : this.fpath,
+                                            fname       : this.fname,
+                                            lang        : this.lang,
+                                            storeRecord : this.storeRecord
+                                        });
+
+                                    } else if (btn === 'yes') {
+
+                                        new ui.task.CheckFileTask({
+                                            prefix      : this.prefix,
+                                            ftype       : this.ftype,
+                                            fid         : this.fid,
+                                            fpath       : this.fpath,
+                                            fname       : this.fname,
+                                            lang        : this.lang,
+                                            storeRecord : this.storeRecord
+                                        }); // include SaveLangFileTask when no err
+                                    }
+                                }
+                            });
                         }
                     }
                 }, {
@@ -517,6 +581,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                         // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right;
                         // 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT; 67 = CTRL+C
+                        // 35 = end; 36 = home
                         if (   keyCode !== 27
                             && keyCode !== 33
                             && keyCode !== 34
@@ -527,6 +592,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             && keyCode !== 17
                             && keyCode !== 16
                             && keyCode !== 67
+                            && keyCode !== 35
+                            && keyCode !== 36
                         ) {
                             if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
                                 // Add an [modified] in title

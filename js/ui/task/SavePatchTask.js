@@ -39,7 +39,7 @@ ui.task.SavePatchTask = function(config)
         success : function(response)
         {
             var o    = Ext.util.JSON.decode(response.responseText),
-                grid = ui.component.PendingPatchGrid.instance;
+                grid = ui.component.PendingPatchGrid.getInstance();
 
             // Add this files into storePendingPatch
             grid.store.insert(0,

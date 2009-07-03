@@ -122,7 +122,20 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     iconCls : 'iconCommitFileCvs',
                     handler : function()
                     {
-                        phpDoc.WinCommit(true, this.rowIdx);
+                        var record = ui.component.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
+                            fdbid  = record.data.id,
+                            fpath  = record.data.path,
+                            fname  = record.data.name,
+                            fid    = Ext.util.md5(fpath + fname);
+
+                        new ui.component.CommitPrompt({
+                            files : [{
+                                fid : fid,
+                                fpath : fpath,
+                                fname : fname,
+                                fdbid : fdbid
+                            }]
+                        }).show();
                     }
                 }, {
                     scope   : this,
@@ -130,7 +143,28 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     iconCls : 'iconCommitFileCvs',
                     handler : function()
                     {
-                        phpDoc.WinCommit(false, '', 'by me');
+                        var files = [],
+                            grid  = ui.component.PendingCommitGrid.getInstance();
+
+                        grid.store.each(function(record)
+                        {
+                            if (record.data.by === phpDoc.userLogin) {
+                                var fdbid  = record.data.id,
+                                    fpath  = record.data.path,
+                                    fname  = record.data.name,
+                                    fid    = Ext.util.md5(fpath + fname);
+                                files.push({
+                                    fid   : fid,
+                                    fpath : fpath,
+                                    fname : fname,
+                                    fdbid : fdbid
+                                });
+                            }
+                        });
+
+                        new ui.component.CommitPrompt({
+                            files : files
+                        }).show();
                     }
                 }, {
                     scope   : this,
@@ -138,7 +172,26 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     iconCls : 'iconCommitFileCvs',
                     handler : function()
                     {
-                        phpDoc.WinCommit(false);
+                        var files = [],
+                            grid  = ui.component.PendingCommitGrid.getInstance();
+
+                        grid.store.each(function(record)
+                        {
+                            var fdbid  = record.data.id,
+                                fpath  = record.data.path,
+                                fname  = record.data.name,
+                                fid    = Ext.util.md5(fpath + fname);
+                            files.push({
+                                fid   : fid,
+                                fpath : fpath,
+                                fname : fname,
+                                fdbid : fdbid
+                            });
+                        });
+
+                        new ui.component.CommitPrompt({
+                            files : files
+                        }).show();
                     }
                 }]
             })
@@ -327,7 +380,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 FileName    = storeRecord.data.name;
 
             if (FileType === 'update') {
-                ui.component.RepositoryTree.instance.openFile(FilePath, FileName);
+                ui.component.RepositoryTree.getInstance().openFile(FilePath, FileName);
             }
 
             if (FileType === 'delete') {
@@ -343,7 +396,6 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component.PendingCommitGrid.instance = this;
         Ext.apply(this,
         {
             store : new ui.component._PendingCommitGrid.store({
@@ -384,4 +436,14 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         }
     }
 });
-ui.component.PendingCommitGrid.prototype.instance = null;
+
+// singleton
+ui.component._PendingCommitGrid.instance = null;
+ui.component.PendingCommitGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingCommitGrid.instance) {
+        if (!config) config = {};
+        ui.component._PendingCommitGrid.instance = new ui.component.PendingCommitGrid(config);
+    }
+    return ui.component._PendingCommitGrid.instance;
+}

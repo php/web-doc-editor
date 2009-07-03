@@ -142,7 +142,13 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component.SummaryGrid.reload = function()
+// singleton
+ui.component._SummaryGrid.instance = null;
+ui.component.SummaryGrid.getInstance = function(config)
 {
-    ui.component._SummaryGrid.store.reload();
+    if (!ui.component._SummaryGrid.instance) {
+        if (!config) config = {};
+        ui.component._SummaryGrid.instance = new ui.component.SummaryGrid(config);
+    }
+    return ui.component._SummaryGrid.instance;
 }

@@ -32,7 +32,7 @@ ui.task.UpdateConfTask = function(config)
                     break;
                 case 'conf_error_skipnbliteraltag':
                     phpDoc.userConf.conf_error_skipnbliteraltag = "" + this.value + "";
-                    ui.component.ErrorFileGrid.instance.store.reload();
+                    ui.component.ErrorFileGrid.getInstance().store.reload();
                     break;
                 case 'conf_error_scrollbars':
                     phpDoc.userConf.conf_error_scrollbars = "" + this.value + "";

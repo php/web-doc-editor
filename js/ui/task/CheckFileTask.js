@@ -5,6 +5,11 @@ ui.task.CheckFileTask = function(config)
 {
     Ext.apply(this,config);
 
+    if (phpDoc.userLogin === 'cvsread') {
+        phpDoc.winForbidden();
+        return;
+    }
+
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
         _('Checking for error. Please, wait...')
