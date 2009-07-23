@@ -1,17 +1,11 @@
 <?php
 /**
  * Class file for checking errors
- *
  */
 
+require_once dirname(__FILE__) . '/DBConnection.php';
+
 class ToolsError {
-    
-    /**
-     * Database object.
-     *
-     * @var resource
-     */
-    private $db;
 
     /**
      * EN content of the file.
@@ -61,15 +55,14 @@ class ToolsError {
      * @var string
      */
     private $errorStack;
-    
+
     /**
      * Initialise the check
      *
      * @param resource $db Database connexion
      */
-    function __construct($db)
+    function __construct()
     {
-        $this->db          = $db;
         $this->errorStack = array();
     }
 
@@ -112,7 +105,7 @@ class ToolsError {
             // Remove all row in errorfiles tables
             $s = 'DELETE FROM errorfiles WHERE lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
 
-            $this->db->query($s) or die($this->db->error.'|'.$s);
+            DBConnection::getInstance()->query($s);
 
             $this->setParams($nodes[$i]['en_content'], $nodes[$i]['lang_content'], $FileLang, $FilePath, $FileName, $nodes[$i]['maintainer']);
             $this->clearError();
@@ -164,7 +157,7 @@ class ToolsError {
                    name = \''.$this->fileName.'\'
                ';
 
-        $r = $this->db->query($s);
+        $r = DBConnection::getInstance()->query($s);
 
         $return = array();
 
@@ -184,7 +177,7 @@ class ToolsError {
     /**
      * Get all files in error for a given lang
      *
-     * @param array $ModifiedFiles An array containing all modified files in order to display them in red 
+     * @param array $ModifiedFiles An array containing all modified files in order to display them in red
      * @return An array of information
      */
     function getFilesError($ModifiedFiles) {
@@ -196,7 +189,7 @@ class ToolsError {
         }
 
         $s    = 'SELECT * FROM `errorfiles` WHERE '.$type.' `lang`=\''.$this->lang.'\' AND `type` != \'-No error-\'';
-        $r    = $this->db->query($s);
+        $r    = DBConnection::getInstance()->query($s);
         $nb   = $r->num_rows;
         $node = array();
 
@@ -264,12 +257,12 @@ class ToolsError {
             $pattern = ' ("%s", "%s", "%s", "%s", "%s", "%s", "%s"),';
 
             foreach ($this->errorStack as $error) {
-                $sql .= sprintf($pattern, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), $this->db->real_escape_string($error['value_en']),
-                $this->db->real_escape_string($error['value_lang']), $error['type']);
+                $sql .= sprintf($pattern, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), DBConnection::getInstance()->real_escape_string($error['value_en']),
+                DBConnection::getInstance()->real_escape_string($error['value_lang']), $error['type']);
             }
 
             $sql = substr($sql, 0, -1);
-            $this->db->query($sql) or die($this->db->error.'<hr/><pre>'.$sql.'</pre>');
+            DBConnection::getInstance()->query($sql);
 
         }
 
@@ -287,7 +280,7 @@ class ToolsError {
      * Add a new error into the stack
      *
      * @param array $error The new error as an array
-     * 
+     *
      */
     function addError($error) {
         if (is_array($error)) { array_push($this->errorStack, $error); }
@@ -295,7 +288,7 @@ class ToolsError {
 
     /**
      * Run all errors checks
-     * 
+     *
      */
     function run()
     {

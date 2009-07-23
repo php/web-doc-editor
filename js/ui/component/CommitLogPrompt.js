@@ -71,6 +71,7 @@ ui.component._CommitLogPrompt.sm = new Ext.grid.RowSelectionModel({
     singleSelect: true
 });
 
+// config - { rowIdx }
 ui.component._CommitLogPrompt.menu = function(config)
 {
     Ext.apply(this, config);
@@ -86,19 +87,21 @@ Ext.extend(ui.component._CommitLogPrompt.menu, Ext.menu.Menu,
         Ext.apply(this,
         {
             items : [{
+                scope   : this,
                 text    : _('Delete this Log Message'),
                 iconCls : 'iconDelete',
                 handler : function()
                 {
                     XHR({
+                        scope  : this,
                         url    : './php/controller.php',
                         params : {
                             task   : 'deleteLogMessage',
-                            messID : store.getAt(rowIndex).data.id
+                            messID : store.getAt(this.rowIdx).data.id
                         },
                         success : function(response)
                         {
-                            store.remove(store.getAt(rowIndex));
+                            store.remove(store.getAt(this.rowIdx));
                         },
                         failure : function(response)
                         {
@@ -123,7 +126,9 @@ ui.component._CommitLogPrompt.grid = Ext.extend(Ext.grid.EditorGridPanel,
         {
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._CommitLogPrompt.menu().showAt(e.getXY());
+            new ui.component._CommitLogPrompt.menu({
+                rowIdx : rowIndex
+            }).showAt(e.getXY());
         }
     }
 });

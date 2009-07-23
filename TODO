@@ -63,7 +63,7 @@ BUGS:
 =====
 
 * ClearLocalChange
-  - clear local change attempt to open en file which may not exist (class.php line 1884).
+  - clear local change attempt to open en file which may not exist (RepositoryManager.php line 306).
     JSON response would contain the php-warning message that breaks javascript.
 
 * onSuccesCommit

@@ -5,26 +5,24 @@
  * @todo Add inline documentation for each controller task
  */
 
-/**
- * Required file
- */
-require_once './class.php';
-require_once './LockFile.php';
-require_once './BugReader.php';
-require_once './NewsReader.php';
+require_once dirname(__FILE__) . '/LockFile.php';
+require_once dirname(__FILE__) . '/BugReader.php';
+require_once dirname(__FILE__) . '/NewsReader.php';
+require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
+require_once dirname(__FILE__) . '/AccountManager.php';
+require_once dirname(__FILE__) . '/File.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
+require_once dirname(__FILE__) . '/RepositoryFetcher.php';
+require_once dirname(__FILE__) . '/LogManager.php';
+require_once dirname(__FILE__) . '/CvsClient.php';
+require_once dirname(__FILE__) . '/TranslationStatistic.php';
+require_once dirname(__FILE__) . '/TranslatorStatistic.php';
 
 /**
  * Ext JS controller class
  */
 class ExtJsController
 {
-
-    /**
-     * A phpDoc instance
-     *
-     * @var phpDoc
-     */
-    private $phpDoc;
     /**
      * Array of request variables
      *
@@ -39,53 +37,7 @@ class ExtJsController
      */
     public function __construct($request)
     {
-        $this->phpDoc = new phpDoc();
         $this->requestVariables = $request;
-    }
-
-    /**
-     * Returns the JSON representation of a value
-     *
-     * @param mixed $value The value being encoded. Can be any type except a resource.
-     * @return string The JSON encoded value on success
-     */
-    public function getResponse($value)
-    {
-        return json_encode($value);
-    }
-
-    /**
-     * Gets the failure response
-     * @param mixed $value The value being encoded. Can be any type except a resource.
-     *
-     * @return string The failure string.
-     */
-    public function getFailure($value = false)
-    {
-        if ($value) {
-            $value['success'] = false;
-        } else {
-            $value = array('success' => false);
-        }
-
-        return json_encode($value);
-    }
-
-    /**
-     * Gets the success response
-     * @param mixed $value The value being encoded. Can be any type except a resource.
-     *
-     * @return string The success string.
-     */
-    public function getSuccess($value = false)
-    {
-        if ($value) {
-            $value['success'] = true;
-        } else {
-            $value = array('success' => true);
-        }
-
-        return json_encode($value);
     }
 
     /**
@@ -123,76 +75,84 @@ class ExtJsController
         $cvsPasswd = $this->getRequestVariable('cvsPassword');
         $lang      = $this->getRequestVariable('lang');
 
-        $response  = $this->phpDoc->login($cvsLogin,$cvsPasswd,$lang);
+        $response = AccountManager::getInstance()->login($cvsLogin, $cvsPasswd, $lang);
 
         if ($response['state'] === true) {
             // This user is already know in a valid user
-            return $this->getSuccess();
+            return JsonResponseBuilder::success();
         } elseif ($response['state'] === false) {
             // This user is unknow from this server
-            return $this->getFailure(array('msg' => $response['msg']));
+            return JsonResponseBuilder::failure(array('msg' => $response['msg']));
         } else {
-            return $this->getFailure();
+            return JsonResponseBuilder::failure();
         }
     }
 
-
     public function updateRepository()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
-        $this->phpDoc->updateRepository();
-        return $this->getSuccess();
+        RepositoryManager::getInstance()->updateRepository();
+        return JsonResponseBuilder::success();
     }
 
     public function checkLockFile()
     {
         $lockFile = $this->getRequestVariable('lockFile');
-        $lock = new LockFile($lockFile);
+        $lock     = new LockFile($lockFile);
 
-        $this->phpDoc->isLogged();
-        return $lock->isLocked() ? $this->getSuccess() : $this->getFailure();
+        AccountManager::getInstance()->isLogged();
+        return $lock->isLocked()
+            ? JsonResponseBuilder::success()
+            : JsonResponseBuilder::failure();
     }
 
     public function applyTools()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $this->phpDoc->cleanUp();
+        $rm = RepositoryManager::getInstance();
+
+        $rm->cleanUp();
 
         // Set the lock File
         $lock = new LockFile('lock_apply_tools');
 
         if ($lock->lock()) {
 
-            // Start Revcheck
-            $this->phpDoc->revDoRevCheck();
+            require_once dirname(__FILE__) . '/utility.php';
 
-            // Search for Old Files
-            $this->phpDoc->checkOldFiles();
+            // Start Revcheck
+            debug('$rm->applyRevCheck()');
+            $rm->applyRevCheck();
+
+            // Search for NotInEN Old Files
+            debug('$rm->updateNotInEN()');
+            $rm->updateNotInEN();
 
             // Parse translators
-            $this->phpDoc->revParseTranslation();
+            debug('$rm->updateTranslatorInfo()');
+            $rm->updateTranslatorInfo();
 
             // Set lastUpdate date/time
-            $this->phpDoc->setLastUpdate();
-
+            debug('$rm->setLastUpdate()');
+            $rm->setLastUpdate();
         }
         $lock->release();
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
-
 
     /**
      * Tests the CVS username against its password
      *
      * @return Success
      */
+/* obsolete
     public function testCvsLogin()
     {
         $cvsLogin  = $this->getRequestVariable('cvsLogin');
@@ -202,11 +162,14 @@ class ExtJsController
         $r = $this->phpDoc->checkCvsAuth();
 
         if ($r === true) {
-            return $this->getSuccess();
+            return JsonResponseBuilder::success();
         } else {
-            return $this->getFailure(array('msg' => str_replace("\n", "", nl2br($r))));
+            return JsonResponseBuilder::failure(
+                array('msg' => str_replace("\n", "", nl2br($r)))
+            );
         }
     }
+*/
 
     /**
      * Pings the server and user session
@@ -215,131 +178,192 @@ class ExtJsController
      */
     public function ping()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getLastUpdate();
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getLastUpdate();
 
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
-        return $this->getSuccess(array('ping' => $response, 'lastupdate' => $r['lastupdate'], 'by' => $r['by']));
+        return JsonResponseBuilder::success(
+            array(
+                'ping'       => $response,
+                'lastupdate' => $r['lastupdate'],
+                'by'         => $r['by']
+            )
+        );
     }
 
     public function getFilesNeedUpdate()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getFilesNeedUpdate();
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getPendingUpdate();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getFilesNotInEn()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getFilesNotInEn();
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getNotInEn();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getFilesNeedReviewed()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getFilesNeedReviewed();
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getPendingReview();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getFilesError()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $errorTools = new ToolsError($this->phpDoc->db);
-        $errorTools->setParams('', '', $this->phpDoc->cvsLang, '', '', '');
-        $r = $errorTools->getFilesError($this->phpDoc->getModifiedFiles());
+        $errorTools = new ToolsError();
+        $errorTools->setParams('', '', AccountManager::getInstance()->cvsLang, '', '', '');
+        $r = $errorTools->getFilesError(RepositoryFetcher::getInstance()->getModifies());
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getFilesPendingCommit()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $r = $this->phpDoc->getFilesPendingCommit();
+        $r = RepositoryFetcher::getInstance()->getPendingCommit();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getFilesPendingPatch()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $r = $this->phpDoc->getFilesPendingPatch();
+        $r = RepositoryFetcher::getInstance()->getPendingPatch();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getTranslatorInfo()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $translators = $this->phpDoc->getTranslatorsInfo();
+        $translators = TranslatorStatistic::getInstance()->getSummary();
 
-        return $this->getSuccess(array('nbItems' => count($translators), 'Items' => $translators));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($translators),
+                'Items'   => $translators
+            )
+        );
     }
 
     public function getSummaryInfo()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $summary = $this->phpDoc->getSummaryInfo();
+        $summary = TranslationStatistic::getInstance()->getSummary();
 
-        return $this->getSuccess(array('nbItems' => count($summary), 'Items' => $summary));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($summary),
+                'Items'   => $summary
+            )
+        );
     }
 
     public function getLastNews()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $news = new NewsReader($this->phpDoc->cvsLang);
-        $r = $news->getLastNews();
+        $nr = new NewsReader(AccountManager::getInstance()->cvsLang);
+        $r  = $nr->getLastNews();
 
-        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
     }
 
     public function getOpenBugs()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $bugs = new BugReader($this->phpDoc->cvsLang);
+        $bugs = new BugReader(AccountManager::getInstance()->cvsLang);
         $r = $bugs->getOpenBugs();
 
-        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
     }
 
     public function getFile()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
+
         // We must detect the encoding of the file with the first line "xml version="1.0" encoding="utf-8"
         // If this utf-8, we don't need to use utf8_encode to pass to this app, else, we apply it
 
-        $file = $this->phpDoc->getFileContent($FilePath, $FileName);
+        $file     = new File($FileLang, $FilePath, $FileName);
+        $content  = $file->read();
+        $encoding = $file->getEncoding($content);
 
         $return = array();
-
-        if (strtoupper($file['charset']) == 'UTF-8') {
-            $return['content'] = $file['content'];
+        if (strtoupper($encoding) == 'UTF-8') {
+            $return['content'] = $content;
         } else {
-            $return['content'] = iconv($file['charset'], "UTF-8", $file['content']);
+            $return['content'] = iconv($encoding, "UTF-8", $content);
         }
 
-        return $this->getSuccess($return);
+        return JsonResponseBuilder::success($return);
     }
 
     public function checkFileError()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
         $FileLang = $this->getRequestVariable('FileLang');
@@ -350,8 +374,9 @@ class ExtJsController
         // Replace &nbsp; by space
         $FileContent = str_replace("&nbsp;", "", $FileContent);
 
+        $file = new File($FileLang, $FilePath, $FileName);
         // Detect encoding
-        $charset = $this->phpDoc->getFileEncoding($FileContent, 'content');
+        $charset = $file->getEncoding($FileContent);
 
         // If the new charset is set to utf-8, we don't need to decode it
         if ($charset != 'utf-8') {
@@ -360,46 +385,47 @@ class ExtJsController
         }
 
         // Get EN content to check error with
-        $dirEN = DOC_EDITOR_CVS_PATH.'/en'.$FilePath;
-
-        if( $this->phpDoc->isModifiedFile('en', $FilePath, $FileName) ) {
-            // We get the modified file
-            $en_content = file_get_contents($dirEN.$FileName.'.new');
-        } else {
-            // We get the original file
-            $en_content = file_get_contents($dirEN.$FileName);
-        }
-
+        $en_file    = new File('en', $FilePath, $FileName);
+        $en_content = $en_file->read();
 
         // Update DB with this new Error (if any)
-        $info = $this->phpDoc->getInfoFromContent($FileContent);
-        $anode[0] = array( 'lang' => $FileLang,
-                           'path' => $FilePath,
-                           'name' => $FileName,
-                           'en_content' => $en_content,
-                           'lang_content' => $FileContent,
-                           'maintainer' => $info['maintainer']
+        $info = $file->getInfo($FileContent);
+        $anode[0] = array(
+            'lang'         => $FileLang,
+            'path'         => $FilePath,
+            'name'         => $FileName,
+            'en_content'   => $en_content,
+            'lang_content' => $FileContent,
+            'maintainer'   => $info['maintainer']
         );
 
-        $errorTools = new ToolsError($this->phpDoc->db);
+        $errorTools = new ToolsError();
         $r = $errorTools->updateFilesError($anode, 'nocommit');
 
-        return $this->getSuccess(array('error' => $r['state'], 'error_first' => $r['first']));
+        return JsonResponseBuilder::success(
+            array(
+                'error'       => $r['state'],
+                'error_first' => $r['first']
+            )
+        );
     }
 
     public function saveFile()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $filePath   = $this->getRequestVariable('filePath');
         $fileName   = $this->getRequestVariable('fileName');
         $fileLang   = $this->getRequestVariable('fileLang');
-        $type       = $this->getRequestVariable('type') ? $this->getRequestVariable('type') : 'file';
-        $emailAlert = $this->getRequestVariable('emailAlert') ? $this->getRequestVariable('emailAlert') : '';
+        $type       = $this->hasRequestVariable('type')
+                        ? $this->getRequestVariable('type')
+                        : 'file';
+        $emailAlert = $this->hasRequestVariable('emailAlert')
+                        ? $this->getRequestVariable('emailAlert')
+                        : '';
 
-
-        if ($this->phpDoc->cvsLogin == 'cvsread' && $type == 'file') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread' && $type == 'file') {
+            return JsonResponseBuilder::failure();
         }
 
         // Clean up path
@@ -422,7 +448,8 @@ class ExtJsController
         $fileContent = str_replace("&nbsp;", "", $fileContent);
 
         // Detect encoding
-        $charset = $this->phpDoc->getFileEncoding($fileContent, 'content');
+        $file = new File($fileLang, $filePath, $fileName);
+        $charset = $file->getEncoding($fileContent);
 
         // If the new charset is set to utf-8, we don't need to decode it
         if ($charset != 'utf-8') {
@@ -432,133 +459,182 @@ class ExtJsController
         }
 
         // Get revision
-        $info = $this->phpDoc->getInfoFromContent($fileContent);
+        $info = $file->getInfo($fileContent);
 
         if ($type == 'file') {
 
-            $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'file');
-            $r = $this->phpDoc->registerAsPendingCommit($fileLang, $filePath, $fileName, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'update');
-
-            return $this->getSuccess(array(
-                'id'           => $r,
-                'en_revision'  => $info['rev'],
-                'new_revision' => $info['en-rev'],
-                'maintainer'   => $info['maintainer'],
-                'reviewed'     => $info['reviewed']
-            ));
-
+            $file->save($fileContent, false);
+            $r = RepositoryManager::getInstance()->addPendingCommit(
+                $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']
+            );
+            return JsonResponseBuilder::success(
+                array(
+                    'id'           => $r,
+                    'en_revision'  => $info['rev'],
+                    'new_revision' => $info['en-rev'],
+                    'maintainer'   => $info['maintainer'],
+                    'reviewed'     => $info['reviewed']
+                )
+            );
         } else {
-            $uniqID = $this->phpDoc->registerAsPendingPatch($fileLang, $filePath, $fileName, $emailAlert);
-            $this->phpDoc->saveFile($filePath.$fileName, $fileContent, $fileLang, 'patch', $uniqID);
 
-            return $this->getSuccess(array(
-                'uniqId' => $uniqID
-            ));
+            $uniqID = RepositoryManager::getInstance()->addPendingPatch(
+                $file, $emailAlert
+            );
+            $file->save($fileContent, true, $uniqID);
+
+            return JsonResponseBuilder::success(
+                array(
+                    'uniqId' => $uniqID
+                )
+            );
         }
     }
 
     public function getLog()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
         $Path = $this->getRequestVariable('Path');
         $File = $this->getRequestVariable('File');
 
-        $r = $this->phpDoc->cvsGetLog($Path, $File);
+        $r = CvsClient::getInstance()->log($Path, $File);
 
-        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
     }
 
     public function getDiff()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
-        $type     = $this->getRequestVariable('type') ? $this->getRequestVariable('type') : '';
-        $uniqID   = $this->getRequestVariable('uniqID') ? $this->getRequestVariable('uniqID') : '';
 
-        $info = $this->phpDoc->getDiffFromFiles($FilePath, $FileName, $type, $uniqID);
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
 
-        return $this->getSuccess(array(
-            'content'  => $info['content'],
-            'encoding' => $info['charset']
-        ));
+        $type     = $this->hasRequestVariable('type')
+                    ? $this->getRequestVariable('type')
+                    : '';
+        $uniqID   = $this->hasRequestVariable('uniqID')
+                    ? $this->getRequestVariable('uniqID')
+                    : '';
+
+        $file = new File($FileLang, $FilePath, $FileName);
+        $info = $file->htmlDiff(($type=='patch'), $uniqID);
+
+        return JsonResponseBuilder::success(
+            array(
+                'content'  => $info['content'],
+                'encoding' => $info['charset']
+            )
+        );
     }
 
     public function getDiff2()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
+
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
+
         $Rev1 = $this->getRequestVariable('Rev1');
         $Rev2 = $this->getRequestVariable('Rev2');
 
-        $r = $this->phpDoc->getDiffFromExec($FilePath, $FileName, $Rev1, $Rev2);
+        $file = new File($FileLang, $FilePath, $FileName);
+        $r = $file->cvsDiff($Rev1, $Rev2);
 
-        return $this->getSuccess(array(
-             'content' => $r
-        ));
+        return JsonResponseBuilder::success(
+            array(
+                 'content' => $r
+            )
+        );
     }
 
     public function erasePersonalData()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
-        $this->phpDoc->erasePersonalData();
+        AccountManager::getInstance()->eraseData();
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function getCommitLogMessage()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getCommitLogMessage();
+        AccountManager::getInstance()->isLogged();
+        $r = LogManager::getInstance()->getCommitLog();
 
-        return $this->getSuccess(array('nbItems' => count($r), 'Items' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
     }
 
     public function clearLocalChange()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance() == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $FileType = $this->getRequestVariable('FileType');
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $info = $this->phpDoc->clearLocalChange($FileType, $FilePath, $FileName);
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
 
-        return $this->getSuccess(array(
-            'revision'   => $info['rev'],
-            'maintainer' => $info['maintainer'],
-            'error'      => $info['errorFirst'],
-            'reviewed'   => $info['reviewed']
-        ));
+        $info = RepositoryManager::getInstance()->clearLocalChange(
+            $FileType, new File($FileLang, $FilePath, $FileName)
+        );
+
+        return JsonResponseBuilder::success(
+            array(
+                'revision'   => $info['rev'],
+                'maintainer' => $info['maintainer'],
+                'error'      => $info['errorFirst'],
+                'reviewed'   => $info['reviewed']
+            )
+        );
     }
 
     public function getLogFile()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $file = $this->getRequestVariable('file');
 
-        $content = $this->phpDoc->getOutputLogFile($file);
+        $content = LogManager::getInstance()->readOutputLog($file);
 
-        return $this->getSuccess(array('mess' => $content));
+        return JsonResponseBuilder::success(
+            array(
+                'mess' => $content
+            )
+        );
     }
 
     public function checkBuild()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $xmlDetails = $this->getRequestVariable('xmlDetails');
@@ -566,23 +642,23 @@ class ExtJsController
         $lock = new LockFile('lock_check_build');
         if ($lock->lock()) {
             // Start the checkBuild system
-            $output = $this->phpDoc->checkBuild($xmlDetails);
+            $output = RepositoryManager::getInstance()->checkBuild($xmlDetails);
         }
         // Remove the lock File
         $lock->release();
 
         // Send output into a log file
-        $this->phpDoc->saveOutputLogFile('log_check_build', $output);
+        LogManager::getInstance()->saveOutputLog('log_check_build', $output);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function cvsCommit()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $nodes = $this->getRequestVariable('nodes');
@@ -590,17 +666,21 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
-        $r = $this->phpDoc->cvsCommit($anode, $logMessage);
+        $r = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
 
-        return $this->getSuccess(array('mess' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'mess' => $r
+            )
+        );
     }
 
     public function onSuccesCommit()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $nodes = $this->getRequestVariable('nodes');
@@ -608,185 +688,219 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
-        $nodes = $this->phpDoc->getModifiedFilesById($anode);
+        $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
 
-        // Update revision & reviewed for all this files
-        $this->phpDoc->updateRev($nodes);
-
-        // Update FilesError for all this files
+        $files = array();
         for ($i = 0; $i < count($nodes); $i++) {
-
-            $FileLang = $nodes[$i]['lang'];
-            $FilePath = $nodes[$i]['path'];
-            $FileName = $nodes[$i]['name'];
-
-            $en_content     = file_get_contents(DOC_EDITOR_CVS_PATH.'en'.$FilePath.$FileName);
-            $lang_content   = file_get_contents(DOC_EDITOR_CVS_PATH.$FileLang.$FilePath.$FileName);
-
-            $nodes[$i]['en_content'] = $en_content;
-            $nodes[$i]['lang_content'] = $lang_content;
-
+            $files[$i] = new File(
+                $nodes[$i]['lang'],
+                $nodes[$i]['path'],
+                $nodes[$i]['name']
+            );
         }
 
-        $errorTools = new ToolsError($this->phpDoc->db);
+        // Update revision & reviewed for all this files
+        RepositoryManager::getInstance()->updateFileInfo($files);
+
+        for ($i = 0; $i < count($files); $i++) {
+
+            $en = new File('en', $files[$i]->path, $files[$i]->name);
+
+            $en_content   = $en->read(true);
+            $lang_content = $files[$i]->read(true);
+
+            $nodes[$i]['en_content']   = $en_content;
+            $nodes[$i]['lang_content'] = $lang_content;
+        }
+
+        $errorTools = new ToolsError();
         $errorTools->updateFilesError($nodes);
 
         // Remove all this files in needcommit
-        $this->phpDoc->removeNeedCommit($nodes);
+        RepositoryManager::getInstance()->delPendingCommit($files);
 
-        // Manage this logMessage
-        $this->phpDoc->manageLogMessage($logMessage);
+        LogManager::getInstance()->addCommitLog($logMessage);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function getConf()
     {
-        $this->phpDoc->isLogged();
-        $r['userLang']  = $this->phpDoc->cvsLang;
-        $r['userLogin'] = $this->phpDoc->cvsLogin;
-        $r['userConf']  = $this->phpDoc->userConf;
+        AccountManager::getInstance()->isLogged();
 
-        return $this->getSuccess(array('mess' => $r));
+        $r = array();
+        $r['userLang']  = AccountManager::getInstance()->cvsLang;
+        $r['userLogin'] = AccountManager::getInstance()->cvsLogin;
+        $r['userConf']  = AccountManager::getInstance()->userConf;
+
+        return JsonResponseBuilder::success(
+            array(
+                'mess' => $r
+            )
+        );
     }
 
     public function sendEmail()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $to      = $this->getRequestVariable('to');
         $subject = $this->getRequestVariable('subject');
         $msg     = $this->getRequestVariable('msg');
 
-        $this->phpDoc->sendEmail($to, $subject, $msg);
-        return $this->getSuccess();
+        AccountManager::getInstance()->email($to, $subject, $msg);
+
+        return JsonResponseBuilder::success();
     }
 
     public function confUpdate()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $item      = $this->getRequestVariable('item');
         $value     = $this->getRequestVariable('value');
 
-        $r = $this->phpDoc->updateConf($item, $value);
+        AccountManager::getInstance()->updateConf($item, $value);
 
-        return $this->getSuccess(array('msg' => $r));
+        return JsonResponseBuilder::success();
     }
 
     public function getAllFiles()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $node  = $this->getRequestVariable('node');
-        $search  = $this->getRequestVariable('search');
+        $node   = $this->getRequestVariable('node');
+        $search = $this->getRequestVariable('search');
 
-        $files = $this->phpDoc->getAllFiles($node, $search);
+        if ($this->hasRequestVariable('search')) {
+            $files = RepositoryFetcher::getInstance()->getFileByKeyword($search);
+        } else {
+            $files = RepositoryFetcher::getInstance()->getFilesByDirectory($node);
+        }
+
 // for extjs.TreeLoader, Loader must accept TreeNode objects only
-        return $this->getResponse($files);
+        return JsonResponseBuilder::response($files);
 /*
-        return $this->getSuccess($files);
+        return JsonResponseBuilder::success($files);
 */
     }
 
     public function saveLogMessage()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $messID = $this->getRequestVariable('messID');
         $mess   = stripslashes($this->getRequestVariable('mess'));
 
-        $this->phpDoc->saveLogMessage($messID, $mess);
+        LogManager::getInstance()->updateCommitLog($messID, $mess);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function deleteLogMessage()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $messID = $this->getRequestVariable('messID');
 
-        $this->phpDoc->deleteLogMessage($messID);
+        LogManager::getInstance()->delCommitLog($messID);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function getAllFilesAboutExtension()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $ExtName = $this->getRequestVariable('ExtName');
 
-        $r = $this->phpDoc->getAllFilesAboutExtension($ExtName);
+        $r = RepositoryFetcher::getInstance()->getFilesByExtension($ExtName);
 
-        return $this->getSuccess(array('files' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'files' => $r
+            )
+        );
     }
 
     public function afterPatchAccept()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $PatchUniqID = $this->getRequestVariable('PatchUniqID');
 
-        $this->phpDoc->afterPatchAccept($PatchUniqID);
+        RepositoryManager::getInstance()->postPatchAccept($PatchUniqID);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function afterPatchReject()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        if ($this->phpDoc->cvsLogin == 'cvsread') {
-            return $this->getFailure();
+        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+            return JsonResponseBuilder::failure();
         }
 
         $PatchUniqID = $this->getRequestVariable('PatchUniqID');
 
-        $this->phpDoc->afterPatchReject($PatchUniqID);
+        RepositoryManager::getInstance()->postPatchReject($PatchUniqID);
 
-        return $this->getSuccess();
+        return JsonResponseBuilder::success();
     }
 
     public function getCheckDocData()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
+        $ToolsCheckDoc = new ToolsCheckDoc();
         $r = $ToolsCheckDoc->getCheckDocData();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getBuildStatusData()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $r = $this->phpDoc->getBuildStatusData();
+        $r = LogManager::getInstance()->getBuildLogStatus();
 
-        return $this->getSuccess(array('nbItems' => $r['nb'], 'Items' => $r['node']));
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     public function getCheckDocFiles()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $path      = $this->getRequestVariable('path');
         $errorType = $this->getRequestVariable('errorType');
 
-        $ToolsCheckDoc = new ToolsCheckDoc($this->phpDoc->db);
+        $ToolsCheckDoc = new ToolsCheckDoc();
         $r = $ToolsCheckDoc->getCheckDocFiles($path, $errorType);
 
-        return $this->getSuccess(array('files' => $r));
+        return JsonResponseBuilder::success(
+            array(
+                'files' => $r
+            )
+        );
     }
 
     public function downloadPatch()
@@ -794,15 +908,20 @@ class ExtJsController
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $patch = $this->phpDoc->getRawDiff($FilePath, $FileName);
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
 
-        $file = 'patch-' . time() . '.patch';
+        $file  = new File($FileLang, $FilePath, $FileName);
+        $patch = $file->rawDiff(false);
+
+        $name = 'patch-' . time() . '.patch';
 
         $size = strlen($patch);
 
-        header("Content-Type: application/force-download; name=\"$file\"");
+        header("Content-Type: application/force-download; name=\"$name\"");
         header("Content-Transfer-Encoding: binary");
-        header("Content-Disposition: attachment; filename=\"$file\"");
+        header("Content-Disposition: attachment; filename=\"$name\"");
         header("Expires: 0");
         header("Cache-Control: no-cache, must-revalidate");
         header("Pragma: no-cache");
@@ -825,29 +944,29 @@ class ExtJsController
         require_once './jpgraph/src/jpgraph_pie.php';
         require_once './jpgraph/src/jpgraph_pie3d.php';
 
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
-        $Total_files_lang = $this->phpDoc->getNbFiles();
+        $Total_files_lang = TranslationStatistic::getInstance()->getFileCount();
         $Total_files_lang = $Total_files_lang[0];
         //
-        $up_to_date = $this->phpDoc->getNbFilesTranslated();
+        $up_to_date = TranslationStatistic::getInstance()->getTransFileCount();
         $up_to_date = $up_to_date[0];
         //
-        $critical = $this->phpDoc->getStatsCritical();
+        $critical = TranslationStatistic::getInstance()->getCriticalFileCount();
         $critical = $critical[0];
         //
-        $old = $this->phpDoc->getStatsOld();
+        $old = TranslationStatistic::getInstance()->getOldFileCount();
         $old = $old[0];
         //
-        $missing = sizeof($this->phpDoc->getMissFiles());
+        $missing = sizeof(TranslationStatistic::getInstance()->getMissedFileCount());
         //
-        $no_tag = $this->phpDoc->getStatsNoTag();
+        $no_tag = TranslationStatistic::getInstance()->getNoTagFileCount();
         $no_tag = $no_tag[0];
         //
-        $data = array($up_to_date,$critical,$old,$missing,$no_tag);
+        $data     = array($up_to_date,$critical,$old,$missing,$no_tag);
         $pourcent = array();
-        $total = 0;
-        $total = array_sum($data);
+        $total    = 0;
+        $total    = array_sum($data);
 
         foreach ( $data as $valeur ) {
             $pourcent[] = round($valeur * 100 / $total);
@@ -856,14 +975,14 @@ class ExtJsController
         $noExplode = ($Total_files_lang == $up_to_date) ? 1 : 0;
 
         $legend = array(
-        $pourcent[0] . '%% up to date ('.$up_to_date.')',
-        $pourcent[1] . '%% critical ('.$critical.')',
-        $pourcent[2] . '%% old ('.$old.')',
-        $pourcent[3] . '%% missing ('.$missing.')',
-        $pourcent[4] . '%% without revtag ('.$no_tag.')'
+            $pourcent[0] . '%% up to date ('.$up_to_date.')',
+            $pourcent[1] . '%% critical ('.$critical.')',
+            $pourcent[2] . '%% old ('.$old.')',
+            $pourcent[3] . '%% missing ('.$missing.')',
+            $pourcent[4] . '%% without revtag ('.$no_tag.')'
         );
 
-        $title = 'PHP : Details for '.ucfirst($this->phpDoc->cvsLang).' Documentation';
+        $title = 'PHP : Details for '.ucfirst(AccountManager::getInstance()->cvsLang).' Documentation';
 
         $graph = new PieGraph(530,300);
         $graph->SetShadow();
@@ -886,7 +1005,15 @@ class ExtJsController
         $graph->AddText($t1);
 
         $p1 = new PiePlot3D($data);
-        $p1->SetSliceColors(array("#68d888", "#ff6347", "#eee8aa", "#dcdcdc", "#f4a460"));
+        $p1->SetSliceColors(
+            array(
+                '#68d888',
+                '#ff6347',
+                '#eee8aa',
+                '#dcdcdc',
+                '#f4a460'
+            )
+        );
         if ($noExplode != 1) {
             $p1->ExplodeAll();
         }
@@ -903,22 +1030,39 @@ class ExtJsController
 
     public function getLastUpdate()
     {
-        $this->phpDoc->isLogged();
-        $r = $this->phpDoc->getLastUpdate();
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getLastUpdate();
 
-        return $this->getSuccess(array('success' => true, 'lastupdate' => $r['lastupdate']));
+        return JsonResponseBuilder::success(
+            array(
+                'success'    => true,
+                'lastupdate' => $r['lastupdate']
+            )
+        );
     }
 
     public function markAsNeedDelete()
     {
-        $this->phpDoc->isLogged();
+        AccountManager::getInstance()->isLogged();
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $r = $this->phpDoc->markAsNeedDelete($FilePath, $FileName);
+        $t = explode('/', $FilePath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
 
-        return $this->getSuccess(array('id' => $r['id'], 'by' => $r['by'], 'date' => $r['date']));
+        $file = new File($FileLang, $FilePath, $FileName);
+
+        $r = RepositoryManager::getInstance()->addPendingDelete($file);
+
+        return JsonResponseBuilder::success(
+            array(
+                'id'   => $r['id'],
+                'by'   => $r['by'],
+                'date' => $r['date']
+            )
+        );
     }
 
 }

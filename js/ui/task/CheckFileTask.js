@@ -76,6 +76,8 @@ ui.task.CheckFileTask = function(config)
                     '&nocache=' + new Date().getTime()
                 );
             }
+
+            ui.component.ErrorFileGrid.getInstance().store.reload();
         }
     });
 }

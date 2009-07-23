@@ -152,7 +152,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     // CleanUp the path
                     t = FilePath.split('/');
                     t.shift();
-                    t.shift();
 
                     FileName = t.pop();
 

@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/DBConnection.php';
+
 /**
  * A class for the check doc tools
  * Original check_phpdoc script have been written by didou <didou@php.net>
@@ -7,22 +9,14 @@
  *
  */
 class ToolsCheckDoc {
-    
-    /**
-     * Database connection
-     *
-     * @var resource
-     */
-    private $db;
-    
+
     /**
      * Initialise
      *
      * @param string $db The database connection
      */
-    function __construct($db)
+    function __construct()
     {
-        $this->db   = $db;
     }
 
     /**
@@ -35,7 +29,7 @@ class ToolsCheckDoc {
     function getCheckDocFiles($path, $errorType)
     {
         $s = sprintf('SELECT name FROM `files` WHERE `lang`="en" AND `path`="%s" AND `%s`=1', $path, $errorType);
-        $r = $this->db->query($s);
+        $r = DBConnection::getInstance()->query($s);
 
         $node = array();
         while ($row = $r->fetch_assoc()) {
@@ -76,8 +70,8 @@ class ToolsCheckDoc {
 
                   ORDER BY path';
 
-        $r    = $this->db->query($s);
-        $nb   = $r->num_rows;
+        $r  = DBConnection::getInstance()->query($s);
+        $nb = $r->num_rows;
         $i = 0;
         while ($a = $r->fetch_object()) {
             $i++;

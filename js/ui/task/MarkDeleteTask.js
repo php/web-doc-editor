@@ -21,7 +21,7 @@ ui.task.MarkDeleteTask = function(config)
                     url     : './php/controller.php',
                     params  : {
                         task     : 'markAsNeedDelete',
-                        FilePath : this.fpath,
+                        FilePath : phpDoc.userLang + this.fpath,
                         FileName : this.fname
                     },
                     success : function(response)

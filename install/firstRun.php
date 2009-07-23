@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once '../php/class.php';
+require_once '../php/RepositoryManager.php';
 require_once '../php/html.templates.php';
 
 $isCLI = (PHP_SAPI == 'cli');
@@ -13,9 +13,8 @@ if ($isCLI) {
     echo headerTemplate('Installation', 1);
 }
 
-$phpDoc = new phpDoc();
-
 // We checkOut phpdoc-all as cvsread
+$rm = RepositoryManager::getInstance();
 
 if ($isCLI) {
     echo "\n * Initial repository checkout...";
@@ -23,7 +22,7 @@ if ($isCLI) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initial repository checkout...";');
 }
 flush();
-$phpDoc->checkoutRepository();
+$rm->checkoutRepository();
 
 if ($isCLI) {
     echo "\n * Applying tools on repository...";
@@ -32,10 +31,10 @@ if ($isCLI) {
 }
 flush();
 //We apply all tools for all language
-$phpDoc->revDoRevCheck();
+$rm->applyRevCheck();
 
-// Search for Old Files
-$phpDoc->checkOldFiles();
+// Search for NotInEN old Files
+$rm->updateNotInEN();
 
 if ($isCLI) {
     echo "\n * Parsing translation data...";
@@ -45,10 +44,10 @@ if ($isCLI) {
 flush();
 
 // Parse translators
-$phpDoc->revParseTranslation();
+$rm->updateTranslatorInfo();
 
 // We update the last update date/time into DB
-$phpDoc->setLastUpdate();
+$rm->setLastUpdate();
 
 
 if ($isCLI) {
