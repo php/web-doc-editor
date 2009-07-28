@@ -5,6 +5,7 @@
 * The MySQLi extension
 * The PHP-GDLib module
 * Shell exec privileges
+* PHP-WebDAV extension (for svn repository, consult http://php-webdav.pureftpd.org/project/php-webdav & http://librenix.com/?inode=12427)
 
 == Configuration ==
 * Configuration is set in php/config.inc.php
@@ -12,7 +13,7 @@
 == File structure ==
 * A checkout of the CVS module named doc-editor
   - cvs -d :pserver:cvsread@cvs.php.net:/repository checkout doc-editor
-* A copy of the jpgraph 2.x series
+* A copy of the jpgraph 3.x series
   - Download from here: http://www.aditus.nu/jpgraph/jpdownload.php
   - Unpack it like so: doc-editor/php/jpgraph/
 * A copy of the ExtJs 2.2.x series
