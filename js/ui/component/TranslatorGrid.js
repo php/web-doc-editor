@@ -28,8 +28,8 @@ ui.component._TranslatorGrid.store = new Ext.data.Store({
                 name    : 'nick',
                 mapping : 'nick'
             }, {
-                name    : 'cvs',
-                mapping : 'cvs'
+                name    : 'vcs',
+                mapping : 'vcs'
             }, {
                 name    : 'uptodate',
                 mapping : 'uptodate',

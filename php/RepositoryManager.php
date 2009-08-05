@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/LockFile.php';
 require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/CvsClient.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/ToolsError.php';
 require_once dirname(__FILE__) . '/ToolsCheckDoc.php';
 
@@ -21,7 +21,7 @@ class RepositoryManager
         return self::$instance;
     }
 
-    private $availableLang = array(
+    public $availableLang = array(
         'ar', 'bg', 'zh', 'hk','pt_BR',
         'tw', 'cs', 'da', 'nl', 'fi',
         'fr', 'de', 'el', 'he', 'hu',
@@ -44,7 +44,7 @@ class RepositoryManager
 
         if ($lock->lock()) {
             // exec the checkout
-            CvsClient::getInstance()->checkout();
+            VCSFactory::getInstance()->checkout();
         }
 
         $lock->release();
@@ -57,14 +57,14 @@ class RepositoryManager
      */
     public function cleanUp()
     {
-        // We cleanUp the database before update Cvs and apply again all tools
+        // We cleanUp the database before update vcs and apply again all tools
         foreach (array('files', 'translators', 'errorfiles') as $table) {
             DBConnection::getInstance()->query("TRUNCATE TABLE $table");
         }
     }
 
     /**
-     * Update the repository to sync our local copy. Simply exec an "cvs -f -q update -d -P" command.
+     * Update the repository to sync our local copy.
      * As this exec command take some time, we start by creating a lock file, then run the command, then delete this lock file.
      * As it, we can test if this command has finish, or not.
      */
@@ -74,7 +74,7 @@ class RepositoryManager
 
         if ($lock->lock()) {
             // exec the update
-            CvsClient::getInstance()->update();
+            VCSFactory::getInstance()->update();
         }
 
         $lock->release();
@@ -89,9 +89,9 @@ class RepositoryManager
      */
     public function checkBuild($enable_xml_details=false)
     {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';'
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.';'
               .'/usr/bin/php configure.php '
-              .'--with-lang='.AccountManager::getInstance()->cvsLang.' --disable-segfault-error';
+              .'--with-lang='.AccountManager::getInstance()->vcsLang.' --disable-segfault-error';
 
         if ($enable_xml_details) {
             $cmd .= ' --enable-xml-details';
@@ -134,7 +134,7 @@ class RepositoryManager
             $s = sprintf(
                 'INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
                 $file->lang, $file->path, $file->name, $revision, $en_revision,
-                $reviewed, $maintainer, AccountManager::getInstance()->cvsLogin, $type
+                $reviewed, $maintainer, AccountManager::getInstance()->vcsLogin, $type
             );
             DBConnection::getInstance()->query($s);
             $fileID = DBConnection::getInstance()->insert_id();
@@ -187,7 +187,7 @@ class RepositoryManager
 
         $s = sprintf(
             'INSERT into `pendingPatch` (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", now(), "%s", "%s")',
-            $file->lang, $file->path, $file->name, AccountManager::getInstance()->cvsLogin, $email, $uniqID
+            $file->lang, $file->path, $file->name, AccountManager::getInstance()->vcsLogin, $email, $uniqID
         );
         DBConnection::getInstance()->query($s);
 
@@ -210,14 +210,14 @@ class RepositoryManager
             VALUES
                 ("%s","%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")',
             $file->lang, $file->path, $file->name,
-            AccountManager::getInstance()->cvsLogin,
+            AccountManager::getInstance()->vcsLogin,
             $date
         );
         DBConnection::getInstance()->query($s);
 
         return array(
             'id'   => DBConnection::getInstance()->insert_id(),
-            'by'   => AccountManager::getInstance()->cvsLogin,
+            'by'   => AccountManager::getInstance()->vcsLogin,
             'date' => $date
         );
     }
@@ -250,7 +250,7 @@ class RepositoryManager
                 case 'delete': $delete_stack[] = $f; break;
             }
         }
-        $commitLog = CvsClient::getInstance()->commit(
+        $commitLog = VCSFactory::getInstance()->commit(
             $log, $create_stack, $update_stack, $delete_stack
         );
 
@@ -305,8 +305,8 @@ class RepositoryManager
         @unlink($doc);
 
         // We need check for error in this file
-        $en_content   = file_get_contents(DOC_EDITOR_CVS_PATH.'en' .$path.$name);
-        $lang_content = file_get_contents(DOC_EDITOR_CVS_PATH.$lang.$path.$name);
+        $en_content   = file_get_contents(DOC_EDITOR_VCS_PATH.'en' .$path.$name);
+        $lang_content = file_get_contents(DOC_EDITOR_VCS_PATH.$lang.$path.$name);
 
         $info = $file->getInfo($lang_content);
         $anode[0] = array(
@@ -352,17 +352,17 @@ class RepositoryManager
         $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
         $r = DBConnection::getInstance()->query($s);
 
-        $cvsLogin = isset(AccountManager::getInstance()->cvsLogin)
-                    ? AccountManager::getInstance()->cvsLogin : '-';
+        $vcsLogin = isset(AccountManager::getInstance()->vcsLogin)
+                    ? AccountManager::getInstance()->vcsLogin : '-';
         if ($r->num_rows == 0) {
             $s = sprintf(
                 'INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), "%s")',
-                $cvsLogin
+                $vcsLogin
             );
         } else {
             $s = sprintf(
                 'UPDATE `project` SET `lastupdate`=now(), `by`="%s" WHERE `name`=\'php\'',
-                $cvsLogin
+                $vcsLogin
             );
         }
         DBConnection::getInstance()->query($s);
@@ -375,7 +375,7 @@ class RepositoryManager
      */
     public function postPatchAccept($uniqID)
     {
-        $cvsLogin = AccountManager::getInstance()->cvsLogin;
+        $vcsLogin = AccountManager::getInstance()->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
         $r = DBConnection::getInstance()->query($s);
@@ -394,12 +394,12 @@ time to get updated, we would like to ask you to be a bit patient.
 Thank you for your submission, and for helping us make our documentation better.
 
 --
-{$cvsLogin}@php.net
+{$vcsLogin}@php.net
 EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink(DOC_EDITOR_VCS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -411,7 +411,7 @@ EOD;
      */
     public function postPatchReject($uniqID)
     {
-        $cvsLogin = AccountManager::getInstance()->cvsLogin;
+        $vcsLogin = AccountManager::getInstance()->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
         $r = DBConnection::getInstance()->query($s);
@@ -427,12 +427,12 @@ Your patch ($uniqID) was rejected from the PHP Manual.
 Thank you for your submission.
 
 --
-{$cvsLogin}@php.net
+{$vcsLogin}@php.net
 EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink(DOC_EDITOR_VCS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -481,7 +481,7 @@ EOD;
 
             } else { // lang file
 
-                $pathEN    = DOC_EDITOR_CVS_PATH.'en'.$file->path.$file->name;
+                $pathEN    = DOC_EDITOR_VCS_PATH.'en'.$file->path.$file->name;
                 $sizeEN    = intval(filesize($pathEN) / 1024);
                 $dateEN    = filemtime($pathEN);
 
@@ -537,7 +537,7 @@ EOD;
                 $matches = array();
                 if (preg_match_all('!<person (.+)/\\s?>!U', $txml, $matches)) {
                     $default = array(
-                        'cvs'    => 'n/a',
+                        'vcs'    => 'n/a',
                         'nick'   => 'n/a',
                         'editor' => 'n/a',
                         'email'  => 'n/a',
@@ -557,13 +557,13 @@ EOD;
                         $person = array_merge($default, $person);
 
                         $s = sprintf(
-                            'INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `cvs`, `editor`)
+                            'INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
                              VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
                             $lang,
                             DBConnection::getInstance()->real_escape_string($person['nick']),
                             DBConnection::getInstance()->real_escape_string($name),
                             DBConnection::getInstance()->real_escape_string($person['email']),
-                            DBConnection::getInstance()->real_escape_string($person['cvs']),
+                            DBConnection::getInstance()->real_escape_string($person['vcs']),
                             DBConnection::getInstance()->real_escape_string($person['editor'])
                         );
                         DBConnection::getInstance()->query($s);
@@ -618,7 +618,7 @@ EOD;
      */
     private function doUpdateNotInEN($path, $lang)
     {
-        if ($dh = @opendir(DOC_EDITOR_CVS_PATH.$lang.$path)) {
+        if ($dh = @opendir(DOC_EDITOR_VCS_PATH.$lang.$path)) {
 
             $dirs  = array();
             $files = array();
@@ -638,8 +638,8 @@ EOD;
             }
 
             foreach($files as $f) {
-                $en_file   = DOC_EDITOR_CVS_PATH .'en'  .$f->path .$f->name;
-                $lang_file = DOC_EDITOR_CVS_PATH .$lang .$f->path .$f->name;
+                $en_file   = DOC_EDITOR_VCS_PATH .'en'  .$f->path .$f->name;
+                $lang_file = DOC_EDITOR_VCS_PATH .$lang .$f->path .$f->name;
 
                 if (!@is_file($en_file)) {
                     $s = sprintf(
@@ -666,7 +666,7 @@ EOD;
      */
     public function applyRevCheck($path = '/')
     {
-        if ($dh = @opendir(DOC_EDITOR_CVS_PATH.'en'.$path)) {
+        if ($dh = @opendir(DOC_EDITOR_VCS_PATH.'en'.$path)) {
 
             $dirs  = array();
             $files = array();

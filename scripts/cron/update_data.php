@@ -8,37 +8,37 @@
 ****/
 
 
-require_once dirname(__FILE__) . '/../../php/class.php';
+require_once dirname(__FILE__) . '/../../php/conf.inc.php';
+require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
-$phpDoc = new phpDoc();
+$rm = RepositoryManager::getInstance();
 
 // Cvs update
-$phpDoc->updateRepository();
+$rm->updateRepository();
 
 // After update the repo, we need to chmod all file to be able to save it again as www server user
-$cmd = "cd ".DOC_EDITOR_CVS_PATH."; chmod -R 777 ./; chown -R  ".DOC_EDITOR_WWW_USER.":".DOC_EDITOR_WWW_GROUP." ./";
+$cmd = "cd ".DOC_EDITOR_VCS_PATH."; chmod -R 775 ./; chown -R  ".DOC_EDITOR_WWW_USER.":".DOC_EDITOR_WWW_GROUP." ./";
 exec($cmd);
 
 // Clean Up DB
-$phpDoc->cleanUp();
+$rm->cleanUp();
 
 // Set the lock File
 $lock = new LockFile('lock_apply_tools');
 
 if ($lock->lock()) {
 
-  // Start Revcheck
-  $phpDoc->revDoRevCheck();
+    // Start Revcheck
+    $rm->applyRevCheck();
 
-  // Search for Old Files
-  $phpDoc->checkOldFiles();
+    // Search for NotInEN Old Files
+    $rm->updateNotInEN();
 
-  // Parse translators
-  $phpDoc->revParseTranslation();
+    // Parse translators
+    $rm->updateTranslatorInfo();
 
-  // Set lastUpdate date/time
-  $phpDoc->setLastUpdate();
-
+    // Set lastUpdate date/time
+    $rm->setLastUpdate();
 }
 $lock->release();
 

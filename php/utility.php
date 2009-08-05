@@ -10,9 +10,9 @@ require_once dirname(__FILE__) . '/AccountManager.php';
 function debug($mess)
 {
     $mess = '['.date('d/m/Y H:i:s').'] by '
-            .AccountManager::getInstance()->cvsLogin.' : '.$mess."\n";
+            .AccountManager::getInstance()->vcsLogin.' : '.$mess."\n";
 
-    $fp = fopen(DOC_EDITOR_CVS_PATH.'../.debug', 'a+');
+    $fp = fopen(DOC_EDITOR_VCS_PATH.'../.debug', 'a+');
     fwrite($fp, $mess);
     fclose($fp);
 }

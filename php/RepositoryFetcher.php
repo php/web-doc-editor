@@ -55,7 +55,7 @@ class RepositoryFetcher
             'SELECT `id`, `lang`, `path`, `name`, CONCAT("1.", `revision`) AS `revision`,
             CONCAT("1.", `en_revision`) AS `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE
             `lang`="%s" OR `lang`="en"',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -80,7 +80,7 @@ class RepositoryFetcher
         $s = sprintf(
             'SELECT * FROM `pendingCommit` WHERE
             (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
-            AccountManager::getInstance()->cvsLang, $ids
+            AccountManager::getInstance()->vcsLang, $ids
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -99,19 +99,19 @@ class RepositoryFetcher
      */
     public function getPendingUpdate()
     {
-        $cvsLang = AccountManager::getInstance()->cvsLang;
+        $vcsLang = AccountManager::getInstance()->vcsLang;
 
         $m = $this->getModifies();
         $s = sprintf(
             'SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`',
-            $cvsLang
+            $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
         while ($a = $r->fetch_object()) {
 
-            if (   isset($m[$cvsLang.$a->path.$a->name])
+            if (   isset($m[$vcsLang.$a->path.$a->name])
                 || isset($m['en'    .$a->path.$a->name])
             ) {
                 if (isset($m['en'.$a->path.$a->name])) {
@@ -120,10 +120,10 @@ class RepositoryFetcher
                     $new_maintainer  = $a->maintainer;
                 }
 
-                if (isset($m[$cvsLang.$a->path.$a->name])) {
+                if (isset($m[$vcsLang.$a->path.$a->name])) {
                     $new_en_revision = '1.'.$a->en_revision;
-                    $new_revision    = $m[$cvsLang.$a->path.$a->name]['en_revision'];
-                    $new_maintainer  = $m[$cvsLang.$a->path.$a->name]['maintainer'];
+                    $new_revision    = $m[$vcsLang.$a->path.$a->name]['en_revision'];
+                    $new_maintainer  = $m[$vcsLang.$a->path.$a->name]['maintainer'];
                 }
 
                 $node[] = array(
@@ -159,12 +159,12 @@ class RepositoryFetcher
      */
     public function getPendingReview()
     {
-        $cvsLang = AccountManager::getInstance()->cvsLang;
+        $vcsLang = AccountManager::getInstance()->vcsLang;
 
         $m = $this->getModifies();
         $s = sprintf(
             'SELECT * FROM `files` WHERE `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
-            $cvsLang
+            $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -177,7 +177,7 @@ class RepositoryFetcher
                 "name" => $a->name,
             );
 
-            if (   isset($m[$cvsLang.$a->path.$a->name])
+            if (   isset($m[$vcsLang.$a->path.$a->name])
                 || isset($m['en'    .$a->path.$a->name])
             ) {
                 if (isset($m['en'.$a->path.$a->name])) {
@@ -185,9 +185,9 @@ class RepositoryFetcher
                     $new_maintainer = $a->maintainer;
                 }
 
-                if (isset($m[$cvsLang.$a->path.$a->name])) {
-                    $new_reviewed   = $m[$cvsLang.$a->path.$a->name]['reviewed'];
-                    $new_maintainer = $m[$cvsLang.$a->path.$a->name]['maintainer'];
+                if (isset($m[$vcsLang.$a->path.$a->name])) {
+                    $new_reviewed   = $m[$vcsLang.$a->path.$a->name]['reviewed'];
+                    $new_maintainer = $m[$vcsLang.$a->path.$a->name]['maintainer'];
                 }
 
                 $temp['reviewed']   = $new_reviewed;
@@ -210,10 +210,10 @@ class RepositoryFetcher
      */
     public function getNotInEn()
     {
-        $cvsLang = AccountManager::getInstance()->cvsLang;
+        $vcsLang = AccountManager::getInstance()->vcsLang;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $cvsLang);
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $vcsLang);
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
@@ -222,7 +222,7 @@ class RepositoryFetcher
                 "id"         => $a->id,
                 "path"       => $a->path,
                 "name"       => $a->name,
-                "needcommit" => isset($m[$cvsLang.$a->path.$a->name]) ? true : false
+                "needcommit" => isset($m[$vcsLang.$a->path.$a->name]) ? true : false
             );
         }
 
@@ -238,7 +238,7 @@ class RepositoryFetcher
     {
         $s = sprintf(
             'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -259,7 +259,7 @@ class RepositoryFetcher
     {
         $s = sprintf(
             'SELECT * FROM `pendingCommit` WHERE `lang`="%s" OR `lang`=\'en\'',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -289,7 +289,7 @@ class RepositoryFetcher
         $s = sprintf(
             'SELECT `path`, `name` FROM `files` WHERE `path`
              LIKE \'/reference/%s/%%\' AND `lang`="%s" ORDER BY `path`, `name`',
-            $ext, AccountManager::getInstance()->cvsLang
+            $ext, AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -329,7 +329,7 @@ class RepositoryFetcher
         $s = sprintf(
             'SELECT `lang`, `path`, `name` FROM `files` WHERE (`lang`="%s" OR `lang`=\'en\')
              AND `name` LIKE \'%%%s%%\' ORDER BY `lang`, `path`, `name`',
-            AccountManager::getInstance()->cvsLang, $key
+            AccountManager::getInstance()->vcsLang, $key
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -363,7 +363,7 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
 
-        $d = dir(DOC_EDITOR_CVS_PATH.$dir);
+        $d = dir(DOC_EDITOR_VCS_PATH.$dir);
 
         $files = array();
         while ($f = $d->read())
@@ -371,7 +371,7 @@ class RepositoryFetcher
             // We display only 'en' and 'LANG' tree
             if (   $dir == '/'
                 && $f != 'en'
-                && $f != AccountManager::getInstance()->cvsLang
+                && $f != AccountManager::getInstance()->vcsLang
             ) {
                 continue; // skip non-en and non-user-lang
             }
@@ -384,7 +384,7 @@ class RepositoryFetcher
                 || $f == 'CVS'
             ) continue;
 
-            if (is_dir(DOC_EDITOR_CVS_PATH.$dir.$f)) {
+            if (is_dir(DOC_EDITOR_VCS_PATH.$dir.$f)) {
 
                 $files[] = array(
                     'text' => $f,

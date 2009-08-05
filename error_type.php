@@ -2,16 +2,17 @@
 session_start();
 error_reporting(E_ALL);
 
-include "./php/class.php";
+require_once "./php/AccountManager.php";
+require_once "./php/ToolsError.php";
 
-$phpDoc = new phpDoc();
-$phpDoc->isLogged();
+$am = AccountManager::getInstance();
+$am->isLogged();
 
 if (isset($_GET['dir']) && isset($_GET['file'])) {
 
     // We retrieve all this error from DB to display the value.
-    $errorTools = new ToolsError($phpDoc->db);
-    $errorTools->setParams('', '', $phpDoc->cvsLang, $_GET['dir'], $_GET['file'], '');
+    $errorTools = new ToolsError();
+    $errorTools->setParams('', '', $am->vcsLang, $_GET['dir'], $_GET['file'], '');
     $error_to_display = $errorTools->getInfo();
 
     $fileLibel = $_GET['dir'] . $_GET['file'];
@@ -106,7 +107,7 @@ $tags = array(
 foreach ($tags as $tag => $label)
 {
     $error['nb' . $label . 'Tag']['head'] = $label . ' tag';
-    $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different from english version.';   
+    $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different from english version.';
 }
 
 $error['-No error-']['head'] = '- No error -';
@@ -293,7 +294,7 @@ while (list($k, $v) = each($to_display)) {
         if (isset($error_to_display[$k2]['error'])) {
             for ($i = 0; $i < count($error_to_display[$k2]['error']); $i++) {
                 echo 'value in En : ' . $error_to_display[$k2]['error'][$i]['value_en'] . '<br/>';
-                echo 'value in ' . ucfirst($phpDoc->cvsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>';
+                echo 'value in ' . ucfirst($am->vcsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>';
             }
         }
 ?>

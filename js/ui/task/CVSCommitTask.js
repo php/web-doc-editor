@@ -25,7 +25,7 @@ ui.task._CVSCommitTask.commit = function(files)
     XHR({
         url     : './php/controller.php',
         params  : {
-            task       : 'cvsCommit',
+            task       : 'vcsCommit',
             nodes      : Ext.util.JSON.encode(nodes),
             logMessage : LogMessage
         },

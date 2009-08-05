@@ -5,6 +5,7 @@
 * The MySQLi extension
 * The PHP-GDLib module
 * Shell exec privileges
+* native vcs-client (e.g. using Subversion should have native svn-client)
 
 == Configuration ==
 * Configuration is set in php/config.inc.php
@@ -36,3 +37,4 @@
 === Other notes ===
 * A common test PHP CVS user is: cvsread with password: phpfi
 * Or use your own CVS credentials
+* After modifying any .js, run /scripts/util/compress.sh

@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `translators` (
   `nick` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `mail` varchar(255) NOT NULL,
-  `cvs` varchar(255) NOT NULL,
+  `vcs` varchar(255) NOT NULL,
   `editor` varchar(255) NOT NULL,
   KEY `id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -153,8 +153,8 @@ CREATE TABLE IF NOT EXISTS `translators` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cvs_login` varchar(255) NOT NULL,
-  `cvs_passwd` varchar(255) NOT NULL,
+  `vcs_login` varchar(255) NOT NULL,
+  `vcs_passwd` varchar(255) NOT NULL,
   `conf_needupdate_diff` varchar(255) NOT NULL DEFAULT 'using-exec',
   `conf_needupdate_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
   `conf_needupdate_displaylog` varchar(10) NOT NULL DEFAULT 'false',

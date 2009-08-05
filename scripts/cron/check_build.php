@@ -7,28 +7,35 @@
 * 00 01 * * 4 /usr/bin/php /path/to/your/cvs/dir/doc-editor/scripts/cron/check_build.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/class.php';
-
-$phpDoc = new phpDoc();
+require_once dirname(__FILE__) . '/../../php/conf.inc.php';
+require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
+require_once dirname(__FILE__) . '/../../php/LogManager.php';
 
 // For all language, we check the build
-while (list(, $lang) = each($phpDoc->availableLanguage)) {
+foreach (RepositoryManager::getInstance()->availableLang as $lang) {
 
     $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
     $output = array();
     exec($cmd, $output);
 
-    $msg = implode("\n", $output);
-    $msg = "Your documentation is broken. The build is done on Friday.\n\nPlease, try to fix it *quickly*.\n\nHere is the output of the configure.php script :\n\n=============================\n\n".$msg;
+    $m = implode("\n", $output);
+    $msg = "Your documentation is broken. The build is done on Friday.
 
-    $smg .= "
--- 
+Please, try to fix it *quickly*.
+
+Here is the output of the configure.php script :
+
+=============================
+
+$m
+
+--
 This email is send automatically by the PhpDocumentation Online Editor.
 ";
 
     $status = 1;
     // Send an email only if the build is broken
-    if( !strstr($msg, 'All good. Saving .manual.xml... done.')) {
+    if (!strstr($msg, 'All good. Saving .manual.xml... done.')) {
 
         $status = 0;
 
@@ -41,11 +48,9 @@ This email is send automatically by the PhpDocumentation Online Editor.
         'Content-Type: text/plain; charset="utf-8"'."\n";
 
         mail($to, $subject, $msg, $headers);
-
     }
 
-    $phpDoc->buildLog($lang, $status);
-
+    LogManager::getInstance()->saveBuildLogStatus($lang, $status);
 }
 
 ?>

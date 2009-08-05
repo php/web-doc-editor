@@ -105,7 +105,7 @@ class LogManager
      */
     public function saveOutputLog($file, $output)
     {
-        $fp = fopen(DOC_EDITOR_CVS_PATH . '../.' . $file, 'w');
+        $fp = fopen(DOC_EDITOR_VCS_PATH . '../.' . $file, 'w');
         fwrite($fp, implode("<br>",$output));
         fclose($fp);
     }
@@ -118,7 +118,7 @@ class LogManager
      */
     public function readOutputLog($file)
     {
-        return file_get_contents(DOC_EDITOR_CVS_PATH . '../.' . $file);
+        return file_get_contents(DOC_EDITOR_VCS_PATH . '../.' . $file);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/conf.inc.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/CvsClient.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class File
 {
@@ -32,7 +32,7 @@ class File
         if (substr($path, -1)   != '/') $path = $path.'/';
         $this->path = $path;
 
-        $this->full_path = DOC_EDITOR_CVS_PATH.$lang.$path.$name;
+        $this->full_path = DOC_EDITOR_VCS_PATH.$lang.$path.$name;
     }
 
     /**
@@ -164,7 +164,7 @@ class File
             'content'    => $content
         );
 
-        // Cvs tag
+        // revision tag
         $match = array();
         preg_match('/<!-- .Revision: \d+\.(\d+) . -->/', $content, $match);
         if (!empty($match)) {
@@ -205,7 +205,7 @@ class File
     public function rawDiff($isPatch=false, $uniqID='')
     {
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$this->lang.$this->path.'; '
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$this->lang.$this->path.'; '
               .'diff -uN '.$this->name.' '.$this->name.$ext;
 
         $output = array();
@@ -243,10 +243,10 @@ class File
      * @param $rev2 Second revision.
      * @return The diff a the file with his modified version, as HTML, reday to be display.
      */
-    public function cvsDiff($rev1, $rev2)
+    public function vcsDiff($rev1, $rev2)
     {
-        $output = CvsClient::getInstance()->diff(
-            DOC_EDITOR_CVS_PATH.$this->lang.$this->path,
+        $output = VCSFactory::getInstance()->diff(
+            $this->lang.$this->path,
             $this->name, $rev1, $rev2
         );
         $output = htmlentities(join("\n", $output));

@@ -13,7 +13,6 @@ if ($isCLI) {
     echo headerTemplate('Installation', 1);
 }
 
-// We checkOut phpdoc-all as cvsread
 $rm = RepositoryManager::getInstance();
 
 if ($isCLI) {
@@ -22,6 +21,7 @@ if ($isCLI) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initial repository checkout...";');
 }
 flush();
+// checkout repository from VCS
 $rm->checkoutRepository();
 
 if ($isCLI) {

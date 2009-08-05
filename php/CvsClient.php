@@ -66,11 +66,11 @@ class CvsClient
      */
     public function authenticate($cvsLogin, $cvsPasswd)
     {
-        $fp = fsockopen(DOC_EDITOR_CVS_SERVER_HOST, DOC_EDITOR_CVS_SERVER_PORT);
+        $fp = fsockopen(DOC_EDITOR_VCS_SERVER_HOST, DOC_EDITOR_VCS_SERVER_PORT);
         fwrite($fp,
             implode("\n", array(
                 'BEGIN AUTH REQUEST',
-                DOC_EDITOR_CVS_SERVER_PATH,
+                DOC_EDITOR_VCS_SERVER_PATH,
                 $cvsLogin,
                 $this->passwdEncode($cvsPasswd, 'A'),
                 'END AUTH REQUEST'."\n"
@@ -102,11 +102,11 @@ class CvsClient
     }
 
     /**
-     *  cvs -f -q update -d -P . under DOC_EDITOR_CVS_PATH
+     *  cvs -f -q update -d -P . under DOC_EDITOR_VCS_PATH
      */
     public function update()
     {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.'; cvs -f -q update -d -P .;';
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; cvs -f -q update -d -P .;';
         exec($cmd);
     }
 
@@ -119,7 +119,7 @@ class CvsClient
      */
     public function log($path, $file)
     {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$path.'; cvs log '.$file;
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; cvs log '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -133,23 +133,25 @@ class CvsClient
         $final = array();
         for ($i=1; $i < count($part); $i++ ) {
 
-            $final[$i-1]['id']  = $i;
-            $final[$i-1]['raw'] = $part[$i];
+            $o = array();
+
+            $o['id']  = $i;
+            $o['raw'] = $part[$i];
 
             // Get revision
             $out = array();
             preg_match('/revision (.*?)\n/e', $part[$i], $out);
-            $final[$i-1]['revision'] = $out[1];
+            $o['revision'] = $out[1];
 
             // Get date
             $out = array();
             preg_match('/date: (.*?);/e', $part[$i], $out);
-            $final[$i-1]['date'] = $out[1];
+            $o['date'] = $out[1];
 
             // Get user
             $out = array();
             preg_match('/author: (.*?);/e', $part[$i], $out);
-            $final[$i-1]['author'] = $out[1];
+            $o['author'] = $out[1];
 
             //Get content
             $content = explode("\n", $part[$i]);
@@ -157,12 +159,14 @@ class CvsClient
             if (substr($content[3], 0, 9) == 'branches:' ) { $j=4; }
             else { $j=3; }
 
-            $final[$i-1]['content'] = '';
+            $o['content'] = '';
 
             for ($h=$j; $h < count($content); $h++) {
-                $final[$i-1]['content'] .= $content[$h]."\n";
+                $o['content'] .= $content[$h]."\n";
             }
-            $final[$i-1]['content'] = str_replace("\n", '<br/>', trim($final[$i-1]['content']));
+            $o['content'] = str_replace("\n", '<br/>', trim($o['content']));
+
+            $final[] = $o;
         }
 
         return $final;
@@ -179,7 +183,7 @@ class CvsClient
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -210,10 +214,10 @@ class CvsClient
 
             // Pre-commit : rename .new to actual file
 /*
-            @unlink(DOC_EDITOR_CVS_PATH.$p);
+            @unlink(DOC_EDITOR_VCS_PATH.$p);
 */
-            @copy(  DOC_EDITOR_CVS_PATH.$p.'.new', DOC_EDITOR_CVS_PATH.$p);
-            @unlink(DOC_EDITOR_CVS_PATH.$p.'.new');
+            @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
+            @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
         }
 
         $delete_stack = array();
@@ -227,8 +231,8 @@ class CvsClient
         $filesDelete = implode($delete_stack, ' ');
 
         // Buil the command line
-        $cvsLogin  = AccountManager::getInstance()->cvsLogin;
-        $cvsPasswd = AccountManager::getInstance()->cvsPasswd;
+        $cvsLogin  = AccountManager::getInstance()->vcsLogin;
+        $cvsPasswd = AccountManager::getInstance()->vcsPasswd;
 
         $cmdCreate = $cmdDelete = '';
         if (trim($filesCreate) != '') {
@@ -245,13 +249,12 @@ class CvsClient
                "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f commit -l -m '$log' $filesUpdate $filesDelete $filesCreate";
 
         // First, login into Cvs
-        $fullCmd = 'export CVS_PASSFILE='.realpath(DOC_EDITOR_DATA_PATH).'/.cvspass && cd '.DOC_EDITOR_CVS_PATH.' && '
+        $fullCmd = 'export CVS_PASSFILE='.realpath(DOC_EDITOR_DATA_PATH).'/.cvspass && cd '.DOC_EDITOR_VCS_PATH.' && '
                   ."cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository login && $cmd";
 
         $output  = array();
-/* HIDE
         exec($fullCmd, $output);
-*/
+
         return $output;
     }
 }

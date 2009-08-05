@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/RepositoryFetcher.php';
 require_once dirname(__FILE__) . '/LogManager.php';
-require_once dirname(__FILE__) . '/CvsClient.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/TranslatorStatistic.php';
 
@@ -71,11 +71,11 @@ class ExtJsController
      */
     public function login()
     {
-        $cvsLogin  = $this->getRequestVariable('cvsLogin');
-        $cvsPasswd = $this->getRequestVariable('cvsPassword');
+        $vcsLogin  = $this->getRequestVariable('cvsLogin');
+        $vcsPasswd = $this->getRequestVariable('cvsPassword');
         $lang      = $this->getRequestVariable('lang');
 
-        $response = AccountManager::getInstance()->login($cvsLogin, $cvsPasswd, $lang);
+        $response = AccountManager::getInstance()->login($vcsLogin, $vcsPasswd, $lang);
 
         if ($response['state'] === true) {
             // This user is already know in a valid user
@@ -92,7 +92,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -124,52 +124,22 @@ class ExtJsController
 
         if ($lock->lock()) {
 
-            require_once dirname(__FILE__) . '/utility.php';
-
             // Start Revcheck
-            debug('$rm->applyRevCheck()');
             $rm->applyRevCheck();
 
             // Search for NotInEN Old Files
-            debug('$rm->updateNotInEN()');
             $rm->updateNotInEN();
 
             // Parse translators
-            debug('$rm->updateTranslatorInfo()');
             $rm->updateTranslatorInfo();
 
             // Set lastUpdate date/time
-            debug('$rm->setLastUpdate()');
             $rm->setLastUpdate();
         }
         $lock->release();
 
         return JsonResponseBuilder::success();
     }
-
-    /**
-     * Tests the CVS username against its password
-     *
-     * @return Success
-     */
-/* obsolete
-    public function testCvsLogin()
-    {
-        $cvsLogin  = $this->getRequestVariable('cvsLogin');
-        $cvsPasswd = $this->getRequestVariable('cvsPasswd');
-
-        $this->phpDoc->login($cvsLogin,$cvsPasswd);
-        $r = $this->phpDoc->checkCvsAuth();
-
-        if ($r === true) {
-            return JsonResponseBuilder::success();
-        } else {
-            return JsonResponseBuilder::failure(
-                array('msg' => str_replace("\n", "", nl2br($r)))
-            );
-        }
-    }
-*/
 
     /**
      * Pings the server and user session
@@ -236,7 +206,7 @@ class ExtJsController
         AccountManager::getInstance()->isLogged();
 
         $errorTools = new ToolsError();
-        $errorTools->setParams('', '', AccountManager::getInstance()->cvsLang, '', '', '');
+        $errorTools->setParams('', '', AccountManager::getInstance()->vcsLang, '', '', '');
         $r = $errorTools->getFilesError(RepositoryFetcher::getInstance()->getModifies());
 
         return JsonResponseBuilder::success(
@@ -307,7 +277,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $nr = new NewsReader(AccountManager::getInstance()->cvsLang);
+        $nr = new NewsReader(AccountManager::getInstance()->vcsLang);
         $r  = $nr->getLastNews();
 
         return JsonResponseBuilder::success(
@@ -322,7 +292,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $bugs = new BugReader(AccountManager::getInstance()->cvsLang);
+        $bugs = new BugReader(AccountManager::getInstance()->vcsLang);
         $r = $bugs->getOpenBugs();
 
         return JsonResponseBuilder::success(
@@ -424,7 +394,7 @@ class ExtJsController
                         ? $this->getRequestVariable('emailAlert')
                         : '';
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread' && $type == 'file') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread' && $type == 'file') {
             return JsonResponseBuilder::failure();
         }
 
@@ -497,7 +467,7 @@ class ExtJsController
         $Path = $this->getRequestVariable('Path');
         $File = $this->getRequestVariable('File');
 
-        $r = CvsClient::getInstance()->log($Path, $File);
+        $r = VCSFactory::getInstance()->log($Path, $File);
 
         return JsonResponseBuilder::success(
             array(
@@ -549,7 +519,7 @@ class ExtJsController
         $Rev2 = $this->getRequestVariable('Rev2');
 
         $file = new File($FileLang, $FilePath, $FileName);
-        $r = $file->cvsDiff($Rev1, $Rev2);
+        $r = $file->vcsDiff($Rev1, $Rev2);
 
         return JsonResponseBuilder::success(
             array(
@@ -562,7 +532,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -588,7 +558,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance() == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -633,7 +603,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -653,11 +623,11 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
-    public function cvsCommit()
+    public function vcsCommit()
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -679,7 +649,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -729,8 +699,8 @@ class ExtJsController
         AccountManager::getInstance()->isLogged();
 
         $r = array();
-        $r['userLang']  = AccountManager::getInstance()->cvsLang;
-        $r['userLogin'] = AccountManager::getInstance()->cvsLogin;
+        $r['userLang']  = AccountManager::getInstance()->vcsLang;
+        $r['userLogin'] = AccountManager::getInstance()->vcsLogin;
         $r['userConf']  = AccountManager::getInstance()->userConf;
 
         return JsonResponseBuilder::success(
@@ -789,7 +759,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -805,7 +775,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -846,7 +816,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->cvsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
             return JsonResponseBuilder::failure();
         }
 
@@ -982,7 +952,7 @@ class ExtJsController
             $pourcent[4] . '%% without revtag ('.$no_tag.')'
         );
 
-        $title = 'PHP : Details for '.ucfirst(AccountManager::getInstance()->cvsLang).' Documentation';
+        $title = 'PHP : Details for '.ucfirst(AccountManager::getInstance()->vcsLang).' Documentation';
 
         $graph = new PieGraph(530,300);
         $graph->SetShadow();

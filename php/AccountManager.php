@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/CvsClient.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 
 class AccountManager
@@ -17,9 +17,9 @@ class AccountManager
     }
 
     public $userID;
-    public $cvsLogin;
-    public $cvsPasswd;
-    public $cvsLang;
+    public $vcsLogin;
+    public $vcsPasswd;
+    public $vcsLang;
     public $userConf;
 
     private function __construct()
@@ -50,9 +50,9 @@ class AccountManager
         }
 
         $this->userID    = $_SESSION['userID'];
-        $this->cvsLogin  = $_SESSION['cvsLogin'];
-        $this->cvsPasswd = $_SESSION['cvsPasswd'];
-        $this->cvsLang   = $_SESSION['lang'];
+        $this->vcsLogin  = $_SESSION['vcsLogin'];
+        $this->vcsPasswd = $_SESSION['vcsPasswd'];
+        $this->vcsLang   = $_SESSION['lang'];
 
         $this->userConf = isset($_SESSION['userConf'])
             ? $_SESSION['userConf']
@@ -83,39 +83,39 @@ class AccountManager
     /**
      * Log into this application.
      *
-     * @param $cvsLogin  The login use to identify this user into PHP CVS server.
-     * @param $cvsPasswd The password, in plain text, to identify this user into PHP CVS server.
+     * @param $vcsLogin  The login use to identify this user into PHP VCS server.
+     * @param $vcsPasswd The password, in plain text, to identify this user into PHP VCS server.
      * @param $lang      The language we want to access.
      * @return An associated array.
      */
-    public function login($cvsLogin, $cvsPasswd, $lang='en')
+    public function login($vcsLogin, $vcsPasswd, $lang='en')
     {
         $return = array(); // Value return
 
         // Is this user already exist on this server ? database check
         $s = sprintf(
-            'SELECT * FROM `users` WHERE `cvs_login`="%s" AND `cvs_passwd`="%s"',
-            $cvsLogin,
-            $cvsPasswd
+            'SELECT * FROM `users` WHERE `vcs_login`="%s" AND `vcs_passwd`="%s"',
+            $vcsLogin,
+            $vcsPasswd
         );
         $r = DBConnection::getInstance()->query($s);
 
-        $this->cvsLogin  = $cvsLogin;
-        $this->cvsPasswd = $cvsPasswd;
-        $this->cvsLang   = $lang;
+        $this->vcsLogin  = $vcsLogin;
+        $this->vcsPasswd = $vcsPasswd;
+        $this->vcsLang   = $lang;
 
         if ($r->num_rows == 0) { // No match
 
             $s = sprintf(
-                'SELECT * FROM `users` WHERE `cvs_login`="%s"',
-                $cvsLogin
+                'SELECT * FROM `users` WHERE `vcs_login`="%s"',
+                $vcsLogin
             );
             $r = DBConnection::getInstance()->query($s);
 
             if ($r->num_rows == 0) {
                 //User unknow from this server for now.
-                // Is a valid cvs user ?
-                $r = CvsClient::getInstance()->authenticate($cvsLogin, $cvsPasswd);
+                // Is a valid vcs user ?
+                $r = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
 
                 if ($r === true) {
                     // We register this new valid user
@@ -123,9 +123,9 @@ class AccountManager
 
                     //Store in session
                     $_SESSION['userID']    = $userID;
-                    $_SESSION['cvsLogin']  = $this->cvsLogin;
-                    $_SESSION['cvsPasswd'] = $this->cvsPasswd;
-                    $_SESSION['lang']      = $this->cvsLang;
+                    $_SESSION['vcsLogin']  = $this->vcsLogin;
+                    $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+                    $_SESSION['lang']      = $this->vcsLang;
                     $_SESSION['userConf']  = array(
                         "conf_needupdate_diff"       => 'using-exec',
                         "conf_needupdate_scrollbars" => 'true',
@@ -150,12 +150,12 @@ class AccountManager
                 } elseif ($r == 'Bad password') {
 
                     $return['state'] = false;
-                    $return['msg']   = 'Bad cvs password';
+                    $return['msg']   = 'Bad vcs password';
 
                 } else {
 
                     $return['state'] = false;
-                    $return['msg']   = 'unknow from cvs';
+                    $return['msg']   = 'unknow from vcs';
                 }
 
             } else {
@@ -190,9 +190,9 @@ class AccountManager
 
             // Store in session
             $_SESSION['userID']    = $a->userID;
-            $_SESSION['cvsLogin']  = $this->cvsLogin;
-            $_SESSION['cvsPasswd'] = $this->cvsPasswd;
-            $_SESSION['lang']      = $this->cvsLang;
+            $_SESSION['vcsLogin']  = $this->vcsLogin;
+            $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+            $_SESSION['lang']      = $this->vcsLang;
             $_SESSION['userConf']  = $this->userConf;
 
             $return['state'] = true;
@@ -205,15 +205,15 @@ class AccountManager
     /**
      * Register a new valid user on the application.
      *
-     * @todo The CVS password is stored in plain text into the database for later use. We need to find something better
+     * @todo The VCS password is stored in plain text into the database for later use. We need to find something better
      * @return int The database insert id
      */
     private function register()
     {
         $s = sprintf(
-            'INSERT INTO `users` (`cvs_login`, `cvs_passwd`) VALUES ("%s", "%s")',
-            $this->cvsLogin,
-            $this->cvsPasswd
+            'INSERT INTO `users` (`vcs_login`, `vcs_passwd`) VALUES ("%s", "%s")',
+            $this->vcsLogin,
+            $this->vcsPasswd
         );
         $db = DBConnection::getInstance();
         $db->query($s);
@@ -229,8 +229,8 @@ class AccountManager
     public function updateConf($item, $value)
     {
         $s = sprintf(
-            'UPDATE `users` SET `%s`="%s" WHERE `cvs_login`="%s"',
-            $item, $value, AccountManager::getInstance()->cvsLogin
+            'UPDATE `users` SET `%s`="%s" WHERE `vcs_login`="%s"',
+            $item, $value, AccountManager::getInstance()->vcsLogin
         );
         DBConnection::getInstance()->query($s);
 
@@ -268,12 +268,11 @@ class AccountManager
      */
     public function email($to, $subject, $msg)
     {
-        $headers = 'From: '.$this->cvsLogin.'@php.net' . "\r\n" .
+        $headers = 'From: '.$this->vcsLogin.'@php.net' . "\r\n" .
                    'X-Mailer: PhpDocumentation Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";
-/*HIDE
+
         mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers);
-*/
     }
 }
 

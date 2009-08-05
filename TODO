@@ -10,6 +10,12 @@ GENERAL:
   - Other VCS Systems (SVN, GIT)
   - Generic projects (not php.net related)
 
+CVS2SVN:
+====
+  - svn diff failed due to different in revision numbering scheme (see File.php getinfo)
+  - svn diff failed due to cvs2svn diff info lost
+  - using svn native-client over HTTP may sometimes fail and need to redo the operation
+
 PHP:
 ====
 
@@ -25,7 +31,6 @@ PHP:
   - Create a DocumentationCheck class which will perform all the tests against
     the en/ tree (and other languages? we _should_ be able to rely on TranslationStatus
     on its own
-  - Create a CvsClient class to handle all the CVS operations (fsockopen() and exec())
 
 * Controller
   - Implement Apache rewriting to have controller actions look like http://foo.com/do/task/?arg=val

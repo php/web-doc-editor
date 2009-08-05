@@ -28,8 +28,8 @@ class TranslatorStatistic
     public function getTranslators()
     {
         $s = sprintf(
-            'SELECT `id`, `nick`, `name`, `mail`, `cvs` FROM `translators` WHERE `lang`="%s"',
-            AccountManager::getInstance()->cvsLang
+            'SELECT `id`, `nick`, `name`, `mail`, `vcs` FROM `translators` WHERE `lang`="%s"',
+            AccountManager::getInstance()->vcsLang
         );
         $result = DBConnection::getInstance()->query($s);
 
@@ -39,7 +39,7 @@ class TranslatorStatistic
                 'id'   => $r['id'],
                 'name' => utf8_encode($r['name']),
                 'mail' => $r['mail'],
-                'cvs'  => $r['cvs']
+                'vcs'  => $r['vcs']
             );
         }
         return $persons;
@@ -66,7 +66,7 @@ class TranslatorStatistic
                 `maintainer`
             ORDER BY
                 `maintainer`',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $result = DBConnection::getInstance()->query($s);
 
@@ -106,7 +106,7 @@ class TranslatorStatistic
                 `maintainer`
             ORDER BY
                 `maintainer`',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $result = DBConnection::getInstance()->query($s);
 
@@ -143,7 +143,7 @@ class TranslatorStatistic
                 `maintainer`
             ORDER BY
                 `maintainer`',
-            AccountManager::getInstance()->cvsLang
+            AccountManager::getInstance()->vcsLang
         );
         $result = DBConnection::getInstance()->query($s);
 

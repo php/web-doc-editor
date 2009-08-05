@@ -33,7 +33,7 @@ class TranslationStatistic
                 FROM
                     `files`
                 WHERE
-                    `lang`="' . AccountManager::getInstance()->cvsLang . '"
+                    `lang`="' . AccountManager::getInstance()->vcsLang . '"
             ';
         $res = DBConnection::getInstance()->query($s);
 
@@ -55,7 +55,7 @@ class TranslationStatistic
             FROM
                 files
             WHERE
-                lang="' . AccountManager::getInstance()->cvsLang . '"
+                lang="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 revision = en_revision';
         $res = DBConnection::getInstance()->query($s);
@@ -78,7 +78,7 @@ class TranslationStatistic
             FROM
                 `files`
             WHERE
-                `lang`="' . AccountManager::getInstance()->cvsLang . '"
+                `lang`="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 ( `en_revision` - `revision` >= 10  OR
                 ( `en_revision` != `revision`  AND
@@ -106,7 +106,7 @@ class TranslationStatistic
             FROM
                 `files`
             WHERE
-                `lang`="' . AccountManager::getInstance()->cvsLang . '"
+                `lang`="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 `en_revision` != `revision`
             AND
@@ -143,7 +143,7 @@ class TranslationStatistic
             AND
                 a.name = b.name
             WHERE
-                a.lang="' . AccountManager::getInstance()->cvsLang . '"
+                a.lang="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 b.lang="en"
             AND
@@ -179,7 +179,7 @@ class TranslationStatistic
             AND
                 a.name = b.name
             WHERE
-                a.lang="' . AccountManager::getInstance()->cvsLang . '"
+                a.lang="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 b.lang="en"
             AND
@@ -219,7 +219,7 @@ class TranslationStatistic
             AND
                 a.name = b.name
             WHERE
-                a.lang="' . AccountManager::getInstance()->cvsLang . '"
+                a.lang="' . AccountManager::getInstance()->vcsLang . '"
             AND
                 b.lang="en"
             AND
