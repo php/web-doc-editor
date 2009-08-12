@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._SummaryGrid');
 // Store : storeSummary with Informations like Revcheck second table
 ui.component._SummaryGrid.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getSummaryInfo'
     }),
-    baseParams : { task : 'getSummaryInfo' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',

@@ -20,7 +20,6 @@ ui.task.RejectPatchTask = function(config)
 
                 XHR({
                     scope  : this,
-                    url    : './php/controller.php',
                     params : {
                         task        : 'afterPatchReject',
                         PatchUniqID : this.fuid

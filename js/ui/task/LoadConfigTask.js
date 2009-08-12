@@ -5,7 +5,6 @@ ui.task.LoadConfigTask = function(config)
     Ext.apply(this, config);
 
     XHR({
-        url     : './php/controller.php',
         params  : { task : 'getConf' },
         success : function(response)
         {

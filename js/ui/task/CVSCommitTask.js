@@ -23,7 +23,6 @@ ui.task._CVSCommitTask.commit = function(files)
     Ext.getCmp('winCvsCommit').close();
 
     XHR({
-        url     : './php/controller.php',
         params  : {
             task       : 'vcsCommit',
             nodes      : Ext.util.JSON.encode(nodes),
@@ -61,7 +60,6 @@ ui.task._CVSCommitTask.commit = function(files)
 
             // Apply modification
             XHR({
-                url     : './php/controller.php',
                 params  : {
                     task       : 'onSuccesCommit',
                     nodes      : Ext.util.JSON.encode(nodes),

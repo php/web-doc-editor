@@ -23,7 +23,6 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
 
             XHR({
                 scope   : this,
-                url     : './php/controller.php',
                 params  : {
                     task    : 'sendEmail',
                     to      : values.to,
@@ -54,7 +53,6 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
     {
         Ext.apply(this, {
             items : new Ext.form.FormPanel({
-                url         : 'save-form.php',
                 baseCls     : 'x-plain',
                 labelWidth  : 55,
                 defaultType : 'textfield',

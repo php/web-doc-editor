@@ -26,7 +26,6 @@ ui.task.SavePatchTask = function(config)
     // We save this patch
     XHR({
         scope  : this,
-        url    : './php/controller.php',
         params : {
             task        : 'saveFile',
             filePath    : this.fpath,

@@ -8,7 +8,6 @@ ui.task.UpdateConfTask = function(config)
     // Apply modification in DB
     XHR({
         scope   : this,
-        url     : './php/controller.php',
         params  : {
             task  : 'confUpdate',
             item  : this.item,

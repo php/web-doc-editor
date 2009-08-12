@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._TranslatorGrid');
 // Store : Translator with Informations like Revcheck first table
 ui.component._TranslatorGrid.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url: './php/controller.php'
+        url: './do/getTranslatorInfo'
     }),
-    baseParams : { task : 'getTranslatorInfo' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',

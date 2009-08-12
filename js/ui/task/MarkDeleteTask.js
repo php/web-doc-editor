@@ -18,7 +18,6 @@ ui.task.MarkDeleteTask = function(config)
 
                 XHR({
                     scope   : this,
-                    url     : './php/controller.php',
                     params  : {
                         task     : 'markAsNeedDelete',
                         FilePath : phpDoc.userLang + this.fpath,

@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._LocalMailGrid');
 // Store : Mailing with Informations about phpdoc-LANG mailing
 ui.component._LocalMailGrid.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getLastNews'
     }),
-    baseParams : { task : 'getLastNews' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',

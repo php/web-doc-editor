@@ -39,7 +39,7 @@ ui.component.About = Ext.extend(Ext.Window,
                                 'UI: ' + phpDoc.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-2009 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
-                                _('and <a href="http://cvs.php.net/viewvc.cgi/doc-editor/" target="_blank">others</a>') +
+                                _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
                             '</div>'
                 }, {
                     title     : _('Credits'),

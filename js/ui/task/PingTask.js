@@ -5,7 +5,6 @@ ui.task.PingTask = function()
     this.task = new Ext.util.DelayedTask(function()
     {
         XHR({
-            url     : './php/controller.php',
             params  : { task : 'ping' },
             success : function(response)
             {

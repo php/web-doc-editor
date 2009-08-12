@@ -16,7 +16,6 @@ ui.task.GetFileTask = function(config)
     // We load the File
     XHR({
         scope  : this,
-        url    : './php/controller.php',
         params : {
             task     : 'getFile',
             FilePath : this.fpath,

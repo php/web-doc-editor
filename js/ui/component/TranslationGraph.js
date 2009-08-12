@@ -26,7 +26,7 @@ ui.component.TranslationGraph = Ext.extend(Ext.Panel,
 
             loadMask.show();
             img.hide();
-            img.dom.src = "./php/controller.php?task=translationGraph";
+            img.dom.src = "./do/translationGraph";
         }
     }
 });

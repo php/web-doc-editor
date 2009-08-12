@@ -29,6 +29,8 @@ function XHR(config)
         failure_cb  = config.failure,
         original_cb = config.callback;
 
+    config.url = './do/' + config.params.task;
+    delete config.params.task;
     config.failure  = config.success = Ext.emptyFn;
     config.callback = function(options, success, response)
     {

@@ -15,7 +15,6 @@ ui.task.SaveLangFileTask = function(config)
 
     XHR({
         scope  : this,
-        url    : './php/controller.php',
         params : {
             task        : 'saveFile',
             filePath    : this.fpath,

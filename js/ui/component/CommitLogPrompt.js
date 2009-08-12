@@ -2,9 +2,8 @@ Ext.namespace('ui','ui.component','ui.component._CommitLogPrompt');
 
 ui.component._CommitLogPrompt.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getCommitLogMessage'
     }),
-    baseParams : { task : 'getCommitLogMessage' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',
@@ -45,7 +44,6 @@ ui.component._CommitLogPrompt.cm = new Ext.grid.ColumnModel([
                         var messID = editor.record.data.id;
 
                         XHR({
-                            url    : './php/controller.php',
                             params : {
                                 task   : 'saveLogMessage',
                                 messID : messID,
@@ -94,7 +92,6 @@ Ext.extend(ui.component._CommitLogPrompt.menu, Ext.menu.Menu,
                 {
                     XHR({
                         scope  : this,
-                        url    : './php/controller.php',
                         params : {
                             task   : 'deleteLogMessage',
                             messID : store.getAt(this.rowIdx).data.id

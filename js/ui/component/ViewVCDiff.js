@@ -5,7 +5,7 @@ Ext.namespace('ui','ui.component');
 ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
 {
     layout    : 'fit',
-    title     : _('Diff From cvs'),
+    title     : _('Diff From vcs'),
     height    : 150,
     collapsed : true,
 
@@ -17,7 +17,7 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
                 id         : this.prefix + '-diff-' + this.fid,
                 xtype      : 'iframepanel',
                 loadMask   : true,
-                defaultSrc : 'http://cvs.php.net/viewvc.cgi/phpdoc/en' +
+                defaultSrc : 'http://svn.php.net/viewvc/phpdoc/en/trunk' +
                                 this.fpath + this.fname +
                                 '?r1=' + this.rev1 + '&r2=' + this.rev2
             }

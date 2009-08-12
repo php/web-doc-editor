@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._BuildStatus');
 // BuildStatus Grid datastore
 ui.component._BuildStatus.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getBuildStatusData'
     }),
-    baseParams : { task : 'getBuildStatusData' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',

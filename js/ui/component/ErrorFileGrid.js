@@ -143,7 +143,6 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
                     // Load diff data
                     XHR({
                         scope   : this,
-                        url     : './php/controller.php',
                         params  : {
                             task     : 'getDiff',
                             FilePath : this.lang + this.fpath,
@@ -171,7 +170,7 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
                             iconCls    : 'iconHelp',
                             closable   : true,
                             autoScroll : true,
-                            autoLoad   : './error_type.php'
+                            autoLoad   : './error'
                         });
                         Ext.getCmp('main-panel').setActiveTab('FE-help');
 
@@ -266,7 +265,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 xtype      : 'iframepanel',
                                 id         : 'FE-error-type-' + FileID,
                                 loadMask   : true,
-                                defaultSrc : './error_type.php?dir=' + FilePath + '&file=' + FileName
+                                defaultSrc : './error?dir=' + FilePath +
+                                                    '&file=' + FileName
                             }
                         }, {
                             region      : 'west',
@@ -361,9 +361,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             store : new ui.component._ErrorFileGrid.store({
                 autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesError' }
+                    url : './do/getFilesError'
+                })
             }),
             tbar : [
                 _('Filter: '), ' ',

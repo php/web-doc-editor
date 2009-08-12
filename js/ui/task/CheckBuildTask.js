@@ -3,7 +3,6 @@ Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
 ui.task._CheckBuildTask.display = function()
 {
     XHR({
-        url     : './php/controller.php',
         params  : {
             task : 'getLogFile',
             file : 'log_check_build'
@@ -39,7 +38,6 @@ ui.task._CheckBuildTask.display = function()
 ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
 {
     XHR({
-        url     : './php/controller.php',
         params  : {
             task     : 'checkLockFile',
             lockFile : 'lock_check_build'
@@ -71,7 +69,6 @@ ui.task.CheckBuildTask = function(config)
     ui.task.PingTask.getInstance().cancel();
 
     XHR({
-        url     : './php/controller.php',
         params  : {
             task       : 'checkBuild',
             xmlDetails : Ext.getCmp('option-xml-details').checked

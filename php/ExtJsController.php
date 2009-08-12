@@ -71,8 +71,8 @@ class ExtJsController
      */
     public function login()
     {
-        $vcsLogin  = $this->getRequestVariable('cvsLogin');
-        $vcsPasswd = $this->getRequestVariable('cvsPassword');
+        $vcsLogin  = $this->getRequestVariable('vcsLogin');
+        $vcsPasswd = $this->getRequestVariable('vcsPassword');
         $lang      = $this->getRequestVariable('lang');
 
         $response = AccountManager::getInstance()->login($vcsLogin, $vcsPasswd, $lang);

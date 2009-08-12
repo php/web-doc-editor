@@ -12,8 +12,7 @@ ui.component._RepositoryTree.root = new Ext.tree.AsyncTreeNode({
 
 // RepositoryTree default tree loader
 ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
-    dataUrl    : './php/controller.php',
-    baseParams : { task : 'getAllFiles' }
+    dataUrl    : './do/getAllFiles'
 });
 
 Ext.namespace('ui.component._RepositoryTree.menu');

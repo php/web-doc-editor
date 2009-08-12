@@ -28,7 +28,6 @@ ui.task.ClearLocalChangeTask = function(config)
 
                 XHR({
                     scope   : this,
-                    url     : './php/controller.php',
                     params  : {
                         task     : 'clearLocalChange',
                         FileType : this.ftype,

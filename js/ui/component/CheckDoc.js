@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._CheckDoc');
 // CheckDoc Grid datastore
 ui.component._CheckDoc.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getCheckDocData'
     }),
-    baseParams : { task : 'getCheckDocData' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',
@@ -289,7 +288,6 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                 // TODO - may change to use HttpProxy for DataStore
                 //        remove XHR, win.open() and load from proxy
                 XHR({
-                    url      : './php/controller.php',
                     params   : {
                         task      : 'getCheckDocFiles',
                         path      : fpath,

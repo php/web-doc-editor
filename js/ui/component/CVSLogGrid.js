@@ -119,10 +119,9 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
         store = new ui.component._CVSLogGrid.store({
             autoLoad : this.loadStore,
             proxy : new Ext.data.HttpProxy({
-                url : './php/controller.php'
+                url : './do/getLog'
             }),
             baseParams : {
-                task : 'getLog',
                 Path : this.fpath,
                 File : this.fname
             }
@@ -159,7 +158,6 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
 
                     // Load diff data
                     XHR({
-                        url    : './php/controller.php',
                         params : {
                             task     : 'getDiff2',
                             FilePath : this.fpath,

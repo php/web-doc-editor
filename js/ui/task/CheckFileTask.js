@@ -17,7 +17,6 @@ ui.task.CheckFileTask = function(config)
 
     XHR({
         scope  : this,
-        url    : './php/controller.php',
         params : {
             task        : 'checkFileError',
             FilePath    : this.fpath,
@@ -41,8 +40,8 @@ ui.task.CheckFileTask = function(config)
                     iconCls    : 'FilesError',
                     closable   : true,
                     autoScroll : true,
-                    autoLoad   : './error_type.php?dir=' +
-                                 this.fpath + '&file=' + this.fname
+                    autoLoad   : './error?dir='  + this.fpath +
+                                        '&file=' + this.fname
                 });
 
                 Ext.getCmp('main-panel').setActiveTab('FE-help-' + this.fid);

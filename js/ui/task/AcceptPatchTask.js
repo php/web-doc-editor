@@ -30,7 +30,6 @@ ui.task.AcceptPatchTask = function(config)
                 // We save LANG File
                 XHR({
                     scope  : this,
-                    url    : './php/controller.php',
                     params : {
                         task        : 'saveFile',
                         filePath    : this.fpath,
@@ -57,7 +56,6 @@ ui.task.AcceptPatchTask = function(config)
                         // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
                         XHR({
                             scope  : this,
-                            url    : './php/controller.php',
                             params : {
                                 task        : 'afterPatchAccept',
                                 PatchUniqID : this.fuid

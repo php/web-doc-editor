@@ -27,7 +27,6 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     );
 
                     XHR({
-                        url     : './php/controller.php',
                         params  : { task : 'getLastUpdate' },
                         success : function(response)
                         {
@@ -144,7 +143,6 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 );
 
                                 XHR({
-                                    url     : './php/controller.php',
                                     params  : { task : 'erasePersonalData' },
                                     success : function(response)
                                     {
@@ -157,7 +155,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                             buttons : Ext.MessageBox.OK,
                                             fn      : function()
                                             {
-                                                window.location.href = './php/controller.php?task=logout';
+                                                window.location.href = './do/logout';
                                             }
                                         });
                                     },
@@ -180,7 +178,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         function(btn)
                         {
                             if (btn === 'yes') {
-                                window.location.href = './php/controller.php?task=logout';
+                                window.location.href = './do/logout';
                             }
                         }
                     );

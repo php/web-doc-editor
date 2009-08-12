@@ -124,7 +124,6 @@ Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
                 // Load diff data
                 XHR({
                     scope   : this,
-                    url     : './php/controller.php',
                     params  : {
                         task     : 'getDiff',
                         FilePath : phpDoc.userLang + this.fpath,
@@ -172,7 +171,6 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                 );
 
                 XHR({
-                    url     : './php/controller.php',
                     params  : {
                         task    : 'getAllFilesAboutExtension',
                         ExtName : this.gname
@@ -381,9 +379,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
             store : new ui.component._PendingReviewGrid.store({
                 autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesNeedReviewed' }
+                    url : './do/getFilesNeedReviewed'
+                })
             }),
             tbar : [
                 _('Filter: '), ' ',

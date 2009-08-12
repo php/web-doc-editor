@@ -193,7 +193,6 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 {
                                     // Load diff data
                                     XHR({
-                                        url     : './php/controller.php',
                                         params  : {
                                             task     : 'getDiff',
                                             FilePath : FilePath,
@@ -291,9 +290,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
             store : new ui.component._PendingPatchGrid.store({
                 autoLoad : true,
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesPendingPatch' }
+                    url : './do/getFilesPendingPatch'
+                })
             })
         });
         ui.component.PendingPatchGrid.superclass.initComponent.call(this);

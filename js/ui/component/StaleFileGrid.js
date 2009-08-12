@@ -151,7 +151,6 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                     // Load diff data
                     XHR({
                         scope   : this,
-                        url     : './php/controller.php',
                         params  : {
                             task     : 'getDiff',
                             FilePath : this.lang + this.fpath,
@@ -330,9 +329,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             store   : new ui.component._StaleFileGrid.store({
                 autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesNeedUpdate' }
+                    url : './do/getFilesNeedUpdate'
+                })
             }),
             tbar:[
                 _('Filter: '), ' ',

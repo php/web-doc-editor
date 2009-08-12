@@ -251,7 +251,6 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                         // Load diff data
                         XHR({
                             scope   : this,
-                            url     : './php/controller.php',
                             params  : {
                                 task     : 'getDiff',
                                 FilePath : this.fpath,
@@ -273,8 +272,8 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     iconCls : 'iconCommitFileCvs',
                     handler : function()
                     {
-                        window.location.href = './php/controller.php?task=downloadPatch' +
-                                               '&FilePath=' + this.fpath +
+                        window.location.href = './do/downloadPatch' +
+                                               '?FilePath=' + this.fpath +
                                                '&FileName=' + this.fname;
                     }
                 }, '-', {
@@ -401,9 +400,8 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             store : new ui.component._PendingCommitGrid.store({
                 autoLoad : true,
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesPendingCommit' }
+                    url : './do/getFilesPendingCommit'
+                })
             })
         });
         ui.component.PendingCommitGrid.superclass.initComponent.call(this);

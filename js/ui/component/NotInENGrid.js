@@ -141,9 +141,8 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
             store : new ui.component._NotInENGrid.store({
                 autoLoad : (phpDoc.userLang === 'en') ? false : true,
                 proxy : new Ext.data.HttpProxy({
-                    url : './php/controller.php'
-                }),
-                baseParams : { task : 'getFilesNotInEn' }
+                    url : './do/getFilesNotInEn'
+                })
             })
         });
         ui.component.NotInENGrid.superclass.initComponent.call(this);

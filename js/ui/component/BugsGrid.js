@@ -6,9 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._BugsGrid');
 // Store : All open bugs for documentation
 ui.component._BugsGrid.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
-        url : './php/controller.php'
+        url : './do/getOpenBugs'
     }),
-    baseParams : { task : 'getOpenBugs' },
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',

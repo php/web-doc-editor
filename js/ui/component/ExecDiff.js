@@ -15,7 +15,6 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
             // Load diff data
             XHR({
                 scope   : this,
-                url     : './php/controller.php',
                 params  : {
                     task     : 'getDiff2',
                     FilePath : 'en' + this.fpath,
