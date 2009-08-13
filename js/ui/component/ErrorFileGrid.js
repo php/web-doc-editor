@@ -271,7 +271,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         }, {
                             region      : 'west',
                             xtype       : 'panel',
-                            title       : _('CvsLog'),
+                            title       : _('VCSLog'),
                             collapsible : true,
                             collapsed   : true,
                             layout      : 'fit',
@@ -283,7 +283,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 tabPosition : 'bottom',
                                 defaults    : { autoScroll : true },
                                 items       : [
-                                    new ui.component.CVSLogGrid({
+                                    new ui.component.VCSLogGrid({
                                         layout    : 'fit',
                                         title     : phpDoc.userLang,
                                         prefix    : 'FE-LANG',
@@ -292,7 +292,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                         fname     : FileName,
                                         loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
                                     }),
-                                    new ui.component.CVSLogGrid({
+                                    new ui.component.VCSLogGrid({
                                         layout    : 'fit',
                                         title     : 'en',
                                         prefix    : 'FE-EN',

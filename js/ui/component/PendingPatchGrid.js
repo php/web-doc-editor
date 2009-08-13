@@ -212,7 +212,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         }, {
                             region      : 'west',
                             xtype       : 'panel',
-                            title       : _('CvsLog'),
+                            title       : _('VCSLog'),
                             layout      : 'fit',
                             bodyBorder  : false,
                             collapsible : true,
@@ -223,7 +223,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 activeTab   : 0,
                                 tabPosition : 'bottom',
                                 defaults    : { autoScroll : true },
-                                items       : new ui.component.CVSLogGrid({
+                                items       : new ui.component.VCSLogGrid({
                                     layout    : 'fit',
                                     title     : _('Log'),
                                     prefix    : 'PP',

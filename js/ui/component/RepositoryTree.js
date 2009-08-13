@@ -180,7 +180,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         panelWest = {
                             xtype       : 'panel',
                             region      : 'west',
-                            title       : 'CvsLog',
+                            title       : _('VCSLog'),
                             layout      : 'fit',
                             bodyBorder  : false,
                             split       : true,
@@ -195,7 +195,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                                 items       : [{
                                     title  : 'Log',
                                     layout : 'fit',
-                                    items  : [new ui.component.CVSLogGrid({
+                                    items  : [new ui.component.VCSLogGrid({
                                         prefix    : 'AF',
                                         fid       : FileID,
                                         fpath     : FileLang + FilePath,

@@ -297,7 +297,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         {
                             region      : 'west',
                             xtype       : 'panel',
-                            title       : _('CvsLog'),
+                            title       : _('VCSLog'),
                             collapsible : true,
                             collapsed   : true,
                             layout      : 'fit',
@@ -309,7 +309,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                 tabPosition : 'bottom',
                                 defaults    : { autoScroll : true },
                                 items       : [
-                                    new ui.component.CVSLogGrid({
+                                    new ui.component.VCSLogGrid({
                                         layout    : 'fit',
                                         title     : phpDoc.userLang,
                                         prefix    : 'FNR-LANG',
@@ -317,7 +317,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                         fpath     : phpDoc.userLang + FilePath,
                                         fname     : FileName,
                                         loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
-                                    }), new ui.component.CVSLogGrid({
+                                    }), new ui.component.VCSLogGrid({
                                         layout    : 'fit',
                                         title     : 'en',
                                         prefix    : 'FNR-EN',

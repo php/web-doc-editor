@@ -112,14 +112,14 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
         Ext.apply(this,
         {
             text     : _('Commit...'),
-            iconCls  : 'iconCommitFileCvs',
+            iconCls  : 'iconCommitFileVcs',
             disabled : (phpDoc.userLogin === 'cvsread'),
             handler  : function() { return false; },
             menu     : new Ext.menu.Menu({
                 items : [{
                     scope   : this,
                     text    : _('...this file'),
-                    iconCls : 'iconCommitFileCvs',
+                    iconCls : 'iconCommitFileVcs',
                     handler : function()
                     {
                         var record = ui.component.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
@@ -140,7 +140,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                 }, {
                     scope   : this,
                     text    : _('...all files modified by me'),
-                    iconCls : 'iconCommitFileCvs',
+                    iconCls : 'iconCommitFileVcs',
                     handler : function()
                     {
                         var files = [],
@@ -169,7 +169,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                 }, {
                     scope   : this,
                     text    : _('...all files modified'),
-                    iconCls : 'iconCommitFileCvs',
+                    iconCls : 'iconCommitFileVcs',
                     handler : function()
                     {
                         var files = [],
@@ -269,7 +269,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                 }, {
                     scope   : this,
                     text    : _('Download the diff as a patch'),
-                    iconCls : 'iconCommitFileCvs',
+                    iconCls : 'iconCommitFileVcs',
                     handler : function()
                     {
                         window.location.href = './do/downloadPatch' +

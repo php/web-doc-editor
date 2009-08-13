@@ -15,13 +15,14 @@ CVS2SVN:
   - svn diff failed due to different in revision numbering scheme (see File.php getinfo)
   - svn diff failed due to cvs2svn diff info lost
   - using svn native-client over HTTP may sometimes fail and need to redo the operation
+  - ui should allow anonymous user as cvsread
 
 PHP:
 ====
 
 * Security
   - Fix XSS holes
-  - Redo the folder tree to keep classes and data out of web server reach
+  - Redo the folder tree to keep classes and data out of web server reach (can we do this in mod_rewrite?)
   - Implement php.net authentication scheme (cvsauth)
 
 * Clean up class.php
@@ -32,10 +33,6 @@ PHP:
     the en/ tree (and other languages? we _should_ be able to rely on TranslationStatus
     on its own
 
-* Controller
-  - Implement Apache rewriting to have controller actions look like http://foo.com/do/task/?arg=val
-  - Clean up the action names (and reflect the changes in main.js)
-
 * Translation Status
   - At the current time, the french translation graph is useless/unreadable. We need to find
     a better way to display the information
@@ -43,13 +40,12 @@ PHP:
 * Implement i18n
 
 * Automatic upgrade
-  - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling)
+  - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling, crontab?)
 
 JAVASCRIPT:
 ===========
 
 * Implement RTL where appropriate
-* Decide whether XHR abstraction could be used (refer bug report from yannick)
 * Generalize Diff?? cvs-log-diff, cvs-file-diff, patch-file-diff, pending-commit-file-diff
 * adjust diff-panel id convention to prevent mixing different diff-panel
 
@@ -63,6 +59,9 @@ USER INTERFACE:
   - DocBook
   - ReST
   - PO files (gettext)
+
+* Implement WYSIWYG
+  - using XSLT for rendering? (inspired by http://beacon.kix.in/)
 
 BUGS:
 =====
@@ -80,3 +79,6 @@ BUGS:
     Some ui component may issue a diff between file & file.new but sometimes file.new is removed as .patch
 
 * reopening file-diff (context-menu diff) in main-panel tab crashes extjs
+
+* Translator vcs account parsing failed
+  - check php parsing scripts

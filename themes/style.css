@@ -76,7 +76,7 @@ opacity:
     color: #aaa;
     font-size: 10pt !important;
     font-family: monospace;
-} 
+}
 
 .flag {
     background-repeat: no-repeat ! important;
@@ -277,9 +277,9 @@ opacity:
     background-image: url(../themes/img/page_edit.png) !important;
 } .iconTabError {
     background-image: url(../themes/img/error_delete.png) !important;
-} .iconUpdateFileCvs {
+} .iconUpdateFileVcs {
     background-image: url(../themes/img/database_refresh.png) !important;
-} .iconCommitFileCvs {
+} .iconCommitFileVcs {
     background-image: url(../themes/img/database_go.png) !important;
 } .iconViewDiff {
     background-image: url(../themes/img/chart_organisation.png) !important;
@@ -297,7 +297,7 @@ opacity:
 } .winManageLog {
     background-image: url(../themes/img/page_white_gear.png) !important;
 } #main-panel .x-layout-collapsed-west {
-    background-image: url(../themes/img/cvs_log.png);
+    background-image: url(../themes/img/vcs_log.png);
     background-repeat: no-repeat;
     background-position: center;
 } #main-panel .x-layout-collapsed-east {
@@ -305,7 +305,7 @@ opacity:
     background-repeat: no-repeat;
     background-position: center;
 } #main-panel .x-layout-collapsed-north {
-    background-image: url(../themes/img/diff_cvs.png);
+    background-image: url(../themes/img/diff_vcs.png);
     background-repeat: no-repeat;
     background-position: center;
 } .x-layout-collapsed-east-error-desc {
@@ -464,7 +464,7 @@ opacity:
 .file-needcommit-update {
     background-image: url(../themes/img/arrow_refresh.png) !important;
     background-repeat: no-repeat !important;
- 
+
 }
 .file-needcommit-delete {
     background-image: url(../themes/img/delete.png) !important;

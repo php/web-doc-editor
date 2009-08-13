@@ -3,9 +3,9 @@ Ext.namespace('ui','ui.component');
 // config - { files: {fid, fpath, fname, fdbid} }
 ui.component.CommitPrompt = Ext.extend(Ext.Window,
 {
-    id         : 'winCvsCommit',
+    id         : 'winVCSCommit',
     layout     : 'form',
-    title      : _('CVS commit'),
+    title      : _('VCS commit'),
     closable   : false,
     width      : 400,
     height     : 480,
@@ -27,14 +27,14 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         text    : _('Submit'),
         handler : function()
         {
-            new ui.task.CVSCommitTask();
+            new ui.task.VCSCommitTask();
         }
     }, {
         id      : 'win-commit-btn-close',
         text    : _('Close'),
         handler : function()
         {
-            Ext.getCmp('winCvsCommit').close();
+            Ext.getCmp('winVCSCommit').close();
         }
     }],
     initComponent : function()

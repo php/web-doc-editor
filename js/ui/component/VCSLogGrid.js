@@ -1,10 +1,10 @@
-Ext.namespace('ui','ui.component','ui.component._CVSLogGrid');
+Ext.namespace('ui','ui.component','ui.component._VCSLogGrid');
 
 //------------------------------------------------------------------------------
-// CVSLogGrid internals
+// VCSLogGrid internals
 
-// CVSLogGrid log information store
-ui.component._CVSLogGrid.store = Ext.extend(Ext.data.Store,
+// VCSLogGrid log information store
+ui.component._VCSLogGrid.store = Ext.extend(Ext.data.Store,
 {
     reader : new Ext.data.JsonReader(
         {
@@ -34,9 +34,9 @@ ui.component._CVSLogGrid.store = Ext.extend(Ext.data.Store,
     )
 });
 
-// CVSLogGrid selection model
+// VCSLogGrid selection model
 // config - {fid}
-ui.component._CVSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
+ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
 {
     singleSelect : false,
     header       : '',
@@ -73,8 +73,8 @@ ui.component._CVSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
     }
 });
 
-// CVSLogGrid columns definition
-ui.component._CVSLogGrid.columns = [
+// VCSLogGrid columns definition
+ui.component._VCSLogGrid.columns = [
     {
         id        : 'id',
         header    : "Rev.",
@@ -101,9 +101,9 @@ ui.component._CVSLogGrid.columns = [
 ];
 
 //------------------------------------------------------------------------------
-// CVSLogGrid
+// VCSLogGrid
 // config - {prefix, fid, fpath, fname, loadStore}
-ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
+ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
@@ -112,11 +112,11 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        var sm = new ui.component._CVSLogGrid.sm({
+        var sm = new ui.component._VCSLogGrid.sm({
             fid    : this.fid,
             prefix : this.prefix
         }),
-        store = new ui.component._CVSLogGrid.store({
+        store = new ui.component._VCSLogGrid.store({
             autoLoad : this.loadStore,
             proxy : new Ext.data.HttpProxy({
                 url : './do/getLog'
@@ -129,8 +129,8 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
         columns = [];
 
         columns.push(sm);
-        for (var i = 0; i < ui.component._CVSLogGrid.columns.length; ++i) {
-            columns.push(ui.component._CVSLogGrid.columns[i]);
+        for (var i = 0; i < ui.component._VCSLogGrid.columns.length; ++i) {
+            columns.push(ui.component._VCSLogGrid.columns[i]);
         }
 
         store.setDefaultSort('date', 'desc');
@@ -204,6 +204,6 @@ ui.component.CVSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 }
             }]
         });
-        ui.component.CVSLogGrid.superclass.initComponent.call(this);
+        ui.component.VCSLogGrid.superclass.initComponent.call(this);
     }
 });

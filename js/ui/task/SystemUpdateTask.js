@@ -70,7 +70,7 @@ ui.task._SystemUpdateTask.apply_tool = function()
     });
 }
 
-ui.task._SystemUpdateTask.cvs_poll = new Ext.util.DelayedTask(function()
+ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
 {
     XHR({
         params  : {
@@ -79,7 +79,7 @@ ui.task._SystemUpdateTask.cvs_poll = new Ext.util.DelayedTask(function()
         },
         success : function(response)
         {
-            ui.task._SystemUpdateTask.cvs_poll.delay(5000);
+            ui.task._SystemUpdateTask.vcs_poll.delay(5000);
         },
         failure : function(response)
         {
@@ -91,7 +91,7 @@ ui.task._SystemUpdateTask.cvs_poll = new Ext.util.DelayedTask(function()
 
                 new ui.task._SystemUpdateTask.apply_tool();
             } else {
-                ui.task._SystemUpdateTask.cvs_poll.delay(5000);
+                ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }
         }
     });
@@ -121,7 +121,7 @@ ui.task.SystemUpdateTask = function()
                 Ext.getCmp('sys-update-win').close();
                 phpDoc.winForbidden();
             } else {
-                ui.task._SystemUpdateTask.cvs_poll.delay(5000);
+                ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }
         }
     });

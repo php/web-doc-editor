@@ -13,7 +13,7 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
     iconCls   : 'refresh',
     html      : [
         '<div id="wizard-step-1" class="wizard-step-before">',
-            _('Update all files from Cvs'),
+            _('Update all files from VCS'),
         '</div>',
         '<div id="wizard-step-1.1" class="wizard-wait">',
             _('This may take time. Thank you for your patience...'),

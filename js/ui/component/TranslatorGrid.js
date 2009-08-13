@@ -108,10 +108,10 @@ ui.component._TranslatorGrid.columns = [
         sortable  : true,
         dataIndex : 'nick'
     }, {
-        header    : _('Cvs'),
+        header    : _('VCS'),
         width     : 45,
         sortable  : true,
-        dataIndex : 'cvs'
+        dataIndex : 'vcs'
     }, {
         header      : _('UptoDate'),
         width       : 60,

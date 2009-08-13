@@ -1,6 +1,6 @@
-Ext.namespace('ui','ui.task','ui.task._CVSCommitTask');
+Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
 
-ui.task._CVSCommitTask.commit = function(files)
+ui.task._VCSCommitTask.commit = function(files)
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -9,7 +9,7 @@ ui.task._CVSCommitTask.commit = function(files)
 
     var nodes = [], node, LogMessage;
 
-    // Go for Cvs commit
+    // Go for VCS commit
     for (var i = 0; i < files.length; i = i + 1) {
 
         node = Ext.getCmp('commit-tree-panel').getNodeById(files[i]);
@@ -20,7 +20,7 @@ ui.task._CVSCommitTask.commit = function(files)
     LogMessage = Ext.getCmp('form-commit-message-log').getValue();
 
     // Close this window
-    Ext.getCmp('winCvsCommit').close();
+    Ext.getCmp('winVCSCommit').close();
 
     XHR({
         params  : {
@@ -84,12 +84,12 @@ ui.task._CVSCommitTask.commit = function(files)
     });
 }
 
-ui.task.CVSCommitTask = function()
+ui.task.VCSCommitTask = function()
 {
     // If the user is cvsread, we don't commit anything
     if (phpDoc.userLogin === 'cvsread') {
-        Ext.getCmp('winCvsCommit').close();
-        phpDochis.winForbidden();
+        Ext.getCmp('winVCSCommit').close();
+        phpDoc.winForbidden();
 
         return;
     }
@@ -148,11 +148,11 @@ ui.task.CVSCommitTask = function()
                         Ext.getCmp('main-panel').remove(NeedToBeClose[j][0]);
                     }
 
-                    ui.task._CVSCommitTask.commit(files);
+                    ui.task._VCSCommitTask.commit(files);
                 }
             }
         });
     } else {
-        ui.task._CVSCommitTask.commit(files);
+        ui.task._VCSCommitTask.commit(files);
     }
 }

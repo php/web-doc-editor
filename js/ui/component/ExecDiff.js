@@ -5,7 +5,7 @@ Ext.namespace('ui','ui.component');
 ui.component.ExecDiff = Ext.extend(Ext.Panel,
 {
     layout     : 'fit',
-    title      : _('Diff From cvs'),
+    title      : _('Diff From VCS'),
     height     : 150,
     autoScroll : true,
     collapsed  : true,
