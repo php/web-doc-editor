@@ -3,11 +3,11 @@
 /**
  * WWW user
  */
-define('DOC_EDITOR_WWW_USER',  'www-data');
+define('DOC_EDITOR_WWW_USER',  'apache');
 /**
  * WWW group
  */
-define('DOC_EDITOR_WWW_GROUP', 'www-data');
+define('DOC_EDITOR_WWW_GROUP', 'apache');
 /**
  * MySQL server
  */
@@ -15,11 +15,11 @@ define('DOC_EDITOR_SQL_HOST', 'localhost');
 /**
  * MySQL user
  */
-define('DOC_EDITOR_SQL_USER', 'doc_editor');
+define('DOC_EDITOR_SQL_USER', 'nobody');
 /**
  * MySQL password
  */
-define('DOC_EDITOR_SQL_PASS', 'doc_editor');
+define('DOC_EDITOR_SQL_PASS', '');
 /**
  * MySQL database
  */
