@@ -22,7 +22,7 @@ if ($isCLI) {
 }
 flush();
 // checkout repository from VCS
-//$rm->checkoutRepository();
+$rm->checkoutRepository();
 
 if ($isCLI) {
     echo "\n * Applying tools on repository...";
