@@ -141,8 +141,8 @@ class RepositoryFetcher
                     "id"          => $a->id,
                     "path"        => $a->path,
                     "name"        => $a->name,
-                    "revision"    => '1.'.$a->revision,
-                    "en_revision" => '1.'.$a->en_revision,
+                    "revision"    => $a->revision,
+                    "en_revision" => $a->en_revision,
                     "maintainer"  => $a->maintainer,
                     "needcommit"  => false,
                     "isCritical"  => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false

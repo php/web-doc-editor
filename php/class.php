@@ -797,8 +797,8 @@ class phpDoc
     function getModifiedFiles() {
 
         // Get Modified Files
-        $s = sprintf('SELECT `id`, `lang`, `path`, `name`, CONCAT("1.", `revision`) AS `revision`,
-        CONCAT("1.", `en_revision`) AS `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE 
+        $s = sprintf('SELECT `id`, `lang`, `path`, `name`, `revision`,
+        `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE 
         `lang`="%s" OR `lang`="en"', $this->cvsLang);
 
         $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
@@ -863,12 +863,12 @@ class phpDoc
 
                 if (isset($ModifiedFiles['en'.$a->path.$a->name])) {
                     $new_en_revision = $ModifiedFiles['en'.$a->path.$a->name]['revision'];
-                    $new_revision    = '1.'.$a->revision;
+                    $new_revision    = $a->revision;
                     $new_maintainer  = $a->maintainer;
                 }
 
                 if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name])) {
-                    $new_en_revision = '1.'.$a->en_revision;
+                    $new_en_revision = $a->en_revision;
                     $new_revision    = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['en_revision'];
                     $new_maintainer  = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['maintainer'];
                 }
@@ -888,8 +888,8 @@ class phpDoc
                 "id"          => $a->id,
                 "path"        => $a->path,
                 "name"        => $a->name,
-                "revision"    => '1.'.$a->revision,
-                "en_revision" => '1.'.$a->en_revision,
+                "revision"    => $a->revision,
+                "en_revision" => $a->en_revision,
                 "maintainer"  => $a->maintainer,
                 "needcommit"  => false,
                 "isCritical"  => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false
