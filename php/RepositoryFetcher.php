@@ -52,8 +52,8 @@ class RepositoryFetcher
     public function getModifies()
     {
         $s = sprintf(
-            'SELECT `id`, `lang`, `path`, `name`, CONCAT("1.", `revision`) AS `revision`,
-            CONCAT("1.", `en_revision`) AS `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE
+            'SELECT `id`, `lang`, `path`, `name`, `revision`,
+            `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE
             `lang`="%s" OR `lang`="en"',
             AccountManager::getInstance()->vcsLang
         );
@@ -116,12 +116,12 @@ class RepositoryFetcher
             ) {
                 if (isset($m['en'.$a->path.$a->name])) {
                     $new_en_revision = $m['en'.$a->path.$a->name]['revision'];
-                    $new_revision    = '1.'.$a->revision;
+                    $new_revision    = $a->revision;
                     $new_maintainer  = $a->maintainer;
                 }
 
                 if (isset($m[$vcsLang.$a->path.$a->name])) {
-                    $new_en_revision = '1.'.$a->en_revision;
+                    $new_en_revision = $a->en_revision;
                     $new_revision    = $m[$vcsLang.$a->path.$a->name]['en_revision'];
                     $new_maintainer  = $m[$vcsLang.$a->path.$a->name]['maintainer'];
                 }
