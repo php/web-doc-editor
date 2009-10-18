@@ -124,11 +124,12 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
         {
             title : String.format(_('Open bugs for {0}'), 'doc-' + phpDoc.userLang),
             tbar  : [{
+				scope: this,
                 tooltip : _('Refresh this grid'),
                 iconCls : 'refresh',
                 handler : function()
                 {
-                    ui.component.BugsGrid.reload();
+                    this.store.reload();
                 }
             }]
         });
