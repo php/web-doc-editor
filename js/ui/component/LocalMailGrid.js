@@ -133,11 +133,12 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
         {
             title : String.format(_('Mails from {0}'), 'doc-' + phpDoc.userLang),
             tbar : [{
+				scope: this,
                 tooltip : _('Refresh this grid'),
                 iconCls : 'refresh',
                 handler : function()
                 {
-                    ui.component.LocalMailGrid.reload();
+					console.log(this); this.store.reload();
                 }
             }]
         });
