@@ -1,7 +1,6 @@
 var phpDoc = function()
 {
     Ext.QuickTips.init();
-    Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
 
     return {
         // Variable

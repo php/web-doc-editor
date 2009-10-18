@@ -1,3 +1,5 @@
+Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
+
 // javascript debug-logging wrapper
 function log()
 {
