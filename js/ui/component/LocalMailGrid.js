@@ -138,7 +138,7 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
                 iconCls : 'refresh',
                 handler : function()
                 {
-					console.log(this); this.store.reload();
+					this.store.reload();
                 }
             }]
         });
