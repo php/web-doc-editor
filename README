@@ -16,7 +16,7 @@
 * A copy of the jpgraph 3.x series
   - Download from here: http://www.aditus.nu/jpgraph/jpdownload.php
   - Unpack it like so: doc-editor/php/jpgraph/
-* A copy of the ExtJs 2.2.x series
+* A copy of the ExtJs 2.3.x series
   - Download from here: http://extjs.com/products/extjs/download.php
   - Unpack it like so: doc-editor/js/extjs/
   - Note: extjs does not unzip into a new directory by default, so beware
@@ -37,6 +37,6 @@
 == Other notes ==
 * A common test PHP CVS user is: cvsread with password: phpfi **depreciated**
 * Or use your own SVN credentials
-* After modifying any .js, run scripts/util/compress.sh, you need yui-compressor-2.4.2+
+* After modifying any .js, run scripts/util/compress-js.sh, you need yui-compressor-2.4.2+
   The script will look for scripts/util/yuicompressor.jar
 
