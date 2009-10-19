@@ -74,7 +74,7 @@ ui.component._NotInENGrid.menu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._NotInENGrid.menu.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
 {
     init : function()
@@ -113,7 +113,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 
             if (!grid.store.getAt(rowIndex).data.needcommit) {
 
-                new ui.component._NotInENGrid.menu({
+                var tmp = new ui.component._NotInENGrid.menu({
                     grid   : grid,
                     rowIdx : rowIndex,
                     event  : e
@@ -124,9 +124,10 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         {
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name;
+                FileName    = storeRecord.data.name,
+				tmp;
 
-            new ui.task.MarkDeleteTask({
+            tmp = new ui.task.MarkDeleteTask({
                 fpath       : FilePath,
                 fname       : FileName,
                 storeRecord : storeRecord
@@ -154,8 +155,10 @@ ui.component._NotInENGrid.instance = null;
 ui.component.NotInENGrid.getInstance = function(config)
 {
     if (!ui.component._NotInENGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._NotInENGrid.instance = new ui.component.NotInENGrid(config);
     }
     return ui.component._NotInENGrid.instance;
-}
+};

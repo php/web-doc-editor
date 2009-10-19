@@ -37,7 +37,7 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
         Ext.apply(this,
         {
             html : '<div id="' + this.prefix + '-diff-' + this.fid +
-                    '" class="diff-content"></div>',
+                    '" class="diff-content"></div>'
         });
         ui.component.ExecDiff.superclass.initComponent.call(this);
     }

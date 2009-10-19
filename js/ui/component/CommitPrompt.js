@@ -19,7 +19,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         qtip    : _('Configure this tools'),
         handler : function()
         {
-            new ui.component.CommitLogPrompt().show();
+            var tmp = new ui.component.CommitLogPrompt().show();
         }
     }],
     buttons : [{
@@ -27,7 +27,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         text    : _('Submit'),
         handler : function()
         {
-            new ui.task.VCSCommitTask();
+            var tmp = new ui.task.VCSCommitTask();
         }
     }, {
         id      : 'win-commit-btn-close',

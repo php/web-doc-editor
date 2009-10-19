@@ -104,7 +104,7 @@ ui.component._StaleFileGrid.menu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
 {
     init : function()
@@ -183,11 +183,12 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         rowcontextmenu : function(grid, rowIndex, e)
         {
             var FilePath = grid.store.getAt(rowIndex).data.path,
-                FileName = grid.store.getAt(rowIndex).data.name;
+                FileName = grid.store.getAt(rowIndex).data.name,
+				tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._StaleFileGrid.menu({
+            tmp = new ui.component._StaleFileGrid.menu({
                 hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
                 grid       : grid,
                 event      : e,
@@ -361,7 +362,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         var v = this.getValue();
 
-                        if (v == '' || v.length < 3) {
+                        if (v === '' || v.length < 3) {
                             this.markInvalid(
                                 _('Your filter must contain at least 3 characters')
                             );
@@ -383,8 +384,10 @@ ui.component._StaleFileGrid.instance = null;
 ui.component.StaleFileGrid.getInstance = function(config)
 {
     if (!ui.component._StaleFileGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._StaleFileGrid.instance = new ui.component.StaleFileGrid(config);
     }
     return ui.component._StaleFileGrid.instance;
-}
+};

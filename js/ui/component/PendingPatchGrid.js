@@ -91,7 +91,7 @@ ui.component._PendingPatchGrid.menu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._PendingPatchGrid.menu.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
 {
     init : function()
@@ -114,7 +114,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
                 iconCls : 'iconPageDelete',
                 handler : function()
                 {
-                    new ui.task.RejectPatchTask({
+                    var tmp = new ui.task.RejectPatchTask({
                         fid         : this.fid,
                         fuid        : this.fuid,
                         storeRecord : this.grid.store.getAt(this.rowIdx)
@@ -142,11 +142,12 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
             var FilePath   = grid.store.getAt(rowIndex).data.path,
                 FileName   = grid.store.getAt(rowIndex).data.name,
                 FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
-                FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
+                FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName),
+				tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._PendingPatchGrid.menu({
+            tmp = new ui.component._PendingPatchGrid.menu({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e,
@@ -303,8 +304,10 @@ ui.component._PendingPatchGrid.instance = null;
 ui.component.PendingPatchGrid.getInstance = function(config)
 {
     if (!ui.component._PendingPatchGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._PendingPatchGrid.instance = new ui.component.PendingPatchGrid(config);
     }
     return ui.component._PendingPatchGrid.instance;
-}
+};

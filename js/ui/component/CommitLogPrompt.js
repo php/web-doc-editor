@@ -75,7 +75,7 @@ ui.component._CommitLogPrompt.menu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._CommitLogPrompt.menu.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._CommitLogPrompt.menu, Ext.menu.Menu,
 {
     init : function()
@@ -123,7 +123,7 @@ ui.component._CommitLogPrompt.grid = Ext.extend(Ext.grid.EditorGridPanel,
         {
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._CommitLogPrompt.menu({
+            var tmp = new ui.component._CommitLogPrompt.menu({
                 rowIdx : rowIndex
             }).showAt(e.getXY());
         }
@@ -159,7 +159,7 @@ ui.component.CommitLogPrompt = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            items : [new ui.component._CommitLogPrompt.grid()],
+            items : [new ui.component._CommitLogPrompt.grid()]
         });
         ui.component.CommitLogPrompt.superclass.initComponent.call(this);
     }

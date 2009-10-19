@@ -5,7 +5,7 @@ ui.component.MainMenu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component.MainMenu.superclass.constructor.call(this);
-}
+};
 
 Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 {
@@ -33,7 +33,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             // Remove wait msg
                             Ext.getBody().unmask();
 
-                            var o = Ext.util.JSON.decode(response.responseText);
+                            var o = Ext.util.JSON.decode(response.responseText), tmp;
 
                             if( o.lastupdate === 'in_progress' ) {
                                 Ext.MessageBox.show({
@@ -44,7 +44,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     icon    : Ext.MessageBox.INFO
                                 });
                             } else {
-                                new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
+                                tmp = new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
                             }
                         }
                     });
@@ -55,13 +55,13 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls  : 'checkBuild',
                 handler  : function()
                 {
-                    new ui.component.CheckBuildPrompt().show(
+                    var tmp = new ui.component.CheckBuildPrompt().show(
                         Ext.get('acc-need-update')
                     );
                 }
             }, {
                 text    : _('EN tools'),
-                handler : function() { return false },
+                handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
                         text    : _('Translation build status'),
@@ -83,7 +83,9 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 tab = Ext.getCmp('tab-build-status');
                             }
 
-                            if (tab.items) tab.removeAll(true);
+                            if (tab.items) {
+								tab.removeAll(true);
+							}
                             tab.add(new ui.component.BuildStatus());
                             tab.doLayout(); // render the grid
 
@@ -109,7 +111,9 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 tab = Ext.getCmp('tab-check-doc');
                             }
 
-                            if (tab.items) tab.removeAll(true);
+                            if (tab.items) {
+								tab.removeAll(true);
+							}
                             tab.add(new ui.component.CheckDoc());
                             tab.doLayout(); // render the grid
 
@@ -124,7 +128,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 id      : 'winconf-btn',
                 handler : function()
                 {
-                    new ui.component.EditorConf().show(Ext.get('winconf-btn'));
+                    var tmp = new ui.component.EditorConf().show(Ext.get('winconf-btn'));
                 }
             }, '-', {
                 text     : _('Erase my personal data'),
@@ -189,7 +193,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls : 'iconHelp',
                 handler : function()
                 {
-                    new ui.component.About().show(Ext.get('winabout-btn'));
+                    var tmp = new ui.component.About().show(Ext.get('winabout-btn'));
                 }
             }]
         });

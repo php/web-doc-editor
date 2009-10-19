@@ -40,7 +40,7 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
             // Set 'in progress'
             Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
 
-            new ui.task.SystemUpdateTask();
+            var tmp = new ui.task.SystemUpdateTask();
         }
     }]
 });

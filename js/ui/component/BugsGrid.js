@@ -74,7 +74,7 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
         {
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new Ext.menu.Menu({
+            var tmp = new Ext.menu.Menu({
                 id    : 'submenu',
                 items : [{
                     text    : '<b>'+_('Open in a new Tab')+'</b>',
@@ -142,9 +142,10 @@ ui.component._BugsGrid.instance = null;
 ui.component.BugsGrid.getInstance = function(config)
 {
     if (!ui.component._BugsGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._BugsGrid.instance = new ui.component.BugsGrid(config);
     }
     return ui.component._BugsGrid.instance;
-}
-
+};

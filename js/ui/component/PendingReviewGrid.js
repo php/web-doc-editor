@@ -91,7 +91,7 @@ ui.component._PendingReviewGrid.menu.diff = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._PendingReviewGrid.menu.diff.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
 {
     text    : _('View Diff'),
@@ -150,7 +150,7 @@ ui.component._PendingReviewGrid.menu.group = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._PendingReviewGrid.menu.group.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
 {
     iconCls : 'iconViewDiff',
@@ -179,7 +179,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                     {
                         var o = Ext.util.JSON.decode(response.responseText);
 
-                        phpDoc.filePendingOpen = new Array();
+                        phpDoc.filePendingOpen = [];
 
                         for (var i = 0; i < o.files.length; i = i + 1) {
                             phpDoc.filePendingOpen[i] = {
@@ -209,7 +209,7 @@ ui.component._PendingReviewGrid.menu.main = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._PendingReviewGrid.menu.main.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
 {
     init : function()
@@ -257,11 +257,12 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
-                fpath_split = FilePath.split('/');
+                fpath_split = FilePath.split('/'),
+				tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._PendingReviewGrid.menu.main({
+            tmp = new ui.component._PendingReviewGrid.menu.main({
                 grid      : grid,
                 rowIdx    : rowIndex,
                 event     : e,
@@ -411,7 +412,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         var v = this.getValue();
 
-                        if( v == '' || v.length < 3) {
+                        if( v === '' || v.length < 3) {
                             this.markInvalid(
                                 _('Your filter must contain at least 3 characters')
                             );
@@ -433,8 +434,10 @@ ui.component._PendingReviewGrid.instance = null;
 ui.component.PendingReviewGrid.getInstance = function(config)
 {
     if (!ui.component._PendingReviewGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._PendingReviewGrid.instance = new ui.component.PendingReviewGrid(config);
     }
     return ui.component._PendingReviewGrid.instance;
-}
+};
