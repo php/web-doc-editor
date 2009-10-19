@@ -60,7 +60,7 @@ ui.component._TranslatorGrid.translatorSumRenderer = function(value)
     } else {
         return;
     }
-}
+};
 
 // TranslatorGrid cell renderer for up-to-date column
 ui.component._TranslatorGrid.uptodateRenderer = function(value)
@@ -70,13 +70,13 @@ ui.component._TranslatorGrid.uptodateRenderer = function(value)
     } else {
         return '<span style="color:green; font-weight: bold;">' + value + '</span>';
     }
-}
+};
 
 // TranslatorGrid cell renderer for old/sum column
 ui.component._TranslatorGrid.old_sumRenderer = function(value)
 {
     return (value === '0') ? '' : value;
-}
+};
 
 // TranslatorGrid cell renderer for critical column
 ui.component._TranslatorGrid.criticalRenderer = function(value)
@@ -86,7 +86,7 @@ ui.component._TranslatorGrid.criticalRenderer = function(value)
     } else {
         return '<span style="color:red; font-weight: bold;">' + value + '</span>';
     }
-}
+};
 
 // TranslatorGrid columns definition
 ui.component._TranslatorGrid.columns = [
@@ -170,7 +170,7 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component.EmailPrompt({
+            var tmp = new ui.component.EmailPrompt({
                 name  : TranslatorName,
                 email : TranslatorEmail
             }).show();
@@ -182,14 +182,14 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new Ext.menu.Menu({
+            var tmp = new Ext.menu.Menu({
                 id    : 'submenu',
                 items : [{
                     text    : '<b>' + String.format(_('Send an email to {0}'), TranslatorName) + '</b>',
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        new ui.component.EmailPrompt({
+                        var tmp = new ui.component.EmailPrompt({
                             name  : TranslatorName,
                             email : TranslatorEmail
                         }).show();
@@ -199,7 +199,7 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        new ui.component.EmailPrompt({
+                        var tmp = new ui.component.EmailPrompt({
                             name  : 'Php Doc Team ' + phpDoc.userLang,
                             email : 'doc-' + phpDoc.userLang + '@lists.php.net'
                         }).show();
@@ -215,8 +215,10 @@ ui.component._TranslatorGrid.instance = null;
 ui.component.TranslatorGrid.getInstance = function(config)
 {
     if (!ui.component._TranslatorGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._TranslatorGrid.instance = new ui.component.TranslatorGrid(config);
     }
     return ui.component._TranslatorGrid.instance;
-}
+};

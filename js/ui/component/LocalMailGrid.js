@@ -81,7 +81,7 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
         {
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new Ext.menu.Menu({
+            var tmp = new Ext.menu.Menu({
                 id    : 'submenu',
                 items : [{
                     text    : '<b>'+_('Open in a new Tab')+'</b>',
@@ -151,8 +151,10 @@ ui.component._LocalMailGrid.instance = null;
 ui.component.LocalMailGrid.getInstance = function(config)
 {
     if (!ui.component._LocalMailGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._LocalMailGrid.instance = new ui.component.LocalMailGrid(config);
     }
     return ui.component._LocalMailGrid.instance;
-}
+};

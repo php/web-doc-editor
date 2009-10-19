@@ -23,7 +23,7 @@ ui.component._RepositoryTree.menu.folder = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._RepositoryTree.menu.folder.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
 {
     init : function()
@@ -31,15 +31,17 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
         Ext.apply(this,
         {
             items : [{
-                text    : (this.node.isExpanded())
-                        ? '<b>' + _('Collapse') + '</b>'
-                        : '<b>' + _('Expand') + '</b>',
+                text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
                 iconCls : 'iconFolderClose',
                 scope   : this,
                 handler : function()
                 {
-                    if (this.node.isExpanded()) this.node.collapse();
-                    else                        this.node.expand();
+                    if (this.node.isExpanded()) {
+						this.node.collapse();
+					}
+					else {
+						this.node.expand();
+					}
                 }
             }]
         });
@@ -53,7 +55,7 @@ ui.component._RepositoryTree.menu.file = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._RepositoryTree.menu.file.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
 {
     init : function()
@@ -81,12 +83,7 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                 }
             }, {
                 hidden  : (this.node.attributes.from === 'search'),
-                text    : (FileLang === 'en')
-                        ? String.format(
-                            _('Open the same file in <b>{0}</b>'),
-                            Ext.util.Format.uppercase(phpDoc.userLang))
-                        : String.format(
-                            _('Open the same file in <b>{0}</b>'), 'EN'),
+                text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(phpDoc.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
                 iconCls : 'iconTabNeedReviewed',
                 scope   : this,
                 handler : function()
@@ -123,14 +120,15 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
     listeners: {
         contextmenu : function(node, e)
         {
+			var tmp;
             node.select();
 
             if (node.attributes.type === 'folder' || node.isRoot) {
-                new ui.component._RepositoryTree.menu.folder({
+                tmp = new ui.component._RepositoryTree.menu.folder({
                     node : node
                 }).showAt(e.getXY());
             } else if (node.attributes.type === 'file') {
-                new ui.component._RepositoryTree.menu.file({
+                tmp = new ui.component._RepositoryTree.menu.file({
                     node : node
                 }).showAt(e.getXY());
             }
@@ -294,7 +292,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         var instance = ui.component._RepositoryTree.instance,
                             v        = this.getValue();
 
-                        if( v == '' || v.length < 3) {
+                        if( v === '' || v.length < 3) {
                             this.markInvalid(_('Your search must contain at least 3 characters'));
                             return;
                         }
@@ -320,7 +318,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
         });
         ui.component.RepositoryTree.superclass.initComponent.call(this);
 
-        new Ext.tree.TreeSorter(this, {
+        var tmp = new Ext.tree.TreeSorter(this, {
             folderSort : true
         });
     },
@@ -334,10 +332,10 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
             node.ensureVisible();
             if (t[0] && t[0] !== '') {
                 // walk into childs
-                for (var i = 0; i < node.childNodes.length; ++i) {
-                    if (node.childNodes[i].text === t[0]) {
+                for (var j = 0; j < node.childNodes.length; ++j) {
+                    if (node.childNodes[j].text === t[0]) {
                         t.shift();
-                        node.childNodes[i].expand(false, true, cb.createDelegate(this));
+                        node.childNodes[j].expand(false, true, cb.createDelegate(this));
                     }
                 }
             } else {
@@ -350,7 +348,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     }
                 }
             }
-        }
+        };
         this.root.expand(false, true, cb.createDelegate(this));
     }
 });
@@ -360,8 +358,10 @@ ui.component._RepositoryTree.instance = null;
 ui.component.RepositoryTree.getInstance = function(config)
 {
     if (!ui.component._RepositoryTree.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._RepositoryTree.instance = new ui.component.RepositoryTree(config);
     }
     return ui.component._RepositoryTree.instance;
-}
+};

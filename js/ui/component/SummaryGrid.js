@@ -135,7 +135,7 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            iconCls : 'flag-' + phpDoc.userLang,
+            iconCls : 'flag-' + phpDoc.userLang
         });
         ui.component.SummaryGrid.superclass.initComponent.call(this);
     }
@@ -146,8 +146,10 @@ ui.component._SummaryGrid.instance = null;
 ui.component.SummaryGrid.getInstance = function(config)
 {
     if (!ui.component._SummaryGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._SummaryGrid.instance = new ui.component.SummaryGrid(config);
     }
     return ui.component._SummaryGrid.instance;
-}
+};

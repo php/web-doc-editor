@@ -10,7 +10,7 @@ ui.component._FilePanel.tbar.menu.lang = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._FilePanel.tbar.menu.lang.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
@@ -55,7 +55,7 @@ ui.component._FilePanel.tbar.menu.en = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._FilePanel.tbar.menu.en.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
@@ -406,7 +406,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     iconCls  : 'saveFile',
                     handler  : function()
                     {
-                        new ui.task.AcceptPatchTask({
+                        var tmp = new ui.task.AcceptPatchTask({
                             fid         : this.fid,
                             fpath       : this.fpath,
                             fname       : this.fname,
@@ -421,7 +421,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     iconCls  : 'iconPageDelete',
                     handler  : function()
                     {
-                        new ui.task.RejectPatchTask({
+                        var tmp = new ui.task.RejectPatchTask({
                             fid         : this.fid,
                             fuid        : this.fuid,
                             storeRecord : this.storeRecord
@@ -446,9 +446,11 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
+						var tmp;
+						
                         if (this.lang === 'en') {
 
-                            new ui.task.SaveENFileTask({
+                            tmp = new ui.task.SaveENFileTask({
                                 prefix      : this.prefix,
                                 ftype       : this.ftype,
                                 fid         : this.fid,
@@ -460,7 +462,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         } else {
 
                             if (this.prefix === 'AF') {
-                                new ui.task.SaveLangFileTask({
+                                tmp = new ui.task.SaveLangFileTask({
                                     prefix      : this.prefix,
                                     ftype       : this.ftype,
                                     fid         : this.fid,
@@ -481,7 +483,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 {
                                     if (btn === 'no') {
 
-                                        new ui.task.SaveLangFileTask({
+                                        tmp = new ui.task.SaveLangFileTask({
                                             prefix      : this.prefix,
                                             ftype       : this.ftype,
                                             fid         : this.fid,
@@ -493,7 +495,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                                     } else if (btn === 'yes') {
 
-                                        new ui.task.CheckFileTask({
+                                        tmp = new ui.task.CheckFileTask({
                                             prefix      : this.prefix,
                                             ftype       : this.ftype,
                                             fid         : this.fid,
@@ -515,15 +517,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
-                        new ui.component.PatchPrompt({
+                        var tmp = new ui.component.PatchPrompt({
                             prefix : this.prefix,
                             ftype  : this.ftype,
                             fid    : this.fid,
                             fpath  : this.fpath,
                             fname  : this.fname,
                             lang   : this.lang,
-                            defaultEmail : (phpDoc.userLogin !== 'cvsread')
-                                           ? phpDoc.userLogin + '@php.net' : ''
+                            defaultEmail : (phpDoc.userLogin !== 'cvsread') ? phpDoc.userLogin + '@php.net' : ''
                         }).show();
                     }
                 }, '-', {
@@ -534,9 +535,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
                     }
-                }, (this.lang === 'en')
-                ? new ui.component._FilePanel.tbar.menu.en({ comp_id : id_prefix + '-FILE-' + this.fid })
-                : new ui.component._FilePanel.tbar.menu.lang({ comp_id : id_prefix + '-FILE-' + this.fid })
+                }, (this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({ comp_id : id_prefix + '-FILE-' + this.fid }) : new ui.component._FilePanel.tbar.menu.lang({ comp_id : id_prefix + '-FILE-' + this.fid })
             ];
         } else {
             this.tbar = [{}]; // empty tbar for readonly file
@@ -555,21 +554,19 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     scope  : this,
                     initialize : function()
                     {
-                        new ui.task.GetFileTask({
+                        var tmp = new ui.task.GetFileTask({
                             prefix : this.prefix,
                             ftype  : this.ftype,
                             fid    : this.fid,
-                            fpath  : (this.isPatch)
-                                    ? this.fpath
-                                    : this.lang + this.fpath,
-                            fname  : (this.isPatch)
-                                    ? this.fname + '.' + this.fuid + '.patch'
-                                    : this.fname
+                            fpath  : (this.isPatch) ? this.fpath : this.lang + this.fpath,
+                            fname  : (this.isPatch) ? this.fname + '.' + this.fuid + '.patch' : this.fname
                         });
                     },
                     cmchange : function(keyCode, charCode, obj)
                     {
-                        if ( keyCode === 116 ) return; // 116 = f5
+                        if (keyCode === 116) {
+							return;
+						} // 116 = f5
 
                         var cursorPosition = Ext.util.JSON.decode(
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid)
@@ -582,19 +579,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right;
                         // 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT; 67 = CTRL+C
                         // 35 = end; 36 = home
-                        if (   keyCode !== 27
-                            && keyCode !== 33
-                            && keyCode !== 34
-                            && keyCode !== 37
-                            && keyCode !== 38
-                            && keyCode !== 39
-                            && keyCode !== 40
-                            && keyCode !== 17
-                            && keyCode !== 16
-                            && keyCode !== 67
-                            && keyCode !== 35
-                            && keyCode !== 36
-                        ) {
+                        if (   keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67 && keyCode !== 35 && keyCode !== 36 ) {
                             if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
                                 // Add an [modified] in title
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(

@@ -39,7 +39,7 @@ ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
 ui.component._BuildStatus.rendererLanguage = function(value)
 {
     return '<div class="flag flag-' + value + '">' + value + '</div>';
-}
+};
 
 // BuildStatus Grid status cell renderer
 ui.component._BuildStatus.rendererStatus = function(value)
@@ -49,7 +49,7 @@ ui.component._BuildStatus.rendererStatus = function(value)
     } else {
         return 'Ok';
     }
-}
+};
 
 // BuildStatus Grid columns definition
 ui.component._BuildStatus.columns = [

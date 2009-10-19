@@ -37,7 +37,7 @@ ui.component.PatchPrompt = Ext.extend(Ext.Window,
                 text    : _('Save'),
                 handler : function()
                 {
-                    new ui.task.SavePatchTask({
+                    var tmp = new ui.task.SavePatchTask({
                         prefix : this.prefix,
                         fid    : this.fid,
                         ftype  : this.ftype,

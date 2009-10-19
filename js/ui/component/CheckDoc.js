@@ -74,7 +74,7 @@ ui.component._CheckDoc.renderer = function(value, metadata)
     } else {
         return;
     }
-}
+};
 
 // CheckDoc Grid columns definition
 ui.component._CheckDoc.columns = [
@@ -211,7 +211,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
             var win   = Ext.getCmp('check-doc-file-win'),
                 store = ui.component._CheckDoc.fs;
 
-            phpDoc.filePendingOpen = new Array();
+            phpDoc.filePendingOpen = [];
 
             for (var i = 0; i < store.getCount(); ++i) {
                 phpDoc.filePendingOpen[i] = {
@@ -238,7 +238,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                     .getSelectionModel()
                     .getSelections();
 
-            phpDoc.filePendingOpen = new Array();
+            phpDoc.filePendingOpen = [];
 
             for (var i = 0; i < r.length; ++i) {
                 phpDoc.filePendingOpen[i] = {
@@ -283,7 +283,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                 data      = record.get(errorType),
                 fpath     = record.data.path;
 
-            if (Ext.num(data, false) && data != 0) {
+            if (Ext.num(data, false) && data !== 0) {
                 // get checkdoc file via XHR
                 // TODO - may change to use HttpProxy for DataStore
                 //        remove XHR, win.open() and load from proxy
@@ -296,11 +296,12 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                     success : function(response)
                     {
                         // Must choose the file
-                        var o = Ext.decode(response.responseText);
+                        var o = Ext.decode(response.responseText),
+						i, tmp;
 
                         // file store
                         ui.component._CheckDoc.fs.removeAll();
-                        for (var i = 0; i < o.files.length; ++i) {
+                        for (i = 0; i < o.files.length; ++i) {
 
                             ui.component._CheckDoc.fs.insert(
                                 0, new ui.component._CheckDoc.fs.recordType({
@@ -311,7 +312,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                         }
                         ui.component._CheckDoc.fs.sort('file', 'asc');
 
-                        new ui.component._CheckDoc.FileWin({
+                        tmp = new ui.component._CheckDoc.FileWin({
                             fpath : fpath,
                             items : [
                                 new ui.component._CheckDoc.FileGrid({

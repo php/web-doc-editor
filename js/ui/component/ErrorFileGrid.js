@@ -96,7 +96,7 @@ ui.component._ErrorFileGrid.menu = function(config)
     Ext.apply(this, config);
     this.init();
     ui.component._ErrorFileGrid.menu.superclass.constructor.call(this);
-}
+};
 Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 {
     init : function()
@@ -202,11 +202,12 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         rowcontextmenu : function(grid, rowIndex, e)
         {
             var FilePath = grid.store.getAt(rowIndex).data.path,
-                FileName = grid.store.getAt(rowIndex).data.name;
+                FileName = grid.store.getAt(rowIndex).data.name,
+				tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            new ui.component._ErrorFileGrid.menu({
+            tmp = new ui.component._ErrorFileGrid.menu({
                 hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
                 grid       : grid,
                 event      : e,
@@ -232,10 +233,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 
                 grid.store.each(function(record)
                 {
-                    if (   record.data.path === FilePath
-                        && record.data.name === FileName
-                        && !error[record.data.type]
-                    ) {
+                    if ( record.data.path === FilePath && record.data.name === FileName && !error[record.data.type] ) {
                         error.push(record.data.type);
                     }
                 });
@@ -381,7 +379,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     listeners : {
                         keypress : function(field, e)
                         {
-                            if (e.getKey() == e.ENTER) {
+                            if (e.getKey() === e.ENTER) {
                                 this.onTrigger2Click();
                             }
                         }
@@ -396,7 +394,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         var v = this.getValue();
 
-                        if (v == '' || v.length < 3) {
+                        if (v === '' || v.length < 3) {
                             this.markInvalid(
                                 _('Your filter must contain at least 3 characters')
                             );
@@ -418,8 +416,10 @@ ui.component._ErrorFileGrid.instance = null;
 ui.component.ErrorFileGrid.getInstance = function(config)
 {
     if (!ui.component._ErrorFileGrid.instance) {
-        if (!config) config = {};
+        if (!config) {
+			config = {};
+		}
         ui.component._ErrorFileGrid.instance = new ui.component.ErrorFileGrid(config);
     }
     return ui.component._ErrorFileGrid.instance;
-}
+};
