@@ -193,8 +193,6 @@ i18n["Erase my personal data"] = "Effacer mes données personnelles";
 
 i18n["Log out"] = "Se déconnecter";
     i18n["Are you sure you want to logout?"] = "êtes-vous sûr de vouloir vous déconnecter ?";
-    i18n[""] = "";
-    i18n[""] = "";
 
 i18n["About"] = "À propos";
     i18n["About {0}"] = "À propos de {0}";
