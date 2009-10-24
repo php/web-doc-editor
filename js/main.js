@@ -8,7 +8,7 @@ var phpDoc = function()
         userLang   : null,
         appName    : 'PhpDocumentation Online Editor',
         appVer     : '0.2',
-        uiRevision : '$Revision: 1.65 $',
+        uiRevision : '$Revision$',
 
         userConf : {
             'conf_needupdate_diff'       : 'using-exec',
