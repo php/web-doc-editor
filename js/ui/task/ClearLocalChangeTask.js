@@ -59,9 +59,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath
-                                    && record.data.name === this.fname
-                                ) {
+                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             },
@@ -72,9 +70,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath
-                                    && record.data.name === this.fname
-                                ) {
+                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             },
@@ -85,9 +81,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath
-                                    && record.data.name === this.fname
-                                ) {
+                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             },
@@ -98,9 +92,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.ErrorFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath
-                                    && record.data.name === this.fname
-                                ) {
+                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             },
@@ -124,4 +116,4 @@ ui.task.ClearLocalChangeTask = function(config)
             }
         }, this
     );
-}
+};

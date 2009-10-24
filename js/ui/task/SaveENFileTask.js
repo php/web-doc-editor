@@ -76,4 +76,4 @@ ui.task.SaveENFileTask = function(config)
             phpDoc.winForbidden();
         }
     });
-}
+};

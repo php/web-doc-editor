@@ -76,7 +76,4 @@ ui.task.AcceptPatchTask = function(config)
             } // btn = yes
         }, this // scope
     );
-}
-
-
-
+};

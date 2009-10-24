@@ -57,4 +57,4 @@ ui.task.UpdateConfTask = function(config)
             }
         }
     });
-}
+};

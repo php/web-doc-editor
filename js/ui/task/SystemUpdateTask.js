@@ -27,7 +27,7 @@ ui.task._SystemUpdateTask.refresh_ui = function()
 
     // Re-enable win's close button
     Ext.getCmp('sys-update-win').tools.close.setVisible(true);
-}
+};
 
 ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
 {
@@ -42,10 +42,10 @@ ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
         },
         failure : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(response.responseText), tmp;
             if (o && o.success === false) {
                 Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
-                new ui.task._SystemUpdateTask.refresh_ui();
+                tmp = new ui.task._SystemUpdateTask.refresh_ui();
             } else {
                 ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
             }
@@ -60,15 +60,16 @@ ui.task._SystemUpdateTask.apply_tool = function()
         params  : { task: 'applyTools' },
         success : function(response)
         {
+			var tmp;
             Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
-            new ui.task._SystemUpdateTask.refresh_ui();
+            tmp = new ui.task._SystemUpdateTask.refresh_ui();
         },
         failure : function(response)
         {
             ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
         }
     });
-}
+};
 
 ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
 {
@@ -83,13 +84,13 @@ ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
         },
         failure : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(response.responseText), tmp;
 
             if (o && o.success === false) {
                 Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
                 Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
 
-                new ui.task._SystemUpdateTask.apply_tool();
+                tmp = new ui.task._SystemUpdateTask.apply_tool();
             } else {
                 ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }
@@ -108,10 +109,12 @@ ui.task.SystemUpdateTask = function()
         params  : { task: 'updateRepository' },
         success : function(response)
         {
+			var tmp;
+			
             Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
             Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
 
-            new ui.task._SystemUpdateTask.apply_tool();
+            tmp = new ui.task._SystemUpdateTask.apply_tool();
         },
         failure: function(response)
         {
@@ -125,4 +128,4 @@ ui.task.SystemUpdateTask = function()
             }
         }
     });
-}
+};

@@ -14,10 +14,7 @@ ui.task.SavePatchTask = function(config)
         Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
     );
 
-    if (   (this.prefix === 'AF')
-        || (this.lang === 'en' && Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified === false)
-        || (this.lang !== 'en' && Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified === false)
-    ) {
+    if (   (this.prefix === 'AF') || (this.lang === 'en' && Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified === false) || (this.lang !== 'en' && Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified === false) ) {
         Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
             Ext.getCmp(this.prefix + '-' + this.fid).originTitle
         );
@@ -56,4 +53,4 @@ ui.task.SavePatchTask = function(config)
             msg.hide();
         }
     });
-}
+};

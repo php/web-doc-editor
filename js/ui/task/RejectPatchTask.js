@@ -48,4 +48,4 @@ ui.task.RejectPatchTask = function(config)
             } // btn = yes
         }, this // scope
     );
-}
+};

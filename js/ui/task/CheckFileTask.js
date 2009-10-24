@@ -29,7 +29,7 @@ ui.task.CheckFileTask = function(config)
         {
             Ext.getBody().unmask();
 
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(response.responseText), tmp;
 
             // If there is some errors, we display this
             if (o.error && o.error_first !== '-No error-') {
@@ -57,7 +57,7 @@ ui.task.CheckFileTask = function(config)
             }
 
             // Now, We save LANG File
-            new ui.task.SaveLangFileTask({
+            tmp = new ui.task.SaveLangFileTask({
                 prefix      : this.prefix,
                 ftype       : this.ftype,
                 fid         : this.fid,
@@ -79,4 +79,4 @@ ui.task.CheckFileTask = function(config)
             ui.component.ErrorFileGrid.getInstance().store.reload();
         }
     });
-}
+};

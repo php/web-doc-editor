@@ -37,4 +37,4 @@ ui.task.LoadConfigTask = function(config)
             phpDoc.drawInterface();
         }
     });
-}
+};

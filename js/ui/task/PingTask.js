@@ -30,7 +30,7 @@ ui.task.PingTask = function()
         });
         this.task.delay(30000);
     }, this);
-}
+};
 
 // delegates
 ui.task.PingTask.prototype.delay = function(delay, newFn, newScope, newArgs)
@@ -50,4 +50,4 @@ ui.task.PingTask.getInstance = function()
         ui.task._PingTask.instance = new ui.task.PingTask();
     }
     return ui.task._PingTask.instance;
-}
+};

@@ -44,4 +44,4 @@ ui.task.GetFileTask = function(config)
             }
         }
     });
-}
+};

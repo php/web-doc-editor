@@ -37,4 +37,4 @@ ui.task.MarkDeleteTask = function(config)
             }
         }, this
     );
-}
+};

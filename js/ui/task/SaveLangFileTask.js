@@ -82,4 +82,4 @@ ui.task.SaveLangFileTask = function(config)
             phpDoc.winForbidden();
         }
     });
-}
+};
