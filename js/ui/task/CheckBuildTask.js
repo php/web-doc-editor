@@ -33,7 +33,7 @@ ui.task._CheckBuildTask.display = function()
             Ext.getCmp('main-panel').setActiveTab('check_build_panel');
         }
     });
-}
+};
 
 ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
 {
@@ -48,9 +48,9 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
         },
         failure : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(response.responseText), tmp;
             if (o && o.success === false) {
-                new ui.task._CheckBuildTask.display();
+                tmp = new ui.task._CheckBuildTask.display();
             } else {
                 ui.task._CheckBuildTask.poll.delay(5000);
             }
@@ -75,7 +75,7 @@ ui.task.CheckBuildTask = function(config)
         },
         success : function(response)
         {
-            new ui.task._CheckBuildTask.display();
+            var tmp = new ui.task._CheckBuildTask.display();
         },
         failure : function(response)
         {
@@ -93,4 +93,4 @@ ui.task.CheckBuildTask = function(config)
             }
         }
     });
-}
+};
