@@ -364,7 +364,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 scope : this,
                 check : function(c)
                 {
-                    phpDoc.confUpdate(this.syncScrollConf, c.getValue());
+					var tmp = new ui.task.UpdateConfTask({item: this.syncScrollConf, value: c.getValue()});
                 },
                 render : function(c)
                 {
