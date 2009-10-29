@@ -147,7 +147,7 @@ class TranslationStatistic
             AND
                 b.lang="en"
             AND
-                a.revision is NULL
+                (a.revision is NULL OR a.revision = 0)
             AND
                 a.size is NULL';
         $result = DBConnection::getInstance()->query($s);
@@ -183,7 +183,7 @@ class TranslationStatistic
             AND
                 b.lang="en"
             AND
-                a.revision is NULL
+                (a.revision is NULL OR a.revision=0)
             AND
                 a.size is NULL';
         $result = DBConnection::getInstance()->query($s);

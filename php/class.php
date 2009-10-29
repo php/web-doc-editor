@@ -1370,7 +1370,7 @@ class phpDoc
             AND
                 b.lang="en"
             AND
-                a.revision is NULL
+                (a.revision is NULL OR a.revision = 0)
             AND
                 a.size is NULL', $this->cvsLang);
 
