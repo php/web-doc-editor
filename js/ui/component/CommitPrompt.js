@@ -61,7 +61,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'checktreepanel',
+                xtype       : 'treepanel',
                 id          : 'commit-tree-panel',
                 anchor      : '100%',
                 height      : 180,

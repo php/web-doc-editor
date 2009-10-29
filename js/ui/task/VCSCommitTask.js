@@ -12,7 +12,7 @@ ui.task._VCSCommitTask.commit = function(files)
     // Go for VCS commit
     for (var i = 0; i < files.length; i = i + 1) {
 
-        node = Ext.getCmp('commit-tree-panel').getNodeById(files[i]);
+        node = Ext.getCmp('commit-tree-panel').getNodeById(files[i].id);
         nodes.push(node.attributes.FileDBID);
     }
 
@@ -94,12 +94,12 @@ ui.task.VCSCommitTask = function()
         return;
     }
 
-    var files         = Ext.getCmp('commit-tree-panel').getValue(),
+    var files         = Ext.getCmp('commit-tree-panel').getChecked(),
         NeedToBeClose = [],
         checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID, labelNeedToBeClose = '';
 
     for (var i = 0; i < files.length; ++i) {
-        checkNode = Ext.getCmp('commit-tree-panel').getNodeById(files[i]).attributes;
+        checkNode = files[i].attributes;
 
         paneID_FE  = 'FE-' + Ext.util.md5('FE-' + checkNode.FilePath + checkNode.FileName);
         paneID_FNU = 'FNU-' + Ext.util.md5('FNU-' + checkNode.FilePath + checkNode.FileName);

@@ -27,7 +27,6 @@ echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/style.css');
 // Ext.ux Css files
 echo cssLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.css');
-echo cssLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.css');
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
 echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
@@ -40,7 +39,6 @@ echo jsLoadTemplate('js/ux/miframe1_2/miframe.js');
 echo jsLoadTemplate('js/ux/md5/md5.js');
 echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/ux/Ext.ux.CodeMirror.js');
-echo jsLoadTemplate('js/ux/CheckTreePanel/Ext.ux.tree.CheckTreePanel.js');
 // Main app
 echo jsLoadi18nTemplate();
 echo jsLoadTemplate('js/main_override.js');
@@ -57,3 +55,4 @@ echo jsCallTemplate($directAccess);
 
 echo footerTemplate();
 
+?>
