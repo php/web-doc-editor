@@ -106,8 +106,6 @@ class RepositoryManager
         // TODO: extract the string replace outside this function
         $output = str_replace("Warning", '<span style="color: #FF0000; font-weight: bold;">Warning</span>', $output);
 
-		$output[] = $cmd;
-
         return $output;
     }
 
