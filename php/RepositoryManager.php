@@ -89,7 +89,7 @@ class RepositoryManager
      */
     public function checkBuild($enable_xml_details=false)
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.';'
+        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'/doc-base/;'
               .'/usr/bin/php configure.php '
               .'--with-lang='.AccountManager::getInstance()->vcsLang.' --disable-segfault-error';
 
@@ -105,6 +105,8 @@ class RepositoryManager
         // Format the output
         // TODO: extract the string replace outside this function
         $output = str_replace("Warning", '<span style="color: #FF0000; font-weight: bold;">Warning</span>', $output);
+
+		$output[] = $cmd;
 
         return $output;
     }
