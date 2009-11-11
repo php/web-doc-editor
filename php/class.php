@@ -803,26 +803,6 @@ class phpDoc
     }
 
     /**
-     * Get all commit message.
-     *
-     * Each time we commit, we store in DB the commit message to be use later. This method get all this message from DB.
-     *
-     * @return An indexed array of commit message.
-     */
-    function getCommitLogMessage()
-    {
-        $result = array();
-
-        $s = sprintf('SELECT `id`, `text` FROM `commitMessage` WHERE userID="%s"', $this->userID);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        while ($a = $r->fetch_assoc()) {
-            $result[] = $a;
-        }
-
-        return $result;
-    }
-
-    /**
      * Save Output message into a log file.
      *
      * @param $file The name of the file.
