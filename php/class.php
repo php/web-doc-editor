@@ -1427,30 +1427,6 @@ class phpDoc
     }
 
     /**
-     * Check the build of your file (using configure.php script).
-     * PHP binary should be in /usr/bin
-     *
-     * @return The output log.
-     */
-    function checkBuild($enable_xml_details='false') {
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.';/usr/bin/php configure.php --with-lang='.$this->cvsLang.' --disable-segfault-error';
-
-        if ($enable_xml_details == 'true' ) {
-            $cmd .= ' --enable-xml-details';
-        }
-
-        $cmd .= ';';
-
-        $output = array();
-        exec($cmd, $output);
-
-        //Format the outPut
-        $output = str_replace("Warning", '<span style="color: #FF0000; font-weight: bold;">Warning</span>', $output);
-
-        return $output;
-    }
-
-    /**
      * Delete local change of a file.
      *
      * @param $type The type of the file. Can be 'update', 'delete' or new'
