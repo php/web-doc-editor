@@ -827,23 +827,6 @@ class phpDoc
     }
 
     /**
-     * Get a raw diff between a file and a modified file.
-     *
-     * @param $path The path to the file.
-     * @param $file The name of the file.
-     * @return The diff of the file with his modified version.
-     */
-    function getRawDiff($path, $file) {
-
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$path.'; diff -uN '.$file.' '.$file.'.new';
-
-        $output = array();
-        exec($cmd, $output);
-        return implode("\r\n",$output);
-
-    }
-
-    /**
      * Get the diff of a file with his modified version.
      *
      * @param $path The path to the file.
