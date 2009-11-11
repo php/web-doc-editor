@@ -265,65 +265,6 @@ class phpDoc
     }
 
     /**
-     * Analyse all files to check if the LANG files is present into EN tree or not.
-     * 
-     * @param $dir The analysed dir.
-     * @param $lang The tested lang.
-     *
-     */
-    function doCheckOldFiles($dir = '', $lang) {
-
-        if ($dh = @opendir(DOC_EDITOR_CVS_PATH . $lang . $dir)) {
-
-            $entriesDir = array();
-            $entriesFiles = array();
-
-            while (($file = readdir($dh)) !== false) {
-                if ( !$this->isParsed($lang, $dir, $file) ) {
-                    continue;
-                }
-
-                if ($file != '.' && $file != '..' && $file != 'CVS' && $dir != '/functions') {
-
-                    if (is_dir(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file)) {
-                        $entriesDir[] = $file;
-                    } elseif (is_file(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file)) {
-                        $entriesFiles[] = $file;
-                    }
-                }
-            }
-
-            // Files first
-            if (!empty($entriesFiles)) {
-                foreach($entriesFiles as $file) {
-                    $path_en = DOC_EDITOR_CVS_PATH . 'en/' . $dir . '/' . $file;
-                    $path = DOC_EDITOR_CVS_PATH . $lang . $dir . '/' . $file;
-
-                    if (!@is_file($path_en)) {
-                        $size = intval(filesize($path) / 1024);
-
-                        $s = sprintf('INSERT INTO `files` (`lang`, `path`, `name`, `status`) VALUES (%s, %s, %s, %s)',
-                        "'".$lang."'",
-                        "'$dir/'",
-                        "'$file'",
-                        "'NotInEN'"
-                        );
-                        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-                    }
-                }
-            }
-
-            // Directories..
-            if (!empty($entriesDir)) {
-                foreach ($entriesDir as $Edir) {
-                    $this->doCheckOldFiles($dir . '/' . $Edir, $lang);
-                }
-            }
-        }
-        @closedir($dh);
-    }
-
-    /**
      * Test if the file is a modified file.
      *
      * @param $lang The lang of the tested file.
