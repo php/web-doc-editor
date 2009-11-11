@@ -496,35 +496,6 @@ class phpDoc
     }
 
     /**
-     * Test the CVS credentials against the server
-     *
-     * @return TRUE if the loggin success, error message otherwise.
-     */
-    function checkCvsAuth() {
-
-        $fp = fsockopen(DOC_EDITOR_CVS_SERVER_HOST, DOC_EDITOR_CVS_SERVER_PORT);
-        fwrite($fp, "BEGIN AUTH REQUEST\n");
-        fwrite($fp, DOC_EDITOR_CVS_SERVER_PATH . "\n");
-        fwrite($fp, $this->cvsLogin."\n");
-
-        fwrite($fp, $this->encodeCvsPass($this->cvsPasswd,"A")."\n");
-        fwrite($fp, "END AUTH REQUEST\n");
-
-        $r = trim(fread($fp, 1024));
-
-        if ($r != 'I LOVE YOU')  {
-            if ($r == 'I HATE YOU') {
-                return 'Bad password';
-            } else {
-                return $r;
-            }
-        } else {
-            return true;
-        }
-
-    }
-
-    /**
      * Get Cvs log of a specified file.
      *
      * @param $Path The path of the file.
