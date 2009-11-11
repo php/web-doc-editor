@@ -465,24 +465,6 @@ class phpDoc
     }
 
     /**
-     * Update the repository to sync our local copy. Simply exec an "cvs -f -q update -d -P" command.
-     * As this exec command take some time, we start by creating a lock file, then run the command, then delete this lock file.
-     * As it, we can test if this command has finish, or not.
-     */
-    function updateRepository() {
-        // We place a lock file to test if update is finish
-        $lock = new LockFile('lock_update_repository');
-        if ($lock->lock()) {
-            // We exec the update
-            $cmd = "cd ".DOC_EDITOR_CVS_PATH."; cvs -f -q update -d -P . ;";
-            exec($cmd);
-        }
-
-        // We remove the lock file
-        $lock->release();
-    }
-
-    /**
      * Parse a string to find all attributs.
      *
      * @param $tags_attrs The string to parse.
