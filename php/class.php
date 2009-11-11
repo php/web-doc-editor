@@ -807,30 +807,6 @@ class phpDoc
      *
      * @param $path The path to the file.
      * @param $file The name of the file.
-     * @param $type The type is blank, $file is a modified file, else, this is a patch.
-     * @param $uniqID The uniq ID of the patch, if $type != ''.
-     * @return The diff of the file with his modified version, as HTML, ready to be display.
-     */
-    function getDiffFromFiles($path, $file, $type='', $uniqID='') {
-        include "./class.fileDiff.php";
-
-        $charset = $this->getFileEncoding(DOC_EDITOR_CVS_PATH.$path.'/'.$file, 'file');
-
-        $FilePath1 = DOC_EDITOR_CVS_PATH.$path.'/'.$file;
-        $FilePath2 = ( $type == '' ) ? DOC_EDITOR_CVS_PATH.$path.'/'.$file.'.new' : DOC_EDITOR_CVS_PATH.$path.'/'.$file.'.'.$uniqID.'.patch';
-
-        $diff = new diff;
-        $info['content'] = $diff->inline($FilePath1, $FilePath2, 2, $charset);
-        $info['charset'] = $charset;
-        return $info;
-
-    }
-
-    /**
-     * Get the diff of a file with his modified version.
-     *
-     * @param $path The path to the file.
-     * @param $file The name of the file.
      * @param $rev1 Frist revison.
      * @param $rev2 Second revision.
      * @return The diff a the file with his modified version, as HTML, reday to be display.
