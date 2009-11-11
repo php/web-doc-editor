@@ -791,47 +791,6 @@ class phpDoc
     }
 
     /**
-     * Get the information from the content of a file.
-     *
-     * @param $content The content of the file.
-     * @return An associated array of informations.
-     */
-    function getInfoFromContent($content) {
-
-        $info = array('rev'=>0, 'en-rev'=>0, 'maintainer'=>'NULL', 'reviewed'=>'NULL', 'status'=>'NULL', 'xmlid'=>'NULL', 'content'=>$content);
-
-        // Cvs tag
-        $match = array();
-        preg_match('/<!-- .Revision: (\d+) . -->/', $content, $match);
-        if (!empty($match)) {
-            $info['rev'] = $match[1];
-        }
-
-        //Rev tag
-        $match = array();
-        preg_match('/<!--\s*EN-Revision:\s*(\d+)\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
-        if (!empty($match)) {
-            $info['en-rev'] = $match[1];
-            $info['maintainer'] = $match[2];
-            $info['status'] = $match[3];
-        }
-
-        // Reviewed tag
-        $match = array();
-        if (preg_match('/<!--\s*Reviewed:\s*(.*?)*-->/Ui', $content, $match)) {
-            $info['reviewed'] = trim($match[1]);
-        }
-
-        // All xmlid
-        $match = array();
-        if (preg_match_all('/xml:id="(.*?)"/', $content, $match)) {
-            $info['xmlid'] = implode('|',$match[1]);
-        }
-
-        return $info;
-    }
-
-    /**
      * Same as getInfoFromContent() but with a file instead of a content of a file.
      *
      * @param $FilePath The path of the file.
