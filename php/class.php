@@ -324,60 +324,6 @@ class phpDoc
     }
 
     /**
-     * Parse the translation's file witch hold all informations about all translators and put it into database.
-     */
-    function revParseTranslation() {
-
-        reset($this->availableLanguage);
-        while (list(, $lang) = each($this->availableLanguage)) {
-
-            // Path to find translation.xml file, set default values,
-            // in case we can't find the translation file
-            $translation_xml = DOC_EDITOR_CVS_PATH . $lang . "/translation.xml";
-
-            if (file_exists($translation_xml)) {
-                // Else go on, and load in the file, replacing all
-                // space type chars with one space
-                $txml = preg_replace('/\\s+/', ' ', join('', file($translation_xml)));
-
-            }
-
-            if (isset($txml)) {
-                // Find all persons matching the pattern
-                $matches = array();
-                if (preg_match_all('!<person (.+)/\\s?>!U', $txml, $matches)) {
-                    $default = array('cvs' => 'n/a', 'nick' => 'n/a', 'editor' => 'n/a', 'email' => 'n/a', 'name' => 'n/a');
-                    $persons = $this->revParseAttrString($matches[1]);
-
-                    $charset = $this->getFileEncoding($txml, 'content');
-
-                    foreach ($persons as $person) {
-
-                        if ($charset == 'utf-8' ) {
-                            $name = utf8_decode($person['name']);
-                        } else {
-                            $name = $person['name'];
-                        }
-
-                        $person = array_merge($default, $person);
-
-                        $s = sprintf('INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `cvs`, `editor`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
-                        $lang,
-                        $this->db->real_escape_string($person['nick']),
-                        $this->db->real_escape_string($name),
-                        $this->db->real_escape_string($person['email']),
-                        $this->db->real_escape_string($person['cvs']),
-                        $this->db->real_escape_string($person['editor'])
-                        );
-
-                        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Test if the file is a modified file.
      *
      * @param $lang The lang of the tested file.
