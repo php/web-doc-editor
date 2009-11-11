@@ -452,19 +452,6 @@ class phpDoc
     }
 
     /**
-     * Register a new valid user on the application.
-     * 
-     * @todo The CVS password is stored in plain text into the database for later use. We need to find something better
-     * @return int The database insert id
-     */
-    function registerUser()
-    {
-        $s = sprintf('INSERT INTO `users` (`cvs_login`, `cvs_passwd`) VALUES ("%s", "%s")', $this->cvsLogin, $this->cvsPasswd);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        return $this->db->insert_id;
-    }
-
-    /**
      * Parse a string to find all attributs.
      *
      * @param $tags_attrs The string to parse.
