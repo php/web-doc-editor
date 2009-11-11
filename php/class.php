@@ -1918,25 +1918,6 @@ EOD;
     }
 
     /**
-     * Mark a file as need delete.
-     *
-     * @param $FilePath
-     * @param $FileName
-     * @return 
-     */
-    function markAsNeedDelete($FilePath, $FileName)
-    {
-
-        $date = date("Y-m-d H:i:s");
-
-        $s = sprintf('INSERT INTO `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s","%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")', $this->cvsLang, $FilePath, $FileName, $this->cvsLogin, $date);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        return Array('id'=>$this->db->insert_id, 'by'=>$this->cvsLogin, 'date'=>$date);
-
-    }
-
-    /**
      * Save buildLog status.
      *
      * @param $lang The lang checked
