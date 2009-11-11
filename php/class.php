@@ -1743,27 +1743,6 @@ EOD;
     } // get_last_update
 
     /**
-     * Set the last update datetime into DB
-     */
-    function setLastUpdate()
-    {
-
-        $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        if( $nb == 0 ) {
-            $s = sprintf('INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), "%s")', ( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ));
-        } else {
-            $s = sprintf('UPDATE `project` SET `lastupdate`=now(), `by`="%s" WHERE `name`=\'php\'', ( ( isset($this->cvsLogin ) ) ? $this->cvsLogin : '-' ));
-        }
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        return;
-
-    }
-
-    /**
      * Save buildLog status.
      *
      * @param $lang The lang checked
