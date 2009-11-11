@@ -1832,26 +1832,6 @@ class phpDoc
     }
 
     /**
-     * Update an option in user configuration database
-     *
-     * @param $item The name of the option.
-     * @param $value The value of the option.
-     */
-    function updateConf($item, $value)
-    {
-
-        $s = sprintf('UPDATE `users` SET `%s`="%s" WHERE `cvs_login`="%s"', $item, $value, $this->cvsLogin);
-
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        // In session
-        $this->userConf[$item] = $value;
-        $_SESSION['userConf'][$item] = $value;
-
-        return '';
-    }
-
-    /**
      * Erase personal data. Delete all reference into the DB for this user.
      */
     function erasePersonalData()
