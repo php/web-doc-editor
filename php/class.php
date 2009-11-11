@@ -252,19 +252,6 @@ class phpDoc
     }
 
     /**
-     * List all available language to run doCheckOldFiles() on it.
-     * 
-     */
-    function checkOldFiles() {
-
-        reset($this->availableLanguage);
-
-        while (list(, $lang) = each($this->availableLanguage)) {
-            $this->doCheckOldFiles('', $lang);
-        }
-    }
-
-    /**
      * Test if the file is a modified file.
      *
      * @param $lang The lang of the tested file.
