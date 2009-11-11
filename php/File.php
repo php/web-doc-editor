@@ -239,9 +239,9 @@ class File
     /**
      * Get the diff of a file with his modified version.
      *
-     * @param $rev1 Frist revison.
+     * @param $rev1 First revison.
      * @param $rev2 Second revision.
-     * @return The diff a the file with his modified version, as HTML, reday to be display.
+     * @return The diff a the file with his modified version, as HTML, ready to be display.
      */
     public function vcsDiff($rev1, $rev2)
     {
