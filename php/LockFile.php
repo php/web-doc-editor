@@ -1,10 +1,5 @@
 <?php
 /**
- * Class file for locking tasks
- *
- */
-
-/**
  * A class for locking tasks
  *
  */
