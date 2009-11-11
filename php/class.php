@@ -1649,34 +1649,6 @@ class phpDoc
     }
 
     /**
-     * Remove the mark "needCommit" into DB for a set of files.
-     *
-     * @param $nodes An array of files.
-     */
-    function removeNeedCommit($nodes) {
-
-        for ($i = 0; $i < count($nodes); $i++ ) {
-
-            $FileLang = $nodes[$i]['lang'];
-            $FilePath = $nodes[$i]['path'];
-            $FileName = $nodes[$i]['name'];
-
-            $s = sprintf('DELETE FROM `pendingCommit`
-              WHERE
-                 `lang` = "%s" AND
-                 `path` = "%s" AND
-                 `name` = "%s"
-            ', $FileLang, $FilePath, $FileName);
-
-            $this->db->query($s) or die($this->db->error.'|'.$s);
-
-            //$this->debug('in removeNeedCommit() ; DB query : '.$s);
-
-        }
-
-    }
-
-    /**
      * Print debug information into a file (.debug) into data folder.
      *
      * @param $mess The debug message.
