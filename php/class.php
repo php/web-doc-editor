@@ -1628,46 +1628,6 @@ class phpDoc
     }
 
     /**
-     * All we must do after a patch have been accepted.
-     *
-     * @param $PatchUniqID ID of the accepted patch.
-     */
-    function afterPatchAccept($PatchUniqID) {
-
-        $s = sprintf('SELECT * FROM `pendingPatch` WHERE `uniqID` = "%s"', $PatchUniqID);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $a = $r->fetch_object();
-
-        // We need to send an email ?
-        if (trim($a->email) != '' ) {
-
-            $to = trim($a->email);
-            $subject = '[PHP-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
-            $msg = <<<EOD
-Your patch ($PatchUniqID) was accepted and applied to the PHP Manual.
-
-Since the online and downloadable versions of the documentation need some
-time to get updated, we would like to ask you to be a bit patient.
- 	
-Thank you for your submission, and for helping us make our documentation better.
-
--- 
-{$this->cvsLogin}@php.net
-EOD;
-            $this->sendEmail($to, $subject, $msg);
-
-        }
-        
-        // We need to delete this patch from filesystem...
-        @unlink(DOC_EDITOR_CVS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
-        
-        // ... and from DB
-        $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-    }
-
-    /**
      * All we must do after a patch have been rejected.
      *
      * @param $PatchUniqID ID of the accepted patch.
