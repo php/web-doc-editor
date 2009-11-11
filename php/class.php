@@ -734,32 +734,6 @@ class phpDoc
     }
 
     /**
-     * Get encoding of a file, regarding his XML's header.
-     *
-     * @param $file The file to get encoding from.
-     * @param $mode The mode. Must be 'file' if $file is a path to the file, or 'content' if $file is the content of the file.
-     * @return The charset as a string.
-     */
-    function getFileEncoding($file, $mode) {
-
-        if ($mode == 'file' ) {
-            $txml = file_get_contents($file);
-        } else {
-            $txml = $file;
-        }
-
-        $txml = preg_replace('/\\s+/', ' ', $txml);
-
-        $match = array();
-        preg_match('!<\?xml(.+)\?>!U', $txml, $match);
-        $xmlinfo = $this->revParseAttrString($match);
-
-        $charset = (isset($xmlinfo[1]['encoding'])) ? strtolower($xmlinfo[1]['encoding']) : 'iso-8859-1';
-
-        return $charset;
-    }
-
-    /**
      * Get the content of a file.
      *
      * @param $FilePath The path of the file.
