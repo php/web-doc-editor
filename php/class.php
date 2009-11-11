@@ -65,36 +65,6 @@ class phpDoc
     }
 
     /**
-     * Check is the File/Folder must be parsed or not.
-     *
-     * @param $lang The lang for this File/Folder.
-     * @param $dir The checked Folder.
-     * @param $file The checked File.
-     * @return Booleen TRUE if the File/Folder must be parsed, FALSE otherwise.
-     */
-    function isParsed($lang, $dir, $file) {
-
-        if (
-        (!is_dir(DOC_EDITOR_CVS_PATH . $lang . $dir.'/' .$file) && !in_array(substr($file, -3), array('xml','ent')) && substr($file, -13) != 'PHPEditBackup' )
-        || strpos($file, 'entities.') === 0
-        || $dir == '/chmonly' || $dir == '/internals' || $dir == '/internals2'
-        || $file == 'contributors.ent' || $file == 'contributors.xml'
-        || ($dir == '/appendices' && ($file == 'reserved.constants.xml' || $file == 'extensions.xml'))
-        || $file == 'README'
-        || $file == 'DO_NOT_TRANSLATE'
-        || $file == 'rsusi.txt'
-        || $file == 'translation.xml'
-        || $file == 'missing-ids.xml'
-        || $file == 'license.xml'
-        || $file == 'versions.xml'
-        ) {
-            return FALSE;
-        } else {
-            return TRUE;
-        }
-    }
-
-    /**
      * Apply the Revcheck tools recursively on all lang
      *
      * @param $dir The directory from which we start.
