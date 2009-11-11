@@ -1150,41 +1150,6 @@ class phpDoc
     }
 
     /**
-     * Register a file as need to be commited, into the database.
-     *
-     * @param $lang        The path for the file witch need to be commited.
-     * @param $FilePath    The path for the file witch need to be commited.
-     * @param $FileName    The name of the file witch need to be commited.
-     * @param $revision    The revision of this file.
-     * @param $en_revision The EN revision of this file.
-     * @param $reviewed    The stats of the reviewed tag.
-     * @param $maintainer  The maintainer.
-     * @param $type        The type of commit. Can be 'new' for new file, 'update' for an uptaded file or 'delete' for a file marked as delete.
-     */
-    function registerAsPendingCommit($lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $type='update') {
-
-        $s = sprintf('SELECT id FROM `pendingCommit` WHERE `lang`="%s" AND `path`="%s" AND `name`="%s"', $lang, $FilePath, $FileName);
-        $r = $this->db->query($s);
-
-        $nb = $r->num_rows;
-
-        // We insert or update the pendingCommit table
-        if ($nb == 0 ) {
-
-            $s = sprintf('INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")', $lang, $FilePath, $FileName, $revision, $en_revision, $reviewed, $maintainer, $this->cvsLogin, $type);
-            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-            $fileID = $this->db->insert_id;
-        } else {
-            $a = $r->fetch_object();
-
-            $s = sprintf('UPDATE `pendingCommit` SET `revision`="%s", `en_revision`="%s", `reviewed`="%s", `maintainer`="%s" WHERE id="%s"', $revision, $en_revision, $reviewed, $maintainer, $a->id);
-            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-            $fileID = $a->id;
-        }
-        return $fileID;
-    }
-
-    /**
      * Register a new patch, into the database.
      *
      * @param $lang     The lang.
