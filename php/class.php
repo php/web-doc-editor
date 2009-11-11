@@ -409,49 +409,6 @@ class phpDoc
     }
 
     /**
-     * Check if there is an authentificated session or not
-     *
-     * @return TRUE if there is an authentificated session, FALSE otherwise.
-     */
-    function isLogged() {
-
-        if (isset($_SESSION['userID'])) {
-            $this->userID     = $_SESSION['userID'];
-            $this->cvsLogin   = $_SESSION['cvsLogin'];
-            $this->cvsPasswd  = $_SESSION['cvsPasswd'];
-            $this->cvsLang    = $_SESSION['lang'];
-
-            $this->userConf   = ( isset($_SESSION['userConf']) ) ? $_SESSION['userConf'] : array(
-
-            "conf_needupdate_diff"        => 'using-exec',
-            "conf_needupdate_scrollbars"  => 'true',
-            "conf_needupdate_displaylog"  => 'false',
-
-            "conf_error_skipnbliteraltag" => 'true',
-            "conf_error_scrollbars"       => 'true',
-            "conf_error_displaylog"       => 'false',
-
-            "conf_reviewed_scrollbars"    => 'true',
-            "conf_reviewed_displaylog"    => 'false',
-
-            "conf_allfiles_displaylog"    => 'false',
-
-            "conf_patch_scrollbars"       => 'true',
-            "conf_patch_displaylog"       => 'false',
-
-            "conf_theme"                  => 'themes/empty.css'
-            );
-
-            $this->updateLastConnect();
-
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    /**
      * Parse a string to find all attributs.
      *
      * @param $tags_attrs The string to parse.
