@@ -65,26 +65,6 @@ class phpDoc
     }
 
     /**
-     * Test if the file is a modified file.
-     *
-     * @param $lang The lang of the tested file.
-     * @param $path The path of the tested file.
-     * @param $name The name of the tested file.
-     *
-     * @return Boolean TRUE if the file is a modified file, FALSE otherwise.
-     */
-    function isModifiedFile($lang, $path, $name) {
-
-        $s = sprintf('SELECT `id`, `lang`, `path`, `name` FROM `pendingCommit` WHERE 
-        `lang`="%s" AND `path`="%s" AND `name`="%s"', $lang, $path, $name);
-
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        return ( $r->num_rows == 0 ) ? FALSE : TRUE;
-
-    }
-
-    /**
      * Get all modified files.
      *
      * @return An associated array containing all informations about modified files.
