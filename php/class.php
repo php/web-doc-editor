@@ -1150,26 +1150,6 @@ class phpDoc
     }
 
     /**
-     * Register a new patch, into the database.
-     *
-     * @param $lang     The lang.
-     * @param $FilePath The path for the file.
-     * @param $FileName The name of the file.
-     * @param $emailAlert The email of the user how propose this patch.
-     * @return Nothing.
-     */
-    function registerAsPendingPatch($lang, $FilePath, $FileName, $emailAlert) {
-
-        $uniqID = md5(uniqid(rand(), true));
-
-        $s = sprintf('INSERT into `pendingPatch` (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", now(), "%s", "%s")', $lang, $FilePath, $FileName, $this->cvsLogin, $emailAlert, $uniqID);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        return $uniqID;
-
-    }
-
-    /**
      * Get the information from the content of a file.
      *
      * @param $content The content of the file.
