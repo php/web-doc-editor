@@ -65,23 +65,6 @@ class phpDoc
     }
 
     /**
-     * Checkout the phpdoc-all repository.
-     * This method must be call ONLY by the /firstRun.php script.
-     */
-    function checkoutRepository() {
-
-        $lock = new LockFile('lock_checkout_repository');
-
-        if ($lock->lock()) {
-            // We exec the checkout
-            $cmd = "cd " . DOC_EDITOR_DATA_PATH ."; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;";
-            exec($cmd);
-        }
-
-        $lock->release();
-    }
-
-    /**
      * Check is the File/Folder must be parsed or not.
      *
      * @param $lang The lang for this File/Folder.
