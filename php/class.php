@@ -1817,21 +1817,6 @@ class phpDoc
     }
 
     /**
-     * Send an email.
-     *
-     * @param $to The Receiver.
-     * @param $subject The subject of the email.
-     * @param $msg The content of the email. Don't use HTML here ; only plain text.
-     */
-    function sendEmail($to, $subject, $msg) {
-
-        $headers = 'From: '.$this->cvsLogin.'@php.net' . "\r\n" .
-        'X-Mailer: PhpDocumentation Online Editor' . "\r\n" .
-        'Content-Type: text/plain; charset="utf-8"'."\n";
-        mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers);
-    }
-
-    /**
      * Get all files from the local copy.
      *
      * @param $node The start folder to retrieve files/folders from.
