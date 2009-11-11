@@ -65,34 +65,6 @@ class phpDoc
     }
 
     /**
-     * Parse a string to find all attributs.
-     *
-     * @param $tags_attrs The string to parse.
-     * @return An associated array who key are the name of the attribut, and value, the value of the attribut.
-     */
-    function revParseAttrString($tags_attrs) {
-        $tag_attrs_processed = array();
-
-        // Go through the tag attributes
-        foreach ($tags_attrs as $attrib_list) {
-
-            // Get attr name and values
-            $attribs = array();
-            preg_match_all('!(.+)=\\s*(["\'])\\s*(.+)\\2!U', $attrib_list, $attribs);
-
-            // Assign all attributes to one associative array
-            $attrib_array = array();
-            foreach ($attribs[1] as $num => $attrname) {
-                $attrib_array[trim($attrname)] = trim($attribs[3][$num]);
-            }
-            // Collect in order of tags received
-            $tag_attrs_processed[] = $attrib_array;
-        }
-        // Retrun with collected attributes
-        return $tag_attrs_processed;
-    }
-
-    /**
      * Test if the file is a modified file.
      *
      * @param $lang The lang of the tested file.
