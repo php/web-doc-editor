@@ -482,65 +482,6 @@ class phpDoc
         $lock->release();
     }
 
-
-    /**
-     * Get Cvs log of a specified file.
-     *
-     * @param $Path The path of the file.
-     * @param $File The name of the file.
-     * @return An array containing all Cvs log informations.
-     */
-    function cvsGetLog($Path, $File) {
-
-        $cmd = 'cd '.DOC_EDITOR_CVS_PATH.$Path.'; cvs log '.$File;
-
-        $output = array();
-        exec($cmd, $output);
-
-        $output = implode("\n", $output);
-
-        $output = str_replace("=============================================================================", "", $output);
-
-        $part = explode("----------------------------", $output);
-
-        for ($i=1; $i < count($part); $i++ ) {
-
-            $final[$i-1]['id'] = $i;
-
-            $final[$i-1]['raw'] = $part[$i];
-
-            // Get revision
-            $out = array();
-            preg_match('/revision (.*?)\n/e', $part[$i], $out);
-            $final[$i-1]['revision'] = $out[1];
-
-            // Get date
-            $out = array();
-            preg_match('/date: (.*?);/e', $part[$i], $out);
-            $final[$i-1]['date'] = $out[1];
-
-            // Get user
-            $out = array();
-            preg_match('/author: (.*?);/e', $part[$i], $out);
-            $final[$i-1]['author'] = $out[1];
-
-            //Get content
-            $content = explode("\n", $part[$i]);
-
-            if (substr($content[3], 0, 9) == 'branches:' ) { $j=4; }
-            else { $j=3; }
-
-            $final[$i-1]['content'] = '';
-
-            for ($h=$j; $h < count($content); $h++) {
-                $final[$i-1]['content'] .= $content[$h]."\n";
-            }
-            $final[$i-1]['content'] = str_replace("\n", '<br/>', trim($final[$i-1]['content']));
-        }
-
-        return $final;
-    }
-
     /**
      * Parse a string to find all attributs.
      *
