@@ -398,17 +398,6 @@ class phpDoc
     }
 
     /**
-     * Update the date/time about the lastConnexion for this user, in DB
-     *
-     */
-    function updateLastConnect() {
-
-        $s = sprintf('UPDATE `users` SET `last_connect`=now() WHERE `userID`="%s"', $this->userID);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-    }
-
-    /**
      * Parse a string to find all attributs.
      *
      * @param $tags_attrs The string to parse.
