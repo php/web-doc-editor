@@ -1832,22 +1832,6 @@ class phpDoc
     }
 
     /**
-     * Erase personal data. Delete all reference into the DB for this user.
-     */
-    function erasePersonalData()
-    {
-
-        $s = sprintf('DELETE FROM `commitMessage` WHERE `userID`="%s"', $this->userID);
-        $this->db->query($s);
-
-        $s = sprintf('DELETE FROM `users` WHERE `userID`="%s"', $this->userID);
-        $this->db->query($s);
-
-        return;
-
-    }
-
-    /**
      * Get all files from the local copy.
      *
      * @param $node The start folder to retrieve files/folders from.
