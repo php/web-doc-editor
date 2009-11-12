@@ -926,18 +926,6 @@ class phpDoc
     }
 
     /**
-     * Save an existing log message into DB.
-     *
-     * @param $messID The ID of the log message.
-     * @param $mess The message.
-     */
-    function saveLogMessage($messID, $mess)
-    {
-        $s = sprintf('UPDATE `commitMessage` SET `text`="%s" WHERE `id`="%s"', $this->db->real_escape_string($mess), $messID);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-    }
-
-    /**
      * Delete a log message into DB.
      *
      * @param $messID The ID of the log message.
