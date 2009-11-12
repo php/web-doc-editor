@@ -275,42 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get statistic about files witch need to be translated.
-     *
-     * @return An associated array (total=>nb files, size=>size of this files).
-     */
-    function getStatsNoTrans()
-    {
-        $sql = sprintf('SELECT
-                COUNT(a.name) as total, 
-                sum(b.size) as size 
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b
-            ON 
-                a.path = b.path 
-            AND
-                a.name = b.name
-            WHERE
-                a.lang="%s" 
-            AND
-                b.lang="en"
-            AND
-                (a.revision is NULL OR a.revision = 0)
-            AND
-                a.size is NULL', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        if ($result->num_rows) {
-            $r = $result->fetch_array();
-            return array($r['total'], $r['size']);
-        } else {
-            return array(0,0);
-        }
-    }
-
-    /**
      * Get statistic about missed files witch need to be added to LANG tree.
      *
      * @return An array of missed files (size=>size of the file, file=>name of the file).
