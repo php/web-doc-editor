@@ -90,43 +90,6 @@ class phpDoc
     }
 
     /**
-     * Get number of old files per translators.
-     *
-     * @return An associated array (key=>translator's nick, value=>nb files).
-     */
-    function translatorGetOld()
-    {
-        $sql = sprintf('SELECT
-                COUNT(`name`) AS total,
-                `maintainer`
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND
-                `en_revision` != `revision`
-            AND
-                `en_revision` - `revision` < 10
-            AND
-                `size_diff` < 3 
-            AND 
-                `mdate_diff` > -30
-            AND
-                `size` is not NULL
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
-        }
-        return $tmp;
-    }
-
-    /**
      * Get number of critical files per translators.
      *
      * @return An associated array (key=>translator's nick, value=>nb files).
