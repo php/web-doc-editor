@@ -65,31 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all statistiques about translators.
-     *
-     * @return An indexed array containing all statistiques about translators (nb uptodate files, nb old files, etc...)
-     */
-    function getTranslatorsInfo() {
-
-        $translators = $this->getTranslators();
-        $uptodate    = $this->translatorGetUptodate();
-        $old         = $this->translatorGetOld();
-        $critical    = $this->translatorGetCritical();
-
-        $i=0; $persons=array();
-        foreach($translators as $nick => $data) {
-            $persons[$i]              = $data;
-            $persons[$i]['nick']      = $nick;
-            $persons[$i]['uptodate']  = isset($uptodate[$nick]) ? $uptodate[$nick] : '0';
-            $persons[$i]['old']       = isset($old[$nick]) ? $old[$nick] : '0';
-            $persons[$i]['critical']  = isset($critical[$nick]) ? $critical[$nick] : '0';
-            $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['old'] + $persons[$i]['critical'];
-            $i++;
-        }
-        return $persons;
-    }
-
-    /**
      * Get the content of a file.
      *
      * @param $FilePath The path of the file.
