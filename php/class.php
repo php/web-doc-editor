@@ -803,20 +803,6 @@ class phpDoc
     }
 
     /**
-     * Save Output message into a log file.
-     *
-     * @param $file The name of the file.
-     * @param $output The output message.
-     * @return Nothing.
-     */
-    function saveOutputLogFile($file, $output)
-    {
-        $fp = fopen(DOC_EDITOR_CVS_PATH . '../.' . $file, 'w');
-        fwrite($fp, implode("<br>",$output));
-        fclose($fp);
-    }
-
-    /**
      * Get the content of a log file.
      *
      * @param $file The name of the file.
