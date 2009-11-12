@@ -65,27 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all pending patch.
-     *
-     * @return An associated array containing all informations about pending patch.
-     */
-    function getFilesPendingPatch() {
-
-        $s = sprintf('SELECT `id`, CONCAT(`lang`, `path`) AS path, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'', $this->cvsLang);
-
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        $node = array();
-
-        while ($row = $r->fetch_assoc()) {
-            $node[] = $row;
-        }
-
-        return array('nb' => $nb, 'node' => $node);
-    }
-
-    /**
      * Get all files pending for commit.
      *
      * @return An associated array containing all informations about files pending for commit.
