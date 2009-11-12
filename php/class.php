@@ -65,24 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all translators informations.
-     *
-     * @return An associated array containing all informations about translators.
-     */
-    function getTranslators()
-    {
-        $sql = sprintf('SELECT `id`, `nick`, `name`, `mail`, `cvs` FROM `translators` WHERE `lang`="%s"', $this->cvsLang);
-        $persons = array();
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-
-        while ($r = $result->fetch_array()) {
-            $persons[$r['nick']] = array('id'=>$r['id'], 'name' => utf8_encode($r['name']), 'mail' => $r['mail'], 'cvs' => $r['cvs']);
-        }
-
-        return $persons;
-    }
-
-    /**
      * Get all statistiques about translators.
      *
      * @return An indexed array containing all statistiques about translators (nb uptodate files, nb old files, etc...)
