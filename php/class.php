@@ -855,25 +855,6 @@ class phpDoc
     }
 
     /**
-     * Add (or not) a log message to the DB.
-     *
-     * @param $logMessage The log message to be added if it don't exist yet.
-     * @return Nothing.
-     */
-    function manageLogMessage($logMessage) {
-
-        $s = sprintf('SELECT id FROM `commitMessage` WHERE `text`="%s" AND `userID`="%s"', $this->db->real_escape_string($logMessage), $this->userID);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        if ($nb == 0 ) {
-            $s = sprintf('INSERT INTO `commitMessage` (`text`,`userID`) VALUES ("%s", "%s")', $this->db->real_escape_string($logMessage), $this->userID);
-            $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        }
-
-    }
-
-    /**
      * Get all files from the local copy.
      *
      * @param $node The start folder to retrieve files/folders from.
