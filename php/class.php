@@ -275,47 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get statistic about missed files witch need to be added to LANG tree.
-     *
-     * @return An array of missed files (size=>size of the file, file=>name of the file).
-     */
-    function getMissFiles()
-    {
-        $sql = sprintf('SELECT
-                b.size as size, 
-                a.name as file 
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b 
-            ON 
-                a.path = b.path 
-            AND
-                a.name = b.name 
-            WHERE 
-                a.lang="%s" 
-            AND
-                b.lang="en" 
-            AND
-                a.revision is NULL 
-            AND
-                a.size is NULL', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $num = $result->num_rows;
-        if ($num == 0) {
-            // only 'null' will produce a 0 with sizeof()
-            return null;
-        } else {
-            $tmp = array();
-            while ($r = $result->fetch_array()) {
-                $tmp[] = array('size' => $r['size'], 'file' => $r['file']);
-            }
-            return $tmp;
-        }
-    }
-
-    /**
      * Get statistic about files witch haven't revcheck's tags.
      *
      * @return An associated array (total=>nb files, size=>size of this files).
