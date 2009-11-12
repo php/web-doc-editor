@@ -661,18 +661,4 @@ class phpDoc
         return $nodes;
     }
 
-    /**
-     * Search a file regarding his file's ID.
-     *
-     * @TODO Better description here...
-     * @param $lang The lang of the searched file.
-     * @param $fileID The ID of the searched file.
-     */
-    function searchXmlID($lang, $fileID)
-    {
-        $s = sprintf('SELECT `lang`, `path`, `name` FROM `files` WHERE `lang` = "%s" AND `xmlid` LIKE "%' . $fileID . '%"', $lang);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        return $r->fetch_object();
-    }
-
 } // End of class
