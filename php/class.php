@@ -803,16 +803,6 @@ class phpDoc
     }
 
     /**
-     * Get the content of a log file.
-     *
-     * @param $file The name of the file.
-     * @return $content The content.
-     */
-    function getOutputLogFile($file) {
-        return file_get_contents(DOC_EDITOR_CVS_PATH . '../.' . $file);
-    }
-
-    /**
      * Highlights the given commit log
      *
      * @param $message The commit log
