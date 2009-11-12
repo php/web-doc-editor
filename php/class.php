@@ -275,39 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get statistic about old files witch need to be uptadeted from LANG tree.
-     *
-     * @return An associated array (total=>nb files, total_size=>size of this files).
-     */
-    function getStatsOld()
-    {
-        $sql = sprintf('SELECT
-                COUNT(`name`) AS total,
-                SUM(`size`)   AS total_size
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND
-                `en_revision` != `revision`
-            AND
-                `en_revision` - `revision` < 10
-            AND
-                `size_diff` < 3 
-            AND 
-                `mdate_diff` > -30
-            AND
-                `size` is not NULL
-           ', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['total_size']);
-        return $result;
-    }
-
-    /**
      * Get statistic about files witch need to be translated.
      *
      * @return An associated array (total=>nb files, size=>size of this files).
