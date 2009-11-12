@@ -662,31 +662,6 @@ class phpDoc
     }
 
     /**
-     * Get all files for a given php's extension.
-     *
-     * @param $ExtName The name of the extension.
-     * @return An array of files
-     */
-    function getAllFilesAboutExtension($ExtName) {
-
-        $s = sprintf('SELECT `path`, `name` FROM `files` WHERE `path` LIKE \'/reference/%s/%%\' AND `lang`="%s" ORDER BY `path`, `name`',$ExtName, $this->cvsLang);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $node = array();
-
-        $i=0;
-        while ($a = $r->fetch_object()) {
-
-            $node[$i]['path'] = $a->path;
-            $node[$i]['name'] = $a->name;
-
-            $i++;
-        }
-
-        return $node;
-
-    }
-
-    /**
      * Search a file regarding his file's ID.
      *
      * @TODO Better description here...
