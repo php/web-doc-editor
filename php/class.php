@@ -65,55 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all files witch need to be reviewed.
-     *
-     * @return An associated array containing all informations about files witch need to be reviewed.
-     */
-    function getFilesNeedReviewed() {
-
-        // Get Files Need Commit
-        $ModifiedFiles = $this->getModifiedFiles();
-
-        $s = sprintf('SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` = `en_revision` AND reviewed != \'yes\' LIMIT 100', $this->cvsLang);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        $node = array();
-
-        while ($a = $r->fetch_object()) {
-
-            $temp = array(
-            "id"         => $a->id,
-            "path"       => $a->path,
-            "name"       => $a->name,
-            );
-
-            if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name]) || isset($ModifiedFiles['en'.$a->path.$a->name])) {
-
-                if (isset($ModifiedFiles['en'.$a->path.$a->name])) {
-                    $new_reviewed    = $a->reviewed;
-                    $new_maintainer  = $a->maintainer;
-                }
-
-                if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name])) {
-                    $new_reviewed    = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['reviewed'];
-                    $new_maintainer  = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['maintainer'];
-                }
-
-                $temp['reviewed']   = $new_reviewed;
-                $temp['maintainer'] = $new_maintainer;
-                $temp['needcommit'] = true;
-            } else {
-                $temp['reviewed']   = $a->reviewed;
-                $temp['maintainer'] = $a->maintainer;
-                $temp['needcommit'] = false;
-            }
-            $node[] = $temp;
-        }
-        return array('nb'=>$nb, 'node'=>$node);
-    }
-
-    /**
      * Get all files witch are not in EN tree.
      *
      * @return An associated array containing all informations about files witch are not in EN tree
