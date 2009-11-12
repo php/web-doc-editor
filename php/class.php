@@ -65,65 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all files witch need to be updated.
-     *
-     * @return An associated array containing all informations about files witch need to be updated.
-     */
-    function getFilesNeedUpdate() {
-
-        // Get Files Need Commit
-        $ModifiedFiles = $this->getModifiedFiles();
-
-        $s = sprintf('SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`', $this->cvsLang);
-        $r = $this->db->query($s);
-
-        $nb = $r->num_rows;
-
-        $node = array();
-
-        while ($a = $r->fetch_object()) {
-
-            if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name]) || isset($ModifiedFiles['en'.$a->path.$a->name])) {
-
-                if (isset($ModifiedFiles['en'.$a->path.$a->name])) {
-                    $new_en_revision = $ModifiedFiles['en'.$a->path.$a->name]['revision'];
-                    $new_revision    = $a->revision;
-                    $new_maintainer  = $a->maintainer;
-                }
-
-                if (isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name])) {
-                    $new_en_revision = $a->en_revision;
-                    $new_revision    = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['en_revision'];
-                    $new_maintainer  = $ModifiedFiles[$this->cvsLang.$a->path.$a->name]['maintainer'];
-                }
-
-                $node[] = array(
-                "id"          => $a->id,
-                "path"        => $a->path,
-                "name"        => $a->name,
-                "revision"    => $new_revision,
-                "en_revision" => $new_en_revision,
-                "maintainer"  => $new_maintainer,
-                "needcommit"  => true,
-                "isCritical"  => false
-                );
-            } else {
-                $node[] = array(
-                "id"          => $a->id,
-                "path"        => $a->path,
-                "name"        => $a->name,
-                "revision"    => $a->revision,
-                "en_revision" => $a->en_revision,
-                "maintainer"  => $a->maintainer,
-                "needcommit"  => false,
-                "isCritical"  => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false
-                );
-            }
-        }
-        return array('nb'=>$nb, 'node'=>$node);
-    }
-
-    /**
      * Get all files witch need to be reviewed.
      *
      * @return An associated array containing all informations about files witch need to be reviewed.
