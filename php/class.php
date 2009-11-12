@@ -940,30 +940,4 @@ class phpDoc
         return $r->fetch_object();
     }
 
-    /**
-     * Get the last update datetime
-     *
-     * @return The last update datetime or "in_progress" if the update is in progress
-     */
-    function getLastUpdate()
-    {
-        // Test is there is an update in progress
-        $lock_update = new LockFile('lock_update_repository');
-        $lock_apply = new LockFile('lock_apply_tools');
-
-        if( $lock_update->isLocked() || $lock_apply->isLocked() ) { return array('lastupdate'=>'in_progress', 'by'=>'-'); }
-        else {
-
-            $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
-            $r = $this->db->query($s);
-            $a = $r->fetch_assoc();
-
-            return $a;
-
-        }
-
-
-    } // get_last_update
-
-
 } // End of class
