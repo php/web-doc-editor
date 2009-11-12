@@ -65,35 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all files pending for commit.
-     *
-     * @return An associated array containing all informations about files pending for commit.
-     */
-    function getFilesPendingCommit() {
-
-        $s = sprintf('SELECT * FROM `pendingCommit` WHERE `lang`="%s" OR `lang`=\'en\'', $this->cvsLang);
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        $node = array();
-
-        while ($a = $r->fetch_object()) {
-
-            $node[] = array(
-            "id"          => $a->id,
-            "path"        => $a->lang.$a->path,
-            "name"        => $a->name,
-            "by"          => $a->modified_by,
-            "date"        => $a->date,
-            "type"        => $a->type
-            );
-
-        }
-
-        return array('nb'=>$nb, 'node'=>$node);
-    }
-
-    /**
      * Get all translators informations.
      *
      * @return An associated array containing all informations about translators.
