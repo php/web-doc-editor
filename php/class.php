@@ -65,37 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all files witch are not in EN tree.
-     *
-     * @return An associated array containing all informations about files witch are not in EN tree
-     */
-    function getFilesNotInEn() {
-
-        // Get Files Need Commit
-        $ModifiedFiles = $this->getModifiedFiles();
-
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $this->cvsLang);
-
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-        $nb = $r->num_rows;
-
-        $node = array();
-
-        while ($a = $r->fetch_object()) {
-
-            $node[] = array(
-            "id"          => $a->id,
-            "path"        => $a->path,
-            "name"        => $a->name,
-            "needcommit"  => ( isset($ModifiedFiles[$this->cvsLang.$a->path.$a->name]) ) ? true : false
-            );
-
-        }
-
-        return array('nb' => $nb, 'node' => $node);
-    }
-
-    /**
      * Get all pending patch.
      *
      * @return An associated array containing all informations about pending patch.
