@@ -65,30 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get all modified files.
-     *
-     * @return An associated array containing all informations about modified files.
-     */
-    function getModifiedFiles() {
-
-        // Get Modified Files
-        $s = sprintf('SELECT `id`, `lang`, `path`, `name`, `revision`,
-        `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE 
-        `lang`="%s" OR `lang`="en"', $this->cvsLang);
-
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        $node = array();
-
-        while ($a = $r->fetch_assoc()) {
-            $node[$a['lang'].$a['path'].$a['name']] = $a;
-        }
-
-        return $node;
-
-    }
-
-    /**
      * Get modified files by ID.
      * @param $id Can be a single ID or an array of id
      * @return An associated array containing all informations about modified files.
