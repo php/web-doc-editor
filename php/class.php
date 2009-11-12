@@ -926,17 +926,6 @@ class phpDoc
     }
 
     /**
-     * Delete a log message into DB.
-     *
-     * @param $messID The ID of the log message.
-     */
-    function deleteLogMessage($messID)
-    {
-        $s = sprintf('DELETE FROM `commitMessage` WHERE `id`="%s"', $messID);
-        $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-    }
-
-    /**
      * Get all files for a given php's extension.
      *
      * @param $ExtName The name of the extension.
