@@ -90,39 +90,6 @@ class phpDoc
     }
 
     /**
-     * Get number of critical files per translators.
-     *
-     * @return An associated array (key=>translator's nick, value=>nb files).
-     */
-    function translatorGetCritical()
-    {
-        $sql = sprintf('SELECT
-                COUNT(`name`) AS total,
-                `maintainer`
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND
-                ( `en_revision` - `revision` >= 10  OR
-                ( `en_revision` != `revision`  AND
-                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
-                ))
-            AND
-                `size` is not NULL
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`', $this->cvsLang);
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
-        }
-        return $tmp;
-    }
-
-    /**
      * Get the content of a file.
      *
      * @param $FilePath The path of the file.
