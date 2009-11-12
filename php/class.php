@@ -90,35 +90,6 @@ class phpDoc
     }
 
     /**
-     * Get number of uptodate files per translators.
-     *
-     * @return An associated array (key=>translator's nick, value=>nb files).
-     */
-    function translatorGetUptodate()
-    {
-        $sql = sprintf('SELECT
-                COUNT(`name`) AS total,
-                `maintainer`
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND 
-                `revision` = `en_revision`
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
-        }
-        return $tmp;
-    }
-
-    /**
      * Get number of old files per translators.
      *
      * @return An associated array (key=>translator's nick, value=>nb files).
