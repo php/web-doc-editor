@@ -275,40 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get statistic about files witch haven't revcheck's tags.
-     *
-     * @return An associated array (total=>nb files, size=>size of this files).
-     */
-    function getStatsNoTag()
-    {
-        $sql = sprintf('SELECT
-                COUNT(a.name) as total,
-                sum(b.size) as size
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b 
-            ON 
-                a.path = b.path 
-            AND
-                a.name = b.name
-            WHERE
-                a.lang="%s" 
-            AND
-                b.lang="en"
-            AND
-                a.revision is NULL
-            AND
-                a.size is not NULL', $this->cvsLang);
-
-        $result = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['size']);
-        return $result;
-    }
-
-    /**
      * Get the content of a file.
      *
      * @param $FilePath The path of the file.
