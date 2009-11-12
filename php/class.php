@@ -275,27 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get number/size of all files.
-     *
-     * @return An indexed array.
-     */
-    function getNbFiles() {
-        $sql = sprintf('SELECT
-                    COUNT(*) AS total,
-                    SUM(`size`) AS total_size
-                FROM
-                    `files`
-                WHERE
-                    `lang` = "%s"
-            ', $this->cvsLang);
-
-        $res = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $r = $res->fetch_array();
-        $result = array($r['total'], $r['total_size']);
-        return $result;
-    }
-
-    /**
      * Get number of translated files.
      *
      * @return Number of translated files.
