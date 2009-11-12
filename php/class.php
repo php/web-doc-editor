@@ -275,30 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get number of translated files.
-     *
-     * @return Number of translated files.
-     */
-    function getNbFilesTranslated() {
-
-        $sql = 'SELECT
-                COUNT(name) AS total,
-                SUM(size)   AS total_size
-            FROM
-                files
-            WHERE
-                lang="' . $this->cvsLang . '"
-            AND
-                revision = en_revision
-           ';
-
-        $res = $this->db->query($sql) or die('Error: '.$this->db->error.'|'.$s);
-        $r = $res->fetch_array();
-        $result = array($r['total'], $r['total_size']);
-        return $result;
-    }
-
-    /**
      * Get statistic about critical files witch need to be updated.
      *
      * @return An associated array (total=>nb files, total_size=>size of this files).
