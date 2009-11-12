@@ -275,36 +275,6 @@ class phpDoc
     }
 
     /**
-     * Get statistic about critical files witch need to be updated.
-     *
-     * @return An associated array (total=>nb files, total_size=>size of this files).
-     */
-    function getStatsCritical() {
-
-        $s = sprintf('SELECT
-                COUNT(`name`) AS total,
-                SUM(`size`) AS total_size
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND
-                ( `en_revision` - `revision` >= 10  OR
-                ( `en_revision` != `revision`  AND
-                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
-                ))
-            AND
-                `size` is not NULL
-           ', $this->cvsLang);
-
-        $result = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['total_size']);
-        return $result;
-    }
-
-    /**
      * Get statistic about old files witch need to be uptadeted from LANG tree.
      *
      * @return An associated array (total=>nb files, total_size=>size of this files).
