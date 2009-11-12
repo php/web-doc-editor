@@ -65,33 +65,6 @@ class phpDoc
     }
 
     /**
-     * Get modified files by ID.
-     * @param $id Can be a single ID or an array of id
-     * @return An associated array containing all informations about modified files.
-     */
-    function getModifiedFilesById($id) {
-
-        if( is_array($id) ) {
-            $ids = implode($id, ',');
-        } else {
-            $ids = $id;
-        }
-
-        $s = sprintf('SELECT * FROM `pendingCommit` WHERE 
-                      (`lang`="%s" OR `lang`="en") AND `id` IN (%s)', $this->cvsLang, $ids);
-
-        $r = $this->db->query($s) or die('Error: '.$this->db->error.'|'.$s);
-
-        $nodes = array();
-
-        while ($a = $r->fetch_assoc()) {
-            $nodes[] = $a;
-        }
-
-        return $nodes;
-    }
-
-    /**
      * Get all files witch need to be updated.
      *
      * @return An associated array containing all informations about files witch need to be updated.
