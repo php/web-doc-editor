@@ -40,6 +40,7 @@ class AccountManager
 
     /**
      * Check if there is an authentificated session or not
+     * Update the last connexion's date in DB for this user
      *
      * @return TRUE if there is an authentificated session, FALSE otherwise.
      */
