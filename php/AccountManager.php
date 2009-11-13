@@ -91,113 +91,109 @@ class AccountManager
      */
     public function login($vcsLogin, $vcsPasswd, $lang='en')
     {
-        $return = array(); // Value return
 
-        // Is this user already exist on this server ? database check
-        $s = sprintf(
-            'SELECT * FROM `users` WHERE `vcs_login`="%s" AND `vcs_passwd`="%s"',
-            $vcsLogin,
-            $vcsPasswd
-        );
-        $r = DBConnection::getInstance()->query($s);
+        // Var to return into ExtJs
+        $return = array();
 
-        $this->vcsLogin  = $vcsLogin;
-        $this->vcsPasswd = $vcsPasswd;
-        $this->vcsLang   = $lang;
+        // We try to authenticate this user to VCS server.
+        $r = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
 
-        if ($r->num_rows == 0) { // No match
+        if( $r === true ) {
 
-            $s = sprintf(
-                'SELECT * FROM `users` WHERE `vcs_login`="%s"',
-                $vcsLogin
-            );
-            $r = DBConnection::getInstance()->query($s);
+           $this->vcsLogin  = $vcsLogin;
+           $this->vcsPasswd = $vcsPasswd;
+           $this->vcsLang   = $lang;
 
-            if ($r->num_rows == 0) {
-                //User unknow from this server for now.
-                // Is a valid vcs user ?
-                $r = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
+           // Is this user already exist on this server ? database check
+           $s = sprintf(
+               'SELECT * FROM `users` WHERE `vcs_login`="%s"',
+               $vcsLogin
+           );
+           $r = DBConnection::getInstance()->query($s);
 
-                if ($r === true) {
-                    // We register this new valid user
-                    $userID = $this->register();
+           if ($r->num_rows == 1) {
 
-                    //Store in session
-                    $_SESSION['userID']    = $userID;
-                    $_SESSION['vcsLogin']  = $this->vcsLogin;
-                    $_SESSION['vcsPasswd'] = $this->vcsPasswd;
-                    $_SESSION['lang']      = $this->vcsLang;
-                    $_SESSION['userConf']  = array(
-                        "conf_needupdate_diff"       => 'using-exec',
-                        "conf_needupdate_scrollbars" => 'true',
-                        "conf_needupdate_displaylog" => 'false',
+              //This user exist into DB. We store his configuration into ...
+              $a = $r->fetch_object();
 
-                        "conf_error_skipnbliteraltag" => 'true',
-                        "conf_error_scrollbars"       => 'true',
-                        "conf_error_displaylog"       => 'false',
+              // ... object's property ...
+              $this->userConf = array(
+                  "conf_needupdate_diff"       => $a->conf_needupdate_diff,
+                  "conf_needupdate_scrollbars" => $a->conf_needupdate_scrollbars,
+                  "conf_needupdate_displaylog" => $a->conf_needupdate_displaylog,
 
-                        "conf_reviewed_scrollbars" => 'true',
-                        "conf_reviewed_displaylog" => 'false',
+                  "conf_error_skipnbliteraltag" => $a->conf_error_skipnbliteraltag,
+                  "conf_error_scrollbars"       => $a->conf_error_scrollbars,
+                  "conf_error_displaylog"       => $a->conf_error_displaylog,
 
-                        "conf_allfiles_displaylog" => 'false',
+                  "conf_reviewed_scrollbars" => $a->conf_reviewed_scrollbars,
+                  "conf_reviewed_displaylog" => $a->conf_reviewed_displaylog,
 
-                        "conf_patch_scrollbars" => 'true',
-                        "conf_patch_displaylog" => 'false',
+                  "conf_allfiles_displaylog" => $a->conf_allfiles_displaylog,
 
-                        "conf_theme" => 'themes/empty.css'
-                    );
-                    $return['state'] = true;
+                  "conf_patch_scrollbars" => $a->conf_patch_scrollbars,
+                  "conf_patch_displaylog" => $a->conf_patch_displaylog,
 
-                } elseif ($r == 'Bad password') {
+                  "conf_theme" => $a->conf_theme
+              );
 
-                    $return['state'] = false;
-                    $return['msg']   = 'Bad vcs password';
+              // ... and into the php's session
+              $_SESSION['userID']    = $a->userID;
+              $_SESSION['vcsLogin']  = $this->vcsLogin;
+              $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+              $_SESSION['lang']      = $this->vcsLang;
+              $_SESSION['userConf']  = $this->userConf;
 
-                } else {
+              // We construct the return's var for ExtJs
+              $return['state'] = true;
+              $return['msg']   = 'Welcome !';
 
-                    $return['state'] = false;
-                    $return['msg']   = 'unknow from vcs';
-                }
 
-            } else {
-                //User exist, but a bad password is enter
-                $return['state'] = false;
-                $return['msg']   = 'Bad db password';
-            }
+           } else {
 
-        } else { // user know on this server
+              // We register this new valid user
+              $userID = $this->register();
 
-            $a = $r->fetch_object();
+              //We store his configuration into object's property
+              $_SESSION['userID']    = $userID;
+              $_SESSION['vcsLogin']  = $this->vcsLogin;
+              $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+              $_SESSION['lang']      = $this->vcsLang;
+              $_SESSION['userConf']  = array(
+                  "conf_needupdate_diff"       => 'using-exec',
+                  "conf_needupdate_scrollbars" => 'true',
+                  "conf_needupdate_displaylog" => 'false',
 
-            $this->userConf = array(
-                "conf_needupdate_diff"       => $a->conf_needupdate_diff,
-                "conf_needupdate_scrollbars" => $a->conf_needupdate_scrollbars,
-                "conf_needupdate_displaylog" => $a->conf_needupdate_displaylog,
+                  "conf_error_skipnbliteraltag" => 'true',
+                  "conf_error_scrollbars"       => 'true',
+                  "conf_error_displaylog"       => 'false',
 
-                "conf_error_skipnbliteraltag" => $a->conf_error_skipnbliteraltag,
-                "conf_error_scrollbars"       => $a->conf_error_scrollbars,
-                "conf_error_displaylog"       => $a->conf_error_displaylog,
+                  "conf_reviewed_scrollbars" => 'true',
+                  "conf_reviewed_displaylog" => 'false',
 
-                "conf_reviewed_scrollbars" => $a->conf_reviewed_scrollbars,
-                "conf_reviewed_displaylog" => $a->conf_reviewed_displaylog,
+                  "conf_allfiles_displaylog" => 'false',
 
-                "conf_allfiles_displaylog" => $a->conf_allfiles_displaylog,
+                  "conf_patch_scrollbars" => 'true',
+                  "conf_patch_displaylog" => 'false',
 
-                "conf_patch_scrollbars" => $a->conf_patch_scrollbars,
-                "conf_patch_displaylog" => $a->conf_patch_displaylog,
+                  "conf_theme" => 'themes/empty.css'
+              );
 
-                "conf_theme" => $a->conf_theme
-            );
+              // We construct the return's var for ExtJs
+              $return['state'] = true;
 
-            // Store in session
-            $_SESSION['userID']    = $a->userID;
-            $_SESSION['vcsLogin']  = $this->vcsLogin;
-            $_SESSION['vcsPasswd'] = $this->vcsPasswd;
-            $_SESSION['lang']      = $this->vcsLang;
-            $_SESSION['userConf']  = $this->userConf;
+           }
+        } elseif ($r == 'Bad password') {
 
-            $return['state'] = true;
-            $return['msg']   = 'Welcome !';
+            // Authentication failed from the VCS server : bad password return
+            $return['state'] = false;
+            $return['msg']   = 'Bad vcs password';
+
+        } else {
+
+            //Authentication failed from the VCS server : others errors
+            $return['state'] = false;
+            $return['msg']   = 'unknow from vcs';
         }
 
         return $return;
@@ -212,9 +208,8 @@ class AccountManager
     private function register()
     {
         $s = sprintf(
-            'INSERT INTO `users` (`vcs_login`, `vcs_passwd`) VALUES ("%s", "%s")',
-            $this->vcsLogin,
-            $this->vcsPasswd
+            'INSERT INTO `users` (`vcs_login`) VALUES ("%s")',
+            $this->vcsLogin
         );
         $db = DBConnection::getInstance();
         $db->query($s);

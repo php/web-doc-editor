@@ -154,7 +154,6 @@ CREATE TABLE IF NOT EXISTS `translators` (
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `vcs_login` varchar(255) NOT NULL,
-  `vcs_passwd` varchar(255) NOT NULL,
   `conf_needupdate_diff` varchar(255) NOT NULL DEFAULT 'using-exec',
   `conf_needupdate_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
   `conf_needupdate_displaylog` varchar(10) NOT NULL DEFAULT 'false',
