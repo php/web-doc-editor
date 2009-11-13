@@ -12,8 +12,6 @@ require_once dirname(__FILE__) . '/../../php/AccountManager.php';
 require_once dirname(__FILE__) . '/../../php/LogManager.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
-$ac = AccountManager::getInstance();
-
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
 
@@ -46,7 +44,7 @@ This email is send automatically by the PhpDocumentation Online Editor.
 
         $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
 
-        $ac->email($to, $subject, $msg);
+        AccountManager::getInstance()->email($to, $subject, $msg);
     }
 
     LogManager::getInstance()->saveBuildLogStatus($lang, $status);
