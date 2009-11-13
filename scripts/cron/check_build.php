@@ -8,8 +8,11 @@
 ****/
 
 require_once dirname(__FILE__) . '/../../php/conf.inc.php';
-require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
+require_once dirname(__FILE__) . '/../../php/AccountManager.php';
 require_once dirname(__FILE__) . '/../../php/LogManager.php';
+require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
+
+$ac = AccountManager::getInstance();
 
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
@@ -43,11 +46,7 @@ This email is send automatically by the PhpDocumentation Online Editor.
 
         $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
 
-        $headers = 'From: www@php.net' . "\r\n" .
-        'X-Mailer: PhpDocumentation Online Editor' . "\r\n" .
-        'Content-Type: text/plain; charset="utf-8"'."\n";
-
-        mail($to, $subject, $msg, $headers);
+        $ac->email($to, $subject, $msg);
     }
 
     LogManager::getInstance()->saveBuildLogStatus($lang, $status);
