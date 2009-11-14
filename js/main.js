@@ -47,7 +47,7 @@ var phpDoc = function()
         {
             Ext.MessageBox.alert(
                 _('Forbidden'),
-                _('You can\'t do this action as cvsread user.')
+                _('You can\'t do this action as anonymous user.')
             );
         },
 
@@ -294,7 +294,7 @@ var phpDoc = function()
             Ext.get('loading').remove();
             Ext.fly('loading-mask').fadeOut({ remove : true });
 
-            // Direct access to a file as cvsread
+            // Direct access to a file as anonymous user
             if (directAccess) {
                 ui.component.RepositoryTree.getInstance().openFile(
                     directAccess.lang + directAccess.path,

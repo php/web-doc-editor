@@ -628,7 +628,7 @@ EOD;
                 if (!$this->needParsing($file)) {
                     continue;
                 }
-                if ($name != '.' && $name != '..' && $name != 'CVS' && $path != '/functions/') {
+                if ($name != '.' && $name != '..' && $name != '.svn' && $path != '/functions/') {
                     if (is_dir($file->full_path)) {
                         $dirs[] = $file;
                     } elseif (is_file($file->full_path)) {
@@ -678,7 +678,7 @@ EOD;
                     continue;
                 }
 
-                if ($name != '.' && $name != '..' && $name != 'CVS' && $path != '/functions/') {
+                if ($name != '.' && $name != '..' && $name != '.svn' && $path != '/functions/') {
                     if (is_dir($file->full_path)) {
                         $dirs[] = $file;
                     } elseif (is_file($file->full_path)) {
