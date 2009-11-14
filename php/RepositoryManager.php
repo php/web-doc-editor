@@ -760,10 +760,9 @@ EOD;
                         }
                     } else {
                         $s = sprintf(
-                            'INSERT INTO `files` (`lang`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`)
-                                VALUES ("%s", "%s", "%s", "%s", %s, %s, "%s", "%s")',
-                            $lang, $lang_file->path, $lang_file->name,
-                            'NULL', 'NULL', 'NULL', 'NULL', 'NULL'
+                            'INSERT INTO `files` (`lang`, `path`, `name`)
+                                VALUES ("%s", "%s", "%s")',
+                            $lang, $lang_file->path, $lang_file->name
                         );
                         DBConnection::getInstance()->query($s);
                     }

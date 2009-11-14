@@ -33,7 +33,8 @@ class TranslationStatistic
                 FROM
                     `files`
                 WHERE
-                    `lang`="' . AccountManager::getInstance()->vcsLang . '"
+                    `lang` = "' . AccountManager::getInstance()->vcsLang . '" AND
+                    ( `status` != "NotInEN" OR `status` IS NULL )
             ';
         $res = DBConnection::getInstance()->query($s);
 
@@ -147,7 +148,7 @@ class TranslationStatistic
             AND
                 b.lang="en"
             AND
-                (a.revision is NULL OR a.revision = 0)
+                a.revision is NULL
             AND
                 a.size is NULL';
         $result = DBConnection::getInstance()->query($s);
@@ -183,7 +184,7 @@ class TranslationStatistic
             AND
                 b.lang="en"
             AND
-                (a.revision is NULL OR a.revision=0)
+                a.revision is NULL
             AND
                 a.size is NULL';
         $result = DBConnection::getInstance()->query($s);
