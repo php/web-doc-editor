@@ -37,7 +37,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                     {
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, "end",
-                            "\n<!-- EN-Revision: 1.XX Maintainer: " +
+                            "\n<!-- EN-Revision: XX Maintainer: " +
                                 phpDoc.userLogin + " Status: ready -->"
                         );
                         Ext.getCmp(this.comp_id).focus();
@@ -340,6 +340,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 //    id, title, prefix, ftype {'EN' | 'LANG'},
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
+//    isTrans                      pendingTranslate file config
 //    isPatch, fuid,               pending patch file config
 //    parser, storeRecord,
 //    syncScrollCB {true | false}, display sync-scroll checkbox
@@ -461,8 +462,21 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                         } else {
 
+                            // From "All files" or "Need translate file", we only save the file
                             if (this.prefix === 'AF') {
                                 tmp = new ui.task.SaveLangFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                });
+                                return;
+                            }
+                            if (this.prefix === 'FNT' ) {
+                                tmp = new ui.task.SaveTransFileTask({
                                     prefix      : this.prefix,
                                     ftype       : this.ftype,
                                     fid         : this.fid,
@@ -554,12 +568,31 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     scope  : this,
                     initialize : function()
                     {
-                        var tmp = new ui.task.GetFileTask({
+
+                        var herePath, hereName, tmp;
+
+                        if( this.isPatch ) {
+                          herePath = this.fpath;
+                          hereName = this.fname + '.' + this.fuid + '.patch';
+                        } else if ( this.isTrans ) {
+                             if( this.storeRecord.data['needcommit'] ) {
+                                herePath = this.lang + this.fpath;
+                                hereName = this.fname+'.new';
+                             } else {
+                                herePath = 'en' + this.fpath;
+                                hereName = this.fname;
+                             }
+                        } else {
+                          herePath = this.lang + this.fpath;
+                          hereName = this.fname;
+                        }
+
+                        tmp = new ui.task.GetFileTask({
                             prefix : this.prefix,
                             ftype  : this.ftype,
                             fid    : this.fid,
-                            fpath  : (this.isPatch) ? this.fpath : this.lang + this.fpath,
-                            fname  : (this.isPatch) ? this.fname + '.' + this.fuid + '.patch' : this.fname
+                            fpath  : herePath,
+                            fname  : hereName
                         });
                     },
                     cmchange : function(keyCode, charCode, obj)

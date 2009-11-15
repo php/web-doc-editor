@@ -161,6 +161,21 @@ var phpDoc = function()
                             menu    : mainMenu
                         }],
                         items : [{
+                            id        : 'acc-need-translate',
+                            title     : _('Files Need Translate') + ' - <em id="acc-need-translate-nb">0</em>',
+                            layout    : 'fit',
+                            iconCls   : 'FilesNeedTranslate',
+                            hidden    : (this.userLang === 'en'),
+                            items     : [ ui.component.PendingTranslateGrid.getInstance() ],
+                            collapsed : true,
+                            listeners : {
+                                expand : function(panel)
+                                {
+                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
+                                    Ext.getCmp('FNT-filter').wrap.setWidth(200);
+                                }
+                            }
+                        },{
                             id        : 'acc-need-update',
                             title     : _('Files Need Update') + ' - <em id="acc-need-update-nb">0</em>',
                             layout    : 'fit',

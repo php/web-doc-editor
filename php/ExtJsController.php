@@ -175,6 +175,19 @@ class ExtJsController
         );
     }
 
+    public function getFilesNeedTranslate()
+    {
+        AccountManager::getInstance()->isLogged();
+        $r = RepositoryFetcher::getInstance()->getPendingTranslate();
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
+    }
+
     public function getFilesNotInEn()
     {
         AccountManager::getInstance()->isLogged();
@@ -384,6 +397,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
+
         $filePath   = $this->getRequestVariable('filePath');
         $fileName   = $this->getRequestVariable('fileName');
         $fileLang   = $this->getRequestVariable('fileLang');
@@ -394,7 +408,7 @@ class ExtJsController
                         ? $this->getRequestVariable('emailAlert')
                         : '';
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread' && $type == 'file') {
+        if (AccountManager::getInstance()->vcsLogin == 'cvsread' && ($type == 'file' || $type == 'trans')) {
             return JsonResponseBuilder::failure();
         }
 
@@ -446,6 +460,31 @@ class ExtJsController
                     'reviewed'     => $info['reviewed']
                 )
             );
+        } else if ($type == 'trans') {
+
+            // We must to ensure that this folder existe in the VCS repository & localy
+            $vf = VCSFactory::getInstance();
+
+            if( $vf->folderExist($file) ) {
+
+               $file->save($fileContent, false);
+               $r = RepositoryManager::getInstance()->addPendingCommit(
+                   $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'new'
+               );
+               return JsonResponseBuilder::success(
+                   array(
+                       'id'           => $r,
+                       'en_revision'  => $info['rev'],
+                       'new_revision' => $info['en-rev'],
+                       'maintainer'   => $info['maintainer'],
+                       'reviewed'     => $info['reviewed']
+                   )
+               );
+
+            } else {
+              return JsonResponseBuilder::failure();
+            }
+
         } else {
 
             $uniqID = RepositoryManager::getInstance()->addPendingPatch(

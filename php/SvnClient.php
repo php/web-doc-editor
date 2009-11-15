@@ -215,6 +215,73 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     }
 
     /**
+     * Create a new folder localy and commit it into repository
+     *
+     * @param $path path to create
+     * @return true
+     */
+    private function createFolder($path) {
+
+       // We create this folder localy
+       $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; mkdir '.$path;
+
+       $trial_threshold = 3;
+       while ($trial_threshold-- > 0) {
+           $output = array();
+           exec($cmd, $output);
+           if (strlen(trim(implode('', $output))) != 0) break;
+       }
+
+       // We add this new folder into repository
+       $vcsLogin  = AccountManager::getInstance()->vcsLogin;
+       $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
+
+       $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; svn add '.$path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$path;
+
+       $trial_threshold = 3;
+       while ($trial_threshold-- > 0) {
+           $output = array();
+           exec($cmd, $output);
+           if (strlen(trim(implode('', $output))) != 0) break;
+       }
+
+       return true;
+    }
+
+    /**
+     * Check if the path of this $file exist or not. If not, try to create it recursively with createFolder's method
+     *
+     * @param $file path to check
+     * @return true
+     */
+    public function folderExist($file) {
+
+        $folders = array();
+        $_folders = explode("/", $file->path);
+
+        //Skip empty value
+        for( $i=0; $i < count($_folders); $i++) {
+           if( $_folders[$i] != "" ) {
+              $folders[] = $_folders[$i];
+           }
+        }
+
+        $path = $file->lang;
+
+        for( $i=0; $i < count($folders); $i++ ) {
+
+           $herePath = $path.'/'.$folders[$i];
+
+           if( !is_dir(DOC_EDITOR_VCS_PATH.$herePath) ) {
+              $this->createFolder($herePath);
+           }
+
+           $path = $herePath;
+        }
+        return true;
+    }
+
+    /**
      * Executes svn commit
      *
      * @param $log Commit log
@@ -227,7 +294,12 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     {
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
-            $create_stack[] = $create[$i]->lang.'/'.$create[$i]->path.'/'.$create[$i]->name;
+            $p = $create[$i]->lang.'/'.$create[$i]->path.'/'.$create[$i]->name;
+            $create_stack[] = $p;
+
+            // Pre-commit : rename .new to actual file
+            @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
+            @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
         }
 
         $update_stack = array();
@@ -236,9 +308,6 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $update_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-/*
-            @unlink(DOC_EDITOR_VCS_PATH.$p);
-*/
             @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
             @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
         }
@@ -259,7 +328,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $cmdCreate = $cmdDelete = '';
         if (trim($filesCreate) != '') {
-            $cmdCreate = "svn add $filesCreate ; ";
+            $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Revision\" $filesCreate ; ";
         }
         if (trim($filesDelete) != '') {
             $cmdDelete = "svn rm -f $filesDelete ; ";

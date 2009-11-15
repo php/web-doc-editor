@@ -96,16 +96,18 @@ ui.task.VCSCommitTask = function()
 
     var files         = Ext.getCmp('commit-tree-panel').getChecked(),
         NeedToBeClose = [],
-        checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID, labelNeedToBeClose = '';
+        checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '';
 
     for (var i = 0; i < files.length; ++i) {
         checkNode = files[i].attributes;
 
-        paneID_FE  = 'FE-' + Ext.util.md5('FE-' + checkNode.FilePath + checkNode.FileName);
+        paneID_FE  = 'FE-'  + Ext.util.md5('FE-'  + checkNode.FilePath + checkNode.FileName);
         paneID_FNU = 'FNU-' + Ext.util.md5('FNU-' + checkNode.FilePath + checkNode.FileName);
         paneID_FNR = 'FNR-' + Ext.util.md5('FNR-' + checkNode.FilePath + checkNode.FileName);
+        paneID_FNT = 'FNT-' + Ext.util.md5('FNT-' + checkNode.FilePath + checkNode.FileName);
 
-        if (   Ext.getCmp('main-panel').findById(paneID_FE) || Ext.getCmp('main-panel').findById(paneID_FNU) || Ext.getCmp('main-panel').findById(paneID_FNR) ) {
+        if ( Ext.getCmp('main-panel').findById(paneID_FE) || Ext.getCmp('main-panel').findById(paneID_FNU) || Ext.getCmp('main-panel').findById(paneID_FNR) || Ext.getCmp('main-panel').findById(paneID_FNT) ) {
+
             if (Ext.getCmp('main-panel').findById(paneID_FE)) {
                 paneID = paneID_FE;
             }
@@ -114,6 +116,9 @@ ui.task.VCSCommitTask = function()
             }
             if (Ext.getCmp('main-panel').findById(paneID_FNR)) {
                 paneID = paneID_FNR;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNT)) {
+                paneID = paneID_FNT;
             }
 
             NeedToBeClose.push([paneID, checkNode.FileName]);

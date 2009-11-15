@@ -234,6 +234,9 @@ i18n["Home"] = "Accueil";
     i18n["Graphics"] = "Graphiques";
 
 // Module
+i18n["Files Need Translate"] = "Nouveaux Fichiers à traduire";
+    i18n["Need Translate: in {0}"] = "Nouveau fichier à traduire : dans {0}";
+    i18n["New File: "] = "Nouveau fichier : ";
 i18n["Files Need Update"] = "Fichiers à mettre à jour";
     i18n["Need Update: in {0}"] = "Fichiers à mettre à jour : dans {0}";
 i18n["Error in current translation"] = "Fichiers avec des erreurs";

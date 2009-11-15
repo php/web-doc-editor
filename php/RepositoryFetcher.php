@@ -230,6 +230,33 @@ class RepositoryFetcher
     }
 
     /**
+     * Get all files which need to be translated
+     *
+     * @return An associated array containing informations about files which need to be translated
+     */
+    public function getPendingTranslate()
+    {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+
+        $m = $this->getModifies();
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL LIMIT 50', $vcsLang);
+        $r = DBConnection::getInstance()->query($s);
+
+        $node = array();
+        while ($a = $r->fetch_object()) {
+            $node[] = array(
+                "id"         => $a->id,
+                "path"       => $a->path,
+                "name"       => $a->name,
+                "needcommit" => isset($m[$vcsLang.$a->path.$a->name]) ? true : false
+            );
+        }
+
+        return array('nb' => $r->num_rows, 'node' => $node);
+    }
+
+
+    /**
      * Get all pending patch.
      *
      * @return An associated array containing informations about pending patch.

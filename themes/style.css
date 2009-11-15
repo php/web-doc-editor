@@ -216,6 +216,8 @@ opacity:
     background: transparent url(../themes/img/chart_pie.png) no-repeat 0 0;
 } .home-mailing-title {
     background: transparent url(../themes/img/email_open_image.png) no-repeat 0 0;
+} .FilesNeedTranslate {
+    background: transparent url(../themes/img/page_add.png) no-repeat 0 0;
 } .FilesNeedUpdate {
     background: transparent url(../themes/img/arrow_refresh.png) no-repeat 0 0;
 } .FilesNeedReviewed {
@@ -265,6 +267,8 @@ opacity:
     background-image: url(../themes/img/door_in.png) !important;
 } .iconTabLink {
     background-image: url(../themes/img/page_link.png) !important;
+} .iconTabNeedTranslate {
+    background-image: url(../themes/img/page_add.png) !important;
 } .iconTabNeedUpdate {
     background-image: url(../themes/img/arrow_refresh.png) !important;
 } .iconDelete {

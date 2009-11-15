@@ -6,6 +6,7 @@ ui.task.GetFileTask = function(config)
     Ext.apply(this, config);
 
     var id_prefix = this.prefix + '-' + this.ftype;
+
     // Mask the panel
     Ext.get(id_prefix + '-PANEL-' + this.fid).mask(
         '<img src="themes/img/loading.gif" ' +

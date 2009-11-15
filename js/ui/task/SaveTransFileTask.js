@@ -1,7 +1,7 @@
 Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
-ui.task.SaveLangFileTask = function(config)
+ui.task.SaveTransFileTask = function(config)
 {
     Ext.apply(this, config);
 
@@ -12,11 +12,12 @@ ui.task.SaveLangFileTask = function(config)
 
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
-console.log('HERE !');
+
     XHR({
         scope  : this,
         params : {
             task        : 'saveFile',
+            type        : 'trans',
             filePath    : this.fpath,
             fileName    : this.fname,
             fileLang    : this.lang,
@@ -27,36 +28,13 @@ console.log('HERE !');
         {
             var o = Ext.util.JSON.decode(response.responseText);
 
-            if (this.prefix === 'FE') {
-                // Update our store
                 this.storeRecord.set('needcommit', true);
-                this.storeRecord.set('maintainer', o.maintainer);
+                //this.storeRecord.set('maintainer', o.maintainer);
                 this.storeRecord.commit();
-            }
-
-            if (this.prefix === 'FNU') {
-                // Update our store
-                this.storeRecord.set('revision', o.new_revision);
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.set('maintainer', o.maintainer);
-                this.storeRecord.commit();
-            }
-
-            if (this.prefix === 'FNR') {
-                // Update our store
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.set('maintainer', o.maintainer);
-                this.storeRecord.set('reviewed', o.reviewed);
-                this.storeRecord.commit();
-            }
-
-            if (this.prefix === 'AF') {
-                this.storeRecord.getUI().addClass('modified'); // tree node
-            }
 
             // Add this files into storePendingCommit
             ui.component.PendingCommitGrid.getInstance().addRecord(
-                o.id, this.lang + this.fpath, this.fname, 'update'
+                o.id, this.lang + this.fpath, this.fname, 'new'
             );
 
             // reset file
@@ -65,13 +43,15 @@ console.log('HERE !');
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
             );
+            // reset tab-panel
+            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+            );
+/*
             if (this.ftype === 'ALL' || !Ext.getCmp(this.prefix + '-EN-FILE-' + this.fid).isModified) {
-                // reset tab-panel
-                Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-                    Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                );
-            }
 
+            }
+*/
             // Remove wait msg
             msg.hide();
         },
