@@ -53,6 +53,7 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
 // StaleFileGrid view
 ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
     forceFit     : true,
+    startCollapsed: true,
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
