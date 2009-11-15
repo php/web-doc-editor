@@ -12,7 +12,7 @@ ui.task.SaveLangFileTask = function(config)
 
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
-console.log('HERE !');
+
     XHR({
         scope  : this,
         params : {
