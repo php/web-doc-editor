@@ -269,10 +269,14 @@ opacity:
     background-image: url(../themes/img/page_link.png) !important;
 } .iconTabNeedTranslate {
     background-image: url(../themes/img/page_add.png) !important;
+} .iconTabView {
+    background-image: url(../themes/img/eye.png) !important;
 } .iconTabNeedUpdate {
     background-image: url(../themes/img/arrow_refresh.png) !important;
 } .iconDelete {
     background-image: url(../themes/img/delete.png) !important;
+} .iconView {
+    background-image: url(../themes/img/eye.png) !important;
 } .iconFolderOpen {
     background-image: url(../themes/img/folder-open.gif) !important;
 } .iconFolderClose {

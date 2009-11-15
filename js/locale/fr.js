@@ -129,9 +129,10 @@ i18n["Your search must contain at least 3 characters"] = "Votre recherche doit c
 i18n["Filter: "] = "Filtrer : ";
 i18n["Your filter must contain at least 3 characters"] = "Votre filtre doit comporter au moins 3 caractères";
 i18n["Not in EN tree"] = "Non présent en EN";
+i18n["Not In EN: in {0}"] = "Non présent en EN : dans {0}";
 i18n["Remove this file"] = "Supprimer ce fichier";
 i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "Voulez-vous marquer ce fichier comme devant être effacé ?<br/><br/>L'effacement sera effectif qu'une fois le commit émis.<br/><br/>Vous devez confirmer cette action.";
-
+i18n["View in a new Tab"] = "Voir dans un nouvel onglet";
 i18n["Translation build status"] = "Statut de la compilation";
 i18n["Language"] = "Langage";
 

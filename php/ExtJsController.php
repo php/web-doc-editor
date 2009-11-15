@@ -323,6 +323,10 @@ class ExtJsController
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
+        $readOriginal = $this->hasRequestVariable('readOriginal')
+                        ? $this->getRequestVariable('readOriginal')
+                        : false;
+
         $t = explode('/', $FilePath);
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
@@ -331,7 +335,7 @@ class ExtJsController
         // If this utf-8, we don't need to use utf8_encode to pass to this app, else, we apply it
 
         $file     = new File($FileLang, $FilePath, $FileName);
-        $content  = $file->read();
+        $content  = $file->read($readOriginal);
         $encoding = $file->getEncoding($content);
 
         $return = array();

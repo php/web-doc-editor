@@ -55,6 +55,7 @@ ui.component._NotInENGrid.columns = [{
 // NotInENGrid view
 ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
     forceFit     : true,
+    startCollapsed: true,
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
@@ -83,13 +84,30 @@ Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
         {
             items : [{
                 scope   : this,
-                text    : _('Remove this file'),
-                iconCls : 'iconDelete',
+                text    : '<b>'+_('View in a new Tab')+'</b>',
+                iconCls : 'iconView',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',
                         this.grid, this.rowIdx, this.event
                     );
+                }
+            }, {
+                scope   : this,
+                text    : _('Remove this file'),
+                iconCls : 'iconDelete',
+                handler : function()
+                {
+                   var storeRecord = this.grid.store.getAt(this.rowIdx),
+                       FilePath    = storeRecord.data.path,
+                       FileName    = storeRecord.data.name,
+                       tmp;
+
+                   tmp = new ui.task.MarkDeleteTask({
+                       fpath       : FilePath,
+                       fname       : FileName,
+                       storeRecord : storeRecord
+                   });
                 }
             }]
         });
@@ -125,13 +143,49 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
-				tmp;
+                FileID      = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
 
-            tmp = new ui.task.MarkDeleteTask({
-                fpath       : FilePath,
-                fname       : FileName,
-                storeRecord : storeRecord
-            });
+
+            // Render only if this tab don't exist yet
+            if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {
+
+                Ext.getCmp('main-panel').add(
+                {
+                    id             : 'FNIEN-' + FileID,
+                    layout         : 'border',
+                    title          : FileName,
+                    originTitle    : FileName,
+                    iconCls        : 'iconTabView',
+                    closable       : true,
+                    defaults       : { split : true },
+                    tabTip         : String.format(
+                        _('Not In EN: in {0}'), FilePath
+                    ),
+                    items : [
+                       new ui.component.FilePanel(
+                        {
+                            id             : 'FNIEN-NotInEN-PANEL-' + FileID,
+                            region         : 'center',
+                            title          : _('File: ') + FilePath + FileName,
+                            prefix         : 'FNIEN',
+                            ftype          : 'NotInEN',
+                            fid            : FileID,
+                            fpath          : FilePath,
+                            fname          : FileName,
+                            readOnly       : true,
+                            lang           : phpDoc.userLang,
+                            parser         : 'xml',
+                            storeRecord    : storeRecord,
+                            syncScroll     : false
+                        })
+                    ]
+                });
+                Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
+
+            } else {
+                // This tab already exist. We focus it.
+                Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
+            }
         }
     },
 
@@ -156,8 +210,8 @@ ui.component.NotInENGrid.getInstance = function(config)
 {
     if (!ui.component._NotInENGrid.instance) {
         if (!config) {
-			config = {};
-		}
+           config = {};
+        }
         ui.component._NotInENGrid.instance = new ui.component.NotInENGrid(config);
     }
     return ui.component._NotInENGrid.instance;

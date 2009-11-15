@@ -331,7 +331,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Revision\" $filesCreate ; ";
         }
         if (trim($filesDelete) != '') {
-            $cmdDelete = "svn rm -f $filesDelete ; ";
+            $cmdDelete = "svn delete $filesDelete ; ";
         }
 
         // Escape single quote
