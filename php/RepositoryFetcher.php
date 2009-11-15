@@ -239,7 +239,7 @@ class RepositoryFetcher
         $vcsLang = AccountManager::getInstance()->vcsLang;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL LIMIT 50', $vcsLang);
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL', $vcsLang);
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
