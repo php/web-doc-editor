@@ -364,7 +364,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 scope : this,
                 check : function(c)
                 {
-					var tmp = new ui.task.UpdateConfTask({item: this.syncScrollConf, value: c.getValue()});
+                    var tmp = new ui.task.UpdateConfTask({item: this.syncScrollConf, value: c.getValue()});
                 },
                 render : function(c)
                 {
@@ -446,8 +446,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
-						var tmp;
-						
+                        var tmp;
+
                         if (this.lang === 'en') {
 
                             tmp = new ui.task.SaveENFileTask({
@@ -565,8 +565,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     cmchange : function(keyCode, charCode, obj)
                     {
                         if (keyCode === 116) {
-							return;
-						} // 116 = f5
+                           return;
+                        } // 116 = f5
 
                         var cursorPosition = Ext.util.JSON.decode(
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid)
