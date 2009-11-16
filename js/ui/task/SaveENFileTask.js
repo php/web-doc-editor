@@ -8,7 +8,7 @@ ui.task.SaveENFileTask = function(config)
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
 
-    if (phpDoc.userLogin === 'cvsread') {
+    if (phpDoc.userLogin === 'anonymous') {
         msg.hide();
         phpDoc.winForbidden();
         return;

@@ -5,7 +5,7 @@ ui.task.AcceptPatchTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (phpDoc.userLogin === 'cvsread') {
+    if (phpDoc.userLogin === 'anonymous') {
         phpDoc.winForbidden();
         return;
     }

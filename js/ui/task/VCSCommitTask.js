@@ -86,8 +86,8 @@ ui.task._VCSCommitTask.commit = function(files)
 
 ui.task.VCSCommitTask = function()
 {
-    // If the user is cvsread, we don't commit anything
-    if (phpDoc.userLogin === 'cvsread') {
+    // If the user is anonymous, we don't commit anything
+    if (phpDoc.userLogin === 'anonymous') {
         Ext.getCmp('winVCSCommit').close();
         phpDoc.winForbidden();
 

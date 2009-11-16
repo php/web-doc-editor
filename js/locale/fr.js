@@ -9,6 +9,8 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
+
+i18n["anonymous"] = "Utilisateur anonyme";
 i18n["Close"] = "Fermer";
 i18n["Confirm"] = "Confirmation";
 i18n["Save"] = "Sauvegarder";

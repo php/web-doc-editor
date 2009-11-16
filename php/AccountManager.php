@@ -95,10 +95,27 @@ class AccountManager
         // Var to return into ExtJs
         $return = array();
 
-        // We try to authenticate this user to VCS server.
-        $r = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
+        // Var return from VCS auth system
+        $AuthReturn = false;
 
-        if( $r === true ) {
+        // Special case for anonymous's user. Anonymous's user can logging into this app by providing this login/pass => anonymous/(empty) ou (empty)/(empty)
+        // The result is the same. $this->vcsLogin will be "anonymous" and $this->vcsPasswd, (empty)
+        if( ($vcsLogin == "anonymous" && $vcsPasswd == "")
+         || ($vcsLogin == ""          && $vcsPasswd == "") ) {
+
+           // We simulate an successfull authentication from VCS system
+           $AuthReturn = true;
+
+           // Even if the user provide an empty login, we force it to be 'anonymous'
+           $vcsLogin  = 'anonymous';
+
+        } // End anonymous's login
+        else {
+           // We try to authenticate this user to VCS server.
+           $AuthReturn = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
+        }
+
+        if( $AuthReturn === true ) {
 
            $this->vcsLogin  = $vcsLogin;
            $this->vcsPasswd = $vcsPasswd;
@@ -183,7 +200,7 @@ class AccountManager
               $return['state'] = true;
 
            }
-        } elseif ($r == 'Bad password') {
+        } elseif ($AuthReturn == 'Bad password') {
 
             // Authentication failed from the VCS server : bad password return
             $return['state'] = false;

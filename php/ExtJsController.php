@@ -92,7 +92,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -412,7 +412,7 @@ class ExtJsController
                         ? $this->getRequestVariable('emailAlert')
                         : '';
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread' && ($type == 'file' || $type == 'trans')) {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous' && ($type == 'file' || $type == 'trans')) {
             return JsonResponseBuilder::failure();
         }
 
@@ -575,7 +575,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -601,7 +601,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -646,7 +646,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -670,7 +670,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -692,7 +692,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -802,7 +802,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -818,7 +818,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -859,7 +859,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'cvsread') {
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 

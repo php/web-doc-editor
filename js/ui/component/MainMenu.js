@@ -16,7 +16,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
+                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'refresh',
                 handler  : function()
                 {
@@ -51,7 +51,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 }
             }, {
                 text     : _('Check Build'),
-                disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
+                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'checkBuild',
                 handler  : function()
                 {
@@ -132,7 +132,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 }
             }, '-', {
                 text     : _('Erase my personal data'),
-                disabled : (phpDoc.userLogin === 'cvsread') ? true : false,
+                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconErasePersonalData',
                 handler  : function()
                 {

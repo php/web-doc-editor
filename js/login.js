@@ -55,8 +55,8 @@ var loginPage = function()
                         items : [{
                             fieldLabel : 'Vcs login',
                             name       : 'vcsLogin',
+                            value      : 'anonymous',
                             id         : 'login-form-vcsLogin',
-                            allowBlank : false,
                             enableKeyEvents : true,
                             listeners : {
                                 keypress : function(field, e)
@@ -68,7 +68,6 @@ var loginPage = function()
                             }
                         }, {
                             fieldLabel : 'Vcs password',
-                            allowBlank : false,
                             name       : 'vcsPassword',
                             id         : 'login-form-vcsPasswd',
                             inputType  : 'password',

@@ -284,7 +284,7 @@ var phpDoc = function()
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                String.format(_('Connected as <em>{0}</em>'), this.userLogin) +
+                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
                                                 '<br/><br/>' +
                                                 String.format(_('Last data update: <em id="lastUpdateTime">{0}</em>'), '-') +
                                             '</h3>' +

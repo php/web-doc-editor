@@ -538,7 +538,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             fpath  : this.fpath,
                             fname  : this.fname,
                             lang   : this.lang,
-                            defaultEmail : (phpDoc.userLogin !== 'cvsread') ? phpDoc.userLogin + '@php.net' : ''
+                            defaultEmail : (phpDoc.userLogin !== 'anonymous') ? phpDoc.userLogin + '@php.net' : ''
                         }).show();
                     }
                 }, '-', {

@@ -113,7 +113,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
         {
             text     : _('Commit...'),
             iconCls  : 'iconCommitFileVcs',
-            disabled : (phpDoc.userLogin === 'cvsread'),
+            disabled : (phpDoc.userLogin === 'anonymous'),
             handler  : function() { return false; },
             menu     : new Ext.menu.Menu({
                 items : [{
@@ -283,7 +283,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     scope    : this,
                     text     : _('Clear this change'),
                     iconCls  : 'iconPageDelete',
-                    disabled : (phpDoc.userLogin === 'cvsread'),
+                    disabled : (phpDoc.userLogin === 'anonymous'),
                     handler  : function()
                     {
                         var tmp = new ui.task.ClearLocalChangeTask({
@@ -373,7 +373,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                     scope    : this,
                     text     : '<b>' + _('Cancel') + '<b>',
                     iconCls  : 'iconPageDelete',
-                    disabled : (phpDoc.userLogin === 'cvsread'),
+                    disabled : (phpDoc.userLogin === 'anonymous'),
                     handler : function()
                     {
                         this.grid.fireEvent('rowdblclick',

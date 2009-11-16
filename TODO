@@ -15,7 +15,6 @@ CVS2SVN:
   - svn diff failed due to different in revision numbering scheme (see File.php getinfo)
   - svn diff failed due to cvs2svn diff info lost
   - using svn native-client over HTTP may sometimes fail and need to redo the operation
-  - ui should allow anonymous user as cvsread
 
 PHP:
 ====
