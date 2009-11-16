@@ -27,7 +27,7 @@ class DBConnection
                 DOC_EDITOR_SQL_BASE
             );
             if (mysqli_connect_errno()) {
-                throw new Exception('connect databases faild!');
+                throw new Exception('connect databases failed!');
             }
         } catch (Exception $e) {
             echo $e->getMessage();
