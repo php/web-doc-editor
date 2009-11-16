@@ -703,35 +703,78 @@ class ExtJsController
 
         $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
 
-        $files = array();
+        // We need to provide a different treatment regarding the file's type...
+        $existFiles = array(); // Can be an updated file or a new file
+        $deleteFiles = array();
+        $j = 0;
+
         for ($i = 0; $i < count($nodes); $i++) {
-            $files[$i] = new File(
-                $nodes[$i]['lang'],
-                $nodes[$i]['path'],
-                $nodes[$i]['name']
-            );
+
+            if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
+                $existFiles[] = new File(
+                    $nodes[$i]['lang'],
+                    $nodes[$i]['path'],
+                    $nodes[$i]['name']
+                );
+            }
+
+            if( $nodes[$i]['type'] == 'delete' ) {
+                $deleteFiles[$j]->lang = $nodes[$i]['lang'];
+                $deleteFiles[$j]->path = $nodes[$i]['path'];
+                $deleteFiles[$j]->name = $nodes[$i]['name'];
+                $j ++;
+            }
+
         }
 
-        // Update revision & reviewed for all this files
-        RepositoryManager::getInstance()->updateFileInfo($files);
+        // ... for existing Files (new or update)
+        if( !empty($existFiles) ) {
 
-        for ($i = 0; $i < count($files); $i++) {
+            // Update revision & reviewed for all this files (LANG & EN)
+            RepositoryManager::getInstance()->updateFileInfo($existFiles);
 
-            $en = new File('en', $files[$i]->path, $files[$i]->name);
+            // Stuff only for LANG files
+            $langFiles = array();
+            $j = 0;
 
-            $en_content   = $en->read(true);
-            $lang_content = $files[$i]->read(true);
+            for ($i = 0; $i < count($existFiles); $i++) {
+                // Only for lang files.
+                if( $existFiles[$i]->lang != 'en' ) {
 
-            $nodes[$i]['en_content']   = $en_content;
-            $nodes[$i]['lang_content'] = $lang_content;
-        }
+                    $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
 
-        $errorTools = new ToolsError();
-        $errorTools->updateFilesError($nodes);
+                    $info = $existFiles[$i]->getInfo();
 
-        // Remove all this files in needcommit
-        RepositoryManager::getInstance()->delPendingCommit($files);
+                    $langFiles[$j]['en_content']   = $en->read(true);
+                    $langFiles[$j]['lang_content'] = $existFiles[$i]->read(true);
+                    $langFiles[$j]['lang'] = $existFiles[$i]->lang;
+                    $langFiles[$j]['path'] = $existFiles[$i]->path;
+                    $langFiles[$j]['name'] = $existFiles[$i]->name;
+                    $langFiles[$j]['maintainer'] = $info['maintainer'];
 
+                    $j ++;
+                }
+            }
+            if( !empty($langFiles) ) {
+                $errorTools = new ToolsError();
+                $errorTools->updateFilesError($langFiles);
+            }
+            // Remove all this files in needcommit
+            RepositoryManager::getInstance()->delPendingCommit($existFiles);
+        } // End of $existFiles stuff
+
+        // ... for deleted Files
+        if( !empty($deleteFiles) ) {
+
+            // Remove this files from the repository
+            RepositoryManager::getInstance()->delFiles($deleteFiles);
+
+            // Remove all this files in needcommit
+            RepositoryManager::getInstance()->delPendingCommit($deleteFiles);
+
+        } // End of $deleteFiles stuff
+
+        // Manage log message (add new or ignore it if this message already exist for this user)
         LogManager::getInstance()->addCommitLog($logMessage);
 
         return JsonResponseBuilder::success();

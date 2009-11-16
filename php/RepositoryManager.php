@@ -775,6 +775,27 @@ EOD;
         }
         @closedir($dh);
     }
+
+    /**
+     * Remove a file from DB
+     *
+     * @param $files An array of File instances.
+     * @return Nothing.
+     */
+    public function delFiles($files)
+    {
+        for ($i = 0; $i < count($files); $i++) {
+            $s = sprintf('DELETE FROM files
+                WHERE
+                    `lang` = "%s" AND
+                    `path` = "%s" AND
+                    `name` = "%s"',
+                $files[$i]->lang, $files[$i]->path, $files[$i]->name
+            );
+            DBConnection::getInstance()->query($s);
+        }
+    }
+
 }
 
 ?>
