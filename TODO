@@ -4,7 +4,6 @@ GENERAL:
 * Dedicate a wiki page to the doc-editor (and move this TODO there)
 * Take a decision once and for all about the app name, and its spelling
 * Take a decision about the license, and update all the files accordingly
-* Use the $Revision$ keyword (in comments, about popup, ..)
 * Allow use for other systems
   - Other PHP Projects (peardoc, gtkdocs, php-src/README*, phpweb/reST/)
   - Other VCS Systems (SVN, GIT)
