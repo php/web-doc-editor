@@ -22,7 +22,6 @@ PHP:
 * Security
   - Fix XSS holes
   - Redo the folder tree to keep classes and data out of web server reach (can we do this in mod_rewrite?)
-  - Implement php.net authentication scheme (cvsauth)
 
 * Clean up class.php
   - Create a DocumentationFile class which will handle all the parsing task
