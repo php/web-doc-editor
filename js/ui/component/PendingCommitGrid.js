@@ -344,12 +344,6 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                            fpath       : FilePath,
                            fname       : FileName
                        });
-/*
-                        this.grid.fireEvent('rowdblclick',
-                            this.grid, this.rowIdx, this.event
-                        );
-*/
-
 
                     }
                 }, '-', new ui.component._PendingCommitGrid.menu.common({
