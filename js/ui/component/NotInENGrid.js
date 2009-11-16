@@ -142,50 +142,56 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         {
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileID      = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
+                FileName    = storeRecord.data.name;
 
+            this.openFile(FilePath, FileName);
 
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {
+        }
+    },
 
-                Ext.getCmp('main-panel').add(
-                {
-                    id             : 'FNIEN-' + FileID,
-                    layout         : 'border',
-                    title          : FileName,
-                    originTitle    : FileName,
-                    iconCls        : 'iconTabView',
-                    closable       : true,
-                    defaults       : { split : true },
-                    tabTip         : String.format(
-                        _('Not In EN: in {0}'), FilePath
-                    ),
-                    items : [
-                       new ui.component.FilePanel(
-                        {
-                            id             : 'FNIEN-NotInEN-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : _('File: ') + FilePath + FileName,
-                            prefix         : 'FNIEN',
-                            ftype          : 'NotInEN',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            readOnly       : true,
-                            lang           : phpDoc.userLang,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScroll     : false
-                        })
-                    ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
+    openFile : function(FilePath, FileName) {
 
-            } else {
-                // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
-            }
+        var FileID = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {
+
+            Ext.getCmp('main-panel').add(
+            {
+                id             : 'FNIEN-' + FileID,
+                layout         : 'border',
+                title          : FileName,
+                originTitle    : FileName,
+                iconCls        : 'iconTabView',
+                closable       : true,
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Not In EN: in {0}'), FilePath
+                ),
+                items : [
+                   new ui.component.FilePanel(
+                    {
+                        id             : 'FNIEN-NotInEN-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('File: ') + FilePath + FileName,
+                        prefix         : 'FNIEN',
+                        ftype          : 'NotInEN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        readOnly       : true,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : '',
+                        syncScroll     : false
+                    })
+                ]
+            });
+            Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
         }
     },
 
