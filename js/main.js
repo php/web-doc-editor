@@ -56,7 +56,7 @@ var phpDoc = function()
         {
             var stateLang, stateEn, state, PanType = tab.id.split('-');
 
-            if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF') && PanType[1] !== 'help') {
+            if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF' || PanType[0] === 'FNT') && PanType[1] !== 'help') {
 
                 if (PanType[0] === 'FE') {
                     stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
@@ -84,6 +84,10 @@ var phpDoc = function()
 
                 if (PanType[0] === 'AF') {
                     state = Ext.getCmp('AF-ALL-FILE-' + PanType[1]).isModified;
+                }
+
+                if (PanType[0] === 'FNT') {
+                    state = Ext.getCmp('FNT-TRANS-FILE-' + PanType[1]).isModified;
                 }
 
                 if (stateEn || stateLang || state) {
