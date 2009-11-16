@@ -37,11 +37,11 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
                 handler : function()
                 {
                     if (this.node.isExpanded()) {
-						this.node.collapse();
-					}
-					else {
-						this.node.expand();
-					}
+                        this.node.collapse();
+                    }
+                    else {
+                        this.node.expand();
+                    }
                 }
             }]
         });
@@ -120,7 +120,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
     listeners: {
         contextmenu : function(node, e)
         {
-			var tmp;
+            var tmp;
             node.select();
 
             if (node.attributes.type === 'folder' || node.isRoot) {
@@ -359,8 +359,8 @@ ui.component.RepositoryTree.getInstance = function(config)
 {
     if (!ui.component._RepositoryTree.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._RepositoryTree.instance = new ui.component.RepositoryTree(config);
     }
     return ui.component._RepositoryTree.instance;
