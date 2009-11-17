@@ -369,7 +369,26 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
     {
         Ext.apply(this,
         {
-            items: [new ui.component._PendingCommitGrid.menu.common({
+            items: [{
+                    scope    : this,
+                    text     : _('Clear this change'),
+                    iconCls  : 'iconPageDelete',
+                    disabled : (phpDoc.userLogin === 'anonymous'),
+                    handler  : function()
+                    {
+
+
+                       var storeRecord = this.grid.store.getAt(this.rowIdx),
+                           FilePath    = storeRecord.data.path,
+                           FileName    = storeRecord.data.name,
+                           tmp = new ui.task.ClearLocalChangeTask({
+                            storeRecord : storeRecord,
+                            ftype       : 'new',
+                            fpath       : FilePath,
+                            fname       : FileName
+                        });
+                    }
+                }, '-',new ui.component._PendingCommitGrid.menu.common({
                     rowIdx : this.rowIdx
                 })]
         });

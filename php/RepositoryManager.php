@@ -285,7 +285,7 @@ class RepositoryManager
         $path = $file->path;
         $name = $file->name;
 
-        // We need delete row from pendingCommit table
+        // We need select row from pendingCommit table
         $s = "SELECT `id` FROM `pendingCommit`
               WHERE `lang`='$lang' AND `path`='$path' AND `name`='$name'";
         $r = DBConnection::getInstance()->query($s);
@@ -295,14 +295,19 @@ class RepositoryManager
         $s = 'DELETE FROM `pendingCommit` WHERE `id`="' .$a->id. '"';
         DBConnection::getInstance()->query($s);
 
-        // If type == delete or new, we stop here and return
-        if ($type == 'delete' || $type == 'new') {
+        // If type == delete, we stop here and return
+        if ($type == 'delete') {
             return;
         }
 
-        // We need delete file on filesystem
+        // We need delete file on filesystem (for new & update)
         $doc = $file->full_path.'.new';
         @unlink($doc);
+
+        // If type == new, we stop here and return
+        if ($type == 'new') {
+            return;
+        }
 
         // We need check for error in this file
         $en_content   = file_get_contents(DOC_EDITOR_VCS_PATH.'en' .$path.$name);

@@ -654,6 +654,7 @@ class ExtJsController
 
         $lock = new LockFile('lock_check_build');
         if ($lock->lock()) {
+
             // Start the checkBuild system
             $output = RepositoryManager::getInstance()->checkBuild($xmlDetails);
         }
