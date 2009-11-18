@@ -22,19 +22,9 @@ PHP:
   - Fix XSS holes
   - Redo the folder tree to keep classes and data out of web server reach (can we do this in mod_rewrite?)
 
-* Clean up class.php
-  - Create a DocumentationFile class which will handle all the parsing task
-  - Create a TranslationStatus class which will compute the translation
-    status by comparing DocumentationFile objects
-  - Create a DocumentationCheck class which will perform all the tests against
-    the en/ tree (and other languages? we _should_ be able to rely on TranslationStatus
-    on its own
-
 * Translation Status
   - At the current time, the french translation graph is useless/unreadable. We need to find
     a better way to display the information
-
-* Implement i18n
 
 * Automatic upgrade
   - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling, crontab?)
