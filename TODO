@@ -63,10 +63,6 @@ USER INTERFACE:
 BUGS:
 =====
 
-* ClearLocalChange
-  - clear local change attempt to open en file which may not exist (RepositoryManager.php line 306).
-    JSON response would contain the php-warning message that breaks javascript.
-
 * Saving patch / file
   - when a file is saved, file.new is created. when a patch is saved, file.new is replaced by file.###.patch
     Some ui component may issue a diff between file & file.new but sometimes file.new is removed as .patch
