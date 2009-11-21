@@ -185,7 +185,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         {
             var FilePath = grid.store.getAt(rowIndex).data.path,
                 FileName = grid.store.getAt(rowIndex).data.name,
-				tmp;
+                tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
@@ -201,121 +201,126 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                en_revision = storeRecord.data.en_revision,
-                revision    = storeRecord.data.revision,
-                FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
-                diff        = '';
+            this.openFile(grid.store.getAt(rowIndex).data.id);
+        }
+    },
 
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
+    openFile : function(rowId) {
 
-                if (phpDoc.userConf.conf_needupdate_diff === "using-viewvc") {
-                    diff = ui.component.ViewVCDiff;
-                } else if (phpDoc.userConf.conf_needupdate_diff === "using-exec") {
-                    diff = ui.component.ExecDiff;
-                }
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            en_revision = storeRecord.data.en_revision,
+            revision    = storeRecord.data.revision,
+            FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
+            diff        = '';
 
-                Ext.getCmp('main-panel').add(
-                {
-                    id             : 'FNU-' + FileID,
-                    layout         : 'border',
-                    title          : FileName,
-                    originTitle    : FileName,
-                    iconCls        : 'iconTabNeedUpdate',
-                    closable       : true,
-                    defaults       : { split : true },
-                    tabTip         : String.format(
-                        _('Need Update: in {0}'), FilePath
-                    ),
-                    items : [
-                        new diff({
-                            region      : 'north',
-                            collapsible : true,
-                            prefix      : 'FNU',
-                            fid         : FileID,
-                            fpath       : FilePath,
-                            fname       : FileName,
-                            rev1        : revision,
-                            rev2        : en_revision
-                        }), {
-                            region      : 'west',
-                            xtype       : 'panel',
-                            title       : _('VCSLog'),
-                            collapsible : true,
-                            collapsed   : true,
-                            layout      : 'fit',
-                            bodyBorder  : false,
-                            width       : 375,
-                            items       : {
-                                xtype       : 'tabpanel',
-                                activeTab   : 0,
-                                tabPosition : 'bottom',
-                                defaults    : { autoScroll: true },
-                                items       : [
-                                    new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : phpDoc.userLang,
-                                        prefix    : 'FNU-LANG',
-                                        fid       : FileID,
-                                        fpath     : phpDoc.userLang + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
-                                    }),
-                                    new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : 'en',
-                                        prefix    : 'FNU-EN',
-                                        fid       : FileID,
-                                        fpath     : 'en' + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
-                                    })
-                                ]
-                            }
-                        }, new ui.component.FilePanel(
-                        {
-                            id             : 'FNU-LANG-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
-                            prefix         : 'FNU',
-                            ftype          : 'LANG',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : phpDoc.userLang,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScrollCB   : true,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_needupdate_scrollbars'
-                        }), new ui.component.FilePanel(
-                        {
-                            id             : 'FNU-EN-PANEL-' + FileID,
-                            region         : 'east',
-                            width          : 575,
-                            title          : _('en File: ') + FilePath + FileName,
-                            prefix         : 'FNU',
-                            ftype          : 'EN',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : 'en',
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_needupdate_scrollbars'
-                        })
-                    ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
 
-            } else {
-                // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+            if (phpDoc.userConf.conf_needupdate_diff === "using-viewvc") {
+                diff = ui.component.ViewVCDiff;
+            } else if (phpDoc.userConf.conf_needupdate_diff === "using-exec") {
+                diff = ui.component.ExecDiff;
             }
+
+            Ext.getCmp('main-panel').add(
+            {
+                id             : 'FNU-' + FileID,
+                layout         : 'border',
+                title          : FileName,
+                originTitle    : FileName,
+                iconCls        : 'iconTabNeedUpdate',
+                closable       : true,
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Need Update: in {0}'), FilePath
+                ),
+                items : [
+                    new diff({
+                        region      : 'north',
+                        collapsible : true,
+                        prefix      : 'FNU',
+                        fid         : FileID,
+                        fpath       : FilePath,
+                        fname       : FileName,
+                        rev1        : revision,
+                        rev2        : en_revision
+                    }), {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('VCSLog'),
+                        collapsible : true,
+                        collapsed   : true,
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        width       : 375,
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll: true },
+                            items       : [
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : phpDoc.userLang,
+                                    prefix    : 'FNU-LANG',
+                                    fid       : FileID,
+                                    fpath     : phpDoc.userLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                }),
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : 'en',
+                                    prefix    : 'FNU-EN',
+                                    fid       : FileID,
+                                    fpath     : 'en' + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                })
+                            ]
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'FNU-LANG-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        prefix         : 'FNU',
+                        ftype          : 'LANG',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_needupdate_scrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FNU-EN-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 575,
+                        title          : _('en File: ') + FilePath + FileName,
+                        prefix         : 'FNU',
+                        ftype          : 'EN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : 'en',
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_needupdate_scrollbars'
+                    })
+                ]
+            });
+            Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
         }
     },
 
@@ -386,8 +391,8 @@ ui.component.StaleFileGrid.getInstance = function(config)
 {
     if (!ui.component._StaleFileGrid.instance) {
         if (!config) {
-			config = {};
-		}
+           config = {};
+        }
         ui.component._StaleFileGrid.instance = new ui.component.StaleFileGrid(config);
     }
     return ui.component._StaleFileGrid.instance;

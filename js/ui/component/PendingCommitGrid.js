@@ -451,7 +451,20 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 tmp;
 
             if (FileType === 'update') {
-                ui.component.RepositoryTree.getInstance().openFile(FilePath, FileName);
+
+                // Find the rowIndex in this store
+                tmp = FilePath.split('/');
+                tmp.shift();
+
+                FilePath = "/" + tmp.join('/');
+
+                ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+
+                    if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                        ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                    }
+                });
+
             }
 
             if (FileType === 'delete') {
