@@ -327,6 +327,9 @@ class ExtJsController
                         ? $this->getRequestVariable('readOriginal')
                         : false;
 
+        // ExtJs pass false as a string ; fix it
+        if( $readOriginal == "false" ) $readOriginal = false;
+
         $t = explode('/', $FilePath);
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
