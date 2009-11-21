@@ -452,7 +452,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
             if (FileType === 'update') {
 
-                // Find the rowIndex in this store
+                // Find the id of this row into StaleFileGrid.store and open it !
                 tmp = FilePath.split('/');
                 tmp.shift();
 
