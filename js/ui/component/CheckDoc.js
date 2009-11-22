@@ -80,59 +80,59 @@ ui.component._CheckDoc.renderer = function(value, metadata)
 ui.component._CheckDoc.columns = [
     new Ext.grid.RowNumberer(), {
         id        : 'extension',
-        header    : "Extension",
+        header    : _('Extension'),
         sortable  : true,
         dataIndex : 'extension'
     }, {
-        header    : "Not documented",
+        header    : _('Not documented'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_undoc',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "Old style",
+        header    : _('Old style'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_oldstyle',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "Bad refsect1 order",
+        header    : _('Bad refsect1 order'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_badorder',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "No parameters",
+        header    : _('No parameters'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noparameters',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "No return values",
+        header    : _('No return values'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noreturnvalues',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "No examples",
+        header    : _('No examples'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noexamples',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "No errors section",
+        header    : _('No errors section'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noerrors',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "No see also",
+        header    : _('No see also'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noseealso',
         renderer  : ui.component._CheckDoc.renderer
     }, {
-        header    : "Refsect1 role error",
+        header    : _('Refsect1 role error'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_roleerror',
@@ -169,7 +169,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
     }),
     columns : [ new Ext.grid.RowNumberer(), {
         id        : 'file',
-        header    : "Files",
+        header    : _('Files'),
         sortable  : true,
         dataIndex : 'file'
     } ],
@@ -205,7 +205,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
     autoScroll : true,
     layout     : 'fit',
     buttons    : [{
-        text    : 'Open all files',
+        text    : _('Open all files'),
         handler : function()
         {
             var win   = Ext.getCmp('check-doc-file-win'),
@@ -228,7 +228,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
             win.close();
         }
     }, {
-        text     : 'Open selected files',
+        text     : _('Open selected files'),
         id       : 'check-doc-btn-open-selected-files',
         disabled : true,
         handler  : function()
@@ -297,7 +297,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                     {
                         // Must choose the file
                         var o = Ext.decode(response.responseText),
-						i, tmp;
+                            i, tmp;
 
                         // file store
                         ui.component._CheckDoc.fs.removeAll();

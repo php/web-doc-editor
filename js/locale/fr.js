@@ -258,3 +258,17 @@ i18n["Need Reviewed in: {0}"] = "À relire dans : {0}";
 i18n["All files"] = "Tous les fichiers";
 i18n["Pending for commit"] = "Commit en attente";
 i18n["Pending Patch"] = "Patchs en attente";
+
+// Check doc
+i18n["Extension"] = "Extension";
+i18n["Not documented"] = "Non documenté";
+i18n["Old style"] = "Ancien style";
+i18n["Bad refsect1 order"] = "Refsect1 : Ordre incorrect";
+i18n["No parameters"] = "Aucun paramètre";
+i18n["No return values"] = "Aucune valeur retournée";
+i18n["No examples"] = "Pas d'exemple";
+i18n["No errors section"] = "Pas de section \"Error\"";
+i18n["No see also"] = "Pas de section \"See also\"";
+i18n["Refsect1 role error"] = "Erreur dans le rôle du Refsect1";
+i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
+i18n["Open all files"] = "Ouvrir tous les fichiers";
