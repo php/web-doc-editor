@@ -7,7 +7,7 @@ ui.task._VCSCommitTask.commit = function(files)
         _('Please, wait until commit...')
     );
 
-    var nodes = [], node, LogMessage;
+    var nodes = [], node, LogMessage, tmp;
 
     // Go for VCS commit
     for (var i = 0; i < files.length; i = i + 1) {
@@ -18,6 +18,22 @@ ui.task._VCSCommitTask.commit = function(files)
 
     // Get log message
     LogMessage = Ext.getCmp('form-commit-message-log').getValue();
+
+    // The LogMessage is required
+    LogMessage = String.trim(LogMessage);
+
+    if( Ext.isEmpty(LogMessage) ) {
+
+        Ext.getBody().unmask();
+
+        Ext.getCmp('form-commit-message-log').markInvalid(_('The log message is required.'));
+
+        Ext.MessageBox.alert(
+            _('Error'),
+            _('The log message is required.')
+        );
+        return;
+    }
 
     // Close this window
     Ext.getCmp('winVCSCommit').close();
@@ -30,7 +46,8 @@ ui.task._VCSCommitTask.commit = function(files)
         },
         success : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(response.responseText),
+                tmp;
 
             Ext.getBody().unmask();
 
