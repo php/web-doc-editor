@@ -128,50 +128,77 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 hidden  : this.hideCommit,
-                text    : _('View Diff'),
+                text    : _('View Diff...'),
                 iconCls : 'iconViewDiff',
-                handler : function()
-                {
-                    // Add tab for the diff
-                    Ext.getCmp('main-panel').add({
-                        xtype      : 'panel',
-                        id         : 'diff_panel_' + this.rowIdx,
-                        title      : _('Diff'),
-                        tabTip     : _('Diff'),
-                        closable   : true,
-                        autoScroll : true,
-                        iconCls    : 'iconTabLink',
-                        html: '<div id="diff_content_' + this.rowIdx +
-                              '" class="diff-content"></div>'
-                    });
-                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
-
-                    Ext.get('diff_panel_' + this.rowIdx).mask(
-                        '<img src="themes/img/loading.gif" ' +
-                        'style="vertical-align: middle;" />' +
-                        _('Please, wait...')
-                    );
-
-                    // Load diff data
-                    XHR({
-                        scope   : this,
-                        params  : {
-                            task     : 'getDiff',
-                            FilePath : this.lang + this.fpath,
-                            FileName : this.fname
-                        },
-                        success : function(response)
-                        {
-                            var o = Ext.util.JSON.decode(response.responseText);
-                            // We display in diff div
-                            Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
-                            Ext.get('diff_panel_' + this.rowIdx).unmask();
+                menu    : new Ext.menu.Menu({
+                    items: [{
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.needCommitEN === false),
+                        text: String.format(_('... of the {0} file'), 'EN'),
+                        handler: function() {
+                            this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
                         }
-                    });
-                }
+                    }, {
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
+                        text: String.format(_('... of the {0} file'), phpDoc.userLang),
+                        handler: function() {
+                            this.openTab(this.rowIdx, phpDoc.userLang, this.fpath, this.fname);
+                        }
+                    }]
+                })
             }]
         });
+    },
+
+    openTab: function(rowIdx, lang, fpath, fname) {
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
+
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype      : 'panel',
+                id         : 'diff_panel_' + lang + '_' + rowIdx,
+                title      : _('Diff'),
+                tabTip     : String.format(_('Diff for file: {0}'), lang+fpath+fname),
+                closable   : true,
+                autoScroll : true,
+                iconCls    : 'iconTabLink',
+                html: '<div id="diff_content_' + lang + '_' + rowIdx +
+                      '" class="diff-content"></div>'
+            });
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+
+            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
+                '<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" />' +
+                _('Please, wait...')
+            );
+
+            // Load diff data
+            XHR({
+                params  : {
+                    task     : 'getDiff',
+                    FilePath : lang + fpath,
+                    FileName : fname
+                },
+                success : function(response)
+                {
+                    var o = Ext.util.JSON.decode(response.responseText);
+                    // We display in diff div
+                    Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
+                    Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
+                }
+            });
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+        }
+
     }
+
 });
 
 
