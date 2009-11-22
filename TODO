@@ -57,7 +57,5 @@ BUGS:
   - when a file is saved, file.new is created. when a patch is saved, file.new is replaced by file.###.patch
     Some ui component may issue a diff between file & file.new but sometimes file.new is removed as .patch
 
-* reopening file-diff (context-menu diff) in main-panel tab crashes extjs
-
 * Translator vcs account parsing failed
   - check php parsing scripts
