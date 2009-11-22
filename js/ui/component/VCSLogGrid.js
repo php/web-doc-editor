@@ -77,22 +77,22 @@ ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
 ui.component._VCSLogGrid.columns = [
     {
         id        : 'id',
-        header    : "Rev.",
+        header    : _('Rev.'),
         width     : 40,
         sortable  : false,
         dataIndex : 'revision'
     }, {
-        header    : "Content",
+        header    : _('Content'),
         width     : 130,
         sortable  : true,
         dataIndex : 'content'
     }, {
-        header    : "By",
+        header    : _('By'),
         width     : 50,
         sortable  : true,
         dataIndex : 'author'
     }, {
-        header    : "Date",
+        header    : _('Date'),
         width     : 85,
         sortable  : true,
         dataIndex : 'date',
@@ -145,7 +145,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
             tbar  : [{
                 scope    : this,
                 id       : this.prefix + '-PANEL-btn-log-' + this.fid,
-                tooltip  : '<b>View</b> the diff',
+                tooltip  : _('<b>View</b> the diff'),
                 iconCls  : 'iconViewDiff',
                 disabled : true,
                 handler : function()
@@ -196,7 +196,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
             }, {
                 scope   : this,
                 id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
-                tooltip : '<b>Load/Refresh</b> revisions',
+                tooltip : _('<b>Load/Refresh</b> revisions'),
                 iconCls : 'refresh',
                 handler : function()
                 {
