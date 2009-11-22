@@ -233,41 +233,49 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     iconCls : 'iconViewDiff',
                     handler : function()
                     {
-                        // Add tab for the diff
-                        Ext.getCmp('main-panel').add({
-                            xtype      : 'panel',
-                            id         : 'diff_panel_' + this.rowIdx,
-                            iconCls    : 'iconTabLink',
-                            title      : _('Diff'),
-                            tabTip     : _('Diff'),
-                            closable   : true,
-                            autoScroll : true,
-                            html       : '<div id="diff_content_' + this.rowIdx + '" class="diff-content"></div>'
-                        });
-                        Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
 
-                        Ext.get('diff_panel_' + this.rowIdx).mask(
-                            '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                            _('Please, wait...')
-                        );
+                        // Render only if this tab don't exist yet
+                        if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + this.rowIdx)) {
 
-                        // Load diff data
-                        XHR({
-                            scope   : this,
-                            params  : {
-                                task     : 'getDiff',
-                                FilePath : this.fpath,
-                                FileName : this.fname
-                            },
-                            success : function(response)
-                            {
-                                var o = Ext.util.JSON.decode(response.responseText);
+                            // Add tab for the diff
+                            Ext.getCmp('main-panel').add({
+                                xtype      : 'panel',
+                                id         : 'diff_panel_pending_' + this.rowIdx,
+                                iconCls    : 'iconTabLink',
+                                title      : _('Diff'),
+                                tabTip     : String.format(_('Diff for file: {0}'), this.fpath+this.fname),
+                                closable   : true,
+                                autoScroll : true,
+                                html       : '<div id="diff_content_pending_' + this.rowIdx + '" class="diff-content"></div>'
+                            });
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
 
-                                // We display in diff div
-                                Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
-                                Ext.get('diff_panel_' + this.rowIdx).unmask();
-                            }
-                        });
+                            Ext.get('diff_panel_pending_' + this.rowIdx).mask(
+                                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                _('Please, wait...')
+                            );
+
+                            // Load diff data
+                            XHR({
+                                scope   : this,
+                                params  : {
+                                    task     : 'getDiff',
+                                    FilePath : this.fpath,
+                                    FileName : this.fname
+                                },
+                                success : function(response)
+                                {
+                                    var o = Ext.util.JSON.decode(response.responseText);
+
+                                    // We display in diff div
+                                    Ext.get('diff_content_pending_' + this.rowIdx).dom.innerHTML = o.content;
+                                    Ext.get('diff_panel_pending_' + this.rowIdx).unmask();
+                                }
+                            });
+                        } else {
+                            // This tab already exist. We focus it.
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
+                        }
                     }
                 }, {
                     scope   : this,

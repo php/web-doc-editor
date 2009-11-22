@@ -105,6 +105,7 @@ i18n["There is {0} files to close before commit.<br><br>{1}<br/><br/>Would you l
 i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like I close it for you ?"] = "Il y a {0} fichier à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
 i18n["Please, wait until commit..."] = "Veuillez patienter...";
 i18n["Type"] = "Type";
+i18n["View Diff"] = "Voir la différence";
 i18n["View Diff..."] = "Voir la différence...";
 i18n["... of the {0} file"] = "... du fichier {0}";
 i18n["Forbidden"] = "Interdit";
