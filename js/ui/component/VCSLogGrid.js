@@ -182,7 +182,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                                 bodyStyle  : 'background-color: white; padding: 5px;',
                                 html       : '<div class="diff-content">' + o.content + '</div>',
                                 buttons : [{
-                                    text    : 'Close',
+                                    text    : _('Close'),
                                     handler : function()
                                     {
                                         winStatus.close();
