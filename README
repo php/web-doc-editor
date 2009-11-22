@@ -6,6 +6,7 @@
 * The PHP-GDLib module
 * Shell exec privileges
 * native vcs-client (e.g. using Subversion should have native svn-client)
+* Php mail function must be activate
 
 == Configuration ==
 * Configuration is set in php/config.inc.php
