@@ -10,6 +10,7 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
 
+i18n["Log"] = "Journal";
 i18n["Cancel this deletion"] = "Annuler cette suppression";
 i18n["anonymous"] = "Utilisateur anonyme";
 i18n["Close"] = "Fermer";
