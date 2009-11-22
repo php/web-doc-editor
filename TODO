@@ -33,8 +33,6 @@ JAVASCRIPT:
 ===========
 
 * Implement RTL where appropriate
-* Generalize Diff?? cvs-log-diff, cvs-file-diff, patch-file-diff, pending-commit-file-diff
-* adjust diff-panel id convention to prevent mixing different diff-panel
 
 USER INTERFACE:
 ===============
