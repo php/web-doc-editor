@@ -461,8 +461,9 @@ class ExtJsController
             return JsonResponseBuilder::success(
                 array(
                     'id'           => $r,
-                    'en_revision'  => $info['rev'],
-                    'new_revision' => $info['en-rev'],
+                    'lang'         => $fileLang,
+                    'revision'     => $info['rev'],
+                    'en_revision'  => $info['en-rev'],
                     'maintainer'   => $info['maintainer'],
                     'reviewed'     => $info['reviewed']
                 )
@@ -481,8 +482,9 @@ class ExtJsController
                return JsonResponseBuilder::success(
                    array(
                        'id'           => $r,
-                       'en_revision'  => $info['rev'],
-                       'new_revision' => $info['en-rev'],
+                       'lang'         => $fileLang,
+                       'revision'     => $info['rev'],
+                       'en_revision'  => $info['en-rev'],
                        'maintainer'   => $info['maintainer'],
                        'reviewed'     => $info['reviewed']
                    )
@@ -622,7 +624,11 @@ class ExtJsController
 
         return JsonResponseBuilder::success(
             array(
+                'path'       => $FilePath,
+                'name'       => $FileName,
+                'lang'       => $FileLang,
                 'revision'   => $info['rev'],
+                'en-revision'=> $info['en-rev'],
                 'maintainer' => $info['maintainer'],
                 'error'      => $info['errorFirst'],
                 'reviewed'   => $info['reviewed']

@@ -36,8 +36,8 @@ ui.task.SaveLangFileTask = function(config)
 
             if (this.prefix === 'FNU') {
                 // Update our store
-                this.storeRecord.set('revision', o.new_revision);
-                this.storeRecord.set('needcommit', true);
+                this.storeRecord.set('revision', o.en_revision);
+                this.storeRecord.set('needCommitLang', true);
                 this.storeRecord.set('maintainer', o.maintainer);
                 this.storeRecord.commit();
             }

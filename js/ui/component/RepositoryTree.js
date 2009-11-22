@@ -142,7 +142,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     extension = node.attributes.extension,
                     t, FileLang, FileName, parser,
                     panelWest, panelCenter;
-
+console.log(FilePath);
                 // Render only if this tab don't exist yet
                 if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
 

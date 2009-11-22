@@ -30,8 +30,9 @@ ui.task.SaveENFileTask = function(config)
 
             if (this.prefix === 'FNU') {
                 // Update our store
-                this.storeRecord.set('en_revision', o.en_revision);
-                this.storeRecord.set('needcommit', true);
+                this.storeRecord.set('en_revision', o.revision);
+                this.storeRecord.set('needCommitEN', true);
+                this.storeRecord.commit();
             }
 
             if (this.prefix === 'FE') {

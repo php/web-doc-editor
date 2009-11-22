@@ -285,6 +285,15 @@ class RepositoryManager
         $path = $file->path;
         $name = $file->name;
 
+        // Initiate return's var
+        $return = array();
+        $return['rev']        = 0;
+        $return['en-rev']     = 0;
+        $return['maintainer'] = 0;
+        $return['reviewed']   = 0;
+        $return['errorState'] = false;
+        $return['errorFirst'] = 0;
+
         // We need select row from pendingCommit table
         $s = "SELECT `id` FROM `pendingCommit`
               WHERE `lang`='$lang' AND `path`='$path' AND `name`='$name'";
@@ -297,7 +306,7 @@ class RepositoryManager
 
         // If type == delete, we stop here and return
         if ($type == 'delete') {
-            return;
+            return $return;
         }
 
         // We need delete file on filesystem (for new & update)
@@ -306,7 +315,7 @@ class RepositoryManager
 
         // If type == new, we stop here and return
         if ($type == 'new') {
-            return;
+            return $return;
         }
 
         // We need check for error in this file
@@ -326,27 +335,27 @@ class RepositoryManager
         $errorTools = new ToolsError();
         $error = $errorTools->updateFilesError($anode, 'nocommit');
 
-        // We need reload original lang_revision
-        $s = "SELECT `revision`, `maintainer`, `reviewed` FROM `files`
+        // We need reload original information
+        $s = "SELECT `revision`, `en_revision`, `maintainer`, `reviewed` FROM `files`
               WHERE `lang`='$lang' AND `path`='$path' AND `name`='$name'";
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        $info = array();
-        $info['rev']        = $a->revision;
-        $info['maintainer'] = $a->maintainer;
-        $info['reviewed']   = $a->reviewed;
+        $return['rev']        = $a->revision;
+        $return['en-rev']     = $a->en_revision;
+        $return['maintainer'] = $a->maintainer;
+        $return['reviewed']   = $a->reviewed;
 
         if (isset($error['first'])) {
-            $info['errorState'] = true;
-            $info['errorFirst'] = $error['first'];
+            $return['errorState'] = true;
+            $return['errorFirst'] = $error['first'];
         } else {
-            $info['errorState'] = false;
-            $info['errorFirst'] = '-No error-';
+            $return['errorState'] = false;
+            $return['errorFirst'] = '-No error-';
         }
 
         // We return original lang_revision & maintainer
-        return $info;
+        return $return;
     }
 
     /**

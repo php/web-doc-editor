@@ -36,6 +36,46 @@ ui.task.ClearLocalChangeTask = function(config)
                     },
                     success : function(response)
                     {
+                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance(),
+                            o = Ext.util.JSON.decode(response.responseText);
+
+                        // We delete this record from the pending commit store
+                        pending_commit_grid.store.remove(this.storeRecord);
+
+                        // We fire event add to update the file count
+                        pending_commit_grid.store.fireEvent(
+                            'add', pending_commit_grid.store
+                        );
+
+                        // Action for EN file
+                        if( o.lang === 'en' && this.ftype === 'update' ) {
+
+                            // trow StaleFile store
+                            ui.component.StaleFileGrid.getInstance().store.each(
+                                function(record)
+                                {
+                                    if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
+                                        record.set('needCommitEN', false);
+                                        record.set('en_revision', o.revision);
+                                        record.commit();
+                                    }
+                                }
+                            , this);
+
+                            // find open node in All Files modules
+                            var node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                            if (node) {
+                              node.getUI().removeClass('modified');
+                            }
+
+                            Ext.getBody().unmask();
+                            return;
+                        }
+
+                        // All after this is only available for LANG file
+
+
+/*
                         // clear local change success
                         if (phpDoc.userLang === 'en') {
                             // We reload all store
@@ -43,15 +83,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             ui.component.ErrorFileGrid.getInstance().store.reload();
                             ui.component.PendingReviewGrid.getInstance().store.reload();
                         }
-
-                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance();
-                        // We delete from this store
-                        pending_commit_grid.store.remove(this.storeRecord);
-
-                        // We fire event add to update the file count
-                        pending_commit_grid.store.fireEvent(
-                            'add', pending_commit_grid.store
-                        );
+*/
 
                         // We try to search in others stores if this file is marked as needCommit
 
@@ -62,9 +94,8 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            },
-                            this
-                        );
+                            }
+                        , this);
 
                         // trow storeFilesNeedReviewed
                         ui.component.PendingReviewGrid.getInstance().store.each(
@@ -73,20 +104,21 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            },
-                            this
-                        );
+                            }
+                        , this);
 
                         // trow StaleFile store
                         ui.component.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                    record.set('needCommitLang', false);
+                                    record.set('revision', o.revision);
+                                    record.set('maintainer', o.maintainer);
+                                    record.commit();
                                 }
-                            },
-                            this
-                        );
+                            }
+                        , this);
 
                         // trow FileError
                         ui.component.ErrorFileGrid.getInstance().store.each(
@@ -95,15 +127,15 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            },
-                            this
-                        );
+                            }
+                        , this);
 
                         // find open node in All Files modules
-                        var node = ui.component.RepositoryTree.getInstance().getNodeById('//'+this.fpath+this.fname);
+                        var node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
                           node.getUI().removeClass('modified');
                         }
+
                         Ext.getBody().unmask();
                     },
                     failure : function(response)

@@ -29,8 +29,11 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
                 name    : 'maintainer',
                 mapping : 'maintainer'
             }, {
-                name    : 'needcommit',
-                mapping : 'needcommit'
+                name    : 'needCommitEN',
+                mapping : 'needCommitEN'
+            }, {
+                name    : 'needCommitLang',
+                mapping : 'needCommitLang'
             }, {
                 name    : 'isCritical',
                 mapping : 'isCritical'
@@ -59,7 +62,7 @@ ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     getRowClass : function(record, numIndex, rowParams, store)
     {
-        if (record.data.needcommit) {
+        if (record.data.needCommitEN || record.data.needCommitLang) {
             return 'file-need-commit';
         }
         if (record.data.isCritical) {
@@ -190,7 +193,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             grid.getSelectionModel().selectRow(rowIndex);
 
             tmp = new ui.component._StaleFileGrid.menu({
-                hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
+                hideCommit : (grid.store.getAt(rowIndex).data.needCommitEN === false && grid.store.getAt(rowIndex).data.needCommitLang === false),
                 grid       : grid,
                 event      : e,
                 rowIdx     : rowIndex,

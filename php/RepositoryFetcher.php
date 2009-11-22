@@ -102,6 +102,7 @@ class RepositoryFetcher
         $vcsLang = AccountManager::getInstance()->vcsLang;
 
         $m = $this->getModifies();
+
         $s = sprintf(
             'SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`',
             $vcsLang
@@ -127,25 +128,27 @@ class RepositoryFetcher
                 }
 
                 $node[] = array(
-                    "id"          => $a->id,
-                    "path"        => $a->path,
-                    "name"        => $a->name,
-                    "revision"    => $new_revision,
-                    "en_revision" => $new_en_revision,
-                    "maintainer"  => $new_maintainer,
-                    "needcommit"  => true,
-                    "isCritical"  => false
+                    "id"             => $a->id,
+                    "path"           => $a->path,
+                    "name"           => $a->name,
+                    "revision"       => $new_revision,
+                    "en_revision"    => $new_en_revision,
+                    "maintainer"     => $new_maintainer,
+                    "needCommitEN"   => (isset($m['en'.$a->path.$a->name])) ? true : false,
+                    "needCommitLang" => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false,
+                    "isCritical"     => false
                 );
             } else {
                 $node[] = array(
-                    "id"          => $a->id,
-                    "path"        => $a->path,
-                    "name"        => $a->name,
-                    "revision"    => $a->revision,
-                    "en_revision" => $a->en_revision,
-                    "maintainer"  => $a->maintainer,
-                    "needcommit"  => false,
-                    "isCritical"  => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false
+                    "id"              => $a->id,
+                    "path"            => $a->path,
+                    "name"            => $a->name,
+                    "revision"        => $a->revision,
+                    "en_revision"     => $a->en_revision,
+                    "maintainer"      => $a->maintainer,
+                    "needCommitEN"    => false,
+                    "needCommitLang"  => false,
+                    "isCritical"      => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false
                 );
             }
         }
