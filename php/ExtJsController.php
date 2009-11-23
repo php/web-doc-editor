@@ -404,7 +404,6 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-
         $filePath   = $this->getRequestVariable('filePath');
         $fileName   = $this->getRequestVariable('fileName');
         $fileLang   = $this->getRequestVariable('fileLang');
@@ -454,20 +453,31 @@ class ExtJsController
 
         if ($type == 'file') {
 
-            $file->save($fileContent, false);
-            $r = RepositoryManager::getInstance()->addPendingCommit(
-                $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']
-            );
-            return JsonResponseBuilder::success(
-                array(
-                    'id'           => $r,
-                    'lang'         => $fileLang,
-                    'revision'     => $info['rev'],
-                    'en_revision'  => $info['en-rev'],
-                    'maintainer'   => $info['maintainer'],
-                    'reviewed'     => $info['reviewed']
-                )
-            );
+            $er = $file->save($fileContent, false);
+
+            if( $er['state'] ) {
+
+                $r = RepositoryManager::getInstance()->addPendingCommit(
+                    $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']
+                );
+                return JsonResponseBuilder::success(
+                    array(
+                        'id'           => $r,
+                        'lang'         => $fileLang,
+                        'revision'     => $info['rev'],
+                        'en_revision'  => $info['en-rev'],
+                        'maintainer'   => $info['maintainer'],
+                        'reviewed'     => $info['reviewed']
+                    )
+                );
+            } else {
+                return JsonResponseBuilder::failure(
+                    array(
+                        'type' => 'fs_error',
+                        'mess' => ''
+                    )
+                );
+            }
         } else if ($type == 'trans') {
 
             // We must to ensure that this folder existe in the VCS repository & localy
@@ -475,21 +485,32 @@ class ExtJsController
 
             if( $vf->folderExist($file) ) {
 
-               $file->save($fileContent, false);
-               $r = RepositoryManager::getInstance()->addPendingCommit(
-                   $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'new'
-               );
-               return JsonResponseBuilder::success(
-                   array(
-                       'id'           => $r,
-                       'lang'         => $fileLang,
-                       'revision'     => $info['rev'],
-                       'en_revision'  => $info['en-rev'],
-                       'maintainer'   => $info['maintainer'],
-                       'reviewed'     => $info['reviewed']
-                   )
-               );
+               $er = $file->save($fileContent, false);
 
+               if( $er['state'] ) {
+
+                   $r = RepositoryManager::getInstance()->addPendingCommit(
+                       $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'new'
+                   );
+                   return JsonResponseBuilder::success(
+                       array(
+                           'id'           => $r,
+                           'lang'         => $fileLang,
+                           'revision'     => $info['rev'],
+                           'en_revision'  => $info['en-rev'],
+                           'maintainer'   => $info['maintainer'],
+                           'reviewed'     => $info['reviewed']
+                       )
+                   );
+
+               } else {
+                   return JsonResponseBuilder::failure(
+                       array(
+                           'type' => 'fs_error',
+                           'mess' => ''
+                       )
+                   );
+               }
             } else {
               return JsonResponseBuilder::failure();
             }
@@ -499,6 +520,7 @@ class ExtJsController
             $uniqID = RepositoryManager::getInstance()->addPendingPatch(
                 $file, $emailAlert
             );
+
             $file->save($fileContent, true, $uniqID);
 
             return JsonResponseBuilder::success(

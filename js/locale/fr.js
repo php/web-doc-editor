@@ -272,3 +272,6 @@ i18n["No see also"] = "Pas de section \"See also\"";
 i18n["Refsect1 role error"] = "Erreur dans le rôle du Refsect1";
 i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
 i18n["Open all files"] = "Ouvrir tous les fichiers";
+
+// Error
+i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";

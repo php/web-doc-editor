@@ -61,11 +61,16 @@ class File
         $path = $this->full_path . $ext;
 
         // Open in w+ mode
-        $h = fopen($path, 'w+');
-        fwrite($h, $content);
-        fclose($h);
-
-        return $path;
+        $h = @fopen($path, 'w+');
+        if( $h ) {
+            fwrite($h, $content);
+            fclose($h);
+            return $path;
+        } else {
+            return array(
+             'state' => false
+            );
+        }
     }
 
     /**

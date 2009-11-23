@@ -77,9 +77,15 @@ ui.task.SaveLangFileTask = function(config)
         },
         failure : function(response)
         {
+            var o = Ext.util.JSON.decode(response.responseText);
+
             // Remove wait msg
             msg.hide();
-            phpDoc.winForbidden();
+            if( o.type ) {
+                phpDoc.winForbidden(o.type);
+            } else {
+                phpDoc.winForbidden();
+            }
         }
     });
 };

@@ -43,11 +43,22 @@ var phpDoc = function()
             new ui.task.LoadConfigTask();
         },
 
-        winForbidden : function()
+        winForbidden : function(type)
         {
+
+            var title = _('Forbidden'),
+                mess  = _('You can\'t do this action as anonymous user.');
+
+            switch (type) {
+                case 'fs_error' :
+                    title = _('Error');
+                    mess  = _('File system error. Check read/write permission under data folder.');
+                    break;
+            }
+
             Ext.MessageBox.alert(
-                _('Forbidden'),
-                _('You can\'t do this action as anonymous user.')
+                title,
+                mess
             );
         },
 
