@@ -14,8 +14,8 @@ require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
-
-    $cmd = 'cd '.DOC_EDITOR_VCS_PATH.';/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
+echo DOC_EDITOR_VCS_PATH;
+    $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'/doc-base/;/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
     $output = array();
     exec($cmd, $output);
 
