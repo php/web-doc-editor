@@ -281,6 +281,22 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         return true;
     }
 
+    public function createCommitLogFile($log)
+    {
+        $path = tempnam(sys_get_temp_dir(), 'Doc_Editor_Commit_Log_Message');
+    
+        $handle = fopen($path, "w");
+        fwrite($handle, $log);
+        fclose($handle);
+
+        return $path;
+    }
+    
+    public function deleteCommitLogFile($path)
+    {
+        @unlink($path);
+    }
+
     /**
      * Executes svn commit
      *
@@ -292,6 +308,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
+
+        $pathLogFile = $this->createCommitLogFile($log);
+
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
             $p = $create[$i]->lang.'/'.$create[$i]->path.'/'.$create[$i]->name;
@@ -338,7 +357,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $log = str_replace("'", "\\'", $log);
         $cmd = $cmdDelete.
                $cmdCreate.
-               "svn ci --no-auth-cache --non-interactive -m '$log' --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
+               "svn ci --no-auth-cache --non-interactive -F $pathLogFile --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
 
         $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; ' .$cmd;
 
@@ -348,6 +367,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             exec($cmd, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
+
+        // Delete tmp logMessage file
+        $this->deleteCommitLogFile($pathLogFile);
 
         return $output;
     }
