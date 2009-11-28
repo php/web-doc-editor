@@ -58,11 +58,9 @@ class RepositoryManager
     public function cleanUp()
     {
         // We cleanUp the database before update vcs and apply again all tools
-        $query = '';
         foreach (array('files', 'translators', 'errorfiles') as $table) {
-            $query .= "TRUNCATE TABLE $table; ";
+            DBConnection::getInstance()->query("TRUNCATE TABLE $table");
         }
-        DBConnection::getInstance()->multi_query($query);
     }
 
     /**
@@ -164,19 +162,17 @@ class RepositoryManager
      */
     public function delPendingCommit($files)
     {
-        $query = '';
     
         for ($i = 0; $i < count($files); $i++) {
-            $query .= sprintf('DELETE FROM `pendingCommit`
+            $query = sprintf('DELETE FROM `pendingCommit`
                 WHERE
                     `lang` = "%s" AND
                     `path` = "%s" AND
-                    `name` = "%s"; ',
+                    `name` = "%s"',
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
+            DBConnection::getInstance()->query($query);
         }
-
-        DBConnection::getInstance()->multi_query($query);
     }
 
     /**
@@ -539,7 +535,6 @@ EOD;
      */
     public function updateTranslatorInfo()
     {
-        $query = '';
     
         foreach ($this->availableLang as $lang) {
 
@@ -577,9 +572,9 @@ EOD;
 
                         $person = array_merge($default, $person);
 
-                        $query .= sprintf(
+                        $query = sprintf(
                             'INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
-                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s"); ',
+                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
                             $lang,
                             DBConnection::getInstance()->real_escape_string($person['nick']),
                             DBConnection::getInstance()->real_escape_string($name),
@@ -587,12 +582,12 @@ EOD;
                             DBConnection::getInstance()->real_escape_string($person['vcs']),
                             DBConnection::getInstance()->real_escape_string($person['editor'])
                         );
+                        DBConnection::getInstance()->query($query);
 
                     }
                 }
             }
         }
-        DBConnection::getInstance()->multi_query($query);
     }
 
     /**
@@ -644,7 +639,6 @@ EOD;
 
             $dirs  = array();
             $files = array();
-            $query = '';
 
             while (($name = readdir($dh)) !== false) {
                 $file = new File($lang, $path, $name);
@@ -665,15 +659,14 @@ EOD;
                 $lang_file = DOC_EDITOR_VCS_PATH .$lang .$f->path .$f->name;
 
                 if (!@is_file($en_file)) {
-                    $query .= sprintf(
+                    $query = sprintf(
                         'INSERT INTO `files` (`lang`, `path`, `name`, `status`)
-                         VALUES ("%s", "%s", "%s", "%s"); ',
+                         VALUES ("%s", "%s", "%s", "%s")',
                         $lang, $f->path, $f->name, 'NotInEN'
                     );
+                    DBConnection::getInstance()->query($query);
                 }
             }
-
-            DBConnection::getInstance()->multi_query($query);
 
             foreach ($dirs as $d) {
                 $this->doUpdateNotInEN($d->path.$d->name.'/', $lang);
@@ -694,7 +687,6 @@ EOD;
 
             $dirs  = array();
             $files = array();
-            $query = '';
 
             while (($name = readdir($dh)) !== false) {
 
@@ -727,9 +719,9 @@ EOD;
                 $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
 
                 // Sql insert.
-                $query .= sprintf(
+                $query = sprintf(
                     'INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
-                        VALUES ("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                        VALUES ("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     'en', $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
                     $ToolsCheckDocResult['check_oldstyle'],
                     $ToolsCheckDocResult['check_undoc'],
@@ -741,6 +733,7 @@ EOD;
                     $ToolsCheckDocResult['check_noexamples'],
                     $ToolsCheckDocResult['check_noerrors']
                 );
+                DBConnection::getInstance()->query($query);
 
                 foreach($this->availableLang as $lang) {
 
@@ -762,14 +755,15 @@ EOD;
                         $xmlid      = ($infoLANG['xmlid']      == 'NULL') ? 'NULL' : $infoLANG['xmlid'];
                         $reviewed   = ($infoLANG['reviewed']   == 'NULL') ? 'NULL' : $infoLANG['reviewed'];
 
-                        $query .= sprintf(
+                        $query = sprintf(
                             'INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
-                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s"); ',
+                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
                             $lang, $xmlid, $lang_file->path, $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
                             $maintainer, $status
                         );
+                        DBConnection::getInstance()->query($query);
 
                         // Check for error in this file ONLY if this file is uptodate
                         if ($revision == $en_revision ) {
@@ -782,16 +776,15 @@ EOD;
                             $error->saveError();
                         }
                     } else {
-                        $query .= sprintf(
+                        $query = sprintf(
                             'INSERT INTO `files` (`lang`, `path`, `name`)
-                                VALUES ("%s", "%s", "%s"); ',
+                                VALUES ("%s", "%s", "%s")',
                             $lang, $lang_file->path, $lang_file->name
                         );
+                        DBConnection::getInstance()->query($query);
                     }
                 }
             }
-
-            DBConnection::getInstance()->multi_query($query);
 
             foreach ($dirs as $d) {
                 $this->applyRevCheck($d->path.$d->name.'/');
@@ -808,18 +801,17 @@ EOD;
      */
     public function delFiles($files)
     {
-        $query = '';
     
         for ($i = 0; $i < count($files); $i++) {
-            $query .= sprintf('DELETE FROM files
+            $query = sprintf('DELETE FROM files
                 WHERE
                     `lang` = "%s" AND
                     `path` = "%s" AND
-                    `name` = "%s"; ',
+                    `name` = "%s"',
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
-        }
-        DBConnection::getInstance()->multi_query($query);
+            DBConnection::getInstance()->query($query);
+        }        
     }
 
 }

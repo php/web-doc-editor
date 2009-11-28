@@ -36,7 +36,7 @@ class DBConnection
     }
 
     public function query($s)
-    {
+    {    
         $r = $this->conn->query($s) or die('Error: '.$this->conn->error.'|'.$s);
         return $r;
     }
