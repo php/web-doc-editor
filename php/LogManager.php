@@ -71,8 +71,8 @@ class LogManager
     /**
      * Save an existing log message into DB.
      *
-     * @param $messID The ID of the log message.
-     * @param $mess The message.
+     * @param $logID The ID of the log message.
+     * @param $log The message.
      */
     public function updateCommitLog($logID, $log)
     {
@@ -86,7 +86,7 @@ class LogManager
     /**
      * Delete a log message into DB.
      *
-     * @param $messID The ID of the log message.
+     * @param $logID The ID of the log message.
      */
     public function delCommitLog($logID)
     {
@@ -114,7 +114,7 @@ class LogManager
      * Get the content of a log file.
      *
      * @param $file The name of the file.
-     * @return $content The content.
+     * @return The content of the log file.
      */
     public function readOutputLog($file)
     {
