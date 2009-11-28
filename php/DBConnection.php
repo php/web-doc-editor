@@ -50,6 +50,12 @@ class DBConnection
     {
         return $this->conn->real_escape_string($escape_str);
     }
+
+    public function multi_query($s)
+    {
+        $r = $this->conn->multi_query($s) or die('Error: '.$this->conn->error.'|'.$s);
+        return $r;
+    }
 }
 
 ?>

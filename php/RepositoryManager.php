@@ -162,16 +162,20 @@ class RepositoryManager
      */
     public function delPendingCommit($files)
     {
+        // Initiate the $s var to store the multi_query
+        $s = '';
+    
         for ($i = 0; $i < count($files); $i++) {
-            $s = sprintf('DELETE FROM `pendingCommit`
+            $s .= sprintf('DELETE FROM `pendingCommit`
                 WHERE
                     `lang` = "%s" AND
                     `path` = "%s" AND
-                    `name` = "%s"',
+                    `name` = "%s"; ',
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
-            DBConnection::getInstance()->query($s);
         }
+
+        DBConnection::getInstance()->multi_query($s);
     }
 
     /**
