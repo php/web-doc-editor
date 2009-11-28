@@ -238,7 +238,7 @@ class RepositoryManager
     {
         $fileInfos = RepositoryFetcher::getInstance()->getModifiesById($ids);
 
-        // Loop over $fileInfos to find files to be create, update, delete
+        // Loop over $fileInfos to find files to be create, update or delete
         $create_stack = array();
         $update_stack = array();
         $delete_stack = array();
@@ -280,7 +280,7 @@ class RepositoryManager
     /**
      * clear local change of a file.
      *
-     * @param $type The type of the file. Can be 'update', 'delete' or new'
+     * @param $type The type of the file. Can be 'update', 'delete' or 'new'
      * @param $file The File instance of the file.
      * @return An array which contain informations about this file.
      */
