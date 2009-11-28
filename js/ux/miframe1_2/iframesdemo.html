@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>IframePanels for ExtJs 2.0</title>
+<title>IframePanels for ExtJs 2.2</title>
 <link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
 
     <!-- GC -->
@@ -11,7 +11,6 @@
  <!-- ENDLIBS -->
 
     <script type="text/javascript" src="../../ext-all.js"></script>
-
      <script type="text/javascript" src="../portal/Portal.js"></script>
      <script type="text/javascript" src="../portal/PortalColumn.js"></script>
      <script type="text/javascript" src="../portal/Portlet.js"></script>
@@ -21,17 +20,42 @@
 
     <script type="text/javascript">
 
+//Ext syntax sugar and FB console emulation
+    if(typeof console == 'undefined'){
+        console = {
+        log: Ext.debug?Ext.log:alert,
+        dir: Ext.debug?Ext.dump:alert,
+        info: Ext.debug?Ext.log:alert,
+        warn: Ext.debug?Ext.log:alert
+        };
+      }
+
+    Ext.apply(window,{
+        $ : Ext.get
+       ,$A: Ext.value
+       ,$C : Ext.getCmp
+       ,$D : Ext.getDom
+       ,$$ : Ext.select
+       ,$Q : Ext.query
+       ,$on: Ext.EventManager.on
+       ,$ready : Ext.onReady
+       ,$l : console.log
+       ,$cd: console.dir
+       ,$for : typeof forEach != 'undefined'? forEach : Ext.each
+
+    });
+
 
     Ext.BLANK_IMAGE_URL = '../../resources/images/default/s.gif';
 
     Ext.onReady(function(){
         Ext.QuickTips.init();
         Ext.QuickTips.getQuickTip().interceptTitles = true;
-        Ext.QuickTips.enable();
+       // Ext.QuickTips.enable();
 
         // create some portlet tools using built in Ext tool ids
        var tools = [{
-               id:'gear',
+               id:'refresh',
                handler: function(e, target, panel){
                    panel.setSrc();
                }
@@ -121,6 +145,7 @@
                         },
                       items:    [{
                           title: 'Iframe Portlet',
+                          id   :'portletBoo',
                           html: 'Notice the way all browsers (except IE) reset the iframe when its DOM parent changes [boo].'
                       },{
                           title: 'Iframe Portlet 2',
@@ -213,36 +238,76 @@
                 loadMask:{hideOnReady :false,msg:'Loading Site...'},
                 autoScroll : true,
                 autoShow:true
-
-
               },
 
-              items: [{
+              items: [ {
+                     id: 'winname'
+                    ,title:'Window.name Test'
+                    ,defaultSrc : null
+                    ,loadMask : false
+                   /* ,listeners : {
+                        domready : function(frame){
+                            console.warn( 'DR ' + frame._targetURI);
+                          console.info( 'domready: Received Result: ' +  frame.getWindow().name );
+
+                        },
+                        documentloaded : function(frame){
+                            console.warn( 'DL ' +frame._targetURI );
+                            if(frame.domWritable()){
+                                console.info( 'docLoaded: Received Result: ' +  frame.getWindow().name );
+
+                            }
+                        }
+                    } */
+                    ,tbar : [{
+                        text: 'Make Cross Domain Request',
+                        handler: function(){
+                          var MIFP;
+                          if(MIFP =Ext.getCmp('winname')){
+                              var f = MIFP.getFrame(),handled = false;
+
+                              f.setSrc('http://licensing.theactivegroup.com/nametest.html?_cb='+new Date().getTime(),
+                                 false ,
+                                 //Reset to our local domain and get the results.
+                                 function(frame){
+                                     frame.reset(null
+                                     ,function(frame){
+                                        frame.update('Received Result: ' +  frame.getWindow().name );
+
+                                     });
+                              });
+
+                           }
+                         }
+                       }
+                      ]
+                    },
+                     {
                      id: 'google'
                     ,title:'Google'
-                    ,frameConfig : {id:'google'}
+                    ,frameConfig : {id:'googles'}
                     ,defaultSrc : function(){return 'http://www.google.com';}
                     ,tbar : buildTBar ()
-                       }, {
+                       },
+                       {
                      id: 'ajaxian'
                     ,title:'Ajaxian'
                     ,frameConfig : {autoCreate:{id:'ajaxianFrame'}}
                     ,defaultSrc :  'http://www.ajaxian.com'
                     ,tbar : buildTBar ()
-                       }, {
-                     id: 'extjs'
-                    ,title:'Ext Forums'
+                       },
+                       {
+                     id: 'MIF'
+                    ,title:'MIF Forum Thread'
                     ,frameConfig : {name:'extjs'}
-                    ,defaultSrc :  'http://extjs.com/forum/showthread.php?t=32310'
+                    ,defaultSrc :  'http://extjs.com/forum/showthread.php?t=40961'
                     ,tbar : buildTBar ()
-                       },{
+                       },
+                       {
                      id: 'bogus'
                     ,title:'Bogus Markup'
-                    ,resetUrl :Ext.isIE&&Ext.isSecure?Ext.SSL_SECURE_URL: ''
                     ,loadMask:{hideOnReady :false,msg:'Loading Printable Bogus Markup...'}
-
                     ,html: '<h1>This Iframe should be printable.</h1>'+Ext.example.bogusMarkup
-
                      ,tbar:[{
                         text: 'Print',
                         handler: printPanel
@@ -252,11 +317,16 @@
                           var i;
                           if(i=Ext.getCmp('sites').activeTab){
                               toggle = !toggle;
-                              if (toggle){
-                                i.setSrc('http://www.google.com', true);
-                              }else{
-                                i.getFrame().reset(null, function(){
-                                    i.getFrame().update('<h1>This Iframe should be printable.</h1>'+Ext.example.bogusMarkup);
+                              if(toggle){
+                                i.getFrame().loadMask.msg='Reloading Google...';
+                                i.setSrc('http://www.google.com');
+
+                              }else{ //reset back to a neutral 'same-origin' domain for document writing
+                                i.getFrame().reset(null, function(frame){
+                                    frame.loadMask.msg='Loading Printable Bogus Markup...';
+                                    frame.update('<h1>This Iframe should be printable.</h1>'+Ext.example.bogusMarkup+
+                                      '<p><img id="bomber" src="http://www.nasa.gov/images/content/84857main_EC04-0325-23_lg.jpg?dc='+new Date().getTime()+'" style="width:300px; height:240px" />'
+                                    );
 
                                 });
 
@@ -272,7 +342,7 @@
 
          Ext.EventManager.on(window, "beforeunload", function(){
 
-           Ext.destroy(viewport, win);
+           Ext.destroy(viewport, win, Ext.QuickTips.getQuickTip());
 
          },window,{single:true});
 
@@ -336,6 +406,7 @@ Ext.example = function(){
 
 Ext.example.shortBogusMarkup = '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed metus nibh, sodales a, porta at, vulputate eget, dui. Pellentesque ut nisl. Maecenas tortor turpis, interdum non, sodales non, iaculis ac, lacus. Vestibulum auctor, tortor quis iaculis malesuada, libero lectus bibendum purus, sit amet tincidunt quam turpis vel lacus. In pellentesque nisl non sem. Suspendisse nunc sem, pretium eget, cursus a, fringilla vel, urna.';
 Ext.example.bogusMarkup = '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed metus nibh, sodales a, porta at, vulputate eget, dui. Pellentesque ut nisl. Maecenas tortor turpis, interdum non, sodales non, iaculis ac, lacus. Vestibulum auctor, tortor quis iaculis malesuada, libero lectus bibendum purus, sit amet tincidunt quam turpis vel lacus. In pellentesque nisl non sem. Suspendisse nunc sem, pretium eget, cursus a, fringilla vel, urna.<br/><br/>Aliquam commodo ullamcorper erat. Nullam vel justo in neque porttitor laoreet. Aenean lacus dui, consequat eu, adipiscing eget, nonummy non, nisi. Morbi nunc est, dignissim non, ornare sed, luctus eu, massa. Vivamus eget quam. Vivamus tincidunt diam nec urna. Curabitur velit.</p>';
+
 
 Ext.onReady(Ext.example.init, Ext.example);
 
