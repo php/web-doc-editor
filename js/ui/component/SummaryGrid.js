@@ -128,6 +128,11 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
             if( id === 1 || id === 2 || id === 3) {
                 Ext.getCmp('acc-need-update').expand();
             }
+            
+            // Available for translation
+            if( id === 5 ) {
+                Ext.getCmp('acc-need-translate').expand();
+            }
         }
     },
 
