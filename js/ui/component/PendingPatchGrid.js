@@ -111,6 +111,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
             }, '-', {
                 scope   : this,
                 text    : _('Reject this patch'),
+                disabled : (phpDoc.userLogin === 'anonymous'),
                 iconCls : 'iconPageDelete',
                 handler : function()
                 {
