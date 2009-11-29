@@ -347,7 +347,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $cmdCreate = $cmdDelete = '';
         if (trim($filesCreate) != '') {
-            $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Revision\" $filesCreate ; ";
+            $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesCreate ; svn propset svn:eol-style \"native\" ; ";
         }
         if (trim($filesDelete) != '') {
             $cmdDelete = "svn delete $filesDelete ; ";
