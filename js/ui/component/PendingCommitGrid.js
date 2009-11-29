@@ -36,7 +36,7 @@ ui.component._PendingCommitGrid.store = Ext.extend(Ext.data.GroupingStore,
         ])
     ),
     sortInfo : {
-        field     : 'path',
+        field     : 'name',
         direction : "ASC"
     },
     groupField : 'path',
