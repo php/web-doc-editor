@@ -1,5 +1,90 @@
 Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
 
+ui.task._VCSCommitTask.getCommitResponse = function()
+{
+    XHR({
+        params  : {
+            task       : 'getCommitResponse'
+        },
+        success : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText);
+            
+            ui.task._VCSCommitTask.afterCommit(o.mess);
+        }
+    });
+}
+
+ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'lock_'+ phpDoc.userLogin +'_commit'
+        },
+        success : function(response)
+        {
+            ui.task._VCSCommitTask.poll.delay(5000);
+        },
+        failure : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            
+            if (o && o.success === false) {
+                tmp = new ui.task._VCSCommitTask.getCommitResponse();
+
+            } else {
+                ui.task._VCSCommitTask.poll.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task._VCSCommitTask.afterCommit = function(mess)
+{
+    var mess, tmp;
+
+    Ext.getBody().unmask();
+
+    // Re-enable TaskPing
+    ui.task.PingTask.getInstance().delay(30000);
+
+    // Display commit output message
+    tmp = new Ext.Window({
+        title      : _('Status'),
+        width      : 450,
+        height     : 350,
+        resizable  : false,
+        modal      : true,
+        autoScroll : true,
+        bodyStyle  : 'background-color: white; padding: 5px;',
+        html       : mess.join("<br/>"),
+        buttons    : [{
+            text    : _('Close'),
+            handler : function()
+            {
+                this.ownerCt.close();
+            }
+        }]
+    }).show();
+
+    // Apply modification
+    if (phpDoc.userLang != 'en') {
+        // Component
+        ui.component.PendingTranslateGrid.getInstance().store.reload();
+        ui.component.StaleFileGrid.getInstance().store.reload();
+        ui.component.ErrorFileGrid.getInstance().store.reload();
+        ui.component.PendingReviewGrid.getInstance().store.reload();
+        ui.component.NotInENGrid.getInstance().store.reload();
+    }
+    // Component
+    ui.component.PendingCommitGrid.getInstance().store.reload();
+    // Stats
+    ui.component.TranslatorGrid.getInstance().store.reload();
+    ui.component.SummaryGrid.getInstance().store.reload();
+
+}
+
 ui.task._VCSCommitTask.commit = function(files)
 {
     Ext.getBody().mask(
@@ -38,6 +123,9 @@ ui.task._VCSCommitTask.commit = function(files)
     // Close this window
     Ext.getCmp('winVCSCommit').close();
 
+    // We need to stop ping test during this process
+    ui.task.PingTask.getInstance().cancel();
+
     XHR({
         params  : {
             task       : 'vcsCommit',
@@ -46,61 +134,24 @@ ui.task._VCSCommitTask.commit = function(files)
         },
         success : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText),
-                tmp;
+            var o = Ext.util.JSON.decode(response.responseText);
+            
+            ui.task._VCSCommitTask.afterCommit(o.mess);
+        },
+        failure : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText);
 
-            Ext.getBody().unmask();
-
-            // Display commit output message
-            tmp = new Ext.Window({
-                title      : _('Status'),
-                width      : 450,
-                height     : 350,
-                resizable  : false,
-                modal      : true,
-                autoScroll : true,
-                bodyStyle  : 'background-color: white; padding: 5px;',
-                html       : o.mess.join("<br/>"),
-                buttons    : [{
-                    text    : _('Close'),
-                    handler : function()
-                    {
-                        this.ownerCt.close();
-                    }
-                }]
-            }).show();
-
-            Ext.getBody().mask(
-                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                _('Please, wait...')
-            );
-
-            // Apply modification
-            XHR({
-                params  : {
-                    task       : 'onSuccesCommit',
-                    nodes      : Ext.util.JSON.encode(nodes),
-                    logMessage : LogMessage
-                },
-                success : function(response)
-                {
-                    if (phpDoc.userLang != 'en') {
-                        // Component
-                        ui.component.PendingTranslateGrid.getInstance().store.reload();
-                        ui.component.StaleFileGrid.getInstance().store.reload();
-                        ui.component.ErrorFileGrid.getInstance().store.reload();
-                        ui.component.PendingReviewGrid.getInstance().store.reload();
-                        ui.component.NotInENGrid.getInstance().store.reload();
-                    }
-                    // Component
-                    ui.component.PendingCommitGrid.getInstance().store.reload();
-                    // Stats
-                    ui.component.TranslatorGrid.getInstance().store.reload();
-                    ui.component.SummaryGrid.getInstance().store.reload();
-
-                    Ext.getBody().unmask();
-                }
-            });
+            if (o && o.success === false) {
+                // Re-enable TaskPing
+                ui.task.PingTask.getInstance().delay(30000);
+                Ext.getBody().unmask();
+                phpDoc.winForbidden();
+            } else {
+                // take over 30sec (max Keep-Alive time)
+                // poll every XX secondes if the check build is finish
+                ui.task._VCSCommitTask.poll.delay(5000);
+            }
         }
     });
 };

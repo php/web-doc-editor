@@ -698,6 +698,16 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    public function getCommitResponse() {
+    
+        return JsonResponseBuilder::success(
+            array(
+                'mess' => $_SESSION['commitResponse']
+            )
+        );
+
+    }
+
     public function vcsCommit()
     {
         AccountManager::getInstance()->isLogged();
@@ -711,105 +721,107 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
-        $r = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
+        // We create a lock for this commit process
+        
+        $lock = new LockFile('lock_'.AccountManager::getInstance()->vcsLogin.'_commit');
+
+        if ($lock->lock()) {
+
+            $commitResponse = '';
+
+            $commitResponse = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
+
+            // Store the response into session to display later
+            $_SESSION['commitResponse'] = $commitResponse;
+
+            // Start all process after the VCS commit
+
+            $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
+
+            // We need to provide a different treatment regarding the file's type...
+            $existFiles = array(); // Can be an updated file or a new file
+            $deleteFiles = array();
+            $j = 0;
+
+            for ($i = 0; $i < count($nodes); $i++) {
+
+                if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
+                    $existFiles[] = new File(
+                        $nodes[$i]['lang'],
+                        $nodes[$i]['path'],
+                        $nodes[$i]['name']
+                    );
+                }
+
+                if( $nodes[$i]['type'] == 'delete' ) {
+                    $deleteFiles[$j]->lang = $nodes[$i]['lang'];
+                    $deleteFiles[$j]->path = $nodes[$i]['path'];
+                    $deleteFiles[$j]->name = $nodes[$i]['name'];
+                    $j ++;
+                }
+
+            }
+
+            // ... for existing Files (new or update)
+            if( !empty($existFiles) ) {
+
+                // Update revision & reviewed for all this files (LANG & EN)
+                RepositoryManager::getInstance()->updateFileInfo($existFiles);
+
+                // Stuff only for LANG files
+                $langFiles = array();
+                $j = 0;
+
+                for ($i = 0; $i < count($existFiles); $i++) {
+                    // Only for lang files.
+                    if( $existFiles[$i]->lang != 'en' ) {
+
+                        $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
+
+                        $info = $existFiles[$i]->getInfo();
+
+                        $langFiles[$j]['en_content']   = $en->read(true);
+                        $langFiles[$j]['lang_content'] = $existFiles[$i]->read(true);
+                        $langFiles[$j]['lang'] = $existFiles[$i]->lang;
+                        $langFiles[$j]['path'] = $existFiles[$i]->path;
+                        $langFiles[$j]['name'] = $existFiles[$i]->name;
+                        $langFiles[$j]['maintainer'] = $info['maintainer'];
+
+                        $j ++;
+                    }
+                }
+                if( !empty($langFiles) ) {
+                    $errorTools = new ToolsError();
+                    $errorTools->updateFilesError($langFiles);
+                }
+                // Remove all this files in needcommit
+                RepositoryManager::getInstance()->delPendingCommit($existFiles);
+            } // End of $existFiles stuff
+
+            // ... for deleted Files
+            if( !empty($deleteFiles) ) {
+
+                // Remove this files from the repository
+                RepositoryManager::getInstance()->delFiles($deleteFiles);
+
+                // Remove all this files in needcommit
+                RepositoryManager::getInstance()->delPendingCommit($deleteFiles);
+
+            } // End of $deleteFiles stuff
+
+            // Manage log message (add new or ignore it if this message already exist for this user)
+            LogManager::getInstance()->addCommitLog($logMessage);
+
+        }
+
+        // Remove the lock File
+        $lock->release();
 
         return JsonResponseBuilder::success(
             array(
-                'mess' => $r
+                'mess' => $commitResponse
             )
         );
-    }
-
-    public function onSuccesCommit()
-    {
-        AccountManager::getInstance()->isLogged();
-
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
-            return JsonResponseBuilder::failure();
-        }
-
-        $nodes = $this->getRequestVariable('nodes');
-        $logMessage = stripslashes($this->getRequestVariable('logMessage'));
-
-        $anode = json_decode(stripslashes($nodes));
-
-        $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
-
-        // We need to provide a different treatment regarding the file's type...
-        $existFiles = array(); // Can be an updated file or a new file
-        $deleteFiles = array();
-        $j = 0;
-
-        for ($i = 0; $i < count($nodes); $i++) {
-
-            if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
-                $existFiles[] = new File(
-                    $nodes[$i]['lang'],
-                    $nodes[$i]['path'],
-                    $nodes[$i]['name']
-                );
-            }
-
-            if( $nodes[$i]['type'] == 'delete' ) {
-                $deleteFiles[$j]->lang = $nodes[$i]['lang'];
-                $deleteFiles[$j]->path = $nodes[$i]['path'];
-                $deleteFiles[$j]->name = $nodes[$i]['name'];
-                $j ++;
-            }
-
-        }
-
-        // ... for existing Files (new or update)
-        if( !empty($existFiles) ) {
-
-            // Update revision & reviewed for all this files (LANG & EN)
-            RepositoryManager::getInstance()->updateFileInfo($existFiles);
-
-            // Stuff only for LANG files
-            $langFiles = array();
-            $j = 0;
-
-            for ($i = 0; $i < count($existFiles); $i++) {
-                // Only for lang files.
-                if( $existFiles[$i]->lang != 'en' ) {
-
-                    $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
-
-                    $info = $existFiles[$i]->getInfo();
-
-                    $langFiles[$j]['en_content']   = $en->read(true);
-                    $langFiles[$j]['lang_content'] = $existFiles[$i]->read(true);
-                    $langFiles[$j]['lang'] = $existFiles[$i]->lang;
-                    $langFiles[$j]['path'] = $existFiles[$i]->path;
-                    $langFiles[$j]['name'] = $existFiles[$i]->name;
-                    $langFiles[$j]['maintainer'] = $info['maintainer'];
-
-                    $j ++;
-                }
-            }
-            if( !empty($langFiles) ) {
-                $errorTools = new ToolsError();
-                $errorTools->updateFilesError($langFiles);
-            }
-            // Remove all this files in needcommit
-            RepositoryManager::getInstance()->delPendingCommit($existFiles);
-        } // End of $existFiles stuff
-
-        // ... for deleted Files
-        if( !empty($deleteFiles) ) {
-
-            // Remove this files from the repository
-            RepositoryManager::getInstance()->delFiles($deleteFiles);
-
-            // Remove all this files in needcommit
-            RepositoryManager::getInstance()->delPendingCommit($deleteFiles);
-
-        } // End of $deleteFiles stuff
-
-        // Manage log message (add new or ignore it if this message already exist for this user)
-        LogManager::getInstance()->addCommitLog($logMessage);
-
-        return JsonResponseBuilder::success();
     }
 
     public function getConf()
