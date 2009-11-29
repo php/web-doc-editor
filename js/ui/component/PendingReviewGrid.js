@@ -71,6 +71,7 @@ ui.component._PendingReviewGrid.columns = [{
 // PendingReviewGrid view
 ui.component._PendingReviewGrid.view = new Ext.grid.GroupingView({
     forceFit     : true,
+    startCollapsed: true,
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
