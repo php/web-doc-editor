@@ -16,7 +16,7 @@ $rm = RepositoryManager::getInstance();
 $rm->updateRepository();
 
 // After update the repo, we need to chmod all file to be able to save it again as www server user & group
-$cmd = "cd ".DOC_EDITOR_VCS_PATH."; chmod -R 775 ./; chown -R  ".DOC_EDITOR_WWW_USER.":".DOC_EDITOR_WWW_GROUP." ./";
+$cmd = "cd ".DOC_EDITOR_VCS_PATH."; chmod -R 777 ./; chown -R  ".DOC_EDITOR_WWW_USER.":".DOC_EDITOR_WWW_GROUP." ./";
 exec($cmd);
 
 // Clean Up DB
