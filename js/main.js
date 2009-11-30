@@ -34,11 +34,6 @@ var phpDoc = function()
 
         init : function()
         {
-            // Stop default contextmenu on all this app
-            Ext.getBody().on('contextmenu', function(e) {
-                e.stopEvent();
-            }, this);
-
             // We load the configuration for this user
             new ui.task.LoadConfigTask();
         },
