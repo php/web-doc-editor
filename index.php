@@ -4,6 +4,13 @@ session_start();
 
 require_once './php/html.templates.php';
 
+// Direct access to file, grant annoymous login
+if (isset($_REQUEST['perm']) && !isset($_SESSION['userID'])) {
+    require_once dirname(__FILE__) . '/php/AccountManager.php';
+
+    AccountManager::getInstance()->login('anonymous', '', array_shift(explode('/', $_REQUEST['perm'])));
+}
+
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
@@ -45,9 +52,14 @@ echo jsLoadTemplate('js/main_override.js');
 //~ echo jsLoadTemplate('js/main.js');
 echo jsLoadTemplate('js/main_min.js');
 
-if (isset($_SESSION['directAccess']) && is_object($_SESSION['directAccess'])) {
-    $directAccess = 'var directAccess = {"lang":"'.$_SESSION['directAccess']->lang.'", "path":"'.$_SESSION['directAccess']->path.'", "name":"'.$_SESSION['directAccess']->name.'"}';
-    $_SESSION['directAccess'] = '';
+if (isset($_REQUEST['perm'])) {
+
+    $_f    = explode('/', $_REQUEST['perm']);
+    $_lang = array_shift($_f);
+    $_file = array_pop($_f);
+    $_path = (count($_f) > 0)? '/'.implode('/', $_f).'/' : '/';
+    $directAccess = 'var directAccess = {"lang":"'.$_lang.'", "path":"'.$_path.'", "name":"'.$_file.'"};';
+
 } else {
     $directAccess = 'var directAccess = false;';
 }
