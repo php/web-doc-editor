@@ -54,7 +54,9 @@ Accept-Encoding: gzip
 
 ', $uri, $host);
 
-        $h = fsockopen($host, $port);
+        $h = @fsockopen($host, $port);
+
+        if( !$h ) { return 'svn.php.net seems to be down !'; }
 
         $matches = array();
         $trial_count = 0;
