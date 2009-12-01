@@ -26,7 +26,7 @@
   - Default data directory location: doc-editor/data
 
 == The Database ==
-* Create a MySQL database as per php/config.inc.php
+* Create a MySQL database as per php/config.inc.php [If you're a developer and don't want to overwrite the default config, create a file local.conf.inc.php that can override the config
 * Import install/doc-editor.sql into this new database
 * Setup configuration options inside php/config.inc.php
 

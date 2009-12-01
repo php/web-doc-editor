@@ -1,5 +1,11 @@
 <?php
 
+if (file_exists(dirname(__FILE__) . '/local.conf.inc.php')) {
+
+    require_once dirname(__FILE__) . '/local.conf.inc.php';
+
+} else {
+
 /**
  * WWW user
  */
@@ -67,3 +73,7 @@ define('DOC_EDITOR_DATA_PATH', dirname(__FILE__).'/../' . 'data/');
  * VCS checkout path
  */
 define('DOC_EDITOR_VCS_PATH', DOC_EDITOR_DATA_PATH . DOC_EDITOR_VCS_MODULE . '/');
+
+}
+
+?>
