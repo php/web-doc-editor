@@ -37,6 +37,9 @@ class File
 
     /**
      * Read the content of a file.
+     * 
+     * @param $readOriginal true to read the original content of the file, false to read the modified file (if any). By default, false.
+     * @return The content of the file.
      */
     public function read($readOriginal=false)
     {
