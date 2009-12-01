@@ -144,7 +144,7 @@ class ExtJsController
     /**
      * Pings the server and user session
      *
-     * @return string "pong" on success, "false" on failure
+     * @return string "pong" & others informations on success, "false" on failure
      */
     public function ping()
     {
@@ -698,7 +698,8 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
-    public function getCommitResponse() {
+    public function getCommitResponse()
+    {
     
         return JsonResponseBuilder::success(
             array(
