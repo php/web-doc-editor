@@ -257,14 +257,19 @@ class RepositoryManager
 
         // html highlight commit log
         $reg = array(
-            '/(COMMITINFO)/',
-            '/(LOGINFO)/',
-            '/(Checking in)/',
-            '/(done)/',
+            '/(Adding)/',
+            '/(Sending)/',
+            '/(Transmitting file data)/',
+            '/(Committed revision)/',
+            '/(A )/',
+            '/(property )/',
+            '/( set on )/'
+            /*
             '/(bailing)/',
             '/(Mailing the commit email to)/',
             '/(Logging in to)/',
             '/(new revision)/'
+            */
         );
         return preg_replace(
             $reg,
