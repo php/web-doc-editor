@@ -53,12 +53,19 @@ echo jsLoadTemplate('js/main_override.js');
 echo jsLoadTemplate('js/main_min.js');
 
 if (isset($_REQUEST['perm'])) {
+    require_once dirname(__FILE__) . '/php/RepositoryFetcher.php';
 
-    $_f    = explode('/', $_REQUEST['perm']);
-    $_lang = array_shift($_f);
-    $_file = array_pop($_f);
-    $_path = (count($_f) > 0)? '/'.implode('/', $_f).'/' : '/';
-    $directAccess = 'var directAccess = {"lang":"'.$_lang.'", "path":"'.$_path.'", "name":"'.$_file.'"};';
+    $_p    = explode('/', trim($_REQUEST['perm'], '/'));
+    $_lang = array_shift($_p);
+    $_file = array_pop($_p);
+
+    $_id   = explode('.', $_file);
+    array_pop($_id);
+    $xmlid = implode('.', $_id);
+
+    $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
+
+    $directAccess = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'"};';
 
 } else {
     $directAccess = 'var directAccess = false;';
