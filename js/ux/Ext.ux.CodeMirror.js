@@ -93,6 +93,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
        indentUnit: 1,
        id:this.id,
        lineNumbers: true,
+       continuousScanning: 500,
        cursorActivity: CursorActivity,
        stylesheet: this.parserStylesheet,
        path: "js/ux/codemirror/js/",
