@@ -68,17 +68,15 @@ opacity:
     padding-top: 7px;
     color: #849090;
 } .CodeMirror-line-numbers {
-    width: 1.7em;
+    width: 2.2em;
+    color: #aaa;
     background-color: #eee;
     text-align: right;
     padding-right: .3em;
-    padding-top: .4em;
-    color: #aaa;
-    font-size: 10pt !important;
+    font-size: 10pt;
     font-family: monospace;
-}
-
-.flag {
+    padding-top: .4em;
+} .flag {
     background-repeat: no-repeat ! important;
     background-position: 3px 50% ! important;
     padding-left: 24px ! important;
