@@ -563,6 +563,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
         {
             title : this.title  + perm,
             permlink : perm,
+            cls: 'code-mirror-panel',
             originTitle : this.title,
             items : [{
                 xtype      : 'codemirror',

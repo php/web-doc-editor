@@ -76,7 +76,13 @@ opacity:
     font-size: 10pt;
     font-family: monospace;
     padding-top: .4em;
-} .flag {
+}
+
+.code-mirror-panel .x-form-element {
+    padding-right: 33px;
+}
+
+ .flag {
     background-repeat: no-repeat ! important;
     background-position: 3px 50% ! important;
     padding-left: 24px ! important;
