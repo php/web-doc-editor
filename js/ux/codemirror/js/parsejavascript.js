@@ -10,6 +10,8 @@
 var JSParser = Editor.Parser = (function() {
   // Token types that can be considered to be atoms.
   var atomicTypes = {"atom": true, "number": true, "variable": true, "string": true, "regexp": true};
+  // Setting that can be used to have JSON data indent properly.
+  var json = false;
   // Constructor for the lexical context objects.
   function JSLexical(indented, column, type, align, prev, info) {
     // indentation at start of this line
@@ -230,6 +232,7 @@ var JSParser = Editor.Parser = (function() {
       if (type == "var") cont(pushlex("vardef"), vardef1, expect(";"), poplex);
       else if (type == "keyword a") cont(pushlex("form"), expression, statement, poplex);
       else if (type == "keyword b") cont(pushlex("form"), statement, poplex);
+      else if (type == "{" && json) cont(pushlex("}"), commasep(objprop, "}"), poplex);
       else if (type == "{") cont(pushlex("}"), block, poplex);
       else if (type == "function") cont(functiondef);
       else if (type == "for") cont(pushlex("form"), expect("("), pushlex(")"), forspec1, expect(")"), poplex, statement, poplex);
@@ -300,19 +303,24 @@ var JSParser = Editor.Parser = (function() {
       if (type == "variable"){register(value); cont(vardef2);}
       else cont();
     }
-    function vardef2(type){
-      if (type == "operator") cont(expression, vardef2);
+    function vardef2(type, value){
+      if (value == "=") cont(expression, vardef2);
       else if (type == ",") cont(vardef1);
     }
     // For loops.
     function forspec1(type){
       if (type == "var") cont(vardef1, forspec2);
       else if (type == ";") pass(forspec2);
-      else cont(expression, forspec2);
+      else if (type == "variable") cont(formaybein);
+      else pass(forspec2);
     }
-    function forspec2(type){
-      if (type == ",") cont(forspec1);
-      else if (type == ";") cont(forspec3);
+    function formaybein(type, value){
+      if (value == "in") cont(expression);
+      else cont(maybeoperator, forspec2);
+    }
+    function forspec2(type, value){
+      if (type == ";") cont(forspec3);
+      else if (value == "in") cont(expression);
       else cont(expression, expect(";"), forspec3);
     }
     function forspec3(type) {
@@ -332,5 +340,11 @@ var JSParser = Editor.Parser = (function() {
     return parser;
   }
 
-  return {make: parseJS, electricChars: "{}:"};
+  return {
+    make: parseJS,
+    electricChars: "{}:",
+    configure: function(obj) {
+      if (obj.json != null) json = obj.json;
+    }
+  };
 })();
