@@ -73,10 +73,6 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
     listeners : {
-        render : function(grid)
-        {
-            grid.store.load.defer(20, grid.store);
-        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
             grid.getSelectionModel().selectRow(rowIndex);

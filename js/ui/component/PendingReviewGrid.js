@@ -379,7 +379,6 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             store : new ui.component._PendingReviewGrid.store({
-                autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesNeedReviewed'
                 })

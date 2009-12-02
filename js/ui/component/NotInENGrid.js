@@ -200,7 +200,6 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             store : new ui.component._NotInENGrid.store({
-                autoLoad : (phpDoc.userLang === 'en') ? false : true,
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesNotInEn'
                 })

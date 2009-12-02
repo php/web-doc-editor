@@ -116,10 +116,6 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
     view       : ui.component._SummaryGrid.view,
 
     listeners : {
-        render : function(grid)
-        {
-            grid.store.load.defer(20, grid.store);
-        },
         rowdblclick : function ( grid, rowIndex, e )
         {
             var id = grid.store.getAt(rowIndex).data.id;

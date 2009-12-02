@@ -491,7 +491,6 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             store : new ui.component._PendingCommitGrid.store({
-                autoLoad : true,
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesPendingCommit'
                 })

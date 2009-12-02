@@ -357,7 +357,6 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             store : new ui.component._ErrorFileGrid.store({
-                autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesError'
                 })

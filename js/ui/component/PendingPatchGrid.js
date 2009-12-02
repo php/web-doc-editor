@@ -290,7 +290,6 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             store : new ui.component._PendingPatchGrid.store({
-                autoLoad : true,
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesPendingPatch'
                 })

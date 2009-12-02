@@ -364,7 +364,6 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         {
             columns : ui.component._StaleFileGrid.columns,
             store   : new ui.component._StaleFileGrid.store({
-                autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesNeedUpdate'
                 })

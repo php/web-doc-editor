@@ -182,7 +182,6 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         {
             columns : ui.component._PendingTranslateGrid.columns,
             store   : new ui.component._PendingTranslateGrid.store({
-                autoLoad : (phpDoc.userLang !== 'en'),
                 proxy : new Ext.data.HttpProxy({
                     url : './do/getFilesNeedTranslate'
                 })

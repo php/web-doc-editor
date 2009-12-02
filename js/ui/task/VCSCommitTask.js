@@ -68,20 +68,8 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
         }]
     }).show();
 
-    // Apply modification
-    if (phpDoc.userLang != 'en') {
-        // Component
-        ui.component.PendingTranslateGrid.getInstance().store.reload();
-        ui.component.StaleFileGrid.getInstance().store.reload();
-        ui.component.ErrorFileGrid.getInstance().store.reload();
-        ui.component.PendingReviewGrid.getInstance().store.reload();
-        ui.component.NotInENGrid.getInstance().store.reload();
-    }
-    // Component
-    ui.component.PendingCommitGrid.getInstance().store.reload();
-    // Stats
-    ui.component.TranslatorGrid.getInstance().store.reload();
-    ui.component.SummaryGrid.getInstance().store.reload();
+    // Reload all store
+    phpDoc.reloadAllStore();
 
 }
 

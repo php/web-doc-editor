@@ -57,6 +57,133 @@ var phpDoc = function()
             );
         },
 
+        loadAllStore: function() {
+
+            // Store to load for LANG project
+            if (phpDoc.userLang !== 'en') {
+                // We load all stores, one after the others
+                document.getElementById("loading-msg").innerHTML = "Loading data 1/8...";
+                ui.component.PendingTranslateGrid.getInstance().store.load({
+                    callback: function() {
+                        document.getElementById("loading-msg").innerHTML = "Loading data 2/8...";
+                        ui.component.StaleFileGrid.getInstance().store.load({
+                            callback: function() {
+                                document.getElementById("loading-msg").innerHTML = "Loading data 3/8...";
+                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                    callback: function() {
+                                        document.getElementById("loading-msg").innerHTML = "Loading data 4/8...";
+                                        ui.component.PendingReviewGrid.getInstance().store.load({
+                                            callback: function() {
+                                                document.getElementById("loading-msg").innerHTML = "Loading data 5/8...";
+                                                ui.component.NotInENGrid.getInstance().store.load({
+                                                    callback: function() {
+                                                        document.getElementById("loading-msg").innerHTML = "Loading data 6/8...";
+                                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                                            callback: function() {
+                                                                document.getElementById("loading-msg").innerHTML = "Loading data 7/8...";
+                                                                ui.component.PendingPatchGrid.getInstance().store.load({
+                                                                    callback: function() {
+                                                                        document.getElementById("loading-msg").innerHTML = "Loading data 8/8...";
+                                                                        ui.component.SummaryGrid.getInstance().store.load({
+                                                                            callback: function() {
+                                                                                // Now, we can to remove the global mask
+                                                                                Ext.get('loading').remove();
+                                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Store to load only for EN project
+                document.getElementById("loading-msg").innerHTML = "Loading data 1/3...";
+                ui.component.PendingCommitGrid.getInstance().store.load({
+                    callback: function() {
+                        document.getElementById("loading-msg").innerHTML = "Loading data 2/3...";
+                        ui.component.PendingPatchGrid.getInstance().store.load({
+                            callback: function() {
+                                document.getElementById("loading-msg").innerHTML = "Loading data 3/3...";
+                                ui.component.LocalMailGrid.getInstance().store.load({
+                                    callback: function() {
+                                        // Now, we can to remove the global mask
+                                        Ext.get('loading').remove();
+                                        Ext.fly('loading-mask').fadeOut({ remove : true });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            }
+
+        },
+
+        reloadAllStore: function() {
+
+            // Store to reload for LANG project
+            if (phpDoc.userLang !== 'en') {
+                // We reload all stores, one after the others
+                ui.component.PendingTranslateGrid.getInstance().store.reload({
+                    callback: function() {
+                        ui.component.StaleFileGrid.getInstance().store.reload({
+                            callback: function() {
+                                ui.component.ErrorFileGrid.getInstance().store.reload({
+                                    callback: function() {
+                                        ui.component.PendingReviewGrid.getInstance().store.reload({
+                                            callback: function() {
+                                                ui.component.NotInENGrid.getInstance().store.reload({
+                                                    callback: function() {
+                                                        ui.component.PendingCommitGrid.getInstance().store.reload({
+                                                            callback: function() {
+                                                                ui.component.PendingPatchGrid.getInstance().store.reload({
+                                                                    callback: function() {
+                                                                        ui.component.SummaryGrid.getInstance().store.reload({
+                                                                            callback: function() {
+                                                                                ui.component.TranslatorGrid.getInstance().store.reload();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Store to reload only for EN project
+                ui.component.PendingCommitGrid.getInstance().store.reload({
+                    callback: function() {
+                        ui.component.PendingPatchGrid.getInstance().store.reload({
+                            callback: function() {
+                                ui.component.LocalMailGrid.getInstance().store.reload();
+                            }
+                        });
+                    }
+                });
+
+            }
+
+        },
+
         // Need confirm if we want to close a tab and the content have been modified.
         removeTabEvent : function(tabpanel, tab)
         {
@@ -314,10 +441,8 @@ var phpDoc = function()
                     }]
                 }]
             });
-
-            // Remove the global loading message
-            Ext.get('loading').remove();
-            Ext.fly('loading-mask').fadeOut({ remove : true });
+            // Load all store & remove the mask after all store are loaded
+            this.loadAllStore();
 
             // Direct access to a file as anonymous user
             if (directAccess) {
