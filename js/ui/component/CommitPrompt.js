@@ -80,10 +80,6 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
                 valueField    : 'id',
                 displayField  : 'text',
                 listeners : {
-                    render : function(combo)
-                    {
-                        combo.store.load();
-                    },
                     select : function(combo, record, numIndex)
                     {
                         Ext.getCmp('form-commit-message-log').setValue(record.data.text);

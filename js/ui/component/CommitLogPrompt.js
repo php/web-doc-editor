@@ -119,6 +119,10 @@ ui.component._CommitLogPrompt.grid = Ext.extend(Ext.grid.EditorGridPanel,
     sm    : ui.component._CommitLogPrompt.sm,
     store : ui.component._CommitLogPrompt.store,
     listeners : {
+        render : function(grid)
+        {
+            grid.store.load();
+        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
             grid.getSelectionModel().selectRow(rowIndex);
