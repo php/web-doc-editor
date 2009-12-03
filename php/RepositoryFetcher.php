@@ -368,7 +368,7 @@ class RepositoryFetcher
             $ext = array_pop(explode('.', $a->name));
             $files[] = array(
                 'text'      => $a->lang.$a->path.$a->name,
-                'id'        => '//'.$a->lang.$a->path.$a->name,
+                'id'        => '/'.$a->lang.$a->path.$a->name,
                 'leaf'      => true,
                 'cls'       => 'file',
                 'extension' => $ext,
