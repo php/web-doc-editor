@@ -75,7 +75,7 @@ class RepositoryFetcher
      */
     public function getModifiesById($id)
     {
-        $ids = is_array($id) ? implode($id, ',') : id;
+        $ids = is_array($id) ? implode($id, ',') : $id;
 
         $s = sprintf(
             'SELECT * FROM `pendingCommit` WHERE
