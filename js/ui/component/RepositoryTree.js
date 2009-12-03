@@ -120,6 +120,9 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
     listeners: {
         contextmenu : function(node, e)
         {
+
+            e.stopEvent();
+
             var tmp;
             node.select();
 

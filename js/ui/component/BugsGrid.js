@@ -72,6 +72,9 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             grid.getSelectionModel().selectRow(rowIndex);
 
             var tmp = new Ext.menu.Menu({

@@ -75,6 +75,9 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             grid.getSelectionModel().selectRow(rowIndex);
 
             var tmp = new Ext.menu.Menu({

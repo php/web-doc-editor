@@ -127,6 +127,9 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             grid.getSelectionModel().selectRow(rowIndex);
 
             if (!grid.store.getAt(rowIndex).data.needcommit) {

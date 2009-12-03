@@ -416,6 +416,9 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             var storeRecord = grid.store.getAt(rowIndex),
                 FileType    = storeRecord.data.type,
                 FilePath    = storeRecord.data.path,

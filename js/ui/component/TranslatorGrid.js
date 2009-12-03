@@ -177,6 +177,9 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowcontextmenu: function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             var TranslatorEmail = grid.store.getAt(rowIndex).data.email,
                 TranslatorName  = grid.store.getAt(rowIndex).data.name;
 

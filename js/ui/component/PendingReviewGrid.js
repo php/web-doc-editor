@@ -255,6 +255,9 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+
             var storeRecord = grid.store.getAt(rowIndex),
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,

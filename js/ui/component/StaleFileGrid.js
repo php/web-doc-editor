@@ -213,6 +213,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     listeners        : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             var FilePath = grid.store.getAt(rowIndex).data.path,
                 FileName = grid.store.getAt(rowIndex).data.name,
                 tmp;

@@ -177,6 +177,9 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
+
+            e.stopEvent();
+        
             grid.getSelectionModel().selectRow(rowIndex);
         },
         rowdblclick : function(grid, rowIndex, e)
