@@ -501,9 +501,11 @@ EOD;
 
             } else { // lang file
 
-                $pathEN    = DOC_EDITOR_VCS_PATH.'en'.$file->path.$file->name;
-                $sizeEN    = intval(filesize($pathEN) / 1024);
-                $dateEN    = filemtime($pathEN);
+                $en        = new File('en', $file->path, $file->name);
+                $enInfo    = $en->getInfo();
+
+                $sizeEN    = intval(filesize($enInfo->full_path) / 1024);
+                $dateEN    = filemtime($enInfo->full_path);
 
                 $size_diff = $sizeEN - $size;
                 $date_diff = (intval((time() - $dateEN) / 86400))
@@ -514,6 +516,7 @@ EOD;
                     'UPDATE `files`
                         SET
                             `revision`   = "%s",
+                            `en_revision`= "%s",
                             `reviewed`   = "%s",
                             `size`       = "%s",
                             `mdate`      = "%s",
@@ -525,8 +528,8 @@ EOD;
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
-                    $info['en-rev'],     $info['reviewed'], $size, $date,
-                    $info['maintainer'], $info['status'],   $size_diff,
+                    $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
+                    trim($info['maintainer']), trim($info['status']),   $size_diff,
                     $date_diff, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
