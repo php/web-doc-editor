@@ -18,10 +18,12 @@
     background: white;
     color: #444;
     font: bold 13px tahoma, arial, helvetica;
-    padding: 10px;
-    margin: 0;
+    padding: 0;
+    margin: 10px;
     height: auto;
 } #loading-msg {
+    background: transparent url(../themes/img/loading.gif) no-repeat 0 0;
+    padding: 2px 0 2px 18px;
     font: normal 10px arial, tahoma, sans-serif;
 } #loading-php-logo {
     width: 95px;
