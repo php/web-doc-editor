@@ -73,6 +73,9 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
     listeners : {
+        render: function(grid) {
+            if( phpDoc.userLang !== 'en' ) { grid.store.load.defer(20, grid.store); }
+        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
 
