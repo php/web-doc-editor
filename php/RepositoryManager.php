@@ -504,8 +504,8 @@ EOD;
                 $en        = new File('en', $file->path, $file->name);
                 $enInfo    = $en->getInfo();
 
-                $sizeEN    = intval(filesize($enInfo->full_path) / 1024);
-                $dateEN    = filemtime($enInfo->full_path);
+                $sizeEN    = intval(filesize($en->full_path) / 1024);
+                $dateEN    = filemtime($en->full_path);
 
                 $size_diff = $sizeEN - $size;
                 $date_diff = (intval((time() - $dateEN) / 86400))
