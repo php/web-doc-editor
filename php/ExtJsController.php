@@ -588,6 +588,14 @@ class ExtJsController
         $Rev1 = $this->getRequestVariable('Rev1');
         $Rev2 = $this->getRequestVariable('Rev2');
 
+        // Ensure Rev2 is always a value greater than Rev1
+        if( $Rev2 < $Rev1 )
+        {
+            $tmp = $Rev2;
+            $Rev2 = $Rev1;
+            $Rev1 = $tmp;
+        }
+
         $file = new File($FileLang, $FilePath, $FileName);
         $r = $file->vcsDiff($Rev1, $Rev2);
 
