@@ -139,6 +139,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
     insertIntoLine : function(line, position, text) {
      var lineObj = this.mirror.nthLine(line);
      this.mirror.insertIntoLine(lineObj, position, text);
+     this.fireEvent('cmchange');
     },
 
     scrollTo : function(scrollY) {
