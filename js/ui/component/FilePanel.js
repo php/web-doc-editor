@@ -338,7 +338,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 // FilePanel
 // config - {
 //    id, title, prefix, ftype {'EN' | 'LANG'},
-//    fid, fpath, fname, lang, xmlid,
+//    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
 //    isPatch, fuid,               pending patch file config
