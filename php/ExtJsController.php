@@ -340,12 +340,17 @@ class ExtJsController
         $file     = new File($FileLang, $FilePath, $FileName);
         $content  = $file->read($readOriginal);
         $encoding = $file->getEncoding($content);
+        $info     = $file->getInfo($content);
 
         $return = array();
         if (strtoupper($encoding) == 'UTF-8') {
             $return['content'] = $content;
         } else {
             $return['content'] = iconv($encoding, "UTF-8", $content);
+        }
+
+        if (isset($info['xmlid'])) {
+            $return['xmlid'] = $info['xmlid'];
         }
 
         return JsonResponseBuilder::success($return);
@@ -708,7 +713,7 @@ class ExtJsController
 
     public function getCommitResponse()
     {
-    
+
         return JsonResponseBuilder::success(
             array(
                 'mess' => $_SESSION['commitResponse']
@@ -731,7 +736,7 @@ class ExtJsController
         $anode = json_decode(stripslashes($nodes));
 
         // We create a lock for this commit process
-        
+
         $lock = new LockFile('lock_'.AccountManager::getInstance()->vcsLogin.'_commit');
 
         if ($lock->lock()) {

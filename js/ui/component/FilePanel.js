@@ -338,7 +338,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 // FilePanel
 // config - {
 //    id, title, prefix, ftype {'EN' | 'LANG'},
-//    fid, fpath, fname, lang,
+//    fid, fpath, fname, lang, xmlid,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
 //    isPatch, fuid,               pending patch file config
@@ -555,14 +555,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             this.tbar = [{}]; // empty tbar for readonly file
         }
 
-        var path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
-                   + '?perm=' + this.lang + this.fpath + this.fname;
-        var perm = '&nbsp;<a href="' + path + '">permlink</a>';
-
         Ext.apply(this,
         {
-            title : this.title  + perm,
-            permlink : perm,
+            title : this.title,
             cls: 'code-mirror-panel',
             originTitle : this.title,
             items : [{

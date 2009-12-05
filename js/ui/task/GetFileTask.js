@@ -28,7 +28,16 @@ ui.task.GetFileTask = function(config)
         {
             var o = Ext.util.JSON.decode(response.responseText);
 
+            var path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid + '.php';
+            var perm = '&nbsp;<a href="' + path + '">permlink</a>';
+
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
+
+            var p = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+            p.permlink = (o.xmlid != 'NULL')? perm : '';
+            p.setTitle(p.originTitle + p.permlink);
+
             Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
         },
         callback : function()
