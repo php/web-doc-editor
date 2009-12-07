@@ -257,11 +257,13 @@ class RepositoryManager
 
         // html highlight commit log
         $reg = array(
-            '/(Adding)/',
-            '/(Sending)/',
+            '/(Adding )/',
+            '/(Sending )/',
+            '/(Deleting )/',
             '/(Transmitting file data)/',
             '/(Committed revision)/',
             '/(A )/',
+            '/(D )/',
             '/(property )/',
             '/( set on )/'
             /*
