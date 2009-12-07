@@ -7,7 +7,6 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
     layout    : 'fit',
     title     : _('Diff From VCS'),
     height    : 150,
-    collapsed : true,
 
     initComponent : function()
     {

@@ -8,7 +8,6 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
     title      : _('Diff From VCS'),
     height     : 150,
     autoScroll : true,
-    collapsed  : true,
     listeners  : {
         render : function()
         {
