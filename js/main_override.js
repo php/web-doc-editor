@@ -9,14 +9,14 @@ Ext.ux.TabCloseMenu = function(){
         if (!menu) { // create context menu on first right click
             menu = new Ext.menu.Menu([{
                 id: tabs.id + '-close',
-                text: 'Close Tab',
+                text: _('Close Tab'),
                 handler: function(){
                     tabs.remove(ctxItem);
                 }
             }, {
                 id: tabs.id + '-close-others',
                 iconCls: 'closeOthersTabs',
-                text: 'Close Other Tabs',
+                text: _('Close Other Tabs'),
                 handler: function(){
                     tabs.items.each(function(item){
                         if (item.closable && item != ctxItem) {

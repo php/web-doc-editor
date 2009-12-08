@@ -10,6 +10,9 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
 
+i18n["Close Tab"] = "Fermer cet onglet";
+i18n["Close Other Tabs"] = "Fermer tous les autres onglets";
+
 i18n["Error"] = "Erreur";
 i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
 
