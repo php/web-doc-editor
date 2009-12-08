@@ -50,7 +50,6 @@ Ext.override(Ext.form.Checkbox, {
         if (this.inputValue !== undefined) {
             this.el.dom.value = this.inputValue;
         }
-        //this.el.addClass('x-hidden');
         this.innerWrap = this.el.wrap({
             //tabIndex: this.tabIndex,
             cls: this.baseCls + '-wrap-inner'
@@ -71,11 +70,6 @@ Ext.override(Ext.form.Checkbox, {
                 html: this.boxLabel
             });
         }
-        //this.imageEl = this.innerWrap.createChild({
-        //tag: 'img',
-        //src: Ext.BLANK_IMAGE_URL,
-        //cls: this.baseCls
-        //}, this.el);
         if (this.checked) {
             this.setValue(true);
         }
@@ -86,24 +80,19 @@ Ext.override(Ext.form.Checkbox, {
     },
     afterRender: function(){
         Ext.form.Checkbox.superclass.afterRender.call(this);
-        //this.wrap[this.checked ? 'addClass' : 'removeClass'](this.checkedCls);
         this.imageEl[this.checked ? 'addClass' : 'removeClass'](this.checkedCls);
     },
     initCheckEvents: function(){
-        //this.innerWrap.removeAllListeners();
         this.innerWrap.addClassOnOver(this.overCls);
         this.innerWrap.addClassOnClick(this.mouseDownCls);
         this.innerWrap.on('click', this.onClick, this);
-        //this.innerWrap.on('keyup', this.onKeyUp, this);
     },
     onFocus: function(e){
         Ext.form.Checkbox.superclass.onFocus.call(this, e);
-        //this.el.addClass(this.focusCls);
         this.innerWrap.addClass(this.focusCls);
     },
     onBlur: function(e){
         Ext.form.Checkbox.superclass.onBlur.call(this, e);
-        //this.el.removeClass(this.focusCls);
         this.innerWrap.removeClass(this.focusCls);
     },
     onClick: function(e){
@@ -115,7 +104,6 @@ Ext.override(Ext.form.Checkbox, {
                 this.toggleValue();
             }
         }
-        //e.stopEvent();
     },
     onEnable: Ext.form.Checkbox.superclass.onEnable,
     onDisable: Ext.form.Checkbox.superclass.onDisable,
@@ -126,7 +114,6 @@ Ext.override(Ext.form.Checkbox, {
         if (this.rendered) {
             this.el.dom.checked = this.checked;
             this.el.dom.defaultChecked = this.checked;
-            //this.wrap[this.checked ? 'addClass' : 'removeClass'](this.checkedCls);
             this.imageEl[this.checked ? 'addClass' : 'removeClass'](this.checkedCls);
         }
         if (checked != this.checked) {
@@ -137,10 +124,6 @@ Ext.override(Ext.form.Checkbox, {
         }
     },
     getResizeEl: function(){
-        //if(!this.resizeEl){
-        //this.resizeEl = Ext.isSafari ? this.wrap : (this.wrap.up('.x-form-element', 5) || this.wrap);
-        //}
-        //return this.resizeEl;
         return this.wrap;
     }
 });
