@@ -64,6 +64,17 @@ class RepositoryManager
     }
 
     /**
+     * CleanUp the dataBase before check the build.
+     * We only stock in DB the last status for one language.
+     *
+     * @see checkBuild
+     */
+    public function cleanUpBeforeCheckBuild()
+    {
+        DBConnection::getInstance()->query("TRUNCATE TABLE `buildLog`");
+    }
+
+    /**
      * Update the repository to sync our local copy.
      * As this exec command take some time, we start by creating a lock file, then run the command, then delete this lock file.
      * As it, we can test if this command has finish, or not.

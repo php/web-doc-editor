@@ -12,6 +12,9 @@ require_once dirname(__FILE__) . '/../../php/AccountManager.php';
 require_once dirname(__FILE__) . '/../../php/LogManager.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
+// We cleanUp the DB before this process
+RepositoryManager::getInstance()->cleanUpBeforeCheckBuild();
+
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
 
