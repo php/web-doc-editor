@@ -89,7 +89,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
        readOnly: this.readOnly,
        content: this.value,
        parserfile: this.parserFile,
-       parserConfig: {alignCDATA: true},
+       parserConfig: {alignCDATA: true, useHTMLKludges: false},
        indentUnit: 1,
        id:this.id,
        lineNumbers: true,
