@@ -29,7 +29,7 @@ ui.task.GetFileTask = function(config)
             var o = Ext.util.JSON.decode(response.responseText);
 
             var path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
-                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid + '.php';
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php';
             var perm = '&nbsp;<a href="' + path + '">permlink</a>';
 
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
