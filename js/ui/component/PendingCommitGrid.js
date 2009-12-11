@@ -459,22 +459,29 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 FileType    = storeRecord.data.type,
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
-                tmp;
+                FileLang, tmp;
 
             if (FileType === 'update') {
 
-                // Find the id of this row into StaleFileGrid.store and open it !
                 tmp = FilePath.split('/');
+                FileLang = tmp[0];
                 tmp.shift();
 
                 FilePath = "/" + tmp.join('/');
 
-                ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+                // For EN file, we open this new file into the "All files" module
+                if( FileLang === 'en' ) {
+                    ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+                } else {
 
-                    if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
-                        ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
-                    }
-                });
+                    // Find the id of this row into StaleFileGrid.store and open it !
+                    ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+
+                        if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                            ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                        }
+                    });
+                }
 
             }
 
