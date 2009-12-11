@@ -65,12 +65,12 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
             FileLang, FilePath;
 
             t.shift();
+            FileLang = t[0];
             t.shift();
             t.pop();
 
-            FileLang = t.shift();
             FilePath = t.join('/') + '/';
-
+ 
         Ext.apply(this,
         {
             items : [{
@@ -332,6 +332,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
 
         var t = fpath.split('/'), cb = function(node)
         {
+
             node.ensureVisible();
             if (t[0] && t[0] !== '') {
                 // walk into childs
