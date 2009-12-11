@@ -88,6 +88,9 @@ class ExtJsController
         }
     }
 
+    /**
+     * Update the repository
+     */
     public function updateRepository()
     {
         AccountManager::getInstance()->isLogged();
@@ -100,6 +103,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Check if a lock file exist or not
+     */
     public function checkLockFile()
     {
         $lockFile = $this->getRequestVariable('lockFile');
@@ -111,6 +117,9 @@ class ExtJsController
             : JsonResponseBuilder::failure();
     }
 
+    /**
+     * Apply all tools on the documentation
+     */
     public function applyTools()
     {
         AccountManager::getInstance()->isLogged();
@@ -162,6 +171,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files witch need to be updated
+     */
     public function getFilesNeedUpdate()
     {
         AccountManager::getInstance()->isLogged();
@@ -175,6 +187,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files witch need to be translated from scratch
+     */
     public function getFilesNeedTranslate()
     {
         AccountManager::getInstance()->isLogged();
@@ -188,6 +203,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files who are not in the EN tree
+     */
     public function getFilesNotInEn()
     {
         AccountManager::getInstance()->isLogged();
@@ -201,6 +219,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files witch need to be reviewed
+     */
     public function getFilesNeedReviewed()
     {
         AccountManager::getInstance()->isLogged();
@@ -214,6 +235,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files from witch an error have been detected
+     */
     public function getFilesError()
     {
         AccountManager::getInstance()->isLogged();
@@ -230,6 +254,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files witch need to be commited
+     */
     public function getFilesPendingCommit()
     {
         AccountManager::getInstance()->isLogged();
@@ -244,6 +271,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all patch created by users
+     */
     public function getFilesPendingPatch()
     {
         AccountManager::getInstance()->isLogged();
@@ -258,6 +288,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get some statistics from translators
+     */
     public function getTranslatorInfo()
     {
         AccountManager::getInstance()->isLogged();
@@ -272,6 +305,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get some generals statistics
+     */
     public function getSummaryInfo()
     {
         AccountManager::getInstance()->isLogged();
@@ -286,6 +322,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get lasts news from the LANG mailing list
+     */
     public function getLastNews()
     {
         AccountManager::getInstance()->isLogged();
@@ -301,6 +340,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all open bugs from php's bugtracker. The title of the bug need to be prefixed by [LANG] to be found.
+     */
     public function getOpenBugs()
     {
         AccountManager::getInstance()->isLogged();
@@ -316,6 +358,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get the content of a file
+     */
     public function getFile()
     {
         AccountManager::getInstance()->isLogged();
@@ -356,6 +401,9 @@ class ExtJsController
         return JsonResponseBuilder::success($return);
     }
 
+    /**
+     * Check if a file have an error according to ToolsError's class.
+     */
     public function checkFileError()
     {
         AccountManager::getInstance()->isLogged();
@@ -405,6 +453,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Save a file. The new file have an extension like ".new", and is saved in the same folder as the original.
+     */
     public function saveFile()
     {
         AccountManager::getInstance()->isLogged();
@@ -536,6 +587,9 @@ class ExtJsController
         }
     }
 
+    /**
+     * Get VCS log for a given file.
+     */
     public function getLog()
     {
         AccountManager::getInstance()->isLogged();
@@ -552,6 +606,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get the diff of a given file, between the modified and the original version
+     */
     public function getDiff()
     {
         AccountManager::getInstance()->isLogged();
@@ -580,6 +637,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get the diff of a given file, between REV1 & REV2
+     */
     public function getDiff2()
     {
         AccountManager::getInstance()->isLogged();
@@ -611,6 +671,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Erase personal data from this application (cleanUp the database)
+     */
     public function erasePersonalData()
     {
         AccountManager::getInstance()->isLogged();
@@ -624,6 +687,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Get the commit log Message after a VCS commit.
+     */
     public function getCommitLogMessage()
     {
         AccountManager::getInstance()->isLogged();
@@ -637,6 +703,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Revert a modification made in a file
+     */
     public function clearLocalChange()
     {
         AccountManager::getInstance()->isLogged();
@@ -671,6 +740,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get the content of a log's file
+     */
     public function getLogFile()
     {
         AccountManager::getInstance()->isLogged();
@@ -686,6 +758,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Check the build for a given LANG documentation
+     */
     public function checkBuild()
     {
         AccountManager::getInstance()->isLogged();
@@ -711,6 +786,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Get the response of the VCS after a commit
+     */
     public function getCommitResponse()
     {
 
@@ -722,6 +800,9 @@ class ExtJsController
 
     }
 
+    /**
+     * Commit modified files.
+     */
     public function vcsCommit()
     {
         AccountManager::getInstance()->isLogged();
@@ -838,6 +919,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get the UI's configuration for the current user
+     */
     public function getConf()
     {
         AccountManager::getInstance()->isLogged();
@@ -854,6 +938,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Send an email.
+     */
     public function sendEmail()
     {
         AccountManager::getInstance()->isLogged();
@@ -867,6 +954,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Update a given UI configuration's option for the current user
+     */
     public function confUpdate()
     {
         AccountManager::getInstance()->isLogged();
@@ -879,6 +969,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Get all files from the repository. Also used to search for some files into the current LANG & EN documentation
+     */
     public function getAllFiles()
     {
         AccountManager::getInstance()->isLogged();
@@ -892,13 +985,12 @@ class ExtJsController
             $files = RepositoryFetcher::getInstance()->getFilesByDirectory($node);
         }
 
-// for extjs.TreeLoader, Loader must accept TreeNode objects only
         return JsonResponseBuilder::response($files);
-/*
-        return JsonResponseBuilder::success($files);
-*/
     }
 
+    /**
+     * Save a log message into DB to use it later
+     */
     public function saveLogMessage()
     {
         AccountManager::getInstance()->isLogged();
@@ -915,6 +1007,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Delete a log message from the DB
+     */
     public function deleteLogMessage()
     {
         AccountManager::getInstance()->isLogged();
@@ -930,6 +1025,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Get all files for a given Extension. Allow user who reviewed the documentation to open all files about a given extension.
+     */
     public function getAllFilesAboutExtension()
     {
         AccountManager::getInstance()->isLogged();
@@ -945,6 +1043,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * All tasks to be done after a patch have been accepted
+     */
     public function afterPatchAccept()
     {
         AccountManager::getInstance()->isLogged();
@@ -956,6 +1057,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * All tasks to be done after a patch have been rejected
+     */
     public function afterPatchReject()
     {
         AccountManager::getInstance()->isLogged();
@@ -971,6 +1075,9 @@ class ExtJsController
         return JsonResponseBuilder::success();
     }
 
+    /**
+     * Get data about the CheckDoc's tools (ToolsCheckDoc's class).
+     */
     public function getCheckDocData()
     {
         AccountManager::getInstance()->isLogged();
@@ -986,6 +1093,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get data about the status of the build
+     */
     public function getBuildStatusData()
     {
         AccountManager::getInstance()->isLogged();
@@ -1000,6 +1110,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Get all files about the CheckDoc's tools (ToolsCheckDoc's class).
+     */
     public function getCheckDocFiles()
     {
         AccountManager::getInstance()->isLogged();
@@ -1017,6 +1130,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Start the dowload of a given patch
+     */
     public function downloadPatch()
     {
         $FilePath = $this->getRequestVariable('FilePath');
@@ -1043,6 +1159,9 @@ class ExtJsController
         return $patch;
     }
 
+    /**
+     * Logout from this application
+     */
     public function logout()
     {
         $_SESSION = array();
@@ -1052,6 +1171,9 @@ class ExtJsController
         exit;
     }
 
+    /**
+     * Return the translation graph, generated by JpGraph
+     */
     public function translationGraph()
     {
         require_once './jpgraph/src/jpgraph.php';
@@ -1142,6 +1264,9 @@ class ExtJsController
         return '';
     }
 
+    /**
+     * Get the date/time of the last data update
+     */
     public function getLastUpdate()
     {
         AccountManager::getInstance()->isLogged();
@@ -1155,6 +1280,9 @@ class ExtJsController
         );
     }
 
+    /**
+     * Mark a file to be deleted
+     */
     public function markAsNeedDelete()
     {
         AccountManager::getInstance()->isLogged();
