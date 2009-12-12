@@ -480,7 +480,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
                 FilePath = "/" + tmp.join('/');
 
-                // Find the id of this row into StaleFileGrid.store and open it !
+                // Find the id of this row into PendingTranslateGrid.store and open it !
                 ui.component.PendingTranslateGrid.getInstance().store.each(function(row) {
 
                     if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
