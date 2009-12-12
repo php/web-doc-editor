@@ -205,7 +205,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             listeners : {
                                 documentloaded : function(frame)
                                 {
-                                    frame.ownerCt.setTitle('Report bugs');
+                                    frame.ownerCt.setTitle(_('Report bugs'));
                                 }
                             }
                         });
@@ -234,7 +234,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             listeners : {
                                 documentloaded : function(frame)
                                 {
-                                    frame.ownerCt.setTitle('Documentation');
+                                    frame.ownerCt.setTitle(_('Documentation'));
                                 }
                             }
                         });

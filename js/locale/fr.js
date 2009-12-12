@@ -10,6 +10,9 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
 
+i18n["Report bugs"] = "Rapporter un bogue";
+i18n["Documentation"] = "Documentation";
+
 i18n["Close Tab"] = "Fermer cet onglet";
 i18n["Close Other Tabs"] = "Fermer tous les autres onglets";
 
