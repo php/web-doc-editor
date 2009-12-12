@@ -327,7 +327,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                 {
                     scope   : this,
                     text    : '<b>'+_('View in a new Tab')+'</b>',
-                    iconCls : 'iconView',
+                    iconCls : 'PendingCommit',
                     handler : function()
                     {
                         this.grid.fireEvent('rowdblclick',
@@ -377,7 +377,18 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
     {
         Ext.apply(this,
         {
-            items: [{
+            items: [
+                {
+                    scope   : this,
+                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                    iconCls : 'PendingCommit',
+                    handler : function()
+                    {
+                        this.grid.fireEvent('rowdblclick',
+                            this.grid, this.rowIdx, this.event
+                        );
+                    }
+                }, '-',{
                     scope    : this,
                     text     : _('Clear this change'),
                     iconCls  : 'iconPageDelete',
@@ -461,6 +472,24 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 FileName    = storeRecord.data.name,
                 FileLang, tmp;
 
+            if (FileType === 'new') {
+
+                tmp = FilePath.split('/');
+                FileLang = tmp[0];
+                tmp.shift();
+
+                FilePath = "/" + tmp.join('/');
+
+                // Find the id of this row into StaleFileGrid.store and open it !
+                ui.component.PendingTranslateGrid.getInstance().store.each(function(row) {
+
+                    if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                        ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                        return;
+                    }
+                });
+            }
+
             if (FileType === 'update') {
 
                 tmp = FilePath.split('/');
@@ -479,6 +508,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
                         if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
                             ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                            return;
                         }
                     });
                 }

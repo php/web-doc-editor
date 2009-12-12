@@ -130,51 +130,57 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
-                diff        = '';
+            this.openFile(grid.store.getAt(rowIndex).data.id);
+        }
+    },
 
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+    openFile : function(rowId)
+    {
 
-                Ext.getCmp('main-panel').add(
-                {
-                    id             : 'FNT-' + FileID,
-                    layout         : 'border',
-                    title          : FileName,
-                    originTitle    : FileName,
-                    iconCls        : 'iconTabNeedTranslate',
-                    closable       : true,
-                    defaults       : { split : true },
-                    tabTip         : String.format(
-                        _('Need Translate: in {0}'), FilePath
-                    ),
-                    items : [new ui.component.FilePanel(
-                        {
-                            id             : 'FNT-TRANS-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : _('New File: ') + phpDoc.userLang + FilePath + FileName,
-                            isTrans        : true,
-                            prefix         : 'FNT',
-                            ftype          : 'TRANS',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : phpDoc.userLang,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScrollCB   : false
-                        })
-                    ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
+            diff        = '';
 
-            } else {
-                // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
-            }
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+
+            Ext.getCmp('main-panel').add(
+            {
+                id             : 'FNT-' + FileID,
+                layout         : 'border',
+                title          : FileName,
+                originTitle    : FileName,
+                iconCls        : 'iconTabNeedTranslate',
+                closable       : true,
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Need Translate: in {0}'), FilePath
+                ),
+                items : [new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-TRANS-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('New File: ') + phpDoc.userLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'TRANS',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : false
+                    })
+                ]
+            });
+            Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
         }
     },
 
