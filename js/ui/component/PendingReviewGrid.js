@@ -262,7 +262,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
                 fpath_split = FilePath.split('/'),
-				tmp;
+                tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
@@ -279,102 +279,108 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileID      = Ext.util.md5('FNR-' + phpDoc.userLang + FilePath + FileName);
-
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
-
-                Ext.getCmp('main-panel').add({
-                    id          : 'FNR-' + FileID,
-                    title       : FileName,
-                    layout      : 'border',
-                    iconCls     : 'iconTabNeedReviewed',
-                    closable    : true,
-                    originTitle : FileName,
-                    defaults    : { split : true },
-                    tabTip      : String.format(
-                        _('Need Reviewed in: {0}'), FilePath
-                    ),
-                    items : [
-                        {
-                            region      : 'west',
-                            xtype       : 'panel',
-                            title       : _('VCSLog'),
-                            collapsible : true,
-                            collapsed   : true,
-                            layout      : 'fit',
-                            bodyBorder  : false,
-                            width       : 375,
-                            items : {
-                                xtype       : 'tabpanel',
-                                activeTab   : 0,
-                                tabPosition : 'bottom',
-                                defaults    : { autoScroll : true },
-                                items       : [
-                                    new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : phpDoc.userLang,
-                                        prefix    : 'FNR-LANG',
-                                        fid       : FileID,
-                                        fpath     : phpDoc.userLang + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
-                                    }), new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : 'en',
-                                        prefix    : 'FNR-EN',
-                                        fid       : FileID,
-                                        fpath     : 'en' + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
-                                    })
-                                ]
-                            }
-                        }, new ui.component.FilePanel(
-                        {
-                            id             : 'FNR-LANG-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
-                            prefix         : 'FNR',
-                            ftype          : 'LANG',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : phpDoc.userLang,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScrollCB   : true,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_reviewed_scrollbars'
-                        }), new ui.component.FilePanel(
-                        {
-                            id             : 'FNR-EN-PANEL-' + FileID,
-                            region         : 'east',
-                            width          : 575,
-                            title          : _('en File: ') + FilePath + FileName,
-                            prefix         : 'FNR',
-                            ftype          : 'EN',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : 'en',
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_reviewed_scrollbars'
-                        })
-                    ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
-
-            } else {
-                // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
-            }
+            this.openFile(grid.store.getAt(rowIndex).data.id);
         }
+    },
+
+    openFile : function(rowId)
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNR-' + phpDoc.userLang + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
+
+            Ext.getCmp('main-panel').add({
+                id          : 'FNR-' + FileID,
+                title       : FileName,
+                layout      : 'border',
+                iconCls     : 'iconTabNeedReviewed',
+                closable    : true,
+                originTitle : FileName,
+                defaults    : { split : true },
+                tabTip      : String.format(
+                    _('Need Reviewed in: {0}'), FilePath
+                ),
+                items : [
+                    {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('VCSLog'),
+                        collapsible : true,
+                        collapsed   : true,
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        width       : 375,
+                        items : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll : true },
+                            items       : [
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : phpDoc.userLang,
+                                    prefix    : 'FNR-LANG',
+                                    fid       : FileID,
+                                    fpath     : phpDoc.userLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
+                                }), new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : 'en',
+                                    prefix    : 'FNR-EN',
+                                    fid       : FileID,
+                                    fpath     : 'en' + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
+                                })
+                            ]
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'FNR-LANG-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        prefix         : 'FNR',
+                        ftype          : 'LANG',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_reviewed_scrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FNR-EN-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 575,
+                        title          : _('en File: ') + FilePath + FileName,
+                        prefix         : 'FNR',
+                        ftype          : 'EN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : 'en',
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_reviewed_scrollbars'
+                    })
+                ]
+            });
+            Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
+        }
+
     },
 
     initComponent : function()
@@ -438,8 +444,8 @@ ui.component.PendingReviewGrid.getInstance = function(config)
 {
     if (!ui.component._PendingReviewGrid.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._PendingReviewGrid.instance = new ui.component.PendingReviewGrid(config);
     }
     return ui.component._PendingReviewGrid.instance;

@@ -206,7 +206,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         
             var FilePath = grid.store.getAt(rowIndex).data.path,
                 FileName = grid.store.getAt(rowIndex).data.name,
-				tmp;
+                tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
@@ -222,136 +222,142 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileID      = Ext.util.md5('FE-' + phpDoc.userLang + FilePath + FileName),
-                error       = [];
+            this.openFile(grid.store.getAt(rowIndex).data.id);
+        }
+    },
 
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
+    openFile : function(rowId) 
+    {
 
-                // Find all error for this file to pass to error_type.php page
-                error = [];
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FE-' + phpDoc.userLang + FilePath + FileName),
+            error       = [];
 
-                grid.store.each(function(record)
-                {
-                    if ( record.data.path === FilePath && record.data.name === FileName && !error[record.data.type] ) {
-                        error.push(record.data.type);
-                    }
-                });
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
 
-                Ext.getCmp('main-panel').add({
-                    id          : 'FE-' + FileID,
-                    title       : FileName,
-                    layout      : 'border',
-                    iconCls     : 'iconTabError',
-                    closable    : true,
-                    originTitle : FileName,
-                    defaults    : { split : true },
-                    tabTip      : String.format(
-                        _('File with error : in {0}'), FilePath
-                    ),
-                    items : [
-                        {
-                            xtype       : 'panel',
-                            id          : 'FE-error-desc-' + FileID,
-                            region      : 'north',
-                            layout      : 'fit',
-                            title       : _('Error description'),
-                            height      : 150,
-                            collapsible : true,
-                            collapsed   : true,
-                            items : {
-                                xtype      : 'iframepanel',
-                                id         : 'FE-error-type-' + FileID,
-                                loadMask   : true,
-                                defaultSrc : './error?dir=' + FilePath +
-                                                    '&file=' + FileName
-                            }
-                        }, {
-                            region      : 'west',
-                            xtype       : 'panel',
-                            title       : _('VCSLog'),
-                            collapsible : true,
-                            collapsed   : true,
-                            layout      : 'fit',
-                            bodyBorder  : false,
-                            width       : 375,
-                            items       : {
-                                xtype       : 'tabpanel',
-                                activeTab   : 0,
-                                tabPosition : 'bottom',
-                                defaults    : { autoScroll : true },
-                                items       : [
-                                    new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : phpDoc.userLang,
-                                        prefix    : 'FE-LANG',
-                                        fid       : FileID,
-                                        fpath     : phpDoc.userLang + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
-                                    }),
-                                    new ui.component.VCSLogGrid({
-                                        layout    : 'fit',
-                                        title     : 'en',
-                                        prefix    : 'FE-EN',
-                                        fid       : FileID,
-                                        fpath     : 'en' + FilePath,
-                                        fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
-                                    })
-                                ]
-                            }
-                        }, new ui.component.FilePanel(
-                        {
-                            id             : 'FE-LANG-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
-                            prefix         : 'FE',
-                            ftype          : 'LANG',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : phpDoc.userLang,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScrollCB   : true,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_error_scrollbars'
-                        }), new ui.component.FilePanel(
-                        {
-                            id             : 'FE-EN-PANEL-' + FileID,
-                            region         : 'east',
-                            width          : 575,
-                            title          : _('en File: ') + FilePath + FileName,
-                            prefix         : 'FE',
-                            ftype          : 'EN',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : 'en',
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScroll     : true,
-                            syncScrollConf : 'conf_error_scrollbars'
-                        })
-                    ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
+            // Find all error for this file to pass to error_type.php page
+            error = [];
 
-                // Set the bg image for north collapsed el
-                if (Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl) {
-                    Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl.addClass(
-                        'x-layout-collapsed-east-error-desc'
-                    );
+            this.store.each(function(record)
+            {
+                if ( record.data.path === FilePath && record.data.name === FileName && !error[record.data.type] ) {
+                    error.push(record.data.type);
                 }
+            });
 
-            } else {
-                // This tab already exist. We focus it.
-                Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
+            Ext.getCmp('main-panel').add({
+                id          : 'FE-' + FileID,
+                title       : FileName,
+                layout      : 'border',
+                iconCls     : 'iconTabError',
+                closable    : true,
+                originTitle : FileName,
+                defaults    : { split : true },
+                tabTip      : String.format(
+                    _('File with error : in {0}'), FilePath
+                ),
+                items : [
+                    {
+                        xtype       : 'panel',
+                        id          : 'FE-error-desc-' + FileID,
+                        region      : 'north',
+                        layout      : 'fit',
+                        title       : _('Error description'),
+                        height      : 150,
+                        collapsible : true,
+                        collapsed   : true,
+                        items : {
+                            xtype      : 'iframepanel',
+                            id         : 'FE-error-type-' + FileID,
+                            loadMask   : true,
+                            defaultSrc : './error?dir=' + FilePath +
+                                                '&file=' + FileName
+                        }
+                    }, {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('VCSLog'),
+                        collapsible : true,
+                        collapsed   : true,
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        width       : 375,
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll : true },
+                            items       : [
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : phpDoc.userLang,
+                                    prefix    : 'FE-LANG',
+                                    fid       : FileID,
+                                    fpath     : phpDoc.userLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
+                                }),
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : 'en',
+                                    prefix    : 'FE-EN',
+                                    fid       : FileID,
+                                    fpath     : 'en' + FilePath,
+                                    fname     : FileName,
+                                    loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
+                                })
+                            ]
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'FE-LANG-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        prefix         : 'FE',
+                        ftype          : 'LANG',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_error_scrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FE-EN-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 575,
+                        title          : _('en File: ') + FilePath + FileName,
+                        prefix         : 'FE',
+                        ftype          : 'EN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : 'en',
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : true,
+                        syncScrollConf : 'conf_error_scrollbars'
+                    })
+                ]
+            });
+            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
+
+            // Set the bg image for north collapsed el
+            if (Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl) {
+                Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl.addClass(
+                    'x-layout-collapsed-east-error-desc'
+                );
             }
+
+        } else {
+            // This tab already exist. We focus it.
+            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
         }
     },
 

@@ -470,7 +470,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 FileType    = storeRecord.data.type,
                 FilePath    = storeRecord.data.path,
                 FileName    = storeRecord.data.name,
-                FileLang, tmp;
+                FileLang, tmp, found;
 
             if (FileType === 'new') {
 
@@ -503,16 +503,46 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                     ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
                 } else {
 
+                    found = false;
+
                     // Find the id of this row into StaleFileGrid.store and open it !
                     ui.component.StaleFileGrid.getInstance().store.each(function(row) {
 
                         if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
                             ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                            found = true;
                             return;
                         }
                     });
-                }
 
+                    // If we haven't found this file in StaleFileGrid, we try into File in error grid.
+                    if( !found ) {
+
+                        // Find the id of this row into ErrorFileGrid.store and open it !
+                        ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
+
+                            if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                                ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
+                                found = true;
+                                return;
+                            }
+                        });
+                    }
+
+                    // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
+                    if( !found ) {
+
+                        // Find the id of this row into PendingReviewGrid.store and open it !
+                        ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
+
+                            if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                                ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
+                                found = true;
+                                return;
+                            }
+                        });
+                    }
+                }
             }
 
             if (FileType === 'delete') {
