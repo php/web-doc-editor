@@ -280,6 +280,36 @@ class RepositoryFetcher
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
+
+    /**
+     * Get all folders pending for commit.
+     *
+     * @return An associated array containing paths of folders pending for commit, or FALSE if there is no folder to commit.
+     */
+    public function getPendingFoldersCommit()
+    {
+
+        $s = sprintf(
+            'SELECT * FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
+            AccountManager::getInstance()->vcsLang
+        );
+        $r = DBConnection::getInstance()->query($s);
+
+        if( $r->num_rows == 0 ) {
+            return false;
+        }
+
+        $paths = array();
+        while ($a = $r->fetch_object()) {
+
+            $obj = (object) array('lang' => $a->lang, 'path' => $a->path, 'name'=> '-');
+
+            $paths[] = $obj;
+        }
+
+        return $paths;
+    }
+
     /**
      * Get all files pending for commit.
      *
@@ -287,8 +317,10 @@ class RepositoryFetcher
      */
     public function getPendingCommit()
     {
+
+        // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE `lang`="%s" OR `lang`=\'en\'',
+            'SELECT * FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
             AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);

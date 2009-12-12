@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/conf.inc.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/VCSFactory.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
 
 class File
 {
@@ -74,6 +75,62 @@ class File
              'state' => false
             );
         }
+    }
+
+    /**
+     * Create a new folder localy & register it to pendingCommit
+     *
+     * @param $path path to create
+     * @return true
+     */
+    private function createFolder($path) {
+
+       // We create this folder localy
+       $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; mkdir '.$this->lang.$path;
+
+       $trial_threshold = 3;
+       while ($trial_threshold-- > 0) {
+           $output = array();
+           exec($cmd, $output);
+           if (strlen(trim(implode('', $output))) != 0) break;
+       }
+
+       // We register this new folder to be committed
+       $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
+       RepositoryManager::getInstance()->addPendingCommit($obj, '-', '-', '-', '-', 'new');
+
+    }
+
+    /**
+     * Check if the path of this $file exist or not. If not, try to create it recursively with createFolder's method
+     *
+     * @return true
+     */
+    public function folderExist() {
+
+        $folders = array();
+        $_folders = explode("/", $this->path);
+
+        //Skip empty value
+        for( $i=0; $i < count($_folders); $i++) {
+           if( $_folders[$i] != "" ) {
+              $folders[] = $_folders[$i];
+           }
+        }
+
+        $path = '';
+
+        for( $i=0; $i < count($folders); $i++ ) {
+
+           $herePath = $path.'/'.$folders[$i];
+
+           if( !is_dir(DOC_EDITOR_VCS_PATH.$this->lang.$herePath) ) {
+              $this->createFolder($herePath);
+           }
+
+           $path = $herePath;
+        }
+        return true;
     }
 
     /**

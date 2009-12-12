@@ -243,8 +243,19 @@ class RepositoryManager
      */
     public function commitChanges($ids, $log)
     {
-        $fileInfos = RepositoryFetcher::getInstance()->getModifiesById($ids);
 
+        $commitLog = Array();
+
+        // Task for folders
+        $foldersInfos = RepositoryFetcher::getInstance()->getPendingFoldersCommit();
+        if( $foldersInfos ) {
+            $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
+            $commitLog = array_merge($commitLog, $c);
+            $this->delPendingCommit($foldersInfos);
+        }
+
+        // Task for files
+        $fileInfos   = RepositoryFetcher::getInstance()->getModifiesById($ids);
         // Loop over $fileInfos to find files to be create, update or delete
         $create_stack = array();
         $update_stack = array();
@@ -262,9 +273,10 @@ class RepositoryManager
                 case 'delete': $delete_stack[] = $f; break;
             }
         }
-        $commitLog = VCSFactory::getInstance()->commit(
+        $c = VCSFactory::getInstance()->commit(
             $log, $create_stack, $update_stack, $delete_stack
         );
+        $commitLog = array_merge($commitLog, $c);
 
         // html highlight commit log
         $reg = array(

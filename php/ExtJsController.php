@@ -536,10 +536,8 @@ class ExtJsController
             }
         } else if ($type == 'trans') {
 
-            // We must to ensure that this folder existe in the VCS repository & localy
-            $vf = VCSFactory::getInstance();
-
-            if( $vf->folderExist($file) ) {
+            // We must ensure that this folder exist localy
+            if( $file->folderExist() ) {
 
                $er = $file->save($fileContent, false);
 
@@ -570,7 +568,6 @@ class ExtJsController
             } else {
               return JsonResponseBuilder::failure();
             }
-
         } else {
 
             $uniqID = RepositoryManager::getInstance()->addPendingPatch(
@@ -816,13 +813,14 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
+        $commitResponse = '';
+
         // We create a lock for this commit process
 
         $lock = new LockFile('lock_'.AccountManager::getInstance()->vcsLogin.'_commit');
 
         if ($lock->lock()) {
 
-            $commitResponse = '';
 
             $commitResponse = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
 
