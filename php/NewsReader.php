@@ -48,7 +48,7 @@ class NewsReader {
             $result[$i]['title'] = (string) $item->title;
             $result[$i]['description'] = preg_replace('/(<a href[^>]+">)([^>]+)(<\/a>)/', "$2", (string) $item->description);
             $result[$i]['link'] = (string) $item->link;
-            $result[$i]['pubDate'] = date('Y/m/d H:i:s', strtotime((string) $item->pubDate));
+            $result[$i]['pubDate'] = @date('Y/m/d H:i:s', @strtotime((string) $item->pubDate));
             $i++;
         }
         return $result;
