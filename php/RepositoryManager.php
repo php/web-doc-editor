@@ -214,7 +214,7 @@ class RepositoryManager
      */
     public function addPendingDelete($file)
     {
-        $date = date("Y-m-d H:i:s");
+        $date = @date("Y-m-d H:i:s");
 
         $s = sprintf(
             'INSERT INTO `pendingCommit`
