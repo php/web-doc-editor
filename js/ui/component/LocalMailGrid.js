@@ -108,24 +108,30 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
                 MailUrl   = grid.store.getAt(rowIndex).data.link,
                 MailTitle = grid.store.getAt(rowIndex).data.title;
 
-            Ext.getCmp('main-panel').add({
-                xtype      : 'iframepanel',
-                id         : 'mifp_' + MailId,
-                title      : _('Loading...'),
-                tabTip     : MailTitle,
-                iconCls    : 'home-mailing-title',
-                loadMask   : true,
-                defaultSrc : MailUrl,
-                listeners : {
-                    documentloaded : function(frame)
-                    {
-                        frame.ownerCt.setTitle(
-                            Ext.util.Format.substr(MailTitle, 0, 20) + '...'
-                        );
+            if (!Ext.getCmp('main-panel').findById('mifp_' + MailId)) {
+
+                Ext.getCmp('main-panel').add({
+                    xtype      : 'iframepanel',
+                    id         : 'mifp_' + MailId,
+                    title      : _('Loading...'),
+                    tabTip     : MailTitle,
+                    iconCls    : 'home-mailing-title',
+                    loadMask   : true,
+                    defaultSrc : MailUrl,
+                    listeners : {
+                        documentloaded : function(frame)
+                        {
+                            frame.ownerCt.setTitle(
+                                Ext.util.Format.substr(MailTitle, 0, 20) + '...'
+                            );
+                        }
                     }
-                }
-            });
-            Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
+                });
+                Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
+
+            } else {
+                Ext.getCmp('main-panel').setActiveTab('mifp_' + MailId);
+            }
         }
     },
 

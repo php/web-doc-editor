@@ -102,22 +102,28 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
                 BugsUrl   = grid.store.getAt(rowIndex).data.link,
                 BugsTitle = grid.store.getAt(rowIndex).data.title;
 
-            Ext.getCmp('main-panel').add({
-                id         : 'mifp_bugs_' + BugsId,
-                xtype      : 'iframepanel',
-                title      : _('Loading...'),
-                tabTip     : BugsTitle,
-                iconCls    : 'iconBugs',
-                loadMask   : true,
-                defaultSrc : BugsUrl,
-                listeners : {
-                    documentloaded : function(frame)
-                    {
-                        frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
+            if (!Ext.getCmp('main-panel').findById('mifp_bugs_' + BugsId)) {
+
+                Ext.getCmp('main-panel').add({
+                    id         : 'mifp_bugs_' + BugsId,
+                    xtype      : 'iframepanel',
+                    title      : _('Loading...'),
+                    tabTip     : BugsTitle,
+                    iconCls    : 'iconBugs',
+                    loadMask   : true,
+                    defaultSrc : BugsUrl,
+                    listeners : {
+                        documentloaded : function(frame)
+                        {
+                            frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
+                        }
                     }
-                }
-            });
-            Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
+                });
+                Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
+
+            } else {
+                Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
+            }
         }
     },
 
@@ -127,7 +133,7 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
         {
             title : String.format(_('Open bugs for {0}'), 'doc-' + phpDoc.userLang),
             tbar  : [{
-				scope: this,
+                scope: this,
                 tooltip : _('Refresh this grid'),
                 iconCls : 'refresh',
                 handler : function()
@@ -146,8 +152,8 @@ ui.component.BugsGrid.getInstance = function(config)
 {
     if (!ui.component._BugsGrid.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._BugsGrid.instance = new ui.component.BugsGrid(config);
     }
     return ui.component._BugsGrid.instance;
