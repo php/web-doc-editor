@@ -86,14 +86,7 @@ class File
     private function createFolder($path) {
 
        // We create this folder localy
-       $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; mkdir '.$this->lang.$path;
-
-       $trial_threshold = 3;
-       while ($trial_threshold-- > 0) {
-           $output = array();
-           exec($cmd, $output);
-           if (strlen(trim(implode('', $output))) != 0) break;
-       }
+       mkdir(DOC_EDITOR_VCS_PATH.$this->lang.$path);
 
        // We register this new folder to be committed
        $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
