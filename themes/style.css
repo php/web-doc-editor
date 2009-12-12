@@ -243,6 +243,8 @@ opacity:
     background: transparent url(../themes/img/error_delete.png) no-repeat 0 0;
 } .iconBugs {
     background-image: url(../themes/img/bug.png) !important;
+} .iconBook {
+    background-image: url(../themes/img/book.png) !important;
 } .iconIndent {
     background-image: url(../themes/img/text_indent.png) !important;
 } .saveFile {

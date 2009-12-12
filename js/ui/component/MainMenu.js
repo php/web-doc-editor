@@ -84,8 +84,8 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }
 
                             if (tab.items) {
-								tab.removeAll(true);
-							}
+                                tab.removeAll(true);
+                            }
                             tab.add(new ui.component.BuildStatus());
                             tab.doLayout(); // render the grid
 
@@ -112,8 +112,8 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }
 
                             if (tab.items) {
-								tab.removeAll(true);
-							}
+                                tab.removeAll(true);
+                            }
                             tab.add(new ui.component.CheckDoc());
                             tab.doLayout(); // render the grid
 
@@ -186,6 +186,64 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }
                         }
                     );
+                }
+            }, '-', {
+                id      : 'tab-report-bug-btn',
+                text    : _('Report bugs'),
+                iconCls : 'iconBugs',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('tab-report-bug')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'tab-report-bug',
+                            xtype      : 'iframepanel',
+                            title      : _('Loading...'),
+                            iconCls    : 'iconBugs',
+                            loadMask   : true,
+                            defaultSrc : 'http://bugs.php.net/',
+                            listeners : {
+                                documentloaded : function(frame)
+                                {
+                                    frame.ownerCt.setTitle('Report bugs');
+                                }
+                            }
+                        });
+
+                        Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
+
+                    } else {
+                        Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
+                    }
+                }
+            }, {
+                id      : 'tab-documentation-btn',
+                text    : _('Documentation'),
+                iconCls : 'iconBook',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('tab-documentation')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'tab-documentation',
+                            xtype      : 'iframepanel',
+                            title      : _('Loading...'),
+                            iconCls    : 'iconBook',
+                            loadMask   : true,
+                            defaultSrc : 'http://wiki.php.net/doc-editor/',
+                            listeners : {
+                                documentloaded : function(frame)
+                                {
+                                    frame.ownerCt.setTitle('Documentation');
+                                }
+                            }
+                        });
+
+                        Ext.getCmp('main-panel').setActiveTab('tab-documentation');
+
+                    } else {
+                        Ext.getCmp('main-panel').setActiveTab('tab-documentation');
+                    }
                 }
             }, '-', {
                 id      : 'winabout-btn',
