@@ -500,6 +500,7 @@ EOD;
                 $s = sprintf(
                     'UPDATE `files`
                         SET
+                            `xmlid`    = "%s",
                             `revision` = "%s",
                             `size`     = "%s",
                             `mdate`    = "%s"
@@ -507,7 +508,7 @@ EOD;
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
-                    $info['rev'], $size, $date, $file->lang, $file->path, $file->name
+                    $info['xmlid'], $info['rev'], $size, $date, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
 
@@ -540,6 +541,7 @@ EOD;
                 $s = sprintf(
                     'UPDATE `files`
                         SET
+                            `xmlid`      = "%s",
                             `revision`   = "%s",
                             `en_revision`= "%s",
                             `reviewed`   = "%s",
@@ -553,7 +555,7 @@ EOD;
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
-                    $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
+                    $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
                     trim($info['maintainer']), trim($info['status']),   $size_diff,
                     $date_diff, $file->lang, $file->path, $file->name
                 );
