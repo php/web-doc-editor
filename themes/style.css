@@ -174,8 +174,8 @@ opacity:
     background-image: url(../themes/img/delete.png) !important;
 }
 
-/* X-BROWSER-WARNING: this is not being honored by Safari */ .ux-icon-combo-input {
-    padding-left: 25px;
+.ux-icon-combo-input {
+    padding-left: 25px !important;
 } .x-form-field-wrap .ux-icon-combo-icon {
     top: 3px;
     left: 5px;
