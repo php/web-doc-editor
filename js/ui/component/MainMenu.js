@@ -230,7 +230,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             title      : _('Loading...'),
                             iconCls    : 'iconBook',
                             loadMask   : true,
-                            defaultSrc : 'http://wiki.php.net/doc-editor/',
+                            defaultSrc : 'http://wiki.php.net/doc/editor/',
                             listeners : {
                                 documentloaded : function(frame)
                                 {
