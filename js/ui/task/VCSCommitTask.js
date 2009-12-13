@@ -93,7 +93,7 @@ ui.task._VCSCommitTask.commit = function(files)
     LogMessage = Ext.getCmp('form-commit-message-log').getValue();
 
     // The LogMessage is required
-    LogMessage = String.trim(LogMessage);
+    LogMessage = Ext.util.Format.trim(LogMessage);
 
     if( Ext.isEmpty(LogMessage) ) {
 
