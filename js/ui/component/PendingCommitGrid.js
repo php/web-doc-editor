@@ -542,6 +542,12 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                             }
                         });
                     }
+
+                    // FallBack : We open it into "All files" modules
+                    if( !found ) {
+                        ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+                    }
+
                 }
             }
 
