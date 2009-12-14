@@ -11,6 +11,20 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Structure of table `commitMessage`
 --
 
+CREATE TABLE IF NOT EXISTS `staticValue` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(50) NOT NULL,
+  `field` varchar(50) NOT NULL,
+  `value` text NOT NULL,
+  KEY `id` (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `commitMessage`
+--
+
 CREATE TABLE IF NOT EXISTS `commitMessage` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
