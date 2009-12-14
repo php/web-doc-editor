@@ -142,6 +142,10 @@ class ExtJsController
             // Parse translators
             $rm->updateTranslatorInfo();
 
+            // We re-compute statistics
+            TranslationStatistic::getInstance()->computeSummary('all');
+            TranslatorStatistic::getInstance()->computeSummary('all');
+
             // Set lastUpdate date/time
             $rm->setLastUpdate();
         }
@@ -295,7 +299,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $translators = TranslatorStatistic::getInstance()->getSummary();
+        $translators = RepositoryFetcher::getInstance()->getStaticValue('translator_summary', AccountManager::getInstance()->vcsLang);
 
         return JsonResponseBuilder::success(
             array(
@@ -312,7 +316,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $summary = TranslationStatistic::getInstance()->getSummary();
+        $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', AccountManager::getInstance()->vcsLang);
 
         return JsonResponseBuilder::success(
             array(
@@ -905,6 +909,10 @@ class ExtJsController
             // Manage log message (add new or ignore it if this message already exist for this user)
             LogManager::getInstance()->addCommitLog($logMessage);
 
+            // We re-compute summary statistics for the global documentation & by translators
+            $lang = AccountManager::getInstance()->vcsLang;
+            TranslationStatistic::getInstance()->computeSummary($lang);
+            TranslatorStatistic::getInstance()->computeSummary($lang);
         }
 
         // Remove the lock File
@@ -1174,30 +1182,18 @@ class ExtJsController
      */
     public function translationGraph()
     {
-        require_once './jpgraph/src/jpgraph.php';
-        require_once './jpgraph/src/jpgraph_pie.php';
-        require_once './jpgraph/src/jpgraph_pie3d.php';
+        error_reporting(0);
+
+        require_once dirname(__FILE__) . '/jpgraph/src/jpgraph.php';
+        require_once dirname(__FILE__) . '/jpgraph/src/jpgraph_pie.php';
+        require_once dirname(__FILE__) . '/jpgraph/src/jpgraph_pie3d.php';
 
         AccountManager::getInstance()->isLogged();
+        $lang = AccountManager::getInstance()->vcsLang;
 
-        $Total_files_lang = TranslationStatistic::getInstance()->getFileCount();
-        $Total_files_lang = $Total_files_lang[0];
-        //
-        $up_to_date = TranslationStatistic::getInstance()->getTransFileCount();
-        $up_to_date = $up_to_date[0];
-        //
-        $critical = TranslationStatistic::getInstance()->getCriticalFileCount();
-        $critical = $critical[0];
-        //
-        $old = TranslationStatistic::getInstance()->getOldFileCount();
-        $old = $old[0];
-        //
-        $missing = sizeof(TranslationStatistic::getInstance()->getMissedFileCount());
-        //
-        $no_tag = TranslationStatistic::getInstance()->getNoTagFileCount();
-        $no_tag = $no_tag[0];
-        //
-        $data     = array($up_to_date,$critical,$old,$missing,$no_tag);
+        $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
+
+        $data     = array($summary[0]->nbFiles, $summary[1]->nbFiles, $summary[2]->nbFiles);
         $pourcent = array();
         $total    = 0;
         $total    = array_sum($data);
@@ -1206,17 +1202,15 @@ class ExtJsController
             $pourcent[] = round($valeur * 100 / $total);
         }
 
-        $noExplode = ($Total_files_lang == $up_to_date) ? 1 : 0;
+        $noExplode = ($total == $summary[0]->nbFiles) ? 1 : 0;
 
         $legend = array(
-            $pourcent[0] . '%% up to date ('.$up_to_date.')',
-            $pourcent[1] . '%% critical ('.$critical.')',
-            $pourcent[2] . '%% old ('.$old.')',
-            $pourcent[3] . '%% missing ('.$missing.')',
-            $pourcent[4] . '%% without revtag ('.$no_tag.')'
+            $pourcent[0] . "%% up to date (" . $summary[0]->nbFiles . ")",
+            $pourcent[1] . "%% stales (" . $summary[1]->nbFiles . ")",
+            $pourcent[2] . "%% missing (" . $summary[2]->nbFiles . ")"
         );
 
-        $title = 'PHP : Details for '.ucfirst(AccountManager::getInstance()->vcsLang).' Documentation';
+        $title = 'PHP : Details for '.ucfirst($lang).' Documentation';
 
         $graph = new PieGraph(530,300);
         $graph->SetShadow();
@@ -1227,7 +1221,7 @@ class ExtJsController
 
         $graph->legend->Pos(0.02,0.18,"right","center");
 
-        $graph->subtitle->Set('(Total: '.$Total_files_lang.' files)');
+        $graph->subtitle->Set('(Total: '.$total.' files)');
         $graph->subtitle->Align('left');
         $graph->subtitle->SetColor('darkred');
 

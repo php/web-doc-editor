@@ -2,8 +2,10 @@
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once '../php/RepositoryManager.php';
 require_once '../php/html.templates.php';
+require_once '../php/RepositoryManager.php';
+require_once '../php/TranslationStatistic.php';
+require_once '../php/TranslatorStatistic.php';
 
 $isCLI = (PHP_SAPI == 'cli');
 
@@ -45,6 +47,10 @@ flush();
 
 // Parse translators
 $rm->updateTranslatorInfo();
+
+// Compute all summary
+TranslationStatistic::getInstance()->computeSummary('all');
+TranslatorStatistic::getInstance()->computeSummary('all');
 
 // We update the last update date/time into DB
 $rm->setLastUpdate();

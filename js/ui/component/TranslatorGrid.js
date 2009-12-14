@@ -34,12 +34,8 @@ ui.component._TranslatorGrid.store = new Ext.data.Store({
                 mapping : 'uptodate',
                 type    : 'int'
             }, {
-                name    : 'old',
-                mapping : 'old',
-                type    : 'int'
-            }, {
-                name    : 'critical',
-                mapping : 'critical',
+                name    : 'stale',
+                mapping : 'stale',
                 type    : 'int'
             }, {
                 name    : 'sum',
@@ -56,7 +52,7 @@ ui.component._TranslatorGrid.translatorSumRenderer = function(value)
 {
     if (value) {
         var v = (value === 0 || value > 1) ? value : 1;
-        return '(' + v + ' Translators)';
+        return String.format('('+_('{0} Translators')+')', v);
     } else {
         return;
     }
@@ -72,20 +68,20 @@ ui.component._TranslatorGrid.uptodateRenderer = function(value)
     }
 };
 
-// TranslatorGrid cell renderer for old/sum column
-ui.component._TranslatorGrid.old_sumRenderer = function(value)
-{
-    return (value === '0') ? '' : value;
-};
-
-// TranslatorGrid cell renderer for critical column
-ui.component._TranslatorGrid.criticalRenderer = function(value)
+// TranslatorGrid cell renderer for stale column
+ui.component._TranslatorGrid.staleRenderer = function(value)
 {
     if (value === '0') {
         return;
     } else {
         return '<span style="color:red; font-weight: bold;">' + value + '</span>';
     }
+};
+
+// TranslatorGrid cell renderer for sum column
+ui.component._TranslatorGrid.sumRenderer = function(value)
+{
+    return (value === '0') ? '' : value;
 };
 
 // TranslatorGrid columns definition
@@ -120,24 +116,17 @@ ui.component._TranslatorGrid.columns = [
         dataIndex   : 'uptodate',
         summaryType : 'sum'
     }, {
-        header      : _('Old'),
-        width       : 45,
+        header      : _('Stale'),
+        width       : 90,
         sortable    : true,
-        renderer    : ui.component._TranslatorGrid.old_sumRenderer,
-        dataIndex   : 'old',
-        summaryType : 'sum'
-    }, {
-        header      : _('Critical'),
-        width       : 60,
-        sortable    : true,
-        renderer    : ui.component._TranslatorGrid.criticalRenderer,
-        dataIndex   : 'critical',
+        renderer    : ui.component._TranslatorGrid.staleRenderer,
+        dataIndex   : 'stale',
         summaryType : 'sum'
     }, {
         header      : _('Sum'),
         width       : 50,
         sortable    : true,
-        renderer    : ui.component._TranslatorGrid.old_sumRenderer,
+        renderer    : ui.component._TranslatorGrid.sumRenderer,
         dataIndex   : 'sum',
         summaryType : 'sum'
     }
@@ -219,8 +208,8 @@ ui.component.TranslatorGrid.getInstance = function(config)
 {
     if (!ui.component._TranslatorGrid.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._TranslatorGrid.instance = new ui.component.TranslatorGrid(config);
     }
     return ui.component._TranslatorGrid.instance;

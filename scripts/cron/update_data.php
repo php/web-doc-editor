@@ -9,6 +9,8 @@
 
 require_once dirname(__FILE__) . '/../../php/conf.inc.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
+require_once dirname(__FILE__) . '/../../php/TranslationStatistic.php';
+require_once dirname(__FILE__) . '/../../php/TranslatorStatistic.php';
 
 $rm = RepositoryManager::getInstance();
 
@@ -35,6 +37,10 @@ if ($lock->lock()) {
 
     // Parse translators
     $rm->updateTranslatorInfo();
+
+    // Compute all summary
+    TranslationStatistic::getInstance()->computeSummary('all');
+    TranslatorStatistic::getInstance()->computeSummary('all');    
 
     // Set lastUpdate date/time
     $rm->setLastUpdate();

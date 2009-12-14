@@ -43,11 +43,9 @@ ui.component._SummaryGrid.store = new Ext.data.Store({
             {
                 switch (record.id) {
                     case 1: record.set('libel', _('Up to date files'));                break;
-                    case 2: record.set('libel', _('Old files'));                       break;
-                    case 3: record.set('libel', _('Critical files'));                  break;
-                    case 4: record.set('libel', _('Files without revision tag'));      break;
-                    case 5: record.set('libel', _('Files available for translation')); break;
-                    case 6: record.set('libel', _('Total'));                           break;
+                    case 2: record.set('libel', _('Stale files'));                     break;
+                    case 3: record.set('libel', _('Files available for translation')); break;
+                    case 4: record.set('libel', _('Total'));                           break;
                     default: record.set('libel', '');                                  break;
                 }
                 record.commit();
@@ -96,7 +94,6 @@ ui.component._SummaryGrid.view = new Ext.grid.GridView({
             case 2: return 'summary_2';
             case 3: return 'summary_3';
             case 4: return 'summary_4';
-            case 5: return 'summary_5';
             default: return '';
         }
     }
@@ -120,13 +117,13 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
         {
             var id = grid.store.getAt(rowIndex).data.id;
 
-            // Up to date files, Old files, Criticals files
-            if( id === 1 || id === 2 || id === 3) {
+            // Stales files
+            if( id === 2 ) {
                 Ext.getCmp('acc-need-update').expand();
             }
             
             // Available for translation
-            if( id === 5 ) {
+            if( id === 3 ) {
                 Ext.getCmp('acc-need-translate').expand();
             }
         }

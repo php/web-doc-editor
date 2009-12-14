@@ -37,8 +37,8 @@ ui.component.TranslationGraph.getInstance = function(config)
 {
     if (!ui.component._TranslationGraph.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._TranslationGraph.instance = new ui.component.TranslationGraph(config);
     }
     return ui.component._TranslationGraph.instance;

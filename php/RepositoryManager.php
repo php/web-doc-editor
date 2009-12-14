@@ -849,6 +849,28 @@ EOD;
         }        
     }
 
+    /**
+     * Set a static value into DB
+     *
+     * @param $type The type of this value
+     * @param $field The name of the field for this value
+     * @param $value The value. Can be anything who can be store into a SQL TEXT field
+     * @return Nothing.
+     */
+    public function setStaticValue($type, $field, $value) {
+
+        $s = "SELECT id FROM staticValue WHERE `type`='".$type."' AND `field`= '".$field."'";
+        $r = DBConnection::getInstance()->query($s);
+
+        if( $r->num_rows == 0 ) {
+            $s = "INSERT INTO staticValue (`type`, `field`, `value`) VALUES ('".$type."' , '".$field."', '".DBConnection::getInstance()->real_escape_string($value)."')";
+            DBConnection::getInstance()->query($s);
+        } else {
+            $a = $r->fetch_object();
+            $s = "UPDATE staticValue SET `value`= '".DBConnection::getInstance()->real_escape_string($value)."' WHERE `id`='".$a->id."'";
+            DBConnection::getInstance()->query($s);
+        }
+    }
 }
 
 ?>

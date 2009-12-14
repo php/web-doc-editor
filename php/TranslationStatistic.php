@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
 
 class TranslationStatistic
 {
@@ -23,282 +24,228 @@ class TranslationStatistic
     /**
      * Get number/size of all files.
      *
-     * @return An indexed array.
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getFileCount()
+    public function getFileCount($lang='all')
     {
+
+        if( $lang == 'all' ) {
+            $where = '';
+            $groupBy = 'GROUP BY `lang`';
+        } else {
+            $where = '`lang` = \''.$lang.'\' AND';
+            $groupBy = '';
+        }
+
         $s = 'SELECT
                     COUNT(*) AS total,
-                    SUM(`size`) AS total_size
+                    SUM(`size`) AS total_size,
+                    `lang`
                 FROM
                     `files`
                 WHERE
-                    `lang` = "' . AccountManager::getInstance()->vcsLang . '" AND
+                    ' . $where . '
                     ( `status` != "NotInEN" OR `status` IS NULL )
-            ';
+                ' . $groupBy . '
+        ';
         $res = DBConnection::getInstance()->query($s);
 
-        $r = $res->fetch_array();
-        $result = array($r['total'], $r['total_size']);
+        while( $r = $res->fetch_array() ) {
+            $result[$r['lang']]['total']      = $r['total'];
+            $result[$r['lang']]['total_size'] = $r['total_size'];
+        }
         return $result;
     }
 
     /**
      * Get number of translated files.
      *
-     * @return Number of translated files.
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getTransFileCount()
+    public function getTransFileCount($lang='all')
     {
+
+        if( $lang == 'all' ) {
+            $where = '';
+            $groupBy = 'GROUP BY `lang`';
+        } else {
+            $where = '`lang` = \''.$lang.'\' AND';
+            $groupBy = '';
+        }
+
         $s = 'SELECT
-                COUNT(name) AS total,
-                SUM(size)   AS total_size
+                COUNT(`name`) AS total,
+                SUM(`size`)   AS total_size,
+                `lang`
             FROM
                 files
             WHERE
-                lang="' . AccountManager::getInstance()->vcsLang . '"
-            AND
-                revision = en_revision';
+                ' . $where . '
+                revision = en_revision
+            ' . $groupBy . '
+        ';
         $res = DBConnection::getInstance()->query($s);
 
-        $r = $res->fetch_array();
-        $result = array($r['total'], $r['total_size']);
+        while( $r = $res->fetch_array() ) {
+            $result[$r['lang']]['total']      = $r['total'];
+            $result[$r['lang']]['total_size'] = $r['total_size'];
+        }
         return $result;
     }
 
     /**
-     * Get statistic about critical files which need to be updated.
+     * Get statistic about stales files which need to be updated.
      *
-     * @return An associated array (total=>nb files, total_size=>size of this files).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getCriticalFileCount()
+    public function getStaleFileCount($lang='all')
     {
+
+        if( $lang == 'all' ) {
+            $where = '';
+            $groupBy = 'GROUP BY `lang`';
+        } else {
+            $where = '`lang` = \''.$lang.'\' AND';
+            $groupBy = '';
+        }
+
         $s = 'SELECT
                 COUNT(`name`) AS total,
-                SUM(`size`) AS total_size
+                SUM(`size`) AS total_size,
+                `lang`
             FROM
                 `files`
             WHERE
-                `lang`="' . AccountManager::getInstance()->vcsLang . '"
+                ' . $where . '
+                `en_revision` != `revision` 
             AND
-                ( `en_revision` - `revision` >= 10  OR
-                ( `en_revision` != `revision`  AND
-                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
-                ))
-            AND
-                `size` is not NULL';
-        $result = DBCOnnection::getInstance()->query($s);
+                `size` is not NULL
+            ' . $groupBy . '
+        ';
+        $res = DBCOnnection::getInstance()->query($s);
 
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['total_size']);
-        return $result;
-    }
-
-    /**
-     * Get statistic about old files which need to be uptadeted from LANG tree.
-     *
-     * @return An associated array (total=>nb files, total_size=>size of this files).
-     */
-    public function getOldFileCount()
-    {
-        $s = 'SELECT
-                COUNT(`name`) AS total,
-                SUM(`size`)   AS total_size
-            FROM
-                `files`
-            WHERE
-                `lang`="' . AccountManager::getInstance()->vcsLang . '"
-            AND
-                `en_revision` != `revision`
-            AND
-                `en_revision` - `revision` < 10
-            AND
-                `size_diff` < 3
-            AND
-                `mdate_diff` > -30
-            AND
-                `size` is not NULL';
-        $result = DBConnection::getInstance()->query($s);
-
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['total_size']);
+        while( $r = $res->fetch_array() ) {
+            $result[$r['lang']]['total']      = $r['total'];
+            $result[$r['lang']]['total_size'] = $r['total_size'];
+        }
         return $result;
     }
 
     /**
      * Get statistic about files which need to be translated.
      *
-     * @return An associated array (total=>nb files, size=>size of this files).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getNoTransFileCount()
+    public function getNoTransFileCount($lang='all')
     {
-        $s = 'SELECT
-                COUNT(a.name) as total,
-                sum(b.size) as size
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b
-            ON
-                a.path = b.path
-            AND
-                a.name = b.name
-            WHERE
-                a.lang="' . AccountManager::getInstance()->vcsLang . '"
-            AND
-                b.lang="en"
-            AND
-                a.revision is NULL
-            AND
-                a.size is NULL';
-        $result = DBConnection::getInstance()->query($s);
 
-        if ($result->num_rows) {
-            $r = $result->fetch_array();
-            return array($r['total'], $r['size']);
+        if( $lang == 'all' ) {
+            $where = '`lang` != \'en\' AND';
         } else {
-            return array(0,0);
+            $where = '`lang` = \''.$lang.'\' AND';
         }
+
+        // We get EN files
+
+       $s = 'SELECT * FROM files WHERE lang=\'en\'';
+
+       $r = DBConnection::getInstance()->query($s);
+
+       while( $a = $r->fetch_object() ) {
+          $resultEN[$a->path.$a->name] = $a->size;
+       }
+
+       $s = 'SELECT
+                 path, name, lang
+             FROM
+                 files
+             WHERE
+                 ' . $where . '
+                 revision is NULL AND
+                 size is NULL AND
+                 ( `status` != "NotInEN" OR `status` IS NULL )
+       ';
+
+       $r = DBConnection::getInstance()->query($s);
+
+       while( $a = $r->fetch_object() ) {
+          $result[$a->lang][$a->path.$a->name] = 'exist';
+       }
+
+       while( list($a, $b) = each($result) ) {
+           $size[$a] = 0;
+           while( list($k, $v) = each($result[$a]) ) {
+               $size[$a] += $resultEN[$k];
+           }
+       }
+
+       //
+       reset($result);
+       while( list($a, $b) = each($result) ) {
+           $summary[$a]['total'] = count($result[$a]);
+           $summary[$a]['total_size'] = $size[$a];
+       }
+       return $summary;
     }
 
     /**
-     * Get count of missed files which need to be added to LANG tree.
+     * Compute summary of translation statistic and store it into DB
      *
-     * @return An array of missed files (size=>size of the file, file=>name of the file).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
      */
-    public function getMissedFileCount()
-    { // TODO merge with getNoTransFileCount
-        $s = 'SELECT
-                b.size as size,
-                a.name as file
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b
-            ON
-                a.path = b.path
-            AND
-                a.name = b.name
-            WHERE
-                a.lang="' . AccountManager::getInstance()->vcsLang . '"
-            AND
-                b.lang="en"
-            AND
-                a.revision is NULL
-            AND
-                a.size is NULL';
-        $result = DBConnection::getInstance()->query($s);
+    public function computeSummary($lang='all')
+    {
 
-        if ($result->num_rows == 0) {
-            // only 'null' will produce a 0 with sizeof()
-            return null;
+        $nbFiles   = $this->getFileCount($lang);
+        $uptodate  = $this->getTransFileCount($lang);
+        $stale     = $this->getStaleFileCount($lang);
+        $missFiles = $this->getNoTransFileCount($lang);
+
+        if( $lang == 'all' ) {
+            $hereLang = RepositoryManager::getInstance()->availableLang;
         } else {
-            $tmp = array();
-            while ($r = $result->fetch_array()) {
-                $tmp[] = array('size' => $r['size'], 'file' => $r['file']);
-            }
-            return $tmp;
+            $hereLang = array($lang);
         }
-    }
 
-    /**
-     * Get count of files which haven't revcheck's tags.
-     *
-     * @return An associated array (total=>nb files, size=>size of this files).
-     */
-    public function getNoTagFileCount()
-    {
-        $s = 'SELECT
-                COUNT(a.name) as total,
-                sum(b.size) as size
-            FROM
-                `files` a
-            LEFT JOIN
-                `files` b
-            ON
-                a.path = b.path
-            AND
-                a.name = b.name
-            WHERE
-                a.lang="' . AccountManager::getInstance()->vcsLang . '"
-            AND
-                b.lang="en"
-            AND
-                a.revision is NULL
-            AND
-                a.size is not NULL';
-        $result = DBConnection::getInstance()->query($s);
+        foreach( $hereLang as $lang ) {
 
-        $r = $result->fetch_array();
-        $result = array($r['total'], $r['size']);
-        return $result;
-    }
+            $summary = array();
 
-    /**
-     * Get summary of translation statistic.
-     *
-     * @return An indexed array containing summary of statistic
-     */
-    public function getSummary()
-    {
-        $nbFiles = $this->getFileCount();
+            $summary[0]['id']            = 1;
+            $summary[0]['libel']         = 'Up to date files';
+            $summary[0]['nbFiles']       = $uptodate[$lang]['total'];
+            $summary[0]['percentFiles']  = round(($uptodate[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
+            $summary[0]['sizeFiles']     = ($uptodate[$lang]['total_size'] == '' ) ? 0 : $uptodate[$lang]['total_size'];
+            $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size'])) ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
-        $uptodate = $this->getTransFileCount();
-        $old      = $this->getOldFileCount();
-        $critical = $this->getCriticalFileCount();
+            $summary[1]['id']            = 2;
+            $summary[1]['libel']         = 'Stale files';
+            $summary[1]['nbFiles']       = $stale[$lang]['total'];
+            $summary[1]['percentFiles']  = round(($stale[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
+            $summary[1]['sizeFiles']     = ($stale[$lang]['total_size'] == '' ) ? 0 : $stale[$lang]['total_size'];
+            $summary[1]['percentSize']   = (!isset($stale[$lang]['total_size']) || $stale[$lang]['total_size'] == 0 ) ? 0 : round(($stale[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
-        $missFiles = $this->getNoTransFileCount();
+            $summary[2]['id']            = 3;
+            $summary[2]['libel']         = 'Files available for translation';
+            $summary[2]['nbFiles']       = $missFiles[$lang]['total'];
+            $summary[2]['percentFiles']  = round(($missFiles[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
+            $summary[2]['sizeFiles']     = ($missFiles[$lang]['total_size'] == '' ) ? 0 : $missFiles[$lang]['total_size'];
+            $summary[2]['percentSize']   = (!isset($missFiles[$lang]['total_size']) || $missFiles[$lang]['total_size'] == 0 ) ? 0 : round(($missFiles[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
-        $withoutRevTag = $this->getNoTagFileCount();
+            $summary[3]['id']            = 4;
+            $summary[3]['libel']         = 'Total';
+            $summary[3]['nbFiles']       = $nbFiles[$lang]['total'];
+            $summary[3]['percentFiles']  = '100%';
+            $summary[3]['sizeFiles']     = $nbFiles[$lang]['total_size'];
+            $summary[3]['percentSize']   = '100%';
 
-        $nbFiles[1] = $uptodate[1]+$old[1]+$critical[1]+$withoutRevTag[1]+$missFiles[1];
-
-        $summary = array();
-
-        $summary[0]['id']            = 1;
-        $summary[0]['libel']         = 'Up to date files';
-        $summary[0]['nbFiles']       = $uptodate[0];
-        $summary[0]['percentFiles']  = round(($uptodate[0]*100)/$nbFiles[0], 2);
-        $summary[0]['sizeFiles']     = ($uptodate[1] == '' ) ? 0 : $uptodate[1];
-        $summary[0]['percentSize']   = round(($uptodate[1]*100)/$nbFiles[1], 2);
-
-        $summary[1]['id']            = 2;
-        $summary[1]['libel']         = 'Old files';
-        $summary[1]['nbFiles']       = $old[0];
-        $summary[1]['percentFiles']  = round(($old[0]*100)/$nbFiles[0], 2);
-        $summary[1]['sizeFiles']     = ($old[1] == '' ) ? 0 : $old[1];
-        $summary[1]['percentSize']   = round(($old[1]*100)/$nbFiles[1], 2);
-
-        $summary[2]['id']            = 3;
-        $summary[2]['libel']         = 'Critical files';
-        $summary[2]['nbFiles']       = $critical[0];
-        $summary[2]['percentFiles']  = round(($critical[0]*100)/$nbFiles[0], 2);
-        $summary[2]['sizeFiles']     = ($critical[1] == '' ) ? 0 : $critical[1];
-        $summary[2]['percentSize']   = round(($critical[1]*100)/$nbFiles[1], 2);
-
-
-        $summary[3]['id']            = 4;
-        $summary[3]['libel']         = 'Files without revision tag';
-        $summary[3]['nbFiles']       = $withoutRevTag[0];
-        $summary[3]['percentFiles']  = round(($withoutRevTag[0]*100)/$nbFiles[0], 2);
-        $summary[3]['sizeFiles']     = ($withoutRevTag[1] == '' ) ? 0 : $withoutRevTag[1];
-        $summary[3]['percentSize']   = round(($withoutRevTag[1]*100)/$nbFiles[1], 2);
-
-        $summary[4]['id']            = 5;
-        $summary[4]['libel']         = 'Files available for translation';
-        $summary[4]['nbFiles']       = $missFiles[0];
-        $summary[4]['percentFiles']  = round(($missFiles[0]*100)/$nbFiles[0], 2);
-        $summary[4]['sizeFiles']     = ($missFiles[1] == '' ) ? 0 : $missFiles[1];
-        $summary[4]['percentSize']   = round(($missFiles[1]*100)/$nbFiles[1], 2);
-
-        $summary[5]['id']            = 6;
-        $summary[5]['libel']         = 'Total';
-        $summary[5]['nbFiles']       = $nbFiles[0];
-        $summary[5]['percentFiles']  = '100%';
-        $summary[5]['sizeFiles']     = $nbFiles[1];
-        $summary[5]['percentSize']   = '100%';
-
-        return $summary;
+            // Save $summary into DB
+            RepositoryManager::getInstance()->setStaticValue('translation_summary', $lang, json_encode($summary));
+        }
     }
 
 }

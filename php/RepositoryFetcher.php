@@ -135,8 +135,7 @@ class RepositoryFetcher
                     "en_revision"    => $new_en_revision,
                     "maintainer"     => $new_maintainer,
                     "needCommitEN"   => (isset($m['en'.$a->path.$a->name])) ? true : false,
-                    "needCommitLang" => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false,
-                    "isCritical"     => false
+                    "needCommitLang" => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false
                 );
             } else {
                 $node[] = array(
@@ -147,8 +146,7 @@ class RepositoryFetcher
                     "en_revision"     => $a->en_revision,
                     "maintainer"      => $a->maintainer,
                     "needCommitEN"    => false,
-                    "needCommitLang"  => false,
-                    "isCritical"      => ( ($a->en_revision - $a->revision >= 10) || $a->size_diff >= 3 || $a->mdate_diff <= -30 ) ? true : false
+                    "needCommitLang"  => false
                 );
             }
         }
@@ -479,6 +477,27 @@ class RepositoryFetcher
         $d->close();
 
         return $files;
+    }
+
+    /**
+     * Get a static value from DB
+     *
+     * @param $type The type of this value
+     * @param $field The name of the field for this value
+     * @return The value.
+     */
+    public function getStaticValue($type, $field) {
+
+        // Save in DB
+        $s = "SELECT id, value FROM staticValue WHERE `type`='".$type."' AND `field`= '".$field."'";
+        $r = DBConnection::getInstance()->query($s);
+
+        if( $r->num_rows == 0 ) {
+            return false;
+        } else {
+            $a = $r->fetch_object();
+            return json_decode($a->value);
+        }
     }
 }
 

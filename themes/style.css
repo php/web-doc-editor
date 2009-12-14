@@ -333,10 +333,6 @@ opacity:
 } .file-need-commit {
     color: red !important;
     font-weight: bold !important;
-} .file-critical {
-    color: black !important;
-    font-weight: bold !important;
-    background-color: #fddcdc !important;
 } .summary_1 {
     color: black !important;
     font-weight: bold !important;
@@ -344,16 +340,12 @@ opacity:
 } .summary_2 {
     color: black !important;
     font-weight: bold !important;
-    background-color: #EEE8AA !important;
+    background-color: #FF6347 !important;
 } .summary_3 {
     color: black !important;
     font-weight: bold !important;
-    background-color: #FF6347 !important;
+    background-color: #EEE8AA !important;
 } .summary_4 {
-    color: black !important;
-    font-weight: bold !important;
-    background-color: #DCDCDC !important;
-} .summary_5 {
     color: black !important;
     font-weight: bold !important;
     background-color: #DCDCDC !important;

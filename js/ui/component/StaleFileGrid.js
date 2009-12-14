@@ -34,9 +34,6 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
             }, {
                 name    : 'needCommitLang',
                 mapping : 'needCommitLang'
-            }, {
-                name    : 'isCritical',
-                mapping : 'isCritical'
             }
         ])
     ),
@@ -64,9 +61,6 @@ ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
     {
         if (record.data.needCommitEN || record.data.needCommitLang) {
             return 'file-need-commit';
-        }
-        if (record.data.isCritical) {
-            return 'file-critical';
         }
     },
     emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'

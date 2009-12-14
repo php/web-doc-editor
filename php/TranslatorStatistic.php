@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
 
 class TranslatorStatistic
 {
@@ -23,23 +24,34 @@ class TranslatorStatistic
     /**
      * Get translators information.
      *
-     * @return An associated array containing informations about translators.
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getTranslators()
+    public function getTranslators($lang='all')
     {
-        $s = sprintf(
-            'SELECT `id`, `nick`, `name`, `mail`, `vcs` FROM `translators` WHERE `lang`="%s"',
-            AccountManager::getInstance()->vcsLang
-        );
+        if( $lang == 'all' ) {
+            $where = '';
+        } else {
+            $where = 'WHERE `lang`="'.$lang.'"';
+        }
+
+        $s =  'SELECT 
+                 `id`, `nick`, `name`, `mail`, `vcs`, `lang`
+               FROM
+                 `translators`
+               '.$where.'
+        ';
+
         $result = DBConnection::getInstance()->query($s);
 
         $persons = array();
-        while ($r = $result->fetch_array()) {
-            $persons[$r['nick']] = array(
-                'id'   => $r['id'],
-                'name' => utf8_encode($r['name']),
-                'mail' => $r['mail'],
-                'vcs'  => $r['vcs']
+
+        while ($r = $result->fetch_object()) {
+            $persons[$r->lang][$r->nick] = array(
+                'id'   => $r->id,
+                'name' => utf8_encode($r->name),
+                'mail' => $r->mail,
+                'vcs'  => $r->vcs
             );
         }
         return $persons;
@@ -48,135 +60,112 @@ class TranslatorStatistic
     /**
      * Get number of uptodate files per translators.
      *
-     * @return An associated array (key=>translator's nick, value=>nb files).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getUptodateFileCount()
+    public function getUptodateFileCount($lang='all')
     {
-        $s = sprintf(
-            'SELECT
+        if( $lang == 'all' ) {
+            $where = '';
+        } else {
+            $where = '`lang`="'.$lang.'" AND';
+        }
+
+        $s = 'SELECT
                 COUNT(`name`) AS total,
-                `maintainer`
+                `maintainer`,
+                `lang`
             FROM
                 `files`
             WHERE
-                `lang`="%s"
-            AND
+                ' . $where . '
                 `revision` = `en_revision`
             GROUP BY
                 `maintainer`
             ORDER BY
-                `maintainer`',
-            AccountManager::getInstance()->vcsLang
-        );
-        $result = DBConnection::getInstance()->query($s);
+                `maintainer`
+        ';
+        $r = DBConnection::getInstance()->query($s);
 
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
+        $result = array();
+        while ($a = $r->fetch_object()) {
+            $result[$a->lang][$a->maintainer] = $a->total;
         }
-        return $tmp;
+        return $result;
     }
 
     /**
      * Get number of old files per translators.
      *
-     * @return An associated array (key=>translator's nick, value=>nb files).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
+     * @return An associated array
      */
-    public function getOldFileCount()
+    public function getStaleFileCount($lang='all')
     {
-        $s = sprintf(
-            'SELECT
+        if( $lang == 'all' ) {
+            $where = '';
+        } else {
+            $where = '`lang`="'.$lang.'" AND';
+        }
+
+        $s = 'SELECT
                 COUNT(`name`) AS total,
-                `maintainer`
+                `maintainer`,
+                `lang`
             FROM
                 `files`
             WHERE
-                `lang`="%s"
-            AND
+                ' . $where . '
                 `en_revision` != `revision`
             AND
-                `en_revision` - `revision` < 10
-            AND
-                `size_diff` < 3
-            AND
-                `mdate_diff` > -30
-            AND
                 `size` is not NULL
             GROUP BY
                 `maintainer`
             ORDER BY
-                `maintainer`',
-            AccountManager::getInstance()->vcsLang
-        );
-        $result = DBConnection::getInstance()->query($s);
+                `maintainer`
+        ';
+        $r = DBConnection::getInstance()->query($s);
 
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
+        $result = array();
+        while ($a = $r->fetch_object()) {
+            $result[$a->lang][$a->maintainer] = $a->total;
         }
-        return $tmp;
+        return $result;
     }
 
     /**
-     * Get number of critical files per translators.
+     * Compute statistics summary about translators and store it into DB
      *
-     * @return An associated array (key=>translator's nick, value=>nb files).
+     * @param $lang Can be either 'all' for all availables languages, or one specific language
      */
-    public function getCriticalFileCount()
+    public function computeSummary($lang='all')
     {
-        $s = sprintf(
-            'SELECT
-                COUNT(`name`) AS total,
-                `maintainer`
-            FROM
-                `files`
-            WHERE
-                `lang`="%s"
-            AND
-                ( `en_revision` - `revision` >= 10  OR
-                ( `en_revision` != `revision`  AND
-                    ( `size_diff` >= 3 OR `mdate_diff` <= -30 )
-                ))
-            AND
-                `size` is not NULL
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`',
-            AccountManager::getInstance()->vcsLang
-        );
-        $result = DBConnection::getInstance()->query($s);
 
-        $tmp = array();
-        while ($r = $result->fetch_array()) {
-            $tmp[$r['maintainer']] = $r['total'];
+        $translators = $this->getTranslators($lang);
+        $uptodate    = $this->getUptodateFileCount($lang);
+        $stale       = $this->getStaleFileCount($lang);
+
+        if( $lang == 'all' ) {
+            $hereLang = RepositoryManager::getInstance()->availableLang;
+        } else {
+            $hereLang = array($lang);
         }
-        return $tmp;
-    }
 
-    /**
-     * Get statistics summary about translators.
-     *
-     * @return An indexed array containing statistics about translators (nb uptodate files, nb old files, etc...)
-     */
-    public function getSummary()
-    {
-        $translators = $this->getTranslators();
-        $uptodate    = $this->getUptodateFileCount();
-        $old         = $this->getOldFileCount();
-        $critical    = $this->getCriticalFileCount();
+        foreach( $hereLang as $lang ) {
 
-        $i=0; $persons=array();
-        foreach ($translators as $nick => $data) {
-            $persons[$i]              = $data;
-            $persons[$i]['nick']      = $nick;
-            $persons[$i]['uptodate']  = isset($uptodate[$nick]) ? $uptodate[$nick] : '0';
-            $persons[$i]['old']       = isset($old[$nick])      ? $old[$nick]      : '0';
-            $persons[$i]['critical']  = isset($critical[$nick]) ? $critical[$nick] : '0';
-            $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['old'] + $persons[$i]['critical'];
-            $i++;
+            $i=0; $persons=array();
+            foreach ($translators[$lang] as $nick => $data) {
+                $persons[$i]              = $data;
+                $persons[$i]['nick']      = $nick;
+                $persons[$i]['uptodate']  = isset($uptodate[$lang][$nick]) ? $uptodate[$lang][$nick] : '0';
+                $persons[$i]['stale']     = isset($stale[$lang][$nick])      ? $stale[$lang][$nick]      : '0';
+                $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['stale'];
+                $i++;
+            }
+
+            // Save $summary into DB
+            RepositoryManager::getInstance()->setStaticValue('translator_summary', $lang, json_encode($persons));
         }
-        return $persons;
     }
 }
 
