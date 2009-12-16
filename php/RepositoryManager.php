@@ -65,13 +65,13 @@ class RepositoryManager
 
     /**
      * CleanUp the dataBase before check the build.
-     * We only stock in DB the last status for one language.
+     * We only stock in DB the last failed build on a month.
      *
      * @see checkBuild
      */
     public function cleanUpBeforeCheckBuild()
     {
-        DBConnection::getInstance()->query("TRUNCATE TABLE `buildLog`");
+        DBConnection::getInstance()->query("DELETE FROM `failedBuildLog` WHERE `date` < date_sub(now(),interval 1 month)");
     }
 
     /**
@@ -92,32 +92,46 @@ class RepositoryManager
     }
 
     /**
-     * Check the build of your file (using configure.php script).
+     * Check the build of the documentation (using configure.php script).
      * PHP binary should be in /usr/bin
      *
+     * @param $lang The lang of the documentation we want to check the build. We must take out $lang to be able to use this method from cron script on multiple language
      * @param $enable_xml_details Indicate whether the checking includes xml-details
      * @return The output log.
      */
-    public function checkBuild($enable_xml_details=false)
+    public function checkBuild($lang, $enable_xml_details="false")
     {
+
+        $return = Array(
+            "state"      => "ok",
+            "logContent" => ""
+        );
+
         $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'/doc-base/;'
               .'/usr/bin/php configure.php '
-              .'--with-lang='.AccountManager::getInstance()->vcsLang.' --disable-segfault-error';
+              .'--with-lang='.$lang.' --disable-segfault-error';
 
-        if ($enable_xml_details) {
+        if ( $enable_xml_details == "true" ) {
             $cmd .= ' --enable-xml-details';
         }
 
         $cmd .= ';';
 
-        $output = array();
-        exec($cmd, $output);
+        $trial_threshold = 3;
+        while ($trial_threshold-- > 0) {
+            $output = array();
+            exec($cmd, $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
+        }
 
-        // Format the output
-        // TODO: extract the string replace outside this function
-        $output = str_replace("Warning", '<span style="color: #FF0000; font-weight: bold;">Warning</span>', $output);
+        $return["logContent"] = $output;
 
-        return $output;
+        // We save the result of this check only if it failed.
+        if (!strstr(implode(" ", $output), 'All good. Saving .manual.xml... done.')) {
+            $return["state"] = "ko";
+        }
+
+        return $return;
     }
 
     /**
@@ -846,7 +860,7 @@ EOD;
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
             DBConnection::getInstance()->query($query);
-        }        
+        }
     }
 
     /**

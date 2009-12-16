@@ -492,7 +492,7 @@ class ExtJsController
         }
 
         // Remove \
-        $fileContent = stripslashes($this->getRequestVariable('fileContent'));
+        $fileContent = $this->getRequestVariable('fileContent');
 
         // Replace &nbsp; by space
         $fileContent = str_replace("&nbsp;", "", $fileContent);
@@ -771,18 +771,29 @@ class ExtJsController
         }
 
         $xmlDetails = $this->getRequestVariable('xmlDetails');
+        $return = "";
 
-        $lock = new LockFile('lock_check_build');
+        $lang = AccountManager::getInstance()->vcsLang;
+
+        $lock = new LockFile('lock_check_build_'.$lang);
         if ($lock->lock()) {
 
+            // Remove old log from DB
+            RepositoryManager::getInstance()->cleanUpBeforeCheckBuild();
+
             // Start the checkBuild system
-            $output = RepositoryManager::getInstance()->checkBuild($xmlDetails);
+            $return = RepositoryManager::getInstance()->checkBuild($lang, $xmlDetails);
         }
         // Remove the lock File
         $lock->release();
 
         // Send output into a log file
-        LogManager::getInstance()->saveOutputLog('log_check_build', $output);
+        LogManager::getInstance()->saveOutputLog('log_check_build_'.$lang, $return["logContent"]);
+
+        // If the state of this build is ko, we save it into DB
+        if( $return["state"] == 'ko' ) {
+            LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
+        }
 
         return JsonResponseBuilder::success();
     }
@@ -1100,13 +1111,31 @@ class ExtJsController
     }
 
     /**
-     * Get data about the status of the build
+     * Get the content of a failed build
      */
-    public function getBuildStatusData()
+    public function getFailedBuildData()
     {
         AccountManager::getInstance()->isLogged();
 
-        $r = LogManager::getInstance()->getBuildLogStatus();
+        $idFailedBuild = $this->getRequestVariable('idFailedBuild');
+
+        $r = LogManager::getInstance()->getFailedBuildData($idFailedBuild);
+
+        return JsonResponseBuilder::success(
+            array(
+                'mess' => $r
+            )
+        );
+    }
+
+    /**
+     * Get all failed build
+     */
+    public function getFailedBuild()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $r = LogManager::getInstance()->getFailedBuild();
 
         return JsonResponseBuilder::success(
             array(

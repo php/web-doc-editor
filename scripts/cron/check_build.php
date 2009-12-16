@@ -18,12 +18,12 @@ RepositoryManager::getInstance()->cleanUpBeforeCheckBuild();
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
 
-    $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'/doc-base/;/usr/bin/php configure.php --with-lang='.$lang.' --disable-segfault-error';
-    $output = array();
-    exec($cmd, $output);
+    $return = RepositoryManager::getInstance()->checkBuild($lang);
 
-    $m = implode("\n", $output);
-    $msg = "Your documentation is broken. The build is done on Friday.
+    // What we must do when the build failed
+    if( $return["state"] == "ko" ) {
+
+        $msg = "Your documentation is broken. The build is done on Friday.
 
 Please, try to fix it *quickly*.
 
@@ -31,26 +31,23 @@ Here is the output of the configure.php script :
 
 =============================
 
-$m
+".implode("\n", $return["logContent"])."
 
 --
 This email is send automatically by the PhpDocumentation Online Editor.
 ";
 
-    $status = 1;
-    // Send an email only if the build is broken
-    if (!strstr($msg, 'All good. Saving .manual.xml... done.')) {
-
-        $status = 0;
-
         $to = "doc-$lang@lists.php.net";
 
         $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
 
+        // We send an email for this failed build
         AccountManager::getInstance()->email($to, $subject, $msg);
+
+        // We store it into DB
+        LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
     }
 
-    LogManager::getInstance()->saveBuildLogStatus($lang, $status);
 }
 
 ?>

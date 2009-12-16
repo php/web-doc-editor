@@ -64,7 +64,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
-                        text    : _('Translation build status'),
+                        text    : _('Last failed build'),
                         iconCls : 'BuildStatus',
                         handler : function()
                         {
@@ -74,7 +74,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 // if tab not exist, create new tab
                                 Ext.getCmp('main-panel').add({
                                     id       : 'tab-build-status',
-                                    title    : _('Translation build status'),
+                                    title    : _('Last failed build'),
                                     iconCls  : 'BuildStatus',
                                     layout   : 'fit',
                                     closable : true,

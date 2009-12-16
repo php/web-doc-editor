@@ -8,7 +8,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
--- Structure of table `commitMessage`
+-- Structure of table `staticValue`
 --
 
 CREATE TABLE IF NOT EXISTS `staticValue` (
@@ -187,13 +187,13 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `buildLog`
+-- Structure of table `failedBuildLog`
 --
-CREATE TABLE IF NOT EXISTS `buildLog` (
+CREATE TABLE IF NOT EXISTS `failedBuildLog` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(50) NOT NULL,
   `lang` varchar(10) NOT NULL,
-  `status` enum('0','1') NOT NULL,
+  `log` mediumtext NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

@@ -148,7 +148,7 @@ i18n["Not In EN: in {0}"] = "Non présent en EN : dans {0}";
 i18n["Remove this file"] = "Supprimer ce fichier";
 i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "Voulez-vous marquer ce fichier comme devant être effacé ?<br/><br/>L'effacement sera effectif qu'une fois le commit émis.<br/><br/>Vous devez confirmer cette action.";
 i18n["View in a new Tab"] = "Voir dans un nouvel onglet";
-i18n["Translation build status"] = "Statut de la compilation";
+i18n["Last failed build"] = "Dernier échec de la compilation";
 i18n["Language"] = "Langage";
 
 // Main Menu
@@ -165,7 +165,8 @@ i18n["Refresh all data"]                                       = "Rafraîchir le
 i18n["Check Build"]                                           = "Vérifier la compilation";
     i18n["Go !"]                                              = "Commencer !";
     i18n["Please, wait until the build is checked..."]        = "Merci de patienter pendant la vérification.";
-    i18n["Check Build Result"]                                = "Résultat de la vérification";
+    i18n["Last failed build for {0}"]                         = "Dernier échec pour {0}";
+    i18n["Last failed build for the documentation {0}"]       = "Dernier échec pour la documentation {0}";
     i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";
     i18n["Enable detailed XML error messages"]                = "Activer les messages d'erreur XML détaillés";
 

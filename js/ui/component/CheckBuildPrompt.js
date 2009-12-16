@@ -30,7 +30,7 @@ ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
                 baseCls   : 'x-plain',
                 bodyStyle : 'padding:5px 5px 0',
                 html      : _('You\'re about to check the build via this command:') +
-                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + phpDoc.userLang + '<br><br>'
+                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + phpDoc.userLang + '<br/><br/>'
             }, {
                 xtype     : 'checkbox',
                 id        : 'option-xml-details',

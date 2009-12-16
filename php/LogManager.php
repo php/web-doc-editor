@@ -118,31 +118,72 @@ class LogManager
      */
     public function readOutputLog($file)
     {
-        return file_get_contents(DOC_EDITOR_VCS_PATH . '../.' . $file);
+        
+        return $this->highlightBuildLog(file_get_contents(DOC_EDITOR_VCS_PATH . '../.' . $file));
     }
 
     /**
-     * Save buildLog status.
+     * Save failed build log.
      *
      * @param $lang The lang checked
-     * @param $status The status of the build. 0 if the build is broken, 1 otherwise.
+     * @param $log The content of the log
      */
-    public function saveBuildLogStatus($lang, $status)
+    public function saveFailedBuild($lang, $log)
     {
         $s = sprintf(
-            'INSERT INTO `buildLog` (`project`, `lang`, `status`, `date`)
+            'INSERT INTO `failedBuildLog` (`project`, `lang`, `log`, `date`)
              VALUES ("php","%s", "%s", now())',
-            $lang, $status
+            $lang, DBConnection::getInstance()->real_escape_string(json_encode($log))
         );
         DBConnection::getInstance()->query($s);
     }
 
     /**
-     * Get buildLog data.
+     * Highlight buildLog with some colors.
+     *
+     * @param $content The content of the log we want to highlight
+     * @return The log highlighted 
      */
-    public function getBuildLogStatus()
+    public function highlightBuildLog($content)
     {
-        $s = 'SELECT `id`, `lang`, `status`, `date` FROM `buildLog`';
+
+         $reg_red = array(
+             '/(Warning: )/',
+             '/(Notice: )/',
+             '/(Eyh man. No worries. Happ shittens. Try again after fixing the errors above.)/'
+         );
+
+         $reg_blue = array(
+             '/(Loading and parsing manual.xml...)/',
+             '/(Checking )/',
+             '/(Saving it...)/',
+             '/(Generating )/',
+             '/( on line )/',
+             '/(line: )/',
+             '/(Creating file )/'
+         );
+
+        $content = preg_replace(
+            $reg_red,
+            '<span style="color: #c22900; font-weight: bold;">$1</span>',
+            $content
+        );
+
+        $content = preg_replace(
+            $reg_blue,
+            '<span style="color: #418bd4; font-weight: bold;">$1</span>',
+            $content
+        );
+
+         return $content;
+    }
+
+    /**
+     * Get the list of failed build.
+     */
+    public function getFailedBuild()
+    {
+        $s = 'SELECT `id`, `lang`, `date` FROM `failedBuildLog`';
         $r  = DBConnection::getInstance()->query($s);
 
         $node = array();
@@ -151,6 +192,22 @@ class LogManager
         }
 
         return array('nb' => $r->num_rows, 'node' => $node);
+    }
+
+    /**
+     * Get the data about a failed build.
+     *
+     * @param $id The id of the failed build into DB we want to retrieve
+     * @return The content of this failed build
+     */
+    public function getFailedBuildData($id)
+    {
+        $s = 'SELECT `log` FROM `failedBuildLog` WHERE `id`=\''.$id.'\'';
+        $r  = DBConnection::getInstance()->query($s);
+
+        $a = $r->fetch_object();
+
+        return $this->highlightBuildLog(json_decode($a->log));
     }
 }
 

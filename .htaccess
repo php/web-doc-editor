@@ -1,3 +1,4 @@
+php_flag magic_quotes_gpc Off
 Options +FollowSymLinks
 RewriteEngine On
 RewriteRule ^do/([^\?]+)$ php/controller.php?task=$1&%{QUERY_STRING}
