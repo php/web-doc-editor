@@ -105,7 +105,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                     mode           : 'local',
                     forceSelection : true,
                     editable       : false,
-                    value          : phpDoc.userConf.conf_theme,
+                    value          : phpDoc.userConf["theme"],
                     store          : ui.component._EditorConf.themeStore,
 
                     listeners : {
@@ -116,11 +116,11 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                         select : function(c, record, numIndex)
                         {
                             var hrefTheme = c.getValue(),
-							    tmp;
+                            tmp;
 
                             Ext.get('appTheme').dom.href = hrefTheme;
                             tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_theme',
+                                item  : 'theme',
                                 value : hrefTheme
                             });
                         }
@@ -149,8 +149,8 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'radio',
                 items       : [{
-                    name       : 'conf_needupdate_diff',
-                    checked    : (phpDoc.userConf.conf_needupdate_diff === "using-viewvc") ? true : false,
+                    name       : 'needUpdateDiff',
+                    checked    : (phpDoc.userConf["needUpdateDiff"] === "using-viewvc") ? true : false,
                     boxLabel   : _('Using ViewVc from php web site'),
                     inputValue : 'using-viewvc',
 
@@ -159,15 +159,15 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         {
                             if (field.checked) {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'conf_needupdate_diff',
+                                    item  : 'needUpdateDiff',
                                     value : field.getRawValue()
                                 });
                             }
                         }
                     }
                 }, {
-                    name       : 'conf_needupdate_diff',
-                    checked    : (phpDoc.userConf.conf_needupdate_diff === "using-exec") ? true : false,
+                    name       : 'needUpdateDiff',
+                    checked    : (phpDoc.userConf["needUpdateDiff"] === "using-exec") ? true : false,
                     boxLabel   : _('Using diff -kk -u command line'),
                     inputValue : 'using-exec',
 
@@ -176,7 +176,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         {
                             if (field.checked) {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'conf_needupdate_diff',
+                                    item  : 'needUpdateDiff',
                                     value : field.getRawValue()
                                 });
                             }
@@ -190,29 +190,29 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_needupdate_scrollbars',
-                    checked  : (phpDoc.userConf.conf_needupdate_scrollbars === "true") ? true : false,
+                    name     : 'needUpdateScrollbars',
+                    checked  : phpDoc.userConf["needUpdateScrollbars"],
                     boxLabel : _('Synchronize scroll bars'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_needupdate_scrollbars',
+                                item  : 'needUpdateScrollbars',
                                 value : field.getValue()
                             });
                         }
                     }
                 }, {
-                    name     : 'conf_needupdate_displaylog',
-                    checked  : (phpDoc.userConf.conf_needupdate_displaylog === "true") ? true : false,
+                    name     : 'needUpdateDisplaylog',
+                    checked  : phpDoc.userConf["needUpdateDisplaylog"],
                     boxLabel : _('Automatically load the log when displaying the file'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_needupdate_displaylog',
+                                item  : 'needUpdateDisplaylog',
                                 value : field.getValue()
                             });
                         }
@@ -241,15 +241,15 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_error_skipnbliteraltag',
-                    checked  : (phpDoc.userConf.conf_error_skipnbliteraltag === "true") ? true : false,
+                    name     : 'errorSkipNbLiteralTag',
+                    checked  : phpDoc.userConf["errorSkipNbLiteralTag"],
                     boxLabel : _('Skip nbLiteralTag error'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_error_skipnbliteraltag',
+                                item  : 'errorSkipNbLiteralTag',
                                 value : field.getValue()
                             });
                         }
@@ -262,29 +262,29 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_error_scrollbars',
-                    checked  : (phpDoc.userConf.conf_error_scrollbars === "true") ? true : false,
+                    name     : 'errorScrollbars',
+                    checked  : phpDoc.userConf["errorScrollbars"],
                     boxLabel : _('Synchronize scroll bars'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_error_scrollbars',
+                                item  : 'errorScrollbars',
                                 value : field.getValue()
                             });
                         }
                     }
                 }, {
-                    name     : 'conf_error_displaylog',
-                    checked  : (phpDoc.userConf.conf_error_displaylog === "true") ? true : false,
+                    name     : 'errorDisplayLog',
+                    checked  : phpDoc.userConf["errorDisplayLog"],
                     boxLabel : _('Automatically load the log when displaying the file'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_error_displaylog',
+                                item  : 'errorDisplayLog',
                                 value : field.getValue()
                             });
                         }
@@ -313,29 +313,29 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_reviewed_scrollbars',
-                    checked  : (phpDoc.userConf.conf_reviewed_scrollbars === "true") ? true : false,
+                    name     : 'reviewedScrollbars',
+                    checked  : phpDoc.userConf["reviewedScrollbars"],
                     boxLabel : _('Synchronize scroll bars'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_reviewed_scrollbars',
+                                item  : 'reviewedScrollbars',
                                 value : field.getValue()
                             });
                         }
                     }
                 }, {
-                    name     : 'conf_reviewed_displaylog',
-                    checked  : (phpDoc.userConf.conf_reviewed_displaylog === "true") ? true : false,
+                    name     : 'reviewedDisplaylog',
+                    checked  : phpDoc.userConf["reviewedDisplaylog"],
                     boxLabel : _('Automatically load the log when displaying the file'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_reviewed_displaylog',
+                                item  : 'reviewedDisplaylog',
                                 value : field.getValue()
                             });
                         }
@@ -364,15 +364,15 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_allfiles_displaylog',
-                    checked  : (phpDoc.userConf.conf_allfiles_displaylog === "true") ? true : false,
+                    name     : 'allFilesDisplayLog',
+                    checked  : phpDoc.userConf["allFilesDisplayLog"],
                     boxLabel : _('Automatically load the log when displaying the file'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_allfiles_displaylog',
+                                item  : 'allFilesDisplayLog',
                                 value : field.getValue()
                             });
                         }
@@ -401,29 +401,29 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'conf_patch_scrollbars',
-                    checked  : (phpDoc.userConf.conf_patch_scrollbars === "true") ? true : false,
+                    name     : 'patchScrollbars',
+                    checked  : phpDoc.userConf["patchScrollbars"],
                     boxLabel : _('Synchronize scroll bars'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_patch_scrollbars',
+                                item  : 'patchScrollbars',
                                 value : field.getValue()
                             });
                         }
                     }
                 }, {
-                    name     : 'conf_patch_displaylog',
-                    checked  : (phpDoc.userConf.conf_patch_displaylog === "true") ? true : false,
+                    name     : 'patchDisplayLog',
+                    checked  : phpDoc.userConf["patchDisplayLog"],
                     boxLabel : _('Automatically load the log when displaying the file'),
 
                     listeners : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
-                                item  : 'conf_patch_displaylog',
+                                item  : 'patchDisplayLog',
                                 value : field.getValue()
                             });
                         }

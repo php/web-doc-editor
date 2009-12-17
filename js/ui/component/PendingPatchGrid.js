@@ -235,7 +235,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_patch_displaylog === 'true')
+                                    loadStore : phpDoc.userConf["patchDisplayLog"]
                                 })
                             }
                         }, new ui.component.FilePanel(
@@ -254,7 +254,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             storeRecord    : storeRecord,
                             syncScrollCB   : true,
                             syncScroll     : true,
-                            syncScrollConf : 'conf_patch_scrollbars'
+                            syncScrollConf : 'patchScrollbars'
                         }), new ui.component.FilePanel(
                         {
                             id             : 'PP-ORIGIN-PANEL-' + FileID,
@@ -270,7 +270,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             readOnly       : true,
                             parser         : 'xml',
                             syncScroll     : true,
-                            syncScrollConf : 'conf_patch_scrollbars'
+                            syncScrollConf : 'patchScrollbars'
                         })
                     ]
                 });

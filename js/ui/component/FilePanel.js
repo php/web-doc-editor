@@ -357,9 +357,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
         this.bbar = (this.syncScrollCB) ? [{
             xtype     : 'checkbox',
-            name      : 'conf_needupdate_scrollbars',
+            name      : 'needUpdateScrollbars',
             hideLabel : true,
-            checked   : (phpDoc.userConf[this.syncScrollConf] === 'true'),
+            checked   : phpDoc.userConf[this.syncScrollConf],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,

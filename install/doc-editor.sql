@@ -168,18 +168,7 @@ CREATE TABLE IF NOT EXISTS `translators` (
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `vcs_login` varchar(255) NOT NULL,
-  `conf_needupdate_diff` varchar(255) NOT NULL DEFAULT 'using-exec',
-  `conf_needupdate_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
-  `conf_needupdate_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_error_skipnbliteraltag` varchar(10) NOT NULL DEFAULT 'true',
-  `conf_error_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
-  `conf_error_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_reviewed_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
-  `conf_reviewed_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_allfiles_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_patch_scrollbars` varchar(10) NOT NULL DEFAULT 'true',
-  `conf_patch_displaylog` varchar(10) NOT NULL DEFAULT 'false',
-  `conf_theme` varchar(255) NOT NULL DEFAULT 'themes/empty.css',
+  `conf` text NOT NULL,
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

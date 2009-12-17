@@ -298,7 +298,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : phpDoc.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
+                                    loadStore : phpDoc.userConf["errorDisplayLog"]
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -307,7 +307,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_error_displaylog === 'true')
+                                    loadStore : phpDoc.userConf["errorDisplayLog"]
                                 })
                             ]
                         }
@@ -326,7 +326,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_error_scrollbars'
+                        syncScrollConf : 'errorScrollbars'
                     }), new ui.component.FilePanel(
                     {
                         id             : 'FE-EN-PANEL-' + FileID,
@@ -342,7 +342,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_error_scrollbars'
+                        syncScrollConf : 'errorScrollbars'
                     })
                 ]
             });

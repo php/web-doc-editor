@@ -327,7 +327,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : phpDoc.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
+                                    loadStore : phpDoc.userConf["reviewedDisplaylog"]
                                 }), new ui.component.VCSLogGrid({
                                     layout    : 'fit',
                                     title     : 'en',
@@ -335,7 +335,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_reviewed_displaylog === 'true')
+                                    loadStore : phpDoc.userConf["reviewedDisplaylog"]
                                 })
                             ]
                         }
@@ -354,7 +354,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_reviewed_scrollbars'
+                        syncScrollConf : 'reviewedScrollbars'
                     }), new ui.component.FilePanel(
                     {
                         id             : 'FNR-EN-PANEL-' + FileID,
@@ -370,7 +370,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_reviewed_scrollbars'
+                        syncScrollConf : 'reviewedScrollbars'
                     })
                 ]
             });

@@ -21,9 +21,29 @@ class AccountManager
     public $vcsPasswd;
     public $vcsLang;
     public $userConf;
+    public $defaultConf;
 
     private function __construct()
     {
+        $this->defaultConf = array(
+            "needUpdateDiff"        => 'using-exec',
+            "needUpdateDisplaylog"  => false,
+            "needUpdateScrollbars"  => true,
+
+            "errorDisplayLog"       => false,
+            "errorScrollbars"       => true,
+            "errorSkipNbLiteralTag" => true,
+
+            "reviewedDisplaylog"    => false,
+            "reviewedScrollbars"    => true,
+
+            "allFilesDisplayLog"    => false,
+
+            "patchDisplayLog"       => false,
+            "patchScrollbars"       => true,
+
+            "theme"                 => 'themes/empty.css'
+        );
     }
 
     /**
@@ -57,25 +77,7 @@ class AccountManager
 
         $this->userConf = isset($_SESSION['userConf'])
             ? $_SESSION['userConf']
-            : array(
-                "conf_needupdate_diff"       => 'using-exec',
-                "conf_needupdate_scrollbars" => 'true',
-                "conf_needupdate_displaylog" => 'false',
-
-                "conf_error_skipnbliteraltag" => 'true',
-                "conf_error_scrollbars"       => 'true',
-                "conf_error_displaylog"       => 'false',
-
-                "conf_reviewed_scrollbars" => 'true',
-                "conf_reviewed_displaylog" => 'false',
-
-                "conf_allfiles_displaylog" => 'false',
-
-                "conf_patch_scrollbars" => 'true',
-                "conf_patch_displaylog" => 'false',
-
-                "conf_theme" => 'themes/empty.css'
-            );
+            : $this->defaultConf;
         $this->updateLastConnect();
 
         return true;
@@ -134,25 +136,7 @@ class AccountManager
               $a = $r->fetch_object();
 
               // ... object's property ...
-              $this->userConf = array(
-                  "conf_needupdate_diff"       => $a->conf_needupdate_diff,
-                  "conf_needupdate_scrollbars" => $a->conf_needupdate_scrollbars,
-                  "conf_needupdate_displaylog" => $a->conf_needupdate_displaylog,
-
-                  "conf_error_skipnbliteraltag" => $a->conf_error_skipnbliteraltag,
-                  "conf_error_scrollbars"       => $a->conf_error_scrollbars,
-                  "conf_error_displaylog"       => $a->conf_error_displaylog,
-
-                  "conf_reviewed_scrollbars" => $a->conf_reviewed_scrollbars,
-                  "conf_reviewed_displaylog" => $a->conf_reviewed_displaylog,
-
-                  "conf_allfiles_displaylog" => $a->conf_allfiles_displaylog,
-
-                  "conf_patch_scrollbars" => $a->conf_patch_scrollbars,
-                  "conf_patch_displaylog" => $a->conf_patch_displaylog,
-
-                  "conf_theme" => $a->conf_theme
-              );
+              $this->userConf = json_decode($a->conf);
 
               // ... and into the php's session
               $_SESSION['userID']    = $a->userID;
@@ -176,25 +160,7 @@ class AccountManager
               $_SESSION['vcsLogin']  = $this->vcsLogin;
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
               $_SESSION['lang']      = $this->vcsLang;
-              $_SESSION['userConf']  = array(
-                  "conf_needupdate_diff"       => 'using-exec',
-                  "conf_needupdate_scrollbars" => 'true',
-                  "conf_needupdate_displaylog" => 'false',
-
-                  "conf_error_skipnbliteraltag" => 'true',
-                  "conf_error_scrollbars"       => 'true',
-                  "conf_error_displaylog"       => 'false',
-
-                  "conf_reviewed_scrollbars" => 'true',
-                  "conf_reviewed_displaylog" => 'false',
-
-                  "conf_allfiles_displaylog" => 'false',
-
-                  "conf_patch_scrollbars" => 'true',
-                  "conf_patch_displaylog" => 'false',
-
-                  "conf_theme" => 'themes/empty.css'
-              );
+              $_SESSION['userConf']  = $this->defaultConf;
 
               // We construct the return's var for ExtJs
               $return['state'] = true;
@@ -224,11 +190,13 @@ class AccountManager
      */
     private function register()
     {
-        $s = sprintf(
-            'INSERT INTO `users` (`vcs_login`) VALUES ("%s")',
-            $this->vcsLogin
-        );
+
         $db = DBConnection::getInstance();
+
+        $s = sprintf(
+            'INSERT INTO `users` (`vcs_login`, `conf`) VALUES ("%s","%s")',
+            $this->vcsLogin, $db->real_escape_string(json_encode($this->defaultConf))
+        );
         $db->query($s);
         return $db->insert_id();
     }
@@ -241,15 +209,27 @@ class AccountManager
      */
     public function updateConf($item, $value)
     {
-        $s = sprintf(
-            'UPDATE `users` SET `%s`="%s" WHERE `vcs_login`="%s"',
-            $item, $value, AccountManager::getInstance()->vcsLogin
-        );
-        DBConnection::getInstance()->query($s);
+
+        if( $value == "false" ) {
+            $value = false;
+        }
+
+        if( $value == "true" ) {
+            $value = true;
+        }
 
         // In session
-        AccountManager::getInstance()->userConf[$item] = $value;
+        $this->userConf[$item] = $value;
         $_SESSION['userConf'][$item] = $value;
+        $db = DBConnection::getInstance();
+
+        // In DB
+        $s = sprintf(
+            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
+            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
+        );
+        $db->query($s);
+
     }
 
     /**
@@ -257,16 +237,16 @@ class AccountManager
      */
     public function eraseData()
     {
-        $uid = AccountManager::getInstance()->userID;
+
         $s = sprintf(
             'DELETE FROM `commitMessage` WHERE `userID`="%s"',
-            $uid
+            $this->userID
         );
         DBConnection::getInstance()->query($s);
 
         $s = sprintf(
             'DELETE FROM `users` WHERE `userID`="%s"',
-            $uid
+            $this->userID
         );
         DBConnection::getInstance()->query($s);
     }

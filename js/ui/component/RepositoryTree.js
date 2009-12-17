@@ -201,7 +201,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                                         fid       : FileID,
                                         fpath     : FileLang + FilePath,
                                         fname     : FileName,
-                                        loadStore : (phpDoc.userConf.conf_allfiles_displaylog === "true")
+                                        loadStore : phpDoc.userConf["allFilesDisplayLog"]
                                     })]
                                 }]
                             }

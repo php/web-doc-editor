@@ -10,25 +10,7 @@ var phpDoc = function()
         appVer     : '0.2',
         uiRevision : '$Revision$',
 
-        userConf : {
-            'conf_needupdate_diff'       : 'using-exec',
-            'conf_needupdate_scrollbars' : true,
-            'conf_needupdate_displaylog' : false,
-
-            'conf_error_skipnbliteraltag' : true,
-            'conf_error_scrollbars'       : true,
-            'conf_error_displaylog'       : false,
-
-            'conf_reviewed_scrollbars' : true,
-            'conf_reviewed_displaylog' : false,
-
-            'conf_allfiles_displaylog' : false,
-
-            'conf_patch_scrollbars' : true,
-            'conf_patch_displaylog' : false,
-
-            'conf_theme' : 'themes/empty.css'
-        },
+        userConf : '',
 
         filePendingOpen : '',
 

@@ -245,9 +245,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
 
-            if (phpDoc.userConf.conf_needupdate_diff === "using-viewvc") {
+            if (phpDoc.userConf["needUpdateDiff"] === "using-viewvc") {
                 diff = ui.component.ViewVCDiff;
-            } else if (phpDoc.userConf.conf_needupdate_diff === "using-exec") {
+            } else if (phpDoc.userConf["needUpdateDiff"] === "using-exec") {
                 diff = ui.component.ExecDiff;
             }
 
@@ -295,7 +295,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : phpDoc.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                    loadStore : phpDoc.userConf["needUpdateDisplaylog"]
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -304,7 +304,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : (phpDoc.userConf.conf_needupdate_displaylog === "true")
+                                    loadStore : phpDoc.userConf["needUpdateDisplaylog"]
                                 })
                             ]
                         }
@@ -323,7 +323,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_needupdate_scrollbars'
+                        syncScrollConf : 'needUpdateScrollbars'
                     }), new ui.component.FilePanel(
                     {
                         id             : 'FNU-EN-PANEL-' + FileID,
@@ -339,7 +339,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScroll     : true,
-                        syncScrollConf : 'conf_needupdate_scrollbars'
+                        syncScrollConf : 'needUpdateScrollbars'
                     })
                 ]
             });
