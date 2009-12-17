@@ -182,7 +182,7 @@ class ToolsError {
      */
     function getFilesError($ModifiedFiles) {
 
-        if ($_SESSION['userConf']['errorSkipNbLiteralTag'] == 'true' ) {
+        if ($_SESSION['userConf']->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
