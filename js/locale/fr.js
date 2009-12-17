@@ -130,6 +130,11 @@ i18n["Last data update: <em id=\"lastUpdateTime\">{0}</em>"] = "Dernière mise �
 i18n["update in progress..."] = "Mise en jour en cours...";
 i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l\'état de la mise à jour. Merci de patienter...";
 i18n["There is currently an update in progress.<br/>You can\'t perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l\'effectuer maintenant";
+
+
+i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s\'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
+i18n["There is currently a check in progress for this language.<br/>You can\'t perform a new check now."] = "Il y a actuellement une vérification de la compilation de ce langage en cours.<br/>Vous ne pouvez pas effectuer un maintenant.";
+
 i18n["in {0}"] = "dans le dossier {0}";
 i18n["Up to date files"] = "Fichiers à jour";
 i18n["Stale files"] = "Fichiers à mettre à jour";
@@ -165,6 +170,8 @@ i18n["Refresh all data"]                                       = "Rafraîchir le
 i18n["Check Build"]                                           = "Vérifier la compilation";
     i18n["Go !"]                                              = "Commencer !";
     i18n["Please, wait until the build is checked..."]        = "Merci de patienter pendant la vérification.";
+    i18n["Check Build Result for {0}"]                        = "Résultat de la compilation pour {0}";
+    i18n["Check Build Result for the documentation {0}"]      = "Résultat de la compilation pour la documentation {0}";
     i18n["Last failed build for {0}"]                         = "Dernier échec pour {0}";
     i18n["Last failed build for the documentation {0}"]       = "Dernier échec pour la documentation {0}";
     i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";

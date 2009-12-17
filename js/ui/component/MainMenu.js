@@ -55,9 +55,42 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls  : 'checkBuild',
                 handler  : function()
                 {
-                    var tmp = new ui.component.CheckBuildPrompt().show(
-                        Ext.get('acc-need-update')
+                    // We test if there is a check in progress for this language
+                    Ext.getBody().mask(
+                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                        _('Verify if there is a check in progress. Please, wait...')
                     );
+
+                    XHR({
+                        params  :
+                        {
+                            task     : 'checkLockFile',
+                            lockFile : 'lock_check_build_' + phpDoc.userLang
+                        },
+                        success : function()
+                        {
+                            // Remove wait msg
+                            Ext.getBody().unmask();
+
+                            Ext.MessageBox.show({
+                                title   : _('Status'),
+                                msg     : _('There is currently a check in progress for this language.<br/>' +
+                                            'You can\'t perform a new check now.'),
+                                buttons : Ext.MessageBox.OK,
+                                icon    : Ext.MessageBox.INFO
+                            });
+                        },
+                        failure : function()
+                        {
+                            // Remove wait msg
+                            Ext.getBody().unmask();
+
+                            var tmp = new ui.component.CheckBuildPrompt().show(
+                                Ext.get('acc-need-update')
+                            );
+
+                        }
+                    });
                 }
             }, {
                 text    : _('EN tools'),
