@@ -42,7 +42,7 @@ This email is send automatically by the PhpDocumentation Online Editor.
         $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
 
         // We send an email for this failed build
-        AccountManager::getInstance()->email($to, $subject, $msg);
+        AccountManager::getInstance()->email($to, $subject, $msg, 'www');
 
         // We store it into DB
         LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);

@@ -219,8 +219,8 @@ class AccountManager
         }
 
         // In session
-        $this->userConf[$item] = $value;
-        $_SESSION['userConf'][$item] = $value;
+        $this->userConf->$item = $value;
+        $_SESSION['userConf']->$item = $value;
         $db = DBConnection::getInstance();
 
         // In DB
@@ -258,10 +258,13 @@ class AccountManager
      * @param $to The Receiver.
      * @param $subject The subject of the email.
      * @param $msg The content of the email. Don't use HTML here ; only plain text.
+     * @param $from The email we place into From header.
      */
-    public function email($to, $subject, $msg)
+    public function email($to, $subject, $msg, $from='')
     {
-        $headers = 'From: '.$this->vcsLogin.'@php.net' . "\r\n" .
+        if( $from != 'www' ) $from = $this->vcsLogin;
+
+        $headers = 'From: '.$from.'@php.net' . "\r\n" .
                    'X-Mailer: PhpDocumentation Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";
 
