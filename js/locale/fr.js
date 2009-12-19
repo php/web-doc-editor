@@ -10,6 +10,7 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
 
+i18n["Open the Log Message Manager"] = "Ouvrir le gestionnaire de messages d'historisation";
 i18n["Switch to language..."] = "Basculer vers la langue ...";
 
 i18n["Report bugs"] = "Rapporter un bogue";
@@ -218,7 +219,7 @@ i18n["Erase my personal data"] = "Effacer mes données personnelles";
     i18n["Thank you for using this application !"] = "Merci d'avoir utilisé cette application !";
 
 i18n["Log out"] = "Se déconnecter";
-    i18n["Are you sure you want to logout?"] = "êtes-vous sûr de vouloir vous déconnecter ?";
+    i18n["Are you sure you want to logout?"] = "Êtes-vous sûr de vouloir vous déconnecter ?";
 
 i18n["About"] = "À propos";
     i18n["About {0}"] = "À propos de {0}";

@@ -334,6 +334,14 @@ var phpDoc = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingCommit',
+                        tools     : [{
+                            id      : 'gear',
+                            hidden  : (this.userLogin == 'anonymous' ),
+                            qtip    : _('Open the Log Message Manager'),
+                            handler : function() {
+                                var tmp = new ui.component.CommitLogPrompt().show();
+                            }
+                        }],
                         title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
                         layout    : 'fit',
                         border    : false,
