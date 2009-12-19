@@ -482,12 +482,12 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
             }, {
                 id         : 'confCard',
                 region     : 'center',
-                layout     : 'slide',
+                layout     : 'card',
                 width      : 375,
                 frame      : true,
                 activeItem : 0,
 
-                bbar : new Ext.StatusBar({
+                bbar : new Ext.ux.StatusBar({
                     defaultText    : _('All changes take effect immediately'),
                     defaultIconCls : 'confStatusBar'
                 }),

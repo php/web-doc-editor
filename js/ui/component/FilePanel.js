@@ -384,7 +384,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             }
         }] : [{
             xtype     : 'panel',
-            height    : 21,
+            height    : 26,
             baseCls   : '',
             bodyStyle : 'padding-top:5px;',
             html      : [
@@ -656,7 +656,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     },
                     cmscroll : function(scrollY)
                     {
-                        if (this.syncScroll && phpDoc.userConf[this.syncScrollConf] === 'true') {
+                        if( this.syncScroll && phpDoc.userConf[this.syncScrollConf] ) {
                             var opp_prefix;
                             switch (this.ftype) {
                                 case 'EN':     opp_prefix = this.prefix + '-LANG';   break;

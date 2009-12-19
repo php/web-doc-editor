@@ -4,11 +4,11 @@ Ext.namespace('ui','ui.component','ui.component._RepositoryTree');
 // RepositoryTree internals
 
 // RepositoryTree root node
-ui.component._RepositoryTree.root = new Ext.tree.AsyncTreeNode({
+ui.component._RepositoryTree.root = {
+    nodeType  : 'async',
     id        : '/',
-    text      : _('Repository'),
-    draggable : false // disable root node dragging
-});
+    text      : _('Repository')
+};
 
 // RepositoryTree default tree loader
 ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
@@ -111,7 +111,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
     enableDD        : false,
     useArrows       : true,
     autoScroll      : true,
-    bodyBorder      : false,
+    border          : false,
     containerScroll : true,
 
     root   : ui.component._RepositoryTree.root,

@@ -105,7 +105,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
     view             : ui.component._PendingTranslateGrid.view,
     loadMask         : true,
     autoExpandColumn : 'name',
-    bodyBorder       : false,
+    border           : false,
     listeners        : {
         rowcontextmenu : function(grid, rowIndex, e)
         {

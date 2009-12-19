@@ -247,7 +247,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
 ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
-    bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'name',
     columns          : ui.component._PendingReviewGrid.columns,
     view             : ui.component._PendingReviewGrid.view,

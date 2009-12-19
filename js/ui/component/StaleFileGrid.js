@@ -203,7 +203,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     view             : ui.component._StaleFileGrid.view,
     loadMask         : true,
     autoExpandColumn : 'name',
-    bodyBorder       : false,
+    border           : false,
     listeners        : {
         rowcontextmenu : function(grid, rowIndex, e)
         {

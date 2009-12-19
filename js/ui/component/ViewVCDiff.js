@@ -14,11 +14,11 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
         {
             items : {
                 id         : this.prefix + '-diff-' + this.fid,
-                xtype      : 'iframepanel',
-                loadMask   : true,
-                defaultSrc : 'http://svn.php.net/viewvc/phpdoc/en/trunk' +
+                xtype      : 'panel',
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-' + this.prefix + '-diff-' + this.fid, url: 'http://svn.php.net/viewvc/phpdoc/en/trunk' +
                                 this.fpath + this.fname +
-                                '?r1=' + this.rev1 + '&r2=' + this.rev2
+                                '?r1=' + this.rev1 + '&r2=' + this.rev2 }) ]
             }
         });
         ui.component.ViewVCDiff.superclass.initComponent.call(this);

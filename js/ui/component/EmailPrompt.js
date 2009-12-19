@@ -18,11 +18,10 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
         text    : _('Send'),
         handler : function()
         {
-            var values = this.ownerCt.findByType('form').shift()
-                        .getForm().getValues();
+            var win    = this.ownerCt.ownerCt,
+                values = win.findByType('form').shift().getForm().getValues();
 
             XHR({
-                scope   : this,
                 params  : {
                     task    : 'sendEmail',
                     to      : values.to,
@@ -31,11 +30,12 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
                 },
                 success : function(response)
                 {
-                    this.ownerCt.close();
-                    Ext.MessageBox.alert(
+                    win.close();
+
+                    Ext.Msg.alert(
                         _('Status'),
-                        String.format(_('Email sent to {0} with success!'),
-                        this.ownerCt.name)
+                        String.format(_('Email sent to {0} with success!'), win.name),
+                        Ext.emptyFn
                     );
                 }
             });
@@ -45,7 +45,7 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
         text    : _('Cancel'),
         handler : function()
         {
-            this.ownerCt.close();
+            this.ownerCt.ownerCt.close();
         }
     }],
 

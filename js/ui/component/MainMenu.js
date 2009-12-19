@@ -230,17 +230,12 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                         Ext.getCmp('main-panel').add({
                             id         : 'tab-report-bug',
-                            xtype      : 'iframepanel',
-                            title      : _('Loading...'),
+                            xtype      : 'panel',
+                            title      : _('Report bugs'),
                             iconCls    : 'iconBugs',
-                            loadMask   : true,
-                            defaultSrc : 'http://bugs.php.net/',
-                            listeners : {
-                                documentloaded : function(frame)
-                                {
-                                    frame.ownerCt.setTitle(_('Report bugs'));
-                                }
-                            }
+                            closable   : true,
+                            layout     : 'fit',
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-report-bug', url: 'http://bugs.php.net/' }) ]
                         });
 
                         Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
@@ -259,17 +254,12 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                         Ext.getCmp('main-panel').add({
                             id         : 'tab-documentation',
-                            xtype      : 'iframepanel',
-                            title      : _('Loading...'),
+                            xtype      : 'panel',
+                            title      : _('Documentation'),
                             iconCls    : 'iconBook',
-                            loadMask   : true,
-                            defaultSrc : 'http://wiki.php.net/doc/editor/',
-                            listeners : {
-                                documentloaded : function(frame)
-                                {
-                                    frame.ownerCt.setTitle(_('Documentation'));
-                                }
-                            }
+                            closable   : true,
+                            layout     : 'fit',
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'http://wiki.php.net/doc/editor/' }) ]
                         });
 
                         Ext.getCmp('main-panel').setActiveTab('tab-documentation');

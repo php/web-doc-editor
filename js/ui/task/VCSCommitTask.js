@@ -63,7 +63,7 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
             text    : _('Close'),
             handler : function()
             {
-                this.ownerCt.close();
+                this.ownerCt.ownerCt.close();
             }
         }]
     }).show();

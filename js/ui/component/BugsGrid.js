@@ -102,27 +102,23 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
                 BugsUrl   = grid.store.getAt(rowIndex).data.link,
                 BugsTitle = grid.store.getAt(rowIndex).data.title;
 
-            if (!Ext.getCmp('main-panel').findById('mifp_bugs_' + BugsId)) {
+            if (!Ext.getCmp('main-panel').findById('bugs-' + BugsId)) {
 
                 Ext.getCmp('main-panel').add({
-                    id         : 'mifp_bugs_' + BugsId,
-                    xtype      : 'iframepanel',
-                    title      : _('Loading...'),
+                    id         : 'bugs-' + BugsId,
+                    xtype      : 'panel',
+                    title      : Ext.util.Format.substr(BugsTitle, 0, 20) + '...',
                     tabTip     : BugsTitle,
                     iconCls    : 'iconBugs',
-                    loadMask   : true,
-                    defaultSrc : BugsUrl,
-                    listeners : {
-                        documentloaded : function(frame)
-                        {
-                            frame.ownerCt.setTitle(Ext.util.Format.substr(BugsTitle, 0, 20) + '...');
-                        }
-                    }
+                    closable   : true,
+                    layout     : 'fit',
+                    items: [ new Ext.ux.IFrameComponent({ id: 'frame-bugs-' + BugsId, url: BugsUrl }) ]
+
                 });
-                Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
+                Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
 
             } else {
-                Ext.getCmp('main-panel').setActiveTab('mifp_bugs_' + BugsId);
+                Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
             }
         }
     },

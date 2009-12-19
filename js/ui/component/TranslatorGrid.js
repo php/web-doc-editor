@@ -146,7 +146,7 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
     store            : ui.component._TranslatorGrid.store,
     columns          : ui.component._TranslatorGrid.columns,
     autoExpandColumn : 'GridTransName',
-
+    sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     listeners : {
         render : function(grid)
         {
@@ -170,11 +170,12 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
             e.stopEvent();
         
             var TranslatorEmail = grid.store.getAt(rowIndex).data.email,
-                TranslatorName  = grid.store.getAt(rowIndex).data.name;
+                TranslatorName  = grid.store.getAt(rowIndex).data.name,
+                tmp='';
 
             grid.getSelectionModel().selectRow(rowIndex);
 
-            var tmp = new Ext.menu.Menu({
+            tmp = new Ext.menu.Menu({
                 id    : 'submenu',
                 items : [{
                     text    : '<b>' + String.format(_('Send an email to {0}'), TranslatorName) + '</b>',
@@ -197,7 +198,9 @@ ui.component.TranslatorGrid = Ext.extend(Ext.grid.GridPanel,
                         }).show();
                     }
                 }]
-            }).showAt(e.getXY());
+            });
+            tmp.showAt(e.getXY());
+
         }
     }
 });

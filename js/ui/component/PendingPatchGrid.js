@@ -134,7 +134,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
     columns          : ui.component._PendingPatchGrid.columns,
     view             : ui.component._PendingPatchGrid.view,
     loadMask         : true,
-    bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'name',
 
     listeners : {
@@ -147,7 +147,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                 FileName   = grid.store.getAt(rowIndex).data.name,
                 FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
                 FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName),
-				tmp;
+                tmp;
 
             grid.getSelectionModel().selectRow(rowIndex);
 
@@ -308,8 +308,8 @@ ui.component.PendingPatchGrid.getInstance = function(config)
 {
     if (!ui.component._PendingPatchGrid.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._PendingPatchGrid.instance = new ui.component.PendingPatchGrid(config);
     }
     return ui.component._PendingPatchGrid.instance;

@@ -119,7 +119,7 @@ Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
 ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
-    bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'name',
     view             : ui.component._NotInENGrid.view,
     columns          : ui.component._NotInENGrid.columns,

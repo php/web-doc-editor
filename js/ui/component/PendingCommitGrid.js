@@ -419,7 +419,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
 ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
-    bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'name',
     columns          : ui.component._PendingCommitGrid.columns,
     view             : ui.component._PendingCommitGrid.view,

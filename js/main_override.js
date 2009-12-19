@@ -1,46 +1,10 @@
-Ext.ux.TabCloseMenu = function(){
-    var tabs, menu, ctxItem;
-    this.init = function(tp){
-        tabs = tp;
-        tabs.on('contextmenu', onContextMenu);
-    }
-    
-    function onContextMenu(ts, item, e){
-        if (!menu) { // create context menu on first right click
-            menu = new Ext.menu.Menu([{
-                id: tabs.id + '-close',
-                text: _('Close Tab'),
-                handler: function(){
-                    tabs.remove(ctxItem);
-                }
-            }, {
-                id: tabs.id + '-close-others',
-                iconCls: 'closeOthersTabs',
-                text: _('Close Other Tabs'),
-                handler: function(){
-                    tabs.items.each(function(item){
-                        if (item.closable && item != ctxItem) {
-                            tabs.remove(item);
-                        }
-                    });
-                }
-            }]);
-        }
-        ctxItem = item;
-        var items = menu.items;
-        items.get(tabs.id + '-close').setDisabled(!item.closable);
-        var disableOthers = true;
-        tabs.items.each(function(){
-            if (this != item && this.closable) {
-                disableOthers = false;
-                return false;
-            }
-        });
-        items.get(tabs.id + '-close-others').setDisabled(disableOthers);
-        menu.showAt(e.getPoint());
-    }
-};
+Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+     onRender : function(ct, position){
+          this.el = ct.createChild({tag: 'iframe', id: 'iframe-'+ this.id, frameBorder: 0, src: this.url});
+     }
+});
 
+/*
 //Current bug in Radio/Checkbox
 // http://extjs.com/forum/showthread.php?t=44603
 
@@ -211,3 +175,4 @@ Ext.override(Ext.Editor, {
         }
     }
 });
+*/

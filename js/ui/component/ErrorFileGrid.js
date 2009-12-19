@@ -189,9 +189,8 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
-    bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'name',
-
     view    : ui.component._ErrorFileGrid.view,
     columns : ui.component._ErrorFileGrid.columns,
 
@@ -270,13 +269,9 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         height      : 150,
                         collapsible : true,
                         collapsed   : true,
-                        items : {
-                            xtype      : 'iframepanel',
-                            id         : 'FE-error-type-' + FileID,
-                            loadMask   : true,
-                            defaultSrc : './error?dir=' + FilePath +
+                        autoScroll  : true,
+                        autoLoad    : './error?dir=' + FilePath +
                                                 '&file=' + FileName
-                        }
                     }, {
                         region      : 'west',
                         xtype       : 'panel',
@@ -426,8 +421,8 @@ ui.component.ErrorFileGrid.getInstance = function(config)
 {
     if (!ui.component._ErrorFileGrid.instance) {
         if (!config) {
-			config = {};
-		}
+            config = {};
+        }
         ui.component._ErrorFileGrid.instance = new ui.component.ErrorFileGrid(config);
     }
     return ui.component._ErrorFileGrid.instance;

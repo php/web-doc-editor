@@ -262,120 +262,92 @@ var phpDoc = function()
                 }, {
                     // accordion
                     region       : 'west',
+                    layout       : 'accordion',
+
                     collapsible  : true,
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    layout       : 'fit',
+
                     width        : 300,
-                    autoScroll   : true,
+                    //autoHeight : true,
+                    //autoScroll   : true,
+
+                    header       : false,
+                    tbar : [{
+                        text    : _('Main Menu'),
+                        iconCls : 'MainMenu',
+                        menu    : mainMenu
+                    }],
                     items : [{
-                        layout     : 'accordion',
-                        animate    : true,
-                        bodyBorder : false,
-                        border     : false,
-                        tbar : [{
-                            text    : _('Main Menu'),
-                            iconCls : 'MainMenu',
-                            menu    : mainMenu
-                        }],
-                        items : [{
-                            id        : 'acc-need-translate',
-                            title     : _('Files Need Translate') + ' - <em id="acc-need-translate-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'FilesNeedTranslate',
-                            hidden    : (this.userLang === 'en'),
-                            items     : [ ui.component.PendingTranslateGrid.getInstance() ],
-                            collapsed : true,
-                            listeners : {
-                                expand : function(panel)
-                                {
-                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
-                                    Ext.getCmp('FNT-filter').wrap.setWidth(200);
-                                }
-                            }
-                        },{
-                            id        : 'acc-need-update',
-                            title     : _('Files Need Update') + ' - <em id="acc-need-update-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'FilesNeedUpdate',
-                            hidden    : (this.userLang === 'en'),
-                            items     : [ ui.component.StaleFileGrid.getInstance() ],
-                            collapsed : true,
-                            listeners : {
-                                expand : function(panel)
-                                {
-                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
-                                    Ext.getCmp('FNU-filter').wrap.setWidth(200);
-                                }
-                            }
-                        }, {
-                            id        : 'acc-error',
-                            title     : _('Error in current translation') + ' - <em id="acc-error-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'FilesError',
-                            hidden    : (this.userLang === 'en'),
-                            items     : [ ui.component.ErrorFileGrid.getInstance() ],
-                            collapsed : true,
-                            listeners : {
-                                expand : function(panel)
-                                {
-                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
-                                    Ext.getCmp('FE-filter').wrap.setWidth(200);
-                                }
-                            }
-                        }, {
-                            id        : 'acc-need-reviewed',
-                            title     : _('Files Need Reviewed') + ' - <em id="acc-need-reviewed-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'FilesNeedReviewed',
-                            hidden    : (this.userLang === 'en'),
-                            items     : [ ui.component.PendingReviewGrid.getInstance() ],
-                            collapsed : true,
-                            listeners : {
-                                expand : function(panel)
-                                {
-                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
-                                    Ext.getCmp('FNR-filter').wrap.setWidth(200);
-                                }
-                            }
-                        }, {
-                            id        : 'acc-notInEn',
-                            title     : _('Not in EN tree') + ' - <em id="acc-notInEn-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'NotInEn',
-                            hidden    : (this.userLang === 'en'),
-                            items     : [ ui.component.NotInENGrid.getInstance() ],
-                            collapsed : true
-                        }, {
-                            id        : 'acc-all-files',
-                            title     : _('All files'),
-                            layout    : 'fit',
-                            iconCls   : 'AllFiles',
-                            items     : [ ui.component.RepositoryTree.getInstance() ],
-                            collapsed : true,
-                            listeners : {
-                                expand : function(panel)
-                                {
-                                    //TODO: try to find a better way to handle this. If we don't do this, twinTrigger's field is not render because this panel is hidden at the load time
-                                    Ext.getCmp('AF-search').wrap.setWidth(200);
-                                }
-                            }
-                        }, {
-                            id        : 'acc-need-pendingCommit',
-                            title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'PendingCommit',
-                            items     : [ ui.component.PendingCommitGrid.getInstance() ],
-                            collapsed : true
-                        }, {
-                            id        : 'acc-need-pendingPatch',
-                            title     : _('Pending Patch') + ' - <em id="acc-pendingPatch-nb">0</em>',
-                            layout    : 'fit',
-                            iconCls   : 'PendingPatch',
-                            items     : [ ui.component.PendingPatchGrid.getInstance() ],
-                            collapsed : true
-                        }]
+                        id        : 'acc-need-translate',
+                        title     : _('Files Need Translate') + ' - <em id="acc-need-translate-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'FilesNeedTranslate',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.PendingTranslateGrid.getInstance() ],
+                        collapsed : true
+                    },{
+                        id        : 'acc-need-update',
+                        title     : _('Files Need Update') + ' - <em id="acc-need-update-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'FilesNeedUpdate',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.StaleFileGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-error',
+                        title     : _('Error in current translation') + ' - <em id="acc-error-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'FilesError',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.ErrorFileGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-reviewed',
+                        title     : _('Files Need Reviewed') + ' - <em id="acc-need-reviewed-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'FilesNeedReviewed',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.PendingReviewGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-notInEn',
+                        title     : _('Not in EN tree') + ' - <em id="acc-notInEn-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'NotInEn',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.NotInENGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-all-files',
+                        title     : _('All files'),
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'AllFiles',
+                        items     : [ ui.component.RepositoryTree.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-pendingCommit',
+                        title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'PendingCommit',
+                        items     : [ ui.component.PendingCommitGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-pendingPatch',
+                        title     : _('Pending Patch') + ' - <em id="acc-pendingPatch-nb">0</em>',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'PendingPatch',
+                        items     : [ ui.component.PendingPatchGrid.getInstance() ],
+                        collapsed : true
                     }]
                 }, {
                     // main panel
