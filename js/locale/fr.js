@@ -10,6 +10,8 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
 
+i18n["Switch to language..."] = "Basculer vers la langue ...";
+
 i18n["Report bugs"] = "Rapporter un bogue";
 i18n["Documentation"] = "Documentation";
 

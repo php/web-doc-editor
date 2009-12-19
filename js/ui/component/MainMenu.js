@@ -1,4 +1,4 @@
-Ext.namespace('ui','ui.component');
+Ext.namespace('ui','ui.component','ui.component._MainMenu');
 
 ui.component.MainMenu = function(config)
 {
@@ -7,11 +7,63 @@ ui.component.MainMenu = function(config)
     ui.component.MainMenu.superclass.constructor.call(this);
 };
 
+
+// Load all available language
+ui.component._MainMenu.store = new Ext.data.Store({
+    autoLoad : true,
+    proxy    : new Ext.data.HttpProxy({
+        url : './do/getAvailableLanguage'
+    }),
+    reader   : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'code'
+        }, Ext.data.Record.create([
+            {
+                name    : 'code',
+                mapping : 'code'
+            }, {
+                name    : 'iconCls',
+                mapping : 'iconCls'
+            }, {
+                name    : 'name',
+                mapping : 'name'
+            }
+        ])
+    )
+});       
+
 Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 {
     id : 'mainMenu',
     init : function()
     {
+
+        var MenuLang = new Ext.menu.Menu(),
+            tmp;
+
+        ui.component._MainMenu.store.each(function(record){
+
+            tmp = new Ext.menu.Item({
+                text    : record.data["name"],
+                iconCls : record.data["iconCls"],
+                disabled: (record.data["code"] === phpDoc.userLang),
+                handler : function() {
+                    
+                    XHR({
+                        params  : { task : 'switchLang', lang: record.data["code"] },
+                        success : function()
+                        {
+                            window.location.reload();
+                        }
+                    });
+                }
+            })
+            MenuLang.add(tmp);
+
+        });
+
         Ext.apply(this,
         {
             items: [{
@@ -206,6 +258,11 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     );
                 }
             }, '-', {
+                id      : 'menuLang',
+                text    : _('Switch to language...'),
+                handler : function() { return false; },
+                menu    : MenuLang
+            }, {
                 text    : _('Log out'),
                 iconCls : 'iconLogOut',
                 handler : function()

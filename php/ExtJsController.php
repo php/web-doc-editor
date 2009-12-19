@@ -118,6 +118,20 @@ class ExtJsController
     }
 
     /**
+     * switch to a specific language
+     */
+    public function switchLang()
+    {
+
+        $lang = $this->getRequestVariable('lang');
+
+        AccountManager::getInstance()->switchLang($lang);
+
+        return JsonResponseBuilder::success();
+
+    }
+
+    /**
      * Get all available language
      */
     public function getAvailableLanguage()

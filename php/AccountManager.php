@@ -46,6 +46,11 @@ class AccountManager
         );
     }
 
+    public function switchLang($lang) {
+        $_SESSION['lang'] = $lang;
+        $this->vcsLang    = $lang;
+    }
+
     /**
      * Update the date/time about the lastConnexion for this user, in DB
      */
