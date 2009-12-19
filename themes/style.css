@@ -1,5 +1,5 @@
 .grid-search {
-    background-image: url(../themes/img/zoom.png) !important;
+    background-image: url(./img/zoom.png) !important;
 } .MainInfoTabPanel {
     padding: 10px !important;
 } .x-form-check-group .x-form-check-wrap, .x-form-radio-group .x-form-radio-wrap {
@@ -59,7 +59,7 @@ opacity:
     text-align: center;
     color: #849090;
 } #phd-oe-credit ul {
-    list-style: disc url(../themes/img/arrow_right2.png) inside;
+    list-style: disc url(./img/arrow_right2.png) inside;
 } #phd-oe-credit li {
     margin: 10px;
     padding: 0;
@@ -89,71 +89,71 @@ opacity:
 }
 
 .key {
-    background-image: url(../themes/img/key.png) !important;
+    background-image: url(./img/key.png) !important;
 } .flag-ar {
-    background-image: url(../themes/img/flags/ar.png) !important;
+    background-image: url(./img/flags/ar.png) !important;
 } .flag-bg {
-    background-image: url(../themes/img/flags/bg.png) !important;
+    background-image: url(./img/flags/bg.png) !important;
 } .flag-cs {
-    background-image: url(../themes/img/flags/cz.png) !important;
+    background-image: url(./img/flags/cz.png) !important;
 } .flag-da {
-    background-image: url(../themes/img/flags/da.png) !important;
+    background-image: url(./img/flags/da.png) !important;
 } .flag-de {
-    background-image: url(../themes/img/flags/de.png) !important;
+    background-image: url(./img/flags/de.png) !important;
 } .flag-el {
-    background-image: url(../themes/img/flags/el.png) !important;
+    background-image: url(./img/flags/el.png) !important;
 } .flag-en {
-    background-image: url(../themes/img/flags/en.png) !important;
+    background-image: url(./img/flags/en.png) !important;
 } .flag-es {
-    background-image: url(../themes/img/flags/es.png) !important;
+    background-image: url(./img/flags/es.png) !important;
 } .flag-fa {
-    background-image: url(../themes/img/flags/fa.png) !important;
+    background-image: url(./img/flags/fa.png) !important;
 } .flag-fi {
-    background-image: url(../themes/img/flags/fi.png) !important;
+    background-image: url(./img/flags/fi.png) !important;
 } .flag-fr {
-    background-image: url(../themes/img/flags/fr.png) !important;
+    background-image: url(./img/flags/fr.png) !important;
 } .flag-hk {
-    background-image: url(../themes/img/flags/hk.png) !important;
+    background-image: url(./img/flags/hk.png) !important;
 } .flag-he {
-    background-image: url(../themes/img/flags/he.png) !important;
+    background-image: url(./img/flags/he.png) !important;
 } .flag-hu {
-    background-image: url(../themes/img/flags/hu.png) !important;
+    background-image: url(./img/flags/hu.png) !important;
 } .flag-it {
-    background-image: url(../themes/img/flags/it.png) !important;
+    background-image: url(./img/flags/it.png) !important;
 } .flag-ja {
-    background-image: url(../themes/img/flags/ja.png) !important;
+    background-image: url(./img/flags/ja.png) !important;
 } .flag-kr {
-    background-image: url(../themes/img/flags/kr.png) !important;
+    background-image: url(./img/flags/kr.png) !important;
 } .flag-nl {
-    background-image: url(../themes/img/flags/nl.png) !important;
+    background-image: url(./img/flags/nl.png) !important;
 } .flag-no {
-    background-image: url(../themes/img/flags/no.png) !important;
+    background-image: url(./img/flags/no.png) !important;
 } .flag-pl {
-    background-image: url(../themes/img/flags/pl.png) !important;
+    background-image: url(./img/flags/pl.png) !important;
 } .flag-pt {
-    background-image: url(../themes/img/flags/pt.png) !important;
+    background-image: url(./img/flags/pt.png) !important;
 } .flag-pt_BR {
-    background-image: url(../themes/img/flags/pt_BR.png) !important;
+    background-image: url(./img/flags/pt_BR.png) !important;
 } .flag-ro {
-    background-image: url(../themes/img/flags/ro.png) !important;
+    background-image: url(./img/flags/ro.png) !important;
 } .flag-ru {
-    background-image: url(../themes/img/flags/ru.png) !important;
+    background-image: url(./img/flags/ru.png) !important;
 } .flag-sl {
-    background-image: url(../themes/img/flags/sl.png) !important;
+    background-image: url(./img/flags/sl.png) !important;
 } .flag-se {
-    background-image: url(../themes/img/flags/se.png) !important;
+    background-image: url(./img/flags/se.png) !important;
 } .flag-sk {
-    background-image: url(../themes/img/flags/sk.png) !important;
+    background-image: url(./img/flags/sk.png) !important;
 } .flag-sv {
-    background-image: url(../themes/img/flags/sv.png) !important;
+    background-image: url(./img/flags/sv.png) !important;
 } .flag-tr {
-    background-image: url(../themes/img/flags/tr.png) !important;
+    background-image: url(./img/flags/tr.png) !important;
 } .flag-tw {
-    background-image: url(../themes/img/flags/tw.png) !important;
+    background-image: url(./img/flags/tw.png) !important;
 } .flag-zh {
-    background-image: url(../themes/img/flags/zh.png) !important;
+    background-image: url(./img/flags/zh.png) !important;
 } .closeOthersTabs {
-    background-image: url(../themes/img/tab_delete.png) !important;
+    background-image: url(./img/tab_delete.png) !important;
 } .x-tree-node .modified a span {
     color: red;
 } .x-grid3-col-GridBugTitle {
@@ -171,7 +171,7 @@ opacity:
 }
 
 .NotInEn {
-    background-image: url(../themes/img/delete.png) !important;
+    background-image: url(./img/delete.png) !important;
 }
 
 .ux-icon-combo-input {
@@ -187,11 +187,11 @@ opacity:
     margin-top: 5px;
     padding-left: 20px;
 } .wizard-step-before {
-    background: transparent url(../themes/img/arrow_right.png) no-repeat 0 0;
+    background: transparent url(./img/arrow_right.png) no-repeat 0 0;
     opacity: 0.5;
     padding-bottom: 5px;
 } .wizard-step-working {
-    background: transparent url(../themes/img/loading.gif) no-repeat 0 0;
+    background: transparent url(./img/loading.gif) no-repeat 0 0;
     padding-bottom: 5px;
 } .wizard-wait {
     display: none;
@@ -200,7 +200,7 @@ opacity:
     margin-left: 10px;
     display: block;
 } .wizard-step-done {
-    background: transparent url(../themes/img/accept.png) no-repeat 0 0;
+    background: transparent url(./img/accept.png) no-repeat 0 0;
     font-weight: bold;
     padding-bottom: 5px;
 } #home-panel {
@@ -217,117 +217,117 @@ opacity:
     font-family: tahoma, arial, helvetica, sans-serif;
     padding: 4px 4px 4px 20px;
 } .home-graphic-title {
-    background: transparent url(../themes/img/chart_pie.png) no-repeat 0 0;
+    background: transparent url(./img/chart_pie.png) no-repeat 0 0;
 } .home-mailing-title {
-    background: transparent url(../themes/img/email_open_image.png) no-repeat 0 0;
+    background: transparent url(./img/email_open_image.png) no-repeat 0 0;
 } .FilesNeedTranslate {
-    background: transparent url(../themes/img/page_add.png) no-repeat 0 0;
+    background: transparent url(./img/page_add.png) no-repeat 0 0;
 } .FilesNeedUpdate {
-    background: transparent url(../themes/img/arrow_refresh.png) no-repeat 0 0;
+    background: transparent url(./img/arrow_refresh.png) no-repeat 0 0;
 } .FilesNeedReviewed {
-    background: transparent url(../themes/img/page_edit.png) no-repeat 0 0;
+    background: transparent url(./img/page_edit.png) no-repeat 0 0;
 } .CheckDoc {
-    background-image: url(../themes/img/lightbulb_add.png) !important;
+    background-image: url(./img/lightbulb_add.png) !important;
 } .BuildStatus {
-    background-image: url(../themes/img/error_delete.png) !important;
+    background-image: url(./img/error_delete.png) !important;
 } .AllFiles {
-    background: transparent url(../themes/img/application_side_tree.png) no-repeat 0 0;
+    background: transparent url(./img/application_side_tree.png) no-repeat 0 0;
 } .PendingCommit {
-    background: transparent url(../themes/img/arrow_down.png) no-repeat 0 0;
+    background: transparent url(./img/arrow_down.png) no-repeat 0 0;
 } .PendingPatch {
-    background: transparent url(../themes/img/arrow_switch.png) no-repeat 0 0;
+    background: transparent url(./img/arrow_switch.png) no-repeat 0 0;
 } .MainMenu {
-    background-image: url(../themes/img/application_home.png) !important;
+    background-image: url(./img/application_home.png) !important;
     background-position: 2px 4px !important;
 } .FilesError {
-    background: transparent url(../themes/img/error_delete.png) no-repeat 0 0;
+    background: transparent url(./img/error_delete.png) no-repeat 0 0;
 } .iconBugs {
-    background-image: url(../themes/img/bug.png) !important;
+    background-image: url(./img/bug.png) !important;
 } .iconBook {
-    background-image: url(../themes/img/book.png) !important;
+    background-image: url(./img/book.png) !important;
 } .iconIndent {
-    background-image: url(../themes/img/text_indent.png) !important;
+    background-image: url(./img/text_indent.png) !important;
 } .saveFile {
-    background-image: url(../themes/img/disk.png) !important;
+    background-image: url(./img/disk.png) !important;
 } .saveAsFile {
-    background-image: url(../themes/img/table_save.png) !important;
+    background-image: url(./img/table_save.png) !important;
 } .patchAlert {
-    background-image: url(../themes/img/bell.png) !important;
+    background-image: url(./img/bell.png) !important;
 } .iconConf {
-    background-image: url(../themes/img/wrench_orange.png) !important;
+    background-image: url(./img/wrench_orange.png) !important;
 } .refresh {
-    background-image: url(../themes/img/arrow_refresh.png) !important;
+    background-image: url(./img/arrow_refresh.png) !important;
 } .checkBuild {
-    background-image: url(../themes/img/bug_delete.png) !important;
+    background-image: url(./img/bug_delete.png) !important;
 } .startRefresh {
-    background-image: url(../themes/img/hourglass_go.png) !important;
+    background-image: url(./img/hourglass_go.png) !important;
 } .finishRefresh {
-    background-image: url(../themes/img/accept.png) !important;
+    background-image: url(./img/accept.png) !important;
 } .openInTab {
-    background-image: url(../themes/img/tab_go.png) !important;
+    background-image: url(./img/tab_go.png) !important;
 } .iconErasePersonalData {
-    background-image: url(../themes/img/layout_delete.png) !important;
+    background-image: url(./img/layout_delete.png) !important;
 } .iconTranslator {
-    background-image: url(../themes/img/group.png) !important;
+    background-image: url(./img/group.png) !important;
 } .iconLogOut {
-    background-image: url(../themes/img/door_in.png) !important;
+    background-image: url(./img/door_in.png) !important;
 } .iconTabLink {
-    background-image: url(../themes/img/page_link.png) !important;
+    background-image: url(./img/page_link.png) !important;
 } .iconTabNeedTranslate {
-    background-image: url(../themes/img/page_add.png) !important;
+    background-image: url(./img/page_add.png) !important;
 } .iconTabView {
-    background-image: url(../themes/img/eye.png) !important;
+    background-image: url(./img/eye.png) !important;
 } .iconTabNeedUpdate {
-    background-image: url(../themes/img/arrow_refresh.png) !important;
+    background-image: url(./img/arrow_refresh.png) !important;
 } .iconDelete {
-    background-image: url(../themes/img/delete.png) !important;
+    background-image: url(./img/delete.png) !important;
 } .iconView {
-    background-image: url(../themes/img/eye.png) !important;
+    background-image: url(./img/eye.png) !important;
 } .iconFolderOpen {
-    background-image: url(../themes/img/folder-open.gif) !important;
+    background-image: url(./img/folder-open.gif) !important;
 } .iconFolderClose {
-    background-image: url(../themes/img/folder.gif) !important;
+    background-image: url(./img/folder.gif) !important;
 } .iconTabNeedReviewed {
-    background-image: url(../themes/img/page_edit.png) !important;
+    background-image: url(./img/page_edit.png) !important;
 } .iconTabError {
-    background-image: url(../themes/img/error_delete.png) !important;
+    background-image: url(./img/error_delete.png) !important;
 } .iconUpdateFileVcs {
-    background-image: url(../themes/img/database_refresh.png) !important;
+    background-image: url(./img/database_refresh.png) !important;
 } .iconCommitFileVcs {
-    background-image: url(../themes/img/database_go.png) !important;
+    background-image: url(./img/database_go.png) !important;
 } .iconViewDiff {
-    background-image: url(../themes/img/chart_organisation.png) !important;
+    background-image: url(./img/chart_organisation.png) !important;
 } .iconPageDelete {
-    background-image: url(../themes/img/page_delete.png) !important;
+    background-image: url(./img/page_delete.png) !important;
 } .iconHelp {
-    background-image: url(../themes/img/help.png) !important;
+    background-image: url(./img/help.png) !important;
 } .iconSendEmail {
-    background-image: url(../themes/img/email_edit.png) !important;
+    background-image: url(./img/email_edit.png) !important;
 } .iconInsertCode {
-    background-image: url(../themes/img/page_code.png) !important;
+    background-image: url(./img/page_code.png) !important;
 } .confStatusBar {
-    background: transparent url(../themes/img/help.png) no-repeat 0 2px;
+    background: transparent url(./img/help.png) no-repeat 0 2px;
     padding-left: 20px !important;
 } .winManageLog {
-    background-image: url(../themes/img/page_white_gear.png) !important;
+    background-image: url(./img/page_white_gear.png) !important;
 } #main-panel .x-layout-collapsed-west {
-    background-image: url(../themes/img/vcs_log.png);
+    background-image: url(./img/vcs_log.png);
     background-repeat: no-repeat;
     background-position: center;
 } #main-panel .x-layout-collapsed-east {
-    background-image: url(../themes/img/en_version.png);
+    background-image: url(./img/en_version.png);
     background-repeat: no-repeat;
     background-position: center;
 } #main-panel .x-layout-collapsed-north {
-    background-image: url(../themes/img/diff_vcs.png);
+    background-image: url(./img/diff_vcs.png);
     background-repeat: no-repeat;
     background-position: center;
 } .x-layout-collapsed-east-error-desc {
-    background-image: url(../themes/img/error_description.png) !important;
+    background-image: url(./img/error_description.png) !important;
     background-repeat: no-repeat;
     background-position: center;
 } .x-layout-collapsed-east-patch-desc {
-    background-image: url(../themes/img/patch.png) !important;
+    background-image: url(./img/patch.png) !important;
     background-repeat: no-repeat;
     background-position: center;
 } .file-need-commit {
@@ -393,7 +393,7 @@ opacity:
 } .diff-content table.code td.truncated {
     background-color: #f7f7f7;
 } .diff-content table.code td.line {
-    background: #eed url(../themes/img/help.png) no-repeat 0 0;
+    background: #eed url(./img/help.png) no-repeat 0 0;
     padding-left: 20px;
     color: #886;
     border: 1px solid #d7d7d7;
@@ -431,15 +431,15 @@ opacity:
 } #confMenu .x-view-selected span {
     color: #1A4D8F;
 } .res-block {
-    background: transparent url(../themes/img/block-top.gif) no-repeat scroll 0 0;
+    background: transparent url(./img/block-top.gif) no-repeat scroll 0 0;
     margin-bottom: 15px;
     padding-top: 5px;
     width: 280px;
 } .res-block-inner {
-    background: transparent url(../themes/img/block-bottom.gif) no-repeat scroll left bottom;
+    background: transparent url(./img/block-bottom.gif) no-repeat scroll left bottom;
     padding: 3px 11px;
 } .res-block h3 {
-    background: transparent url(../themes/img/user.png) no-repeat 0 1px;
+    background: transparent url(./img/user.png) no-repeat 0 1px;
     padding-left: 20px;
     padding-top: 3px;
     -x-system-font: none;
@@ -468,15 +468,15 @@ opacity:
 }
 
 .file-needcommit-update {
-    background-image: url(../themes/img/arrow_refresh.png) !important;
+    background-image: url(./img/arrow_refresh.png) !important;
     background-repeat: no-repeat !important;
 
 }
 .file-needcommit-delete {
-    background-image: url(../themes/img/delete.png) !important;
+    background-image: url(./img/delete.png) !important;
     background-repeat: no-repeat !important;
 }
 .file-needcommit-new {
-    background-image: url(../themes/img/lightbulb_add.png) !important;
+    background-image: url(./img/lightbulb_add.png) !important;
     background-repeat: no-repeat !important;
 }
