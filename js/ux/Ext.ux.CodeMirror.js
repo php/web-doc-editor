@@ -1,11 +1,10 @@
-Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
+Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     readOnly: (this.readOnly) ? this.readOnly : false,
     mirror: false,
     width: 'auto',
     height: 'auto',
     value: (this.value) ? this.value : "",
-    hideLabel: true,
     autoResize: true,
     obj: false,
     initialised: false,
@@ -48,7 +47,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
     },
 
     resize: function() {
-      this.mirror.frame.style.height = this.ownerCt.lastSize.height - 79 +"px";
+      this.mirror.frame.style.height = this.ownerCt.lastSize.height - 85 +"px";
+      this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
     },
 
     onInit: function() {
@@ -74,13 +74,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.form.TextArea, {
     monitorScroll: function(e, obj) {
       obj.fireEvent('cmscroll',e.target.body.scrollTop, this);
     },
-/*
-    monitorKey : function(keyCode, charCode) {
-      // Must handle the onChange Event
-      this.fireEvent('cmchange',keyCode, charCode, this);
 
-    },
-*/
     afterRender: function() {
      this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
        textWrapping: false,
