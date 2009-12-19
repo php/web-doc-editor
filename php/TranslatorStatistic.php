@@ -148,10 +148,12 @@ class TranslatorStatistic
         if( $lang == 'all' ) {
             $hereLang = RepositoryManager::getInstance()->availableLang;
         } else {
-            $hereLang = array($lang);
+            $hereLang = array(0 => Array("code" => $lang));
         }
 
         foreach( $hereLang as $lang ) {
+
+            $lang = $lang["code"];
 
             $i=0; $persons=array();
             foreach ($translators[$lang] as $nick => $data) {

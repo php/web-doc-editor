@@ -22,16 +22,46 @@ class RepositoryManager
     }
 
     public $availableLang = array(
-        'ar', 'bg', 'zh', 'hk','pt_BR',
-        'tw', 'cs', 'da', 'nl', 'fi',
-        'fr', 'de', 'el', 'he', 'hu',
-        'it', 'ja', 'kr', 'no', 'fa',
-        'pl', 'pt', 'ro', 'ru', 'se',
-        'sk', 'sl', 'es', 'sv', 'tr'
+         0 => Array('code' => 'ar',    'iconCls' => 'flag-ar',    'name' => 'Arabic'),
+         1 => Array('code' => 'pt_BR', 'iconCls' => 'flag-pt_BR', 'name' => 'Brazilian Portuguese'),
+         2 => Array('code' => 'bg',    'iconCls' => 'flag-bg',    'name' => 'Bulgarian'),
+         3 => Array('code' => 'zh',    'iconCls' => 'flag-zh',    'name' => 'Chinese (Simplified)'),
+         4 => Array('code' => 'hk',    'iconCls' => 'flag-hk',    'name' => 'Chinese (Hong Kong Cantonese)'),
+         5 => Array('code' => 'tw',    'iconCls' => 'flag-tw',    'name' => 'Chinese (Traditional)'),
+         6 => Array('code' => 'cs',    'iconCls' => 'flag-cs',    'name' => 'Czech'),
+         7 => Array('code' => 'da',    'iconCls' => 'flag-da',    'name' => 'Danish'),
+         8 => Array('code' => 'nl',    'iconCls' => 'flag-nl',    'name' => 'Dutch'),
+         9 => Array('code' => 'en',    'iconCls' => 'flag-en',    'name' => 'English'),
+        10 => Array('code' => 'fi',    'iconCls' => 'flag-fi',    'name' => 'Finnish'),
+        11 => Array('code' => 'fr',    'iconCls' => 'flag-fr',    'name' => 'French'),
+        12 => Array('code' => 'de',    'iconCls' => 'flag-de',    'name' => 'Germany'),
+        13 => Array('code' => 'el',    'iconCls' => 'flag-el',    'name' => 'Greek'),
+        14 => Array('code' => 'he',    'iconCls' => 'flag-he',    'name' => 'Hebrew'),
+        15 => Array('code' => 'hu',    'iconCls' => 'flag-hu',    'name' => 'Hungarian'),
+        16 => Array('code' => 'it',    'iconCls' => 'flag-it',    'name' => 'Italian'),
+        17 => Array('code' => 'ja',    'iconCls' => 'flag-ja',    'name' => 'Japanese'),
+        18 => Array('code' => 'kr',    'iconCls' => 'flag-kr',    'name' => 'Korean'),
+        19 => Array('code' => 'no',    'iconCls' => 'flag-no',    'name' => 'Norwegian'),
+        20 => Array('code' => 'fa',    'iconCls' => 'flag-fa',    'name' => 'Persian'),
+        21 => Array('code' => 'pl',    'iconCls' => 'flag-pl',    'name' => 'Polish'),
+        22 => Array('code' => 'pt',    'iconCls' => 'flag-pt',    'name' => 'Portuguese'),
+        23 => Array('code' => 'ro',    'iconCls' => 'flag-ro',    'name' => 'Romanian'),
+        24 => Array('code' => 'ru',    'iconCls' => 'flag-ru',    'name' => 'Russian'),
+        25 => Array('code' => 'se',    'iconCls' => 'flag-se',    'name' => 'Serbian'),
+        26 => Array('code' => 'sk',    'iconCls' => 'flag-sk',    'name' => 'Slovak'),
+        27 => Array('code' => 'sl',    'iconCls' => 'flag-sl',    'name' => 'Slovenian'),
+        28 => Array('code' => 'es',    'iconCls' => 'flag-es',    'name' => 'Spanish'),
+        29 => Array('code' => 'sv',    'iconCls' => 'flag-fi',    'name' => 'Swedish'),
+        30 => Array('code' => 'tr',    'iconCls' => 'flag-tr',    'name' => 'Turkish')
     );
 
     private function __construct()
     {
+    }
+
+    public function getAvailableLanguage()
+    {
+        return $this->availableLang;
     }
 
     /**
@@ -587,6 +617,8 @@ EOD;
     
         foreach ($this->availableLang as $lang) {
 
+            $lang = $lang["code"];
+
             // Path to find translation.xml file, set default values,
             // in case we can't find the translation file
             $translation_xml = new File($lang, '/', 'translation.xml');
@@ -673,7 +705,7 @@ EOD;
     public function updateNotInEN()
     {
         foreach ($this->availableLang as $lang) {
-            $this->doUpdateNotInEN('/', $lang);
+            $this->doUpdateNotInEN('/', $lang["code"]);
         }
     }
     /**
@@ -785,6 +817,8 @@ EOD;
                 DBConnection::getInstance()->query($query);
 
                 foreach($this->availableLang as $lang) {
+
+                    $lang = $lang["code"];
 
                     $lang_file = new File($lang, $f->path, $f->name);
 

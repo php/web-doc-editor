@@ -208,10 +208,12 @@ class TranslationStatistic
         if( $lang == 'all' ) {
             $hereLang = RepositoryManager::getInstance()->availableLang;
         } else {
-            $hereLang = array($lang);
+            $hereLang = array(0 => Array("code" => $lang));
         }
 
         foreach( $hereLang as $lang ) {
+
+            $lang = $lang["code"];
 
             $summary = array();
 

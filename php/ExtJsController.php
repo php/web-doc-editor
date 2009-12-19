@@ -118,6 +118,23 @@ class ExtJsController
     }
 
     /**
+     * Get all available language
+     */
+    public function getAvailableLanguage()
+    {
+
+        $r = RepositoryManager::getInstance()->getAvailableLanguage();
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+
+    }
+
+    /**
      * Apply all tools on the documentation
      */
     public function applyTools()

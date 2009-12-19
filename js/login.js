@@ -5,8 +5,36 @@ var loginPage = function()
 
     return {
 
+        storeLang : '',
+
         init : function()
         {
+            // Load all available language
+            this.storeLang = new Ext.data.Store({
+                autoLoad : true,
+                proxy    : new Ext.data.HttpProxy({
+                    url : './do/getAvailableLanguage'
+                }),
+                reader   : new Ext.data.JsonReader(
+                    {
+                        root          : 'Items',
+                        totalProperty : 'nbItems',
+                        id            : 'code'
+                    }, Ext.data.Record.create([
+                        {
+                            name    : 'code',
+                            mapping : 'code'
+                        }, {
+                            name    : 'iconCls',
+                            mapping : 'iconCls'
+                        }, {
+                            name    : 'name',
+                            mapping : 'name'
+                        }
+                    ])
+                )
+            });       
+
             this.drawForm();
         },
 
@@ -84,52 +112,16 @@ var loginPage = function()
                             xtype      : 'combo',
                             width      : 235,
                             fieldLabel : 'Translate module',
-                            store      : new Ext.data.SimpleStore({
-                                fields : ['countryCode', 'countryName', 'countryFlag'],
-                                data   : [
-                                    ['ar', 'Arabic', 'flag-ar'],
-                                    ['pt_BR', 'Brazilian Portuguese', 'flag-pt_BR'],
-                                    ['bg', 'Bulgarian', 'flag-bg'],
-                                    ['zh', 'Chinese (Simplified)', 'flag-zh'],
-                                    ['hk', 'Chinese (Hong Kong Cantonese)', 'flag-hk'],
-                                    ['tw', 'Chinese (Traditional)', 'flag-tw'],
-                                    ['cs', 'Czech', 'flag-cs'],
-                                    ['da', 'Danish', 'flag-da'],
-                                    ['nl', 'Dutch', 'flag-nl'],
-                                    ['en', 'English', 'flag-en'],
-                                    ['fi', 'Finnish', 'flag-fi'],
-                                    ['fr', 'French', 'flag-fr'],
-                                    ['de', 'Germany', 'flag-de'],
-                                    ['el', 'Greek', 'flag-el'],
-                                    ['he', 'Hebrew', 'flag-he'],
-                                    ['hu', 'Hungarian', 'flag-hu'],
-                                    ['it', 'Italian', 'flag-it'],
-                                    ['ja', 'Japanese', 'flag-ja'],
-                                    ['kr', 'Korean', 'flag-kr'],
-                                    ['no', 'Norwegian', 'flag-no'],
-                                    ['fa', 'Persian', 'flag-fa'],
-                                    ['pl', 'Polish', 'flag-pl'],
-                                    ['pt', 'Portuguese', 'flag-pt'],
-                                    ['ro', 'Romanian', 'flag-ro'],
-                                    ['ru', 'Russian', 'flag-ru'],
-                                    ['se', 'Serbian', 'flag-se'],
-                                    ['sk', 'Slovak', 'flag-sk'],
-                                    ['sl', 'Slovenian', 'flag-sl'],
-                                    ['es', 'Spanish', 'flag-es'],
-                                    ['sv', 'Swedish', 'flag-fi'],
-                                    ['tr', 'Turkish', 'flag-tr']
-                                ]
-                            }),
+                            store      : this.storeLang,
                             plugins       : new Ext.ux.plugins.IconCombo(),
-                            valueField    : 'countryCode',
+                            valueField    : 'code',
                             listWidth     : 235,
                             maxHeight     : 150,
                             editable      : true,
-                            value         : 'ar',
                             id            : 'login-form-lang',
                             name          : 'langDisplay',
-                            displayField  : 'countryName',
-                            iconClsField  : 'countryFlag',
+                            displayField  : 'name',
+                            iconClsField  : 'iconCls',
                             triggerAction : 'all',
                             mode          : 'local'
                         }]

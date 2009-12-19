@@ -18,6 +18,8 @@ RepositoryManager::getInstance()->cleanUpBeforeCheckBuild();
 // For all language, we check the build
 foreach (RepositoryManager::getInstance()->availableLang as $lang) {
 
+    $lang = $lang["code"];
+
     $return = RepositoryManager::getInstance()->checkBuild($lang);
 
     // What we must do when the build failed
