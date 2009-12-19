@@ -32,17 +32,26 @@ echo headerTemplate();
 echo cssLoadTemplate('js/extjs/resources/css/ext-all.css', 'extTheme');
 echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/style.css');
+
 // Ext.ux Css files
 echo cssLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.css');
+echo cssLoadTemplate('js/ux/extjsPowered/RowEditor.css');
+echo cssLoadTemplate('js/ux/extjsPowered/StatusBar.css');
+
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
 echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
 echo jsLoadTemplate('js/extjs/ext-all.js');
+
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.js');
-echo jsLoadTemplate('js/ux/miframe1_2/miframe.js');
+
+echo jsLoadTemplate('js/ux/extjsPowered/RowEditor.js');
+echo jsLoadTemplate('js/ux/extjsPowered/StatusBar.js');
+echo jsLoadTemplate('js/ux/extjsPowered/TabCloseMenu.js');
+
 echo jsLoadTemplate('js/ux/md5/md5.js');
 echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/ux/Ext.ux.CodeMirror.js');
