@@ -285,7 +285,7 @@ var phpDoc = function()
 
 
                 mainContentLeft = (this.userLang === 'en') ? [
-                    ui.component.PortletLocalMail.getInstance()
+                    ui.component.PortletLocalMail.getInstance({lang: this.userLang})
                 ] : [
                     ui.component.PortletSummary.getInstance({lang: this.userLang}),
                     ui.component.PortletTranslator.getInstance({lang: this.userLang}),
