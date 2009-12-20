@@ -39,6 +39,7 @@ i18n["Title"] = "Titre";
 i18n["By"] = "Par";
 i18n["Date"] = "Date";
 i18n["Refresh this grid"] = "Rafraîchir ces données";
+i18n["Refresh this graph"] = "Rafraîchir ce graphique";
 i18n["Open in a new Tab"] = "Ouvrir dans un nouvel onglet";
 i18n["Edit in a new Tab"] = "Éditer dans un nouvel onglet";
 i18n["Files"] = "Fichiers";
@@ -263,6 +264,7 @@ i18n["Home"] = "Accueil";
     i18n["Open bugs for {0}"] = "Bogues en cours pour {0}";
         i18n["No open Bugs"] = "Aucun bogue ouvert actuellement";
     i18n["Graphics"] = "Graphiques";
+    i18n["Graphics for all language"] = "Graphiques pour toutes les langues";
 
 // Module
 i18n["Files Need Translate"] = "Nouveaux Fichiers à traduire";

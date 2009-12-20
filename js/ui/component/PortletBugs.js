@@ -1,10 +1,10 @@
-Ext.namespace('ui','ui.component','ui.component._BugsGrid');
+Ext.namespace('ui','ui.component','ui.component._PortletBugs');
 
 //------------------------------------------------------------------------------
-// BugsGrid internals
+// PortletBugs internals
 
 // Store : All open bugs for documentation
-ui.component._BugsGrid.store = new Ext.data.Store({
+ui.component._PortletBugs.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getOpenBugs'
     }),
@@ -32,14 +32,14 @@ ui.component._BugsGrid.store = new Ext.data.Store({
 });
 
 // BugsGrid columns definition
-ui.component._BugsGrid.columns = [{
+ui.component._PortletBugs.gridColumns = [{
     id        : 'GridBugTitle',
     header    : "Title",
     sortable  : true,
     dataIndex : 'title'
 }];
 
-ui.component._BugsGrid.view = new Ext.grid.GridView({
+ui.component._PortletBugs.gridView = new Ext.grid.GridView({
     forceFit      : true,
     emptyText     : _('No open Bugs'),
     enableRowBody : true,
@@ -52,24 +52,18 @@ ui.component._BugsGrid.view = new Ext.grid.GridView({
 
 //------------------------------------------------------------------------------
 // BugsGrid
-ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
+ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 {
-    iconCls          : 'iconBugs',
     loadMask         : true,
-    stripeRows       : true,
     autoScroll       : true,
-    width            : 800,
+    autoHeight       : true,
     autoExpandColumn : 'GridBugTitle',
-    store            : ui.component._BugsGrid.store,
-    columns          : ui.component._BugsGrid.columns,
-    view             : ui.component._BugsGrid.view,
+    store            : ui.component._PortletBugs.store,
+    columns          : ui.component._PortletBugs.gridColumns,
+    view             : ui.component._PortletBugs.gridView,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
     listeners : {
-        render : function(grid)
-        {
-            grid.store.load.defer(20, grid.store);
-        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
 
@@ -113,7 +107,6 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
                     closable   : true,
                     layout     : 'fit',
                     items: [ new Ext.ux.IFrameComponent({ id: 'frame-bugs-' + BugsId, url: BugsUrl }) ]
-
                 });
                 Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
 
@@ -123,34 +116,47 @@ ui.component.BugsGrid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
-    initComponent : function()
+    initComponent : function(config)
     {
-        Ext.apply(this,
-        {
-            title : String.format(_('Open bugs for {0}'), 'doc-' + phpDoc.userLang),
-            tbar  : [{
-                scope: this,
-                tooltip : _('Refresh this grid'),
-                iconCls : 'refresh',
-                handler : function()
-                {
-                    this.store.reload();
-                }
-            }]
-        });
-        ui.component.BugsGrid.superclass.initComponent.call(this);
+        ui.component._PortletBugs.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletSummary
+ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
+{
+    title   : '',
+    iconCls : 'iconBugs home-bugs-title',
+    layout  : 'fit',
+    store   : ui.component._PortletBugs.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletBugs.store.reload();
+        }
+    }],
+    initComponent: function(config) {
+
+        ui.component.PortletBugs.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
+        this.add(new ui.component._PortletBugs.grid());
+
     }
 });
 
 // singleton
-ui.component._BugsGrid.instance = null;
-ui.component.BugsGrid.getInstance = function(config)
+ui.component._PortletBugs.instance = null;
+ui.component.PortletBugs.getInstance = function(config)
 {
-    if (!ui.component._BugsGrid.instance) {
+    if (!ui.component._PortletBugs.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._BugsGrid.instance = new ui.component.BugsGrid(config);
+        ui.component._PortletBugs.instance = new ui.component.PortletBugs(config);
     }
-    return ui.component._BugsGrid.instance;
+    return ui.component._PortletBugs.instance;
 };

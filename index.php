@@ -37,6 +37,7 @@ echo cssLoadTemplate('themes/style.css');
 echo cssLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.css');
 echo cssLoadTemplate('js/ux/extjsPowered/RowEditor.css');
 echo cssLoadTemplate('js/ux/extjsPowered/StatusBar.css');
+echo cssLoadTemplate('js/ux/extjsPowered/Portal.css');
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
@@ -51,6 +52,10 @@ echo jsLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.js');
 echo jsLoadTemplate('js/ux/extjsPowered/RowEditor.js');
 echo jsLoadTemplate('js/ux/extjsPowered/StatusBar.js');
 echo jsLoadTemplate('js/ux/extjsPowered/TabCloseMenu.js');
+
+echo jsLoadTemplate('js/ux/extjsPowered/PortalColumn.js');
+echo jsLoadTemplate('js/ux/extjsPowered/Portal.js');
+echo jsLoadTemplate('js/ux/extjsPowered/Portlet.js');
 
 echo jsLoadTemplate('js/ux/md5/md5.js');
 echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');

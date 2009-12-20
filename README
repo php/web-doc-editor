@@ -3,7 +3,6 @@
 == Requirements ==
 * PHP 5.2.1+
 * The MySQLi extension
-* The PHP-GDLib module
 * Shell exec privileges
 * native vcs-client (e.g. using Subversion should have native svn-client)
 * Php mail function must be activate
@@ -15,9 +14,6 @@
 == File structure ==
 * A checkout of the SVN copy named doc-editor
   - svn co http://svn.php.net/repository/web/doc-editor/trunk doc-editor 
-* A copy of the jpgraph 3.x series
-  - Download from here: http://www.aditus.nu/jpgraph/jpdownload.php
-  - Unpack it like so: doc-editor/php/jpgraph/
 * A copy of the ExtJs 3.1 or higher series
   - Download from here: http://extjs.com/products/extjs/download.php
   - Unpack it like so: doc-editor/js/extjs/
@@ -37,7 +33,7 @@
   - Checks out the phpdoc-all CVS module into the data directory
 
 == Other notes ==
-* A common test PHP CVS user is: cvsread with password: phpfi **depreciated**
+* Anonymous authentication : anonymous with blank password
 * Or use your own SVN credentials
 * After modifying any .js, run scripts/util/compress-js.sh, you need yui-compressor-2.4.2+
   The script will look for scripts/util/yuicompressor.jar

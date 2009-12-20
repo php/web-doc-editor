@@ -1,0 +1,90 @@
+Ext.namespace('ui','ui.component','ui.component._PortletTranslationsGraph');
+
+ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getGraphLangs'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'libel',
+                mapping : 'libel',
+                 type   : 'string'
+            }, {
+                name    : 'total',
+                mapping : 'total',
+                type    : 'int'
+            }
+        ])
+    )
+});
+
+ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
+{
+
+    height : 400,
+    url    : 'js/extjs/resources/charts.swf',
+    xField : 'libel',
+    series : [{
+        type        : 'column',
+        displayName : 'Total',
+        yField      : 'total',
+        style : {
+            image :'bar.gif',
+            mode  : 'stretch',
+            color : 0x99BBE8
+        }
+    }],
+    store : ui.component._PortletTranslationsGraph.store,
+
+    initComponent : function(config)
+    {
+        ui.component._PortletTranslationsGraph.chart.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+
+});
+
+//------------------------------------------------------------------------------
+// PortletTranslationGraph
+ui.component.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Graphics for all language'),
+    iconCls : 'home-graphic-title',
+    layout  : 'fit',
+    store   : ui.component._PortletTranslationsGraph.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this graph'),
+        handler: function() {
+            ui.component._PortletTranslationsGraph.store.reload();
+        }
+    }],
+    initComponent : function(config)
+    {
+        ui.component.PortletTranslationsGraph.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.add(new ui.component._PortletTranslationsGraph.chart());
+    }
+
+});
+
+// singleton
+ui.component._PortletTranslationsGraph.instance = null;
+ui.component.PortletTranslationsGraph.getInstance = function(config)
+{
+    if (!ui.component._PortletTranslationsGraph.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletTranslationsGraph.instance = new ui.component.PortletTranslationsGraph(config);
+    }
+    return ui.component._PortletTranslationsGraph.instance;
+};

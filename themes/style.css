@@ -1,8 +1,13 @@
 .grid-search {
     background-image: url(./img/zoom.png) !important;
-} .MainInfoTabPanel {
-    padding: 10px !important;
-} .x-form-check-group .x-form-check-wrap, .x-form-radio-group .x-form-radio-wrap {
+} 
+
+.MainInfoTabPanel {
+    margin: 0 5px 0 5px !important;
+    padding: 0 !important;
+}
+
+.x-form-check-group .x-form-check-wrap, .x-form-radio-group .x-form-radio-wrap {
     height: auto;
 } .ext-ie .x-form-check-group .x-form-check-wrap, .ext-ie .x-form-radio-group .x-form-radio-wrap {
     height: auto;
@@ -180,8 +185,8 @@ opacity:
     top: 3px;
     left: 5px;
 } .ux-icon-combo-item {
-    background-repeat: no-repeat ! important;
-    background-position: 3px 50% ! important;
+    background-repeat: no-repeat !important;
+    background-position: 3px 50% !important;
     padding-left: 24px ! important;
 } #wizard-step-1, #wizard-step-2, #wizard-step-3 {
     margin-top: 5px;
@@ -210,16 +215,12 @@ opacity:
     vertical-align: top;
 } #home-panel table tr {
     vertical-align: top;
-} .home-translator-title, .home-graphic-title, .home-mailing-title {
-    font-weight: bold;
-    font-size: 11px;
-    color: #3764A0;
-    font-family: tahoma, arial, helvetica, sans-serif;
-    padding: 4px 4px 4px 20px;
+} .home-summary-title, .home-bugs-title {
+    background-position: 0 6px !important;
 } .home-graphic-title {
-    background: transparent url(./img/chart_pie.png) no-repeat 0 0;
+    background: transparent url(./img/chart_pie.png) no-repeat 0 5px !important;
 } .home-mailing-title {
-    background: transparent url(./img/email_open_image.png) no-repeat 0 0;
+    background: transparent url(./img/email_open_image.png) no-repeat 0 5px !important;
 } .FilesNeedTranslate {
     background: transparent url(./img/page_add.png) no-repeat 0 0;
 } .FilesNeedUpdate {
@@ -432,7 +433,7 @@ opacity:
     color: #1A4D8F;
 } .res-block {
     background: transparent url(./img/block-top.gif) no-repeat scroll 0 0;
-    margin-bottom: 15px;
+    margin: 10px 0 0 5px;
     padding-top: 5px;
     width: 280px;
 } .res-block-inner {

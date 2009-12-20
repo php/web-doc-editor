@@ -44,33 +44,58 @@ var phpDoc = function()
             // Store to load for LANG project
             if (phpDoc.userLang !== 'en') {
                 // We load all stores, one after the others
-                document.getElementById("loading-msg").innerHTML = "Loading data 1/8...";
+                document.getElementById("loading-msg").innerHTML = "Loading data 1/13...";
                 ui.component.PendingTranslateGrid.getInstance().store.load({
                     callback: function() {
-                        document.getElementById("loading-msg").innerHTML = "Loading data 2/8...";
+                        document.getElementById("loading-msg").innerHTML = "Loading data 2/13...";
                         ui.component.StaleFileGrid.getInstance().store.load({
                             callback: function() {
-                                document.getElementById("loading-msg").innerHTML = "Loading data 3/8...";
+                                document.getElementById("loading-msg").innerHTML = "Loading data 3/13...";
                                 ui.component.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
-                                        document.getElementById("loading-msg").innerHTML = "Loading data 4/8...";
+                                        document.getElementById("loading-msg").innerHTML = "Loading data 4/13...";
                                         ui.component.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
-                                                document.getElementById("loading-msg").innerHTML = "Loading data 5/8...";
+                                                document.getElementById("loading-msg").innerHTML = "Loading data 5/13...";
                                                 ui.component.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
-                                                        document.getElementById("loading-msg").innerHTML = "Loading data 6/8...";
+                                                        document.getElementById("loading-msg").innerHTML = "Loading data 6/13...";
                                                         ui.component.PendingCommitGrid.getInstance().store.load({
                                                             callback: function() {
-                                                                document.getElementById("loading-msg").innerHTML = "Loading data 7/8...";
+                                                                document.getElementById("loading-msg").innerHTML = "Loading data 7/13...";
                                                                 ui.component.PendingPatchGrid.getInstance().store.load({
                                                                     callback: function() {
-                                                                        document.getElementById("loading-msg").innerHTML = "Loading data 8/8...";
-                                                                        ui.component.SummaryGrid.getInstance().store.load({
+                                                                        document.getElementById("loading-msg").innerHTML = "Loading data 8/13...";
+                                                                        ui.component.PortletSummary.getInstance().store.load({
                                                                             callback: function() {
-                                                                                // Now, we can to remove the global mask
-                                                                                Ext.get('loading').remove();
-                                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                                document.getElementById("loading-msg").innerHTML = "Loading data 9/13...";
+                                                                                ui.component.PortletTranslationGraph.getInstance().store.load({
+                                                                                    callback: function() {
+                                                                                        document.getElementById("loading-msg").innerHTML = "Loading data 10/13...";
+                                                                                        ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                                                                            callback: function() {
+                                                                                                document.getElementById("loading-msg").innerHTML = "Loading data 11/13...";
+                                                                                                ui.component.PortletBugs.getInstance().store.load({
+                                                                                                    callback: function() {
+                                                                                                        document.getElementById("loading-msg").innerHTML = "Loading data 12/13...";
+                                                                                                        ui.component.PortletTranslator.getInstance().store.load({
+                                                                                                            callback: function() {
+                                                                                                                document.getElementById("loading-msg").innerHTML = "Loading data 13/13...";
+                                                                                                                ui.component.PortletLocalMail.getInstance().store.load({
+                                                                                                                    callback: function() {
+                                                                                                                        // Now, we can to remove the global mask
+                                                                                                                        Ext.get('loading').remove();
+                                                                                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                                                                    }
+                                                                                                                });
+                                                                                                            }
+                                                                                                        });
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                });
                                                                             }
                                                                         });
                                                                     }
@@ -96,11 +121,16 @@ var phpDoc = function()
                         ui.component.PendingPatchGrid.getInstance().store.load({
                             callback: function() {
                                 document.getElementById("loading-msg").innerHTML = "Loading data 3/3...";
-                                ui.component.LocalMailGrid.getInstance().store.load({
+                                ui.component.PortletLocalMail.getInstance().store.load({
                                     callback: function() {
+                                        document.getElementById("loading-msg").innerHTML = "Loading data 3/3...";
+                                        ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                            callback: function() {
                                         // Now, we can to remove the global mask
                                         Ext.get('loading').remove();
                                         Ext.fly('loading-mask').fadeOut({ remove : true });
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -131,9 +161,17 @@ var phpDoc = function()
                                                             callback: function() {
                                                                 ui.component.PendingPatchGrid.getInstance().store.reload({
                                                                     callback: function() {
-                                                                        ui.component.SummaryGrid.getInstance().store.reload({
+                                                                        ui.component.PortletSummary.getInstance().store.reload({
                                                                             callback: function() {
-                                                                                ui.component.TranslatorGrid.getInstance().store.reload();
+                                                                                ui.component.PortletTranslator.getInstance().store.reload({
+                                                                                    callback: function() {
+                                                                                        ui.component.PortletTranslationGraph.getInstance().store.reload({
+                                                                                            callback: function() {
+                                                                                                ui.component.PortletTranslationsGraph.getInstance().store.reload();
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                });
                                                                             }
                                                                         });
                                                                     }
@@ -154,11 +192,7 @@ var phpDoc = function()
                 // Store to reload only for EN project
                 ui.component.PendingCommitGrid.getInstance().store.reload({
                     callback: function() {
-                        ui.component.PendingPatchGrid.getInstance().store.reload({
-                            callback: function() {
-                                ui.component.LocalMailGrid.getInstance().store.reload();
-                            }
-                        });
+                        ui.component.PendingPatchGrid.getInstance().store.reload();
                     }
                 });
 
@@ -236,16 +270,25 @@ var phpDoc = function()
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
-            var mainMenu    = new ui.component.MainMenu(),
-                mainContent = (this.userLang === 'en') ? [
-                    ui.component.LocalMailGrid.getInstance()
+            var mainMenu    = new ui.component.MainMenu();
+
+
+                mainContentLeft = (this.userLang === 'en') ? [
+                    ui.component.PortletLocalMail.getInstance()
                 ] : [
-                    ui.component.SummaryGrid.getInstance(),
-                    ui.component.TranslatorGrid.getInstance(),
-                    ui.component.LocalMailGrid.getInstance(),
-                    ui.component.BugsGrid.getInstance(),
-                    ui.component.TranslationGraph.getInstance()
+                    ui.component.PortletSummary.getInstance({lang: this.userLang}),
+                    ui.component.PortletTranslator.getInstance({lang: this.userLang}),
+                    ui.component.PortletLocalMail.getInstance({lang: this.userLang})
                 ];
+
+                mainContentRight = (this.userLang === 'en') ? [
+                    ui.component.PortletTranslationsGraph.getInstance()
+                ] : [
+                    ui.component.PortletTranslationGraph.getInstance() ,
+                    ui.component.PortletTranslationsGraph.getInstance(),
+                    ui.component.PortletBugs.getInstance({lang: this.userLang})
+                ];
+
             new Ext.Viewport({
                 layout : 'border',
                 items : [{
@@ -268,11 +311,7 @@ var phpDoc = function()
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-
                     width        : 300,
-                    //autoHeight : true,
-                    //autoScroll   : true,
-
                     header       : false,
                     tbar : [{
                         text    : _('Main Menu'),
@@ -390,19 +429,22 @@ var phpDoc = function()
                                         '</div>' +
                                      '</div>'
                         }, {
-                            xtype      : 'tabpanel',
-                            activeTab  : 0,
-                            plain      : true,
-                            autoScroll : true,
-                            height     : 400,
-                            border     : false,
-                            items      : mainContent,
-                            defaults   : { border: true },
-                            layoutOnTabChange : true
+                            xtype      : 'portal',
+                            border: false,
+                            items:[{
+                                columnWidth : .5,
+                                style       : 'padding:10px 5px 10px 5px',
+                                items       : mainContentLeft
+                            },{
+                                columnWidth : .5,
+                                style       : 'padding:10px 5px 10px 5px',
+                                items       : mainContentRight
+                            }]
                         }]
                     }]
                 }]
             });
+
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 

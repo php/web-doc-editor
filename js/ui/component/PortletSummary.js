@@ -1,10 +1,11 @@
-Ext.namespace('ui','ui.component','ui.component._SummaryGrid');
+
+Ext.namespace('ui','ui.component','ui.component._PortletSummary');
 
 //------------------------------------------------------------------------------
-// SummaryGrid Internals
+// PortletSummary Internals
 
 // Store : storeSummary with Informations like Revcheck second table
-ui.component._SummaryGrid.store = new Ext.data.Store({
+ui.component._PortletSummary.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getSummaryInfo'
     }),
@@ -35,7 +36,6 @@ ui.component._SummaryGrid.store = new Ext.data.Store({
             }
         ])
     ),
-
     listeners : {
         load : function()
         {
@@ -54,8 +54,8 @@ ui.component._SummaryGrid.store = new Ext.data.Store({
     }
 });
 
-// SummaryGrid columns definition
-ui.component._SummaryGrid.columns = [
+// PortletSummary grid's columns definition
+ui.component._PortletSummary.gridColumns = [
     new Ext.grid.RowNumberer(), {
         id        : 'StatusType',
         header    : _('File status type'),
@@ -85,8 +85,8 @@ ui.component._SummaryGrid.columns = [
     }
 ];
 
-// SummaryGrid gridview
-ui.component._SummaryGrid.view = new Ext.grid.GridView({
+// PortletSummary gridview
+ui.component._PortletSummary.gridView = new Ext.grid.GridView({
     getRowClass : function(record, numIndex, rowParams, store)
     {
         switch (record.data.id) {
@@ -100,18 +100,15 @@ ui.component._SummaryGrid.view = new Ext.grid.GridView({
 });
 
 //------------------------------------------------------------------------------
-// SummaryGrid
-ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
+// PortletSummary grid
+ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
 {
-    title      : _('Summary'),
     loadMask   : true,
     autoScroll : true,
-    height     : 400,
-    width      : 800,
-    store      : ui.component._SummaryGrid.store,
-    columns    : ui.component._SummaryGrid.columns,
-    view       : ui.component._SummaryGrid.view,
-
+    autoHeight : true,
+    store      : ui.component._PortletSummary.store,
+    columns    : ui.component._PortletSummary.gridColumns,
+    view       : ui.component._PortletSummary.gridView,
     listeners : {
         rowdblclick : function ( grid, rowIndex, e )
         {
@@ -128,26 +125,48 @@ ui.component.SummaryGrid = Ext.extend(Ext.grid.GridPanel,
             }
         }
     },
-
-    initComponent : function()
+    initComponent: function(config)
     {
-        Ext.apply(this,
-        {
-            iconCls : 'flag-' + phpDoc.userLang
-        });
-        ui.component.SummaryGrid.superclass.initComponent.call(this);
+        ui.component._PortletSummary.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletSummary
+ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Summary'),
+    iconCls : '',
+    layout  : 'fit',
+    store   : ui.component._PortletSummary.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletSummary.store.reload();
+        }
+    }],
+    initComponent: function(config) {
+
+        ui.component.PortletSummary.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.iconCls = 'flag-' + this.lang + ' home-summary-title';
+        this.add(new ui.component._PortletSummary.grid());
+
     }
 });
 
 // singleton
-ui.component._SummaryGrid.instance = null;
-ui.component.SummaryGrid.getInstance = function(config)
+ui.component._PortletSummary.instance = null;
+ui.component.PortletSummary.getInstance = function(config)
 {
-    if (!ui.component._SummaryGrid.instance) {
+    if (!ui.component._PortletSummary.instance) {
         if (!config) {
-			config = {};
-		}
-        ui.component._SummaryGrid.instance = new ui.component.SummaryGrid(config);
+            config = {};
+        }
+        ui.component._PortletSummary.instance = new ui.component.PortletSummary(config);
     }
-    return ui.component._SummaryGrid.instance;
+    return ui.component._PortletSummary.instance;
 };

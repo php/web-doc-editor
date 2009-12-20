@@ -1,10 +1,10 @@
-Ext.namespace('ui','ui.component','ui.component._LocalMailGrid');
+Ext.namespace('ui','ui.component','ui.component._PortletLocalMail');
 
 //------------------------------------------------------------------------------
-// LocalMailGrid internals
+// PortletLocalMail internals
 
 // Store : Mailing with Informations about phpdoc-LANG mailing
-ui.component._LocalMailGrid.store = new Ext.data.Store({
+ui.component._PortletLocalMail.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getLastNews'
     }),
@@ -35,10 +35,10 @@ ui.component._LocalMailGrid.store = new Ext.data.Store({
         ])
     )
 });
-ui.component._LocalMailGrid.store.setDefaultSort('pubDate', 'desc');
+ui.component._PortletLocalMail.store.setDefaultSort('pubDate', 'desc');
 
-// LocalMailGrid columns definition
-ui.component._LocalMailGrid.columns = [
+// PortletLocalMail columns definition
+ui.component._PortletLocalMail.columns = [
     new Ext.grid.RowNumberer(), {
         id        : 'GridMailingTitle',
         header    : _('Title'),
@@ -59,23 +59,18 @@ ui.component._LocalMailGrid.columns = [
 ];
 
 //------------------------------------------------------------------------------
-// LocalMailGrid
-ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
+// _PortletLocalMail
+ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
 {
-    iconCls          : 'home-mailing-title',
-    height           : 400,
-    width            : 800,
+    autoHeight       : true,
     loadMask         : true,
     autoScroll       : true,
     autoExpandColumn : 'GridMailingTitle',
-    store            : ui.component._LocalMailGrid.store,
-    columns          : ui.component._LocalMailGrid.columns,
+    store            : ui.component._PortletLocalMail.store,
+    columns          : ui.component._PortletLocalMail.columns,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
     listeners : {
-        render: function(grid) {
-            if( phpDoc.userLang !== 'en' ) { grid.store.load.defer(20, grid.store); }
-        },
         rowcontextmenu : function(grid, rowIndex, e)
         {
 
@@ -108,7 +103,7 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
                 MailUrl   = grid.store.getAt(rowIndex).data.link,
                 MailTitle = grid.store.getAt(rowIndex).data.title;
 
-            if (!Ext.getCmp('main-panel').findById('mifp_' + MailId)) {
+            if (!Ext.getCmp('main-panel').findById('mail-' + MailId)) {
 
                 Ext.getCmp('main-panel').add({
                     xtype      : 'panel',
@@ -128,34 +123,48 @@ ui.component.LocalMailGrid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
-    initComponent : function()
+    initComponent : function(config)
     {
-        Ext.apply(this,
-        {
-            title : String.format(_('Mails from {0}'), 'doc-' + phpDoc.userLang),
-            tbar : [{
-				scope: this,
-                tooltip : _('Refresh this grid'),
-                iconCls : 'refresh',
-                handler : function()
-                {
-					this.store.reload();
-                }
-            }]
-        });
-        ui.component.LocalMailGrid.superclass.initComponent.call(this);
+        ui.component._PortletLocalMail.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletLocalMail
+ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
+{
+    title   : '',
+    iconCls : 'home-mailing-title',
+    layout  : 'fit',
+    store   : ui.component._PortletLocalMail.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletLocalMail.store.reload();
+        }
+    }],
+    initComponent: function(config) {
+
+        ui.component.PortletLocalMail.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.title = String.format(_('Mails from {0}'), 'doc-' + this.lang);
+        this.add(new ui.component._PortletLocalMail.grid());
+
     }
 });
 
 // singleton
-ui.component._LocalMailGrid.instance = null;
-ui.component.LocalMailGrid.getInstance = function(config)
+ui.component._PortletLocalMail.instance = null;
+ui.component.PortletLocalMail.getInstance = function(config)
 {
-    if (!ui.component._LocalMailGrid.instance) {
+    if (!ui.component._PortletLocalMail.instance) {
         if (!config) {
-			config = {};
-		}
-        ui.component._LocalMailGrid.instance = new ui.component.LocalMailGrid(config);
+            config = {};
+        }
+        ui.component._PortletLocalMail.instance = new ui.component.PortletLocalMail(config);
     }
-    return ui.component._LocalMailGrid.instance;
+    return ui.component._PortletLocalMail.instance;
 };
