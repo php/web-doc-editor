@@ -28,6 +28,7 @@ function headerTemplate($title = 'PHP Documentation Online Editor', $depth = 0)
    <div class="loading-indicator">
     <img src="{$prefix}themes/img/php.png" class="loading-php-logo" alt="PHP" />PhpDocumentation Online Editor
     <div id="loading-msg">Loading styles and images...</div>
+    <div id="loading-progressBar"></div>
    </div>
   </div>
 
