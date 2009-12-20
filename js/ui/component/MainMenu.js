@@ -10,7 +10,6 @@ ui.component.MainMenu = function(config)
 
 // Load all available language
 ui.component._MainMenu.store = new Ext.data.Store({
-    autoLoad : true,
     proxy    : new Ext.data.HttpProxy({
         url : './do/getAvailableLanguage'
     }),
@@ -32,7 +31,35 @@ ui.component._MainMenu.store = new Ext.data.Store({
             }
         ])
     )
-});       
+});
+
+ui.component._MainMenu.store.on('load', function(store) {
+
+    var tmp; 
+
+    store.each(function(record){
+
+        tmp = new Ext.menu.Item({
+            text    : record.data["name"],
+            iconCls : record.data["iconCls"],
+            disabled: (record.data["code"] === phpDoc.userLang),
+            handler : function() {
+                
+                XHR({
+                    params  : { task : 'switchLang', lang: record.data["code"] },
+                    success : function()
+                    {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+
+        Ext.getCmp('MenuLang-ct').add(tmp);
+    });
+
+
+}, this);
 
 Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 {
@@ -40,29 +67,8 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
     init : function()
     {
 
-        var MenuLang = new Ext.menu.Menu(),
-            tmp;
+        var MenuLang = new Ext.menu.Menu({id: 'MenuLang-ct'});
 
-        ui.component._MainMenu.store.each(function(record){
-
-            tmp = new Ext.menu.Item({
-                text    : record.data["name"],
-                iconCls : record.data["iconCls"],
-                disabled: (record.data["code"] === phpDoc.userLang),
-                handler : function() {
-                    
-                    XHR({
-                        params  : { task : 'switchLang', lang: record.data["code"] },
-                        success : function()
-                        {
-                            window.location.reload();
-                        }
-                    });
-                }
-            })
-            MenuLang.add(tmp);
-
-        });
 
         Ext.apply(this,
         {
