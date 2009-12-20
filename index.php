@@ -15,7 +15,7 @@ if (isset($_REQUEST['perm']) && !isset($_SESSION['userID'])) {
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
     echo cssLoadTemplate('js/extjs/resources/css/ext-all.css');
-    echo cssLoadTemplate('themes/style.css');
+    echo cssLoadTemplate('themes/style_min.css');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
     echo jsLoadTemplate('js/extjs/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
@@ -23,6 +23,7 @@ if (!isset($_SESSION['userID'])) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
     echo jsLoadTemplate('js/util.js'); // TODO: REMOVE AFTER USING YUI-COMPRESSOR
     echo jsLoadTemplate('js/login_override.js');
+    echo jsLoadTemplate('js/ux/Ext.ux.WindowDrawer.js');
     echo jsLoadTemplate('js/login.js');
     echo footerTemplate();
     exit;

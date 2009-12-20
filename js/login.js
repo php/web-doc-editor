@@ -53,6 +53,16 @@ var loginPage = function()
                     plain       : true,
                     title       : 'Control Access',
                     iconCls     : 'key',
+                    plugins     : [
+                        new Ext.ux.plugins.WindowDrawer({
+                            html : 'If you want to request for a SVN account, please read this page :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php">http://php.net/svn-php.php</a></div>',
+                            side : 's',
+                            bodyStyle: 'margin: 10px;',
+                            animate : true,
+                            resizable : false,
+                            height : 80
+                        })
+                    ],
                     listeners : {
                         render : function()
                         {
@@ -126,7 +136,19 @@ var loginPage = function()
                             mode          : 'local'
                         }]
                     }],
+                    buttonAlign: 'left',
                     buttons : [{
+                        text    : 'Request an account',
+                        iconCls : 'iconHelp',
+                        tabIndex : -1,
+                        handler : function() {
+                            if( win.drawers.s.hidden ) {
+                                win.drawers.s.show();
+                            } else {
+                                win.drawers.s.hide();
+                            }
+                        }
+                    }, '->', {
                         text      : 'Login',
                         id        : 'login-btn',
                         disabled  : false,
