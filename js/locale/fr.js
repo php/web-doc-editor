@@ -9,6 +9,10 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
+i18n["Errors"] = "Erreurs";
+i18n["Update"] = "Mettre à jour";
+i18n["You need to commit or cancel your changes"] = "Vous devez valider ou annuler vos modifications";
+
 
 i18n["Open the Log Message Manager"] = "Ouvrir le gestionnaire de messages d'historisation";
 i18n["Switch to language..."] = "Basculer vers la langue ...";

@@ -119,7 +119,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
 
     startEditing: function(rowIndex, doFocus){
         if(this.editing && this.isDirty()){
-            this.showTooltip('You need to commit or cancel your changes');
+            this.showTooltip(_('You need to commit or cancel your changes'));
             return;
         }
         this.editing = true;
@@ -450,7 +450,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
                 maxWidth: 600,
                 cls: 'errorTip',
                 width: 300,
-                title: 'Errors',
+                title: _('Errors'),
                 autoHide: false,
                 anchor: 'left',
                 anchorToTarget: true,

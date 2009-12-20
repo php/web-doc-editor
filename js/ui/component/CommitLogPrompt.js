@@ -21,47 +21,47 @@ ui.component._CommitLogPrompt.store = new Ext.data.Store({
     )
 });
 
+ui.component._CommitLogPrompt.editor = new Ext.ux.grid.RowEditor({
+    saveText: _('Update'),
+    cancelText: _('Cancel')
+});
+
+ui.component._CommitLogPrompt.editor.on('afteredit', function(editor, changes, record, rowIdx) {
+
+    XHR({
+        params : {
+            task   : 'saveLogMessage',
+            messID : record.data.id,
+            mess   : record.data.text
+        },
+        success : function(response)
+        {
+           record.commit();
+        },
+        failure : function(response)
+        {
+            phpDoc.winForbidden();
+        }
+    });
+
+
+
+
+}, this);
+
 ui.component._CommitLogPrompt.cm = new Ext.grid.ColumnModel([
     new Ext.grid.RowNumberer(),
     {
         id        : 'log_msg',
         header    : _('Log message'),
         dataIndex : 'text',
+        editor    : {
+            xtype : 'textarea'
+        },
         renderer  : function(value)
         {
             return value.split("\n").join("<br/>");
-        },
-        editor : new Ext.Editor(
-            new Ext.form.TextArea({
-                grow    : true,
-                growMin : 120
-            }), {
-                shadow    : false,
-                autoSize  : true,
-                listeners : {
-                    complete : function(editor, newValue, OldValue)
-                    {
-                        var messID = editor.record.data.id;
-
-                        XHR({
-                            params : {
-                                task   : 'saveLogMessage',
-                                messID : messID,
-                                mess   : newValue
-                            },
-                            success : function(response)
-                            {
-                                ui.component._CommitLogPrompt.store.getById(messID).commit();
-                            },
-                            failure : function(response)
-                            {
-                                phpDoc.winForbidden();
-                            }
-                        });
-                    }
-                }
-            }
-        )
+        }
     }
 ]);
 
@@ -111,13 +111,14 @@ Ext.extend(ui.component._CommitLogPrompt.menu, Ext.menu.Menu,
     }
 });
 
-ui.component._CommitLogPrompt.grid = Ext.extend(Ext.grid.EditorGridPanel,
+ui.component._CommitLogPrompt.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoExpandColumn : 'log_msg',
-    cm    : ui.component._CommitLogPrompt.cm,
-    sm    : ui.component._CommitLogPrompt.sm,
-    store : ui.component._CommitLogPrompt.store,
+    cm      : ui.component._CommitLogPrompt.cm,
+    sm      : ui.component._CommitLogPrompt.sm,
+    store   : ui.component._CommitLogPrompt.store,
+    plugins : [ui.component._CommitLogPrompt.editor],
     listeners : {
         render : function(grid)
         {
@@ -153,7 +154,7 @@ ui.component.CommitLogPrompt = Ext.extend(Ext.Window,
         text    : _('Close'),
         handler : function()
         {
-            this.ownerCt.close();
+            Ext.getCmp('commit-log-win').close();
         }
     }],
     listeners : {
