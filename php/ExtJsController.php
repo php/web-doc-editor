@@ -1282,7 +1282,7 @@ class ExtJsController
 
             $return[$j]['id'] = $j;
             $return[$j]['libel'] = str_replace("_", "", $lang);
-            $return[$j]['total'] = ($summary[0]->nbFiles == NULL ) ? 0 : $summary[0]->nbFiles;
+            $return[$j]['total'] = ( !isset($summary[0]) || $summary[0]->nbFiles == NULL ) ? 0 : $summary[0]->nbFiles;
 
             $j ++;
         }
