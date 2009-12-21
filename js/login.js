@@ -55,7 +55,7 @@ var loginPage = function()
                     iconCls     : 'key',
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
-                            html : 'If you want to request for a SVN account, please read this page :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php">http://php.net/svn-php.php</a></div>',
+                            html : 'To request an VCS account please read :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php">http://php.net/svn-php.php</a></div>',
                             side : 's',
                             bodyStyle: 'margin: 10px;',
                             animate : true,
@@ -91,7 +91,7 @@ var loginPage = function()
                         defaults    : { width : 217 },
                         defaultType : 'textfield',
                         items : [{
-                            fieldLabel : 'Vcs login',
+                            fieldLabel : 'VCS login',
                             name       : 'vcsLogin',
                             value      : 'anonymous',
                             id         : 'login-form-vcsLogin',
@@ -105,7 +105,7 @@ var loginPage = function()
                                 }
                             }
                         }, {
-                            fieldLabel : 'Vcs password',
+                            fieldLabel : 'VCS password',
                             name       : 'vcsPassword',
                             id         : 'login-form-vcsPasswd',
                             inputType  : 'password',
