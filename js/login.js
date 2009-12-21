@@ -33,7 +33,7 @@ var loginPage = function()
                         }
                     ])
                 )
-            });       
+            });
 
             this.drawForm();
         },
@@ -166,7 +166,7 @@ var loginPage = function()
                                         waitMsg   : 'Sending data...',
                                         success   : function(form, action)
                                         {
-                                            window.location.href = './';
+                                            window.location.reload();
                                         },
                                         failure : function(form, action)
                                         {

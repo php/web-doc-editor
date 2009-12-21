@@ -4,13 +4,6 @@ session_start();
 
 require_once './php/html.templates.php';
 
-// Direct access to file, grant annoymous login
-if (isset($_REQUEST['perm']) && !isset($_SESSION['userID'])) {
-    require_once dirname(__FILE__) . '/php/AccountManager.php';
-
-    AccountManager::getInstance()->login('anonymous', '', array_shift(explode('/', $_REQUEST['perm'])));
-}
-
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
