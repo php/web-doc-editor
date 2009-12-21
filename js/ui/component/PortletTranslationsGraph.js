@@ -37,7 +37,7 @@ ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
         displayName : 'Total',
         yField      : 'total',
         style : {
-            image :'bar.gif',
+            image :'themes/img/bar.gif',
             mode  : 'stretch',
             color : 0x99BBE8
         }
