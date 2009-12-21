@@ -121,7 +121,7 @@ var loginPage = function()
                         }, {
                             xtype      : 'combo',
                             width      : 235,
-                            fieldLabel : 'Translate module',
+                            fieldLabel : 'Language module',
                             store      : this.storeLang,
                             plugins       : new Ext.ux.plugins.IconCombo(),
                             valueField    : 'code',
