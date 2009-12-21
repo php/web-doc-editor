@@ -41,7 +41,7 @@ ui.component._PortletBugs.gridColumns = [{
 
 ui.component._PortletBugs.gridView = new Ext.grid.GridView({
     forceFit      : true,
-    emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>', //_('No open Bugs'),
+    emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
     deferEmptyText: false,
     enableRowBody : true,
     getRowClass   : function(record, rowIndex, p, store)
@@ -132,6 +132,11 @@ ui.component._PortletBugs.reloadData = function() {
               Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading open bugs from Php.net !') + '</div>');
               Ext.get('PortletBugs-grid-defaultMess-id').highlight();
 
+          } else {
+              if (ui.component._PortletBugs.store.getTotalCount() == 0 ) {
+                  Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open Bugs')+'</div>');
+                  Ext.get('PortletBugs-grid-defaultMess-id').highlight();
+              }
           }
         }
     });
