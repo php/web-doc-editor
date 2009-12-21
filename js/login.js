@@ -11,7 +11,6 @@ var loginPage = function()
         {
             // Load all available language
             this.storeLang = new Ext.data.Store({
-                autoLoad : true,
                 proxy    : new Ext.data.HttpProxy({
                     url : './do/getAvailableLanguage'
                 }),
@@ -34,8 +33,12 @@ var loginPage = function()
                     ])
                 )
             });
-
-            this.drawForm();
+            this.storeLang.load({
+                scope: this,
+                callback: function() {
+                    this.drawForm();
+                }
+            });
         },
 
         drawForm : function()
@@ -119,21 +122,22 @@ var loginPage = function()
                                 }
                             }
                         }, {
-                            xtype      : 'combo',
+                            xtype      : 'iconcombo',
                             width      : 235,
                             fieldLabel : 'Language module',
                             store      : this.storeLang,
-                            plugins       : new Ext.ux.plugins.IconCombo(),
+                            triggerAction : 'all',
+                            allowBlank    : false,
                             valueField    : 'code',
+                            displayField  : 'name',
+                            iconClsField  : 'iconCls',
+                            mode          : 'local',
+                            value         : 'en',
                             listWidth     : 235,
                             maxHeight     : 150,
                             editable      : true,
                             id            : 'login-form-lang',
-                            name          : 'langDisplay',
-                            displayField  : 'name',
-                            iconClsField  : 'iconCls',
-                            triggerAction : 'all',
-                            mode          : 'local'
+                            name          : 'langDisplay'
                         }]
                     }],
                     buttonAlign: 'left',
