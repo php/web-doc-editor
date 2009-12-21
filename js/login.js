@@ -55,7 +55,7 @@ var loginPage = function()
                     iconCls     : 'key',
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
-                            html : 'To request an VCS account please read :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php">http://php.net/svn-php.php</a></div>',
+                            html : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php">http://php.net/svn-php.php</a></div>',
                             side : 's',
                             bodyStyle: 'margin: 10px;',
                             animate : true,
