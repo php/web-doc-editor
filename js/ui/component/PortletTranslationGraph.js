@@ -1,5 +1,9 @@
 Ext.namespace('ui','ui.component','ui.component._PortletTranslationGraph');
 
+function renderLibel(v) {
+ return _(v);
+}
+
 ui.component._PortletTranslationGraph.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getGraphLang'
@@ -15,7 +19,8 @@ ui.component._PortletTranslationGraph.store = new Ext.data.Store({
                 mapping : 'id'
             }, {
                 name    : 'libel',
-                mapping : 'libel'
+                mapping : 'libel',
+                convert : renderLibel
             }, {
                 name    : 'total',
                 mapping : 'total'
