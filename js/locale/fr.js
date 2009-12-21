@@ -9,6 +9,12 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
+
+
+i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
+i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";
+i18n["Error when loading open bugs from Php.net !"] = "Erreur lors du chargement des bogues ouverts depuis Php.net !";
+
 i18n["Errors"] = "Erreurs";
 i18n["Update"] = "Mettre à jour";
 i18n["You need to commit or cancel your changes"] = "Vous devez valider ou annuler vos modifications";

@@ -32,7 +32,9 @@ class BugReader {
 
         $url = 'http://bugs.php.net/rss/search.php?cmd=display&bug_type[]=Translation+problem&status=Open&search_for=&php_os=&php_os_not=0&boolean=1&author_email=&bug_age=0&by=&order_by=id&direction=DESC&phpver=&limit=All&assign=&format=rss';
 
-        $r = file_get_contents($url);
+        $r = @file_get_contents($url);
+
+        if( !$r ) { return false; }
 
         $xml = new SimpleXMLElement($r);
         $channel = $xml;

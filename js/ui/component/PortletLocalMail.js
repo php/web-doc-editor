@@ -46,12 +46,12 @@ ui.component._PortletLocalMail.columns = [
         dataIndex : 'title'
     }, {
         header    : _('By'),
-        width     : 110,
+        width     : 100,
         sortable  : true,
         dataIndex : 'description'
     }, {
         header    : _('Date'),
-        width     : 140,
+        width     : 100,
         sortable  : true,
         dataIndex : 'pubDate',
         renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
@@ -66,9 +66,18 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     autoScroll       : true,
     autoExpandColumn : 'GridMailingTitle',
+    id               : 'PortletLocalMail-grid-id',
     store            : ui.component._PortletLocalMail.store,
     columns          : ui.component._PortletLocalMail.columns,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
+
+    view: new Ext.grid.GridView({
+        forceFit:true,
+        enableRowBody:true,
+        ignoreAdd: true,
+        emptyText: '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
+        deferEmptyText: false
+    }),
 
     listeners : {
         rowcontextmenu : function(grid, rowIndex, e)
@@ -92,7 +101,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'refresh',
                     handler : function()
                     {
-                        grid.store.reload();
+                        ui.component._PortletLocalMail.reloadData();
                     }
                 }]
             }).showAt(e.getXY());
@@ -130,6 +139,18 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
+ui.component._PortletLocalMail.reloadData = function() {
+    ui.component._PortletLocalMail.store.reload({
+        callback: function(r,o,success) {
+          if( !success ) {
+              Ext.getCmp('PortletLocalMail-grid-id').getView().mainBody.update('<div id="PortletLocalMail-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading mails from this mailing list !') + '</div>');
+              Ext.get('PortletLocalMail-grid-defaultMess-id').highlight();
+
+          }
+        }
+    });
+};
+
 //------------------------------------------------------------------------------
 // PortletLocalMail
 ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
@@ -142,7 +163,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
         id : 'refresh',
         qtip: _('Refresh this grid'),
         handler: function() {
-            ui.component._PortletLocalMail.store.reload();
+            ui.component._PortletLocalMail.reloadData();
         }
     }],
     initComponent: function(config) {

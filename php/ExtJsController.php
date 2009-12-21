@@ -367,12 +367,17 @@ class ExtJsController
         $nr = new NewsReader(AccountManager::getInstance()->vcsLang);
         $r  = $nr->getLastNews();
 
-        return JsonResponseBuilder::success(
-            array(
-                'nbItems' => count($r),
-                'Items'   => $r
-            )
-        );
+        if( !$r ) {
+            return JsonResponseBuilder::failure();
+        } else {
+            return JsonResponseBuilder::success(
+                array(
+                    'nbItems' => count($r),
+                    'Items'   => $r
+                )
+            );
+        }
+
     }
 
     /**
@@ -385,12 +390,16 @@ class ExtJsController
         $bugs = new BugReader(AccountManager::getInstance()->vcsLang);
         $r = $bugs->getOpenBugs();
 
-        return JsonResponseBuilder::success(
-            array(
-                'nbItems' => count($r),
-                'Items'   => $r
-            )
-        );
+        if( !$r ) {
+            return JsonResponseBuilder::failure();
+        } else {
+            return JsonResponseBuilder::success(
+                array(
+                    'nbItems' => count($r),
+                    'Items'   => $r
+                )
+            );
+        }
     }
 
     /**

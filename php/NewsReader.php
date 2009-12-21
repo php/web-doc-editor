@@ -26,7 +26,7 @@ class NewsReader {
     /**
      * Get all news for this LANG.
      * 
-     * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs
+     * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs, or false if an error occurs
      */
     function getLastNews() {
 
@@ -38,7 +38,11 @@ class NewsReader {
             $url .= '.' . strtolower(str_replace('_', '-', $this->lang));
         }
 
-        $xml = new SimpleXMLElement(file_get_contents($url));
+        $content = @file_get_contents($url);
+
+        if( !$content ) { return false; }
+
+        $xml = new SimpleXMLElement($content);
 
         $channel = $xml->channel;
 

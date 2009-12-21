@@ -41,7 +41,8 @@ ui.component._PortletBugs.gridColumns = [{
 
 ui.component._PortletBugs.gridView = new Ext.grid.GridView({
     forceFit      : true,
-    emptyText     : _('No open Bugs'),
+    emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>', //_('No open Bugs'),
+    deferEmptyText: false,
     enableRowBody : true,
     getRowClass   : function(record, rowIndex, p, store)
     {
@@ -58,6 +59,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
     autoScroll       : true,
     autoHeight       : true,
     autoExpandColumn : 'GridBugTitle',
+    id               : 'PortletBugs-grid-id',
     store            : ui.component._PortletBugs.store,
     columns          : ui.component._PortletBugs.gridColumns,
     view             : ui.component._PortletBugs.gridView,
@@ -85,7 +87,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
                     iconCls : 'refresh',
                     handler : function()
                     {
-                        grid.store.reload();
+                        ui.component._PortletBugs.reloadData();
                     }
                 }]
             }).showAt(e.getXY());
@@ -123,6 +125,18 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
+ui.component._PortletBugs.reloadData = function() {
+    ui.component._PortletBugs.store.reload({
+        callback: function(r,o,success) {
+          if( !success ) {
+              Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading open bugs from Php.net !') + '</div>');
+              Ext.get('PortletBugs-grid-defaultMess-id').highlight();
+
+          }
+        }
+    });
+};
+
 //------------------------------------------------------------------------------
 // PortletSummary
 ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
@@ -135,7 +149,7 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
         id : 'refresh',
         qtip: _('Refresh this grid'),
         handler: function() {
-            ui.component._PortletBugs.store.reload();
+            ui.component._PortletBugs.reloadData();
         }
     }],
     initComponent: function(config) {
