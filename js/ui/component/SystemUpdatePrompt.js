@@ -35,7 +35,7 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
             Ext.getCmp('btn-start-refresh').disable();
 
             // Disable the close button for this win
-            this.ownerCt.tools.close.setVisible(false);
+             this.ownerCt.ownerCt.tools.close.setVisible(false);
 
             // Set 'in progress'
             Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
