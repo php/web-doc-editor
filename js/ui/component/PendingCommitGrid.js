@@ -77,11 +77,12 @@ ui.component._PendingCommitGrid.columns = [{
 
 // PendingCommitGrid view
 ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    emptyText    : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
+    forceFit       : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    emptyText      : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
+    deferEmptyText : false,
     getRowClass  : function(record, numIndex, rowParams, store)
     {
         if ( record.data.type === 'update' ) {

@@ -81,7 +81,8 @@ ui.component._PendingPatchGrid.view = new Ext.grid.GroupingView({
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    emptyText    : '<div style="text-align: center;">' + _('No pending Patch') + '</div>'
+    emptyText    : '<div style="text-align: center;">' + _('No pending Patch') + '</div>',
+    deferEmptyText: false
 });
 
 // PendingPatchGrid context menu

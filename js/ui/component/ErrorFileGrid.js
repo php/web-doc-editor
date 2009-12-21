@@ -77,6 +77,7 @@ ui.component._ErrorFileGrid.columns = [{
 // ErrorFileGrid view
 ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
     emptyText    : '<div style="text-align: center;">'+_('No Files')+'</div>',
+    deferEmptyText: false,
     forceFit     : true,
     startCollapsed : true,
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +

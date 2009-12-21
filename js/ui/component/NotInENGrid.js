@@ -59,6 +59,7 @@ ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText: false,
     emptyText    : '<div style="text-align: center;">' + _('No Files') + '</div>',
     getRowClass  : function(record, numIndex, rowParams, store)
     {

@@ -81,6 +81,7 @@ ui.component._PendingReviewGrid.view = new Ext.grid.GroupingView({
             return 'file-need-commit';
         }
     },
+    deferEmptyText: false,
     emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 

@@ -57,6 +57,7 @@ ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText: false,
     getRowClass : function(record, numIndex, rowParams, store)
     {
         if (record.data.needCommitEN || record.data.needCommitLang) {
