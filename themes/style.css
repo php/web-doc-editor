@@ -248,7 +248,13 @@ opacity:
     background-image: url(./img/book.png) !important;
 } .iconIndent {
     background-image: url(./img/text_indent.png) !important;
-} .saveFile {
+} .iconUndo {
+    background-image: url(./img/arrow_undo.png) !important;
+} .iconRedo {
+    background-image: url(./img/arrow_redo.png) !important;
+}
+
+ .saveFile {
     background-image: url(./img/disk.png) !important;
 } .saveAsFile {
     background-image: url(./img/table_save.png) !important;

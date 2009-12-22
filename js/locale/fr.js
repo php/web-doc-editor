@@ -9,7 +9,8 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
-
+i18n["<b>Undo</b>"] = "<b>Annuler</b>";
+i18n["<b>Redo</b>"] = "<b>Refaire</b>";
 
 i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
 i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";

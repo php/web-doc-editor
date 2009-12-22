@@ -130,6 +130,34 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      this.fireEvent('cmchange');
     },
 
+    undo : function(cmp) {
+
+     this.mirror.undo();
+     this.fireEvent('cmchange');
+
+     // Enable the Redo btn
+     cmp.topToolbar.items.items[4].enable();
+
+     // Is there more undo history ? If not, we disable this btn
+     if( ! this.mirror.editor.history.history.length ) {
+         cmp.topToolbar.items.items[3].disable();
+     }
+
+    },
+
+    redo : function(cmp) {
+     this.mirror.redo();
+     this.fireEvent('cmchange');
+
+     // Enable the undo btn
+     cmp.topToolbar.items.items[3].enable();
+
+     // Is there more redo history ? If not, we disable this btn
+     if( ! this.mirror.editor.history.redoHistory.length ) {
+         cmp.topToolbar.items.items[4].disable();
+     }
+    },
+
     insertIntoLine : function(line, position, text) {
      var lineObj = this.mirror.nthLine(line);
      this.mirror.insertIntoLine(lineObj, position, text);

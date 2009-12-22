@@ -430,6 +430,24 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     }
                 }, '-', {
                     scope   : this,
+                    tooltip : _('<b>Undo</b>'),
+                    disabled: true,
+                    iconCls : 'iconUndo',
+                    handler : function()
+                    {
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).undo(this);
+                    }
+                },{
+                    scope   : this,
+                    tooltip : _('<b>Redo</b>'),
+                    disabled: true,
+                    iconCls : 'iconRedo',
+                    handler : function()
+                    {
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).redo(this);
+                    }
+                },'-', {
+                    scope   : this,
                     tooltip : _('<b>Re-indent</b> all this file'),
                     iconCls : 'iconIndent',
                     handler : function()
@@ -543,6 +561,24 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     }
                 }, '-', {
                     scope   : this,
+                    tooltip : _('<b>Undo</b>'),
+                    disabled: true,
+                    iconCls : 'iconUndo',
+                    handler : function()
+                    {
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).undo(this);
+                    }
+                },{
+                    scope   : this,
+                    tooltip : _('<b>Redo</b>'),
+                    disabled: true,
+                    iconCls : 'iconRedo',
+                    handler : function()
+                    {
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).redo(this);
+                    }
+                },'-', {
+                    scope   : this,
                     tooltip : _('<b>Re-indent</b> all this file'),
                     iconCls : 'iconIndent',
                     handler : function()
@@ -639,6 +675,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
                                     Ext.get(id_prefix + '-PANEL-btn-saveas-' + this.fid).frame("3F8538");
                                 }
+
+                                // Enable the undo btn
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
 
                                 // Mark as modified
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;
