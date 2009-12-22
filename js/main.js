@@ -255,16 +255,24 @@ var phpDoc = function()
                                 tabpanel.un('beforeremove', this.removeTabEvent, this);
                                 tabpanel.remove(tab);
                                 tabpanel.addListener('beforeremove', this.removeTabEvent, this);
+                                this.afterRemoveTab();
                             }
                         }
                     });
                     return false;
                 } else {
+                    this.afterRemoveTab();
                     return true;
                 }
             } else {
+                this.afterRemoveTab();
                 return true;
             }
+
+        },
+
+        afterRemoveTab: function(p) {
+            delete window.obj;
         },
 
         drawInterface: function()
@@ -405,10 +413,10 @@ var phpDoc = function()
                     region            : 'center',
                     activeTab         : 0,
                     enableTabScroll   : true,
-                    layoutOnTabChange : true,
+                    //layoutOnTabChange : true,
                     plugins           : new Ext.ux.TabCloseMenu(),
                     listeners : {
-                        scope : this,
+                        scope        : this,
                         beforeremove : this.removeTabEvent
                     },
                     items : [{
