@@ -87,13 +87,14 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
        indentUnit: 1,
        id:this.id,
        lineNumbers: true,
-       continuousScanning: 500,
+       continuousScanning: (this.readOnly) ? false : 500,
        cursorActivity: CursorActivity,
        stylesheet: this.parserStylesheet,
        path: "js/ux/codemirror/js/",
        obj: this,
        initCallback: this.onInit,
-       autoMatchParens: true
+       autoMatchParens: true,
+       disableSpellcheck: false
      });
 
      var scope = this;
