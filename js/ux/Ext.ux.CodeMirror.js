@@ -72,7 +72,6 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     saveFunction: function() {
-
         var saveBtn = this.obj.ownerCt.topToolbar.items.items[0];
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
@@ -142,8 +141,13 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     undo : function(cmp) {
 
+     var dummyObj = new Object;
+     dummyObj.keyCode  = 38;
+     dummyObj.charCode = 0;
+     dummyObj.ctrlKey  = false;
+
      this.mirror.undo();
-     this.fireEvent('cmchange');
+     this.fireEvent('cmchange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
 
      // Enable the Redo btn
      cmp.topToolbar.items.items[4].enable();
@@ -152,12 +156,17 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      if( ! this.mirror.editor.history.history.length ) {
          cmp.topToolbar.items.items[3].disable();
      }
-
     },
 
     redo : function(cmp) {
+
+     var dummyObj = new Object;
+     dummyObj.keyCode  = 38;
+     dummyObj.charCode = 0;
+     dummyObj.ctrlKey  = false;
+
      this.mirror.redo();
-     this.fireEvent('cmchange');
+     this.fireEvent('cmchange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
 
      // Enable the undo btn
      cmp.topToolbar.items.items[3].enable();
