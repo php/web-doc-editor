@@ -260,6 +260,11 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 tabTip      : String.format(
                     _('File with error : in {0}'), FilePath
                 ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
                 items : [
                     {
                         xtype       : 'panel',
@@ -328,7 +333,6 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FE-EN-PANEL-' + FileID,
                         region         : 'east',
-                        width          : 575,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FE',
                         ftype          : 'EN',

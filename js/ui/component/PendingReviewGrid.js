@@ -305,6 +305,11 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 tabTip      : String.format(
                     _('Need Reviewed in: {0}'), FilePath
                 ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
                 items : [
                     {
                         region      : 'west',
@@ -360,7 +365,6 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FNR-EN-PANEL-' + FileID,
                         region         : 'east',
-                        width          : 575,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FNR',
                         ftype          : 'EN',

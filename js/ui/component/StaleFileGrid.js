@@ -264,6 +264,11 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 tabTip         : String.format(
                     _('Need Update: in {0}'), FilePath
                 ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
                 items : [
                     new diff({
                         region      : 'north',
@@ -329,7 +334,6 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FNU-EN-PANEL-' + FileID,
                         region         : 'east',
-                        width          : 575,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FNU',
                         ftype          : 'EN',
