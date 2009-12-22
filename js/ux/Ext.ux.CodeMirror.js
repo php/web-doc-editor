@@ -71,6 +71,10 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     },
 
+    saveFunction: function() {
+        return;
+    },
+
     monitorScroll: function(e, obj) {
       obj.fireEvent('cmscroll',e.target.body.scrollTop, this);
     },
@@ -78,6 +82,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     afterRender: function() {
      this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
        textWrapping: false,
+       saveFunction: this.saveFunction,
        width: '100%',
        height: this.ownerCt.lastSize.height,
        readOnly: this.readOnly,

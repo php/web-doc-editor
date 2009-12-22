@@ -642,15 +642,25 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         var cursorPosition = Ext.util.JSON.decode(
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid)
                                 .getCursorPosition()
-                        );
+                        ), passiveKey, saveBtn;
 
                         Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = cursorPosition.line;
                         Ext.get(id_prefix + '-status-col-' + this.fid).dom.innerHTML  = cursorPosition.caracter;
 
+                        // Handle the CTRL+s
+                        saveBtn = Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid);
+
+                        if( keyCode == 83 && ! saveBtn.disabled ) {
+                            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
+                        }
+
                         // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right;
                         // 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT; 67 = CTRL+C
-                        // 35 = end; 36 = home
-                        if (   keyCode !== 27 && keyCode !== 33 && keyCode !== 34 && keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 17 && keyCode !== 16 && keyCode !== 67 && keyCode !== 35 && keyCode !== 36 ) {
+                        // 35 = end; 36 = home, 83 = CTRL+s
+                        passiveKey = [16, 17, 27, 33, 34, 35, 36, 37, 38, 39, 40, 67, 83];
+
+                        if( ! passiveKey.in_array(keyCode) ) {
+
                             if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
                                 // Add an [modified] in title
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
