@@ -82,7 +82,7 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                     ui.component._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
-                hidden  : (this.node.attributes.from === 'search'),
+                hidden  : (this.node.attributes.from === 'search' || phpDoc.userLang == 'en' ),
                 text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(phpDoc.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
                 iconCls : 'iconTabNeedReviewed',
                 scope   : this,
