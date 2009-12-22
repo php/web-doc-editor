@@ -820,6 +820,12 @@ EOD;
 
                     $lang = $lang["code"];
 
+                    // We skip en language
+                    if( $lang == 'en' ) {
+                        continue;
+                    }
+
+
                     $lang_file = new File($lang, $f->path, $f->name);
 
                     if (is_file($lang_file->full_path)) {
