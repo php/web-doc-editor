@@ -403,7 +403,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 {
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
-                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file'),
+                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
                     iconCls  : 'saveFile',
                     handler  : function()
                     {
@@ -460,7 +460,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 {
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
-                    tooltip  : _('<b>Save</b> this file'),
+                    tooltip  : _('<b>Save</b> this file (CTRL+s)'),
                     iconCls  : 'saveFile',
                     disabled : true,
                     handler  : function()
@@ -633,8 +633,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             fname  : hereName
                         });
                     },
-                    cmchange : function(keyCode, charCode, obj)
+                    cmchange : function(keyCode, charCode, e)
                     {
+
+                        // CTRL+s keyPress
+                        if( e.ctrlKey && keyCode === 83 ) {
+                            return;
+                        }
+                        // F5 keyPress
                         if (keyCode === 116) {
                            return;
                         } // 116 = f5
@@ -642,22 +648,12 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         var cursorPosition = Ext.util.JSON.decode(
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid)
                                 .getCursorPosition()
-                        ), passiveKey, saveBtn;
+                        ), passiveKey;
 
                         Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = cursorPosition.line;
                         Ext.get(id_prefix + '-status-col-' + this.fid).dom.innerHTML  = cursorPosition.caracter;
 
-                        // Handle the CTRL+s
-                        saveBtn = Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid);
-
-                        if( keyCode == 83 && ! saveBtn.disabled ) {
-                            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
-                        }
-
-                        // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right;
-                        // 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT; 67 = CTRL+C
-                        // 35 = end; 36 = home, 83 = CTRL+s
-                        passiveKey = [16, 17, 27, 33, 34, 35, 36, 37, 38, 39, 40, 67, 83];
+                        passiveKey = [16, 17, 27, 33, 34, 35, 36, 37, 38, 39, 40, 67];
 
                         if( ! passiveKey.in_array(keyCode) ) {
 

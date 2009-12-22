@@ -72,7 +72,11 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     saveFunction: function() {
-        return;
+
+        var saveBtn = this.obj.ownerCt.topToolbar.items.items[0];
+        if( ! saveBtn.disabled ) {
+            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
+        }
     },
 
     monitorScroll: function(e, obj) {
