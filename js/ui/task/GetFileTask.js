@@ -34,6 +34,8 @@ ui.task.GetFileTask = function(config)
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' && this.ftype === 'ORIGIN' ) {
+                p.permlink = '';
+            } else {
                 p.permlink = (o.xmlid != 'NULL')? perm : '';
                 p.setTitle(p.originTitle + p.permlink);
             }
