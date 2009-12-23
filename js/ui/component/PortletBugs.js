@@ -107,7 +107,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 
         if(!this.menu) {
             this.menu = new Ext.menu.Menu({
-                id    : 'submenu',
+                id    : 'submenu-bugs',
                 items : [{
                     scope   : this,
                     text    : '<b>'+_('Open in a new Tab')+'</b>',
@@ -124,7 +124,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
                     handler : function()
                     {
                         this.ctxIndex = null;
-                        this.store.reloadData();
+                        ui.component._PortletBugs.reloadData();
                     }
                 }]
             });

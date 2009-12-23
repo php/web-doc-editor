@@ -71,41 +71,14 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
     columns          : ui.component._PortletLocalMail.columns,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
-    view: new Ext.grid.GridView({
-        forceFit:true,
-        enableRowBody:true,
-        ignoreAdd: true,
-        emptyText: '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
-        deferEmptyText: false
-    }),
-
+    view             : new Ext.grid.GridView({
+                           forceFit:true,
+                           enableRowBody:true,
+                           ignoreAdd: true,
+                           emptyText: '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
+                           deferEmptyText: false
+                       }),
     listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
-
-            e.stopEvent();
-        
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            var tmp = new Ext.menu.Menu({
-                id    : 'submenu',
-                items : [{
-                    text    : '<b>'+_('Open in a new Tab')+'</b>',
-                    iconCls : 'openInTab',
-                    handler : function()
-                    {
-                        grid.fireEvent('rowdblclick', grid, rowIndex, e);
-                    }
-                }, '-', {
-                    text    : _('Refresh this grid'),
-                    iconCls : 'refresh',
-                    handler : function()
-                    {
-                        ui.component._PortletLocalMail.reloadData();
-                    }
-                }]
-            }).showAt(e.getXY());
-        },
         rowdblclick : function(grid, rowIndex, e)
         {
             var MailId    = grid.store.getAt(rowIndex).data.pubDate,
@@ -132,10 +105,52 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
+    onContextClick : function(grid, rowIndex, e)
+    {
+
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-mail',
+                items : [{
+                    scope   : this,
+                    text    : '<b>'+_('Open in a new Tab')+'</b>',
+                    iconCls : 'openInTab',
+                    handler : function()
+                    {
+                        this.fireEvent('rowdblclick', grid, this.ctxIndex, e);
+                        this.menu.hide();
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : _('Refresh this grid'),
+                    iconCls : 'refresh',
+                    handler : function()
+                    {
+                        this.ctxIndex = null;
+                        ui.component._PortletLocalMail.reloadData();
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if(this.ctxIndex){
+            this.ctxIndex = null;
+        }
+
+        this.ctxIndex = rowIndex;
+        this.menu.showAt(e.getXY());
+
+    },
+
     initComponent : function(config)
     {
         ui.component._PortletLocalMail.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
     }
 });
 
