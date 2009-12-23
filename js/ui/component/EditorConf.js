@@ -150,13 +150,13 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'radio',
                 items       : [{
+                    autoHeight : true,
                     name       : 'needUpdateDiff',
                     checked    : (phpDoc.userConf["needUpdateDiff"] === "using-viewvc") ? true : false,
                     boxLabel   : _('Using ViewVc from php web site'),
                     inputValue : 'using-viewvc',
-
-                    listeners : {
-                        check : function(field)
+                    listeners  : {
+                        check  : function(field)
                         {
                             if (field.checked) {
                                 var tmp = new ui.task.UpdateConfTask({
@@ -167,11 +167,11 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }, {
+                    autoHeight : true,
                     name       : 'needUpdateDiff',
                     checked    : (phpDoc.userConf["needUpdateDiff"] === "using-exec") ? true : false,
                     boxLabel   : _('Using diff -kk -u command line'),
                     inputValue : 'using-exec',
-
                     listeners : {
                         check : function(field)
                         {
@@ -191,11 +191,11 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'needUpdateScrollbars',
-                    checked  : phpDoc.userConf["needUpdateScrollbars"],
-                    boxLabel : _('Synchronize scroll bars'),
-
-                    listeners : {
+                    autoHeight  : true,
+                    name        : 'needUpdateScrollbars',
+                    checked     : phpDoc.userConf["needUpdateScrollbars"],
+                    boxLabel    : _('Synchronize scroll bars'),
+                    listeners   : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -205,11 +205,11 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }, {
-                    name     : 'needUpdateDisplaylog',
-                    checked  : phpDoc.userConf["needUpdateDisplaylog"],
-                    boxLabel : _('Automatically load the log when displaying the file'),
-
-                    listeners : {
+                    autoHeight  : true,
+                    name        : 'needUpdateDisplaylog',
+                    checked     : phpDoc.userConf["needUpdateDisplaylog"],
+                    boxLabel    : _('Automatically load the log when displaying the file'),
+                    listeners   : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -242,12 +242,12 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'errorSkipNbLiteralTag',
-                    checked  : phpDoc.userConf["errorSkipNbLiteralTag"],
-                    boxLabel : _('Skip nbLiteralTag error'),
-
-                    listeners : {
-                        check : function(field)
+                    autoHeight : true,
+                    name       : 'errorSkipNbLiteralTag',
+                    checked    : phpDoc.userConf["errorSkipNbLiteralTag"],
+                    boxLabel   : _('Skip nbLiteralTag error'),
+                    listeners  : {
+                        check  : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
                                 item  : 'errorSkipNbLiteralTag',
@@ -263,11 +263,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'errorScrollbars',
-                    checked  : phpDoc.userConf["errorScrollbars"],
-                    boxLabel : _('Synchronize scroll bars'),
-
-                    listeners : {
+                    autoHeight : true,
+                    name       : 'errorScrollbars',
+                    checked    : phpDoc.userConf["errorScrollbars"],
+                    boxLabel   : _('Synchronize scroll bars'),
+                    listeners  : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -277,10 +277,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }, {
-                    name     : 'errorDisplayLog',
-                    checked  : phpDoc.userConf["errorDisplayLog"],
-                    boxLabel : _('Automatically load the log when displaying the file'),
-
+                    autoHeight : true,
+                    name       : 'errorDisplayLog',
+                    checked    : phpDoc.userConf["errorDisplayLog"],
+                    boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners : {
                         check : function(field)
                         {
@@ -314,11 +314,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'reviewedScrollbars',
-                    checked  : phpDoc.userConf["reviewedScrollbars"],
-                    boxLabel : _('Synchronize scroll bars'),
-
-                    listeners : {
+                    autoHeight : true,
+                    name       : 'reviewedScrollbars',
+                    checked    : phpDoc.userConf["reviewedScrollbars"],
+                    boxLabel   : _('Synchronize scroll bars'),
+                    listeners  : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -328,11 +328,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }, {
-                    name     : 'reviewedDisplaylog',
-                    checked  : phpDoc.userConf["reviewedDisplaylog"],
-                    boxLabel : _('Automatically load the log when displaying the file'),
-
-                    listeners : {
+                    autoHeight : true,
+                    name       : 'reviewedDisplaylog',
+                    checked    : phpDoc.userConf["reviewedDisplaylog"],
+                    boxLabel   : _('Automatically load the log when displaying the file'),
+                    listeners  : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -365,11 +365,11 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'allFilesDisplayLog',
-                    checked  : phpDoc.userConf["allFilesDisplayLog"],
-                    boxLabel : _('Automatically load the log when displaying the file'),
-
-                    listeners : {
+                    autoHeight : true,
+                    name       : 'allFilesDisplayLog',
+                    checked    : phpDoc.userConf["allFilesDisplayLog"],
+                    boxLabel   : _('Automatically load the log when displaying the file'),
+                    listeners  : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -402,11 +402,11 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                 defaults    : { hideLabel: true },
                 defaultType : 'checkbox',
                 items       : [{
-                    name     : 'patchScrollbars',
-                    checked  : phpDoc.userConf["patchScrollbars"],
-                    boxLabel : _('Synchronize scroll bars'),
-
-                    listeners : {
+                    autoHeight : true,
+                    name       : 'patchScrollbars',
+                    checked    : phpDoc.userConf["patchScrollbars"],
+                    boxLabel   : _('Synchronize scroll bars'),
+                    listeners  : {
                         check : function(field)
                         {
                             var tmp = new ui.task.UpdateConfTask({
@@ -416,10 +416,10 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }, {
-                    name     : 'patchDisplayLog',
-                    checked  : phpDoc.userConf["patchDisplayLog"],
-                    boxLabel : _('Automatically load the log when displaying the file'),
-
+                    autoHeight : true,
+                    name       : 'patchDisplayLog',
+                    checked    : phpDoc.userConf["patchDisplayLog"],
+                    boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners : {
                         check : function(field)
                         {
