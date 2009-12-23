@@ -13,6 +13,7 @@ i18n["<b>Undo</b>"] = "<b>Annuler</b>";
 i18n["<b>Redo</b>"] = "<b>Refaire</b>";
 
 i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
+i18n["(You can change this behavior by setting an option in the configuration window)"] = "(Vous pouvez modifier ce comportement en définissant une option dans la fenêtre de configuration)";
 i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";
 i18n["Error when loading open bugs from Php.net !"] = "Erreur lors du chargement des bogues ouverts depuis Php.net !";
 

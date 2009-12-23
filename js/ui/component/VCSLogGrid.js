@@ -140,8 +140,11 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
             sm      : sm,
             store   : store,
             columns : columns,
-            view    : new Ext.grid.GridView({ forceFit : true }),
-
+            view    : new Ext.grid.GridView({
+                forceFit      : true, 
+                emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
+                deferEmptyText: false,
+            }),
             tbar  : [{
                 scope    : this,
                 id       : this.prefix + '-PANEL-btn-log-' + this.fid,
