@@ -19,7 +19,7 @@ ui.component._PortletBugs.store = new Ext.data.Store({
                 mapping : 'id'
             }, {
                 name    : 'title',
-                mapping : 'title'
+                mapping : 'title',
             }, {
                 name    : 'link',
                 mapping : 'link'
@@ -31,23 +31,34 @@ ui.component._PortletBugs.store = new Ext.data.Store({
     )
 });
 
+ui.component._PortletBugs.gridFormatTitle = function(value) {
+    return String.format('<div class="topic"><b>{0}</b></div>', value);
+};
+
 // BugsGrid columns definition
 ui.component._PortletBugs.gridColumns = [{
     id        : 'GridBugTitle',
-    header    : "Title",
+    header    : _("Title"),
     sortable  : true,
-    dataIndex : 'title'
+    dataIndex : 'title',
+    renderer  : ui.component._PortletBugs.gridFormatTitle
 }];
+
 
 ui.component._PortletBugs.gridView = new Ext.grid.GridView({
     forceFit      : true,
     emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
     deferEmptyText: false,
     enableRowBody : true,
+    showPreview   : false,
     getRowClass   : function(record, rowIndex, p, store)
     {
-        p.body = '<p class="bug-desc">' + record.data.description + '</p>';
-        return 'x-grid3-row-expanded';
+
+        if (this.showPreview) {
+            p.body = '<p>' + record.data.description + '</p>';
+            return 'x-grid3-row-expanded';
+        }
+        return 'x-grid3-row-collapsed';
     }
 });
 
@@ -57,15 +68,14 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
-    autoHeight       : true,
+    height           : 250,
     autoExpandColumn : 'GridBugTitle',
     id               : 'PortletBugs-grid-id',
     store            : ui.component._PortletBugs.store,
     columns          : ui.component._PortletBugs.gridColumns,
     view             : ui.component._PortletBugs.gridView,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
-
-    listeners : {
+    listeners        : {
         rowcontextmenu : function(grid, rowIndex, e)
         {
 
@@ -118,10 +128,28 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
+    togglePreview : function(show){
+        this.view.showPreview = show;
+        this.view.refresh();
+    }, 
+
     initComponent : function(config)
     {
+
+        this.tbar = [{
+            text          : _('Summary'),
+            pressed       : false,
+            enableToggle  : true, 
+            iconCls       : 'iconSummary',
+            scope         : this,
+            toggleHandler : function(btn, pressed){
+                this.togglePreview(pressed);
+            }
+        }];
+
         ui.component._PortletBugs.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
+
     }
 });
 

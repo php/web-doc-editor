@@ -161,14 +161,24 @@ opacity:
     background-image: url(./img/tab_delete.png) !important;
 } .x-tree-node .modified a span {
     color: red;
-} .x-grid3-col-GridBugTitle {
-    color: #385F95;
-    font-weight: bold;
-} .bug-desc {
-    margin: 5px 5px 5px 20px;
-    padding-left: 5px;
-    border-left: 2px solid #72A756;
-} .ux-icon-combo-icon {
+}
+
+.x-grid3-col-GridBugTitle {
+    padding-left: 5px !important;
+}
+
+.x-grid3-td-GridBugTitle .topic {
+    background: transparent url(./img/post.gif) no-repeat scroll 0 -1px !important;
+    padding-left: 20px !important;
+}
+
+.x-grid3-row-body p {
+    margin:5px 20px 10px 25px !important;
+    color:#555;
+}
+
+
+ .ux-icon-combo-icon {
     background-repeat: no-repeat;
     background-position: 0 50%;
     width: 18px;
@@ -310,6 +320,8 @@ opacity:
     background-image: url(./img/help.png) !important;
 } .iconSendEmail {
     background-image: url(./img/email_edit.png) !important;
+} .iconSummary {
+    background-image: url(./img/details.gif) !important;
 } .iconInsertCode {
     background-image: url(./img/page_code.png) !important;
 } .confStatusBar {
