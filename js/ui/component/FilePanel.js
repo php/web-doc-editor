@@ -431,7 +431,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 }, '-', {
                     scope   : this,
                     tooltip : _('<b>Undo</b>'),
-                    disabled: false, //true,
+                    disabled: true,
                     iconCls : 'iconUndo',
                     handler : function()
                     {
@@ -562,7 +562,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 }, '-', {
                     scope   : this,
                     tooltip : _('<b>Undo</b>'),
-                    disabled: false, //true,
+                    disabled: true,
                     iconCls : 'iconUndo',
                     handler : function()
                     {
