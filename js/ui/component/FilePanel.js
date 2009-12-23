@@ -633,7 +633,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             fname  : hereName
                         });
                     },
-                    cmchange : function(keyCode, charCode, e)
+                    codechange : function(keyCode, charCode, e)
                     {
 
                         // CTRL+s keyPress
@@ -695,7 +695,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
                         }
                     },
-                    cmcursormove : function()
+                    cursormove : function()
                     {
                         var cursorPosition = Ext.util.JSON.decode(
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCursorPosition()
@@ -704,7 +704,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = cursorPosition.line;
                         Ext.get(id_prefix + '-status-col-' + this.fid).dom.innerHTML  = cursorPosition.caracter;
                     },
-                    cmscroll : function(scrollY)
+                    scroll : function(scrollY)
                     {
                         if( this.syncScroll && phpDoc.userConf[this.syncScrollConf] ) {
                             var opp_prefix;

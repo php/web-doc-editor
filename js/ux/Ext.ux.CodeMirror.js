@@ -18,9 +18,9 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
       this.addEvents({
           initialize   : true,
-          cmchange     : true,
-          cmcursormove : true,
-          cmscroll     : true
+          codechange     : true,
+          cursormove : true,
+          scroll     : true
       });
 
       //For the parser
@@ -64,7 +64,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
       // Attach some others events
       this.obj.mirror.editor.keyUp = function(e) {
-        obj.fireEvent('cmchange',e.keyCode, e.charCode, e);
+        obj.fireEvent('codechange',e.keyCode, e.charCode, e);
       }
 
       Ext.EventManager.addListener(this.obj.mirror.frame.contentWindow, "scroll", function(e){ obj.monitorScroll(e, obj); }, this);
@@ -79,7 +79,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     monitorScroll: function(e, obj) {
-      obj.fireEvent('cmscroll',e.target.body.scrollTop, this);
+      obj.fireEvent('scroll',e.target.body.scrollTop, this);
     },
 
     afterRender: function() {
@@ -114,7 +114,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      }
 
      function CursorActivity() {
-      scope.fireEvent('cmcursormove');
+      scope.fireEvent('cursormove');
      }
 
     },
@@ -136,7 +136,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     reIndentAll : function() {
      this.mirror.reindent();
-     this.fireEvent('cmchange');
+     this.fireEvent('codechange');
     },
 
     undo : function(cmp) {
@@ -147,7 +147,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      dummyObj.ctrlKey  = false;
 
      this.mirror.undo();
-     this.fireEvent('cmchange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
+     this.fireEvent('codechange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
 
      // Enable the Redo btn
      cmp.topToolbar.items.items[4].enable();
@@ -166,7 +166,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      dummyObj.ctrlKey  = false;
 
      this.mirror.redo();
-     this.fireEvent('cmchange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
+     this.fireEvent('codechange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
 
      // Enable the undo btn
      cmp.topToolbar.items.items[3].enable();
@@ -180,7 +180,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     insertIntoLine : function(line, position, text) {
      var lineObj = this.mirror.nthLine(line);
      this.mirror.insertIntoLine(lineObj, position, text);
-     this.fireEvent('cmchange');
+     this.fireEvent('codechange');
     },
 
     scrollTo : function(scrollY) {
