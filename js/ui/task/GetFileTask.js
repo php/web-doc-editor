@@ -44,14 +44,17 @@ ui.task.GetFileTask = function(config)
             // Remove the mask from the editor
             Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
 
-            // Display a warn message if this file containes some tab caracter.
-            Ext.MessageBox.show({
-                title: 'Warning',
-                msg: String.format(_('The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters.'), this.fpath+this.fname),
-                buttons: Ext.MessageBox.OK,
-                icon: Ext.MessageBox.WARNING
-            });
+            if( o.warn_tab ) {
 
+                // Display a warn message if this file containes some tab caracter.
+                Ext.MessageBox.show({
+                    title: 'Warning',
+                    msg: String.format(_('The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters.'), this.fpath+this.fname),
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+
+            }
 
 
         },
