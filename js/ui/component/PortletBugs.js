@@ -76,32 +76,6 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
     view             : ui.component._PortletBugs.gridView,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
     listeners        : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
-
-            e.stopEvent();
-        
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            var tmp = new Ext.menu.Menu({
-                id    : 'submenu',
-                items : [{
-                    text    : '<b>'+_('Open in a new Tab')+'</b>',
-                    iconCls : 'openInTab',
-                    handler : function()
-                    {
-                        grid.fireEvent('rowdblclick', grid, rowIndex, e);
-                    }
-                }, '-', {
-                    text    : _('Refresh this grid'),
-                    iconCls : 'refresh',
-                    handler : function()
-                    {
-                        ui.component._PortletBugs.reloadData();
-                    }
-                }]
-            }).showAt(e.getXY());
-        },
         rowdblclick : function(grid, rowIndex, e)
         {
             var BugsId    = grid.store.getAt(rowIndex).data.id,
@@ -128,7 +102,48 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
-    togglePreview : function(show){
+    onContextClick : function(grid, rowIndex, e)
+    {
+
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu',
+                items : [{
+                    scope   : this,
+                    text    : '<b>'+_('Open in a new Tab')+'</b>',
+                    iconCls : 'openInTab',
+                    handler : function()
+                    {
+                        this.fireEvent('rowdblclick', grid, this.ctxIndex, e);
+                        this.menu.hide();
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : _('Refresh this grid'),
+                    iconCls : 'refresh',
+                    handler : function()
+                    {
+                        this.ctxIndex = null;
+                        this.store.reloadData();
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if(this.ctxIndex){
+            this.ctxIndex = null;
+        }
+
+        this.ctxIndex = rowIndex;
+        this.menu.showAt(e.getXY());
+
+    },
+
+    togglePreview : function(show) 
+    {
         this.view.showPreview = show;
         this.view.refresh();
     }, 
@@ -149,6 +164,8 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 
         ui.component._PortletBugs.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
 
     }
 });
