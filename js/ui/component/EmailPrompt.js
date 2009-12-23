@@ -13,11 +13,12 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
     bodyStyle   : 'padding:5px;',
     buttonAlign : 'center',
     iconCls     : 'iconSendEmail',
-
+    closeAction : 'hide',
     buttons : [{
         text    : _('Send'),
         handler : function()
         {
+
             var win    = this.ownerCt.ownerCt,
                 values = win.findByType('form').shift().getForm().getValues();
 
@@ -30,7 +31,7 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
                 },
                 success : function(response)
                 {
-                    win.close();
+                    win.hide();
 
                     Ext.Msg.alert(
                         _('Status'),
@@ -45,9 +46,18 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
         text    : _('Cancel'),
         handler : function()
         {
-            this.ownerCt.ownerCt.close();
+            this.ownerCt.ownerCt.hide();
         }
     }],
+
+    setData : function (name, email) {
+        this.name = name;
+        this.email = email;
+
+        this.items.items[0].items.items[0].setValue('"' + this.name + '" <' + this.email + '>');
+        this.items.items[0].items.items[1].setValue('');
+        this.items.items[0].items.items[2].setValue('');
+    },
 
     initComponent : function()
     {
@@ -61,7 +71,7 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
                     fieldLabel : _('Send To'),
                     readOnly   : true,
                     anchor     : '100%',
-                    value      : '"' + this.name + '" <' + this.email + '>'
+                    value      : ''
                 }, {
                     name       : 'subject',
                     fieldLabel : _('Subject'),

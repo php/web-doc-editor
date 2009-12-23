@@ -145,62 +145,77 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
     autoExpandColumn : 'GridTransName',
     sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     lang             : this.lang,
-    listeners : {
+    EmailPrompt      : new ui.component.EmailPrompt(),
+    listeners        : {
         rowdblclick : function(grid, rowIndex, e)
         {
-            var TranslatorEmail = grid.store.getAt(rowIndex).data.email,
-                TranslatorName  = grid.store.getAt(rowIndex).data.name;
 
-            grid.getSelectionModel().selectRow(rowIndex);
+            this.getSelectionModel().selectRow(rowIndex);
 
-            var tmp = new ui.component.EmailPrompt({
-                name  : TranslatorName,
-                email : TranslatorEmail
-            }).show();
-        },
-        rowcontextmenu: function(grid, rowIndex, e)
-        {
+            if( this.ctxTranslatorName ) {
+                this.ctxTranslatorEmail = null;
+                this.ctxTranslatorName  = null;
+            }
 
-            e.stopEvent();
-        
-            var TranslatorEmail = grid.store.getAt(rowIndex).data.email,
-                TranslatorName  = grid.store.getAt(rowIndex).data.name,
-                tmp='';
+            this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
+            this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
 
-            grid.getSelectionModel().selectRow(rowIndex);
+            this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
+            this.EmailPrompt.show('lastUpdateTime');
+        }
+    },
 
-            tmp = new Ext.menu.Menu({
-                id    : 'submenu',
+    onContextClick : function(grid, rowIndex, e)
+    {
+
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-translators',
                 items : [{
-                    text    : '<b>' + String.format(_('Send an email to {0}'), TranslatorName) + '</b>',
+                    scope   : this,
+                    text    : '',
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        var tmp = new ui.component.EmailPrompt({
-                            name  : TranslatorName,
-                            email : TranslatorEmail
-                        }).show();
+                        this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
+                        this.EmailPrompt.show('lastUpdateTime');
                     }
                 }, '-', {
+                    scope   : this,
                     text    : String.format(_('Send an email to the {0}'), 'doc-' + this.lang + '@lists.php.net'),
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        var tmp = new ui.component.EmailPrompt({
-                            name  : 'Php Doc Team ' + this.lang,
-                            email : 'doc-' + this.lang + '@lists.php.net'
-                        }).show();
+                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, 'doc-' + this.lang + '@lists.php.net');
+                        this.EmailPrompt.show('lastUpdateTime');
                     }
                 }]
             });
-            tmp.showAt(e.getXY());
-
         }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if( this.ctxTranslatorName ) {
+            this.ctxTranslatorName  = null;
+            this.ctxTranslatorEmail = null;
+        }
+        this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
+        this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
+
+        // Set the title for items[0]
+        this.menu.items.items[0].setText('<b>' + String.format(_('Send an email to {0}'), this.ctxTranslatorName) + '</b>');
+
+        this.menu.showAt(e.getXY());
+
     },
+
     initComponent: function(config)
     {
         ui.component._PortletTranslator.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
     }
 });
 
