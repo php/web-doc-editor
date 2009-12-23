@@ -26,18 +26,22 @@ ui.task.GetFileTask = function(config)
         },
         success : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o    = Ext.util.JSON.decode(response.responseText),
+                path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php',
+                perm = '&nbsp;<a href="' + path + '" target="_blank">permlink</a>',
+                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
-            var path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
-                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php';
-            var perm = '&nbsp;<a href="' + path + '" target="_blank">permlink</a>';
+            // We set the permLink (exclude for file patch)
+            if( this.prefix === 'PP' && this.ftype === 'ORIGIN' ) {
+                p.permlink = (o.xmlid != 'NULL')? perm : '';
+                p.setTitle(p.originTitle + p.permlink);
+            }
 
+            // We define the content into the editor
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
 
-            var p = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
-            p.permlink = (o.xmlid != 'NULL')? perm : '';
-            p.setTitle(p.originTitle + p.permlink);
-
+            // Remove the mask from the editor
             Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
         },
         callback : function()
