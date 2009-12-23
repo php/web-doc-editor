@@ -239,7 +239,7 @@ opacity:
     background: transparent url(./img/arrow_switch.png) no-repeat 0 0;
 } .MainMenu {
     background-image: url(./img/application_home.png) !important;
-    background-position: 2px 4px !important;
+    background-position: 0 1px !important;
 } .FilesError {
     background: transparent url(./img/error_delete.png) no-repeat 0 0;
 } .iconBugs {
