@@ -77,7 +77,8 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
         ['themes/olive/css/xtheme-olive.css', _('Olive')],
         ['themes/purple/css/xtheme-purple.css', _('Purple')],
         ['js/extjs/resources/css/xtheme-slate.css', _('Slate')],
-        ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')]
+        ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')],
+        ['themes/ubuntu_human/css/xtheme-human.css', _('Ubuntu Human')]
     ]
 });
 
