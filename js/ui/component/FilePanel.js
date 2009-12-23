@@ -695,14 +695,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
                         }
                     },
-                    cursormove : function()
+                    cursormove : function(line, caracter)
                     {
-                        var cursorPosition = Ext.util.JSON.decode(
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCursorPosition()
-                        );
-
-                        Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = cursorPosition.line;
-                        Ext.get(id_prefix + '-status-col-' + this.fid).dom.innerHTML  = cursorPosition.caracter;
+                        Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = line;
+                        Ext.get(id_prefix + '-status-col-'  + this.fid).dom.innerHTML  = caracter;
                     },
                     scroll : function(scrollY)
                     {

@@ -114,7 +114,12 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
      }
 
      function CursorActivity() {
-      scope.fireEvent('cursormove');
+
+         var r        = scope.mirror.cursorPosition(),
+             line     = scope.mirror.lineNumber(r.line),
+             caracter = r.character;
+         scope.fireEvent('cursormove', line, caracter);
+
      }
 
     },
