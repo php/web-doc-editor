@@ -195,7 +195,7 @@ History.prototype = {
     // Used by the line-wrapping line-numbering code.
     if (window.frameElement && window.frameElement.CodeMirror.updateNumbers)
       window.frameElement.CodeMirror.updateNumbers();
-    if (this.onChange) this.onChange();
+    if (this.onChange) this.onChange(this.editor.options.cmId);
   },
 
   // Link a chain into the DOM nodes (or the first/last links for null

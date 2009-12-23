@@ -1,211 +1,225 @@
 Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
-    readOnly: (this.readOnly) ? this.readOnly : false,
-    mirror: false,
-    width: 'auto',
-    height: 'auto',
-    value: (this.value) ? this.value : "",
-    autoResize: true,
-    obj: false,
-    initialised: false,
-    parser: (this.parser) ? this.parser : "xml",
-    parserFile: "parsexml.js",
-    parserStylesheet: "js/ux/codemirror/css/xmlcolors.css",
+    readOnly         : (this.readOnly) ? this.readOnly : false,
+    width            : 'auto',
+    height           : 'auto',
+    autoResize       : true,
+    initialised      : false,
+    documentDurty    : false,
+    parser           : (this.parser) ? this.parser : "xml",
+    parserFile       : "parsexml.js",
+    parserStylesheet : "js/ux/codemirror/css/xmlcolors.css",
 
     initComponent : function() {
 
-      Ext.ux.CodeMirror.superclass.initComponent.apply(this);
+        Ext.ux.CodeMirror.superclass.initComponent.apply(this);
 
-      this.addEvents({
-          initialize   : true,
-          codechange     : true,
-          cursormove : true,
-          scroll     : true
-      });
+        this.addEvents({
+            initialize   : true,
+            codemodified : true,
+            coderestored : true,
+            cursormove   : true,
+            scroll       : true
+        });
 
-      //For the parser
-      if( this.parser == 'xml' ) {
-        this.parserFile = "parsexml.js";
-        this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
-      }
+        //For the parser
+        if( this.parser == 'xml' ) {
+          this.parserFile = "parsexml.js";
+          this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
+        }
 
-      if( this.parser == 'html' ) {
-        this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
-        this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
-      }
+        if( this.parser == 'html' ) {
+          this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
+          this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
+        }
 
-      if( this.parser == 'php' ) {
-        this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
-                           "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
-                           "../contrib/php/js/parsephphtmlmixed.js"];
-        this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
-      }
+        if( this.parser == 'php' ) {
+          this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
+                             "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
+                             "../contrib/php/js/parsephphtmlmixed.js"];
+          this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
+        }
     },
     onRender : function(ct, position){
         Ext.ux.CodeMirror.superclass.onRender.apply(this, [ct, position]);
-        obj = this;
     },
 
     resize: function() {
-      this.mirror.frame.style.height = this.ownerCt.lastSize.height - 85 +"px";
-      this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
+        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 85 +"px";
+        this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
     },
 
-    onInit: function() {
+    onInit: function(t, cmId) {
 
-       this.obj.ownerCt.fireEvent('resize', this);
+        var cmp    = Ext.getCmp(cmId),
+            mirror = cmp.mirror;
 
-      // Fire the initialize event
-      this.obj.fireEvent('initialize', this.obj);
-      this.obj.initialised = true;
+        cmp.ownerCt.fireEvent('resize');
 
-      var obj;
-      obj = this.obj;
+        // Fire the initialize event
+        cmp.fireEvent('initialize');
+        cmp.initialised = true;
 
-      // Attach some others events
-      this.obj.mirror.editor.keyUp = function(e) {
-        obj.fireEvent('codechange',e.keyCode, e.charCode, e);
-      }
+        // Value used to monitor the state of this document (changed or not)
+        cmp.documentDurty = false;
 
-      Ext.EventManager.addListener(this.obj.mirror.frame.contentWindow, "scroll", function(e){ obj.monitorScroll(e, obj); }, this);
+        // Attach some others events
+        mirror.editor.keyUp = function(e) {
+
+          // On envoie cursormove
+          var r        = mirror.cursorPosition(),
+              line     = mirror.lineNumber(r.line),
+              caracter = r.character;
+          cmp.fireEvent('cursormove', line, caracter);
+
+          // We check if the code has changed or not
+          cmp.manageCodeChange(cmId);
+        }
+
+        Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);
 
     },
 
-    saveFunction: function() {
-        var saveBtn = this.obj.ownerCt.topToolbar.items.items[0];
+    manageCodeChange: function(cmId) {
+
+        var cmp    = Ext.getCmp(cmId),
+            mirror = cmp.mirror;
+
+
+        var originalContent = mirror.originalContent,
+            currentContent  = mirror.getCode();
+
+        // If originalContent is false, the editor is not ready
+        if( originalContent ) {
+
+            if( originalContent === currentContent ) {
+                if( cmp.documentDurty === true ) {
+                    cmp.fireEvent('coderestored');
+                    cmp.documentDurty = false;
+                }
+                
+            } else {
+                if( cmp.documentDurty === false ) {
+                    cmp.fireEvent('codemodified');
+                    cmp.documentDurty = true;
+                }
+            }
+
+        }
+
+    },
+
+    saveFunction: function(cmId) {
+
+        var cmp    = Ext.getCmp(cmId);
+
+        var saveBtn = cmp.ownerCt.topToolbar.items.items[0];
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
         }
+
     },
 
-    monitorScroll: function(e, obj) {
-      obj.fireEvent('scroll',e.target.body.scrollTop, this);
+    monitorScroll: function(e, cmp) {
+        cmp.fireEvent('scroll',e.target.body.scrollTop, this);
     },
 
     afterRender: function() {
-     this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
-       textWrapping: false,
-       saveFunction: this.saveFunction,
-       width: '100%',
-       height: this.ownerCt.lastSize.height,
-       readOnly: this.readOnly,
-       content: this.value,
-       parserfile: this.parserFile,
-       parserConfig: {alignCDATA: true, useHTMLKludges: false},
-       indentUnit: 1,
-       id:this.id,
-       lineNumbers: true,
-       continuousScanning: (this.readOnly) ? false : 500,
-       cursorActivity: CursorActivity,
-       stylesheet: this.parserStylesheet,
-       path: "js/ux/codemirror/js/",
-       obj: this,
-       initCallback: this.onInit,
-       autoMatchParens: true,
-       disableSpellcheck: false
-     });
+        this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
+            textWrapping       : false,
+            saveFunction       : this.saveFunction,
+            width              : '100%',
+            height             : this.ownerCt.lastSize.height,
+            readOnly           : this.readOnly,
+            content            : this.value,
+            originalContent    : false,
+            parserfile         : this.parserFile,
+            parserConfig       : {alignCDATA: true, useHTMLKludges: false},
+            indentUnit         : 1,
+            cmId               : this.id,
+            lineNumbers        : true,
+            continuousScanning : (this.readOnly) ? false : 500,
+            stylesheet         : this.parserStylesheet,
+            path               : "js/ux/codemirror/js/",
+            initCallback       : this.onInit,
+            autoMatchParens    : true,
+            disableSpellcheck  : false,
+            onChange           : this.manageCodeChange
+        });
 
-     var scope = this;
-
-     if( this.autoResize ) {
-       this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
-          this.resize();
-       }, this);
-     }
-
-     function CursorActivity() {
-
-         var r        = scope.mirror.cursorPosition(),
-             line     = scope.mirror.lineNumber(r.line),
-             caracter = r.character;
-         scope.fireEvent('cursormove', line, caracter);
-
-     }
+        this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
+           this.resize();
+        }, this);
 
     },
 
     getCode: function() {
-     return this.mirror.getCode();
+        return this.mirror.getCode();
     },
 
     setCode: function(code) {
-     if( !this.initialised ) {
-
-      var wait = new Ext.util.DelayedTask(function() { this.setCode(code); }, this );
-      wait.delay(500);
-
-     } else {
-      this.mirror.setCode(code);
-     }
+        if( !this.initialised ) {
+            var wait = new Ext.util.DelayedTask(function() { this.setCode(code); }, this );
+            wait.delay(500);
+        } else {
+            this.mirror.setCode(code);
+            this.mirror.originalContent = code;
+        }
     },
 
     reIndentAll : function() {
-     this.mirror.reindent();
-     this.fireEvent('codechange');
+        this.mirror.reindent();
     },
 
     undo : function(cmp) {
 
-     var dummyObj = new Object;
-     dummyObj.keyCode  = 38;
-     dummyObj.charCode = 0;
-     dummyObj.ctrlKey  = false;
+        this.mirror.undo();
 
-     this.mirror.undo();
-     this.fireEvent('codechange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
+        // Enable the Redo btn
+        cmp.topToolbar.items.items[4].enable();
 
-     // Enable the Redo btn
-     cmp.topToolbar.items.items[4].enable();
-
-     // Is there more undo history ? If not, we disable this btn
-     if( ! this.mirror.editor.history.history.length ) {
-         cmp.topToolbar.items.items[3].disable();
-     }
+        // Is there more undo history ? If not, we disable this btn
+        if( ! this.mirror.editor.history.history.length ) {
+            cmp.topToolbar.items.items[3].disable();
+        }
     },
 
     redo : function(cmp) {
 
-     var dummyObj = new Object;
-     dummyObj.keyCode  = 38;
-     dummyObj.charCode = 0;
-     dummyObj.ctrlKey  = false;
+        this.mirror.redo();
 
-     this.mirror.redo();
-     this.fireEvent('codechange', dummyObj.keyCode, dummyObj.charCode, dummyObj);
+        // Enable the undo btn
+        cmp.topToolbar.items.items[3].enable();
 
-     // Enable the undo btn
-     cmp.topToolbar.items.items[3].enable();
-
-     // Is there more redo history ? If not, we disable this btn
-     if( ! this.mirror.editor.history.redoHistory.length ) {
-         cmp.topToolbar.items.items[4].disable();
-     }
+        // Is there more redo history ? If not, we disable this btn
+        if( ! this.mirror.editor.history.redoHistory.length ) {
+            cmp.topToolbar.items.items[4].disable();
+        }
     },
 
     insertIntoLine : function(line, position, text) {
-     var lineObj = this.mirror.nthLine(line);
-     this.mirror.insertIntoLine(lineObj, position, text);
-     this.fireEvent('codechange');
+        var lineObj = this.mirror.nthLine(line);
+        this.mirror.insertIntoLine(lineObj, position, text);
     },
 
     scrollTo : function(scrollY) {
-     this.mirror.frame.contentWindow.document.body.scrollTop = scrollY;
+        this.mirror.frame.contentWindow.document.body.scrollTop = scrollY;
     },
 
     focus: function() {
-     this.mirror.focus();
+        this.mirror.focus();
     },
 
     getCursorPosition : function() {
-      var r = this.mirror.cursorPosition();
-      var line = this.mirror.lineNumber(r.line);
-      var caracter = r.character;
+        var r        = this.mirror.cursorPosition(),
+            line     = this.mirror.lineNumber(r.line),
+            caracter = r.character;
 
-      return '{line:'+line+', caracter:'+caracter+'}';
+        return '{line:'+line+', caracter:'+caracter+'}';
     },
 
     nthLine : function(number) {
-      return this.mirror.nthLine(number);
+        return this.mirror.nthLine(number);
     }
 
 });

@@ -26,6 +26,7 @@ var CodeMirror = (function(){
   // options to a specific CodeMirror constructor. See manual.html for
   // their meaning.
   setDefaults(CodeMirrorConfig, {
+    cmId: '',
     stylesheet: "",
     path: "",
     parserfile: [],
@@ -133,7 +134,7 @@ var CodeMirror = (function(){
 
   CodeMirror.prototype = {
     init: function() {
-      if (this.options.initCallback) this.options.initCallback(this);
+      if (this.options.initCallback) this.options.initCallback(this, this.options.cmId);
       if (this.options.lineNumbers) this.activateLineNumbers();
       if (this.options.reindentOnLoad) this.reindent();
     },

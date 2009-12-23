@@ -431,7 +431,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 }, '-', {
                     scope   : this,
                     tooltip : _('<b>Undo</b>'),
-                    disabled: true,
+                    disabled: false, //true,
                     iconCls : 'iconUndo',
                     handler : function()
                     {
@@ -562,7 +562,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 }, '-', {
                     scope   : this,
                     tooltip : _('<b>Undo</b>'),
-                    disabled: true,
+                    disabled: false, //true,
                     iconCls : 'iconUndo',
                     handler : function()
                     {
@@ -633,67 +633,71 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             fname  : hereName
                         });
                     },
-                    codechange : function(keyCode, charCode, e)
-                    {
+                    coderestored : function() {
 
-                        // CTRL+s keyPress
-                        if( e.ctrlKey && keyCode === 83 ) {
-                            return;
-                        }
+                        if ( Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified ) {
+                            // Remove [modified] in title
+                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink
+                            );
 
-                        // F5 keyPress
-                        if (keyCode === 116) {
-                           return;
-                        }
+                            // Remove in tabpanel
+                            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                            );
 
-                        var cursorPosition = Ext.util.JSON.decode(
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid)
-                                .getCursorPosition()
-                        ), passiveKey;
+                            // Desactivate save button
+                            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).disable();
 
-                        Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = cursorPosition.line;
-                        Ext.get(id_prefix + '-status-col-' + this.fid).dom.innerHTML  = cursorPosition.caracter;
-
-                        // 38 = arrow up; 40 = arrow down; 37 = arrow left; 39 = arrow right;
-                        // 34 = pageDown; 33 = pageUp; 27 = esc; 17 = CRTL; 16 = ALT; 67 = CTRL+C
-                        // 35 = end; 36 = home
-                        passiveKey = [16, 17, 27, 33, 34, 35, 36, 37, 38, 39, 40, 67];
-
-                        if( ! passiveKey.in_array(keyCode) ) {
-
-                            if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
-                                // Add an [modified] in title
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-                                    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
-                                    ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
-                                    + Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink
-                                );
-                                // Add in tabpanel
-                                Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-                                    Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
-                                    ' <t style="color:#ff0000; font-weight: bold;">*</t>'
-                                );
-
-                                // Activate save button
-                                Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).enable();
-                                Ext.get(id_prefix + '-PANEL-btn-save-' + this.fid).frame("3F8538");
-
-                                if (this.isPatch) {
-                                    Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).enable();
-                                    Ext.get(id_prefix + '-PANEL-btn-reject-' + this.fid).frame("3F8538");
-                                } else {
-                                    Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
-                                    Ext.get(id_prefix + '-PANEL-btn-saveas-' + this.fid).frame("3F8538");
-                                }
-
-                                // Enable the undo btn
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
-
-                                // Mark as modified
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;
-
+                            if (this.isPatch) {
+                                Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).disable();
+                            } else {
+                                Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).disable();
                             }
+
+                            // Enable the undo btn
+                            //Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
+
+                            // Mark as modified
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
                         }
+
+                    },
+                    codemodified : function() {
+
+                        if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
+                            // Add an [modified] in title
+                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
+                                ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
+                                + Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink
+                            );
+                            // Add in tabpanel
+                            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
+                                ' <t style="color:#ff0000; font-weight: bold;">*</t>'
+                            );
+
+                            // Activate save button
+                            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).enable();
+
+                            if (this.isPatch) {
+                                Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).enable();
+                            } else {
+                                Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
+                            }
+
+                            // Enable the undo btn
+                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
+
+                            // Mark as modified
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;
+
+                        }
+
+
                     },
                     cursormove : function(line, caracter)
                     {
