@@ -331,7 +331,7 @@ var phpDoc = function()
                     }],
                     items : [{
                         id        : 'acc-need-translate',
-                        title     : _('Files Need Translate') + ' - <em id="acc-need-translate-nb">0</em>',
+                        title     : _('Files Need Translate') + ' (<em id="acc-need-translate-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'FilesNeedTranslate',
@@ -340,7 +340,7 @@ var phpDoc = function()
                         collapsed : true
                     },{
                         id        : 'acc-need-update',
-                        title     : _('Files Need Update') + ' - <em id="acc-need-update-nb">0</em>',
+                        title     : _('Files Need Update') + ' (<em id="acc-need-update-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'FilesNeedUpdate',
@@ -349,7 +349,7 @@ var phpDoc = function()
                         collapsed : true
                     }, {
                         id        : 'acc-error',
-                        title     : _('Error in current translation') + ' - <em id="acc-error-nb">0</em>',
+                        title     : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'FilesError',
@@ -358,7 +358,7 @@ var phpDoc = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-reviewed',
-                        title     : _('Files Need Reviewed') + ' - <em id="acc-need-reviewed-nb">0</em>',
+                        title     : _('Files Need Reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'FilesNeedReviewed',
@@ -367,7 +367,7 @@ var phpDoc = function()
                         collapsed : true
                     }, {
                         id        : 'acc-notInEn',
-                        title     : _('Not in EN tree') + ' - <em id="acc-notInEn-nb">0</em>',
+                        title     : _('Not in EN tree') + ' (<em id="acc-notInEn-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'NotInEn',
@@ -392,7 +392,7 @@ var phpDoc = function()
                                 var tmp = new ui.component.CommitLogPrompt().show();
                             }
                         }],
-                        title     : _('Pending for commit') + ' - <em id="acc-pendingCommit-nb">0</em>',
+                        title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'PendingCommit',
@@ -400,7 +400,7 @@ var phpDoc = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingPatch',
-                        title     : _('Pending Patch') + ' - <em id="acc-pendingPatch-nb">0</em>',
+                        title     : _('Pending Patch') + ' (<em id="acc-pendingPatch-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'PendingPatch',
