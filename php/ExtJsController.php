@@ -442,6 +442,9 @@ class ExtJsController
             $return['xmlid'] = $info['xmlid'];
         }
 
+        // Warn if this file contains some tab caracter (the online editor will replace them by a space)
+        $return['warn_tab'] = ( strstr($return['content'], "\t") ) ? true : false ;
+
         return JsonResponseBuilder::success($return);
     }
 

@@ -11,6 +11,7 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 // Generic
 i18n["<b>Undo</b>"] = "<b>Annuler</b>";
 i18n["<b>Redo</b>"] = "<b>Refaire</b>";
+i18n["The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
 
 i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
 i18n["(You can change this behavior by setting an option in the configuration window)"] = "(Vous pouvez modifier ce comportement en définissant une option dans la fenêtre de configuration)";
@@ -217,6 +218,7 @@ i18n["Configure"] = "Configuration";
     i18n["Purple"] = "Violet";
     i18n["Slate"] = "Slate";
     i18n["SilverCherry"] = "SilverCherry";
+    i18n["Ubuntu Human"] = "Ubuntu Human";
     i18n["Diff view"] = "Visualisation de la différence";
     i18n["Using ViewVc from php web site"] = "Utilisation de viewVc depuis le site web de Php";
     i18n["Using diff -kk -u command line"] = "Utilisation de la ligne de commande \"$ diff -kk -u\"";
