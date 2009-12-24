@@ -301,11 +301,9 @@ var phpDoc = function()
                     });
                     return false;
                 } else {
-                    this.afterRemoveTab();
                     return true;
                 }
             } else {
-                this.afterRemoveTab();
                 return true;
             }
 
