@@ -40,6 +40,7 @@ echo jsLoadTemplate('js/extjs/ext-all.js');
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadTemplate('js/ux/GridSummary/Ext.ux.grid.GridSummary.js');
+echo jsLoadTemplate('js/ux/Notification/Ext.ux.Notification.js');
 
 echo jsLoadTemplate('js/ux_extjsPowered_all.js'); // All Js files of folder js/ux/extjsPowered/, minimized
 

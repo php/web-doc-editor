@@ -9,6 +9,9 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
+i18n["Document saved"] = "Document sauvegardé";
+i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
+
 i18n["<b>Undo</b>"] = "<b>Annuler</b>";
 i18n["<b>Redo</b>"] = "<b>Refaire</b>";
 i18n["The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";

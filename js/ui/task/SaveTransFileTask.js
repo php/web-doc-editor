@@ -54,6 +54,9 @@ ui.task.SaveTransFileTask = function(config)
 */
             // Remove wait msg
             msg.hide();
+
+            // Notify
+            phpDoc.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
         failure : function(response)
         {

@@ -477,6 +477,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 fname       : this.fname,
                                 storeRecord : this.storeRecord
                             });
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
                         } else {
 
@@ -491,6 +492,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 });
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                 return;
                             }
                             if (this.prefix === 'FNT' ) {
@@ -503,6 +505,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 });
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                 return;
                             }
                             Ext.MessageBox.show({
@@ -524,6 +527,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                             lang        : this.lang,
                                             storeRecord : this.storeRecord
                                         });
+                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
                                     } else if (btn === 'yes') {
 
@@ -536,6 +540,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                             lang        : this.lang,
                                             storeRecord : this.storeRecord
                                         }); // include SaveLangFileTask when no err
+                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                     }
                                 }
                             });

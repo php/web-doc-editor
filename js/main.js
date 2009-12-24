@@ -20,6 +20,39 @@ var phpDoc = function()
             new ui.task.LoadConfigTask();
         },
 
+        notify : function (type, title, message) {
+
+            var _notify, iconCls;
+
+            if( type == 'info' ) {
+                iconCls = 'iconInfo';
+            }
+
+            if( type == 'error' ) {
+                iconCls = 'iconError';
+            }
+
+            _notify = new Ext.ux.Notification({
+                iconCls     : iconCls,
+                title       : title,
+                html        : message,
+                autoDestroy : true,
+                hideDelay   :  5000,
+                listeners   : {
+                    beforerender : function(){
+/*
+                            Sound.enable();
+                            Sound.play('notify.wav');
+                            Sound.disable();
+*/
+                    }
+                }
+            });
+
+            _notify.show(document); 
+
+        },
+
         winForbidden : function(type)
         {
 

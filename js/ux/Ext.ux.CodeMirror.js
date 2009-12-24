@@ -91,7 +91,6 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
         // If originalContent is false, the editor is not ready
         if( originalContent ) {
-
             if( originalContent === currentContent ) {
                 if( cmp.documentDurty === true ) {
                     cmp.fireEvent('coderestored');
@@ -208,6 +207,11 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     focus: function() {
         this.mirror.focus();
+    },
+
+    setOriginalCode : function() {
+        this.mirror.originalContent = this.getCode();
+        this.documentDurty = false;
     },
 
     getCursorPosition : function() {

@@ -1,3 +1,6 @@
+.x-notification .x-tool-close { display: none; }
+.x-notification.fixed .x-tool-close { display: block; }
+
 .grid-search {
     background-image: url(./img/zoom.png) !important;
 } 
@@ -476,6 +479,13 @@ opacity:
     background-image: url(./img/arrow_undo.png) !important;
 } .iconRedo {
     background-image: url(./img/arrow_redo.png) !important;
+}
+
+.iconInfo {
+    background-image: url(./img/information.gif) !important;
+}
+.iconError {
+    background-image: url(./img/exclamation.gif) !important;
 }
 
  .saveFile {

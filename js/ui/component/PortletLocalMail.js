@@ -178,6 +178,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
         id : 'refresh',
         qtip: _('Refresh this grid'),
         handler: function() {
+            phpDoc.notification();
             ui.component._PortletLocalMail.reloadData();
         }
     }],
