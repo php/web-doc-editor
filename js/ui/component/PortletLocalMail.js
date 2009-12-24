@@ -174,6 +174,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
     iconCls : 'home-mailing-title',
     layout  : 'fit',
     store   : ui.component._PortletLocalMail.store,
+    reloadData : ui.component._PortletLocalMail.reloadData,
     tools   : [{
         id : 'refresh',
         qtip: _('Refresh this grid'),

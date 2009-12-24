@@ -9,6 +9,12 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Generic
+
+i18n["External Data"] = "Données externes";
+i18n["Load Mails at startUp"] = "Charger les mails de la liste au démarrage";
+i18n["Load Bugs at startUp"] = "Charger les bogues ouverts au démarrage";
+
+
 i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 

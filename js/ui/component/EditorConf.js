@@ -127,6 +127,41 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }]
+            },{
+                xtype       : 'fieldset',
+                title       : _('External Data'),
+                autoHeight  : true,
+                defaults    : { hideLabel: true },
+                defaultType : 'checkbox',
+                items       : [{
+                    autoHeight  : true,
+                    name        : 'mainAppLoadMailsAtStartUp',
+                    checked     : phpDoc.userConf["mainAppLoadMailsAtStartUp"],
+                    boxLabel    : _('Load Mails at startUp'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'mainAppLoadMailsAtStartUp',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'mainAppLoadBugsAtStartUp',
+                    checked     : phpDoc.userConf["mainAppLoadBugsAtStartUp"],
+                    boxLabel    : _('Load Bugs at startUp'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'mainAppLoadBugsAtStartUp',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }]
             }]
         });
         ui.component._EditorConf.card1.superclass.initComponent.call(this);

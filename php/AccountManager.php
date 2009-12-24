@@ -26,6 +26,9 @@ class AccountManager
     private function __construct()
     {
         $this->defaultConf = array(
+            "mainAppLoadMailsAtStartUp" => false,
+            "mainAppLoadBugsAtStartUp"  => false,
+
             "needUpdateDiff"        => 'using-exec',
             "needUpdateDisplaylog"  => false,
             "needUpdateScrollbars"  => true,

@@ -37,16 +37,7 @@ var phpDoc = function()
                 title       : title,
                 html        : message,
                 autoDestroy : true,
-                hideDelay   :  5000,
-                listeners   : {
-                    beforerender : function(){
-/*
-                            Sound.enable();
-                            Sound.play('notify.wav');
-                            Sound.disable();
-*/
-                    }
-                }
+                hideDelay   :  5000
             });
 
             _notify.show(document); 
@@ -70,6 +61,21 @@ var phpDoc = function()
                 title,
                 mess
             );
+        },
+
+        // All we want to do after all dataStore are loaded
+        afterLoadAllStore: function() {
+
+            //Load external data
+            // Mails ?
+            if( this.userConf['mainAppLoadMailsAtStartUp'] ) {
+                ui.component.PortletLocalMail.getInstance().reloadData();
+            }
+            // Bugs ?
+            if( this.userConf['mainAppLoadBugsAtStartUp'] ) {
+                ui.component.PortletBugs.getInstance().reloadData();
+            }
+
         },
 
         loadAllStore: function() {
@@ -125,6 +131,7 @@ var phpDoc = function()
                                                                                                                 Ext.get('loading').remove();
                                                                                                                 Ext.fly('loading-mask').fadeOut({ remove : true });
                                                                                                                 progressBar.destroy();
+                                                                                                                phpDoc.afterLoadAllStore();
                                                                                                             }
                                                                                                         });
                                                                                                     }
@@ -168,6 +175,7 @@ var phpDoc = function()
                                                 Ext.get('loading').remove();
                                                 Ext.fly('loading-mask').fadeOut({ remove : true });
                                                 progressBar.destroy();
+                                                phpDoc.afterLoadAllStore();
                                             }
                                         });
                                     }

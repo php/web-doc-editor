@@ -195,6 +195,7 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
     iconCls : 'iconBugs home-bugs-title',
     layout  : 'fit',
     store   : ui.component._PortletBugs.store,
+    reloadData : ui.component._PortletBugs.reloadData,
     tools   : [{
         id : 'refresh',
         qtip: _('Refresh this grid'),
