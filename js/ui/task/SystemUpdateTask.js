@@ -4,12 +4,7 @@ ui.task._SystemUpdateTask.refresh_ui = function()
 {
     Ext.get('wizard-step-3').replaceClass('wizard-step-before', 'wizard-step-working');
 
-    if (phpDoc.userLang != 'en') {
-        // Reload all data on this page
-        ui.component.StaleFileGrid.getInstance().store.reload();
-        ui.component.ErrorFileGrid.getInstance().store.reload();
-        ui.component.TranslatorGrid.getInstance().store.reload();
-    }
+    phpDoc.reloadAllStore();
 
     Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
 
@@ -60,7 +55,7 @@ ui.task._SystemUpdateTask.apply_tool = function()
         params  : { task: 'applyTools' },
         success : function(response)
         {
-			var tmp;
+            var tmp;
             Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
             tmp = new ui.task._SystemUpdateTask.refresh_ui();
         },
@@ -109,8 +104,7 @@ ui.task.SystemUpdateTask = function()
         params  : { task: 'updateRepository' },
         success : function(response)
         {
-			var tmp;
-			
+            var tmp;
             Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
             Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
 
