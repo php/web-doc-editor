@@ -69,11 +69,7 @@ ui.task.CheckFileTask = function(config)
 
             if (this.prefix === 'FE') {
                 // We must reload the iframe of error description
-                Ext.getCmp(this.prefix + '-error-type-' + this.fid).setSrc(
-                    './error_type.php?dir=' + this.fpath +
-                    '&file=' + this.fname +
-                    '&nocache=' + new Date().getTime()
-                );
+                Ext.getCmp('FE-error-desc-' + this.fid).body.updateManager.refresh();
             }
 
             ui.component.ErrorFileGrid.getInstance().store.reload();
