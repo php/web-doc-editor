@@ -108,53 +108,53 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     });
                 }
             }, {
-                text     : _('Check Build'),
-                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
-                iconCls  : 'checkBuild',
-                handler  : function()
-                {
-                    // We test if there is a check in progress for this language
-                    Ext.getBody().mask(
-                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                        _('Verify if there is a check in progress. Please, wait...')
-                    );
-
-                    XHR({
-                        params  :
-                        {
-                            task     : 'checkLockFile',
-                            lockFile : 'lock_check_build_' + phpDoc.userLang
-                        },
-                        success : function()
-                        {
-                            // Remove wait msg
-                            Ext.getBody().unmask();
-
-                            Ext.MessageBox.show({
-                                title   : _('Status'),
-                                msg     : _('There is currently a check in progress for this language.<br/>' +
-                                            'You can\'t perform a new check now.'),
-                                buttons : Ext.MessageBox.OK,
-                                icon    : Ext.MessageBox.INFO
-                            });
-                        },
-                        failure : function()
-                        {
-                            // Remove wait msg
-                            Ext.getBody().unmask();
-
-                            var tmp = new ui.component.CheckBuildPrompt().show(
-                                Ext.get('acc-need-update')
-                            );
-
-                        }
-                    });
-                }
-            }, {
-                text    : _('EN tools'),
+                text    : _('Build tools'),
                 handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
+                        text     : _('Check Build'),
+                        disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
+                        iconCls  : 'checkBuild',
+                        handler  : function()
+                        {
+                            // We test if there is a check in progress for this language
+                            Ext.getBody().mask(
+                                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                _('Verify if there is a check in progress. Please, wait...')
+                            );
+
+                            XHR({
+                                params  :
+                                {
+                                    task     : 'checkLockFile',
+                                    lockFile : 'lock_check_build_' + phpDoc.userLang
+                                },
+                                success : function()
+                                {
+                                    // Remove wait msg
+                                    Ext.getBody().unmask();
+
+                                    Ext.MessageBox.show({
+                                        title   : _('Status'),
+                                        msg     : _('There is currently a check in progress for this language.<br/>' +
+                                                    'You can\'t perform a new check now.'),
+                                        buttons : Ext.MessageBox.OK,
+                                        icon    : Ext.MessageBox.INFO
+                                    });
+                                },
+                                failure : function()
+                                {
+                                    // Remove wait msg
+                                    Ext.getBody().unmask();
+
+                                    var tmp = new ui.component.CheckBuildPrompt().show(
+                                        Ext.get('acc-need-update')
+                                    );
+
+                                }
+                            });
+                        }
+                    }, {
                         text    : _('Last failed build'),
                         iconCls : 'BuildStatus',
                         handler : function()
@@ -182,7 +182,13 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                             Ext.getCmp('main-panel').setActiveTab('tab-build-status');
                         }
-                    }, {
+                    }]
+                })
+            }, {
+                text    : _('EN tools'),
+                handler : function() { return false; },
+                menu : new Ext.menu.Menu({
+                    items : [{
                         text    : _('Script Check doc'),
                         iconCls : 'CheckDoc',
                         handler : function()

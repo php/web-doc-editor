@@ -193,6 +193,8 @@ i18n["Refresh all data"]                                       = "Rafraîchir le
     i18n["Start"]                                              = "Commencer";
     i18n["Finish !"]                                           = "Terminer !";
 
+i18n["Build tools"]                                           = "Outils de compilation";
+
 i18n["Check Build"]                                           = "Vérifier la compilation";
     i18n["Go !"]                                              = "Commencer !";
     i18n["Please, wait until the build is checked..."]        = "Merci de patienter pendant la vérification.";

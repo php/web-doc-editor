@@ -321,7 +321,7 @@ var phpDoc = function()
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
-            var mainMenu    = new ui.component.MainMenu();
+            //var mainMenu    = new ui.component.MainMenu();
 
 
                 mainContentLeft = (this.userLang === 'en') ? [
@@ -368,7 +368,7 @@ var phpDoc = function()
                     tbar : [{
                         text    : _('Main Menu'),
                         iconCls : 'MainMenu',
-                        menu    : mainMenu
+                        menu    : new ui.component.MainMenu()
                     }],
                     items : [{
                         id        : 'acc-need-translate',
