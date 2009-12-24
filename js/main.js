@@ -296,7 +296,6 @@ var phpDoc = function()
                                 tabpanel.un('beforeremove', this.removeTabEvent, this);
                                 tabpanel.remove(tab);
                                 tabpanel.addListener('beforeremove', this.removeTabEvent, this);
-                                this.afterRemoveTab();
                             }
                         }
                     });
@@ -310,10 +309,6 @@ var phpDoc = function()
                 return true;
             }
 
-        },
-
-        afterRemoveTab: function(p) {
-            delete window.obj;
         },
 
         drawInterface: function()
