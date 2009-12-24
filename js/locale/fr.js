@@ -204,6 +204,8 @@ i18n["Check Build"]                                           = "Vérifier la co
     i18n["Last failed build for the documentation {0}"]       = "Dernier échec pour la documentation {0}";
     i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";
     i18n["Enable detailed XML error messages"]                = "Activer les messages d'erreur XML détaillés";
+    i18n["<b>WARNING !</b><br/> This option use a lot of server ressource. If you don't know what are the consequence, please, don't use it."]   =
+       "<b>ATTENTION !</b><br/> Cette option utilise énormément de ressource serveur. Si vous ne savez pas ce que cela implique, merci de ne pas utiliser cette option.";
 
 i18n["EN tools"] = "Outils EN";
     i18n["Script Check doc"] = "Script Check doc";
