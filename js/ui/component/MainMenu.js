@@ -41,7 +41,7 @@ ui.component._MainMenu.store.on('load', function(store) {
 
         tmp = new Ext.menu.Item({
             text    : record.data["name"],
-            iconCls : record.data["iconCls"],
+            iconCls : 'mainMenuLang flags ' + record.data["iconCls"],
             disabled: (record.data["code"] === phpDoc.userLang),
             handler : function() {
                 

@@ -16,9 +16,9 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
  
         Ext.apply(this, {
             tpl:  '<tpl for=".">'
-                + '<div class="x-combo-list-item ux-icon-combo-item '
-                + '{' + this.iconClsField + '}">'
-                + '{' + this.displayField + '}'
+                + '<div class="x-combo-list-item ux-icon-combo-item">'
+                + '<div class="flags {' + this.iconClsField + '}" style="position:absolute"></div>'
+                + '<div class="ux-icon-combo-value">{' + this.displayField + '}</div>'
                 + '</div></tpl>'
         });
  
@@ -45,7 +45,7 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
     setIconCls:function() {
         var rec = this.store.query(this.valueField, this.getValue()).itemAt(0);
         if(rec) {
-            this.icon.className = 'ux-icon-combo-icon ' + rec.get(this.iconClsField);
+            this.icon.className = 'flags ' + rec.get(this.iconClsField);
         }
     }, // end of function setIconCls
  

@@ -152,10 +152,23 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
         ui.component.PortletSummary.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.iconCls = 'flag-' + this.lang + ' home-summary-title';
         this.add(new ui.component._PortletSummary.grid());
 
+    },
+
+    afterRender: function() {
+
+        ui.component.PortletSummary.superclass.afterRender.call(this);
+
+        this.header.insertFirst({
+            tag   : 'div',
+            id    : Ext.id(),
+            style : 'float: left; margin-right: 2px;',
+            cls   : 'flags flag-'+this.lang,
+        }, 'first');
+
     }
+
 });
 
 // singleton
