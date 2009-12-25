@@ -13,7 +13,6 @@ class ToolsCheckDoc {
     /**
      * Initialise
      *
-     * @param string $db The database connection
      */
     function __construct()
     {
