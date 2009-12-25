@@ -644,6 +644,7 @@ opacity:
     margin: 5px 5px;
     font-family: tahoma, arial, helvetica, sans-serif;
     font-size: 11px;
+
 } #confMenu {
     background: white;
     font: 11px Arial, Helvetica, sans-serif;
@@ -673,6 +674,7 @@ opacity:
     background: transparent;
 } #confMenu .x-view-selected span {
     color: #1A4D8F;
+    font-weight: bold;
 } .res-block {
     background: transparent url(./img/block-top.gif) no-repeat scroll 0 0;
     margin: 10px 0 0 5px;

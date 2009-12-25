@@ -483,6 +483,7 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
     title       : _('Configuration'),
     modal       : true,
     plain       : true,
+    bodyBorder  : false,
     buttons     : [{
         text    : _('Close'),
         handler : function()
@@ -512,12 +513,14 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
             items : [{
                 id         : 'confMenu',
                 region     : 'west',
+                border     : false,
                 width      : 190,
                 autoScroll : true,
                 items      : [new ui.component._EditorConf.viewMenu()]
             }, {
                 id         : 'confCard',
                 region     : 'center',
+                border     : false,
                 layout     : 'card',
                 width      : 375,
                 frame      : true,
