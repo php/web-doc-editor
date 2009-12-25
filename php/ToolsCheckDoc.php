@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . '/DBConnection.php';
 /**
  * A class for the check doc tools
  * Original check_phpdoc script have been written by didou <didou@php.net>
- * you can found it here : http://cvs.php.net/viewvc.cgi/phpdoc/scripts/check_phpdoc/
+ * you can found it here : http://svn.php.net/viewvc/phpdoc/doc-base/trunk/scripts/check_phpdoc/
  *
  */
 class ToolsCheckDoc {
