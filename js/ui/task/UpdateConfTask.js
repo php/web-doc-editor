@@ -21,6 +21,9 @@ ui.task.UpdateConfTask = function(config)
             if( this.item == "errorSkipNbLiteralTag" ) {
                 ui.component.ErrorFileGrid.getInstance().store.reload();
             }
+            // Notify
+            phpDoc.notify('info', _('Option saved'), _('Option has been saved successfully !'));
+
 
         }
     });
