@@ -189,6 +189,26 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
+                        text    : _('Script Check Entities'),
+                        iconCls : 'iconCheckEntities',
+                        handler : function()
+                        {
+                            var tab = Ext.getCmp('tab-check-entities');
+
+                            if ( ! tab ) {
+                                // if tab not exist, create new tab
+                                Ext.getCmp('main-panel').add({
+                                    id       : 'tab-check-entities',
+                                    title    : _('Check Entities'),
+                                    iconCls  : 'iconCheckEntities',
+                                    layout   : 'fit',
+                                    closable : true,
+                                    items    : [new ui.component.CheckEntities()]
+                                });
+                            }
+                            Ext.getCmp('main-panel').setActiveTab('tab-check-entities');
+                        }
+                    }, {
                         text    : _('Script Check doc'),
                         iconCls : 'CheckDoc',
                         handler : function()

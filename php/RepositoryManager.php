@@ -1,12 +1,13 @@
 <?php
 
-require_once dirname(__FILE__) . '/LockFile.php';
-require_once dirname(__FILE__) . '/File.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
-require_once dirname(__FILE__) . '/ToolsError.php';
+require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/File.php';
+require_once dirname(__FILE__) . '/LockFile.php';
 require_once dirname(__FILE__) . '/ToolsCheckDoc.php';
+require_once dirname(__FILE__) . '/ToolsCheckEntities.php';
+require_once dirname(__FILE__) . '/ToolsError.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class RepositoryManager
 {

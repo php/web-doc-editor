@@ -210,6 +210,13 @@ i18n["Check Build"]                                           = "Vérifier la co
 
 i18n["EN tools"] = "Outils EN";
     i18n["Script Check doc"] = "Script Check doc";
+    i18n["Script Check Entities"] = "Script de vérification des entités";
+    i18n["Check Entities"] = "Vérification des entités";
+
+    i18n["Entities"] = "Entitiés";
+    i18n["Url"] = "Url";
+    i18n["Result"] = "Résultat";
+
 
 i18n["Configure"] = "Configuration";
     i18n["Main"] = "Principal";

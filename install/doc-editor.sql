@@ -8,6 +8,20 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
+-- Structure of table `checkEntities`
+--
+
+CREATE TABLE IF NOT EXISTS `checkEntities` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `entities` varchar(255) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `result` varchar(50) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
 -- Structure of table `staticValue`
 --
 

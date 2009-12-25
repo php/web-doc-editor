@@ -498,7 +498,11 @@ opacity:
     background-image: url(./img/wrench_orange.png) !important;
 } .refresh {
     background-image: url(./img/arrow_refresh.png) !important;
-} .checkBuild {
+}
+ .iconCheckEntities {
+    background-image: url(./img/link_break.png) !important;
+}
+ .checkBuild {
     background-image: url(./img/bug_delete.png) !important;
 } .startRefresh {
     background-image: url(./img/hourglass_go.png) !important;

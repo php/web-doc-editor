@@ -5,18 +5,18 @@
  * @todo Add inline documentation for each controller task
  */
 
-require_once dirname(__FILE__) . '/LockFile.php';
-require_once dirname(__FILE__) . '/BugReader.php';
-require_once dirname(__FILE__) . '/NewsReader.php';
-require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/AccountManager.php';
+require_once dirname(__FILE__) . '/BugReader.php';
 require_once dirname(__FILE__) . '/File.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
-require_once dirname(__FILE__) . '/RepositoryFetcher.php';
+require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/LogManager.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
+require_once dirname(__FILE__) . '/LockFile.php';
+require_once dirname(__FILE__) . '/NewsReader.php';
+require_once dirname(__FILE__) . '/RepositoryFetcher.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/TranslatorStatistic.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 
 /**
  * Ext JS controller class
@@ -1133,6 +1133,24 @@ class ExtJsController
         RepositoryManager::getInstance()->postPatchReject($PatchUniqID);
 
         return JsonResponseBuilder::success();
+    }
+
+    /**
+     * Get data about the CheckEntities's tools (ToolsCheckEntities's class).
+     */
+    public function getCheckEntitiesData()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $ToolsCheckEntities = new ToolsCheckEntities();
+        $r = $ToolsCheckEntities->getData();
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $r['nb'],
+                'Items'   => $r['node']
+            )
+        );
     }
 
     /**
