@@ -98,6 +98,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 }
                 
             } else {
+                cmp.ownerCt.topToolbar.items.items[3].enable();
                 if( cmp.documentDurty === false ) {
                     cmp.fireEvent('codemodified');
                     cmp.documentDurty = true;

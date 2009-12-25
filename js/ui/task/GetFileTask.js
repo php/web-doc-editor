@@ -56,6 +56,9 @@ ui.task.GetFileTask = function(config)
                     icon: Ext.MessageBox.WARNING
                 });
 
+                // Mark as dirty this editor now
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
+
             }
 
 
