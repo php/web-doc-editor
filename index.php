@@ -32,6 +32,7 @@ echo jsLoadTemplate('js/extjs/ext-all.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
+echo jsLoadi18nTemplate();
 echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/main-all.js');
 
