@@ -55,7 +55,7 @@ var loginPage = function()
                     resizable   : false,
                     plain       : true,
                     title       : 'Control Access',
-                    iconCls     : 'key',
+                    iconCls     : 'iconKey',
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
                             html : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php" target="_blank">http://php.net/svn-php.php</a></div>',

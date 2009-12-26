@@ -20,7 +20,7 @@ function headerTemplate($title = 'PHP Documentation Online Editor', $depth = 0)
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   <meta name="description" content="" />
   <link rel="shortcut icon" href="{$prefix}themes/img/favicon.ico" />
-  <link type="text/css" rel="stylesheet" href="{$prefix}themes/loading.css" />
+  <link type="text/css" rel="stylesheet" href="{$prefix}themes/loading-min.css" />
  </head>
  <body>
   <div id="loading-mask" style=""></div>
