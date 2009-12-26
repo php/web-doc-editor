@@ -67,18 +67,18 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
         type : 'string'
     }],
     data : [
-        ['themes/black/css/xtheme-black.css', _('Black')],
+        ['themes/ExtJsThemes/black/css/xtheme-black.css', _('Black')],
         ['themes/empty.css', _('Default')],
-        ['themes/darkgray/css/xtheme-darkgray.css', _('DarkGray')],
+        ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css', _('DarkGray')],
         ['js/extjs/resources/css/xtheme-gray.css', _('Gray')],
-        ['themes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')],
-        ['themes/indigo/css/xtheme-indigo.css', _('Indigo')],
-        ['themes/midnight/css/xtheme-midnight.css', _('Midnight')],
-        ['themes/olive/css/xtheme-olive.css', _('Olive')],
-        ['themes/purple/css/xtheme-purple.css', _('Purple')],
+        ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')],
+        ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css', _('Indigo')],
+        ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css', _('Midnight')],
+        ['themes/ExtJsThemes/olive/css/xtheme-olive.css', _('Olive')],
+        ['themes/ExtJsThemes/purple/css/xtheme-purple.css', _('Purple')],
         ['js/extjs/resources/css/xtheme-slate.css', _('Slate')],
-        ['themes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')],
-        ['themes/ubuntu_human/css/xtheme-human.css', _('Ubuntu Human')]
+        ['themes/ExtJsThemes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')],
+        ['themes/ExtJsThemes/ubuntu_human/css/xtheme-human.css', _('Ubuntu Human')]
     ]
 });
 
