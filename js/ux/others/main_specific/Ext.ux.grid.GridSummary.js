@@ -55,18 +55,21 @@ Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
     },
 
     calculate : function(rs, cm) {
-        var data = {}, cfg = cm.config;
-        for (var i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
-            var cf = cfg[i], // get column's configuration
-                cname = cf.dataIndex; // get column dataIndex
+        var data = {},
+            cfg  = cm.config,
+            i, cf, cname, j, r, len, jlen;
+
+        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
+            cf = cfg[i]; // get column's configuration
+            cname = cf.dataIndex; // get column dataIndex
 
             // initialise grid summary row data for
             // the current column being worked on
             data[cname] = 0;
 
             if (cf.summaryType) {
-                for (var j = 0, jlen = rs.length; j < jlen; j++) {
-                    var r = rs[j]; // get a single Record
+                for (j = 0, jlen = rs.length; j < jlen; j++) {
+                    r = rs[j]; // get a single Record
                     data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
                 }
             }
@@ -76,7 +79,7 @@ Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
     },
 
     onLayout : function(vw, vh) {
-        if (Ext.type(vh) != 'number') { // handles grid's height:'auto' config
+        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
             return;
         }
         // note: this method is scoped to the GridView
@@ -101,13 +104,14 @@ Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
     },
 
     doAllWidths : function(ws, tw) {
-        var s = this.view.summary.dom, wlen = ws.length;
+        var s    = this.view.summary.dom,
+            wlen = ws.length,
+            cells, j;
 
         s.firstChild.style.width = tw;
+        cells = s.firstChild.rows[0].childNodes;
 
-        var cells = s.firstChild.rows[0].childNodes;
-
-        for (var j = 0; j < wlen; j++) {
+        for (j = 0; j < wlen; j++) {
             cells[j].style.width = ws[j];
         }
     },
@@ -124,21 +128,26 @@ Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
         cs = cs || this.view.getColumnData();
         var cfg = cm.config,
             buf = [],
-            last = cs.length - 1;
+            last = cs.length - 1,
+            c, cf, p, i, len;
 
-        for (var i = 0, len = cs.length; i < len; i++) {
-            var c = cs[i], cf = cfg[i], p = {};
+        for (i = 0, len = cs.length; i < len; i++) {
+            c = cs[i];
+            cf = cfg[i];
+            p = {};
 
             p.id = c.id;
             p.style = c.style;
-            p.css = i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '');
+            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
 
             if (cf.summaryType || cf.summaryRenderer) {
                 p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
             } else {
                 p.value = '';
             }
-            if (p.value == undefined || p.value === "") p.value = "&#160;";
+            if (p.value === undefined || p.value === "") {
+                p.value = "&#160;";
+            }
             buf[buf.length] = this.cellTpl.apply(p);
         }
 
@@ -179,7 +188,7 @@ Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
     },
 
     getSummaryNode : function() {
-        return this.view.summary
+        return this.view.summary;
     }
 });
 Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
@@ -213,6 +222,6 @@ Ext.ux.grid.GridSummary.Calculations = {
 
     average : function(v, record, colName, data, rowIdx) {
         var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
-        return rowIdx == count - 1 ? (t / count) : t;
+        return rowIdx === count - 1 ? (t / count) : t;
     }
-}
+};

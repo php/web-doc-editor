@@ -161,7 +161,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         {
                             var tab = Ext.getCmp('tab-build-status');
 
-                            if (tab === undefined ) {
+                            if (! tab ) {
                                 // if tab not exist, create new tab
                                 Ext.getCmp('main-panel').add({
                                     id       : 'tab-build-status',
@@ -169,16 +169,9 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     iconCls  : 'BuildStatus',
                                     layout   : 'fit',
                                     closable : true,
-                                    html     : 'nothing'
+                                    items    : [ new ui.component.BuildStatus() ]
                                 });
-                                tab = Ext.getCmp('tab-build-status');
                             }
-
-                            if (tab.items) {
-                                tab.removeAll(true);
-                            }
-                            tab.add(new ui.component.BuildStatus());
-                            tab.doLayout(); // render the grid
 
                             Ext.getCmp('main-panel').setActiveTab('tab-build-status');
                         }

@@ -1172,6 +1172,32 @@ class ExtJsController
     }
 
     /**
+     * Start the dowload of a given Failed build
+     */
+    public function downloadFailedBuildLog()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $idFailedBuild = $this->getRequestVariable('idFailedBuild');
+
+        $r['mess'] = LogManager::getInstance()->getFailedBuildData($idFailedBuild, false);
+
+        $name = 'failed-build-' . time() . '.txt';
+        $content = implode("\r\n", $r['mess']);
+
+        $size = strlen($content);
+
+        header("Content-Type: application/force-download; name=\"$name\"");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Disposition: attachment; filename=\"$name\"");
+        header("Expires: 0");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+
+        return $content;
+    }
+
+    /**
      * Get the content of a failed build
      */
     public function getFailedBuildData()
@@ -1180,11 +1206,18 @@ class ExtJsController
 
         $idFailedBuild = $this->getRequestVariable('idFailedBuild');
 
-        $r = LogManager::getInstance()->getFailedBuildData($idFailedBuild);
+        $r['mess'] = LogManager::getInstance()->getFailedBuildData($idFailedBuild);
+        $r['state'] = 'full';
+
+        if( count($r['mess']) > 50 ) {
+          $r['mess'] = array_slice($r['mess'], 0, 50);
+          $r['state'] = 'truncate';
+        }
 
         return JsonResponseBuilder::success(
             array(
-                'mess' => $r
+                'mess'  => $r['mess'],
+                'state' => $r['state']
             )
         );
     }

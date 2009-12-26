@@ -179,7 +179,6 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
         }
     },
 
-
     // private
     onBeforeShow : function() {
         if (this.animate) {
@@ -286,7 +285,6 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
         // force doLayout()
         this.doLayout();
     },
-
 
     // private
     toFront: function() {

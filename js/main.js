@@ -314,9 +314,6 @@ var phpDoc = function()
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
-            //var mainMenu    = new ui.component.MainMenu();
-
-
                 mainContentLeft = (this.userLang === 'en') ? [
                     ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
                     ui.component.PortletBugs.getInstance({lang: this.userLang})
@@ -448,7 +445,6 @@ var phpDoc = function()
                     region            : 'center',
                     activeTab         : 0,
                     enableTabScroll   : true,
-                    //layoutOnTabChange : true,
                     plugins           : new Ext.ux.TabCloseMenu(),
                     listeners : {
                         scope        : this,

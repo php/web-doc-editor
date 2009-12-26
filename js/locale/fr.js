@@ -15,6 +15,10 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+
+i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le boutton ci-dessous pour télécharger le contenu complet.";
+i18n["Download the full content of this log"] = "Télécharger le contenu complet de l'historique";
+
 i18n["External Data"] = "Données externes";
 i18n["Load Mails at startUp"] = "Charger les mails de la liste au démarrage";
 i18n["Load Bugs at startUp"] = "Charger les bogues ouverts au démarrage";

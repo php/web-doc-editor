@@ -61,8 +61,9 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
     },
     animShow: function(){
         this.pos = 0;
-        while(Ext.ux.NotificationMgr.positions.indexOf(this.pos)>-1)
+        while(Ext.ux.NotificationMgr.positions.indexOf(this.pos)>-1) {
             this.pos++;
+        }
         Ext.ux.NotificationMgr.positions.push(this.pos);
         this.setSize(200,100);
         this.el.alignTo(document, "br-br", [ -20, -20-((this.getSize().height+10)*this.pos) ]);

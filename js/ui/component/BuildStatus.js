@@ -7,6 +7,25 @@ ui.component._BuildStatus.display = function(config)
 
     Ext.apply(this, config);
 
+    // Display
+    if ( Ext.getCmp('main-panel').findById('last_failed_build_' + this.lang) ) {
+        Ext.getCmp('main-panel').remove('last_failed_build_' + this.lang);
+    }
+
+    Ext.getCmp('main-panel').add({
+        xtype      : 'panel',
+        id         : 'last_failed_build_' + this.lang,
+        title      : String.format(_('Last failed build for {0}'),Ext.util.Format.uppercase(this.lang)),
+        tabTip     : String.format(_('Last failed build for the documentation {0}'), Ext.util.Format.uppercase(this.lang)),
+        closable   : true,
+        autoScroll : true,
+        iconCls    : 'checkBuild',
+        html       : '<div class="check-build-content" id="check-build-content"></div>'
+    });
+    Ext.getCmp('main-panel').setActiveTab('last_failed_build_' + this.lang);
+
+    Ext.getCmp('main-panel').el.mask(_('Please, wait...'));
+
     XHR({
         scope: this,
         params  : {
@@ -15,25 +34,33 @@ ui.component._BuildStatus.display = function(config)
         },
         success : function(response)
         {
-            var o = Ext.decode(response.responseText),
+            var o    = Ext.decode(response.responseText),
                 mess = o.mess.join("<br/>");
 
-            // Display
-            if ( Ext.getCmp('main-panel').findById('last_failed_build_' + this.lang) ) {
-                Ext.getCmp('main-panel').remove('last_failed_build_' + this.lang);
+            // If the result is too large, the controller have limitated it. So, we add a button to allow the download of the full content
+            if( o.state === 'truncate' ) {
+
+                Ext.get('check-build-content').dom.innerHTML = mess + '<div style="text-align: center; margin: 20px 0 20px 0" class="x-toolbar">' + _('This log is too large and have been truncated. Use the following button to download the full content of it.') + '<div id="check-build-content-download-btn"></div></div>';
+
+                new Ext.Button({
+                    scope: this,
+                    text: _('Download the full content of this log'),
+                    renderTo: 'check-build-content-download-btn',
+                    style: { margin: 'auto' },
+                    handler : function()
+                    {
+                        window.location.href = './do/downloadFailedBuildLog' +
+                                               '?idFailedBuild=' + this.idFailedBuild;
+                    }
+
+                });
+
+            } else {
+                Ext.get('check-build-content').dom.innerHTML = mess;
             }
 
-            Ext.getCmp('main-panel').add({
-                xtype      : 'panel',
-                id         : 'last_failed_build_' + this.lang,
-                title      : String.format(_('Last failed build for {0}'),Ext.util.Format.uppercase(this.lang)),
-                tabTip     : String.format(_('Last failed build for the documentation {0}'), Ext.util.Format.uppercase(this.lang)),
-                closable   : true,
-                autoScroll : true,
-                iconCls    : 'checkBuild',
-                html       : '<div class="check-build-content">' + mess + '</div>'
-            });
-            Ext.getCmp('main-panel').setActiveTab('last_failed_build_' + this.lang);
+            Ext.getCmp('main-panel').el.unmask();
+
         }
     });
 };
@@ -90,30 +117,28 @@ ui.component._BuildStatus.columns = [
 ];
 
 // BuildStatus context menu
-ui.component._BuildStatus.menu = function(config)
+ui.component._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
 {
-    Ext.apply(this, config);
-    this.init();
-    ui.component._BuildStatus.menu.superclass.constructor.call(this);
-};
-Ext.extend(ui.component._BuildStatus.menu, Ext.menu.Menu,
-{
-    init : function()
+    setRowIndex : function(rowIndex) {
+        this.rowIndex = rowIndex;
+    },
+
+    initComponent : function()
     {
-        Ext.apply(this,
-        {
+        Ext.apply(this, {
             items : [{
                 scope   : this,
                 text    : '<b>' + _('View in a new Tab') + '</b>',
-                iconCls : 'PendingPatch',
+                iconCls : 'openInTab',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
+                        this.grid, this.rowIndex, this.event
                     );
                 }
             }]
         });
+        ui.component._BuildStatus.menu.superclass.initComponent.call(this);
     }
 });
 
@@ -127,37 +152,50 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
     store            : ui.component._BuildStatus.ds,
     columns          : ui.component._BuildStatus.columns,
 
-    view : new Ext.grid.GridView({
-        forceFit    : true
+    view             : new Ext.grid.GridView({
+                           forceFit: true
     }),
     listeners : {
-        scope  : this,
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
-
-            e.stopEvent();
-
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            tmp = new ui.component._BuildStatus.menu({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            var storeRecord = grid.store.getAt(rowIndex), tmp;
-
-            tmp = new ui.component._BuildStatus.display({
-                idFailedBuild : storeRecord.id,
-                lang          : storeRecord.data["lang"]
-            });
-
-        },
         render : function(grid)
         {
-            grid.store.load.defer(20, grid.store);
+            this.store.load.defer(20, this.store);
         }
+    },
+
+    onRowdblclick: function(grid, rowIndex, e) {
+
+            var storeRecord = this.store.getAt(rowIndex),
+                tmp         = new ui.component._BuildStatus.display({
+                    idFailedBuild : storeRecord.id,
+                    lang          : storeRecord.data["lang"]
+                });
+
+    },
+
+    onRowContextMenu: function(grid, rowIndex, e) {
+
+            if( ! this.menu ) {
+
+                this.menu = new ui.component._BuildStatus.menu({
+                    grid   : grid,
+                    rowIdx : '',
+                    event  : e
+                });
+
+            }
+
+            e.stopEvent();
+            this.getSelectionModel().selectRow(rowIndex);
+            this.menu.setRowIndex(rowIndex);
+            this.menu.showAt(e.getXY());
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.BuildStatus.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowdblclick',    this.onRowdblclick,  this);
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
 });

@@ -23,21 +23,21 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         });
 
         //For the parser
-        if( this.parser == 'xml' ) {
-          this.parserFile = "parsexml.js";
-          this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
+        if( this.parser === 'xml' ) {
+            this.parserFile = "parsexml.js";
+            this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
         }
 
-        if( this.parser == 'html' ) {
-          this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
-          this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
+        if( this.parser === 'html' ) {
+            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
+            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
         }
 
-        if( this.parser == 'php' ) {
-          this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
+        if( this.parser === 'php' ) {
+            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
                              "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
                              "../contrib/php/js/parsephphtmlmixed.js"];
-          this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
+            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
         }
     },
     onRender : function(ct, position){
@@ -66,15 +66,15 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         // Attach some others events
         mirror.editor.keyUp = function(e) {
 
-          // On envoie cursormove
-          var r        = mirror.cursorPosition(),
-              line     = mirror.lineNumber(r.line),
-              caracter = r.character;
-          cmp.fireEvent('cursormove', line, caracter);
+            // On envoie cursormove
+            var r        = mirror.cursorPosition(),
+                line     = mirror.lineNumber(r.line),
+                caracter = r.character;
+            cmp.fireEvent('cursormove', line, caracter);
 
-          // We check if the code has changed or not
-          cmp.manageCodeChange(cmId);
-        }
+            // We check if the code has changed or not
+            cmp.manageCodeChange(cmId);
+        };
 
         Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);
 
@@ -82,11 +82,9 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     manageCodeChange: function(cmId) {
 
-        var cmp    = Ext.getCmp(cmId),
-            mirror = cmp.mirror;
-
-
-        var originalContent = mirror.originalContent,
+        var cmp             = Ext.getCmp(cmId),
+            mirror          = cmp.mirror,
+            originalContent = mirror.originalContent,
             currentContent  = mirror.getCode();
 
         // If originalContent is false, the editor is not ready
@@ -111,9 +109,9 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     saveFunction: function(cmId) {
 
-        var cmp    = Ext.getCmp(cmId);
+        var cmp     = Ext.getCmp(cmId),
+            saveBtn = cmp.ownerCt.topToolbar.items.items[0];
 
-        var saveBtn = cmp.ownerCt.topToolbar.items.items[0];
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
         }

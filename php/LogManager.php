@@ -200,14 +200,14 @@ class LogManager
      * @param $id The id of the failed build into DB we want to retrieve
      * @return The content of this failed build
      */
-    public function getFailedBuildData($id)
+    public function getFailedBuildData($id, $highlight=true)
     {
         $s = 'SELECT `log` FROM `failedBuildLog` WHERE `id`=\''.$id.'\'';
         $r  = DBConnection::getInstance()->query($s);
 
         $a = $r->fetch_object();
 
-        return $this->highlightBuildLog(json_decode($a->log));
+        return ($highlight) ? $this->highlightBuildLog(json_decode($a->log)) : json_decode($a->log);
     }
 }
 
