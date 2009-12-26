@@ -28,7 +28,9 @@ ui.component._CheckEntities.ds = new Ext.data.Store({
                 mapping : 'result'
             }, {
                 name    : 'date',
-                mapping : 'date'
+                mapping : 'date',
+                type       : 'date',
+                dateFormat : 'Y-m-d H:i:s'
             }
         ])
     )
@@ -63,7 +65,8 @@ ui.component._CheckEntities.columns = [
         header    : _('Date'),
         width     : 30,
         sortable  : true,
-        dataIndex : 'date'
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
     }
 ];
 
