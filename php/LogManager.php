@@ -198,6 +198,7 @@ class LogManager
      * Get the data about a failed build.
      *
      * @param $id The id of the failed build into DB we want to retrieve
+     * @param $highlight If set to tru (default), some elements of the content is html-hightlighted.
      * @return The content of this failed build
      */
     public function getFailedBuildData($id, $highlight=true)
