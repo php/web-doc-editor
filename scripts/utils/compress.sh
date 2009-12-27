@@ -29,7 +29,7 @@ cat js/util.js \
 cat themes/flags.css \
     js/ux/extjsPowered/*.css \
     js/ux/others/main_specific/*.css \
-    themes/style.css \
+    themes/main.css \
     | java -jar scripts/utils/yuicompressor.jar --type css --verbose -o themes/main-all.css
 
 popd
