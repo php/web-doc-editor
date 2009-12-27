@@ -803,6 +803,29 @@ class ExtJsController
     }
 
     /**
+     * Check the entities
+     */
+    public function checkEntities()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+            return JsonResponseBuilder::failure();
+        }
+
+        $lock = new LockFile('lock_check_entities');
+        if ($lock->lock()) {
+
+            ToolsCheckEntities::getInstance()->startCheck();
+
+        }
+        // Remove the lock File
+        $lock->release();
+
+        return JsonResponseBuilder::success();
+    }
+
+    /**
      * Check the build for a given LANG documentation
      */
     public function checkBuild()

@@ -224,6 +224,12 @@ i18n["Check Build"]                                           = "Vérifier la co
 i18n["EN tools"] = "Outils EN";
     i18n["Script Check doc"] = "Script Check doc";
     i18n["Script Check Entities"] = "Script de vérification des entités";
+    i18n["View the last result"] = "Voir le résultat de la dernière vérification";
+    i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";
+    i18n["There is currently a check in progress for the entities.<br/>You can\'t perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
+    i18n["You\'re about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
+    i18n["Please, wait until entities are checked..."] = "Merci de patienter pendant la vérification des entités...";
+    i18n["Run this script"] = "Exécuter ce script";
     i18n["Check Entities"] = "Vérification des entités";
 
     i18n["Entities"] = "Entitiés";

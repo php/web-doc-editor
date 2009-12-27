@@ -113,7 +113,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 menu : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check Build'),
-                        disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
+                        disabled : (phpDoc.userLogin === 'anonymous'),
                         iconCls  : 'checkBuild',
                         handler  : function()
                         {
@@ -184,23 +184,74 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     items : [{
                         text    : _('Script Check Entities'),
                         iconCls : 'iconCheckEntities',
-                        handler : function()
-                        {
-                            var tab = Ext.getCmp('tab-check-entities');
+                        handler : function() { return false; },
+                        menu    : new Ext.menu.Menu({
+                            items   : [{
+                                text    : _('View the last result'),
+                                id      : 'btn-check-entities-view-last-result',
+                                iconCls : 'iconTabView',
+                                handler : function()
+                                {
+                                    var tab = Ext.getCmp('tab-check-entities');
 
-                            if ( ! tab ) {
-                                // if tab not exist, create new tab
-                                Ext.getCmp('main-panel').add({
-                                    id       : 'tab-check-entities',
-                                    title    : _('Check Entities'),
-                                    iconCls  : 'iconCheckEntities',
-                                    layout   : 'fit',
-                                    closable : true,
-                                    items    : [new ui.component.CheckEntities()]
-                                });
-                            }
-                            Ext.getCmp('main-panel').setActiveTab('tab-check-entities');
-                        }
+                                    if ( ! tab ) {
+                                        // if tab not exist, create new tab
+                                        Ext.getCmp('main-panel').add({
+                                            id       : 'tab-check-entities',
+                                            title    : _('Check Entities'),
+                                            iconCls  : 'iconCheckEntities',
+                                            layout   : 'fit',
+                                            closable : true,
+                                            items    : [new ui.component.CheckEntities()]
+                                        });
+                                    }
+                                    Ext.getCmp('main-panel').setActiveTab('tab-check-entities');
+                                }
+                            }, {
+                                text    : _('Run this script'),
+                                iconCls : 'iconRun',
+                                //disabled: (phpDoc.userLogin === 'anonymous'),
+                                handler : function()
+                                {
+                                    // We test if there is a check in progress for this language
+                                    Ext.getBody().mask(
+                                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                        _('Verify if there is an entities check in progress. Please, wait...')
+                                    );
+
+                                    XHR({
+                                        params  :
+                                        {
+                                            task     : 'checkLockFile',
+                                            lockFile : 'lock_check_entities'
+                                        },
+                                        success : function()
+                                        {
+                                            // Remove wait msg
+                                            Ext.getBody().unmask();
+
+                                            Ext.MessageBox.show({
+                                                title   : _('Status'),
+                                                msg     : _('There is currently a check in progress for the entities.<br/>You can\'t perform a new check now.'),
+                                                buttons : Ext.MessageBox.OK,
+                                                icon    : Ext.MessageBox.INFO
+                                            });
+                                        },
+                                        failure : function()
+                                        {
+                                            // Remove wait msg
+                                            Ext.getBody().unmask();
+
+                                            if( ! Ext.getCmp('win-check-entities') ) {
+                                                var win = new ui.component.CheckEntitiesPrompt();
+                                            }
+                                            Ext.getCmp('win-check-entities').show(Ext.get('mainMenu'));
+
+                                        }
+                                    });
+                                }
+                            }]
+                        })
                     }, {
                         text    : _('Script Check doc'),
                         iconCls : 'iconCheckDoc',

@@ -124,6 +124,10 @@
     background-image: url(./img/exclamation.gif) !important;
 }
 
+.iconRun {
+    background-image: url(./img/cog.png) !important;
+}
+
  .saveFile {
     background-image: url(./img/disk.png) !important;
 } .saveAsFile {

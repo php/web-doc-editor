@@ -8,10 +8,17 @@
 ****/
 
 require_once dirname(__FILE__) . '/../../php/conf.inc.php';
-require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
+require_once dirname(__FILE__) . '/../../php/LockFile.php';
 require_once dirname(__FILE__) . '/../../php/ToolsCheckEntities.php';
 
-$tce = ToolsCheckEntities::getInstance();
+$lock = new LockFile('lock_check_entities');
 
-$tce->startCheck();
+if ($lock->lock()) {
+
+    ToolsCheckEntities::getInstance()->startCheck();
+
+}
+// Remove the lock File
+$lock->release();;
+
 ?>

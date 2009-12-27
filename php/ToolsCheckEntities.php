@@ -139,8 +139,6 @@ class ToolsCheckEntities {
         $this->entityNames = $entitiesFound[1];
         $this->entityUrls  = $entitiesFound[3];
 
-        //echo "Found: ". count($this->entityUrls) ." URLs\n"; 
-
         if( $this->forkUrlAllow ) {
             // use the forking method ... MUCH faster
             declare(ticks=1);
@@ -155,11 +153,9 @@ class ToolsCheckEntities {
                     $pid = pcntl_fork();
                     if ($pid) {
                         // parent
-                        //echo "Forked: $pid\n";
                         ++$children;
                     } else {
                         // child
-                        //echo "[$num] (". getmypid() .") Checking: $url\n";
 
                         $r = $this->checkUrl($num, $url);
 
@@ -172,8 +168,6 @@ class ToolsCheckEntities {
                         );
                         DBConnection::getInstance()->query($query);
 
-                        //echo "$name - $url - $r[0]\n";
-
                         exit();
                     }
                 } else {
@@ -181,7 +175,6 @@ class ToolsCheckEntities {
                     $status = 0;
                     $child = pcntl_wait($status);
                     --$children;
-                    //echo "Child: $child exited with status $status ($children remain)\n";
                 }        
             }
 
@@ -189,14 +182,12 @@ class ToolsCheckEntities {
                 $status = 0;
                 $child = pcntl_wait($status);
                 --$children;
-                //echo "Child: $child exited with status $status ($children remain)\n";
             }
             
         } else {
             // no forking
             // walk through entities found
             foreach ($this->entityUrls as $num => $entityUrl) {
-                //echo "[$num] Checking: $entityUrl\n";
 
                 $r = $this->checkUrl($num, $entityUrl);
 
@@ -208,8 +199,6 @@ class ToolsCheckEntities {
                     $r[0]
                 );
                 DBConnection::getInstance()->query($query);
-
-                //echo $this->entityNames[$num]." - $entityUrl - $r[0]\n";
             }
             ++$num; // (for the count)
         }
