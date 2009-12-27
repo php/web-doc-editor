@@ -1,9 +1,6 @@
-.x-notification .x-tool-close { display: none; }
-.x-notification.fixed .x-tool-close { display: block; }
-
 .grid-search {
     background-image: url(./img/zoom.png) !important;
-} 
+}
 
 .MainInfoTabPanel {
     margin: 0 5px 0 5px !important;
@@ -26,30 +23,13 @@
     margin-left: 30px;
     padding-top: 7px;
     color: #849090;
-} .CodeMirror-line-numbers {
-    width: 2.2em;
-    color: #aaa;
-    background-color: #eee;
-    text-align: right;
-    padding-right: .3em;
-    font-size: 10pt;
-    font-family: monospace;
-    padding-top: .4em;
 }
 
-.code-mirror-panel .x-form-element {
-    padding-right: 33px;
-}
-
- .flag {
-    background-repeat: no-repeat ! important;
-    background-position: 3px 50% ! important;
-    padding-left: 24px ! important;
-}
-
- .closeOthersTabs {
+.closeOthersTabs {
     background-image: url(./img/tab_delete.png) !important;
-} .x-tree-node .modified a span {
+}
+
+.x-tree-node .modified a span {
     color: red;
 }
 
@@ -313,7 +293,6 @@
     background: white;
     font: 11px Arial, Helvetica, sans-serif;
 } #confMenu .thumb {
-    /*background: #dddddd;*/
     padding: 3px;
 } #confMenu .thumb-wrap {
     float: left;
