@@ -390,7 +390,7 @@ class ExtJsController
         $bugs = new BugReader(AccountManager::getInstance()->vcsLang);
         $r = $bugs->getOpenBugs();
 
-        if( !$r ) {
+        if( $r === false ) {
             return JsonResponseBuilder::failure();
         } else {
             return JsonResponseBuilder::success(
