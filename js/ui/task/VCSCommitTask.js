@@ -4,7 +4,7 @@ ui.task._VCSCommitTask.getCommitResponse = function()
 {
     XHR({
         params  : {
-            task       : 'getCommitResponse'
+            task: 'getCommitResponse'
         },
         success : function(response)
         {
@@ -80,10 +80,10 @@ ui.task._VCSCommitTask.commit = function(files)
         _('Please, wait until commit...')
     );
 
-    var nodes = [], node, LogMessage, tmp;
+    var nodes = [], node, LogMessage, tmp, i;
 
     // Go for VCS commit
-    for (var i = 0; i < files.length; i = i + 1) {
+    for (i = 0; i < files.length; i = i + 1) {
 
         node = Ext.getCmp('commit-tree-panel').getNodeById(files[i].id);
         nodes.push(node.attributes.FileDBID);
@@ -156,9 +156,9 @@ ui.task.VCSCommitTask = function()
 
     var files         = Ext.getCmp('commit-tree-panel').getChecked(),
         NeedToBeClose = [],
-        checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '';
+        checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i;
 
-    for (var i = 0; i < files.length; ++i) {
+    for (i = 0; i < files.length; ++i) {
         checkNode = files[i].attributes;
 
         paneID_FE  = 'FE-'  + Ext.util.md5('FE-'  + checkNode.FilePath + checkNode.FileName);

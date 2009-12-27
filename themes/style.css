@@ -159,7 +159,7 @@ opacity:
     background: transparent url(./img/arrow_refresh.png) no-repeat 0 0;
 } .FilesNeedReviewed {
     background: transparent url(./img/page_edit.png) no-repeat 0 0;
-} .CheckDoc {
+} .iconCheckDoc {
     background-image: url(./img/lightbulb_add.png) !important;
 } .BuildStatus {
     background-image: url(./img/error_delete.png) !important;
@@ -225,7 +225,11 @@ opacity:
     background-image: url(./img/page_link.png) !important;
 } .iconTabNeedTranslate {
     background-image: url(./img/page_add.png) !important;
-} .iconTabView {
+}
+ .iconFiles {
+    background-image: url(./img/page.png) !important;
+} 
+ .iconTabView {
     background-image: url(./img/eye.png) !important;
 } .iconTabNeedUpdate {
     background-image: url(./img/arrow_refresh.png) !important;

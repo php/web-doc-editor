@@ -38,7 +38,7 @@ ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
                 checked   : false,
                 hideLabel : true,
                 boxLabel  : _('Enable detailed XML error messages'),
-                listeners: {
+                listeners : {
                     check: function(c, state) {
                         Ext.get('option-xml-details-span').dom.style.visibility = (state) ? 'visible' : 'hidden';
                         Ext.get('option-xml-details-div').dom.style.visibility  = (state) ? 'visible' : 'hidden';

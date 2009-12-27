@@ -70,6 +70,7 @@ ui.component._CheckDoc.renderer = function(value, metadata)
 {
     if (value > 0) {
         metadata.css = 'check_doc_cell';
+        metadata.attr = 'ext:qtip="<img src=\'themes/img/help.png\' style=\'vertical-align: middle;\' /> ' + _('Double-click the cell to open the file selection') + '"';
         return value;
     } else {
         return;
@@ -158,39 +159,42 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     bodyBorder       : false,
     autoExpandColumn : 'file',
+    sm               : new Ext.grid.RowSelectionModel({}),
+    columns          : [ new Ext.grid.RowNumberer(), {
+                           id        : 'file',
+                           header    : _('Files'),
+                           sortable  : true,
+                           dataIndex : 'file'
+                       } ],
 
-    sm : new Ext.grid.RowSelectionModel({
-        listeners : {
-            rowselect : function(sm, rowIndex, record)
-            {
-                Ext.getCmp('check-doc-btn-open-selected-files').enable();
-            }
-        }
-    }),
-    columns : [ new Ext.grid.RowNumberer(), {
-        id        : 'file',
-        header    : _('Files'),
-        sortable  : true,
-        dataIndex : 'file'
-    } ],
+    onRowClick: function(grid, rowIndex, e)
+    {
+        Ext.getCmp('check-doc-btn-open-selected-files').enable();
+    },
 
-    listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+        grid.getSelectionModel().selectRow(rowIndex);
+    },
 
-            e.stopEvent();
-        
-            grid.getSelectionModel().selectRow(rowIndex);
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            ui.component.RepositoryTree.getInstance().openFile(
-                'en' + grid.fpath,
-                grid.store.getAt(rowIndex).data.file
-            );
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        ui.component.RepositoryTree.getInstance().openFile(
+            'en' + grid.fpath,
+            grid.store.getAt(rowIndex).data.file
+        );
+        Ext.getCmp('check-doc-file-win').close();
+    },
 
-            Ext.getCmp('check-doc-file-win').close();
-        }
+    initComponent: function(config)
+    {
+        ui.component._CheckDoc.FileGrid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu',    this.onRowContextMenu, this);
+        this.on('rowdblclick',       this.onRowDblClick,    this);
+        this.on('rowclick',          this.onRowClick,      this);
     }
 });
 
@@ -207,16 +211,18 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
     modal      : true,
     autoScroll : true,
     layout     : 'fit',
+    iconCls    : 'iconFiles',
     buttons    : [{
         text    : _('Open all files'),
         handler : function()
         {
             var win   = Ext.getCmp('check-doc-file-win'),
-                store = ui.component._CheckDoc.fs;
+                store = ui.component._CheckDoc.fs,
+                i;
 
             phpDoc.filePendingOpen = [];
 
-            for (var i = 0; i < store.getCount(); ++i) {
+            for (i = 0; i < store.getCount(); ++i) {
                 phpDoc.filePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : store.getAt(i).data.file
@@ -227,7 +233,6 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 phpDoc.filePendingOpen[0].fpath,
                 phpDoc.filePendingOpen[0].fname
             );
-
             win.close();
         }
     }, {
@@ -237,13 +242,14 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
         handler  : function()
         {
             var win = Ext.getCmp('check-doc-file-win'),
-                r = Ext.getCmp('check-doc-file-grid')
-                    .getSelectionModel()
-                    .getSelections();
+                r   = Ext.getCmp('check-doc-file-grid')
+                      .getSelectionModel()
+                      .getSelections(),
+                i;
 
             phpDoc.filePendingOpen = [];
 
-            for (var i = 0; i < r.length; ++i) {
+            for (i = 0; i < r.length; ++i) {
                 phpDoc.filePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : r[i].data.file
@@ -254,7 +260,6 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 phpDoc.filePendingOpen[0].fpath,
                 phpDoc.filePendingOpen[0].fname
             );
-
             win.close();
         }
     }]
@@ -269,63 +274,79 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
     store            : ui.component._CheckDoc.ds,
     columns          : ui.component._CheckDoc.columns,
     autoExpandColumn : 'extension',
+    sm               : new Ext.grid.CellSelectionModel({ singleSelect : true }),
+    view             : new Ext.grid.GridView({ forceFit : true }),
 
-    sm   : new Ext.grid.CellSelectionModel({ singleSelect : true }),
-    view : new Ext.grid.GridView({ forceFit : true }),
-
-    listeners : {
-        render : function(grid)
+    listeners: {
+        render: function(grid)
         {
             // on render, load data
-            grid.store.load.defer(20, grid.store);
-        },
-        celldblclick : function(grid, rowIndex, columnIndex, e)
-        {
-            var record    = grid.getStore().getAt(rowIndex),
-                errorType = grid.getColumnModel().getDataIndex(columnIndex),
-                data      = record.get(errorType),
-                fpath     = record.data.path;
-
-            if (Ext.num(data, false) && data !== 0) {
-                // get checkdoc file via XHR
-                // TODO - may change to use HttpProxy for DataStore
-                //        remove XHR, win.open() and load from proxy
-                XHR({
-                    params   : {
-                        task      : 'getCheckDocFiles',
-                        path      : fpath,
-                        errorType : errorType
-                    },
-                    success : function(response)
-                    {
-                        // Must choose the file
-                        var o = Ext.decode(response.responseText),
-                            i, tmp;
-
-                        // file store
-                        ui.component._CheckDoc.fs.removeAll();
-                        for (i = 0; i < o.files.length; ++i) {
-
-                            ui.component._CheckDoc.fs.insert(
-                                0, new ui.component._CheckDoc.fs.recordType({
-                                    id   : i,
-                                    file : o.files[i].name
-                                })
-                            );
-                        }
-                        ui.component._CheckDoc.fs.sort('file', 'asc');
-
-                        tmp = new ui.component._CheckDoc.FileWin({
-                            fpath : fpath,
-                            items : [
-                                new ui.component._CheckDoc.FileGrid({
-                                    fpath : fpath
-                                })
-                            ]
-                        }).show();
-                    }
-                });
-            } // data is not empty
+            this.store.load.defer(20, grid.store);
         }
+    },
+
+    onCellContextMenu: function (grid, rowIndex, cellIndex, e)
+    {
+        e.stopEvent();
+        this.sm.select(rowIndex, cellIndex);
+    },
+
+    onCellDblClick: function(grid, rowIndex, columnIndex, e)
+    {
+        var record    = this.store.getAt(rowIndex),
+            errorType = this.getColumnModel().getDataIndex(columnIndex),
+            data      = record.get(errorType),
+            fpath     = record.data.path;
+
+        this.el.mask(_('Please, wait...'));
+
+        if (Ext.num(data, false) && data !== 0) {
+            XHR({
+                params   : {
+                    task      : 'getCheckDocFiles',
+                    path      : fpath,
+                    errorType : errorType
+                },
+                success : function(response)
+                {
+                    // Must choose the file
+                    var o = Ext.decode(response.responseText),
+                        i, tmp;
+
+                    // file store
+                    ui.component._CheckDoc.fs.removeAll();
+                    for (i = 0; i < o.files.length; ++i) {
+
+                        ui.component._CheckDoc.fs.insert(
+                            0, new ui.component._CheckDoc.fs.recordType({
+                                id   : i,
+                                file : o.files[i].name
+                            })
+                        );
+                    }
+                    ui.component._CheckDoc.fs.sort('file', 'asc');
+
+                    grid.el.unmask();
+
+                    tmp = new ui.component._CheckDoc.FileWin({
+                        fpath : fpath,
+                        items : [
+                            new ui.component._CheckDoc.FileGrid({
+                                fpath : fpath
+                            })
+                        ]
+                    }).show();
+                }
+            });
+        } // data is not empty
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.CheckDoc.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('celldblclick',    this.onCellDblClick,    this);
+        this.on('cellcontextmenu', this.onCellContextMenu, this);
     }
 });

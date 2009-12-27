@@ -9,12 +9,18 @@ var i18n = new Array();
 i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 
 // Notify
+i18n["Message updated"] = "Message mis à jour";
+i18n["Log Message was updated successfully !"] = "Le message a été mis à jour avec succès !";
+i18n["Message deleted"] = "Message effacé";
+i18n["Log Message was deleted successfully !"] = "Le message a été effacé avec succès !";
 i18n["Option saved"] = "Option sauvegardée";
 i18n["Option has been saved successfully !"] = "L'option a été sauvegardée avec succès !";
 i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+
+i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
 
 i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le boutton ci-dessous pour télécharger le contenu complet.";
 i18n["Download the full content of this log"] = "Télécharger le contenu complet de l'historique";

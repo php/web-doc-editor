@@ -483,11 +483,12 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
     modal       : true,
     plain       : true,
     bodyBorder  : false,
+    closeAction : 'hide',
     buttons     : [{
         text    : _('Close'),
         handler : function()
         {
-            Ext.getCmp('win-conf').close();
+            Ext.getCmp('win-conf').hide();
         }
     }],
 

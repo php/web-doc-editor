@@ -420,7 +420,11 @@ var phpDoc = function()
                             hidden  : (this.userLogin == 'anonymous' ),
                             qtip    : _('Open the Log Message Manager'),
                             handler : function() {
-                                var tmp = new ui.component.CommitLogPrompt().show();
+                                if( ! Ext.getCmp('commit-log-win') )
+                                {
+                                    var win = new ui.component.CommitLogManager();
+                                }
+                                Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
                             }
                         }],
                         title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',

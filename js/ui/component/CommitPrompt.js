@@ -19,7 +19,11 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         qtip    : _('Configure this tools'),
         handler : function()
         {
-            var tmp = new ui.component.CommitLogPrompt().show();
+            if( ! Ext.getCmp('commit-log-win') )
+            {
+                var win = new ui.component.CommitLogManager();
+            }
+            Ext.getCmp('commit-log-win').show(this.id);
         }
     }],
     buttons : [{
@@ -42,9 +46,10 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         var root = new Ext.tree.TreeNode({
             text     : 'root',
             expanded : true
-        });
+        }),
+            i;
 
-        for (var i = 0; i < this.files.length; ++i) {
+        for (i = 0; i < this.files.length; ++i) {
             root.appendChild(
                 new Ext.tree.TreeNode({
                     id         : 'need-commit-' + this.files[i].fid,
@@ -74,7 +79,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
                 fieldLabel    : _('Older messages'),
                 editable      : false,
                 anchor        : '100%',
-                store         : ui.component.CommitLogPrompt.store,
+                store         : ui.component._CommitLogManager.store,
                 triggerAction : 'all',
                 tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
                 valueField    : 'id',

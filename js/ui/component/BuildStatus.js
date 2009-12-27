@@ -96,7 +96,7 @@ ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
 // BuildStatus Grid language cell renderer
 ui.component._BuildStatus.rendererLanguage = function(value)
 {
-    return '<div class="flag flag-' + value + '">' + value + '</div>';
+    return '<div><div class="flags flag-' + value + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
 };
 
 // BuildStatus Grid columns definition

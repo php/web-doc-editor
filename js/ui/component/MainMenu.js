@@ -203,30 +203,22 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         }
                     }, {
                         text    : _('Script Check doc'),
-                        iconCls : 'CheckDoc',
+                        iconCls : 'iconCheckDoc',
                         handler : function()
                         {
                             var tab = Ext.getCmp('tab-check-doc');
 
-                            if (tab === undefined) {
+                            if ( ! tab ) {
                                 // if tab not exist, create new tab
                                 Ext.getCmp('main-panel').add({
                                     id       : 'tab-check-doc',
                                     title    : 'Check Doc',
-                                    iconCls  : 'CheckDoc',
+                                    iconCls  : 'iconCheckDoc',
                                     layout   : 'fit',
                                     closable : true,
-                                    html     : 'nothing'
+                                    items    : [ new ui.component.CheckDoc() ]
                                 });
-                                tab = Ext.getCmp('tab-check-doc');
                             }
-
-                            if (tab.items) {
-                                tab.removeAll(true);
-                            }
-                            tab.add(new ui.component.CheckDoc());
-                            tab.doLayout(); // render the grid
-
                             Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
                         }
                     }]
@@ -238,7 +230,11 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 id      : 'winconf-btn',
                 handler : function()
                 {
-                    var tmp = new ui.component.EditorConf().show(Ext.get('winconf-btn'));
+                    if( ! Ext.getCmp('win-conf') ) {
+                        var win = new ui.component.EditorConf();
+                    }
+                    Ext.getCmp('win-conf').show(Ext.get('mainMenu'));
+
                 }
             }, '-', {
                 text     : _('Erase my personal data'),
