@@ -191,12 +191,8 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                     })
                 ]
             });
-            Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
-
-        } else {
-            // This tab already exist. We focus it.
-            Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
         }
+        Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
     },
 
     initComponent : function()

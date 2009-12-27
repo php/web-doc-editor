@@ -174,11 +174,9 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
                             autoScroll : true,
                             autoLoad   : './error'
                         });
-                        Ext.getCmp('main-panel').setActiveTab('FE-help');
 
-                    } else {
-                        Ext.getCmp('main-panel').setActiveTab('FE-help');
                     }
+                    Ext.getCmp('main-panel').setActiveTab('FE-help');
                 }
             }]
         });

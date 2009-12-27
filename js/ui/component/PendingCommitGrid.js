@@ -249,7 +249,6 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                 autoScroll : true,
                                 html       : '<div id="diff_content_pending_' + this.rowIdx + '" class="diff-content"></div>'
                             });
-                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
 
                             Ext.get('diff_panel_pending_' + this.rowIdx).mask(
                                 '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -273,10 +272,8 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                     Ext.get('diff_panel_pending_' + this.rowIdx).unmask();
                                 }
                             });
-                        } else {
-                            // This tab already exist. We focus it.
-                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
                         }
+                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
                     }
                 }, {
                     scope   : this,
@@ -396,8 +393,6 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
                     disabled : (phpDoc.userLogin === 'anonymous'),
                     handler  : function()
                     {
-
-
                        var storeRecord = this.grid.store.getAt(this.rowIdx),
                            FilePath    = storeRecord.data.path,
                            FileName    = storeRecord.data.name,

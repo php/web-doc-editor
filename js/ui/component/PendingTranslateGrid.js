@@ -177,12 +177,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                     })
                 ]
             });
-            Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
-
-        } else {
-            // This tab already exist. We focus it.
-            Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
         }
+        Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
     },
 
     initComponent : function()

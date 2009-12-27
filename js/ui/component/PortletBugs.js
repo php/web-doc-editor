@@ -75,31 +75,27 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
     columns          : ui.component._PortletBugs.gridColumns,
     view             : ui.component._PortletBugs.gridView,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
-    listeners        : {
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            var BugsId    = grid.store.getAt(rowIndex).data.id,
-                BugsUrl   = grid.store.getAt(rowIndex).data.link,
-                BugsTitle = grid.store.getAt(rowIndex).data.title;
 
-            if (!Ext.getCmp('main-panel').findById('bugs-' + BugsId)) {
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        var BugsId    = grid.store.getAt(rowIndex).data.id,
+            BugsUrl   = grid.store.getAt(rowIndex).data.link,
+            BugsTitle = grid.store.getAt(rowIndex).data.title;
 
-                Ext.getCmp('main-panel').add({
-                    id         : 'bugs-' + BugsId,
-                    xtype      : 'panel',
-                    title      : Ext.util.Format.substr(BugsTitle, 0, 20) + '...',
-                    tabTip     : BugsTitle,
-                    iconCls    : 'iconBugs',
-                    closable   : true,
-                    layout     : 'fit',
-                    items: [ new Ext.ux.IFrameComponent({ id: 'frame-bugs-' + BugsId, url: BugsUrl }) ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
+        if (!Ext.getCmp('main-panel').findById('bugs-' + BugsId)) {
 
-            } else {
-                Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
-            }
+            Ext.getCmp('main-panel').add({
+                id         : 'bugs-' + BugsId,
+                xtype      : 'panel',
+                title      : Ext.util.Format.substr(BugsTitle, 0, 20) + '...',
+                tabTip     : BugsTitle,
+                iconCls    : 'iconBugs',
+                closable   : true,
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-bugs-' + BugsId, url: BugsUrl }) ]
+            });
         }
+        Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
     },
 
     onContextClick : function(grid, rowIndex, e)
@@ -166,6 +162,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
 
     }
 });

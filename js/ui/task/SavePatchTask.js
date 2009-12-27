@@ -51,6 +51,10 @@ ui.task.SavePatchTask = function(config)
 
             // Remove wait msg
             msg.hide();
+
+            // Notify
+            phpDoc.notify('info', _('Patch saved'), _('Patch saved successfully !'));
+
         }
     });
 };

@@ -276,7 +276,6 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         })
                     ]
                 });
-                Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
 
                 // Set the bg image for north collapsed el
                 if (Ext.getCmp('PP-' + FileID).getLayout().north.collapsedEl) {
@@ -284,9 +283,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         'x-layout-collapsed-east-patch-desc'
                     );
                 }
-            }  else {
-                Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
             }
+            Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
         }
     },
 

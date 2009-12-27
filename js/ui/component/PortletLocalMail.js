@@ -65,6 +65,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
     autoHeight       : true,
     loadMask         : true,
     autoScroll       : true,
+    height           : 250,
     autoExpandColumn : 'GridMailingTitle',
     id               : 'PortletLocalMail-grid-id',
     store            : ui.component._PortletLocalMail.store,
@@ -78,34 +79,30 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                            emptyText: '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
                            deferEmptyText: false
                        }),
-    listeners : {
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            var MailId    = grid.store.getAt(rowIndex).data.pubDate,
-                MailUrl   = grid.store.getAt(rowIndex).data.link,
-                MailTitle = grid.store.getAt(rowIndex).data.title;
 
-            if (!Ext.getCmp('main-panel').findById('mail-' + MailId)) {
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        var MailId    = grid.store.getAt(rowIndex).data.pubDate,
+            MailUrl   = grid.store.getAt(rowIndex).data.link,
+            MailTitle = grid.store.getAt(rowIndex).data.title;
 
-                Ext.getCmp('main-panel').add({
-                    xtype      : 'panel',
-                    id         : 'mail-' + MailId,
-                    title      : Ext.util.Format.substr(MailTitle, 0, 20) + '...',
-                    tabTip     : MailTitle,
-                    iconCls    : 'home-mailing-title',
-                    closable   : true,
-                    layout     : 'fit',
-                    items: [ new Ext.ux.IFrameComponent({ id: 'frame-mail-' + MailId, url: MailUrl }) ]
-                });
-                Ext.getCmp('main-panel').setActiveTab('mail-' + MailId);
+        if (!Ext.getCmp('main-panel').findById('mail-' + MailId)) {
 
-            } else {
-                Ext.getCmp('main-panel').setActiveTab('mail-' + MailId);
-            }
+            Ext.getCmp('main-panel').add({
+                xtype      : 'panel',
+                id         : 'mail-' + MailId,
+                title      : Ext.util.Format.substr(MailTitle, 0, 20) + '...',
+                tabTip     : MailTitle,
+                iconCls    : 'home-mailing-title',
+                closable   : true,
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-mail-' + MailId, url: MailUrl }) ]
+            });
         }
+        Ext.getCmp('main-panel').setActiveTab('mail-' + MailId);
     },
 
-    onContextClick : function(grid, rowIndex, e)
+    onContextClick: function(grid, rowIndex, e)
     {
 
         if(!this.menu) {
@@ -151,6 +148,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 

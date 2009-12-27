@@ -163,7 +163,6 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                 html: '<div id="diff_content_' + lang + '_' + rowIdx +
                       '" class="diff-content"></div>'
             });
-            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
 
             Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
                 '<img src="themes/img/loading.gif" ' +
@@ -186,11 +185,8 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                     Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
                 }
             });
-
-        } else {
-            // This tab already exist. We focus it.
-            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
         }
+        Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
 
     }
 
@@ -348,12 +344,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     })
                 ]
             });
-            Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
-
-        } else {
-            // This tab already exist. We focus it.
-            Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
         }
+        Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
     },
 
     initComponent : function()
