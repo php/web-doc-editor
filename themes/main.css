@@ -25,6 +25,9 @@
     color: #849090;
 }
 
+.iconClose {
+    background-image: url(./img/cancel.png) !important;
+}
 .closeOthersTabs {
     background-image: url(./img/tab_delete.png) !important;
 }

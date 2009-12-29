@@ -401,6 +401,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             this.tbar = (this.isPatch) ? [
                 // patch file pane tbar
                 {
+                    scope   : this,
+                    tooltip : _('Close Tab'),
+                    iconCls : 'iconClose',
+                    handler : function()
+                    {
+                        Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
+                    }
+                }, '-', {
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
                     tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
@@ -458,6 +466,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             ] : [
                 // en/lang file pane tbar
                 {
+                    scope   : this,
+                    tooltip : _('Close Tab'),
+                    iconCls : 'iconClose',
+                    handler : function()
+                    {
+                        Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
+                    }
+                }, '-', {
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
                     tooltip  : _('<b>Save</b> this file (CTRL+s)'),
