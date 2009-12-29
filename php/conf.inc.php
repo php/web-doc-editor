@@ -63,6 +63,10 @@ define('DOC_EDITOR_VCS_ANON_PASSWORD', '');
  * VCS module
  */
 define('DOC_EDITOR_VCS_MODULE', 'phpdoc-all');
+/**
+ * Karma File
+ */
+define('DOC_EDITOR_VCS_KARMA_FILE', 'http://svn.php.net/viewvc/SVNROOT/global_avail?view=co');
 
 
 /**

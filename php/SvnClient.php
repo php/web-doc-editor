@@ -19,6 +19,116 @@ class SvnClient
     {
     }
 
+    private function getKarmaList() {
+
+        // If this data is older than 1 day, we update it
+        $data = RepositoryFetcher::getStaticValue('karma_list', '');
+
+        if( $data === false || ($data["update_time"] + (24*60*60)) > time() ) {
+            $this->updateKarmaList();
+            $data = RepositoryFetcher::getStaticValue('karma_list', '');
+        }
+        return $data["data"];
+    }
+
+    private function updateKarmaList() {
+
+        $file = @file(DOC_EDITOR_VCS_KARMA_FILE);
+
+        $line_avail = array();
+        $user = array();
+
+        // We cleanUp the content of this file
+        for( $i=0; $i < count($file); $i++) {
+            if( substr($file[$i], 0, 6) == 'avail|') {
+                $line_avail[] = $file[$i];
+
+                $t = explode("|", $file[$i]);
+                $users   = trim($t[1]);
+                $karmas = ( isset($t[2]) ) ? trim($t[2]) : 'ALL';
+
+                $users = explode(",", $users);
+                $karmas = explode(",", $karmas);
+
+                for( $j=0; $j < count($users); $j++ ) {
+                    if( isset($user[$users[$j]]) ) {
+
+                        $user[$users[$j]]['karma'] = array_merge( $karmas, $user[$users[$j]]['karma'] );
+
+                    } else {
+
+                        $user[$users[$j]]['karma'] = $karmas;
+                    }
+                }
+
+            }
+        }
+
+        // We store this value into DB as json string to retrieve it later
+        $to_store = array(
+            "update_time" => time(),
+            "data"        => $user
+        );
+        RepositoryManager::setStaticValue('karma_list', '', json_encode($to_store));
+
+    }
+
+    // Return true if the $user have the right karma for $module
+    public function checkKarma($user, $lang)
+    {
+
+        $userList = $this->getKarmaList();
+
+        if( isset($userList[$user]) ) {
+
+            $karma = $userList[$user]['karma'];
+
+            // Must have ALL, phpdoc or phpdoc/$lang
+            if( in_array("ALL", $karma) || in_array("phpdoc", $karma) || in_array("phpdoc/$lang", $karma) ) {
+                return true;
+            } else {
+                return 'You haven\'t good Karma for the chosen language. Your Current karma is : '.implode(", ", $karma);
+            }
+
+        }
+        return 'You haven\'t any karma !';
+
+    }
+
+    public function masterPhpAuthenticate($username, $password)
+    {
+
+        $post = http_build_query(
+                array(
+                        "token"    => getenv("TOKEN"),
+                        "username" => $username,
+                        "password" => $password,
+                )
+        );
+
+        $opts = array(
+                "method"  => "POST",
+                "header"  => "Content-type: application/x-www-form-urlencoded",
+                "content" => $post,
+        );
+
+        $ctx = stream_context_create(array("http" => $opts));
+
+        $s = file_get_contents("https://master.php.net/fetch/cvsauth.php", false, $ctx);
+
+        $a = @unserialize($s);
+        if (!is_array($a)) {
+                return 'svn.php.net seems to be down !';
+        }
+        if (isset($a["errno"])) {
+                if( $a["errno"] == 0 ) { return 'svn login failed'; }
+                if( $a["errno"] == 1 ) { return 'Bad login'; }
+                if( $a["errno"] == 2 ) { return 'Bad password'; }
+        }
+
+        return true;
+    }
+
     /**
      * Test the SVN credentials against the server
      * ref - http://www.php.net/manual/en/features.http-auth.php
@@ -27,7 +137,7 @@ class SvnClient
      * @param $password svn login password.
      * @return TRUE if the loggin success, error message otherwise.
      */
-    public function authenticate($username, $password)
+    public function svnAuthenticate($username, $password)
     {
         $uuid = md5(uniqid(rand(), true));
         $uuid =   substr($uuid, 0, 8)  . '-'

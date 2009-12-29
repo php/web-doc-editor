@@ -82,7 +82,10 @@ class ExtJsController
             return JsonResponseBuilder::success();
         } elseif ($response['state'] === false) {
             // This user is unknow from this server
-            return JsonResponseBuilder::failure(array('msg' => $response['msg']));
+            return JsonResponseBuilder::failure(array(
+                                                 'msg'        => $response['msg'],
+                                                 'authMethod' => $response['authMethod']
+                                               ));
         } else {
             return JsonResponseBuilder::failure();
         }

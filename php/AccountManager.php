@@ -121,11 +121,30 @@ class AccountManager
 
         } // End anonymous's login
         else {
-           // We try to authenticate this user to VCS server.
-           $AuthReturn = VCSFactory::getInstance()->authenticate($vcsLogin, $vcsPasswd);
+
+           // If this app is installed into Php's server, we use the standad way to verify login/password
+           if( $_SERVER["SERVER_NAME"] == "doc.php.net" ) {
+               // We try to authenticate this user to master php server.
+               $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
+               $return['authMethod'] = 'masterPhp';
+           } else {
+               // We try to authenticate this user to VCS server.
+               $AuthReturn = VCSFactory::getInstance()->svnAuthenticate($vcsLogin, $vcsPasswd);
+               $return['authMethod'] = 'svnServer';
+           }
         }
 
         if( $AuthReturn === true ) {
+
+           // Check the karma
+           $karma = VCSFactory::getInstance()->checkKarma($vcsLogin, $lang);
+
+           if( $karma !== true ) {
+
+               $return['state'] = false;
+               $return['msg']   = $karma;
+
+           }
 
            $this->vcsLogin  = $vcsLogin;
            $this->vcsPasswd = $vcsPasswd;
