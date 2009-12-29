@@ -221,7 +221,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                 {
                     scope   : this,
                     text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'PendingCommit',
+                    iconCls : 'iconPendingCommit',
                     handler : function()
                     {
                         this.grid.fireEvent('rowdblclick',
@@ -325,7 +325,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                 {
                     scope   : this,
                     text    : '<b>'+_('View in a new Tab')+'</b>',
-                    iconCls : 'PendingCommit',
+                    iconCls : 'iconPendingCommit',
                     handler : function()
                     {
                         this.grid.fireEvent('rowdblclick',
@@ -379,7 +379,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
                 {
                     scope   : this,
                     text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'PendingCommit',
+                    iconCls : 'iconPendingCommit',
                     handler : function()
                     {
                         this.grid.fireEvent('rowdblclick',

@@ -231,7 +231,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         originTitle : FileName,
                         closable    : true,
                         tabTip      : String.format(_('in {0}'), FilePath),
-                        iconCls     : 'AllFiles',
+                        iconCls     : 'iconAllFiles',
                         items       : [panelCenter, panelWest]
                     });
 

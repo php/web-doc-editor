@@ -126,7 +126,7 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
                 items : [{
                     scope   : this,
                     text    : '<b>'+_('Open in a new Tab')+'</b>',
-                    iconCls : 'openInTab',
+                    iconCls : 'iconOpenInTab',
                     handler : function()
                     {
                         this.openTab(this.ctxRowIndex);

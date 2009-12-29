@@ -111,7 +111,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                 items : [{
                     scope   : this,
                     text    : '<b>'+_('Open in a new Tab')+'</b>',
-                    iconCls : 'openInTab',
+                    iconCls : 'iconOpenInTab',
                     handler : function()
                     {
                         this.fireEvent('rowdblclick', grid, this.ctxIndex, e);
@@ -120,7 +120,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                 }, '-', {
                     scope   : this,
                     text    : _('Refresh this grid'),
-                    iconCls : 'refresh',
+                    iconCls : 'iconRefresh',
                     handler : function()
                     {
                         this.ctxIndex = null;

@@ -412,7 +412,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
                     tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
-                    iconCls  : 'saveFile',
+                    iconCls  : 'iconSaveFile',
                     handler  : function()
                     {
                         var tmp = new ui.task.AcceptPatchTask({
@@ -477,7 +477,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     id       : id_prefix + '-PANEL-btn-save-' + this.fid,
                     scope    : this,
                     tooltip  : _('<b>Save</b> this file (CTRL+s)'),
-                    iconCls  : 'saveFile',
+                    iconCls  : 'iconSaveFile',
                     disabled : true,
                     handler  : function()
                     {
@@ -566,7 +566,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     id       : id_prefix + '-PANEL-btn-saveas-' + this.fid,
                     scope    : this,
                     tooltip  : _('<b>Save as</b> a patch'),
-                    iconCls  : 'saveAsFile',
+                    iconCls  : 'iconSaveAsFile',
                     disabled : true,
                     handler  : function()
                     {

@@ -152,7 +152,7 @@ ui.component.CommitLogManager = Ext.extend(Ext.Window,
 {
     id         : 'commit-log-win',
     title      : _('Manage Log Message'),
-    iconCls    : 'winManageLog',
+    iconCls    : 'iconWinManageLog',
     width      : 650,
     height     : 350,
     layout     : 'fit',

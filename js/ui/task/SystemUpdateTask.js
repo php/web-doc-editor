@@ -9,7 +9,7 @@ ui.task._SystemUpdateTask.refresh_ui = function()
     Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
 
     // Re-enable Finish button
-    Ext.getCmp('btn-start-refresh').setIconClass('finishRefresh');
+    Ext.getCmp('btn-start-refresh').setIconClass('iconFinishRefresh');
     Ext.getCmp('btn-start-refresh').setText(_('Finish !'));
     Ext.getCmp('btn-start-refresh').setHandler(function()
     {

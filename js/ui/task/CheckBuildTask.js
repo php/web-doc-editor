@@ -28,7 +28,7 @@ ui.task._CheckBuildTask.display = function()
                 tabTip     : String.format(_('Check Build Result for the documentation {0}'), Ext.util.Format.uppercase(phpDoc.userLang)),
                 closable   : true,
                 autoScroll : true,
-                iconCls    : 'checkBuild',
+                iconCls    : 'iconCheckBuild',
                 html       : '<div class="check-build-content">' + o.mess + '</div>'
             });
             Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + phpDoc.userLang);

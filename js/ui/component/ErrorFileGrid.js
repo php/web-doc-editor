@@ -108,7 +108,7 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
             items : [{
                 scope   : this,
                 text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'FilesError',
+                iconCls : 'iconFilesError',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',

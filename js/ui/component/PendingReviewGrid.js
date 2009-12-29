@@ -221,7 +221,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
             items : [
                 {
                     text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'FilesNeedReviewed',
+                    iconCls : 'iconFilesNeedReviewed',
                     scope   : this,
                     handler : function()
                     {

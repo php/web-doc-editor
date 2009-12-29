@@ -200,7 +200,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 scope   : this,
                 id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
                 tooltip : _('<b>Load/Refresh</b> revisions'),
-                iconCls : 'refresh',
+                iconCls : 'iconRefresh',
                 handler : function()
                 {
                     this.store.reload();

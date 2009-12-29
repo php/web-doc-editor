@@ -19,7 +19,7 @@ ui.component._BuildStatus.display = function(config)
         tabTip     : String.format(_('Last failed build for the documentation {0}'), Ext.util.Format.uppercase(this.lang)),
         closable   : true,
         autoScroll : true,
-        iconCls    : 'checkBuild',
+        iconCls    : 'iconCheckBuild',
         html       : '<div class="check-build-content" id="check-build-content"></div>'
     });
     Ext.getCmp('main-panel').setActiveTab('last_failed_build_' + this.lang);
@@ -129,7 +129,7 @@ ui.component._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
             items : [{
                 scope   : this,
                 text    : '<b>' + _('View in a new Tab') + '</b>',
-                iconCls : 'openInTab',
+                iconCls : 'iconOpenInTab',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',

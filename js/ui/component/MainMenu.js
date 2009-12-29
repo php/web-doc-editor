@@ -75,7 +75,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
             items: [{
                 text     : _('Refresh all data'),
                 disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
-                iconCls  : 'refresh',
+                iconCls  : 'iconRefresh',
                 handler  : function()
                 {
                     // We test if there is an update in progress or not
@@ -114,7 +114,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     items : [{
                         text     : _('Check Build'),
                         disabled : (phpDoc.userLogin === 'anonymous'),
-                        iconCls  : 'checkBuild',
+                        iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {
                             // We test if there is a check in progress for this language
@@ -156,7 +156,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         }
                     }, {
                         text    : _('Last failed build'),
-                        iconCls : 'BuildStatus',
+                        iconCls : 'iconBuildStatus',
                         handler : function()
                         {
                             var tab = Ext.getCmp('tab-build-status');
@@ -166,7 +166,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 Ext.getCmp('main-panel').add({
                                     id       : 'tab-build-status',
                                     title    : _('Last failed build'),
-                                    iconCls  : 'BuildStatus',
+                                    iconCls  : 'iconBuildStatus',
                                     layout   : 'fit',
                                     closable : true,
                                     items    : [ new ui.component.BuildStatus() ]

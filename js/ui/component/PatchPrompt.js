@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.component');
 ui.component.PatchPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Do you want to be alerted ?'),
-    iconCls    : 'patchAlert',
+    iconCls    : 'iconPatchAlert',
     layout     : 'form',
     bodyStyle  : 'padding: 5px;',
     labelWidth : 50,

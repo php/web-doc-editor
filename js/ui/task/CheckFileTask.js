@@ -37,7 +37,7 @@ ui.task.CheckFileTask = function(config)
                 Ext.getCmp('main-panel').add({
                     id         : 'FE-help-' + this.fid,
                     title      : 'Error in ' + this.fname,
-                    iconCls    : 'FilesError',
+                    iconCls    : 'iconFilesError',
                     closable   : true,
                     autoScroll : true,
                     autoLoad   : './error?dir='  + this.fpath +

@@ -73,10 +73,6 @@
     color:#555;
 }
 
-.NotInEn {
-    background-image: url(./img/delete.png) !important;
-}
-
 .home-summary-title, .home-bugs-title {
     background-position: 0 6px !important;
 }
@@ -86,98 +82,77 @@
 .home-mailing-title {
     background: transparent url(./img/email_open_image.png) no-repeat 0 5px !important;
 }
-.FilesNeedTranslate {
-    background: transparent url(./img/page_add.png) no-repeat 0 0;
-}
-.FilesNeedUpdate {
-    background: transparent url(./img/arrow_refresh.png) no-repeat 0 0;
-}
-.FilesNeedReviewed {
-    background: transparent url(./img/page_edit.png) no-repeat 0 0;
-}
-.iconCheckDoc {
-    background-image: url(./img/lightbulb_add.png) !important;
-}
-.BuildStatus {
-    background-image: url(./img/error_delete.png) !important;
-}
-.AllFiles {
-    background: transparent url(./img/application_side_tree.png) no-repeat 0 0;
-}
-.PendingCommit {
-    background: transparent url(./img/arrow_down.png) no-repeat 0 0;
-}
-.PendingPatch {
-    background: transparent url(./img/arrow_switch.png) no-repeat 0 0;
-}
+
+
 .MainMenu {
     background-image: url(./img/application_home.png) !important;
     background-position: 0 1px !important;
 }
-.FilesError {
-    background: transparent url(./img/error_delete.png) no-repeat 0 0;
-}
+
+
 
 /* Icons */
 
-.iconBook              { background-image: url(./img/book.png)               !important;}
-.iconBugs              { background-image: url(./img/bug.png)                !important;}
-.iconCheckEntities     { background-image: url(./img/link_break.png)         !important;}
-.iconClose             { background-image: url(./img/cancel.png)             !important;}
-.iconCloseOthersTabs   { background-image: url(./img/tab_delete.png)         !important;}
-.iconCommitFileVcs     { background-image: url(./img/database_go.png)        !important;}
-.iconConf              { background-image: url(./img/wrench_orange.png)      !important;}
-.iconDelete            { background-image: url(./img/delete.png)             !important;}
-.iconErasePersonalData { background-image: url(./img/layout_delete.png)      !important;}
-.iconError             { background-image: url(./img/exclamation.gif)        !important;}
-.iconFiles             { background-image: url(./img/page.png)               !important;} 
-.iconFolderOpen        { background-image: url(./img/folder-open.gif)        !important;}
-.iconFolderClose       { background-image: url(./img/folder.gif)             !important;}
-.iconHelp              { background-image: url(./img/help.png)               !important;}
-.iconIndent            { background-image: url(./img/text_indent.png)        !important;}
-.iconInfo              { background-image: url(./img/information.gif)        !important;}
-.iconInsertCode        { background-image: url(./img/page_code.png)          !important;}
-.iconLogOut            { background-image: url(./img/door_in.png)            !important;}
-.iconPageDelete        { background-image: url(./img/page_delete.png)        !important;}
-.iconRedo              { background-image: url(./img/arrow_redo.png)         !important;}
-.iconRun               { background-image: url(./img/cog.png)                !important;}
-.iconSendEmail         { background-image: url(./img/email_edit.png)         !important;}
-.iconSummary           { background-image: url(./img/details.gif)            !important;}
-.iconTabError          { background-image: url(./img/error_delete.png)       !important;}
-.iconTabLink           { background-image: url(./img/page_link.png)          !important;}
-.iconTabNeedReviewed   { background-image: url(./img/page_edit.png)          !important;}
-.iconTabNeedTranslate  { background-image: url(./img/page_add.png)           !important;}
-.iconTabNeedUpdate     { background-image: url(./img/arrow_refresh.png)      !important;}
-.iconTabView           { background-image: url(./img/eye.png)                !important;}
-.iconTranslator        { background-image: url(./img/group.png)              !important;}
-.iconUndo              { background-image: url(./img/arrow_undo.png)         !important;}
-.iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)   !important;}
-.iconView              { background-image: url(./img/eye.png)                !important;}
-.iconViewDiff          { background-image: url(./img/chart_organisation.png) !important;}
+.iconAllFiles          { background-image: url(./img/application_side_tree.png) !important;}
+.iconBook              { background-image: url(./img/book.png)                  !important;}
+.iconBugs              { background-image: url(./img/bug.png)                   !important;}
+.iconBuildStatus       { background-image: url(./img/error_delete.png)          !important;}
+.iconCheckBuild        { background-image: url(./img/bug_delete.png)            !important;}
+.iconCheckDoc          { background-image: url(./img/lightbulb_add.png)         !important;}
+.iconCheckEntities     { background-image: url(./img/link_break.png)            !important;}
+.iconClose             { background-image: url(./img/cancel.png)                !important;}
+.iconCloseOthersTabs   { background-image: url(./img/tab_delete.png)            !important;}
+.iconCommitFileVcs     { background-image: url(./img/database_go.png)           !important;}
+.iconConf              { background-image: url(./img/wrench_orange.png)         !important;}
+.iconDelete            { background-image: url(./img/delete.png)                !important;}
+.iconErasePersonalData { background-image: url(./img/layout_delete.png)         !important;}
+.iconError             { background-image: url(./img/exclamation.gif)           !important;}
+.iconFiles             { background-image: url(./img/page.png)                  !important;} 
+.iconFilesError        { background-image: url(./img/error_delete.png)          !important;}
+.iconFilesNeedReviewed { background-image: url(./img/page_edit.png)             !important;}
+.iconFilesNeedTranslate{ background-image: url(./img/page_add.png)              !important;}
+.iconFilesNeedUpdate   { background-image: url(./img/arrow_refresh.png)         !important;}
+.iconFinishRefresh     { background-image: url(./img/accept.png)                !important;}
+.iconFolderOpen        { background-image: url(./img/folder-open.gif)           !important;}
+.iconFolderClose       { background-image: url(./img/folder.gif)                !important;}
+.iconHelp              { background-image: url(./img/help.png)                  !important;}
+.iconIndent            { background-image: url(./img/text_indent.png)           !important;}
+.iconInfo              { background-image: url(./img/information.gif)           !important;}
+.iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
+.iconLogOut            { background-image: url(./img/door_in.png)               !important;}
+.iconNotInEn           { background-image: url(./img/delete.png)                !important;}
+.iconOpenInTab         { background-image: url(./img/tab_go.png)                !important;}
+.iconPageDelete        { background-image: url(./img/page_delete.png)           !important;}
+.iconPatchAlert        { background-image: url(./img/bell.png)                  !important;}
+.iconPendingCommit     { background-image: url(./img/arrow_down.png)            !important;}
+.iconPendingPatch      { background-image: url(./img/arrow_switch.png)          !important;}
+.iconRedo              { background-image: url(./img/arrow_redo.png)            !important;}
+.iconRefresh           { background-image: url(./img/arrow_refresh.png)         !important;}
+.iconRun               { background-image: url(./img/cog.png)                   !important;}
+.iconSaveAsFile        { background-image: url(./img/table_save.png)            !important;}
+.iconSaveFile          { background-image: url(./img/disk.png)                  !important;}
+.iconSendEmail         { background-image: url(./img/email_edit.png)            !important;}
+.iconStartRefresh      { background-image: url(./img/hourglass_go.png)          !important; }
+.iconSummary           { background-image: url(./img/details.gif)               !important;}
+.iconTabError          { background-image: url(./img/error_delete.png)          !important;}
+.iconTabLink           { background-image: url(./img/page_link.png)             !important;}
+.iconTabNeedReviewed   { background-image: url(./img/page_edit.png)             !important;}
+.iconTabNeedTranslate  { background-image: url(./img/page_add.png)              !important;}
+.iconTabNeedUpdate     { background-image: url(./img/arrow_refresh.png)         !important;}
+.iconTabView           { background-image: url(./img/eye.png)                   !important;}
+.iconTranslator        { background-image: url(./img/group.png)                 !important;}
+.iconUndo              { background-image: url(./img/arrow_undo.png)            !important;}
+.iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
+.iconView              { background-image: url(./img/eye.png)                   !important;}
+.iconViewDiff          { background-image: url(./img/chart_organisation.png)    !important;}
+.iconWinManageLog      { background-image: url(./img/page_white_gear.png)       !important; }
 
 
 
-.checkBuild { background-image: url(./img/bug_delete.png) !important;}
-.refresh    { background-image: url(./img/arrow_refresh.png) !important;}
-.saveFile   { background-image: url(./img/disk.png) !important;}
-.saveAsFile { background-image: url(./img/table_save.png) !important;}
-.patchAlert { background-image: url(./img/bell.png) !important;}
 
-.openInTab {
-    background-image: url(./img/tab_go.png) !important;
-}
-.startRefresh {
-    background-image: url(./img/hourglass_go.png) !important;
-}
-.finishRefresh {
-    background-image: url(./img/accept.png) !important;
-}
 .confStatusBar {
     background: transparent url(./img/help.png) no-repeat 0 2px;
     padding-left: 20px !important;
-}
-.winManageLog {
-    background-image: url(./img/page_white_gear.png) !important;
 }
 #main-panel .x-layout-collapsed-west {
     background-image: url(./img/vcs_log.png);

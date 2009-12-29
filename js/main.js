@@ -365,7 +365,7 @@ var phpDoc = function()
                         title     : _('Files Need Translate') + ' (<em id="acc-need-translate-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'FilesNeedTranslate',
+                        iconCls   : 'iconFilesNeedTranslate',
                         hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.PendingTranslateGrid.getInstance() ],
                         collapsed : true
@@ -374,7 +374,7 @@ var phpDoc = function()
                         title     : _('Files Need Update') + ' (<em id="acc-need-update-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'FilesNeedUpdate',
+                        iconCls   : 'iconFilesNeedUpdate',
                         hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.StaleFileGrid.getInstance() ],
                         collapsed : true
@@ -383,7 +383,7 @@ var phpDoc = function()
                         title     : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'FilesError',
+                        iconCls   : 'iconFilesError',
                         hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.ErrorFileGrid.getInstance() ],
                         collapsed : true
@@ -392,7 +392,7 @@ var phpDoc = function()
                         title     : _('Files Need Reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'FilesNeedReviewed',
+                        iconCls   : 'iconFilesNeedReviewed',
                         hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.PendingReviewGrid.getInstance() ],
                         collapsed : true
@@ -401,7 +401,7 @@ var phpDoc = function()
                         title     : _('Not in EN tree') + ' (<em id="acc-notInEn-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'NotInEn',
+                        iconCls   : 'iconNotInEn',
                         hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.NotInENGrid.getInstance() ],
                         collapsed : true
@@ -410,7 +410,7 @@ var phpDoc = function()
                         title     : _('All files'),
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'AllFiles',
+                        iconCls   : 'iconAllFiles',
                         items     : [ ui.component.RepositoryTree.getInstance() ],
                         collapsed : true
                     }, {
@@ -430,7 +430,7 @@ var phpDoc = function()
                         title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'PendingCommit',
+                        iconCls   : 'iconPendingCommit',
                         items     : [ ui.component.PendingCommitGrid.getInstance() ],
                         collapsed : true
                     }, {
@@ -438,7 +438,7 @@ var phpDoc = function()
                         title     : _('Pending Patch') + ' (<em id="acc-pendingPatch-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'PendingPatch',
+                        iconCls   : 'iconPendingPatch',
                         items     : [ ui.component.PendingPatchGrid.getInstance() ],
                         collapsed : true
                     }]

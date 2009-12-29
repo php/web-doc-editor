@@ -10,7 +10,7 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
     resizable : false,
     modal     : true,
     bodyStyle : 'padding:15px 15px 0',
-    iconCls   : 'refresh',
+    iconCls   : 'iconRefresh',
     html      : [
         '<div id="wizard-step-1" class="wizard-step-before">',
             _('Update all files from VCS'),
@@ -28,7 +28,7 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
     buttons : [{
         id      : 'btn-start-refresh',
         text    : _('Start'),
-        iconCls : 'startRefresh',
+        iconCls : 'iconStartRefresh',
         handler : function()
         {
             // Disable start button
