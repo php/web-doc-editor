@@ -677,9 +677,6 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).disable();
                             }
 
-                            // Enable the undo btn
-                            //Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
-
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
 
@@ -711,7 +708,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
 
                             // Enable the undo btn
-                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[3].enable();
+                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[5].enable();
 
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;

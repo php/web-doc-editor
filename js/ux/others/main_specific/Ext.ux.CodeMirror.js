@@ -96,7 +96,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 }
                 
             } else {
-                cmp.ownerCt.topToolbar.items.items[3].enable();
+                cmp.ownerCt.topToolbar.items.items[5].enable();
                 if( cmp.documentDurty === false ) {
                     cmp.fireEvent('codemodified');
                     cmp.documentDurty = true;
@@ -110,7 +110,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     saveFunction: function(cmId) {
 
         var cmp     = Ext.getCmp(cmId),
-            saveBtn = cmp.ownerCt.topToolbar.items.items[0];
+            saveBtn = cmp.ownerCt.topToolbar.items.items[1];
 
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
@@ -174,11 +174,11 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.mirror.undo();
 
         // Enable the Redo btn
-        cmp.topToolbar.items.items[4].enable();
+        cmp.topToolbar.items.items[6].enable();
 
         // Is there more undo history ? If not, we disable this btn
         if( ! this.mirror.editor.history.history.length ) {
-            cmp.topToolbar.items.items[3].disable();
+            cmp.topToolbar.items.items[5].disable();
         }
     },
 
@@ -187,11 +187,11 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.mirror.redo();
 
         // Enable the undo btn
-        cmp.topToolbar.items.items[3].enable();
+        cmp.topToolbar.items.items[5].enable();
 
         // Is there more redo history ? If not, we disable this btn
         if( ! this.mirror.editor.history.redoHistory.length ) {
-            cmp.topToolbar.items.items[4].disable();
+            cmp.topToolbar.items.items[6].disable();
         }
     },
 
