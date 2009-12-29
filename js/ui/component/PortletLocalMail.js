@@ -93,7 +93,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                 id         : 'mail-' + MailId,
                 title      : Ext.util.Format.substr(MailTitle, 0, 20) + '...',
                 tabTip     : MailTitle,
-                iconCls    : 'home-mailing-title',
+                iconCls    : 'iconMailing',
                 closable   : true,
                 layout     : 'fit',
                 items: [ new Ext.ux.IFrameComponent({ id: 'frame-mail-' + MailId, url: MailUrl }) ]
@@ -169,7 +169,7 @@ ui.component._PortletLocalMail.reloadData = function() {
 ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 {
     title   : '',
-    iconCls : 'home-mailing-title',
+    iconCls : 'iconMailing',
     layout  : 'fit',
     store   : ui.component._PortletLocalMail.store,
     reloadData : ui.component._PortletLocalMail.reloadData,

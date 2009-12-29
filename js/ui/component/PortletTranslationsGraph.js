@@ -57,7 +57,7 @@ ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 ui.component.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics for all language'),
-    iconCls : 'home-graphic-title',
+    iconCls : 'iconGraphic',
     layout  : 'fit',
     store   : ui.component._PortletTranslationsGraph.store,
     tools   : [{

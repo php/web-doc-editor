@@ -73,23 +73,10 @@
     color:#555;
 }
 
-.home-summary-title, .home-bugs-title {
-    background-position: 0 6px !important;
-}
-.home-graphic-title {
-    background: transparent url(./img/chart_pie.png) no-repeat 0 5px !important;
-}
-.home-mailing-title {
-    background: transparent url(./img/email_open_image.png) no-repeat 0 5px !important;
-}
-
-
 .MainMenu {
     background-image: url(./img/application_home.png) !important;
     background-position: 0 1px !important;
 }
-
-
 
 /* Icons */
 
@@ -115,11 +102,13 @@
 .iconFinishRefresh     { background-image: url(./img/accept.png)                !important;}
 .iconFolderOpen        { background-image: url(./img/folder-open.gif)           !important;}
 .iconFolderClose       { background-image: url(./img/folder.gif)                !important;}
+.iconGraphic           { background-image: url(./img/chart_pie.png)             !important;}
 .iconHelp              { background-image: url(./img/help.png)                  !important;}
 .iconIndent            { background-image: url(./img/text_indent.png)           !important;}
 .iconInfo              { background-image: url(./img/information.gif)           !important;}
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
 .iconLogOut            { background-image: url(./img/door_in.png)               !important;}
+.iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
 .iconNotInEn           { background-image: url(./img/delete.png)                !important;}
 .iconOpenInTab         { background-image: url(./img/tab_go.png)                !important;}
 .iconPageDelete        { background-image: url(./img/page_delete.png)           !important;}
@@ -132,7 +121,7 @@
 .iconSaveAsFile        { background-image: url(./img/table_save.png)            !important;}
 .iconSaveFile          { background-image: url(./img/disk.png)                  !important;}
 .iconSendEmail         { background-image: url(./img/email_edit.png)            !important;}
-.iconStartRefresh      { background-image: url(./img/hourglass_go.png)          !important; }
+.iconStartRefresh      { background-image: url(./img/hourglass_go.png)          !important;}
 .iconSummary           { background-image: url(./img/details.gif)               !important;}
 .iconTabError          { background-image: url(./img/error_delete.png)          !important;}
 .iconTabLink           { background-image: url(./img/page_link.png)             !important;}
@@ -145,7 +134,7 @@
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}
 .iconViewDiff          { background-image: url(./img/chart_organisation.png)    !important;}
-.iconWinManageLog      { background-image: url(./img/page_white_gear.png)       !important; }
+.iconWinManageLog      { background-image: url(./img/page_white_gear.png)       !important;}
 
 
 
