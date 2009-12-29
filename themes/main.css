@@ -1,13 +1,6 @@
-.grid-search {
-    background-image: url(./img/zoom.png) !important;
-}
+/* About window */
 
-.MainInfoTabPanel {
-    margin: 0 5px 0 5px !important;
-    padding: 0 !important;
-}
-
- #phd-oe-about {
+#phd-oe-about {
     text-align: center;
     margin: 70px 0px 50px 0;
 } #phd-oe-about-info {
@@ -25,12 +18,42 @@
     color: #849090;
 }
 
-.iconClose {
-    background-image: url(./img/cancel.png) !important;
+/* Wizard */
+
+#wizard-step-1, #wizard-step-2, #wizard-step-3 {
+    margin-top: 5px;
+    padding-left: 20px;
 }
-.closeOthersTabs {
-    background-image: url(./img/tab_delete.png) !important;
+.wizard-step-before {
+    background: transparent url(./img/arrow_right.png) no-repeat 0 0;
+    opacity: 0.5;
+    padding-bottom: 5px;
 }
+.wizard-step-working {
+    background: transparent url(./img/loading.gif) no-repeat 0 0;
+    padding-bottom: 5px;
+}
+.wizard-wait {
+    display: none;
+}
+.wizard-show {
+    margin-top: 5px;
+    margin-left: 10px;
+    display: block;
+}
+.wizard-step-done {
+    background: transparent url(./img/accept.png) no-repeat 0 0;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+
+
+.MainInfoTabPanel {
+    margin: 0 5px 0 5px !important;
+    padding: 0 !important;
+}
+
 
 .x-tree-node .modified a span {
     color: red;
@@ -54,196 +77,158 @@
     background-image: url(./img/delete.png) !important;
 }
 
-#wizard-step-1, #wizard-step-2, #wizard-step-3 {
-    margin-top: 5px;
-    padding-left: 20px;
-} .wizard-step-before {
-    background: transparent url(./img/arrow_right.png) no-repeat 0 0;
-    opacity: 0.5;
-    padding-bottom: 5px;
-} .wizard-step-working {
-    background: transparent url(./img/loading.gif) no-repeat 0 0;
-    padding-bottom: 5px;
-} .wizard-wait {
-    display: none;
-} .wizard-show {
-    margin-top: 5px;
-    margin-left: 10px;
-    display: block;
-} .wizard-step-done {
-    background: transparent url(./img/accept.png) no-repeat 0 0;
-    font-weight: bold;
-    padding-bottom: 5px;
-} #home-panel {
-    margin: 10px;
-} #home-panel table {
-    width: 100%;
-    vertical-align: top;
-} #home-panel table tr {
-    vertical-align: top;
-} .home-summary-title, .home-bugs-title {
+.home-summary-title, .home-bugs-title {
     background-position: 0 6px !important;
-} .home-graphic-title {
+}
+.home-graphic-title {
     background: transparent url(./img/chart_pie.png) no-repeat 0 5px !important;
-} .home-mailing-title {
+}
+.home-mailing-title {
     background: transparent url(./img/email_open_image.png) no-repeat 0 5px !important;
-} .FilesNeedTranslate {
+}
+.FilesNeedTranslate {
     background: transparent url(./img/page_add.png) no-repeat 0 0;
-} .FilesNeedUpdate {
+}
+.FilesNeedUpdate {
     background: transparent url(./img/arrow_refresh.png) no-repeat 0 0;
-} .FilesNeedReviewed {
+}
+.FilesNeedReviewed {
     background: transparent url(./img/page_edit.png) no-repeat 0 0;
-} .iconCheckDoc {
+}
+.iconCheckDoc {
     background-image: url(./img/lightbulb_add.png) !important;
-} .BuildStatus {
+}
+.BuildStatus {
     background-image: url(./img/error_delete.png) !important;
-} .AllFiles {
+}
+.AllFiles {
     background: transparent url(./img/application_side_tree.png) no-repeat 0 0;
-} .PendingCommit {
+}
+.PendingCommit {
     background: transparent url(./img/arrow_down.png) no-repeat 0 0;
-} .PendingPatch {
+}
+.PendingPatch {
     background: transparent url(./img/arrow_switch.png) no-repeat 0 0;
-} .MainMenu {
+}
+.MainMenu {
     background-image: url(./img/application_home.png) !important;
     background-position: 0 1px !important;
-} .FilesError {
+}
+.FilesError {
     background: transparent url(./img/error_delete.png) no-repeat 0 0;
-} .iconBugs {
-    background-image: url(./img/bug.png) !important;
-} .iconBook {
-    background-image: url(./img/book.png) !important;
-} .iconIndent {
-    background-image: url(./img/text_indent.png) !important;
-} .iconUndo {
-    background-image: url(./img/arrow_undo.png) !important;
-} .iconRedo {
-    background-image: url(./img/arrow_redo.png) !important;
 }
 
-.iconInfo {
-    background-image: url(./img/information.gif) !important;
-}
-.iconError {
-    background-image: url(./img/exclamation.gif) !important;
-}
+/* Icons */
 
-.iconRun {
-    background-image: url(./img/cog.png) !important;
-}
+.iconBook              { background-image: url(./img/book.png)               !important;}
+.iconBugs              { background-image: url(./img/bug.png)                !important;}
+.iconCheckEntities     { background-image: url(./img/link_break.png)         !important;}
+.iconClose             { background-image: url(./img/cancel.png)             !important;}
+.iconCloseOthersTabs   { background-image: url(./img/tab_delete.png)         !important;}
+.iconCommitFileVcs     { background-image: url(./img/database_go.png)        !important;}
+.iconConf              { background-image: url(./img/wrench_orange.png)      !important;}
+.iconDelete            { background-image: url(./img/delete.png)             !important;}
+.iconErasePersonalData { background-image: url(./img/layout_delete.png)      !important;}
+.iconError             { background-image: url(./img/exclamation.gif)        !important;}
+.iconFiles             { background-image: url(./img/page.png)               !important;} 
+.iconFolderOpen        { background-image: url(./img/folder-open.gif)        !important;}
+.iconFolderClose       { background-image: url(./img/folder.gif)             !important;}
+.iconHelp              { background-image: url(./img/help.png)               !important;}
+.iconIndent            { background-image: url(./img/text_indent.png)        !important;}
+.iconInfo              { background-image: url(./img/information.gif)        !important;}
+.iconInsertCode        { background-image: url(./img/page_code.png)          !important;}
+.iconLogOut            { background-image: url(./img/door_in.png)            !important;}
+.iconPageDelete        { background-image: url(./img/page_delete.png)        !important;}
+.iconRedo              { background-image: url(./img/arrow_redo.png)         !important;}
+.iconRun               { background-image: url(./img/cog.png)                !important;}
+.iconSendEmail         { background-image: url(./img/email_edit.png)         !important;}
+.iconSummary           { background-image: url(./img/details.gif)            !important;}
+.iconTabError          { background-image: url(./img/error_delete.png)       !important;}
+.iconTabLink           { background-image: url(./img/page_link.png)          !important;}
+.iconTabNeedReviewed   { background-image: url(./img/page_edit.png)          !important;}
+.iconTabNeedTranslate  { background-image: url(./img/page_add.png)           !important;}
+.iconTabNeedUpdate     { background-image: url(./img/arrow_refresh.png)      !important;}
+.iconTabView           { background-image: url(./img/eye.png)                !important;}
+.iconTranslator        { background-image: url(./img/group.png)              !important;}
+.iconUndo              { background-image: url(./img/arrow_undo.png)         !important;}
+.iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)   !important;}
+.iconView              { background-image: url(./img/eye.png)                !important;}
+.iconViewDiff          { background-image: url(./img/chart_organisation.png) !important;}
 
- .saveFile {
-    background-image: url(./img/disk.png) !important;
-} .saveAsFile {
-    background-image: url(./img/table_save.png) !important;
-} .patchAlert {
-    background-image: url(./img/bell.png) !important;
-} .iconConf {
-    background-image: url(./img/wrench_orange.png) !important;
-} .refresh {
-    background-image: url(./img/arrow_refresh.png) !important;
-}
- .iconCheckEntities {
-    background-image: url(./img/link_break.png) !important;
-}
- .checkBuild {
-    background-image: url(./img/bug_delete.png) !important;
-} .startRefresh {
-    background-image: url(./img/hourglass_go.png) !important;
-} .finishRefresh {
-    background-image: url(./img/accept.png) !important;
-} .openInTab {
+
+
+.checkBuild { background-image: url(./img/bug_delete.png) !important;}
+.refresh    { background-image: url(./img/arrow_refresh.png) !important;}
+.saveFile   { background-image: url(./img/disk.png) !important;}
+.saveAsFile { background-image: url(./img/table_save.png) !important;}
+.patchAlert { background-image: url(./img/bell.png) !important;}
+
+.openInTab {
     background-image: url(./img/tab_go.png) !important;
-} .iconErasePersonalData {
-    background-image: url(./img/layout_delete.png) !important;
-} .iconTranslator {
-    background-image: url(./img/group.png) !important;
-} .iconLogOut {
-    background-image: url(./img/door_in.png) !important;
-} .iconTabLink {
-    background-image: url(./img/page_link.png) !important;
-} .iconTabNeedTranslate {
-    background-image: url(./img/page_add.png) !important;
 }
- .iconFiles {
-    background-image: url(./img/page.png) !important;
-} 
- .iconTabView {
-    background-image: url(./img/eye.png) !important;
-} .iconTabNeedUpdate {
-    background-image: url(./img/arrow_refresh.png) !important;
-} .iconDelete {
-    background-image: url(./img/delete.png) !important;
-} .iconView {
-    background-image: url(./img/eye.png) !important;
-} .iconFolderOpen {
-    background-image: url(./img/folder-open.gif) !important;
-} .iconFolderClose {
-    background-image: url(./img/folder.gif) !important;
-} .iconTabNeedReviewed {
-    background-image: url(./img/page_edit.png) !important;
-} .iconTabError {
-    background-image: url(./img/error_delete.png) !important;
-} .iconUpdateFileVcs {
-    background-image: url(./img/database_refresh.png) !important;
-} .iconCommitFileVcs {
-    background-image: url(./img/database_go.png) !important;
-} .iconViewDiff {
-    background-image: url(./img/chart_organisation.png) !important;
-} .iconPageDelete {
-    background-image: url(./img/page_delete.png) !important;
-} .iconHelp {
-    background-image: url(./img/help.png) !important;
-} .iconSendEmail {
-    background-image: url(./img/email_edit.png) !important;
-} .iconSummary {
-    background-image: url(./img/details.gif) !important;
-} .iconInsertCode {
-    background-image: url(./img/page_code.png) !important;
-} .confStatusBar {
+.startRefresh {
+    background-image: url(./img/hourglass_go.png) !important;
+}
+.finishRefresh {
+    background-image: url(./img/accept.png) !important;
+}
+.confStatusBar {
     background: transparent url(./img/help.png) no-repeat 0 2px;
     padding-left: 20px !important;
-} .winManageLog {
+}
+.winManageLog {
     background-image: url(./img/page_white_gear.png) !important;
-} #main-panel .x-layout-collapsed-west {
+}
+#main-panel .x-layout-collapsed-west {
     background-image: url(./img/vcs_log.png);
     background-repeat: no-repeat;
     background-position: center;
-} #main-panel .x-layout-collapsed-east {
+}
+#main-panel .x-layout-collapsed-east {
     background-image: url(./img/en_version.png);
     background-repeat: no-repeat;
     background-position: center;
-} #main-panel .x-layout-collapsed-north {
+}
+#main-panel .x-layout-collapsed-north {
     background-image: url(./img/diff_vcs.png);
     background-repeat: no-repeat;
     background-position: center;
-} .x-layout-collapsed-east-error-desc {
+}
+.x-layout-collapsed-east-error-desc {
     background-image: url(./img/error_description.png) !important;
     background-repeat: no-repeat;
     background-position: center;
-} .x-layout-collapsed-east-patch-desc {
+}
+.x-layout-collapsed-east-patch-desc {
     background-image: url(./img/patch.png) !important;
     background-repeat: no-repeat;
     background-position: center;
-} .file-need-commit {
+}
+.file-need-commit {
     color: red !important;
     font-weight: bold !important;
-} .summary_1 {
+}
+.summary_1 {
     color: black !important;
     font-weight: bold !important;
     background-color: #68D888 !important;
-} .summary_2 {
+}
+.summary_2 {
     color: black !important;
     font-weight: bold !important;
     background-color: #FF6347 !important;
-} .summary_3 {
+}
+.summary_3 {
     color: black !important;
     font-weight: bold !important;
     background-color: #EEE8AA !important;
-} .summary_4 {
+}
+.summary_4 {
     color: black !important;
     font-weight: bold !important;
     background-color: #DCDCDC !important;
-} .diff-content table.code {
+}
+.diff-content table.code {
     border: 1px solid #ddd;
     border-spacing: 0;
     border-top: 0;
@@ -253,7 +238,8 @@
     padding: 0;
     margin: 0;
     width: 100%;
-} .diff-content table.code th {
+}
+.diff-content table.code th {
     background: #eed;
     color: #886;
     font-weight: normal;
@@ -263,77 +249,97 @@
     border-top: 1px solid #998;
     font-size: 11px;
     width: 35px;
-} .diff-content table.code td {
+}
+.diff-content table.code td {
     background: #fff;
     font: normal 11px monospace;
     overflow: auto;
     padding: 1px 2px;
-} .diff-content table.code td.del {
+}
+.diff-content table.code td.del {
     background-color: #FDD;
     border-left: 1px solid #C00;
     border-right: 1px solid #C00;
-} .diff-content table.code td.del.first {
+}
+.diff-content table.code td.del.first {
     border-top: 1px solid #C00;
-} .diff-content table.code td.ins {
+}
+.diff-content table.code td.ins {
     background-color: #DFD;
     border-left: 1px solid #0A0;
     border-right: 1px solid #0A0;
-} .diff-content table.code td.ins.first {
+}
+.diff-content table.code td.ins.first {
     border-top: 1px solid #0A0;
-} .diff-content table.code td.del_end {
+}
+.diff-content table.code td.del_end {
     border-top: 1px solid #C00;
-} .diff-content table.code td.ins_end {
+}
+.diff-content table.code td.ins_end {
     border-top: 1px solid #0A0;
-} .diff-content table.code td.truncated {
+}
+.diff-content table.code td.truncated {
     background-color: #f7f7f7;
-} .diff-content table.code td.line {
+}
+.diff-content table.code td.line {
     background: #eed url(./img/help.png) no-repeat 0 0;
     padding-left: 20px;
     color: #886;
     border: 1px solid #d7d7d7;
-} .check-build-content {
+}
+.check-build-content {
     margin: 5px 5px;
     font-family: tahoma, arial, helvetica, sans-serif;
     font-size: 11px;
-
-} #confMenu {
+}
+#confMenu {
     background: white;
     font: 11px Arial, Helvetica, sans-serif;
-} #confMenu .thumb {
+}
+#confMenu .thumb {
     padding: 3px;
-} #confMenu .thumb-wrap {
+}
+#confMenu .thumb-wrap {
     float: left;
     margin: 5px;
     padding: 5px;
     width: 153px;
     text-align: center;
     cursor: pointer;
-} #confMenu .thumb-wrap span {
+}
+#confMenu .thumb-wrap span {
     display: block;
     overflow: hidden;
     text-align: center;
-} #confMenu .x-view-over {
+}
+#confMenu .x-view-over {
     border: 1px solid #dddddd;
     background-color: #efefef;
     padding: 4px;
-} #confMenu .x-view-selected {
+}
+#confMenu .x-view-selected {
     background: #DFEDFF;
     border: 1px solid #6593cf;
     padding: 4px;
-} #confMenu .x-view-selected .thumb {
+}
+#confMenu .x-view-selected .thumb {
     background: transparent;
-} #confMenu .x-view-selected span {
+}
+#confMenu .x-view-selected span {
     color: #1A4D8F;
     font-weight: bold;
-} .res-block {
+}
+.res-block {
     background: transparent url(./img/block-top.gif) no-repeat scroll 0 0;
     margin: 10px 0 0 5px;
     padding-top: 5px;
     width: 280px;
-} .res-block-inner {
+}
+.res-block-inner {
     background: transparent url(./img/block-bottom.gif) no-repeat scroll left bottom;
     padding: 3px 11px;
-} .res-block h3 {
+}
+.res-block h3 {
     background: transparent url(./img/user.png) no-repeat 0 1px;
     padding-left: 20px;
     padding-top: 3px;
@@ -348,20 +354,23 @@
     line-height: normal;
     font-weight: normal;
     margin-bottom: 8px;
-} .res-block em {
+}
+.res-block em {
     font-weight: bold;
-} .ux-grid3-row-action-cell .x-grid3-cell-inner {
+}
+.ux-grid3-row-action-cell .x-grid3-cell-inner {
     padding: 1px 0 0 0;
-} .ux-grid3-row-action-cell .x-grid3-cell-inner div {
+}
+.ux-grid3-row-action-cell .x-grid3-cell-inner div {
     background-repeat: no-repeat;
     width: 16px;
     height: 16px;
     cursor: pointer;
-} .check_doc_cell {
+}
+.check_doc_cell {
     background-color: #DEDEDE;
     text-align: right;
 }
-
 .file-needcommit-update {
     background-image: url(./img/arrow_refresh.png) !important;
     background-repeat: no-repeat !important;

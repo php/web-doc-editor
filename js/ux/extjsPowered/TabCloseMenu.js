@@ -29,7 +29,7 @@ Ext.ux.TabCloseMenu = function(){
                 }
             },{
                 id: tabs.id + '-close-others',
-                iconCls: 'closeOthersTabs',
+                iconCls: 'iconCloseOthersTabs',
                 text: _('Close Other Tabs'),
                 handler : function(){
                     tabs.items.each(function(item){
