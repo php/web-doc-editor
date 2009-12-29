@@ -219,30 +219,30 @@ class TranslationStatistic
 
             $summary[0]['id']            = 1;
             $summary[0]['libel']         = 'Up to date files';
-            $summary[0]['nbFiles']       = $uptodate[$lang]['total'];
+            $summary[0]['nbFiles']       = ( isset($uptodate[$lang]['total']) ) ? $uptodate[$lang]['total'] : 0;
             $summary[0]['percentFiles']  = round(($uptodate[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
             $summary[0]['sizeFiles']     = ($uptodate[$lang]['total_size'] == '' ) ? 0 : $uptodate[$lang]['total_size'];
             $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size'])) ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[1]['id']            = 2;
             $summary[1]['libel']         = 'Stale files';
-            $summary[1]['nbFiles']       = $stale[$lang]['total'];
+            $summary[1]['nbFiles']       = ( isset($stale[$lang]['total']) ) ? $stale[$lang]['total'] : 0;
             $summary[1]['percentFiles']  = round(($stale[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
             $summary[1]['sizeFiles']     = ($stale[$lang]['total_size'] == '' ) ? 0 : $stale[$lang]['total_size'];
             $summary[1]['percentSize']   = (!isset($stale[$lang]['total_size']) || $stale[$lang]['total_size'] == 0 ) ? 0 : round(($stale[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[2]['id']            = 3;
             $summary[2]['libel']         = 'Files available for translation';
-            $summary[2]['nbFiles']       = $missFiles[$lang]['total'];
+            $summary[2]['nbFiles']       = ( isset($missFiles[$lang]['total']) ) ? $missFiles[$lang]['total'] : 0;
             $summary[2]['percentFiles']  = round(($missFiles[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
             $summary[2]['sizeFiles']     = ($missFiles[$lang]['total_size'] == '' ) ? 0 : $missFiles[$lang]['total_size'];
             $summary[2]['percentSize']   = (!isset($missFiles[$lang]['total_size']) || $missFiles[$lang]['total_size'] == 0 ) ? 0 : round(($missFiles[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[3]['id']            = 4;
             $summary[3]['libel']         = 'Total';
-            $summary[3]['nbFiles']       = $nbFiles[$lang]['total'];
+            $summary[3]['nbFiles']       = ( isset($nbFiles[$lang]['total']) ) ? $nbFiles[$lang]['total'] : 0;
             $summary[3]['percentFiles']  = '100%';
-            $summary[3]['sizeFiles']     = $nbFiles[$lang]['total_size'];
+            $summary[3]['sizeFiles']     = ( isset($nbFiles[$lang]['total_size']) ) ? $nbFiles[$lang]['total_size'] : 0;
             $summary[3]['percentSize']   = '100%';
 
             // Save $summary into DB
