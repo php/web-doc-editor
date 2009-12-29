@@ -254,7 +254,7 @@ class ToolsCheckEntities {
 
                 $junk = '';
                 if (!$fp = @fsockopen($scheme . $url['host'], $port, $junk, $junk, $this->urlConnectTimeout)) {
-                    return array(HTTP_CONNECT, array($num));
+                    return array('HTTP_CONNECT', array($num));
 
                 } else {
                     $query = "HEAD {$url['path']} HTTP/1.0\r\n"
