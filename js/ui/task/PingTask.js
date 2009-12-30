@@ -13,6 +13,7 @@ ui.task.PingTask = function()
                     window.location.href = './';
                 } else {
 
+                    // We look if there is an update_data in progress or not
                     if( o.lastupdate === 'in_progress' ) {
                         Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
                     } else {
@@ -20,6 +21,39 @@ ui.task.PingTask = function()
 
                         // We update the lastupdate date/time
                         Ext.getDom('lastUpdateTime').innerHTML = dt.format(_('Y-m-d, H:i'));
+                    }
+
+                    // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
+                    if( phpDoc.userLang !== 'en' ) {
+                        // We look for modules specifics for translation
+                        if( ui.component.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                            ui.component.PendingTranslateGrid.getInstance().store.reload();
+                        }
+
+                        if( ui.component.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                            ui.component.StaleFileGrid.getInstance().store.reload();
+                        }
+
+                        if( ui.component.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                            ui.component.ErrorFileGrid.getInstance().store.reload();
+                        }
+
+                        if( ui.component.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                            ui.component.PendingReviewGrid.getInstance().store.reload();
+                        }
+
+                        if( ui.component.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                            ui.component.NotInENGrid.getInstance().store.reload();
+                        }
+                    }
+
+                    // This 2 modules is commun with EN and LANG
+                    if( ui.component.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
+                        ui.component.PendingCommitGrid.getInstance().store.reload();
+                    }
+
+                    if( ui.component.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
+                        ui.component.PendingPatchGrid.getInstance().store.reload();
                     }
                 }
             },

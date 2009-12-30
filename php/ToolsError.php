@@ -182,7 +182,7 @@ class ToolsError {
      */
     function getFilesError($ModifiedFiles) {
 
-        if ($_SESSION['userConf']->errorSkipNbLiteralTag ) {
+        if ( $_SESSION['userConf']->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
@@ -190,7 +190,6 @@ class ToolsError {
 
         $s    = 'SELECT * FROM `errorfiles` WHERE '.$type.' `lang`=\''.$this->lang.'\' AND `type` != \'-No error-\'';
         $r    = DBConnection::getInstance()->query($s);
-        $nb   = $r->num_rows;
         $node = array();
 
         $alreadyNode = array();
@@ -240,7 +239,7 @@ class ToolsError {
 
         }
 
-        return array('nb'=>$nb, 'node'=>$node);
+        return array('nb'=>count($node), 'node'=>$node);
 
     }
 

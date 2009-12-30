@@ -92,6 +92,21 @@ class RepositoryFetcher
         return $infos;
     }
 
+
+    public function getNbPendingUpdate()
+    {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+
+        $s = sprintf(
+            'SELECT count(*) as total FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`',
+            $vcsLang
+        );
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return $a->total;
+       
+    }
     /**
      * Get all files witch need to be updated.
      *
@@ -153,6 +168,20 @@ class RepositoryFetcher
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
+    public function getNbPendingReview()
+    {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+
+        $m = $this->getModifies();
+        $s = sprintf(
+            'SELECT count(*) as total FROM `files` WHERE `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
+            $vcsLang
+        );
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return ($a->total > 100 ) ? 100 : $a->total;
+    }
     /**
      * Get all files witch need to be reviewed.
      *
@@ -204,6 +233,17 @@ class RepositoryFetcher
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
+    public function getNbNotInEn()
+    {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+
+        $m = $this->getModifies();
+        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $vcsLang);
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return $a->total;
+    }
     /**
      * Get all files which are not in EN tree.
      *
@@ -230,6 +270,16 @@ class RepositoryFetcher
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
+    public function getNbPendingTranslate()
+    {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+
+        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL', $vcsLang);
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return $a->total;
+    }
     /**
      * Get all files which need to be translated
      *
@@ -257,6 +307,17 @@ class RepositoryFetcher
     }
 
 
+    public function getNbPendingPatch()
+    {
+        $s = sprintf(
+            'SELECT count(*) as total FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'',
+            AccountManager::getInstance()->vcsLang
+        );
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return $a->total;
+    }
     /**
      * Get all pending patch.
      *
@@ -308,6 +369,19 @@ class RepositoryFetcher
         return $paths;
     }
 
+    public function getNbPendingCommit()
+    {
+
+        // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+        $s = sprintf(
+            'SELECT count(*) as total FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
+            AccountManager::getInstance()->vcsLang
+        );
+        $r = DBConnection::getInstance()->query($s);
+        $a = $r->fetch_object();
+
+        return $a->total;
+    }
     /**
      * Get all files pending for commit.
      *
