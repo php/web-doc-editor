@@ -309,7 +309,7 @@ class File
         );
         $output = htmlentities(join("\n", $output));
         $match = array();
-        preg_match_all('/@@(.*?)@@(.*(?!@@).*)/s', $output, $match);
+        preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $output, $match);
 
         $diff = array();
         for ($i = 0; $i < count($match[1]); $i++) {
