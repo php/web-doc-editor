@@ -22,6 +22,8 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["Status: "] = "Statut : ";
+i18n["All status"] = "Tous les statuts";
 
 i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
 

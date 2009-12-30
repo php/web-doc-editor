@@ -74,6 +74,7 @@ ui.component._CheckEntities.columns = [
 // CheckDoc Grid
 ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
 {
+    id               : 'check-entities-grid',
     loadMask         : true,
     bodyBorder       : false,
     store            : ui.component._CheckEntities.ds,
@@ -151,6 +152,53 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
+
+        this.tbar = [{
+            xtype : 'label',
+            text  : _('Status: ')
+        }, {
+            xtype         : 'combo',
+            typeAhead     : true,
+            triggerAction : 'all',
+            lazyRender    :true,
+            mode          : 'local',
+            store         : new Ext.data.ArrayStore({
+                id     : 0,
+                fields : [
+                    'myId',
+                    'displayText'
+                ],
+                data: [
+                       ['all',                 _('All status')],
+                       ['FTP_CONNECT',         'FTP_CONNECT'],
+                       ['FTP_LOGIN',           'FTP_LOGIN'],
+                       ['FTP_NO_FILE',         'FTP_NO_FILE'],
+                       ['HTTP_CONNECT',        'HTTP_CONNECT'],
+                       ['HTTP_INTERNAL_ERROR', 'HTTP_INTERNAL_ERROR'],
+                       ['HTTP_NOT_FOUND',      'HTTP_NOT_FOUND'],
+                       ['HTTP_MOVED',          'HTTP_MOVED'],
+                       ['HTTP_WRONG_HEADER',   'HTTP_WRONG_HEADER'],
+                       ['SUCCESS',             'SUCCESS'],
+                       ['UNKNOWN_HOST',        'UNKNOWN_HOST']
+                      ]
+            }),
+            value         : 'all',
+            valueField    : 'myId',
+            displayField  : 'displayText',
+            editable      : false,
+            listeners: {
+                select: function(c, record, index) {
+                    var val = record.id;
+
+                    if( val === 'all' ) {
+                        Ext.getCmp('check-entities-grid').store.clearFilter();
+                    } else {
+                        Ext.getCmp('check-entities-grid').store.filter('result', record.id);
+                    }
+                }
+            }
+        }];
+
         ui.component.CheckEntities.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
