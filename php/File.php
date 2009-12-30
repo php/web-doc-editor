@@ -308,9 +308,8 @@ class File
             $this->name, $rev1, $rev2
         );
         $output = htmlentities(join("\n", $output));
-
         $match = array();
-        preg_match_all('/@@(.*?)@@(.[^@@]*)/s', $output, $match);
+        preg_match_all('/@@(.*?)@@(.*(?!@@).*)/s', $output, $match);
 
         $diff = array();
         for ($i = 0; $i < count($match[1]); $i++) {
