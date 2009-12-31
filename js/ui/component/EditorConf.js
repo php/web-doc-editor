@@ -85,6 +85,7 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
 ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-1',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -161,7 +162,65 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                         }
                     }
                 }]
-            }]
+            },{
+                xtype      : 'fieldset',
+                title      : _('On save lang file'),
+                autoHeight : true,
+                defaults   : { hideLabel: true },
+                defaultType : 'radio',
+                items      : [{
+                    autoHeight : true,
+                    name       : 'onSaveLangFile',
+                    checked    : (phpDoc.userConf["onSaveLangFile"] === "ask-me") ? true : false,
+                    boxLabel   : _('Ask me if I want to check for error before saving the file'),
+                    inputValue : 'ask-me',
+                    listeners  : {
+                        check  : function(field)
+                        {
+                            if (field.checked) {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'onSaveLangFile',
+                                    value : field.getRawValue()
+                                });
+                            }
+                        }
+                    }
+                }, {
+                    autoHeight : true,
+                    name       : 'onSaveLangFile',
+                    checked    : (phpDoc.userConf["onSaveLangFile"] === "always") ? true : false,
+                    boxLabel   : _('Always check for error before saving the file'),
+                    inputValue : 'always',
+                    listeners : {
+                        check : function(field)
+                        {
+                            if (field.checked) {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'onSaveLangFile',
+                                    value : field.getRawValue()
+                                });
+                            }
+                        }
+                    }
+                }, {
+                    autoHeight : true,
+                    name       : 'onSaveLangFile',
+                    checked    : (phpDoc.userConf["onSaveLangFile"] === "never") ? true : false,
+                    boxLabel   : _('Never check for error before saving the file'),
+                    inputValue : 'never',
+                    listeners : {
+                        check : function(field)
+                        {
+                            if (field.checked) {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'onSaveLangFile',
+                                    value : field.getRawValue()
+                                });
+                            }
+                        }
+                    }
+                }]
+             }]
         });
         ui.component._EditorConf.card1.superclass.initComponent.call(this);
     }
@@ -171,6 +230,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
 ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-2',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -263,6 +323,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
 ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-3',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -335,6 +396,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
 ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-4',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -386,6 +448,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
 ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-5',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -423,6 +486,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
 ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-6',
+    autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
     initComponent : function()
@@ -476,8 +540,8 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
 {
     id          : 'win-conf',
     layout      : 'border',
-    width       : 550,
-    height      : 400,
+    width       : 570,
+    height      : 450,
     iconCls     : 'iconConf',
     title       : _('Configuration'),
     modal       : true,

@@ -26,6 +26,8 @@ class AccountManager
     private function __construct()
     {
         $this->defaultConf = array(
+            "onSaveLangFile"       => 'ask-me',
+
             "mainAppLoadMailsAtStartUp" => false,
             "mainAppLoadBugsAtStartUp"  => false,
 

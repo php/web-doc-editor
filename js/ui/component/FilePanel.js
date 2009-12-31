@@ -525,42 +525,79 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                 return;
                             }
-                            Ext.MessageBox.show({
-                                title   : _('Confirm'),
-                                msg     : _('Do you want to check for error before saving?'),
-                                icon    : Ext.MessageBox.INFO,
-                                buttons : Ext.MessageBox.YESNOCANCEL,
-                                scope   : this,
-                                fn      : function (btn)
-                                {
-                                    if (btn === 'no') {
 
-                                        tmp = new ui.task.SaveLangFileTask({
-                                            prefix      : this.prefix,
-                                            ftype       : this.ftype,
-                                            fid         : this.fid,
-                                            fpath       : this.fpath,
-                                            fname       : this.fname,
-                                            lang        : this.lang,
-                                            storeRecord : this.storeRecord
-                                        });
-                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                            // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
+                            switch (phpDoc.userConf["onSaveLangFile"]) {
 
-                                    } else if (btn === 'yes') {
+                                case 'always':
+                                    tmp = new ui.task.CheckFileTask({
+                                        prefix      : this.prefix,
+                                        ftype       : this.ftype,
+                                        fid         : this.fid,
+                                        fpath       : this.fpath,
+                                        fname       : this.fname,
+                                        lang        : this.lang,
+                                        storeRecord : this.storeRecord
+                                    }); // include SaveLangFileTask when no err
+                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                    break;
 
-                                        tmp = new ui.task.CheckFileTask({
-                                            prefix      : this.prefix,
-                                            ftype       : this.ftype,
-                                            fid         : this.fid,
-                                            fpath       : this.fpath,
-                                            fname       : this.fname,
-                                            lang        : this.lang,
-                                            storeRecord : this.storeRecord
-                                        }); // include SaveLangFileTask when no err
-                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    }
-                                }
-                            });
+                                case 'never':
+                                    tmp = new ui.task.SaveLangFileTask({
+                                        prefix      : this.prefix,
+                                        ftype       : this.ftype,
+                                        fid         : this.fid,
+                                        fpath       : this.fpath,
+                                        fname       : this.fname,
+                                        lang        : this.lang,
+                                        storeRecord : this.storeRecord
+                                    });
+                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                    break;
+
+                                case 'ask-me':
+                                    Ext.MessageBox.show({
+                                        title   : _('Confirm'),
+                                        msg     : _('Do you want to check for error before saving?'),
+                                        icon    : Ext.MessageBox.INFO,
+                                        buttons : Ext.MessageBox.YESNOCANCEL,
+                                        scope   : this,
+                                        fn      : function (btn)
+                                        {
+                                            if (btn === 'no') {
+
+                                                tmp = new ui.task.SaveLangFileTask({
+                                                    prefix      : this.prefix,
+                                                    ftype       : this.ftype,
+                                                    fid         : this.fid,
+                                                    fpath       : this.fpath,
+                                                    fname       : this.fname,
+                                                    lang        : this.lang,
+                                                    storeRecord : this.storeRecord
+                                                });
+                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+
+                                            } else if (btn === 'yes') {
+
+                                                tmp = new ui.task.CheckFileTask({
+                                                    prefix      : this.prefix,
+                                                    ftype       : this.ftype,
+                                                    fid         : this.fid,
+                                                    fpath       : this.fpath,
+                                                    fname       : this.fname,
+                                                    lang        : this.lang,
+                                                    storeRecord : this.storeRecord
+                                                }); // include SaveLangFileTask when no err
+                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                            }
+                                        }
+                                    });
+                                    break;
+
+                            }
+
+
+
                         }
                     }
                 }, {

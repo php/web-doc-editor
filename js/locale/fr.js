@@ -22,6 +22,11 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["On save lang file"] = "Lors de la sauvegarde d'un fichier de langue";
+i18n["Ask me if I want to check for error before saving the file"] = "Demander systématiquement si une vérification des erreurs doit être effectuée avant la sauvegarde";
+i18n["Always check for error before saving the file"] = "Toujours effectuer une vérification des erreurs avant la sauvegarde";
+i18n["Never check for error before saving the file"] = "Jamais vérifier les erreurs avant la sauvegarde";
+
 i18n["Status: "] = "Statut : ";
 i18n["All status"] = "Tous les statuts";
 
