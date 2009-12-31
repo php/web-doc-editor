@@ -250,6 +250,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                 html       : '<div id="diff_content_pending_' + this.rowIdx + '" class="diff-content"></div>'
                             });
 
+                            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
+
                             Ext.get('diff_panel_pending_' + this.rowIdx).mask(
                                 '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
                                 _('Please, wait...')
@@ -272,8 +275,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                     Ext.get('diff_panel_pending_' + this.rowIdx).unmask();
                                 }
                             });
+                        } else {
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
                         }
-                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
                     }
                 }, {
                     scope   : this,

@@ -160,9 +160,12 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                 closable   : true,
                 autoScroll : true,
                 iconCls    : 'iconTabLink',
-                html: '<div id="diff_content_' + lang + '_' + rowIdx +
+                html       : '<div id="diff_content_' + lang + '_' + rowIdx +
                       '" class="diff-content"></div>'
             });
+
+            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
 
             Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
                 '<img src="themes/img/loading.gif" ' +
@@ -182,12 +185,13 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                     var o = Ext.util.JSON.decode(response.responseText);
                     // We display in diff div
                     Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
+
                     Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
                 }
             });
+        } else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
         }
-        Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
-
     }
 
 });
@@ -201,36 +205,35 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     autoExpandColumn : 'name',
     border           : false,
-    listeners        : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
 
-            e.stopEvent();
-        
-            var FilePath = grid.store.getAt(rowIndex).data.path,
-                FileName = grid.store.getAt(rowIndex).data.name,
-                tmp;
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        var FilePath = this.store.getAt(rowIndex).data.path,
+            FileName = this.store.getAt(rowIndex).data.name,
+            tmp;
 
-            grid.getSelectionModel().selectRow(rowIndex);
+        this.getSelectionModel().selectRow(rowIndex);
 
-            tmp = new ui.component._StaleFileGrid.menu({
-                hideCommit : (grid.store.getAt(rowIndex).data.needCommitEN === false && grid.store.getAt(rowIndex).data.needCommitLang === false),
-                grid       : grid,
-                event      : e,
-                rowIdx     : rowIndex,
-                lang       : phpDoc.userLang,
-                fpath      : FilePath,
-                fname      : FileName
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            this.openFile(grid.store.getAt(rowIndex).data.id);
-        }
+        tmp = new ui.component._StaleFileGrid.menu({
+            hideCommit : (this.store.getAt(rowIndex).data.needCommitEN === false && this.store.getAt(rowIndex).data.needCommitLang === false),
+            grid       : this,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : phpDoc.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
     },
 
-    openFile : function(rowId) {
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
 
+    openFile: function(rowId)
+    {
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
@@ -405,6 +408,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             ]
         });
         ui.component.StaleFileGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 
