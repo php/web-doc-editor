@@ -11,6 +11,12 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
     listeners  : {
         render : function()
         {
+            this.el.mask(
+                '<img src="themes/img/loading.gif" ' +
+                    'style="vertical-align: middle;" /> '+
+                _('Loading...')
+            );
+
             // Load diff data
             XHR({
                 scope   : this,
@@ -26,6 +32,9 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
                     var o = Ext.util.JSON.decode(response.responseText);
                     // We display in diff div
                     Ext.get(this.prefix + '-diff-' + this.fid).dom.innerHTML = o.content;
+
+                    this.el.unmask();
+
                 }
             });
         }
