@@ -356,6 +356,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
         var id_prefix = this.prefix + '-' + this.ftype;
 
         this.bbar = (this.syncScrollCB) ? [{
+            height    : 22,
             xtype     : 'checkbox',
             name      : 'needUpdateScrollbars',
             hideLabel : true,
@@ -384,7 +385,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             }
         }] : [{
             xtype     : 'panel',
-            height    : 26,
+            height    : 22,
             baseCls   : '',
             bodyStyle : 'padding-top:5px;',
             html      : [

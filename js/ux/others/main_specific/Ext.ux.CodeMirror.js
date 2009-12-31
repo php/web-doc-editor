@@ -45,7 +45,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     resize: function() {
-        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 85 +"px";
+        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 81 +"px";
         this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
     },
 
