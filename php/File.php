@@ -231,11 +231,11 @@ class File
 
         // Rev tag
         $match = array();
-        preg_match('/<!--\s*EN-Revision:\s*(\d+)\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
+        preg_match('/<!--\s*EN-Revision:\s*((\d+)|(n\/a))\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
         if (!empty($match)) {
-            $info['en-rev']     = $match[1];
-            $info['maintainer'] = $match[2];
-            $info['status']     = $match[3];
+            $info['en-rev']     = ($match[1] == 'n/a') ? 0 : $match[1];
+            $info['maintainer'] = $match[4];
+            $info['status']     = $match[5];
         }
 
         // Reviewed tag
