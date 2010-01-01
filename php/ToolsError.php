@@ -4,6 +4,7 @@
  */
 
 require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/AccountManager.php';
 
 class ToolsError {
 
@@ -182,7 +183,7 @@ class ToolsError {
      */
     function getFilesError($ModifiedFiles) {
 
-        if ( $_SESSION['userConf']->errorSkipNbLiteralTag ) {
+        if ( AccountManager::getInstance()->userConf->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
