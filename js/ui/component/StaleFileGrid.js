@@ -23,6 +23,9 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
                 name    : 'revision',
                 mapping : 'revision'
             }, {
+                name    : 'original_revision',
+                mapping : 'original_revision'
+            }, {
                 name    : 'en_revision',
                 mapping : 'en_revision'
             }, {
@@ -234,13 +237,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 
     openFile: function(rowId)
     {
-        var storeRecord = this.store.getById(rowId),
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            en_revision = storeRecord.data.en_revision,
-            revision    = storeRecord.data.revision,
-            FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
-            diff        = '';
+        var storeRecord      = this.store.getById(rowId),
+            FilePath         = storeRecord.data.path,
+            FileName         = storeRecord.data.name,
+            en_revision      = storeRecord.data.en_revision,
+            revision         = storeRecord.data.revision,
+            originalRevision = storeRecord.data.original_revision,
+            FileID           = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
+            diff             = '';
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
@@ -276,7 +280,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         fid         : FileID,
                         fpath       : FilePath,
                         fname       : FileName,
-                        rev1        : revision,
+                        rev1        : (originalRevision) ? originalRevision : revision,
                         rev2        : en_revision
                     }), {
                         region      : 'west',

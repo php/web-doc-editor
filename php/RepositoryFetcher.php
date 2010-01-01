@@ -131,37 +131,41 @@ class RepositoryFetcher
                 || isset($m['en'    .$a->path.$a->name])
             ) {
                 if (isset($m['en'.$a->path.$a->name])) {
-                    $new_en_revision = $m['en'.$a->path.$a->name]['revision'];
-                    $new_revision    = $a->revision;
-                    $new_maintainer  = $a->maintainer;
+                    $new_en_revision   = $m['en'.$a->path.$a->name]['revision'];
+                    $new_revision      = $a->revision;
+                    $original_revision = $a->revision;
+                    $new_maintainer    = $a->maintainer;
                 }
 
                 if (isset($m[$vcsLang.$a->path.$a->name])) {
-                    $new_en_revision = $a->en_revision;
-                    $new_revision    = $m[$vcsLang.$a->path.$a->name]['en_revision'];
-                    $new_maintainer  = $m[$vcsLang.$a->path.$a->name]['maintainer'];
+                    $new_en_revision   = $a->en_revision;
+                    $new_revision      = $m[$vcsLang.$a->path.$a->name]['en_revision'];
+                    $original_revision = $a->revision;
+                    $new_maintainer    = $m[$vcsLang.$a->path.$a->name]['maintainer'];
                 }
 
                 $node[] = array(
-                    "id"             => $a->id,
-                    "path"           => $a->path,
-                    "name"           => $a->name,
-                    "revision"       => $new_revision,
-                    "en_revision"    => $new_en_revision,
-                    "maintainer"     => $new_maintainer,
-                    "needCommitEN"   => (isset($m['en'.$a->path.$a->name])) ? true : false,
-                    "needCommitLang" => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false
+                    "id"                => $a->id,
+                    "path"              => $a->path,
+                    "name"              => $a->name,
+                    "revision"          => $new_revision,
+                    "original_revision" => $original_revision,
+                    "en_revision"       => $new_en_revision,
+                    "maintainer"        => $new_maintainer,
+                    "needCommitEN"      => (isset($m['en'.$a->path.$a->name])) ? true : false,
+                    "needCommitLang"    => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false
                 );
             } else {
                 $node[] = array(
-                    "id"              => $a->id,
-                    "path"            => $a->path,
-                    "name"            => $a->name,
-                    "revision"        => $a->revision,
-                    "en_revision"     => $a->en_revision,
-                    "maintainer"      => $a->maintainer,
-                    "needCommitEN"    => false,
-                    "needCommitLang"  => false
+                    "id"                => $a->id,
+                    "path"              => $a->path,
+                    "name"              => $a->name,
+                    "revision"          => $a->revision,
+                    "original_revision" => NULL,
+                    "en_revision"       => $a->en_revision,
+                    "maintainer"        => $a->maintainer,
+                    "needCommitEN"      => false,
+                    "needCommitLang"    => false
                 );
             }
         }
