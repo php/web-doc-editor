@@ -210,7 +210,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }, {
                                 text    : _('Run this script'),
                                 iconCls : 'iconRun',
-                                //disabled: (phpDoc.userLogin === 'anonymous'),
+                                disabled: (phpDoc.userLogin === 'anonymous'),
                                 handler : function()
                                 {
                                     // We test if there is a check in progress for this language
