@@ -194,9 +194,9 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
     store   : ui.component._PortletBugs.store,
     reloadData : ui.component._PortletBugs.reloadData,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this grid'),
-        handler: function() {
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
             ui.component._PortletBugs.reloadData();
         }
     }],

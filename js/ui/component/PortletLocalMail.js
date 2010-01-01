@@ -62,7 +62,6 @@ ui.component._PortletLocalMail.columns = [
 // _PortletLocalMail
 ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
 {
-    autoHeight       : true,
     loadMask         : true,
     autoScroll       : true,
     height           : 250,
