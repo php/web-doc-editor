@@ -25,26 +25,39 @@ ui.task.PingTask = function()
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
                     if( phpDoc.userLang !== 'en' ) {
+
+                        var needReloadSummary = false;
+
                         // We look for modules specifics for translation
                         if( ui.component.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
                             ui.component.PendingTranslateGrid.getInstance().store.reload();
+                            needReloadSummary = true;
                         }
 
                         if( ui.component.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
                             ui.component.StaleFileGrid.getInstance().store.reload();
+                            needReloadSummary = true;
                         }
 
                         if( ui.component.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
                             ui.component.ErrorFileGrid.getInstance().store.reload();
+                            needReloadSummary = true;
                         }
 
                         if( ui.component.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
                             ui.component.PendingReviewGrid.getInstance().store.reload();
+                            needReloadSummary = true;
                         }
 
                         if( ui.component.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
                             ui.component.NotInENGrid.getInstance().store.reload();
+                            needReloadSummary = true;
                         }
+
+                        if( needReloadSummary ) {
+                            ui.component.PortletSummary.getInstance().store.reload();
+                        }
+
                     }
 
                     // This 2 modules is commun with EN and LANG

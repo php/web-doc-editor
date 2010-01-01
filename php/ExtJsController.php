@@ -199,16 +199,21 @@ class ExtJsController
 
         $r = RepositoryFetcher::getInstance()->getLastUpdate();
 
-        $data['NbPendingTranslate'] = RepositoryFetcher::getInstance()->getNbPendingTranslate();
-        $data['NbPendingUpdate'] = RepositoryFetcher::getInstance()->getNbPendingUpdate();
+        $lang = AccountManager::getInstance()->vcsLang;
 
-        $errorTools = new ToolsError();
-        $errorTools->setParams('', '', AccountManager::getInstance()->vcsLang, '', '', '');
-        $t = $errorTools->getFilesError(RepositoryFetcher::getInstance()->getModifies());
-        $data['NbFilesError'] = $t['nb'];
+        if( $lang != 'en' ) {
+            $data['NbPendingTranslate'] = RepositoryFetcher::getInstance()->getNbPendingTranslate();
+            $data['NbPendingUpdate'] = RepositoryFetcher::getInstance()->getNbPendingUpdate();
 
-        $data['NbPendingReview'] = RepositoryFetcher::getInstance()->getNbPendingReview();
-        $data['NbNotInEn']       = RepositoryFetcher::getInstance()->getNbNotInEn();
+            $errorTools = new ToolsError();
+            $errorTools->setParams('', '', AccountManager::getInstance()->vcsLang, '', '', '');
+            $t = $errorTools->getFilesError(RepositoryFetcher::getInstance()->getModifies());
+            $data['NbFilesError'] = $t['nb'];
+
+            $data['NbPendingReview'] = RepositoryFetcher::getInstance()->getNbPendingReview();
+            $data['NbNotInEn']       = RepositoryFetcher::getInstance()->getNbNotInEn();
+        }
+
         $data['NbPendingCommit'] = RepositoryFetcher::getInstance()->getNbPendingCommit();
         $data['NbPendingPatch']  = RepositoryFetcher::getInstance()->getNbPendingPatch();
 
