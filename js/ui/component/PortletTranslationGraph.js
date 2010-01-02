@@ -37,6 +37,11 @@ ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
     dataField: 'total',
     categoryField: 'libel',
     store: ui.component._PortletTranslationGraph.store,
+    series:[{
+        style: {
+            colors: ["#68D888", "#FF6347", "#EEE8AA"]
+        }
+    }],
     extraStyle:
     {
         legend:
