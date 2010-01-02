@@ -6,26 +6,36 @@
     height: 100%;
     z-index: 20000;
     background-color: white;
-} #loading {
+}
+
+#loading {
+
+    background: transparent url(../themes/img/loading-bg.png) no-repeat 0 0;
     position: absolute;
-    left: 45%;
+    left: 40%;
     top: 40%;
     padding: 2px;
     z-index: 20001;
     height: auto;
     border: 1px solid #000;
-} #loading .loading-indicator {
-    background: white;
+}
+
+#loading .loading-indicator {
+    background: none !important;
     color: #444;
     font: bold 13px tahoma, arial, helvetica;
     padding: 0;
     margin: 10px;
     height: auto;
-} #loading-msg {
+}
+
+#loading-msg {
     background: transparent url(../themes/img/loading.gif) no-repeat 0 0;
     padding: 2px 0 2px 18px;
     font: normal 10px arial, tahoma, sans-serif;
-} #loading-php-logo {
+}
+
+#loading-php-logo {
     width: 95px;
     height: 51px;
     margin-right: 8px;
