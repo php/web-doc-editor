@@ -9,16 +9,31 @@
 
 require_once dirname(__FILE__) . '/../../php/conf.inc.php';
 require_once dirname(__FILE__) . '/../../php/LockFile.php';
+require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
+require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 require_once dirname(__FILE__) . '/../../php/ToolsCheckEntities.php';
 
-$lock = new LockFile('lock_check_entities');
+$rm = RepositoryManager::getInstance();
+$pm = ProjectManager::getInstance();
+$availableProject = $pm->getAvailableProject();
 
-if ($lock->lock()) {
+while( list($key, $project) = each($availableProject) ) {
 
-    ToolsCheckEntities::getInstance()->startCheck();
+    // Define it as a project
+    $pm->setProject($project['code']);
 
+    $lock = new LockFile('project_' . $project['code'] . '_lock_check_entities');
+
+    if ($lock->lock()) {
+
+        ToolsCheckEntities::getInstance()->startCheck();
+
+    }
+    // Remove the lock File
+    $lock->release();;
+    
+    // Set lastUpdate date/time
+    $rm->setLastUpdate('entities');
 }
-// Remove the lock File
-$lock->release();;
 
 ?>

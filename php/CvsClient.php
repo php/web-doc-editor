@@ -66,11 +66,11 @@ class CvsClient
      */
     public function authenticate($cvsLogin, $cvsPasswd)
     {
-        $fp = fsockopen(DOC_EDITOR_VCS_SERVER_HOST, DOC_EDITOR_VCS_SERVER_PORT);
+        $fp = fsockopen($GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'], $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT']);
         fwrite($fp,
             implode("\n", array(
                 'BEGIN AUTH REQUEST',
-                DOC_EDITOR_VCS_SERVER_PATH,
+                $GLOBALS['DOC_EDITOR_VCS_SERVER_PATH'],
                 $cvsLogin,
                 $this->passwdEncode($cvsPasswd, 'A'),
                 'END AUTH REQUEST'."\n"
@@ -96,7 +96,7 @@ class CvsClient
      */
     public function checkout()
     {
-        $cmd = 'cd '.DOC_EDITOR_DATA_PATH.'; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login;'
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_DATA_PATH'].'; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login;'
               .'cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;';
         exec($cmd);
     }
@@ -106,7 +106,7 @@ class CvsClient
      */
     public function update()
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; cvs -f -q update -d -P .;';
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; cvs -f -q update -d -P .;';
         exec($cmd);
     }
 
@@ -119,7 +119,7 @@ class CvsClient
      */
     public function log($path, $file)
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; cvs log '.$file;
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; cvs log '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -183,7 +183,7 @@ class CvsClient
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -216,8 +216,8 @@ class CvsClient
 /*
             @unlink(DOC_EDITOR_VCS_PATH.$p);
 */
-            @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
-            @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
+            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
+            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
         }
 
         $delete_stack = array();
@@ -249,7 +249,7 @@ class CvsClient
                "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f commit -l -m '$log' $filesUpdate $filesDelete $filesCreate";
 
         // First, login into Cvs
-        $fullCmd = 'export CVS_PASSFILE='.realpath(DOC_EDITOR_DATA_PATH).'/.cvspass && cd '.DOC_EDITOR_VCS_PATH.' && '
+        $fullCmd = 'export CVS_PASSFILE='.realpath($GLOBALS['DOC_EDITOR_DATA_PATH']).'/.cvspass && cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].' && '
                   ."cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository login && $cmd";
 
         $output  = array();

@@ -105,7 +105,7 @@ class LogManager
      */
     public function saveOutputLog($file, $output)
     {
-        $fp = fopen(DOC_EDITOR_VCS_PATH . '../.' . $file, 'w');
+        $fp = fopen($GLOBALS['DOC_EDITOR_VCS_PATH'] . '../.' . $file, 'w');
         fwrite($fp, implode("<br>",$output));
         fclose($fp);
     }
@@ -119,7 +119,7 @@ class LogManager
     public function readOutputLog($file)
     {
         
-        return $this->highlightBuildLog(file_get_contents(DOC_EDITOR_VCS_PATH . '../.' . $file));
+        return $this->highlightBuildLog(file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'] . '../.' . $file));
     }
 
     /**
@@ -130,10 +130,12 @@ class LogManager
      */
     public function saveFailedBuild($lang, $log)
     {
+        $project = AccountManager::getInstance()->project;
+
         $s = sprintf(
             'INSERT INTO `failedBuildLog` (`project`, `lang`, `log`, `date`)
-             VALUES ("php","%s", "%s", now())',
-            $lang, DBConnection::getInstance()->real_escape_string(json_encode($log))
+             VALUES ("%s","%s", "%s", now())',
+            $project, $lang, DBConnection::getInstance()->real_escape_string(json_encode($log))
         );
         DBConnection::getInstance()->query($s);
     }
@@ -183,7 +185,9 @@ class LogManager
      */
     public function getFailedBuild()
     {
-        $s = 'SELECT `id`, `lang`, `date` FROM `failedBuildLog`';
+        $project = AccountManager::getInstance()->project;
+
+        $s = 'SELECT `id`, `lang`, `date` FROM `failedBuildLog` WHERE `project` = \''.$project.'\'';
         $r  = DBConnection::getInstance()->query($s);
 
         $node = array();

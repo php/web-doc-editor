@@ -21,10 +21,10 @@ class DBConnection
     {
         try {
             $this->conn = new mysqli(
-                DOC_EDITOR_SQL_HOST,
-                DOC_EDITOR_SQL_USER,
-                DOC_EDITOR_SQL_PASS,
-                DOC_EDITOR_SQL_BASE
+                $GLOBALS['DOC_EDITOR_SQL_HOST'],
+                $GLOBALS['DOC_EDITOR_SQL_USER'],
+                $GLOBALS['DOC_EDITOR_SQL_PASS'],
+                $GLOBALS['DOC_EDITOR_SQL_BASE']
             );
             if (mysqli_connect_errno()) {
                 throw new Exception('connect databases failed!');

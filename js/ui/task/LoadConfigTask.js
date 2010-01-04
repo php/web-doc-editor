@@ -13,7 +13,8 @@ ui.task.LoadConfigTask = function(config)
             phpDoc.userLogin = o.mess.userLogin;
             phpDoc.userLang  = o.mess.userLang;
 
-            phpDoc.userConf = o.mess.userConf;
+            phpDoc.userConf  = o.mess.userConf;
+            phpDoc.project   = o.mess.project;
 
             //For the theme, we apply this.
             Ext.get('appTheme').dom.href = phpDoc.userConf["theme"];

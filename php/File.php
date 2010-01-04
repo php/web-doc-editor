@@ -33,7 +33,7 @@ class File
         if (substr($path, -1)   != '/') $path = $path.'/';
         $this->path = $path;
 
-        $this->full_path = DOC_EDITOR_VCS_PATH.$lang.$path.$name;
+        $this->full_path = $GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name;
     }
 
     /**
@@ -86,7 +86,7 @@ class File
     private function createFolder($path) {
 
        // We create this folder localy
-       mkdir(DOC_EDITOR_VCS_PATH.$this->lang.$path);
+       mkdir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$path);
 
        // We register this new folder to be committed
        $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
@@ -117,7 +117,7 @@ class File
 
            $herePath = $path.'/'.$folders[$i];
 
-           if( !is_dir(DOC_EDITOR_VCS_PATH.$this->lang.$herePath) ) {
+           if( !is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$herePath) ) {
               $this->createFolder($herePath);
            }
 
@@ -263,7 +263,7 @@ class File
     public function rawDiff($isPatch=false, $uniqID='')
     {
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$this->lang.$this->path.'; '
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$this->path.'; '
               .'diff -uN '.$this->name.' '.$this->name.$ext;
 
         $output = array();

@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__) . '/ProjectManager.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 
 /**
@@ -35,7 +36,7 @@ class ToolsCheckEntities {
         $this->urlConnectTimeout = 10;
 
         $this->userAgent = 'DocWeb Link Crawler (http://doc.php.net)';
-        $this->pathEntities = DOC_EDITOR_VCS_PATH.'/doc-base/entities/global.ent';
+        $this->pathEntities = $GLOBALS['DOC_EDITOR_ENTITIES_URL'];
 
         $this->forkUrlAllow   = ( function_exists('pcntl_fork') && isset($_ENV['NUMFORKS']) );
         $this->forkNumAllowed = ( $this->forkUrlAllow ) ? $_ENV['NUMFORKS'] : 0;
@@ -64,17 +65,22 @@ class ToolsCheckEntities {
      *
      * @return An indexed array readable by ExtJs
      */
-    function getData() {
+    function getData()
+    {
+        $project = ProjectManager::getInstance()->project;
 
         $node = array();
 
         $s = 'SELECT
-                   `entities`,
-                   `url`,
-                   `result`,
-                   `date`
+                  `entities`,
+                  `url`,
+                  `result`,
+                  `date`
 
-                  FROM `checkEntities`
+              FROM
+                  `checkEntities`
+              WHERE
+                  `project` = \''.$project.'\'
              ';
 
         $r  = DBConnection::getInstance()->query($s);
@@ -96,7 +102,6 @@ class ToolsCheckEntities {
      */
     private function cleanUpDatabase()
     {
-
         DBConnection::getInstance()->query("TRUNCATE TABLE `checkEntities`");
     }
 
@@ -108,15 +113,14 @@ class ToolsCheckEntities {
      */
     private function getEntitiesContent()
     {
-
         $file = @file_get_contents($this->pathEntities);
+
         if( $file ) {
             return $file;
         } else {
             echo "No entities found.\n";
             die();
         }
-
     }
 
     /**
@@ -125,6 +129,7 @@ class ToolsCheckEntities {
      */
     public function startCheck()
     {
+        $project = ProjectManager::getInstance()->project;
 
         $this->cleanUpDatabase();
 
@@ -160,8 +165,9 @@ class ToolsCheckEntities {
                         $r = $this->checkUrl($num, $url);
 
                         $query = sprintf(
-                            'INSERT INTO `checkEntities` (`entities`, `url`, `result`, `date`)
-                            VALUES ("%s", "%s", "%s", now())',
+                            'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                            VALUES ("%s", "%s", "%s", "%s", now())',
+                            $project,
                             $name,
                             $url,
                             $r[0]
@@ -192,8 +198,9 @@ class ToolsCheckEntities {
                 $r = $this->checkUrl($num, $entityUrl);
 
                 $query = sprintf(
-                    'INSERT INTO `checkEntities` (`entities`, `url`, `result`, `date`)
-                    VALUES ("%s", "%s", "%s", now())',
+                    'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                    VALUES ("%s", "%s", "%s", "%s", now())',
+                    $project,
                     $this->entityNames[$num],
                     $entityUrl,
                     $r[0]

@@ -20,7 +20,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'lock_'+ phpDoc.userLogin +'_commit'
+            lockFile : 'project_' + phpDoc.project + '_lock_'+ phpDoc.userLogin +'_commit'
         },
         success : function(response)
         {

@@ -32,10 +32,10 @@ class NewsReader {
 
         $result = array();
 
-        $url = 'http://news.php.net/group.php?format=rss&group=php.doc';
-
-        if ($this->lang != 'en') {
-            $url .= '.' . strtolower(str_replace('_', '-', $this->lang));
+        if( $this->lang == 'en' ) {
+            $url = $GLOBALS['DOC_EDITOR_NEWS_URL_EN'];
+        } else {
+            $url = str_replace("{LANG}", strtolower(str_replace('_', '-', $this->lang)), $GLOBALS['DOC_EDITOR_NEWS_URL_LANG']);
         }
 
         $content = @file_get_contents($url);

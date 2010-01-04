@@ -31,9 +31,9 @@ class BugReader {
     function getOpenBugs() {
 
         if( $this->lang == 'en' ) {
-            $url = 'http://bugs.php.net/rss/search.php?cmd=display&bug_type[]=Documentation+problem&status=Open&search_for=&php_os=&php_os_not=0&boolean=1&author_email=&bug_age=0&by=&order_by=id&direction=DESC&phpver=&limit=10&assign=';
+            $url = $GLOBALS['DOC_EDITOR_BUGS_URL_EN'];
         } else {
-            $url = 'http://bugs.php.net/rss/search.php?cmd=display&bug_type[]=Translation+problem&status=Open&search_for=&php_os=&php_os_not=0&boolean=1&author_email=&bug_age=0&by=&order_by=id&direction=DESC&phpver=&limit=All&assign=&format=rss';
+            $url = $GLOBALS['DOC_EDITOR_BUGS_URL_LANG'];
         }
 
         $r = @file_get_contents($url);

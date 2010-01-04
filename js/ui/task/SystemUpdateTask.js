@@ -29,7 +29,7 @@ ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'lock_apply_tools'
+            lockFile : 'project_' + phpDoc.project + '_lock_apply_tools'
         },
         success : function(response)
         {
@@ -52,7 +52,9 @@ ui.task._SystemUpdateTask.apply_tool = function()
 {
     Ext.get('wizard-step-2').replaceClass('wizard-step-before', 'wizard-step-working');
     XHR({
-        params  : { task: 'applyTools' },
+        params  : {
+            task: 'applyTools'
+        },
         success : function(response)
         {
             var tmp;
@@ -71,7 +73,7 @@ ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'lock_update_repository'
+            lockFile : 'project_' + phpDoc.project + '_lock_update_repository'
         },
         success : function(response)
         {

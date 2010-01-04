@@ -29,6 +29,7 @@ class TranslationStatistic
      */
     public function getFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
             $where = '';
@@ -46,7 +47,8 @@ class TranslationStatistic
                     `files`
                 WHERE
                     ' . $where . '
-                    ( `status` != "NotInEN" OR `status` IS NULL )
+                    ( `status` != "NotInEN" OR `status` IS NULL ) AND
+                    `project` = \''.$project.'\'
                 ' . $groupBy . '
         ';
         $res = DBConnection::getInstance()->query($s);
@@ -66,6 +68,7 @@ class TranslationStatistic
      */
     public function getTransFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
             $where = '';
@@ -83,7 +86,9 @@ class TranslationStatistic
                 files
             WHERE
                 ' . $where . '
-                revision = en_revision
+                `revision` = `en_revision` AND
+                `revision` != 0 AND
+                `project` = \''.$project.'\'
             ' . $groupBy . '
         ';
         $res = DBConnection::getInstance()->query($s);
@@ -103,6 +108,7 @@ class TranslationStatistic
      */
     public function getStaleFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
             $where = '';
@@ -120,9 +126,11 @@ class TranslationStatistic
                 `files`
             WHERE
                 ' . $where . '
-                `en_revision` != `revision` 
+                (`en_revision` != `revision` OR `en_revision` = 0 )
             AND
                 `size` is not NULL
+            AND
+                `project` = \''.$project.'\'
             ' . $groupBy . '
         ';
         $res = DBCOnnection::getInstance()->query($s);
@@ -142,6 +150,7 @@ class TranslationStatistic
      */
     public function getNoTransFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
             $where = '`lang` != \'en\' AND';
@@ -151,7 +160,7 @@ class TranslationStatistic
 
         // We get EN files
 
-       $s = 'SELECT * FROM files WHERE lang=\'en\'';
+       $s = 'SELECT * FROM files WHERE `lang`=\'en\' AND `project`=\''.$project.'\'';
 
        $r = DBConnection::getInstance()->query($s);
 
@@ -160,13 +169,14 @@ class TranslationStatistic
        }
 
        $s = 'SELECT
-                 path, name, lang
+                 `path`, `name`, `lang`
              FROM
-                 files
+                 `files`
              WHERE
                  ' . $where . '
-                 revision is NULL AND
-                 size is NULL AND
+                 `revision` is NULL AND
+                 `size` is NULL AND
+                 `project` = \''.$project.'\' AND
                  ( `status` != "NotInEN" OR `status` IS NULL )
        ';
 
@@ -206,7 +216,7 @@ class TranslationStatistic
         $missFiles = $this->getNoTransFileCount($lang);
 
         if( $lang == 'all' ) {
-            $hereLang = RepositoryManager::getInstance()->availableLang;
+            $hereLang = RepositoryManager::getInstance()->getExistingLanguage();
         } else {
             $hereLang = array(0 => Array("code" => $lang));
         }
@@ -219,10 +229,10 @@ class TranslationStatistic
 
             $summary[0]['id']            = 1;
             $summary[0]['libel']         = 'Up to date files';
-            $summary[0]['nbFiles']       = ( isset($uptodate[$lang]['total']) ) ? $uptodate[$lang]['total'] : 0;
-            $summary[0]['percentFiles']  = round(($uptodate[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
-            $summary[0]['sizeFiles']     = ($uptodate[$lang]['total_size'] == '' ) ? 0 : $uptodate[$lang]['total_size'];
-            $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size'])) ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
+            $summary[0]['nbFiles']       = ( isset($uptodate[$lang]['total']) )       ? $uptodate[$lang]['total'] : 0;
+            $summary[0]['percentFiles']  = ( isset($uptodate[$lang]['total']) )       ? round(($uptodate[$lang]['total']*100)/$nbFiles[$lang]['total'], 2) : 0;
+            $summary[0]['sizeFiles']     = ( !isset($uptodate[$lang]['total_size']) ) ? 0 : $uptodate[$lang]['total_size'];
+            $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size']))   ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[1]['id']            = 2;
             $summary[1]['libel']         = 'Stale files';
@@ -236,7 +246,7 @@ class TranslationStatistic
             $summary[2]['nbFiles']       = ( isset($missFiles[$lang]['total']) ) ? $missFiles[$lang]['total'] : 0;
             $summary[2]['percentFiles']  = round(($missFiles[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
             $summary[2]['sizeFiles']     = ($missFiles[$lang]['total_size'] == '' ) ? 0 : $missFiles[$lang]['total_size'];
-            $summary[2]['percentSize']   = (!isset($missFiles[$lang]['total_size']) || $missFiles[$lang]['total_size'] == 0 ) ? 0 : round(($missFiles[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
+            $summary[2]['percentSize']   = (!isset($missFiles[$lang]['total_size']) || $missFiles[$lang]['total_size'] == 0 || $nbFiles[$lang]['total_size'] == 0 ) ? 0 : round(($missFiles[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[3]['id']            = 4;
             $summary[3]['libel']         = 'Total';

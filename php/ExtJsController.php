@@ -12,6 +12,7 @@ require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/LogManager.php';
 require_once dirname(__FILE__) . '/LockFile.php';
 require_once dirname(__FILE__) . '/NewsReader.php';
+require_once dirname(__FILE__) . '/ProjectManager.php';
 require_once dirname(__FILE__) . '/RepositoryFetcher.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/TranslationStatistic.php';
@@ -74,8 +75,9 @@ class ExtJsController
         $vcsLogin  = $this->getRequestVariable('vcsLogin');
         $vcsPasswd = $this->getRequestVariable('vcsPassword');
         $lang      = $this->getRequestVariable('lang');
+        $project   = $this->getRequestVariable('project');
 
-        $response = AccountManager::getInstance()->login($vcsLogin, $vcsPasswd, $lang);
+        $response = AccountManager::getInstance()->login($project, $vcsLogin, $vcsPasswd, $lang);
 
         if ($response['state'] === true) {
             // This user is already know in a valid user
@@ -83,9 +85,9 @@ class ExtJsController
         } elseif ($response['state'] === false) {
             // This user is unknow from this server
             return JsonResponseBuilder::failure(array(
-                                                 'msg'        => $response['msg'],
-                                                 'authMethod' => $response['authMethod']
-                                               ));
+              'msg'        => $response['msg'],
+              'authMethod' => $response['authMethod']
+            ));
         } else {
             return JsonResponseBuilder::failure();
         }
@@ -111,10 +113,11 @@ class ExtJsController
      */
     public function checkLockFile()
     {
+        AccountManager::getInstance()->isLogged();
+
         $lockFile = $this->getRequestVariable('lockFile');
         $lock     = new LockFile($lockFile);
 
-        AccountManager::getInstance()->isLogged();
         return $lock->isLocked()
             ? JsonResponseBuilder::success()
             : JsonResponseBuilder::failure();
@@ -134,6 +137,22 @@ class ExtJsController
 
     }
 
+    /**
+     * Get all available project
+     */
+    public function getAvailableProject()
+    {
+
+        $r = ProjectManager::getInstance()->getAvailableProject();
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+
+    }
     /**
      * Get all available language
      */
@@ -160,10 +179,12 @@ class ExtJsController
 
         $rm = RepositoryManager::getInstance();
 
+        $project = AccountManager::getInstance()->project;
+
         $rm->cleanUp();
 
         // Set the lock File
-        $lock = new LockFile('lock_apply_tools');
+        $lock = new LockFile('project_'.$project.'_lock_apply_tools');
 
         if ($lock->lock()) {
 
@@ -181,7 +202,7 @@ class ExtJsController
             TranslatorStatistic::getInstance()->computeSummary('all');
 
             // Set lastUpdate date/time
-            $rm->setLastUpdate();
+            $rm->setLastUpdate('data');
         }
         $lock->release();
 
@@ -221,10 +242,10 @@ class ExtJsController
 
         return JsonResponseBuilder::success(
             array(
-                'ping'       => $response,
-                'lastupdate' => $r['lastupdate'],
-                'by'         => $r['by'],
-                'totalData'  => $data
+                'ping'              => $response,
+                'lastupdatedata'    => $r['lastupdatedata'],
+                'lastcheckentities' => $r['lastcheckentities'],
+                'totalData'         => $data
             )
         );
     }
@@ -830,13 +851,15 @@ class ExtJsController
      */
     public function checkEntities()
     {
-        AccountManager::getInstance()->isLogged();
+        $ac = AccountManager::getInstance();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        $ac->isLogged();
+
+        if ($ac->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
-        $lock = new LockFile('lock_check_entities');
+        $lock = new LockFile('project_' . $ac->project . '_lock_check_entities');
         if ($lock->lock()) {
 
             ToolsCheckEntities::getInstance()->startCheck();
@@ -844,6 +867,9 @@ class ExtJsController
         }
         // Remove the lock File
         $lock->release();
+
+        // Set lastUpdate date/time
+        RepositoryManager::getInstance()->setLastUpdate('entities');
 
         return JsonResponseBuilder::success();
     }
@@ -853,18 +879,20 @@ class ExtJsController
      */
     public function checkBuild()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        $am->isLogged();
+
+        if ($am->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
         $xmlDetails = $this->getRequestVariable('xmlDetails');
         $return = "";
 
-        $lang = AccountManager::getInstance()->vcsLang;
+        $lang = $am->vcsLang;
 
-        $lock = new LockFile('lock_check_build_'.$lang);
+        $lock = new LockFile('project_'.$am->project.'_lock_check_build_'.$lang);
         if ($lock->lock()) {
 
             // Remove old log from DB
@@ -877,7 +905,7 @@ class ExtJsController
         $lock->release();
 
         // Send output into a log file
-        LogManager::getInstance()->saveOutputLog('log_check_build_'.$lang, $return["logContent"]);
+        LogManager::getInstance()->saveOutputLog('project_'.$am->project.'_log_check_build_'.$lang, $return["logContent"]);
 
         // If the state of this build is ko, we save it into DB
         if( $return["state"] == 'ko' ) {
@@ -906,9 +934,11 @@ class ExtJsController
      */
     public function vcsCommit()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        $am->isLogged();
+
+        if ($am->vcsLogin == 'anonymous') {
             return JsonResponseBuilder::failure();
         }
 
@@ -921,7 +951,7 @@ class ExtJsController
 
         // We create a lock for this commit process
 
-        $lock = new LockFile('lock_'.AccountManager::getInstance()->vcsLogin.'_commit');
+        $lock = new LockFile('project_'.$am->project.'_lock_'.$am->vcsLogin.'_commit');
 
         if ($lock->lock()) {
 
@@ -1033,6 +1063,7 @@ class ExtJsController
         AccountManager::getInstance()->isLogged();
 
         $r = array();
+        $r['project']   = AccountManager::getInstance()->project;
         $r['userLang']  = AccountManager::getInstance()->vcsLang;
         $r['userLogin'] = AccountManager::getInstance()->vcsLogin;
         $r['userConf']  = AccountManager::getInstance()->userConf;
@@ -1411,17 +1442,22 @@ class ExtJsController
     }
 
     /**
-     * Get the date/time of the last data update
+     * Get the date/time of the last update (data or entities)
      */
     public function getLastUpdate()
     {
         AccountManager::getInstance()->isLogged();
+
+        $type = $this->getRequestVariable('type');
+
         $r = RepositoryFetcher::getInstance()->getLastUpdate();
+
+        $data = ($type == 'data' ) ? $r['lastupdatedata'] : $r['lastcheckentities'];
 
         return JsonResponseBuilder::success(
             array(
                 'success'    => true,
-                'lastupdate' => $r['lastupdate']
+                'lastupdate' => $data
             )
         );
     }

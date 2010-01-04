@@ -12,7 +12,7 @@ function debug($mess)
     $mess = '['.date('d/m/Y H:i:s').'] by '
             .AccountManager::getInstance()->vcsLogin.' : '.$mess."\n";
 
-    $fp = fopen(DOC_EDITOR_VCS_PATH.'../.debug', 'a+');
+    $fp = fopen($GLOBALS['DOC_EDITOR_VCS_PATH'].'../.debug', 'a+');
     fwrite($fp, $mess);
     fclose($fp);
 }

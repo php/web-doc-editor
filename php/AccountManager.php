@@ -17,6 +17,7 @@ class AccountManager
     }
 
     public $userID;
+    public $project;
     public $vcsLogin;
     public $vcsPasswd;
     public $vcsLang;
@@ -79,15 +80,18 @@ class AccountManager
         if (!isset($_SESSION['userID'])) {
             return false;
         }
-
         $this->userID    = $_SESSION['userID'];
         $this->vcsLogin  = $_SESSION['vcsLogin'];
         $this->vcsPasswd = $_SESSION['vcsPasswd'];
         $this->vcsLang   = $_SESSION['lang'];
+        $this->project   = $_SESSION['project'];
+
+        ProjectManager::getInstance()->setProject($this->project);
 
         $this->userConf = isset($_SESSION['userConf'])
             ? $_SESSION['userConf']
             : $this->defaultConf;
+
         $this->updateLastConnect();
 
         return true;
@@ -96,12 +100,13 @@ class AccountManager
     /**
      * Log into this application.
      *
+     * @param $project   The project we want to work on.
      * @param $vcsLogin  The login use to identify this user into PHP VCS server.
      * @param $vcsPasswd The password, in plain text, to identify this user into PHP VCS server.
      * @param $lang      The language we want to access.
      * @return An associated array.
      */
-    public function login($vcsLogin, $vcsPasswd, $lang='en')
+    public function login($project, $vcsLogin, $vcsPasswd, $lang='en')
     {
 
         // Var to return into ExtJs
@@ -109,6 +114,16 @@ class AccountManager
 
         // Var return from VCS auth system
         $AuthReturn = false;
+
+        // We manage the project
+        if( ProjectManager::getInstance()->setProject($project) ) {
+            $this->project = $project;
+        } else {
+            $return['state'] = false;
+            $return['msg']   = 'Bad project';
+            $return['authMethod'] = '-';
+            return $return;
+        }
 
         // Special case for anonymous's user. Anonymous's user can logging into this app by providing this login/pass => anonymous/(empty) ou (empty)/(empty)
         // The result is the same. $this->vcsLogin will be "anonymous" and $this->vcsPasswd, (empty)
@@ -189,7 +204,7 @@ class AccountManager
               $_SESSION['vcsLogin']  = $this->vcsLogin;
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
               $_SESSION['lang']      = $this->vcsLang;
-              $_SESSION['userConf']  = $this->defaultConf;
+              $_SESSION['userConf']  = json_decode(json_encode($this->defaultConf));
 
               // We construct the return's var for ExtJs
               $return['state'] = true;

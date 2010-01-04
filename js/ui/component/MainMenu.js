@@ -37,6 +37,9 @@ ui.component._MainMenu.store.on('load', function(store) {
 
     var tmp; 
 
+    // We put the lang libel into Info-Language
+    Ext.getDom('Info-Language').innerHTML = store.getById(phpDoc.userLang).data["name"];
+
     store.each(function(record){
 
         tmp = new Ext.menu.Item({
@@ -85,7 +88,10 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                     );
 
                     XHR({
-                        params  : { task : 'getLastUpdate' },
+                        params  : {
+                            task : 'getLastUpdate',
+                            type : 'data'
+                        },
                         success : function(response)
                         {
                             // Remove wait msg
@@ -127,7 +133,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 params  :
                                 {
                                     task     : 'checkLockFile',
-                                    lockFile : 'lock_check_build_' + phpDoc.userLang
+                                    lockFile : 'project_' + phpDoc.project + '_lock_check_build_' + phpDoc.userLang
                                 },
                                 success : function()
                                 {
@@ -223,7 +229,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                         params  :
                                         {
                                             task     : 'checkLockFile',
-                                            lockFile : 'lock_check_entities'
+                                            lockFile : 'project_' + phpDoc.project + '_lock_check_entities'
                                         },
                                         success : function()
                                         {

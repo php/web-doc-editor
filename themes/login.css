@@ -4,3 +4,20 @@
 .iconHelp {
     background-image: url(./img/help.png) !important;
 }
+
+.x-form-field-wrap .project-php, .x-form-field-wrap .project-pear {
+    top: 5px;
+    left: 5px;
+}
+
+.project-php {
+    background-image: url(./img/project_php.png) !important;
+    height: 12px;
+    width: 21px;
+}
+
+.project-pear {
+    background: url(./img/project_pear.png) no-repeat top left;
+    height: 11px;
+    width: 11px;
+}

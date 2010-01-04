@@ -14,13 +14,27 @@ ui.task.PingTask = function()
                 } else {
 
                     // We look if there is an update_data in progress or not
-                    if( o.lastupdate === 'in_progress' ) {
-                        Ext.getDom('lastUpdateTime').innerHTML = _('update in progress...');
-                    } else {
-                        var dt = Date.parseDate(o.lastupdate, "Y-m-d H:i:s");
+                    if( o.lastupdatedata === 'in_progress' ) {
+                        Ext.getDom('Info-LastUpdateData').innerHTML = _('update in progress...');
+                    } else if( o.lastupdatedata !== '-' ) {
+                        var dt = Date.parseDate(o.lastupdatedata, "Y-m-d H:i:s");
 
                         // We update the lastupdate date/time
-                        Ext.getDom('lastUpdateTime').innerHTML = dt.format(_('Y-m-d, H:i'));
+                        Ext.getDom('Info-LastUpdateData').innerHTML = dt.format(_('Y-m-d, H:i'));
+                    } else {
+                        Ext.getDom('Info-LastUpdateData').innerHTML = '-';
+                    }
+
+                    // We look if there is an check_entities in progress or not
+                    if( o.lastcheckentities === 'in_progress' ) {
+                        Ext.getDom('Info-LastCheckEntities').innerHTML = _('check in progress...');
+                    } else if( o.lastcheckentities !== '-' ) {
+                        var dt = Date.parseDate(o.lastcheckentities, "Y-m-d H:i:s");
+
+                        // We update the lastupdate date/time
+                        Ext.getDom('Info-LastCheckEntities').innerHTML = dt.format(_('Y-m-d, H:i'));
+                    } else {
+                        Ext.getDom('Info-LastCheckEntities').innerHTML = '-';
                     }
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
@@ -72,7 +86,7 @@ ui.task.PingTask = function()
             },
             failure: function()
             {
-                window.location.href = './';
+                //window.location.href = './';
             }
         });
         this.task.delay(30000);

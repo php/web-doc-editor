@@ -33,7 +33,7 @@ class SvnClient
 
     private function updateKarmaList() {
 
-        $file = @file(DOC_EDITOR_VCS_KARMA_FILE);
+        $file = @file($GLOBALS['DOC_EDITOR_VCS_KARMA_FILE']);
 
         $line_avail = array();
         $user = array();
@@ -146,9 +146,9 @@ class SvnClient
                 . substr($uuid, 16, 4) . '-'
                 . substr($uuid, 20);
 
-        $host = DOC_EDITOR_VCS_SERVER_HOST;
-        $port = DOC_EDITOR_VCS_SERVER_PORT;
-        $uri  = '/' . DOC_EDITOR_VCS_SERVER_REPOS . '!svn/act/'.$uuid;
+        $host = $GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'];
+        $port = $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT'];
+        $uri  = '/' . $GLOBALS['DOC_EDITOR_VCS_SERVER_REPOS'] . '!svn/act/'.$uuid;
 
         $ping = sprintf('MKACTIVITY %s HTTP/1.1
 Host: %s
@@ -227,12 +227,12 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function checkout()
     {
-        $host   = DOC_EDITOR_VCS_SERVER_HOST;
-        $port   = DOC_EDITOR_VCS_SERVER_PORT;
-        $uri    = DOC_EDITOR_VCS_SERVER_PATH;
-        $module = DOC_EDITOR_VCS_MODULE;
+        $host   = $GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'];
+        $port   = $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT'];
+        $uri    = $GLOBALS['DOC_EDITOR_VCS_SERVER_PATH'];
+        $module = $GLOBALS['DOC_EDITOR_VCS_MODULE'];
 
-        $cmd = 'cd '.DOC_EDITOR_DATA_PATH.'; '
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_DATA_PATH'].'; '
               ."svn co http://$host:$port/$uri $module; ";
 
         $trial_threshold = 3;
@@ -248,7 +248,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function update()
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; svn up .;';
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn up .;';
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -267,7 +267,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function log($path, $file)
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; svn log '.$file;
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; svn log '.$file;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -314,7 +314,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -351,7 +351,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $vcsLogin  = AccountManager::getInstance()->vcsLogin;
             $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
-            $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; svn add '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --non-recursive --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
+            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn add '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --non-recursive --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
 
             $trial_threshold = 3;
             while ($trial_threshold-- > 0) {
@@ -384,8 +384,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $create_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
-            @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
+            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
+            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
         }
 
         $update_stack = array();
@@ -394,8 +394,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $update_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  DOC_EDITOR_VCS_PATH.$p.'.new', DOC_EDITOR_VCS_PATH.$p);
-            @unlink(DOC_EDITOR_VCS_PATH.$p.'.new');
+            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
+            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
         }
 
         $delete_stack = array();
@@ -426,7 +426,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
                $cmdCreate.
                "svn ci --no-auth-cache --non-interactive -F $pathLogFile --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
 
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'; ' .$cmd;
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; ' .$cmd;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {

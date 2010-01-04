@@ -29,16 +29,20 @@ class TranslatorStatistic
      */
     public function getTranslators($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
+
         if( $lang == 'all' ) {
             $where = '';
         } else {
-            $where = 'WHERE `lang`="'.$lang.'"';
+            $where = 'AND `lang`="'.$lang.'"';
         }
 
         $s =  'SELECT 
                  `id`, `nick`, `name`, `mail`, `vcs`, `lang`
                FROM
                  `translators`
+               WHERE
+                 `project` = \''.$project.'\'
                '.$where.'
         ';
 
@@ -65,6 +69,8 @@ class TranslatorStatistic
      */
     public function getUptodateFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
+
         if( $lang == 'all' ) {
             $where = '';
         } else {
@@ -79,7 +85,8 @@ class TranslatorStatistic
                 `files`
             WHERE
                 ' . $where . '
-                `revision` = `en_revision`
+                `revision` = `en_revision` AND
+                `project` = \''.$project.'\'
             GROUP BY
                 `maintainer`
             ORDER BY
@@ -102,6 +109,8 @@ class TranslatorStatistic
      */
     public function getStaleFileCount($lang='all')
     {
+        $project = AccountManager::getInstance()->project;
+
         if( $lang == 'all' ) {
             $where = '';
         } else {
@@ -119,6 +128,8 @@ class TranslatorStatistic
                 `en_revision` != `revision`
             AND
                 `size` is not NULL
+            AND
+                `project` = \''.$project.'\'
             GROUP BY
                 `maintainer`
             ORDER BY
@@ -146,7 +157,7 @@ class TranslatorStatistic
         $stale       = $this->getStaleFileCount($lang);
 
         if( $lang == 'all' ) {
-            $hereLang = RepositoryManager::getInstance()->availableLang;
+            $hereLang = RepositoryManager::getInstance()->getExistingLanguage();
         } else {
             $hereLang = array(0 => Array("code" => $lang));
         }

@@ -23,38 +23,40 @@ class RepositoryManager
     }
 
     public $availableLang = array(
-         0 => Array('code' => 'ar',    'iconCls' => 'flag-ar',    'name' => 'Arabic'),
-         1 => Array('code' => 'pt_BR', 'iconCls' => 'flag-pt_BR', 'name' => 'Brazilian Portuguese'),
-         2 => Array('code' => 'bg',    'iconCls' => 'flag-bg',    'name' => 'Bulgarian'),
-         3 => Array('code' => 'zh',    'iconCls' => 'flag-zh',    'name' => 'Chinese (Simplified)'),
-         4 => Array('code' => 'hk',    'iconCls' => 'flag-hk',    'name' => 'Chinese (Hong Kong Cantonese)'),
-         5 => Array('code' => 'tw',    'iconCls' => 'flag-tw',    'name' => 'Chinese (Traditional)'),
-         6 => Array('code' => 'cs',    'iconCls' => 'flag-cs',    'name' => 'Czech'),
-         7 => Array('code' => 'da',    'iconCls' => 'flag-da',    'name' => 'Danish'),
-         8 => Array('code' => 'nl',    'iconCls' => 'flag-nl',    'name' => 'Dutch'),
-         9 => Array('code' => 'en',    'iconCls' => 'flag-en',    'name' => 'English'),
-        10 => Array('code' => 'fi',    'iconCls' => 'flag-fi',    'name' => 'Finnish'),
-        11 => Array('code' => 'fr',    'iconCls' => 'flag-fr',    'name' => 'French'),
-        12 => Array('code' => 'de',    'iconCls' => 'flag-de',    'name' => 'Germany'),
-        13 => Array('code' => 'el',    'iconCls' => 'flag-el',    'name' => 'Greek'),
-        14 => Array('code' => 'he',    'iconCls' => 'flag-he',    'name' => 'Hebrew'),
-        15 => Array('code' => 'hu',    'iconCls' => 'flag-hu',    'name' => 'Hungarian'),
-        16 => Array('code' => 'it',    'iconCls' => 'flag-it',    'name' => 'Italian'),
-        17 => Array('code' => 'ja',    'iconCls' => 'flag-ja',    'name' => 'Japanese'),
-        18 => Array('code' => 'kr',    'iconCls' => 'flag-kr',    'name' => 'Korean'),
-        19 => Array('code' => 'no',    'iconCls' => 'flag-no',    'name' => 'Norwegian'),
-        20 => Array('code' => 'fa',    'iconCls' => 'flag-fa',    'name' => 'Persian'),
-        21 => Array('code' => 'pl',    'iconCls' => 'flag-pl',    'name' => 'Polish'),
-        22 => Array('code' => 'pt',    'iconCls' => 'flag-pt',    'name' => 'Portuguese'),
-        23 => Array('code' => 'ro',    'iconCls' => 'flag-ro',    'name' => 'Romanian'),
-        24 => Array('code' => 'ru',    'iconCls' => 'flag-ru',    'name' => 'Russian'),
-        25 => Array('code' => 'se',    'iconCls' => 'flag-se',    'name' => 'Serbian'),
-        26 => Array('code' => 'sk',    'iconCls' => 'flag-sk',    'name' => 'Slovak'),
-        27 => Array('code' => 'sl',    'iconCls' => 'flag-sl',    'name' => 'Slovenian'),
-        28 => Array('code' => 'es',    'iconCls' => 'flag-es',    'name' => 'Spanish'),
-        29 => Array('code' => 'sv',    'iconCls' => 'flag-fi',    'name' => 'Swedish'),
-        30 => Array('code' => 'tr',    'iconCls' => 'flag-tr',    'name' => 'Turkish')
+         0 => Array('code' => 'ar',    'iconCls' => 'flags flag-ar',    'name' => 'Arabic'),
+         1 => Array('code' => 'pt_BR', 'iconCls' => 'flags flag-pt_BR', 'name' => 'Brazilian Portuguese'),
+         2 => Array('code' => 'bg',    'iconCls' => 'flags flag-bg',    'name' => 'Bulgarian'),
+         3 => Array('code' => 'zh',    'iconCls' => 'flags flag-zh',    'name' => 'Chinese (Simplified)'),
+         4 => Array('code' => 'hk',    'iconCls' => 'flags flag-hk',    'name' => 'Chinese (Hong Kong Cantonese)'),
+         5 => Array('code' => 'tw',    'iconCls' => 'flags flag-tw',    'name' => 'Chinese (Traditional)'),
+         6 => Array('code' => 'cs',    'iconCls' => 'flags flag-cs',    'name' => 'Czech'),
+         7 => Array('code' => 'da',    'iconCls' => 'flags flag-da',    'name' => 'Danish'),
+         8 => Array('code' => 'nl',    'iconCls' => 'flags flag-nl',    'name' => 'Dutch'),
+         9 => Array('code' => 'en',    'iconCls' => 'flags flag-en',    'name' => 'English'),
+        10 => Array('code' => 'fi',    'iconCls' => 'flags flag-fi',    'name' => 'Finnish'),
+        11 => Array('code' => 'fr',    'iconCls' => 'flags flag-fr',    'name' => 'French'),
+        12 => Array('code' => 'de',    'iconCls' => 'flags flag-de',    'name' => 'Germany'),
+        13 => Array('code' => 'el',    'iconCls' => 'flags flag-el',    'name' => 'Greek'),
+        14 => Array('code' => 'he',    'iconCls' => 'flags flag-he',    'name' => 'Hebrew'),
+        15 => Array('code' => 'hu',    'iconCls' => 'flags flag-hu',    'name' => 'Hungarian'),
+        16 => Array('code' => 'it',    'iconCls' => 'flags flag-it',    'name' => 'Italian'),
+        17 => Array('code' => 'ja',    'iconCls' => 'flags flag-ja',    'name' => 'Japanese'),
+        18 => Array('code' => 'kr',    'iconCls' => 'flags flag-kr',    'name' => 'Korean'),
+        19 => Array('code' => 'no',    'iconCls' => 'flags flag-no',    'name' => 'Norwegian'),
+        20 => Array('code' => 'fa',    'iconCls' => 'flags flag-fa',    'name' => 'Persian'),
+        21 => Array('code' => 'pl',    'iconCls' => 'flags flag-pl',    'name' => 'Polish'),
+        22 => Array('code' => 'pt',    'iconCls' => 'flags flag-pt',    'name' => 'Portuguese'),
+        23 => Array('code' => 'ro',    'iconCls' => 'flags flag-ro',    'name' => 'Romanian'),
+        24 => Array('code' => 'ru',    'iconCls' => 'flags flag-ru',    'name' => 'Russian'),
+        25 => Array('code' => 'se',    'iconCls' => 'flags flag-se',    'name' => 'Serbian'),
+        26 => Array('code' => 'sk',    'iconCls' => 'flags flag-sk',    'name' => 'Slovak'),
+        27 => Array('code' => 'sl',    'iconCls' => 'flags flag-sl',    'name' => 'Slovenian'),
+        28 => Array('code' => 'es',    'iconCls' => 'flags flag-es',    'name' => 'Spanish'),
+        29 => Array('code' => 'sv',    'iconCls' => 'flags flag-fi',    'name' => 'Swedish'),
+        30 => Array('code' => 'tr',    'iconCls' => 'flags flag-tr',    'name' => 'Turkish')
     );
+
+    public $existingLanguage = array();
 
     private function __construct()
     {
@@ -65,13 +67,38 @@ class RepositoryManager
         return $this->availableLang;
     }
 
+    public function computeExistingLanguage()
+    {
+        $this->existingLanguage = array();
+
+        for( $i=0; $i < count($this->availableLang); $i++ ) {
+            if( is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->availableLang[$i]['code'].'/') ) {
+                $this->existingLanguage[] = $this->availableLang[$i];
+            }
+        }
+
+        return $this->existingLanguage;
+    }
+
+    public function getExistingLanguage()
+    {
+        if( !isset($this->existingLanguage) || count($this->existingLanguage) == 0 ) {
+            $this->computeExistingLanguage();
+        }
+
+        return $this->existingLanguage;
+    }
+
+
     /**
      * Checkout the phpdoc-all repository.
      * This method must be call ONLY by the /firstRun.php script.
      */
     public function checkoutRepository()
     {
-        $lock = new LockFile('lock_checkout_repository');
+        $project = AccountManager::getInstance()->project;
+
+        $lock = new LockFile('project_' . $project . '_lock_checkout_repository');
 
         if ($lock->lock()) {
             // exec the checkout
@@ -88,9 +115,12 @@ class RepositoryManager
      */
     public function cleanUp()
     {
+        $project = AccountManager::getInstance()->project;
+
         // We cleanUp the database before update vcs and apply again all tools
         foreach (array('files', 'translators', 'errorfiles') as $table) {
-            DBConnection::getInstance()->query("TRUNCATE TABLE $table");
+            DBConnection::getInstance()->query("DELETE FROM `$table` WHERE `project`='$project'");
+            DBConnection::getInstance()->query("OPTIMIZE TABLE `$table` ");
         }
     }
 
@@ -102,7 +132,9 @@ class RepositoryManager
      */
     public function cleanUpBeforeCheckBuild()
     {
-        DBConnection::getInstance()->query("DELETE FROM `failedBuildLog` WHERE `date` < date_sub(now(),interval 1 month)");
+        $project = AccountManager::getInstance()->project;
+
+        DBConnection::getInstance()->query("DELETE FROM `failedBuildLog` WHERE `project`= '$project' AND `date` < date_sub(now(),interval 1 month)");
     }
 
     /**
@@ -112,7 +144,9 @@ class RepositoryManager
      */
     public function updateRepository()
     {
-        $lock = new LockFile('lock_update_repository');
+        $project = AccountManager::getInstance()->project;
+
+        $lock = new LockFile('project_' . $project . '_lock_update_repository');
 
         if ($lock->lock()) {
             // exec the update
@@ -138,7 +172,7 @@ class RepositoryManager
             "logContent" => ""
         );
 
-        $cmd = 'cd '.DOC_EDITOR_VCS_PATH.'/doc-base/;'
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_PATH'].';'
               .'/usr/bin/php configure.php '
               .'--with-lang='.$lang.' --disable-segfault-error';
 
@@ -179,7 +213,8 @@ class RepositoryManager
     public function addPendingCommit($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
     {
         $s = sprintf(
-            'SELECT id FROM `pendingCommit` WHERE `lang`="%s" AND `path`="%s" AND `name`="%s"',
+            'SELECT id FROM `pendingCommit` WHERE `project`="%s" AND `lang`="%s" AND `path`="%s" AND `name`="%s"',
+            AccountManager::getInstance()->project,
             $file->lang, $file->path, $file->name
         );
         $r = DBConnection::getInstance()->query($s);
@@ -188,7 +223,8 @@ class RepositoryManager
         if ($r->num_rows == 0) {
 
             $s = sprintf(
-                'INSERT into `pendingCommit` (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
+                'INSERT into `pendingCommit` (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
+                AccountManager::getInstance()->project,
                 $file->lang, $file->path, $file->name, $revision, $en_revision,
                 $reviewed, $maintainer, AccountManager::getInstance()->vcsLogin, $type
             );
@@ -222,9 +258,11 @@ class RepositoryManager
         for ($i = 0; $i < count($files); $i++) {
             $query = sprintf('DELETE FROM `pendingCommit`
                 WHERE
+                    `project` = "%s" AND
                     `lang` = "%s" AND
                     `path` = "%s" AND
                     `name` = "%s"',
+                AccountManager::getInstance()->project,
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
             DBConnection::getInstance()->query($query);
@@ -243,7 +281,8 @@ class RepositoryManager
         $uniqID = md5(uniqid(rand(), true));
 
         $s = sprintf(
-            'INSERT into `pendingPatch` (`lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", now(), "%s", "%s")',
+            'INSERT into `pendingPatch` (`project`, `lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", "%s", now(), "%s", "%s")',
+            AccountManager::getInstance()->project,
             $file->lang, $file->path, $file->name, AccountManager::getInstance()->vcsLogin, $email, $uniqID
         );
         DBConnection::getInstance()->query($s);
@@ -263,9 +302,10 @@ class RepositoryManager
 
         $s = sprintf(
             'INSERT INTO `pendingCommit`
-                (`lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`)
+                (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`)
             VALUES
-                ("%s","%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")',
+                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")',
+            AccountManager::getInstance()->project,
             $file->lang, $file->path, $file->name,
             AccountManager::getInstance()->vcsLogin,
             $date
@@ -334,12 +374,6 @@ class RepositoryManager
             '/(D )/',
             '/(property )/',
             '/( set on )/'
-            /*
-            '/(bailing)/',
-            '/(Mailing the commit email to)/',
-            '/(Logging in to)/',
-            '/(new revision)/'
-            */
         );
         return preg_replace(
             $reg,
@@ -357,6 +391,7 @@ class RepositoryManager
      */
     public function clearLocalChange($type, $file)
     {
+        $project = AccountManager::getInstance()->project;
         $lang = $file->lang;
         $path = $file->path;
         $name = $file->name;
@@ -372,7 +407,7 @@ class RepositoryManager
 
         // We need select row from pendingCommit table
         $s = "SELECT `id` FROM `pendingCommit`
-              WHERE `lang`='$lang' AND `path`='$path' AND `name`='$name'";
+              WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -395,8 +430,8 @@ class RepositoryManager
         }
 
         // We need check for error in this file
-        $en_content   = file_get_contents(DOC_EDITOR_VCS_PATH.'en' .$path.$name);
-        $lang_content = file_get_contents(DOC_EDITOR_VCS_PATH.$lang.$path.$name);
+        $en_content   = file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'].'en' .$path.$name);
+        $lang_content = file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name);
 
         $info = $file->getInfo($lang_content);
         $anode[0] = array(
@@ -413,7 +448,7 @@ class RepositoryManager
 
         // We need reload original information
         $s = "SELECT `revision`, `en_revision`, `maintainer`, `reviewed` FROM `files`
-              WHERE `lang`='$lang' AND `path`='$path' AND `name`='$name'";
+              WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -436,26 +471,20 @@ class RepositoryManager
 
     /**
      * Set the last update datetime into DB
+     * @param $type Can be "data" or "entities"
      */
-    public function setLastUpdate()
+    public function setLastUpdate($type)
     {
-        $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
-        $r = DBConnection::getInstance()->query($s);
+        $project = AccountManager::getInstance()->project;
 
         $vcsLogin = isset(AccountManager::getInstance()->vcsLogin)
                     ? AccountManager::getInstance()->vcsLogin : '-';
-        if ($r->num_rows == 0) {
-            $s = sprintf(
-                'INSERT INTO `project` (`name`, `lastupdate`, `by`) VALUES (\'php\', now(), "%s")',
-                $vcsLogin
-            );
-        } else {
-            $s = sprintf(
-                'UPDATE `project` SET `lastupdate`=now(), `by`="%s" WHERE `name`=\'php\'',
-                $vcsLogin
-            );
-        }
-        DBConnection::getInstance()->query($s);
+
+        $value = array();
+        $value['date'] = date("Y-m-d H:i:s");
+        $value['by']   = $vcsLogin;
+
+        $this->setStaticValue('last_update_'.$type, '-', json_encode($value));
     }
 
     /**
@@ -471,12 +500,14 @@ class RepositoryManager
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
+        $project = strtoupper(AccountManager::getInstance()->project);
+
         // We need to send an email ?
         if (trim($a->email) != '' ) {
             $to      = trim($a->email);
-            $subject = '[PHP-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
+            $subject = '['.$project.'-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
             $msg     = <<<EOD
-Your patch ($uniqID) was accepted and applied to the PHP Manual.
+Your patch ($uniqID) was accepted and applied to the $project Manual.
 
 Since the online and downloadable versions of the documentation need some
 time to get updated, we would like to ask you to be a bit patient.
@@ -489,7 +520,7 @@ EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink(DOC_EDITOR_VCS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -522,7 +553,7 @@ EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink(DOC_EDITOR_VCS_PATH.$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -550,9 +581,11 @@ EOD;
                             `size`     = "%s",
                             `mdate`    = "%s"
                         WHERE
+                            `project` = "%s" AND
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
+                    AccountManager::getInstance()->project,
                     $info['xmlid'], $info['rev'], $size, $date, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
@@ -563,9 +596,11 @@ EOD;
                         SET
                             `en_revision` = "%s"
                         WHERE
+                            `project` = "%s" AND
                             `lang` != "%s" AND
                             `path`  = "%s" AND
                             `name`  = "%s"',
+                    AccountManager::getInstance()->project,
                     $info['rev'], $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
@@ -597,9 +632,11 @@ EOD;
                             `size_diff`  = "%s",
                             `mdate_diff` = "%s"
                         WHERE
+                            `project` = "%s" AND
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
+                    AccountManager::getInstance()->project,
                     $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
                     trim($info['maintainer']), trim($info['status']),   $size_diff,
                     $date_diff, $file->lang, $file->path, $file->name
@@ -615,8 +652,9 @@ EOD;
      */
     public function updateTranslatorInfo()
     {
-    
-        foreach ($this->availableLang as $lang) {
+        $ExistingLanguage = $this->getExistingLanguage();
+
+        foreach ($ExistingLanguage as $lang) {
 
             $lang = $lang["code"];
 
@@ -655,8 +693,9 @@ EOD;
                         $person = array_merge($default, $person);
 
                         $query = sprintf(
-                            'INSERT INTO `translators` (`lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
-                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
+                            'INSERT INTO `translators` (`project`, `lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
+                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")',
+                            AccountManager::getInstance()->project,
                             $lang,
                             DBConnection::getInstance()->real_escape_string($person['nick']),
                             DBConnection::getInstance()->real_escape_string($name),
@@ -705,7 +744,9 @@ EOD;
      */
     public function updateNotInEN()
     {
-        foreach ($this->availableLang as $lang) {
+        $ExistingLanguage = $this->getExistingLanguage();
+
+        foreach ($ExistingLanguage as $lang) {
             $this->doUpdateNotInEN('/', $lang["code"]);
         }
     }
@@ -717,7 +758,7 @@ EOD;
      */
     private function doUpdateNotInEN($path, $lang)
     {
-        if ($dh = @opendir(DOC_EDITOR_VCS_PATH.$lang.$path)) {
+        if ($dh = @opendir($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path)) {
 
             $dirs  = array();
             $files = array();
@@ -737,13 +778,14 @@ EOD;
             }
 
             foreach($files as $f) {
-                $en_file   = DOC_EDITOR_VCS_PATH .'en'  .$f->path .$f->name;
-                $lang_file = DOC_EDITOR_VCS_PATH .$lang .$f->path .$f->name;
+                $en_file   = $GLOBALS['DOC_EDITOR_VCS_PATH'] .'en'  .$f->path .$f->name;
+                $lang_file = $GLOBALS['DOC_EDITOR_VCS_PATH'] .$lang .$f->path .$f->name;
 
                 if (!@is_file($en_file)) {
                     $query = sprintf(
-                        'INSERT INTO `files` (`lang`, `path`, `name`, `status`)
-                         VALUES ("%s", "%s", "%s", "%s")',
+                        'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `status`)
+                         VALUES ("%s", "%s", "%s", "%s", "%s")',
+                        AccountManager::getInstance()->project,
                         $lang, $f->path, $f->name, 'NotInEN'
                     );
                     DBConnection::getInstance()->query($query);
@@ -765,7 +807,7 @@ EOD;
      */
     public function applyRevCheck($path = '/')
     {
-        if ($dh = @opendir(DOC_EDITOR_VCS_PATH.'en'.$path)) {
+        if ($dh = @opendir($GLOBALS['DOC_EDITOR_VCS_PATH'].'en'.$path)) {
 
             $dirs  = array();
             $files = array();
@@ -797,13 +839,27 @@ EOD;
 
                 $tmp = explode('/', $f->path);
 
-                $check_doc = new ToolsCheckDoc();
-                $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
+                // Only for Php project
+                if( AccountManager::getInstance()->project == 'php' ) {
+                    $check_doc = new ToolsCheckDoc();
+                    $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
+                } else {
+                    $ToolsCheckDocResult['check_oldstyle']       = 'NULL';
+                    $ToolsCheckDocResult['check_undoc']          = 'NULL';
+                    $ToolsCheckDocResult['check_roleerror']      = 'NULL';
+                    $ToolsCheckDocResult['check_badorder']       = 'NULL';
+                    $ToolsCheckDocResult['check_noseealso']      = 'NULL';
+                    $ToolsCheckDocResult['check_noreturnvalues'] = 'NULL';
+                    $ToolsCheckDocResult['check_noparameters']   = 'NULL';
+                    $ToolsCheckDocResult['check_noexamples']     = 'NULL';
+                    $ToolsCheckDocResult['check_noerrors']       = 'NULL';
+                }
 
                 // Sql insert.
                 $query = sprintf(
-                    'INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
-                        VALUES ("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
+                        VALUES ("%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    AccountManager::getInstance()->project,
                     'en', $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
                     $ToolsCheckDocResult['check_oldstyle'],
                     $ToolsCheckDocResult['check_undoc'],
@@ -817,7 +873,9 @@ EOD;
                 );
                 DBConnection::getInstance()->query($query);
 
-                foreach($this->availableLang as $lang) {
+                $ExistingLanguage = $this->getExistingLanguage();
+
+                foreach($ExistingLanguage as $lang) {
 
                     $lang = $lang["code"];
 
@@ -825,7 +883,6 @@ EOD;
                     if( $lang == 'en' ) {
                         continue;
                     }
-
 
                     $lang_file = new File($lang, $f->path, $f->name);
 
@@ -846,8 +903,9 @@ EOD;
                         $reviewed   = ($infoLANG['reviewed']   == 'NULL') ? 'NULL' : $infoLANG['reviewed'];
 
                         $query = sprintf(
-                            'INSERT INTO `files` (`lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
-                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
+                            'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
+                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
+                            AccountManager::getInstance()->project,
                             $lang, $xmlid, $lang_file->path, $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
@@ -867,8 +925,9 @@ EOD;
                         }
                     } else {
                         $query = sprintf(
-                            'INSERT INTO `files` (`lang`, `path`, `name`)
-                                VALUES ("%s", "%s", "%s")',
+                            'INSERT INTO `files` (`project`, `lang`, `path`, `name`)
+                                VALUES ("%s", "%s", "%s", "%s")',
+                            AccountManager::getInstance()->project,
                             $lang, $lang_file->path, $lang_file->name
                         );
                         DBConnection::getInstance()->query($query);
@@ -895,9 +954,11 @@ EOD;
         for ($i = 0; $i < count($files); $i++) {
             $query = sprintf('DELETE FROM files
                 WHERE
+                    `project` = "%s" AND
                     `lang` = "%s" AND
                     `path` = "%s" AND
                     `name` = "%s"',
+                AccountManager::getInstance()->project,
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
             DBConnection::getInstance()->query($query);
@@ -914,11 +975,17 @@ EOD;
      */
     public function setStaticValue($type, $field, $value) {
 
-        $s = "SELECT id FROM staticValue WHERE `type`='".$type."' AND `field`= '".$field."'";
+        $project = AccountManager::getInstance()->project;
+
+        $s = "SELECT id FROM staticValue WHERE
+              `project` = '".$project."' AND
+              `type`    = '".$type."' AND
+              `field`   = '".$field."'
+             ";
         $r = DBConnection::getInstance()->query($s);
 
         if( $r->num_rows == 0 ) {
-            $s = "INSERT INTO staticValue (`type`, `field`, `value`) VALUES ('".$type."' , '".$field."', '".DBConnection::getInstance()->real_escape_string($value)."')";
+            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`) VALUES ('".$project."' , '".$type."' , '".$field."', '".DBConnection::getInstance()->real_escape_string($value)."')";
             DBConnection::getInstance()->query($s);
         } else {
             $a = $r->fetch_object();

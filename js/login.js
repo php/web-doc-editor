@@ -5,7 +5,8 @@ var loginPage = function()
 
     return {
 
-        storeLang : '',
+        storeLang    : '',
+        storeProject : '',
 
         init : function()
         {
@@ -36,9 +37,40 @@ var loginPage = function()
             this.storeLang.load({
                 scope: this,
                 callback: function() {
-                    this.drawForm();
+                    this.storeProject.load();
                 }
             });
+
+
+            // Load all available language
+            this.storeProject = new Ext.data.Store({
+                proxy    : new Ext.data.HttpProxy({
+                    url : './do/getAvailableProject'
+                }),
+                reader   : new Ext.data.JsonReader(
+                    {
+                        root          : 'Items',
+                        totalProperty : 'nbItems',
+                        id            : 'code'
+                    }, Ext.data.Record.create([
+                        {
+                            name    : 'code',
+                            mapping : 'code'
+                        }, {
+                            name    : 'iconCls',
+                            mapping : 'iconCls'
+                        }, {
+                            name    : 'name',
+                            mapping : 'name'
+                        }
+                    ])
+                )
+            });
+
+            this.storeProject.on('load', function() {
+                this.drawForm();
+            }, this);
+
         },
 
         drawForm : function()
@@ -88,12 +120,30 @@ var loginPage = function()
                         url         : './do/login',
                         bodyStyle   : 'padding:5px 5px 0',
                         border      : false,
-                        height      : 100,
+                        height      : 120,
                         width       : 350,
                         labelWidth  : 110,
                         defaults    : { width : 217 },
                         defaultType : 'textfield',
                         items : [{
+                            xtype      : 'iconcombo',
+                            width      : 235,
+                            fieldLabel : 'Project',
+                            store      : this.storeProject,
+                            triggerAction : 'all',
+                            allowBlank    : false,
+                            valueField    : 'code',
+                            displayField  : 'name',
+                            iconClsField  : 'iconCls',
+                            iconClsBase   : 'project',
+                            mode          : 'local',
+                            value         : 'php',
+                            listWidth     : 235,
+                            maxHeight     : 150,
+                            editable      : true,
+                            id            : 'login-form-project',
+                            name          : 'projectDisplay'
+                        }, {
                             fieldLabel : 'VCS login',
                             name       : 'vcsLogin',
                             value      : 'anonymous',
@@ -131,6 +181,7 @@ var loginPage = function()
                             valueField    : 'code',
                             displayField  : 'name',
                             iconClsField  : 'iconCls',
+                            iconClsBase   : 'flags',
                             mode          : 'local',
                             value         : 'en',
                             listWidth     : 235,
@@ -164,7 +215,8 @@ var loginPage = function()
                                     Ext.getCmp('login-form').getForm().submit({
                                         method : 'POST',
                                         params : {
-                                            lang : Ext.getCmp('login-form-lang').getValue()
+                                            lang    : Ext.getCmp('login-form-lang').getValue(),
+                                            project : Ext.getCmp('login-form-project').getValue()
                                         },
                                         waitTitle : 'Connecting',
                                         waitMsg   : 'Sending data...',

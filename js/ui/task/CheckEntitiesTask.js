@@ -23,7 +23,7 @@ ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'lock_check_entities'
+            lockFile : 'project_' + phpDoc.project + '_lock_check_entities'
         },
         success : function(response)
         {

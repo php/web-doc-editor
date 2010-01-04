@@ -9,7 +9,7 @@ class VCSFactory {
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
-            switch (DOC_EDITOR_VCS) {
+            switch ($GLOBALS['DOC_EDITOR_VCS']) {
                 case 'cvs':
                     require_once dirname(__FILE__) . '/CvsClient.php';
                     self::$instance = CvsClient::getInstance();

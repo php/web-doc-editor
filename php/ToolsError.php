@@ -97,6 +97,8 @@ class ToolsError {
      */
     function updateFilesError($nodes, $action='commit') {
 
+        $project = AccountManager::getInstance()->project;
+
         for ($i = 0; $i < count($nodes); $i++) {
 
             $FileLang = $nodes[$i]['lang'];
@@ -104,7 +106,7 @@ class ToolsError {
             $FileName = $nodes[$i]['name'];
 
             // Remove all row in errorfiles tables
-            $s = 'DELETE FROM errorfiles WHERE lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
+            $s = 'DELETE FROM errorfiles WHERE `project`=\''.$project.'\' AND lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
 
             DBConnection::getInstance()->query($s);
 
@@ -148,14 +150,17 @@ class ToolsError {
      */
     function getInfo() {
 
+        $project = AccountManager::getInstance()->project;
+
         $s = 'SELECT
-                   value_en, value_lang, type
+                   `value_en`, `value_lang`, `type`
                 FROM
-                   errorfiles
+                   `errorfiles`
                 WHERE
-                   lang = \''.$this->lang.'\' AND
-                   path = \''.$this->filePath.'\' AND
-                   name = \''.$this->fileName.'\'
+                   `project` = \''.$project.'\' AND
+                   `lang` = \''.$this->lang.'\' AND
+                   `path` = \''.$this->filePath.'\' AND
+                   `name` = \''.$this->fileName.'\'
                ';
 
         $r = DBConnection::getInstance()->query($s);
@@ -183,13 +188,18 @@ class ToolsError {
      */
     function getFilesError($ModifiedFiles) {
 
+        $project = AccountManager::getInstance()->project;
+
         if ( AccountManager::getInstance()->userConf->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
         }
 
-        $s    = 'SELECT * FROM `errorfiles` WHERE '.$type.' `lang`=\''.$this->lang.'\' AND `type` != \'-No error-\'';
+        $s    = 'SELECT * FROM `errorfiles` WHERE '.$type.'
+        `project` = \''.$project.'\' AND
+        `lang`=\''.$this->lang.'\' AND
+        `type` != \'-No error-\'';
         $r    = DBConnection::getInstance()->query($s);
         $node = array();
 
@@ -251,13 +261,15 @@ class ToolsError {
     function saveError()
     {
 
+        $project = AccountManager::getInstance()->project;
+
         if( count($this->errorStack) > 0 ) {
 
-            $sql = 'INSERT INTO errorfiles (`lang`, `path`, `name`, `maintainer`, `value_en`,`value_lang`,`type`) VALUES';
-            $pattern = ' ("%s", "%s", "%s", "%s", "%s", "%s", "%s"),';
+            $sql = 'INSERT INTO errorfiles (`project`, `lang`, `path`, `name`, `maintainer`, `value_en`,`value_lang`,`type`) VALUES';
+            $pattern = ' ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"),';
 
             foreach ($this->errorStack as $error) {
-                $sql .= sprintf($pattern, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), DBConnection::getInstance()->real_escape_string($error['value_en']),
+                $sql .= sprintf($pattern, $project, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), DBConnection::getInstance()->real_escape_string($error['value_en']),
                 DBConnection::getInstance()->real_escape_string($error['value_lang']), $error['type']);
             }
 

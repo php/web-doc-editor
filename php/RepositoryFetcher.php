@@ -29,19 +29,37 @@ class RepositoryFetcher
      */
     public function getLastUpdate()
     {
-        // Test is there is an update in progress
-        $lock_update = new LockFile('lock_update_repository');
-        $lock_apply  = new LockFile('lock_apply_tools');
 
-        if ($lock_update->isLocked() || $lock_apply->isLocked()) {
-            return array('lastupdate' => 'in_progress', 'by' => '-');
+        $project = AccountManager::getInstance()->project;
+
+        $return = array();
+        $return["lastupdatedata"] = '-';
+        $return["lastcheckentities"] = '-';
+
+        // Test is there is an update in progress (data or entities)
+        $lock_update   = new LockFile('project_'.$project.'_lock_update_repository');
+        $lock_apply    = new LockFile('project_'.$project.'_lock_apply_tools');
+        $lock_entities = new LockFile('project_'.$project.'_lock_check_entities');
+
+        $project = AccountManager::getInstance()->project;
+
+        if ( $lock_update->isLocked() || $lock_apply->isLocked() ) {
+            $return["lastupdatedata"] = 'in_progress';
         } else {
-            $s = 'SELECT `lastupdate`, `by` FROM `project` WHERE `name`="php"';
-            $r = DBConnection::getInstance()->query($s);
-            $a = $r->fetch_assoc();
-
-            return $a;
+            $t = $this->getStaticValue('last_update_data', '-');
+            if( $t ) { $return["lastupdatedata"] = $t->date; }
         }
+
+        if ( $lock_entities->isLocked() ) {
+            $return["lastcheckentities"] = 'in_progress';
+        } else {
+            $t = $this->getStaticValue('last_update_entities', '-');
+            if( $t ) { $return["lastcheckentities"] = $t->date; }
+        }
+
+        return $return;
+
+
     }
 
     /**
@@ -54,7 +72,9 @@ class RepositoryFetcher
         $s = sprintf(
             'SELECT `id`, `lang`, `path`, `name`, `revision`,
             `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE
-            `lang`="%s" OR `lang`="en"',
+            `project` = "%s" AND
+            ( `lang`="%s" OR `lang`="en" ) ',
+            AccountManager::getInstance()->project,
             AccountManager::getInstance()->vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
@@ -79,7 +99,9 @@ class RepositoryFetcher
 
         $s = sprintf(
             'SELECT * FROM `pendingCommit` WHERE
+            `project` = "%s" AND
             (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
+            AccountManager::getInstance()->project,
             AccountManager::getInstance()->vcsLang, $ids
         );
         $r = DBConnection::getInstance()->query($s);
@@ -96,10 +118,11 @@ class RepositoryFetcher
     public function getNbPendingUpdate()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`',
-            $vcsLang
+            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision`',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -115,12 +138,13 @@ class RepositoryFetcher
     public function getPendingUpdate()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
 
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `lang` = "%s" AND `revision` != `en_revision`',
-            $vcsLang
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND ( `revision` != `en_revision` OR `en_revision`=0 )',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -175,11 +199,12 @@ class RepositoryFetcher
     public function getNbPendingReview()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
-            $vcsLang
+            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -194,11 +219,12 @@ class RepositoryFetcher
     public function getPendingReview()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
-            $vcsLang
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -240,9 +266,10 @@ class RepositoryFetcher
     public function getNbNotInEn()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $vcsLang);
+        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -256,9 +283,10 @@ class RepositoryFetcher
     public function getNotInEn()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status`=\'NotInEN\'', $vcsLang);
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
@@ -277,8 +305,9 @@ class RepositoryFetcher
     public function getNbPendingTranslate()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
-        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL', $vcsLang);
+        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL', $project, $vcsLang);
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -292,9 +321,10 @@ class RepositoryFetcher
     public function getPendingTranslate()
     {
         $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `lang`="%s" AND `status` is NULL AND `revision` is NULL', $vcsLang);
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL', $project, $vcsLang);
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
@@ -313,9 +343,12 @@ class RepositoryFetcher
 
     public function getNbPendingPatch()
     {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
+
         $s = sprintf(
-            'SELECT count(*) as total FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'',
-            AccountManager::getInstance()->vcsLang
+            'SELECT count(*) as total FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -329,9 +362,12 @@ class RepositoryFetcher
      */
     public function getPendingPatch()
     {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
+
         $s = sprintf(
-            'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `lang`="%s" OR `lang`=\'en\'',
-            AccountManager::getInstance()->vcsLang
+            'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -351,10 +387,12 @@ class RepositoryFetcher
      */
     public function getPendingFoldersCommit()
     {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
-            AccountManager::getInstance()->vcsLang
+            'SELECT * FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -375,11 +413,13 @@ class RepositoryFetcher
 
     public function getNbPendingCommit()
     {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = sprintf(
-            'SELECT count(*) as total FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
-            AccountManager::getInstance()->vcsLang
+            'SELECT count(*) as total FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -393,11 +433,13 @@ class RepositoryFetcher
      */
     public function getPendingCommit()
     {
+        $vcsLang = AccountManager::getInstance()->vcsLang;
+        $project = AccountManager::getInstance()->project;
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
-            AccountManager::getInstance()->vcsLang
+            'SELECT * FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
+            $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -417,7 +459,8 @@ class RepositoryFetcher
     }
 
     /**
-     * Get all files for a given php's extension.
+     * Get all files for a given php's extension. Can be exclusive for php project
+TODO: Handle project here
      *
      * @param $ext The name of the extension.
      * @return An array of files
@@ -426,8 +469,8 @@ class RepositoryFetcher
     {
         $s = sprintf(
             'SELECT `path`, `name` FROM `files` WHERE `path`
-             LIKE \'/reference/%s/%%\' AND `lang`="%s" ORDER BY `path`, `name`',
-            $ext, AccountManager::getInstance()->vcsLang
+             LIKE \'/reference/%s/%%\' AND `lang`="%s" AND `project`="%s" ORDER BY `path`, `name`',
+            $ext, AccountManager::getInstance()->vcsLang, AccountManager::getInstance()->project
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -450,8 +493,10 @@ class RepositoryFetcher
      */
     public function getFileByXmlID($lang, $id)
     {
+        $project = AccountManager::getInstance()->project;
+
         $s = "SELECT `lang`, `path`, `name` FROM `files`
-              WHERE `lang` = '$lang' AND `xmlid` LIKE '%$id%'";
+              WHERE `project`='$project' AND `lang` = '$lang' AND `xmlid` LIKE '%$id%'";
         $r = DBConnection::getInstance()->query($s);
         return $r->fetch_object();
     }
@@ -465,9 +510,9 @@ class RepositoryFetcher
     public function getFileByKeyword($key)
     {
         $s = sprintf(
-            'SELECT `lang`, `path`, `name` FROM `files` WHERE (`lang`="%s" OR `lang`=\'en\')
+            'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
              AND `name` LIKE \'%%%s%%\' ORDER BY `lang`, `path`, `name`',
-            AccountManager::getInstance()->vcsLang, $key
+            AccountManager::getInstance()->project, AccountManager::getInstance()->vcsLang, $key
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -501,7 +546,7 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
 
-        $d = dir(DOC_EDITOR_VCS_PATH.$dir);
+        $d = dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$dir);
 
         $files = array();
         while ($f = $d->read())
@@ -522,7 +567,7 @@ class RepositoryFetcher
                 || $f == 'CVS'
             ) continue;
 
-            if (is_dir(DOC_EDITOR_VCS_PATH.$dir.$f)) {
+            if (is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$dir.$f)) {
 
                 $files[] = array(
                     'text' => $f,
@@ -567,7 +612,11 @@ class RepositoryFetcher
     public function getStaticValue($type, $field) {
 
         // Save in DB
-        $s = "SELECT id, value FROM staticValue WHERE `type`='".$type."' AND `field`= '".$field."'";
+        $s = "SELECT id, value FROM staticValue WHERE
+             `project`='".AccountManager::getInstance()->project."' AND
+             `type`='".$type."' AND
+             `field`= '".$field."'
+             ";
         $r = DBConnection::getInstance()->query($s);
 
         if( $r->num_rows == 0 ) {

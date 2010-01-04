@@ -10,46 +10,72 @@
 require_once dirname(__FILE__) . '/../../php/conf.inc.php';
 require_once dirname(__FILE__) . '/../../php/AccountManager.php';
 require_once dirname(__FILE__) . '/../../php/LogManager.php';
+require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
-// We cleanUp the DB before this process
-RepositoryManager::getInstance()->cleanUpBeforeCheckBuild();
+$rm = RepositoryManager::getInstance();
+$pm = ProjectManager::getInstance();
+$availableProject = $pm->getAvailableProject();
 
-// For all language, we check the build
-foreach (RepositoryManager::getInstance()->availableLang as $lang) {
+while( list($key, $project) = each($availableProject) ) {
 
-    $lang = $lang["code"];
+echo "enter into ".$project['code']."\n";
 
-    $return = RepositoryManager::getInstance()->checkBuild($lang);
+    // We must delete this var to be re-generated
+    unset($rm->existingLanguage);
 
-    // What we must do when the build failed
-    if( $return["state"] == "ko" ) {
+    // Define it as a project
+    $pm->setProject($project['code']);
 
-        $msg = "Your documentation is broken. The build is done on Friday.
+    // We cleanUp the DB before this process
+    $rm->cleanUpBeforeCheckBuild();
 
-Please, try to fix it *quickly*.
+    $existingLanguage = $rm->getExistingLanguage();
 
-Here is the output of the configure.php script :
+    // For all language, we check the build
+    foreach ($existingLanguage as $lang) {
 
-=============================
+        echo "check lang : ".$lang["code"]."\n";
 
-".implode("\n", $return["logContent"])."
+        $lang = $lang["code"];
 
---
-This email is send automatically by the PhpDocumentation Online Editor.
-";
+        $lock = new LockFile('project_'.$pm->project.'_lock_check_build_'.$lang);
+        if ($lock->lock()) {
 
-        $to = "doc-$lang@lists.php.net";
 
-        $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
+            $return = $rm->checkBuild($lang);
 
-        // We send an email for this failed build
-        AccountManager::getInstance()->email($to, $subject, $msg, 'www');
+            // What we must do when the build failed
+            if( $return["state"] == "ko" ) {
 
-        // We store it into DB
-        LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
+                $msg = "Your documentation is broken. The build is done on Friday.
+
+        Please, try to fix it *quickly*.
+
+        Here is the output of the configure.php script :
+
+        =============================
+
+        ".implode("\n", $return["logContent"])."
+
+        --
+        This email is send automatically by the PhpDocumentation Online Editor.
+        ";
+
+                $to = "doc-$lang@lists.php.net";
+
+                $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
+
+                // We send an email for this failed build
+                AccountManager::getInstance()->email($to, $subject, $msg, 'www');
+
+                // We store it into DB
+                LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
+
+            }
+        }
+        // Remove the lock File
+        $lock->release();
     }
-
 }
-
 ?>

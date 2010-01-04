@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `checkEntities` (
 
 CREATE TABLE IF NOT EXISTS `staticValue` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `type` varchar(50) NOT NULL,
   `field` varchar(50) NOT NULL,
   `value` text NOT NULL,
@@ -139,20 +140,6 @@ CREATE TABLE IF NOT EXISTS `pendingPatch` (
   `uniqID` varchar(255) NOT NULL,
   `date` datetime NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Structure of table `project`
---
-
-CREATE TABLE IF NOT EXISTS `project` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `lastupdate` datetime NOT NULL,
-  `by` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------

@@ -5,7 +5,7 @@ ui.task._CheckBuildTask.display = function()
     XHR({
         params  : {
             task : 'getLogFile',
-            file : 'log_check_build_' + phpDoc.userLang
+            file : 'project_' + phpDoc.project + '_log_check_build_' + phpDoc.userLang
         },
         success : function(response)
         {
@@ -41,7 +41,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'lock_check_build_' + phpDoc.userLang
+            lockFile : 'project_' + phpDoc.project + '_lock_check_build_' + phpDoc.userLang
         },
         success : function(response)
         {

@@ -12,6 +12,8 @@ var phpDoc = function()
 
         userConf : '',
 
+        project : '',
+
         filePendingOpen : '',
 
         init : function()
@@ -469,10 +471,21 @@ var phpDoc = function()
                                             '<h3>' +
                                                 ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
                                                 '<br/><br/>' +
-                                                String.format(_('Last data update: <em id="lastUpdateTime">{0}</em>'), '-') +
+                                                _('Project / Language: ') + '<em id="Info-Project">' + this.project + '</em> / <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +
+                                     '</div>' +
+                                     '<div class="res-block">' +
+                                        '<div class="res-block-inner">' +
+                                            '<p>' +
+                                            _('Last data update: ') + '<em id="Info-LastUpdateData">-</em>' +
+                                            '<br/><br/>' +
+                                            _('Last entities check: ') + '<em id="Info-LastCheckEntities">-</em>' +
+                                            '</p>' +
+                                        '</div>' +
                                      '</div>'
+
+
                         }, {
                             xtype      : 'portal',
                             border: false,

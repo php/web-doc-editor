@@ -20,7 +20,7 @@ class lockFile {
     function __construct($id)
     {
         $this->id   = $id;
-        $this->path = DOC_EDITOR_DATA_PATH . '.' . preg_replace('![^0-9a-z.]!i', '', $this->id);
+        $this->path = $GLOBALS['DOC_EDITOR_DATA_PATH'] . '.' . preg_replace('![^0-9a-z.]!i', '', $this->id);
     }
     
     /**
@@ -41,6 +41,7 @@ class lockFile {
     function lock() 
     {
         if ($this->isLocked()) {
+echo "HERE !!!!!\n";
             return false;
         }
         return touch($this->path);

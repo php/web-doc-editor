@@ -186,7 +186,7 @@ class ToolsCheckDoc {
                                 case 'void':
                                     // This either the return type or 0 parameters
                                     if (!isset($methodname)) {
-                                        //$returnvoid = true;
+
                                     } else { // no parameters
                                         $noparameters = true;
                                     }
@@ -201,7 +201,6 @@ class ToolsCheckDoc {
                                     break;
 
                                 default:
-                                    //echo "Unknown child for methodsynopsis: {$child->nodeName} in $function\n";
                             }
                         }
                     }
