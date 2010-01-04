@@ -154,6 +154,8 @@ class TranslationStatistic
     {
         $project = AccountManager::getInstance()->project;
 
+        $result = array();
+
         if( $lang == 'all' ) {
             $where = '`lang` != \'en\' AND';
         } else {
