@@ -121,7 +121,7 @@ class RepositoryFetcher
         $project = AccountManager::getInstance()->project;
 
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision`',
+            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0',
             $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
@@ -143,7 +143,7 @@ class RepositoryFetcher
         $m = $this->getModifies();
 
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND ( `revision` != `en_revision` OR `en_revision`=0 )',
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0 ',
             $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
