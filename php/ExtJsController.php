@@ -1003,11 +1003,20 @@ class ExtJsController
                     // Only for lang files.
                     if( $existFiles[$i]->lang != 'en' ) {
 
-                        $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
-
                         $info = $existFiles[$i]->getInfo();
 
-                        $langFiles[$j]['en_content']   = $en->read(true);
+                        $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
+
+                        // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
+                        // We fake the EN with the LANG content to fake the errorTools ;)
+
+                        if( ! $en->fileExist() ) {
+                            $en_content = $existFiles[$i]->read(true);
+                        } else {
+                            $en_content = $en->read(true);
+                        }
+
+                        $langFiles[$j]['en_content']   = $en_content;
                         $langFiles[$j]['lang_content'] = $existFiles[$i]->read(true);
                         $langFiles[$j]['lang'] = $existFiles[$i]->lang;
                         $langFiles[$j]['path'] = $existFiles[$i]->path;

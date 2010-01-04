@@ -608,40 +608,74 @@ EOD;
 
             } else { // lang file
 
-                $en        = new File('en', $file->path, $file->name);
-                $enInfo    = $en->getInfo();
+                // If this file don't exist in EN, we should skip all this proces
+                $en = new File('en', $file->path, $file->name);
 
-                $sizeEN    = intval(filesize($en->full_path) / 1024);
-                $dateEN    = filemtime($en->full_path);
+                if( $en->fileExist() ) {
 
-                $size_diff = $sizeEN - $size;
-                $date_diff = (intval((time() - $dateEN) / 86400))
-                           - (intval((time() - $date)   / 86400));
+                    $enInfo    = $en->getInfo();
 
-                // update LANG file info
-                $s = sprintf(
-                    'UPDATE `files`
-                        SET
-                            `xmlid`      = "%s",
-                            `revision`   = "%s",
-                            `en_revision`= "%s",
-                            `reviewed`   = "%s",
-                            `size`       = "%s",
-                            `mdate`      = "%s",
-                            `maintainer` = "%s",
-                            `status`     = "%s",
-                            `size_diff`  = "%s",
-                            `mdate_diff` = "%s"
-                        WHERE
-                            `project` = "%s" AND
-                            `lang` = "%s" AND
-                            `path` = "%s" AND
-                            `name` = "%s"',
-                    $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
-                    trim($info['maintainer']), trim($info['status']),   $size_diff,
-                    $date_diff, $am->project, $file->lang, $file->path, $file->name
-                );
-                DBConnection::getInstance()->query($s);
+                    $sizeEN    = intval(filesize($en->full_path) / 1024);
+                    $dateEN    = filemtime($en->full_path);
+
+                    $size_diff = $sizeEN - $size;
+                    $date_diff = (intval((time() - $dateEN) / 86400))
+                               - (intval((time() - $date)   / 86400));
+
+                    // update LANG file info
+                    $s = sprintf(
+                        'UPDATE `files`
+                            SET
+                                `xmlid`      = "%s",
+                                `revision`   = "%s",
+                                `en_revision`= "%s",
+                                `reviewed`   = "%s",
+                                `size`       = "%s",
+                                `mdate`      = "%s",
+                                `maintainer` = "%s",
+                                `status`     = "%s",
+                                `size_diff`  = "%s",
+                                `mdate_diff` = "%s"
+                            WHERE
+                                `project` = "%s" AND
+                                `lang` = "%s" AND
+                                `path` = "%s" AND
+                                `name` = "%s"',
+                        $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
+                        trim($info['maintainer']), trim($info['status']),   $size_diff,
+                        $date_diff, $am->project, $file->lang, $file->path, $file->name
+                    );
+                    DBConnection::getInstance()->query($s);
+
+                } else // This file exist only in LANG version, like translation.xml, for example
+                {
+
+                    // update LANG file info
+                    $s = sprintf(
+                        'UPDATE `files`
+                            SET
+                                `xmlid`      = "%s",
+                                `revision`   = "%s",
+                                `en_revision`= "%s",
+                                `reviewed`   = "%s",
+                                `size`       = "%s",
+                                `mdate`      = "%s",
+                                `maintainer` = "%s",
+                                `status`     = "%s",
+                                `size_diff`  = "%s",
+                                `mdate_diff` = "%s"
+                            WHERE
+                                `project` = "%s" AND
+                                `lang` = "%s" AND
+                                `path` = "%s" AND
+                                `name` = "%s"',
+                        $info['xmlid'], $info['en-rev'], 0, trim($info['reviewed']), $size, $date,
+                        trim($info['maintainer']), trim($info['status']),   0,
+                        0, $am->project, $file->lang, $file->path, $file->name
+                    );
+                    DBConnection::getInstance()->query($s);
+
+                }
             }
         }
     }

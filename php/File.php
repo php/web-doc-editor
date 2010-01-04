@@ -36,6 +36,12 @@ class File
         $this->full_path = $GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name;
     }
 
+    public function fileExist()
+    {
+        return is_file($this->full_path);
+    }
+
+
     /**
      * Read the content of a file.
      * 
