@@ -43,12 +43,7 @@ $DOC_EDITOR_VCS_MODULE = 'phpdoc-all';
 $DOC_EDITOR_VCS_KARMA_FILE = 'http://svn.php.net/viewvc/SVNROOT/global_avail?view=co';
 
 /**
- * Data path
- */
-$DOC_EDITOR_DATA_PATH = dirname(__FILE__).'/../' . 'data/';
-
-/**
- * VCS checkout path
+ * VCS path
  */
 $DOC_EDITOR_VCS_PATH = $DOC_EDITOR_DATA_PATH . $DOC_EDITOR_VCS_MODULE . '/';
 

@@ -481,7 +481,7 @@ class RepositoryManager
                     ? AccountManager::getInstance()->vcsLogin : '-';
 
         $value = array();
-        $value['date'] = date("Y-m-d H:i:s");
+        $value['date'] = @date("Y-m-d H:i:s");
         $value['by']   = $vcsLogin;
 
         $this->setStaticValue('last_update_'.$type, '-', json_encode($value));

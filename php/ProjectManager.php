@@ -19,8 +19,8 @@ class ProjectManager
     public $project;
 
     public $availableProject = array(
-         0 => Array('code' => 'php',  'iconCls' => 'project-php',  'name' => 'Php Documentation')
-         //1 => Array('code' => 'pear', 'iconCls' => 'project-pear', 'name' => 'Pear Documentation')
+         0 => Array('code' => 'php',  'iconCls' => 'project-php',  'name' => 'Php Documentation'),
+         1 => Array('code' => 'pear', 'iconCls' => 'project-pear', 'name' => 'Pear Documentation')
     );
 
 
@@ -58,6 +58,7 @@ class ProjectManager
         // This project must have a conf file
         if( is_file(dirname(__FILE__) . '/conf.'. $project .'.inc.php') ) {
 
+            include_once dirname(__FILE__) . '/conf.inc.php';
             include_once dirname(__FILE__) . '/conf.'. $project .'.inc.php';
 
             $this->project = $project;

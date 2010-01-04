@@ -70,6 +70,8 @@ class TranslationStatistic
     {
         $project = AccountManager::getInstance()->project;
 
+        $result = array();
+
         if( $lang == 'all' ) {
             $where = '';
             $groupBy = 'GROUP BY `lang`';
@@ -225,6 +227,8 @@ class TranslationStatistic
 
             $lang = $lang["code"];
 
+            if( $lang == 'en' ) { continue; }
+
             $summary = array();
 
             $summary[0]['id']            = 1;
@@ -237,8 +241,8 @@ class TranslationStatistic
             $summary[1]['id']            = 2;
             $summary[1]['libel']         = 'Stale files';
             $summary[1]['nbFiles']       = ( isset($stale[$lang]['total']) ) ? $stale[$lang]['total'] : 0;
-            $summary[1]['percentFiles']  = round(($stale[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
-            $summary[1]['sizeFiles']     = ($stale[$lang]['total_size'] == '' ) ? 0 : $stale[$lang]['total_size'];
+            $summary[1]['percentFiles']  = ( !isset($nbFiles[$lang]['total']) || !isset($stale[$lang]['total']) || $nbFiles[$lang]['total'] == 0 ) ? 0 : round(($stale[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
+            $summary[1]['sizeFiles']     = ( !isset($stale[$lang]['total_size']) || $stale[$lang]['total_size'] == '' ) ? 0 : $stale[$lang]['total_size'];
             $summary[1]['percentSize']   = (!isset($stale[$lang]['total_size']) || $stale[$lang]['total_size'] == 0 ) ? 0 : round(($stale[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[2]['id']            = 3;

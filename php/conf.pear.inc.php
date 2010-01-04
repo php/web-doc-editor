@@ -15,7 +15,7 @@ $DOC_EDITOR_VCS_SERVER_REPOS = 'repository/';
  * VCS project path
  *
  */
-$DOC_EDITOR_VCS_SERVER_PATH =  $DOC_EDITOR_VCS_SERVER_REPOS . 'pear/';
+$DOC_EDITOR_VCS_SERVER_PATH =  $DOC_EDITOR_VCS_SERVER_REPOS . 'pear/peardoc/trunk/';
 
 /**
  * VCS server port
@@ -43,14 +43,10 @@ $DOC_EDITOR_VCS_MODULE = 'peardoc';
 $DOC_EDITOR_VCS_KARMA_FILE = 'http://svn.php.net/viewvc/SVNROOT/global_avail?view=co';
 
 /**
- * Data path
+ * VCS path
  */
-$DOC_EDITOR_DATA_PATH = dirname(__FILE__).'/../' . 'data/';
+$DOC_EDITOR_VCS_PATH = $DOC_EDITOR_DATA_PATH . $DOC_EDITOR_VCS_MODULE . '/';
 
-/**
- * VCS checkout path
- */
-$DOC_EDITOR_VCS_PATH = $DOC_EDITOR_DATA_PATH . $DOC_EDITOR_VCS_MODULE . '/peardoc/trunk/';
 
 /**
  * VCS configure.php path

@@ -36,6 +36,11 @@ if (file_exists(dirname(__FILE__) . '/local.conf.inc.php')) {
      */
     $DOC_EDITOR_VCS = 'svn';
 
+    /**
+     * Data path
+     */
+    $DOC_EDITOR_DATA_PATH = dirname(__FILE__).'/../' . 'data/';
+
 }
 
 ?>
