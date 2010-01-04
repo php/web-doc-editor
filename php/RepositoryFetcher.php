@@ -551,9 +551,10 @@ TODO: Handle project here
         $files = array();
         while ($f = $d->read())
         {
-            // We display only 'en' and 'LANG' tree
+            // We display only 'en', 'LANG' tree
             if (   $dir == '/'
                 && $f != 'en'
+                && $f != $GLOBALS["DOC_EDITOR_ENTITIES_FOLDER"]
                 && $f != AccountManager::getInstance()->vcsLang
             ) {
                 continue; // skip non-en and non-user-lang
