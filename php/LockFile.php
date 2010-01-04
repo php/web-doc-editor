@@ -41,7 +41,6 @@ class lockFile {
     function lock() 
     {
         if ($this->isLocked()) {
-echo "HERE !!!!!\n";
             return false;
         }
         return touch($this->path);
