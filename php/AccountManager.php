@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/ProjectManager.php';
 
 class AccountManager
 {

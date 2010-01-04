@@ -9,8 +9,8 @@ require_once dirname(__FILE__) . '/AccountManager.php';
  */
 function debug($mess)
 {
-    $mess = '['.date('d/m/Y H:i:s').'] by '
-            .AccountManager::getInstance()->vcsLogin.' : '.$mess."\n";
+    $mess = '['.@date('d/m/Y H:i:s').'] by '
+            .AccountManager::getInstance()->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
 
     $fp = fopen($GLOBALS['DOC_EDITOR_VCS_PATH'].'../.debug', 'a+');
     fwrite($fp, $mess);

@@ -565,6 +565,9 @@ EOD;
      */
     public function updateFileInfo($files)
     {
+
+        $am = AccountManager::getInstance();
+
         foreach ($files as $file) {
 
             $info    = $file->getInfo();
@@ -585,8 +588,7 @@ EOD;
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
-                    AccountManager::getInstance()->project,
-                    $info['xmlid'], $info['rev'], $size, $date, $file->lang, $file->path, $file->name
+                    $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
 
@@ -600,8 +602,7 @@ EOD;
                             `lang` != "%s" AND
                             `path`  = "%s" AND
                             `name`  = "%s"',
-                    AccountManager::getInstance()->project,
-                    $info['rev'], $file->lang, $file->path, $file->name
+                    $info['rev'], $am->project, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
 
@@ -636,10 +637,9 @@ EOD;
                             `lang` = "%s" AND
                             `path` = "%s" AND
                             `name` = "%s"',
-                    AccountManager::getInstance()->project,
                     $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
                     trim($info['maintainer']), trim($info['status']),   $size_diff,
-                    $date_diff, $file->lang, $file->path, $file->name
+                    $date_diff, $am->project, $file->lang, $file->path, $file->name
                 );
                 DBConnection::getInstance()->query($s);
             }
