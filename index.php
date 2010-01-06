@@ -49,7 +49,11 @@ if (isset($_REQUEST['perm'])) {
 
     $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
 
-    $directAccess = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'"};';
+    if (false == is_null($r)) {
+        $directAccess = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'"};';
+    } else {
+        $directAccess = 'var directAccess = false;';
+    }
 
 } else {
     $directAccess = 'var directAccess = false;';
