@@ -167,7 +167,7 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                       '" class="diff-content"></div>'
             });
 
-            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+            // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
 
             Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
