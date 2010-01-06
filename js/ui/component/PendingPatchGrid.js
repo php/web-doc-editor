@@ -176,7 +176,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                 Ext.getCmp('main-panel').add({
                     id          : 'PP-' + FileID,
                     layout      : 'border',
-                    iconCls     : 'PendingPatch',
+                    iconCls     : 'iconPendingPatch',
                     title       : FileName,
                     originTitle : FileName,
                     tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
