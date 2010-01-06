@@ -454,7 +454,39 @@ var phpDoc = function()
                     plugins           : new Ext.ux.TabCloseMenu(),
                     listeners : {
                         scope        : this,
-                        beforeremove : this.removeTabEvent
+                        beforeremove : this.removeTabEvent,
+                        tabchange    : function(panel, tab) {
+
+                            // We do somethings only if this panel contiens a tab's navigation button
+                            if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG')    ||
+                                 Ext.getCmp(tab.id + '-btn-tabRight-EN')      ||
+                                 Ext.getCmp(tab.id + '-btn-tabRight-ALL')     ||
+                                 Ext.getCmp(tab.id + '-btn-tabRight-NotInEN') ||
+                                 Ext.getCmp(tab.id + '-btn-tabRight-PATCH')  ) {
+
+                                var currentTabId = tab.id,
+                                    tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+                                    nextTabId    = false,
+                                    currentTabIndex,
+                                    i;
+
+                                for( i=0; i < tabs.length; i++ ) {
+                                    if( tabs[i].id === currentTabId ) {
+                                        currentTabIndex = i;
+                                    }
+                                }
+
+                                // Do we need to activate some button ?
+                                if( tabs[currentTabIndex + 1] ) {
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG'    ) ) { Ext.getCmp(tab.id + '-btn-tabRight-LANG'    ).enable(); }
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-EN'      ) ) { Ext.getCmp(tab.id + '-btn-tabRight-EN'      ).enable(); }
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ) ) { Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ).enable(); }
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ).enable(); }
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ).enable(); }
+                                }
+
+                            }
+                        }
                     },
                     items : [{
                         xtype      : 'panel',

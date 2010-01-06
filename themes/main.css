@@ -81,6 +81,8 @@
 /* Icons */
 
 .iconAllFiles          { background-image: url(./img/application_side_tree.png) !important;}
+.iconArrowLeft         { background-image: url(./img/arrow_left.png)            !important;}
+.iconArrowRight        { background-image: url(./img/arrow_right.png)           !important;}
 .iconBook              { background-image: url(./img/book.png)                  !important;}
 .iconBugs              { background-image: url(./img/bug.png)                   !important;}
 .iconBuildStatus       { background-image: url(./img/error_delete.png)          !important;}

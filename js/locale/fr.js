@@ -12,6 +12,9 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 i18n["Patch saved"] = "Patch sauvegardé";
 i18n["Patch saved successfully !"] = "Patch sauvegardé avec succès !";
 
+i18n["Go to next tab"] = "Aller à l'onglet précédent";
+i18n["Go to previous tab"] = "Aller à l'onglet suivant";
+
 i18n["Message updated"] = "Message mis à jour";
 i18n["Log Message was updated successfully !"] = "Le message a été mis à jour avec succès !";
 i18n["Message deleted"] = "Message effacé";

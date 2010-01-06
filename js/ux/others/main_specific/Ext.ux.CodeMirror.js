@@ -45,7 +45,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     resize: function() {
-        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 81 +"px";
+        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 89 +"px";
         this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
     },
 
@@ -64,7 +64,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         cmp.documentDurty = false;
 
         // Attach some others events
-        mirror.editor.keyUp = function(e) {
+        mirror.editor.keyUp = function() {
 
             // On envoie cursormove
             var r        = mirror.cursorPosition(),
@@ -85,7 +85,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         var cmp             = Ext.getCmp(cmId),
             mirror          = cmp.mirror,
             originalContent = mirror.originalContent,
-            currentContent  = mirror.getCode();
+            currentContent  = mirror.getCode(),
+            btnUndo         = Ext.getCmp(cmId + '-btn-undo');
 
         // If originalContent is false, the editor is not ready
         if( originalContent ) {
@@ -96,7 +97,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 }
                 
             } else {
-                cmp.ownerCt.topToolbar.items.items[5].enable();
+                btnUndo.enable(); // undo
                 if( cmp.documentDurty === false ) {
                     cmp.fireEvent('codemodified');
                     cmp.documentDurty = true;
@@ -110,7 +111,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     saveFunction: function(cmId) {
 
         var cmp     = Ext.getCmp(cmId),
-            saveBtn = cmp.ownerCt.topToolbar.items.items[1];
+            saveBtn = Ext.getCmp(cmId + '-btn-save');
 
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
@@ -169,29 +170,29 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.mirror.reindent();
     },
 
-    undo : function(cmp) {
+    undo : function(id_prefix, fid) {
 
         this.mirror.undo();
 
         // Enable the Redo btn
-        cmp.topToolbar.items.items[6].enable();
+        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').enable();
 
         // Is there more undo history ? If not, we disable this btn
         if( ! this.mirror.editor.history.history.length ) {
-            cmp.topToolbar.items.items[5].disable();
+            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').disable();
         }
     },
 
-    redo : function(cmp) {
+    redo : function(id_prefix, fid) {
 
         this.mirror.redo();
 
         // Enable the undo btn
-        cmp.topToolbar.items.items[5].enable();
+        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').enable();
 
         // Is there more redo history ? If not, we disable this btn
         if( ! this.mirror.editor.history.redoHistory.length ) {
-            cmp.topToolbar.items.items[6].disable();
+            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').disable();
         }
     },
 

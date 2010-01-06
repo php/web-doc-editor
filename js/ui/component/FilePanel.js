@@ -3,8 +3,85 @@ Ext.namespace('ui','ui.component','ui.component._FilePanel');
 //------------------------------------------------------------------------------
 // FilePanel internals
 Ext.namespace('ui.component._FilePanel.tbar.menu');
+Ext.namespace('ui.component._FilePanel.tbar.items');
+
+// FilePanel editor indo/redo items
+ui.component._FilePanel.tbar.items.undoRedo = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.undoRedo.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+               id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
+               scope   : this,
+               tooltip : _('<b>Undo</b>'),
+               disabled: true,
+               iconCls : 'iconUndo',
+               handler : function()
+               {
+                   Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo(this.id_prefix, this.fid);
+               }
+           },{
+               id      : this.id_prefix + '-FILE-' + this.fid + '-btn-redo',
+               scope   : this,
+               tooltip : _('<b>Redo</b>'),
+               disabled: true,
+               iconCls : 'iconRedo',
+               handler : function()
+               {
+                   Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo(this.id_prefix, this.fid);
+               }
+           }]
+        });
+    }
+});
+
+// FilePanel editor commun items
+ui.component._FilePanel.tbar.items.common = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.common.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
+{
+    init    : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                tooltip : _('Close Tab'),
+                iconCls : 'iconClose',
+                handler : function()
+                {
+                    Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
+                }
+            },{
+                id      : this.prefix + '-' + this.fid + '-btn-tabLeft-' + this.ftype,
+                scope   : this,
+                tooltip : _('Go to previous tab'),
+                iconCls : 'iconArrowLeft',
+                handler :  this.goToPreviousTab
+            },{
+                id      : this.prefix + '-' + this.fid + '-btn-tabRight-' + this.ftype,
+                scope    : this,
+                tooltip : _('Go to next tab'),
+                disabled : true,
+                iconCls  : 'iconArrowRight',
+                handler  : this.goToNextTab
+            }]
+        });
+    }
+});
 // FilePanel editor menu for LangFile
-// config - { comp_id }
 ui.component._FilePanel.tbar.menu.lang = function(config)
 {
     Ext.apply(this, config);
@@ -49,7 +126,6 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
 });
 
 // FilePanel editor menu for ENFile
-// config - { comp_id }
 ui.component._FilePanel.tbar.menu.en = function(config)
 {
     Ext.apply(this, config);
@@ -334,6 +410,34 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
     }
 });
 
+// FilePanel editor reindent item & tags menu
+ui.component._FilePanel.tbar.items.reindentTags = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.reindentTags.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                tooltip : _('<b>Re-indent</b> all this file'),
+                iconCls : 'iconIndent',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
+                }
+            },(this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({ comp_id : this.id_prefix + '-FILE-' + this.fid }) :
+                                     new ui.component._FilePanel.tbar.menu.lang({ comp_id : this.id_prefix + '-FILE-' + this.fid})
+            ]
+        });
+    }
+});
+
 //------------------------------------------------------------------------------
 // FilePanel
 // config - {
@@ -350,6 +454,57 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
     activeScroll : false,  // scroll lock
+
+    goToPreviousTab : function()
+    {
+        var currentTabId = this.prefix+'-'+this.fid,
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            previousTabId,
+            currentTabIndex,
+            i;
+
+        for( i=0; i < tabs.length; i++ ) {
+            if( tabs[i].id === currentTabId ) {
+                currentTabIndex = i;
+            }
+        }
+
+        // What's the ID of the previous tab ? There is always the first tab, with id's MainInfoTabPanel
+        // If currentTabIndex is 1, the previous is always MainInfoTabPanel, so we don't compute it
+        if( currentTabIndex === 1 ) {
+            previousTabId = 'MainInfoTabPanel';
+        } else {
+            previousTabId = tabs[currentTabIndex - 1].id;
+        }
+
+        // We go to the previous
+        Ext.getCmp('main-panel').setActiveTab(previousTabId);
+
+    },
+
+    goToNextTab : function()
+    {
+
+        var currentTabId = this.prefix+'-'+this.fid,
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            nextTabId    = false,
+            currentTabIndex,
+            i;
+
+        for( i=0; i < tabs.length; i++ ) {
+            if( tabs[i].id === currentTabId ) {
+                currentTabIndex = i;
+            }
+        }
+
+        // What's the ID of the next tab ?
+        if( tabs[currentTabIndex + 1] ) {
+            // We go to the previous
+            nextTabId = tabs[currentTabIndex + 1].id;
+            Ext.getCmp('main-panel').setActiveTab(nextTabId);
+        }
+
+    },
 
     initComponent : function()
     {
@@ -401,148 +556,70 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
         if (!this.readOnly) {
             this.tbar = (this.isPatch) ? [
                 // patch file pane tbar
+                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab}),
                 {
-                    scope   : this,
-                    tooltip : _('Close Tab'),
-                    iconCls : 'iconClose',
-                    handler : function()
-                    {
-                        Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
-                    }
-                }, '-', {
-                    id       : id_prefix + '-PANEL-btn-save-' + this.fid,
-                    scope    : this,
-                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
-                    iconCls  : 'iconSaveFile',
-                    handler  : function()
-                    {
-                        var tmp = new ui.task.AcceptPatchTask({
-                            fid         : this.fid,
-                            fpath       : this.fpath,
-                            fname       : this.fname,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }, {
-                    id       : id_prefix + '-PANEL-btn-reject-' + this.fid,
-                    scope    : this,
-                    tooltip  : _('<b>Reject</b> this patch'),
-                    iconCls  : 'iconPageDelete',
-                    handler  : function()
-                    {
-                        var tmp = new ui.task.RejectPatchTask({
-                            fid         : this.fid,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }, '-', {
-                    scope   : this,
-                    tooltip : _('<b>Undo</b>'),
-                    disabled: true,
-                    iconCls : 'iconUndo',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).undo(this);
-                    }
-                },{
-                    scope   : this,
-                    tooltip : _('<b>Redo</b>'),
-                    disabled: true,
-                    iconCls : 'iconRedo',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).redo(this);
-                    }
-                },'-', {
-                    scope   : this,
-                    tooltip : _('<b>Re-indent</b> all this file'),
-                    iconCls : 'iconIndent',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
-                    }
-                }
-            ] : [
-                // en/lang file pane tbar
-                {
-                    scope   : this,
-                    tooltip : _('Close Tab'),
-                    iconCls : 'iconClose',
-                    handler : function()
-                    {
-                        Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
-                    }
-                }, '-', {
-                    id       : id_prefix + '-PANEL-btn-save-' + this.fid,
-                    scope    : this,
-                    tooltip  : _('<b>Save</b> this file (CTRL+s)'),
-                    iconCls  : 'iconSaveFile',
-                    disabled : true,
-                    handler  : function()
-                    {
-                        var tmp;
-
-                        if (this.lang === 'en') {
-
-                            tmp = new ui.task.SaveENFileTask({
-                                prefix      : this.prefix,
-                                ftype       : this.ftype,
+                    xtype :'buttongroup',
+                    items : [{
+                        id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                        scope    : this,
+                        tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
+                        iconCls  : 'iconSaveFile',
+                        handler  : function()
+                        {
+                            var tmp = new ui.task.AcceptPatchTask({
                                 fid         : this.fid,
                                 fpath       : this.fpath,
                                 fname       : this.fname,
+                                fuid        : this.fuid,
                                 storeRecord : this.storeRecord
                             });
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                        }
+                    }, {
+                        id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
+                        scope    : this,
+                        tooltip  : _('<b>Reject</b> this patch'),
+                        iconCls  : 'iconPageDelete',
+                        handler  : function()
+                        {
+                            var tmp = new ui.task.RejectPatchTask({
+                                fid         : this.fid,
+                                fuid        : this.fuid,
+                                storeRecord : this.storeRecord
+                            });
+                        }
+                    }]
+                }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
+                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang})
+            ] : [
+                // en/lang file pane tbar
+                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab}), {
+                    xtype :'buttongroup',
+                    items : [{
+                        id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                        scope    : this,
+                        tooltip  : _('<b>Save</b> this file (CTRL+s)'),
+                        iconCls  : 'iconSaveFile',
+                        disabled : true,
+                        handler  : function()
+                        {
+                            var tmp;
 
-                        } else {
+                            if (this.lang === 'en') {
 
-                            // From "All files" or "Need translate file", we only save the file
-                            if (this.prefix === 'AF') {
-                                tmp = new ui.task.SaveLangFileTask({
+                                tmp = new ui.task.SaveENFileTask({
                                     prefix      : this.prefix,
                                     ftype       : this.ftype,
                                     fid         : this.fid,
                                     fpath       : this.fpath,
                                     fname       : this.fname,
-                                    lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 });
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                return;
-                            }
-                            if (this.prefix === 'FNT' ) {
-                                tmp = new ui.task.SaveTransFileTask({
-                                    prefix      : this.prefix,
-                                    ftype       : this.ftype,
-                                    fid         : this.fid,
-                                    fpath       : this.fpath,
-                                    fname       : this.fname,
-                                    lang        : this.lang,
-                                    storeRecord : this.storeRecord
-                                });
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                return;
-                            }
 
-                            // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
-                            switch (phpDoc.userConf["onSaveLangFile"]) {
+                            } else {
 
-                                case 'always':
-                                    tmp = new ui.task.CheckFileTask({
-                                        prefix      : this.prefix,
-                                        ftype       : this.ftype,
-                                        fid         : this.fid,
-                                        fpath       : this.fpath,
-                                        fname       : this.fname,
-                                        lang        : this.lang,
-                                        storeRecord : this.storeRecord
-                                    }); // include SaveLangFileTask when no err
-                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    break;
-
-                                case 'never':
+                                // From "All files" or "Need translate file", we only save the file
+                                if (this.prefix === 'AF') {
                                     tmp = new ui.task.SaveLangFileTask({
                                         prefix      : this.prefix,
                                         ftype       : this.ftype,
@@ -553,101 +630,118 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                         storeRecord : this.storeRecord
                                     });
                                     Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    break;
-
-                                case 'ask-me':
-                                    Ext.MessageBox.show({
-                                        title   : _('Confirm'),
-                                        msg     : _('Do you want to check for error before saving?'),
-                                        icon    : Ext.MessageBox.INFO,
-                                        buttons : Ext.MessageBox.YESNOCANCEL,
-                                        scope   : this,
-                                        fn      : function (btn)
-                                        {
-                                            if (btn === 'no') {
-
-                                                tmp = new ui.task.SaveLangFileTask({
-                                                    prefix      : this.prefix,
-                                                    ftype       : this.ftype,
-                                                    fid         : this.fid,
-                                                    fpath       : this.fpath,
-                                                    fname       : this.fname,
-                                                    lang        : this.lang,
-                                                    storeRecord : this.storeRecord
-                                                });
-                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-
-                                            } else if (btn === 'yes') {
-
-                                                tmp = new ui.task.CheckFileTask({
-                                                    prefix      : this.prefix,
-                                                    ftype       : this.ftype,
-                                                    fid         : this.fid,
-                                                    fpath       : this.fpath,
-                                                    fname       : this.fname,
-                                                    lang        : this.lang,
-                                                    storeRecord : this.storeRecord
-                                                }); // include SaveLangFileTask when no err
-                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                            }
-                                        }
+                                    return;
+                                }
+                                if (this.prefix === 'FNT' ) {
+                                    tmp = new ui.task.SaveTransFileTask({
+                                        prefix      : this.prefix,
+                                        ftype       : this.ftype,
+                                        fid         : this.fid,
+                                        fpath       : this.fpath,
+                                        fname       : this.fname,
+                                        lang        : this.lang,
+                                        storeRecord : this.storeRecord
                                     });
-                                    break;
+                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                    return;
+                                }
 
+                                // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
+                                switch (phpDoc.userConf["onSaveLangFile"]) {
+
+                                    case 'always':
+                                        tmp = new ui.task.CheckFileTask({
+                                            prefix      : this.prefix,
+                                            ftype       : this.ftype,
+                                            fid         : this.fid,
+                                            fpath       : this.fpath,
+                                            fname       : this.fname,
+                                            lang        : this.lang,
+                                            storeRecord : this.storeRecord
+                                        }); // include SaveLangFileTask when no err
+                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                        break;
+
+                                    case 'never':
+                                        tmp = new ui.task.SaveLangFileTask({
+                                            prefix      : this.prefix,
+                                            ftype       : this.ftype,
+                                            fid         : this.fid,
+                                            fpath       : this.fpath,
+                                            fname       : this.fname,
+                                            lang        : this.lang,
+                                            storeRecord : this.storeRecord
+                                        });
+                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                        break;
+
+                                    case 'ask-me':
+                                        Ext.MessageBox.show({
+                                            title   : _('Confirm'),
+                                            msg     : _('Do you want to check for error before saving?'),
+                                            icon    : Ext.MessageBox.INFO,
+                                            buttons : Ext.MessageBox.YESNOCANCEL,
+                                            scope   : this,
+                                            fn      : function (btn)
+                                            {
+                                                if (btn === 'no') {
+
+                                                    tmp = new ui.task.SaveLangFileTask({
+                                                        prefix      : this.prefix,
+                                                        ftype       : this.ftype,
+                                                        fid         : this.fid,
+                                                        fpath       : this.fpath,
+                                                        fname       : this.fname,
+                                                        lang        : this.lang,
+                                                        storeRecord : this.storeRecord
+                                                    });
+                                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+
+                                                } else if (btn === 'yes') {
+
+                                                    tmp = new ui.task.CheckFileTask({
+                                                        prefix      : this.prefix,
+                                                        ftype       : this.ftype,
+                                                        fid         : this.fid,
+                                                        fpath       : this.fpath,
+                                                        fname       : this.fname,
+                                                        lang        : this.lang,
+                                                        storeRecord : this.storeRecord
+                                                    }); // include SaveLangFileTask when no err
+                                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                                }
+                                            }
+                                        });
+                                        break;
+                                }
                             }
-
-
-
                         }
-                    }
-                }, {
-                    id       : id_prefix + '-PANEL-btn-saveas-' + this.fid,
-                    scope    : this,
-                    tooltip  : _('<b>Save as</b> a patch'),
-                    iconCls  : 'iconSaveAsFile',
-                    disabled : true,
-                    handler  : function()
-                    {
-                        var tmp = new ui.component.PatchPrompt({
-                            prefix : this.prefix,
-                            ftype  : this.ftype,
-                            fid    : this.fid,
-                            fpath  : this.fpath,
-                            fname  : this.fname,
-                            lang   : this.lang,
-                            defaultEmail : (phpDoc.userLogin !== 'anonymous') ? phpDoc.userLogin + '@php.net' : ''
-                        }).show();
-                    }
-                }, '-', {
-                    scope   : this,
-                    tooltip : _('<b>Undo</b>'),
-                    disabled: true,
-                    iconCls : 'iconUndo',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).undo(this);
-                    }
-                },{
-                    scope   : this,
-                    tooltip : _('<b>Redo</b>'),
-                    disabled: true,
-                    iconCls : 'iconRedo',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).redo(this);
-                    }
-                },'-', {
-                    scope   : this,
-                    tooltip : _('<b>Re-indent</b> all this file'),
-                    iconCls : 'iconIndent',
-                    handler : function()
-                    {
-                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
-                    }
-                }, (this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({ comp_id : id_prefix + '-FILE-' + this.fid }) : new ui.component._FilePanel.tbar.menu.lang({ comp_id : id_prefix + '-FILE-' + this.fid })
-            ];
+                    }, {
+                        id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
+                        scope    : this,
+                        tooltip  : _('<b>Save as</b> a patch'),
+                        iconCls  : 'iconSaveAsFile',
+                        disabled : true,
+                        handler  : function()
+                        {
+                            var tmp = new ui.component.PatchPrompt({
+                                prefix : this.prefix,
+                                ftype  : this.ftype,
+                                fid    : this.fid,
+                                fpath  : this.fpath,
+                                fname  : this.fname,
+                                lang   : this.lang,
+                                defaultEmail : (phpDoc.userLogin !== 'anonymous') ? phpDoc.userLogin + '@php.net' : ''
+                            }).show();
+                        }
+                    }]
+                }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
+                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang})
+                ]
         } else {
-            this.tbar = [{}]; // empty tbar for readonly file
+            this.tbar = [
+                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab})
+            ];
         }
 
         Ext.apply(this,
@@ -707,12 +801,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
 
                             // Desactivate save button
-                            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).disable();
-
-                            if (this.isPatch) {
-                                Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).disable();
-                            } else {
-                                Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).disable();
+                            if ( ! this.isPatch) {
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
                             }
 
                             // Mark as modified
@@ -737,16 +828,13 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
 
                             // Activate save button
-                            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).enable();
-
-                            if (this.isPatch) {
-                                Ext.getCmp(id_prefix + '-PANEL-btn-reject-' + this.fid).enable();
-                            } else {
-                                Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).enable();
+                            if (! this.isPatch) {
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
                             }
 
                             // Enable the undo btn
-                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).getTopToolbar().items.items[5].enable();
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-undo').enable();
 
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;

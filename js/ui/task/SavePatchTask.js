@@ -8,7 +8,7 @@ ui.task.SavePatchTask = function(config)
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data as a patch...'));
 
-    Ext.getCmp(id_prefix + '-PANEL-btn-saveas-' + this.fid).disable();
+    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
     Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
     Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
         Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle

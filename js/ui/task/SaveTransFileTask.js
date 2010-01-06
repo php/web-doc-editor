@@ -38,7 +38,7 @@ ui.task.SaveTransFileTask = function(config)
             );
 
             // reset file
-            Ext.getCmp(id_prefix + '-PANEL-btn-save-' + this.fid).disable();
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
@@ -47,11 +47,7 @@ ui.task.SaveTransFileTask = function(config)
             Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle
             );
-/*
-            if (this.ftype === 'ALL' || !Ext.getCmp(this.prefix + '-EN-FILE-' + this.fid).isModified) {
 
-            }
-*/
             // Remove wait msg
             msg.hide();
 
