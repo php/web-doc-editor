@@ -277,7 +277,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                     ]
                 });
 
-                // We need to activate HERE this tab, otherwise, we can getLayout() (el() is not defined)
+                // We need to activate HERE this tab, otherwise, we can't getLayout() (el() is not defined)
                 Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
 
                 // Set the bg image for north collapsed el
