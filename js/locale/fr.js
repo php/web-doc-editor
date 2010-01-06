@@ -12,8 +12,11 @@ i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
 i18n["Patch saved"] = "Patch sauvegardé";
 i18n["Patch saved successfully !"] = "Patch sauvegardé avec succès !";
 
-i18n["Go to next tab"] = "Aller à l'onglet précédent";
-i18n["Go to previous tab"] = "Aller à l'onglet suivant";
+i18n["Patch accepted successfully"] = "Patch accepté avec succès";
+i18n["The Patch was accepted successfully !"] = "Le patch a été accepté avec succès !";
+
+i18n["Patch rejected successfully"] = "Patch rejeté avec succès";
+i18n["The Patch was rejected successfully !"] = "Le patch a été rejeté avec succès !";
 
 i18n["Message updated"] = "Message mis à jour";
 i18n["Log Message was updated successfully !"] = "Le message a été mis à jour avec succès !";
@@ -25,6 +28,8 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["Go to next tab"] = "Aller à l'onglet précédent";
+i18n["Go to previous tab"] = "Aller à l'onglet suivant";
 i18n["On save lang file"] = "Lors de la sauvegarde d'un fichier de langue";
 i18n["Ask me if I want to check for error before saving the file"] = "Demander systématiquement si une vérification des erreurs doit être effectuée avant la sauvegarde";
 i18n["Always check for error before saving the file"] = "Toujours effectuer une vérification des erreurs avant la sauvegarde";

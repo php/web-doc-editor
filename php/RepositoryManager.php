@@ -504,13 +504,22 @@ class RepositoryManager
 
         // We need to send an email ?
         if (trim($a->email) != '' ) {
+
+            // We get the diff content to include it into the email
+            $file = new File($a->lang, $a->path, $a->name);
+            $patchContent = $file->rawDiff(true, $uniqID);
+
             $to      = trim($a->email);
             $subject = '['.$project.'-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
             $msg     = <<<EOD
-Your patch ($uniqID) was accepted and applied to the $project Manual.
+Your patch was accepted and applied to the $project Manual.
 
 Since the online and downloadable versions of the documentation need some
 time to get updated, we would like to ask you to be a bit patient.
+
+Here is the content of your patch :
+
+$patchContent
 
 Thank you for your submission, and for helping us make our documentation better.
 
@@ -540,10 +549,19 @@ EOD;
 
         // We need to send an email ?
         if (trim($a->email) != '' ) {
+
+            // We get the diff content to include it into the email
+            $file = new File($a->lang, $a->path, $a->name);
+            $patchContent = $file->rawDiff(true, $uniqID);
+
             $to      = trim($a->email);
             $subject = '[PHP-DOC] - Patch Rejected for '.$a->lang.$a->path.$a->name;
             $msg     = <<<EOD
-Your patch ($uniqID) was rejected from the PHP Manual.
+Your following patch was rejected from the PHP Manual.
+
+Here is the content of your patch :
+
+$patchContent
 
 Thank you for your submission.
 

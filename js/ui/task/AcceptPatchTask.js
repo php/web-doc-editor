@@ -16,9 +16,8 @@ ui.task.AcceptPatchTask = function(config)
         function(btn)
         {
             if (btn === 'yes') {
-                Ext.getCmp('PP-PATCH-PANEL-btn-save-' + this.fid).disable();
-                Ext.getCmp('PP-PATCH-FILE-' + this.fid).isModified = false;
-                Ext.getCmp('PP-PATCH-PANEL-' + this.fid).setTitle(
+                Ext.getCmp('PP-PATCH-FILE-'      + this.fid).isModified = false;
+                Ext.getCmp('PP-PATCH-PANEL-'     + this.fid).setTitle(
                     Ext.getCmp('PP-PATCH-PANEL-' + this.fid).originTitle
                 );
                 Ext.getCmp('PP-' + this.fid).setTitle(
@@ -62,11 +61,14 @@ ui.task.AcceptPatchTask = function(config)
                             }
                         });
 
+                        // Remove this tab
+                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
+
                         // Remove wait msg
                         msg.hide();
 
-                        // Remove this tab
-                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
+                        // Notify
+                        phpDoc.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
                     },
                     failure : function(response) {
                         // Remove wait msg

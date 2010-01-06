@@ -35,8 +35,12 @@ ui.task.RejectPatchTask = function(config)
 
                         // Remove this tab
                         Ext.getCmp('main-panel').remove('PP-' + this.fid);
+
                         // Remove wait msg
                         msg.hide();
+
+                        // Notify
+                        phpDoc.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
                     },
                     failure : function(response)
                     {
