@@ -966,7 +966,7 @@ EOD;
                         DBConnection::getInstance()->query($query);
 
                         // Check for error in this file ONLY if this file is uptodate
-                        if ($revision == $en_revision ) {
+                        if ($revision == $en_revision &&  $revision != 0 ) {
                             $error = new ToolsError();
                             $error->setParams(
                                 $infoEN['content'], $infoLANG['content'],
