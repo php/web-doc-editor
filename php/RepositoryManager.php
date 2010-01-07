@@ -172,15 +172,17 @@ class RepositoryManager
             "logContent" => ""
         );
 
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_PATH'].';'
+        $cmd = 'cd '.realpath($GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_PATH']).';'
               .'/usr/bin/php configure.php '
-              .'--with-lang='.$lang.' --disable-segfault-error';
+              .$GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_OPTIONS'];
+
+        $cmd = str_replace("{LangCode}", $lang, $cmd).';';
 
         if ( $enable_xml_details == "true" ) {
-            $cmd .= ' --enable-xml-details';
+            $cmd = str_replace("{XmlDetails}", "--enable-xml-details", $cmd);
+        } else {
+            $cmd = str_replace("{XmlDetails}", "", $cmd);
         }
-
-        $cmd .= ';';
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -192,7 +194,9 @@ class RepositoryManager
         $return["logContent"] = $output;
 
         // We save the result of this check only if it failed.
-        if (!strstr(implode(" ", $output), 'All good. Saving .manual.xml... done.')) {
+        if ( strstr(implode(" ", $output), 'Eyh man. No worries. Happ shittens. Try again after fixing the errors above.') ||
+             strstr(implode(" ", $output), 'There were warnings loading the manual') )
+        {
             $return["state"] = "ko";
         }
 

@@ -17,7 +17,7 @@ ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
         handler : function()
         {
             var tmp = new ui.task.CheckBuildTask();
-            this.ownerCt.close();
+            this.ownerCt.ownerCt.close();
         }
     }],
     initComponent : function()
