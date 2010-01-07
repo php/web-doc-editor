@@ -791,8 +791,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if ( Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified ) {
                             // Remove [modified] in title
                             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
                             );
 
                             // Remove in tabpanel
@@ -817,9 +817,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
                             // Add an [modified] in title
                             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink    +
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
                                 ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
-                                + Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink
                             );
                             // Add in tabpanel
                             Ext.getCmp(this.prefix + '-' + this.fid).setTitle(

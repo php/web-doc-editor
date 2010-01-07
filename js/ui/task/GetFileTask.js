@@ -29,15 +29,16 @@ ui.task.GetFileTask = function(config)
             var o    = Ext.util.JSON.decode(response.responseText),
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
                        + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php',
-                perm = '&nbsp;<a href="' + path + '" target="_blank">permlink</a>',
+                //perm = '&nbsp;<a href="' + path + '" target="_blank">permlink</a>',
+                perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' && this.ftype === 'ORIGIN' ) {
                 p.permlink = '';
             } else {
-                p.permlink = (o.xmlid != 'NULL')? perm : '';
-                p.setTitle(p.originTitle + p.permlink);
+                p.permlink = (o.xmlid != 'NULL') ? perm : '';
+                p.setTitle(p.permlink + p.originTitle);
             }
 
             // We define the content into the editor

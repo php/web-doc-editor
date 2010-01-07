@@ -28,6 +28,7 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["Permanent link to this page"] = "Lien permanent vers cette page";
 i18n["Go to next tab"] = "Aller à l'onglet précédent";
 i18n["Go to previous tab"] = "Aller à l'onglet suivant";
 i18n["On save lang file"] = "Lors de la sauvegarde d'un fichier de langue";
