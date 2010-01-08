@@ -128,7 +128,7 @@ class TranslationStatistic
                 `files`
             WHERE
                 ' . $where . '
-                (`en_revision` != `revision` OR `en_revision` = 0 )
+                (`en_revision` != `revision` AND `revision` != 0 )
             AND
                 `size` is not NULL
             AND
