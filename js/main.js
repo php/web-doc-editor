@@ -462,7 +462,8 @@ var phpDoc = function()
                                  Ext.getCmp(tab.id + '-btn-tabRight-EN')      ||
                                  Ext.getCmp(tab.id + '-btn-tabRight-ALL')     ||
                                  Ext.getCmp(tab.id + '-btn-tabRight-NotInEN') ||
-                                 Ext.getCmp(tab.id + '-btn-tabRight-PATCH')  ) {
+                                 Ext.getCmp(tab.id + '-btn-tabRight-PATCH')   ||
+                                 Ext.getCmp(tab.id + '-btn-tabRight-TRANS')  ) {
 
                                 var currentTabId = tab.id,
                                     tabs         = Ext.getCmp('main-panel').layout.container.items.items,
@@ -483,6 +484,7 @@ var phpDoc = function()
                                     if ( Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ) ) { Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ).enable(); }
                                     if ( Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ).enable(); }
                                     if ( Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ).enable(); }
+                                    if ( Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ).enable(); }
                                 }
 
                             }
