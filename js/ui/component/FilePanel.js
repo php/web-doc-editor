@@ -795,10 +795,21 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
                             );
 
-                            // Remove in tabpanel
-                            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-                                Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                            );
+                            // Do we need to remove the red mark into the Tab title ?
+                            if( this.ftype === 'EN' || this.ftype === 'LANG' ) {
+
+                                if( (this.ftype === 'EN'   && !Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid).isModified ) ||
+                                    (this.ftype === 'LANG' && !Ext.getCmp(this.prefix + '-EN-FILE-'   + this.fid).isModified ) ) {
+
+                                    Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                        Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                                    );
+                                }
+                            } else {
+                                Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                    Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                                );
+                            }
 
                             // Desactivate save button
                             if ( ! this.isPatch) {
@@ -821,6 +832,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
                                 ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
                             );
+
                             // Add in tabpanel
                             Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
