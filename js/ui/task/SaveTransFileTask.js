@@ -40,6 +40,7 @@ ui.task.SaveTransFileTask = function(config)
             // reset file
             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
             );

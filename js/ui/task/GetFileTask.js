@@ -29,12 +29,15 @@ ui.task.GetFileTask = function(config)
             var o    = Ext.util.JSON.decode(response.responseText),
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
                        + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php',
-                //perm = '&nbsp;<a href="' + path + '" target="_blank">permlink</a>',
                 perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
             // We set the permLink (exclude for file patch)
-            if( this.prefix === 'PP' && this.ftype === 'ORIGIN' ) {
+            if( this.prefix === 'PP' ||
+                this.ftype  === 'TRANS' ||
+                this.prefix === 'FNIEN'
+              )
+            {
                 p.permlink = '';
             } else {
                 p.permlink = (o.xmlid != 'NULL') ? perm : '';
@@ -51,7 +54,7 @@ ui.task.GetFileTask = function(config)
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
-                    title: 'Warning',
+                    title: _('Warning'),
                     msg: String.format(_('The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters.'), this.fpath+this.fname),
                     buttons: Ext.MessageBox.OK,
                     icon: Ext.MessageBox.WARNING

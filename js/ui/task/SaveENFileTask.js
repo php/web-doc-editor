@@ -57,9 +57,12 @@ ui.task.SaveENFileTask = function(config)
             // reset file
             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
             );
+
             if (this.ftype === 'ALL' || !Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid).isModified) {
                 // reset tab-panel
                 Ext.getCmp(this.prefix + '-' + this.fid).setTitle(

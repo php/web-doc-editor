@@ -10,11 +10,16 @@ ui.task.SavePatchTask = function(config)
 
     Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
     Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
     Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
         Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
     );
 
-    if (   (this.prefix === 'AF') || (this.lang === 'en' && Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified === false) || (this.lang !== 'en' && Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified === false) ) {
+    if ( ( this.prefix === 'AF') ||
+         ( this.lang === 'en' && !Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified ) ||
+         ( this.lang !== 'en' && !Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified )
+       ) {
         Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
             Ext.getCmp(this.prefix + '-' + this.fid).originTitle
         );
