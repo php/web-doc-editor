@@ -64,7 +64,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         cmp.documentDurty = false;
 
         // Attach some others events
-        mirror.editor.keyUp = function() {
+        mirror.editor.keyUp = function(e) {
 
             // On envoie cursormove
             var r        = mirror.cursorPosition(),
@@ -72,8 +72,15 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 caracter = r.character;
             cmp.fireEvent('cursormove', line, caracter);
 
-            // We check if the code has changed or not
-            cmp.manageCodeChange(cmId);
+            if( Ext.getCmp(cmId).documentDurty === true && e.keyCode !== 8 && e.keyCode !== 46 ) {
+
+                // Don't need to check if the code has changed
+
+            } else {
+
+                // We check if the code has changed or not
+                cmp.manageCodeChange(cmId);
+            }
         };
 
         Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);

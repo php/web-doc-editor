@@ -825,11 +825,14 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     },
                     codemodified : function() {
 
-                        if (!Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified) {
+                        var cmpFile = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
+                            cmpPanel= Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+
+                        if (!cmpFile.isModified) {
                             // Add an [modified] in title
-                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink    +
-                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle +
+                            cmpPanel.setTitle(
+                                cmpPanel.permlink    +
+                                cmpPanel.originTitle +
                                 ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
                             );
 
@@ -849,7 +852,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-undo').enable();
 
                             // Mark as modified
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = true;
+                            cmpFile.isModified = true;
 
                         }
 
