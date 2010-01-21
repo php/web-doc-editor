@@ -1,6 +1,6 @@
 Ext.namespace('ui','ui.component','ui.component.MainPanel');
 
-ui.component.MainPanel = Ext.extend(Ext.TabPanel, {
+ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     activeTab         : 0,
     enableTabScroll   : true,
     plugins           : new Ext.ux.TabCloseMenu(),
