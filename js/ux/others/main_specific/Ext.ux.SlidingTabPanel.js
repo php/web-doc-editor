@@ -12,6 +12,12 @@ Ext.ux.SlidingTabPanel = Ext.extend(Ext.TabPanel, {
 	
 	initTab: function(item, index){
 		Ext.ux.SlidingTabPanel.superclass.initTab.call(this, item, index);
+
+                this.addEvents({
+                    startDrag : true,
+                    endDrag   : true
+                });
+
 		var p = this.getTemplateArgs(item);
 		if(!this.slidingTabsID) this.slidingTabsID = Ext.id(); // Create a unique ID for this tabpanel
 		new Ext.ux.DDSlidingTab(p, this.slidingTabsID, {
@@ -54,6 +60,10 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 		}
 	}
 	,startDrag: function(x, y) {
+
+                // Fire the startDrag event
+                this.tabpanel.fireEvent('startDrag', this.tabpanel, this.tabpanel.getActiveTab());
+
 		Ext.dd.DDM.useCache = false; // Disable caching of element location
 		Ext.dd.DDM.mode = 1; // Point mode
 		
@@ -161,5 +171,9 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 		});
 		
 		Ext.dd.DDM.useCache = true;
+
+                // Fire the startDrag event
+                this.tabpanel.fireEvent('endDrag', this.tabpanel, this.tabpanel.getActiveTab());
+
 	}
 });
