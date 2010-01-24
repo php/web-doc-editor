@@ -172,8 +172,38 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 		
 		Ext.dd.DDM.useCache = true;
 
+                this.reorderTab();
+
                 // Fire the startDrag event
                 this.tabpanel.fireEvent('endDrag', this.tabpanel, this.tabpanel.getActiveTab());
 
-	}
+	},
+        reorderTab: function() {
+
+            var tabsEl = this.tabpanel.header.child('ul').dom.children,
+                tabsId = [],
+                tabsOrigin = [];
+
+            for ( var i=0; i < tabsEl.length; i++ ) {
+                if( tabsEl[i].id.substr(0, this.tabpanel.id.length) == this.tabpanel.id ) {
+                    tabsId.push( tabsEl[i].id.substr((this.tabpanel.id.length+2), tabsEl[i].id.length ) );
+                }
+            }
+
+            // Now, tabsId is the real list ordered of the tab's id
+            // We put this order into parent element
+
+            // We get the original reference of this tabs
+            for( var i=0; i < this.tabpanel.items.items.length; i++ ) {
+                tabsOrigin[this.tabpanel.items.items[i].id] = this.tabpanel.items.items[i];
+            }
+
+            for( var i=0; i < tabsId.length; i++ ) {
+                // the keys
+                this.tabpanel.items.keys[i] = tabsId[i];
+                // the elements
+                this.tabpanel.items.items[i] = tabsOrigin[tabsId[i]];
+            }
+
+        }
 });

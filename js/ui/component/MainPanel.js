@@ -12,11 +12,12 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
         this.on('beforeremove', this.onBeforeRemove, this);
         this.on('tabchange',    this.onTabChange,    this);
+        this.on('endDrag',    this.onTabChange,    this);
 
     },
 
-    onTabChange : function(panel, tab) {
-
+    onTabChange : function(panel, tab)
+    {
         // We do somethings only if this panel contiens a tab's navigation button
         if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG')    ||
              Ext.getCmp(tab.id + '-btn-tabRight-EN')      ||
