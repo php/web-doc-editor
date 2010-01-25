@@ -351,7 +351,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $vcsLogin  = AccountManager::getInstance()->vcsLogin;
             $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
-            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn add '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --non-recursive --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
+            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn add --non-recursive '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
 
             $trial_threshold = 3;
             while ($trial_threshold-- > 0) {
