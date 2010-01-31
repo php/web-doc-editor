@@ -223,7 +223,7 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' ORDER BY `path`, `name` LIMIT 100',
             $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
