@@ -947,7 +947,7 @@ class ExtJsController
 
         $anode = json_decode(stripslashes($nodes));
 
-        $commitResponse = '';
+        $commitResponse = $tmp = '';
 
         // We create a lock for this commit process
 
@@ -955,8 +955,9 @@ class ExtJsController
 
         if ($lock->lock()) {
 
-
-            $commitResponse = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
+            $tmp = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
+            $commitResponse = $tmp['commitResponse'];
+            $anode          = $tmp['anode'];
 
             // Store the response into session to display later
             $_SESSION['commitResponse'] = $commitResponse;
@@ -995,43 +996,9 @@ class ExtJsController
                 // Update revision & reviewed for all this files (LANG & EN)
                 RepositoryManager::getInstance()->updateFileInfo($existFiles);
 
-                // Stuff only for LANG files
-                $langFiles = array();
-                $j = 0;
-
-                for ($i = 0; $i < count($existFiles); $i++) {
-                    // Only for lang files.
-                    if( $existFiles[$i]->lang != 'en' ) {
-
-                        $info = $existFiles[$i]->getInfo();
-
-                        $en = new File('en', $existFiles[$i]->path, $existFiles[$i]->name);
-
-                        // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
-                        // We fake the EN with the LANG content to fake the errorTools ;)
-
-                        if( ! $en->fileExist() ) {
-                            $en_content = $existFiles[$i]->read(true);
-                        } else {
-                            $en_content = $en->read(true);
-                        }
-
-                        $langFiles[$j]['en_content']   = $en_content;
-                        $langFiles[$j]['lang_content'] = $existFiles[$i]->read(true);
-                        $langFiles[$j]['lang'] = $existFiles[$i]->lang;
-                        $langFiles[$j]['path'] = $existFiles[$i]->path;
-                        $langFiles[$j]['name'] = $existFiles[$i]->name;
-                        $langFiles[$j]['maintainer'] = $info['maintainer'];
-
-                        $j ++;
-                    }
-                }
-                if( !empty($langFiles) ) {
-                    $errorTools = new ToolsError();
-                    $errorTools->updateFilesError($langFiles);
-                }
                 // Remove all this files in needcommit
                 RepositoryManager::getInstance()->delPendingCommit($existFiles);
+
             } // End of $existFiles stuff
 
             // ... for deleted Files

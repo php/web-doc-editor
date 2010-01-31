@@ -244,6 +244,34 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     }
 
     /**
+     *  "svn up" on a single File
+     *
+     * @param $lang The lang of this file.
+     * @param $path The path for this file.
+     * @param $name The name of the file.
+     * @return True if this file exist after the update processus, false otherwise.
+     */
+    public function updateSingleFile($lang, $path, $name)
+    {
+        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn up '.$lang.$path.$name;
+
+        $trial_threshold = 3;
+        while ($trial_threshold-- > 0) {
+            $output = array();
+            exec($cmd, $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
+        }
+
+        if( is_file($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name) ) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    /**
      *  svn up . under DOC_EDITOR_VCS_PATH
      */
     public function update()

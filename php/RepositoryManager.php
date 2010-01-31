@@ -324,11 +324,164 @@ class RepositoryManager
     }
 
     /**
+     * Update the VCS for each file we try to cimmit before start the commit processus.
+     * As it, we ensure all VCS conflict.
+     *
+     * @param $files All files to check
+     * @param $type Type of this file. Can be "new", "update", or "delete"
+     * @return Return the stack of files we must commit. All files witch can't be commited have been deleted from this stack
+     */
+    public function beforeCommitChanges($files, $type)
+    {
+
+        $stack = Array();
+
+        switch($type) {
+
+            case 'new' :
+
+                // For new files, we must ensure that this file is steel non exist into the repository before commit it.
+                for( $i=0; $i < count($files); $i++ ) {
+
+                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
+                        $files[$i]->lang,
+                        $files[$i]->path,
+                        $files[$i]->name
+                    );
+
+                    if( $updateResponse ) {
+
+                        // This file exist in the repository ! We can't commit it as a new file now.
+                        // We must update this file into the app, and suppress it from this commit process
+
+                        // Delete this new file from the fileSystem
+                        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
+                        // Delete from pendingCommit table
+                        $tmp = Array();
+                        $tmp[0] = $files[$i];
+
+                        $this->delPendingCommit($tmp);
+                        // We must now update information into the app for this new file
+                        $this->updateFileInfo($tmp);
+
+                    } else {
+                        // This file steel non exist into the current respository, we can commit it
+                        $stack[] = $files[$i];
+                    }
+
+                }
+
+                break;
+
+            case 'update' :
+
+                // For update files, we must ensure that this file haven't been modified since last big update
+                for( $i=0; $i < count($files); $i++ ) {
+
+                    // We get the filemtime for this file to compare with the filemtime after the update.
+                    $oldTime = filemtime($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+
+                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
+                        $files[$i]->lang,
+                        $files[$i]->path,
+                        $files[$i]->name
+                    );
+
+                    if( $updateResponse ) {
+
+                        // If this file haven't been deleted since last big update, $updateResponse should return true
+                        $newTime = filemtime($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+
+
+                        if( $newTime != $oldTime ) {
+
+                            // This file have been modified since last big update.
+                            // We can't commit our change, or this file will be mark as conflict into VCS
+                            // We just update the info for this file and skip it from this commit process
+
+                            $tmp = Array();
+                            $tmp[0] = $files[$i];
+                            $this->delPendingCommit($tmp);
+                            // We must now update information into the app for this file
+                            $this->updateFileInfo($tmp);
+
+                        } else {
+
+                            // This file haven't been modified since last big update.
+                            // We can continue the commit processus for it
+                            $stack[] = $files[$i];
+
+                        }
+
+                    } else {
+
+                        // Here, we try to update a file witch have been deleted since last bug update
+                        // We delete our .new, and remove all reference for it from the DB
+
+                        // Delete this new file from the fileSystem
+                        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
+
+                        // Delete from pendingCommit table
+                        $tmp = Array();
+                        $tmp[0] = $files[$i];
+
+                        $this->delPendingCommit($tmp);
+
+                    }
+
+                }
+
+                break;
+
+            case 'delete' :
+
+                // For deleted files, we must ensure that this file is steel exist into the repository before commit it.
+                for( $i=0; $i < count($files); $i++ ) {
+
+                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
+                        $files[$i]->lang,
+                        $files[$i]->path,
+                        $files[$i]->name
+                    );
+
+                    if( $updateResponse ) {
+
+                        // This file steel exist into the current respository, we can commit it for deletion
+                        $stack[] = $files[$i];
+
+
+                    } else {
+
+                        // This file don't exist in the repository ! We can't commit it as a deleted file now.
+                        // We must update this file into the app, and suppress it from this commit process
+
+                        // Delete from pendingCommit table
+                        $tmp = Array();
+                        $tmp[0] = $files[$i];
+
+                        $this->delPendingCommit($tmp);
+
+                        // Remove this files from the repository
+                        $this->delFiles($tmp);
+
+                    }
+
+                }
+
+                break;
+
+        }
+
+        return $stack;
+
+    }
+
+    /**
      * Commit file changes to repository.
      *
      * @param $ids An array of files' id to be commited.
      * @param $log The message log to use with this commit.
-     * @return The message from VCS server after this commit (with HTML highlight).
+     * @return An associated array. The key "commitResponse" contains the response from the CVS server after commit (with HTML highlight) and the key "anode", the list of files witch have been really commited.
      */
     public function commitChanges($ids, $log)
     {
@@ -337,6 +490,7 @@ class RepositoryManager
 
         // Task for folders
         $foldersInfos = RepositoryFetcher::getInstance()->getPendingFoldersCommit();
+
         if( $foldersInfos ) {
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
             $commitLog = array_merge($commitLog, $c);
@@ -357,11 +511,17 @@ class RepositoryManager
                 $fileInfos[$i]['name']
             );
             switch ($fileInfos[$i]['type']) {
-                case 'new':    $create_stack[] = $f; break;
-                case 'update': $update_stack[] = $f; break;
-                case 'delete': $delete_stack[] = $f; break;
+                case 'new'    : $create_stack[] = $f; break;
+                case 'update' : $update_stack[] = $f; break;
+                case 'delete' : $delete_stack[] = $f; break;
             }
         }
+
+        // Before commit, we need to update this file to find if there haven't been modified since last update process
+        $create_stack = $this->beforeCommitChanges($create_stack, 'new');
+        $update_stack = $this->beforeCommitChanges($update_stack, 'update');
+        $delete_stack = $this->beforeCommitChanges($delete_stack, 'delete');
+
         $c = VCSFactory::getInstance()->commit(
             $log, $create_stack, $update_stack, $delete_stack
         );
@@ -379,10 +539,25 @@ class RepositoryManager
             '/(property )/',
             '/( set on )/'
         );
-        return preg_replace(
+
+        $commitLog = preg_replace(
             $reg,
             '<span style="color: #15428B; font-weight: bold;">$1</span>',
             $commitLog
+        );
+
+        // We fetch again the file witch have been commited. All file witch have been skip from beforeCommitChanges haren't into DB for now.
+        $fileInfos   = RepositoryFetcher::getInstance()->getModifiesById($ids);
+
+        // Get all ids witch have been really commited
+        $ids = Array();
+        for( $i=0; $i < count($fileInfos); $i ++ ) {
+            $ids[] = $fileInfos[$i]['id'];
+        }
+
+        return Array(
+            'commitResponse' => $commitLog,
+            'anode' => $ids
         );
     }
 
@@ -669,6 +844,17 @@ EOD;
                     );
                     DBConnection::getInstance()->query($s);
 
+                    // Run the errorTools under this file
+                    $tmpFile[0]['en_content']   = $en->read(true);
+                    $tmpFile[0]['lang_content'] = $file->read(true);
+                    $tmpFile[0]['lang']         = $file->lang;
+                    $tmpFile[0]['path']         = $file->path;
+                    $tmpFile[0]['name']         = $file->name;
+                    $tmpFile[0]['maintainer']   = $info['maintainer'];
+
+                    $errorTools = new ToolsError();
+                    $errorTools->updateFilesError($tmpFile);
+
                 } else // This file exist only in LANG version, like translation.xml, for example
                 {
 
@@ -696,6 +882,20 @@ EOD;
                         0, $am->project, $file->lang, $file->path, $file->name
                     );
                     DBConnection::getInstance()->query($s);
+
+                    // Run the errorTools under this file
+                        // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
+                        // We fake the EN with the LANG content to fake the errorTools ;)
+                    $tmpFile[0]['en_content']   = $file->read(true);
+                    $tmpFile[0]['lang_content'] = $file->read(true);
+                    $tmpFile[0]['lang']         = $file->lang;
+                    $tmpFile[0]['path']         = $file->path;
+                    $tmpFile[0]['name']         = $file->name;
+                    $tmpFile[0]['maintainer']   = $info['maintainer'];
+
+                    $errorTools = new ToolsError();
+                    $errorTools->updateFilesError($tmpFile);
+
 
                 }
             }
