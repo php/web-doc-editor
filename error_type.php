@@ -15,6 +15,12 @@ if (isset($_GET['dir']) && isset($_GET['file'])) {
     $errorTools->setParams('', '', $am->vcsLang, $_GET['dir'], $_GET['file'], '');
     $error_to_display = $errorTools->getInfo();
 
+    if( empty($error_to_display) ) {
+        // We fake an empty error
+        $error_to_display['-No error-']['error'][0]['value_en']   = '-';
+        $error_to_display['-No error-']['error'][0]['value_lang'] = '-';
+    }
+
     $fileLibel = $_GET['dir'] . $_GET['file'];
 
 } else {

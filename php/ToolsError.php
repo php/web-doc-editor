@@ -152,11 +152,18 @@ class ToolsError {
 
         $project = AccountManager::getInstance()->project;
 
+        if ( AccountManager::getInstance()->userConf->errorSkipNbLiteralTag ) {
+            $type = ' type != \'nbLiteralTag\' AND ';
+        } else {
+            $type = '';
+        }
+
         $s = 'SELECT
                    `value_en`, `value_lang`, `type`
                 FROM
                    `errorfiles`
                 WHERE
+                   '.$type.'
                    `project` = \''.$project.'\' AND
                    `lang` = \''.$this->lang.'\' AND
                    `path` = \''.$this->filePath.'\' AND
