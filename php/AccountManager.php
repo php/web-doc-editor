@@ -33,6 +33,7 @@ class AccountManager
             "mainAppLoadMailsAtStartUp" => false,
             "mainAppLoadBugsAtStartUp"  => false,
 
+            "needUpdateNbDisplay"   => 0, // 0 means no limit
             "needUpdateDiff"        => 'using-exec',
             "needUpdateDisplaylog"  => false,
             "needUpdateScrollbars"  => true,

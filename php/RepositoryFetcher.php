@@ -117,8 +117,10 @@ class RepositoryFetcher
 
     public function getNbPendingUpdate()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
 
         $s = sprintf(
             'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0',
@@ -127,7 +129,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return $a->total;
+        return ( $a->total > $ac->userConf->needUpdateNbDisplay && $ac->userConf->needUpdateNbDisplay != 0 ) ? $ac->userConf->needUpdateNbDisplay : $a->total;
        
     }
     /**
@@ -137,14 +139,18 @@ class RepositoryFetcher
      */
     public function getPendingUpdate()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
+
+        $limit = ( $ac->userConf->needUpdateNbDisplay ) ? 'LIMIT '.$ac->userConf->needUpdateNbDisplay : '';
 
         $m = $this->getModifies();
 
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0 ',
-            $project, $vcsLang
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0  %s',
+            $project, $vcsLang, $limit
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -211,7 +217,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $ac->userConf->reviewedNbDisplay ) ? $ac->userConf->reviewedNbDisplay : $a->total;
+        return ( $a->total > $ac->userConf->reviewedNbDisplay && $ac->userConf->reviewedNbDisplay != 0 ) ? $ac->userConf->reviewedNbDisplay : $a->total;
     }
     /**
      * Get all files witch need to be reviewed.

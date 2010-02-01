@@ -233,11 +233,52 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
+    poolCommitChange : new Ext.util.DelayedTask(function(args) {
+
+        var tmp = new ui.task.UpdateConfTask({
+            item  : this.name,
+            value : this.getValue()
+        });
+
+    }),
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
+                xtype       : 'fieldset',
+                title       : _('Nb files to display'),
+                autoHeight  : true,
+                defaults    : { hideLabel: true },
+                defaultType : 'spinnerfield',
+                items       : [{
+                    autoHeight : true,
+                    width      : 60,
+                    name       : 'needUpdateNbDisplay',
+                    value      : phpDoc.userConf["needUpdateNbDisplay"] || 0,
+                    boxLabel   : _('files to display'),
+                    minValue   : 0,
+                    maxValue   : 10000,
+                    accelerate : true,
+                    enableKeyEvents : true,
+                    listeners  : {
+                        keyup : function(field)
+                        {
+                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                        },
+                        spin : function(field)
+                        {
+                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                        }
+                    }
+
+                }, {
+                    xtype: 'displayfield',
+                    value: _('0 means no limit'),
+                    style: { fontStyle: 'italic'}
+                }]
+            }, {
                 xtype       : 'fieldset',
                 title       : _('Diff view'),
                 autoHeight  : true,

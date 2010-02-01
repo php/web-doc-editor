@@ -22,6 +22,9 @@ ui.task.UpdateConfTask = function(config)
             if( this.item == "errorSkipNbLiteralTag" ) {
                 ui.component.ErrorFileGrid.getInstance().store.reload();
             }
+            if( this.item == "needUpdateNbDisplay" ) {
+                ui.component.StaleFileGrid.getInstance().store.reload();
+            }
             if( this.item == "reviewedNbDisplay" ) {
                 ui.component.PendingReviewGrid.getInstance().store.reload();
             }
