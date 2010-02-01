@@ -198,18 +198,20 @@ class RepositoryFetcher
 
     public function getNbPendingReview()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' LIMIT 100',
+            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\'',
             $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ($a->total > 100 ) ? 100 : $a->total;
+        return ( $a->total > $ac->userConf->reviewedNbDisplay ) ? $ac->userConf->reviewedNbDisplay : $a->total;
     }
     /**
      * Get all files witch need to be reviewed.
@@ -218,13 +220,17 @@ class RepositoryFetcher
      */
     public function getPendingReview()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
+
+        $limit = ( $ac->userConf->reviewedNbDisplay ) ? 'LIMIT '.$ac->userConf->reviewedNbDisplay : '';
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' ORDER BY `path`, `name` LIMIT 100',
-            $project, $vcsLang
+            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' ORDER BY `path`, `name` %s',
+            $project, $vcsLang, $limit
         );
         $r = DBConnection::getInstance()->query($s);
 

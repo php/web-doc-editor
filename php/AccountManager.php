@@ -41,6 +41,7 @@ class AccountManager
             "errorScrollbars"       => true,
             "errorSkipNbLiteralTag" => true,
 
+            "reviewedNbDisplay"     => 0, // 0 means no limit
             "reviewedDisplaylog"    => false,
             "reviewedScrollbars"    => true,
 
