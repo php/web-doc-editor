@@ -262,10 +262,38 @@
     background: white;
     font: 11px Arial, Helvetica, sans-serif;
 }
-#confMenu .thumb {
-    padding: 3px;
+#confMenu .menu {
+    padding-bottom: 5px;
+    background: url(./img/config-sprite.png) no-repeat top left !important;
+    margin-left: auto;
+    margin-right: auto;
 }
-#confMenu .thumb-wrap {
+
+#confMenu .card1 {
+    background-position: 0 -144px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card2 {
+    background-position: 0 -97px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card3 {
+    background-position: 0 0 !important; width: 48px; height: 44px;
+}
+
+#confMenu .card4 {
+    background-position: 0 -46px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card5 {
+    background-position: 0 -195px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card6 {
+    background-position: 0 -242px !important; width: 48px; height: 47px;
+}
+
+#confMenu .menu-wrap {
     float: left;
     margin: 5px;
     padding: 5px;
@@ -273,7 +301,7 @@
     text-align: center;
     cursor: pointer;
 }
-#confMenu .thumb-wrap span {
+#confMenu .menu-wrap span {
     display: block;
     overflow: hidden;
     text-align: center;
@@ -288,7 +316,7 @@
     border: 1px solid #6593cf;
     padding: 4px;
 }
-#confMenu .x-view-selected .thumb {
+#confMenu .x-view-selected .menu {
     background: transparent;
 }
 #confMenu .x-view-selected span {

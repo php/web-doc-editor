@@ -6,8 +6,8 @@ Ext.namespace('ui','ui.component','ui.component._EditorConf');
 // EditorConf Win-Menu template
 ui.component._EditorConf.tplMenu = new Ext.XTemplate(
     '<tpl for=".">',
-        '<div class="thumb-wrap" id="tplMenu-{id}">',
-            '<div class="thumb"><img src="themes/img/{img}" title=""></div>',
+        '<div class="menu-wrap" id="tplMenu-{id}">',
+            '<div class="menu {card}"></div>',
             '<span>{label}</span>',
         '</div>',
     '</tpl>'
@@ -16,19 +16,19 @@ ui.component._EditorConf.tplMenu.compile();
 
 // EditorConf Win-Menu items definition for EN
 ui.component._EditorConf.menuDefEn = [
-    ['1', 'go-home.png', _('Main')],
-    ['5', 'view-list-tree.png', _('Module "All files"')],
-    ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]
+    ['1', 'card1', _('Main')],
+    ['5', 'card5', _('Module "All files"')],
+    ['6', 'card6', _('Module "Pending Patch"')]
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
 ui.component._EditorConf.menuDefNonEn = [
-    ['1', 'go-home.png', _('Main')],
-    ['2', 'edit-redo.png', _('Module "Files Need Update"')],
-    ['3', 'dialog-cancel.png', _('Module "Files with Error"')],
-    ['4', 'document-properties.png', _('Module "Files need Reviewed"')],
-    ['5', 'view-list-tree.png', _('Module "All files"')],
-    ['6', 'view-media-playlist.png', _('Module "Pending Patch"')]
+    ['1', 'card1', _('Main')],
+    ['2', 'card2', _('Module "Files Need Update"')],
+    ['3', 'card3', _('Module "Files with Error"')],
+    ['4', 'card4', _('Module "Files need Reviewed"')],
+    ['5', 'card5', _('Module "All files"')],
+    ['6', 'card6', _('Module "Pending Patch"')]
 ];
 
 // EditorConf Win-Menu items store
@@ -36,7 +36,7 @@ ui.component._EditorConf.menuStore = new Ext.data.SimpleStore({
     id     : 0,
     fields : [
         { name : 'id'    },
-        { name : 'img'   },
+        { name : 'card'   },
         { name : 'label' }
     ]
 });
@@ -48,7 +48,7 @@ ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
     tpl          : ui.component._EditorConf.tplMenu,
     singleSelect : true,
     overClass    : 'x-view-over',
-    itemSelector : 'div.thumb-wrap',
+    itemSelector : 'div.menu-wrap',
     store        : ui.component._EditorConf.menuStore,
 
     listeners : {
