@@ -47,7 +47,7 @@
 .x-form-field-wrap .x-form-spinner-splitter {
 	line-height:1px;
 	font-size:1px;
-    background:transparent url('../images/spinner-split.gif') no-repeat 0 0;
+    background:transparent url('../js/extjs/examples/ux/images/spinner-split.gif') no-repeat 0 0;
 	position:absolute;
 	cursor: n-resize;
 }
