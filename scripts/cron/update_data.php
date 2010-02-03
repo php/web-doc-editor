@@ -27,10 +27,11 @@ while( list($key, $project) = each($availableProject) ) {
     $pm->setProject($project['code']);
 
     // VCS update
-    $rm->updateRepository();
+    //$rm->updateRepository();
 
     // After update the repo, we need to chmod all file to be able to save it again as www server user & group
-    $cmd = "cd ".DOC_EDITOR_VCS_PATH."; chmod -R 777 ./; chown -R  ".DOC_EDITOR_WWW_USER.":".DOC_EDITOR_WWW_GROUP." ./";
+    $cmd = "cd ".$DOC_EDITOR_VCS_PATH."; chmod -R 777 ./; chown -R  ".$DOC_EDITOR_WWW_USER.":".$DOC_EDITOR_WWW_GROUP." ./";
+
     exec($cmd);
 
     // Clean Up DB
@@ -42,16 +43,21 @@ while( list($key, $project) = each($availableProject) ) {
     if ($lock->lock()) {
 
         // Start Revcheck
+echo "apply revcheck\n";
         $rm->applyRevCheck();
 
         // Search for NotInEN Old Files
+echo "apply notInEN\n";
         $rm->updateNotInEN();
 
         // Parse translators
+echo "apply TranslatorInfo\n";
         $rm->updateTranslatorInfo();
 
         // Compute all summary
+echo "apply translation computeSummary\n";
         TranslationStatistic::getInstance()->computeSummary('all');
+echo "apply translator computeSummary\n";
         TranslatorStatistic::getInstance()->computeSummary('all');    
 
         // Set lastUpdate date/time

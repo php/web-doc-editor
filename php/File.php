@@ -246,7 +246,7 @@ class File
 
         // Reviewed tag
         $match = array();
-        if (preg_match('/<!--\s*Reviewed:\s*(.*?)*-->/Ui', $content, $match)) {
+        if (preg_match('/<!--\s*Reviewed:\s*(.*?)\s*-->/', $content, $match)) {
             $info['reviewed'] = trim($match[1]);
         }
 
