@@ -41,7 +41,7 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
         ])
     ),
     sortInfo : {
-        field     : 'path',
+        field     : 'name',
         direction : "ASC"
     },
     groupField : 'path',
