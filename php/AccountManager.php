@@ -34,24 +34,33 @@ class AccountManager
             "mainAppLoadBugsAtStartUp"  => false,
 
             "newFileNbDisplay"      => 0, // 0 means no limit
+            "newFileSpellCheck"     => false,
 
-            "needUpdateNbDisplay"   => 0, // 0 means no limit
-            "needUpdateDiff"        => 'using-exec',
-            "needUpdateDisplaylog"  => false,
-            "needUpdateScrollbars"  => true,
+            "needUpdateNbDisplay"      => 0, // 0 means no limit
+            "needUpdateDiff"           => 'using-exec',
+            "needUpdateDisplaylog"     => false,
+            "needUpdateScrollbars"     => true,
+            "needUpdateSpellCheckEn"   => false,
+            "needUpdateSpellCheckLang" => false,
 
             "errorDisplayLog"       => false,
             "errorScrollbars"       => true,
             "errorSkipNbLiteralTag" => true,
+            "errorSpellCheckEn"     => false,
+            "errorSpellCheckLang"   => false,
 
-            "reviewedNbDisplay"     => 0, // 0 means no limit
-            "reviewedDisplaylog"    => false,
-            "reviewedScrollbars"    => true,
+            "reviewedNbDisplay"      => 0, // 0 means no limit
+            "reviewedDisplaylog"     => false,
+            "reviewedScrollbars"     => true,
+            "reviewedSpellCheckEn"   => false,
+            "reviewedSpellCheckLang" => false,
 
             "allFilesDisplayLog"    => false,
+            "allFilesSpellCheck"    => false,
 
             "patchDisplayLog"       => false,
             "patchScrollbars"       => true,
+            "patchSpellCheck"       => false,
 
             "theme"                 => 'themes/empty.css'
         );

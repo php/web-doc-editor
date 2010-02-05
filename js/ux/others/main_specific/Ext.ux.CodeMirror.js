@@ -6,6 +6,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     autoResize       : true,
     initialised      : false,
     documentDurty    : false,
+    spellCheck       : ( this.spellCheck ) ? this.spellCheck : false,
     parser           : (this.parser) ? this.parser : "xml",
     parserFile       : "parsexml.js",
     parserStylesheet : "js/ux/codemirror/css/xmlcolors.css",
@@ -149,7 +150,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             path               : "js/ux/codemirror/js/",
             initCallback       : this.onInit,
             autoMatchParens    : true,
-            disableSpellcheck  : false,
+            disableSpellcheck  : !this.spellCheck,
             onChange           : this.manageCodeChange
         });
 
@@ -231,6 +232,10 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     nthLine : function(number) {
         return this.mirror.nthLine(number);
+    },
+
+    setSpellcheck : function(choice) {
+        return this.mirror.setSpellcheck(choice);
     }
 
 });

@@ -123,6 +123,9 @@
 .iconSaveAsFile        { background-image: url(./img/table_save.png)            !important;}
 .iconSaveFile          { background-image: url(./img/disk.png)                  !important;}
 .iconSendEmail         { background-image: url(./img/email_edit.png)            !important;}
+
+.iconSpellCheck        { background-image: url(./img/tools-check-spelling.png)  !important;}
+
 .iconStartRefresh      { background-image: url(./img/hourglass_go.png)          !important;}
 .iconSummary           { background-image: url(./img/details.gif)               !important;}
 .iconTabError          { background-image: url(./img/error_delete.png)          !important;}

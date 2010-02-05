@@ -425,6 +425,17 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
         {
             items : [{
                 scope   : this,
+                tooltip : _('<b>Enable / Disable</b> spellChecking'),
+                enableToggle: true,
+                iconCls : 'iconSpellCheck',
+                pressed: phpDoc.userConf[this.spellCheckConf],
+                handler : function(btn)
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
+                    var tmp = new ui.task.UpdateConfTask({item: this.spellCheckConf, value: btn.pressed});
+                }
+            },{
+                scope   : this,
                 tooltip : _('<b>Re-indent</b> all this file'),
                 iconCls : 'iconIndent',
                 handler : function()
@@ -450,6 +461,8 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //    syncScrollCB {true | false}, display sync-scroll checkbox
 //    syncScroll {true | false},   indicate whether sync the scroll with corresponding file
 //    syncScrollConf               syncScrollConf attribute name in userConf
+//    spellCheck {true | false},   indicate whether spellCheck is enable or not
+//    spellCheckConf               spellCheckConf attribute name in userConf
 // }
 ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
@@ -589,7 +602,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
                     }]
                 }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
-                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang})
+                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang, spellCheck: this.spellCheck, spellCheckConf: this.spellCheckConf})
             ] : [
                 // en/lang file pane tbar
                 new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab}), {
@@ -736,7 +749,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
                     }]
                 }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
-                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang})
+                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang, spellCheck: this.spellCheck, spellCheckConf: this.spellCheckConf})
                 ]
         } else {
             this.tbar = [
@@ -754,6 +767,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 id         : id_prefix + '-FILE-' + this.fid,
                 readOnly   : this.readOnly,
                 parser     : this.parser,
+                spellCheck : this.spellCheck,
                 isModified : false,
                 listeners  : {
                     scope  : this,

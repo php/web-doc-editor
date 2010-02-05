@@ -278,6 +278,27 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                     value: _('0 means no limit'),
                     style: { fontStyle: 'italic'}
                 }]
+            }, {
+                xtype       : 'fieldset',
+                title       : _('Editor'),
+                autoHeight  : true,
+                defaults    : { hideLabel: true },
+                defaultType : 'checkbox',
+                items       : [{
+                    autoHeight  : true,
+                    name        : 'newFileSpellCheck',
+                    checked     : phpDoc.userConf["newFileSpellCheck"],
+                    boxLabel    : _('Enable spellChecking'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'newFileSpellCheck',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }]
             }]
         });
         ui.component._EditorConf.card2.superclass.initComponent.call(this);
@@ -411,6 +432,34 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                             });
                         }
                     }
+                }, {
+                    autoHeight  : true,
+                    name        : 'needUpdateSpellCheckEn',
+                    checked     : phpDoc.userConf["needUpdateSpellCheckEn"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'needUpdateSpellCheckEn',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'needUpdateSpellCheckLang',
+                    checked     : phpDoc.userConf["needUpdateSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'needUpdateSpellCheckLang',
+                                value : field.getValue()
+                            });
+                        }
+                    }
                 }]
             }]
         });
@@ -480,6 +529,34 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                         {
                             var tmp = new ui.task.UpdateConfTask({
                                 item  : 'errorDisplayLog',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'errorSpellCheckEn',
+                    checked     : phpDoc.userConf["errorSpellCheckEn"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'errorSpellCheckEn',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'errorSpellCheckLang',
+                    checked     : phpDoc.userConf["errorSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'errorSpellCheckLang',
                                 value : field.getValue()
                             });
                         }
@@ -577,6 +654,34 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                             });
                         }
                     }
+                }, {
+                    autoHeight  : true,
+                    name        : 'reviewedSpellCheckEn',
+                    checked     : phpDoc.userConf["reviewedSpellCheckEn"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'reviewedSpellCheckEn',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'reviewedSpellCheckLang',
+                    checked     : phpDoc.userConf["reviewedSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'reviewedSpellCheckLang',
+                                value : field.getValue()
+                            });
+                        }
+                    }
                 }]
             }]
         });
@@ -611,6 +716,20 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                         {
                             var tmp = new ui.task.UpdateConfTask({
                                 item  : 'allFilesDisplayLog',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
+                    name        : 'allFilesSpellCheck',
+                    checked     : phpDoc.userConf["allFilesSpellCheck"],
+                    boxLabel    : _('Enable spellChecking'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'allFilesSpellCheck',
                                 value : field.getValue()
                             });
                         }
@@ -667,6 +786,20 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
                             });
                         }
                     }
+                }, {
+                    autoHeight  : true,
+                    name        : 'patchSpellCheck',
+                    checked     : phpDoc.userConf["patchSpellCheck"],
+                    boxLabel    : _('Enable spellChecking'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'patchSpellCheck',
+                                value : field.getValue()
+                            });
+                        }
+                    }
                 }]
             }]
         });
@@ -680,8 +813,8 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
 {
     id          : 'win-conf',
     layout      : 'border',
-    width       : 570,
-    height      : 450,
+    width       : 600,
+    height      : 470,
     iconCls     : 'iconConf',
     title       : _('Configuration'),
     modal       : true,

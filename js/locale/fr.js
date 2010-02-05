@@ -28,6 +28,7 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
 i18n["Nb files to display"] = "Nombre de fichiers à afficher";
 i18n["files to display"] = "fichiers à afficher";
 i18n["0 means no limit"] = "La valeur 0 signifie 'Aucune limite'";
@@ -262,11 +263,14 @@ i18n["EN tools"] = "Outils EN";
 
 i18n["Configure"] = "Configuration";
     i18n["Main"] = "Principal";
+    i18n["Module \"Files Need Translate\""] = 'Module "Nouveaux Fichiers à traduire"';
     i18n["Module \"Files Need Update\""] = 'Module "Fichiers à mettre à jour"';
     i18n["Module \"Files with Error\""] = 'Module "Fichiers avec des erreurs"';
     i18n["Module \"Files need Reviewed\""] = 'Module "À relire"';
     i18n["Module \"All files\""] = 'Module "Tous les fichiers"';
     i18n["Module \"Pending Patch\""] = 'Module "Patchs en attente"';
+    i18n["Enable spellChecking"] = "Activer la vérification orthographique";
+    i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
     i18n["Configuration"] = "Configuration";
     i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
     i18n["Themes"] = "Thèmes";

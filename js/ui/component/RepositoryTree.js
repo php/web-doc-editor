@@ -208,19 +208,21 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         };
 
                         panelCenter = new ui.component.FilePanel({
-                            id           : 'AF' + '-ALL-PANEL-' + FileID,
-                            region       : 'center',
-                            title        : _('File: ') + FileLang + FilePath + FileName,
-                            prefix       : 'AF',
-                            ftype        : 'ALL',
-                            fid          : FileID,
-                            fpath        : FilePath,
-                            fname        : FileName,
-                            lang         : FileLang,
-                            parser       : parser,
-                            storeRecord  : node,
-                            syncScrollCB : false,
-                            syncScroll   : false
+                            id             : 'AF' + '-ALL-PANEL-' + FileID,
+                            region         : 'center',
+                            title          : _('File: ') + FileLang + FilePath + FileName,
+                            prefix         : 'AF',
+                            ftype          : 'ALL',
+                            spellCheck     : phpDoc.userConf["allFilesSpellCheck"],
+                            spellCheckConf : 'allFilesSpellCheck',
+                            fid            : FileID,
+                            fpath          : FilePath,
+                            fname          : FileName,
+                            lang           : FileLang,
+                            parser         : parser,
+                            storeRecord    : node,
+                            syncScrollCB   : false,
+                            syncScroll     : false
                         });
                     }
 
