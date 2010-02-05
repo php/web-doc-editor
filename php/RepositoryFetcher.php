@@ -316,14 +316,16 @@ class RepositoryFetcher
 
     public function getNbPendingTranslate()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
 
         $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL', $project, $vcsLang);
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return $a->total;
+        return ( $a->total > $ac->userConf->newFileNbDisplay && $ac->userConf->newFileNbDisplay != 0 ) ? $ac->userConf->newFileNbDisplay : $a->total;
     }
     /**
      * Get all files which need to be translated
@@ -332,11 +334,15 @@ class RepositoryFetcher
      */
     public function getPendingTranslate()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $ac = AccountManager::getInstance();
+
+        $vcsLang = $ac->vcsLang;
+        $project = $ac->project;
+
+        $limit = ( $ac->userConf->newFileNbDisplay ) ? 'LIMIT '.$ac->userConf->newFileNbDisplay : '';
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL', $project, $vcsLang);
+        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL %s', $project, $vcsLang, $limit);
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();

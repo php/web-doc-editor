@@ -17,18 +17,19 @@ ui.component._EditorConf.tplMenu.compile();
 // EditorConf Win-Menu items definition for EN
 ui.component._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
-    ['5', 'card5', _('Module "All files"')],
-    ['6', 'card6', _('Module "Pending Patch"')]
+    ['6', 'card6', _('Module "All files"')],
+    ['7', 'card7', _('Module "Pending Patch"')]
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
 ui.component._EditorConf.menuDefNonEn = [
     ['1', 'card1', _('Main')],
-    ['2', 'card2', _('Module "Files Need Update"')],
-    ['3', 'card3', _('Module "Files with Error"')],
-    ['4', 'card4', _('Module "Files need Reviewed"')],
-    ['5', 'card5', _('Module "All files"')],
-    ['6', 'card6', _('Module "Pending Patch"')]
+    ['2', 'card2', _('Module "Files Need Translate"')],
+    ['3', 'card3', _('Module "Files Need Update"')],
+    ['4', 'card4', _('Module "Files with Error"')],
+    ['5', 'card5', _('Module "Files need Reviewed"')],
+    ['6', 'card6', _('Module "All files"')],
+    ['7', 'card7', _('Module "Pending Patch"')]
 ];
 
 // EditorConf Win-Menu items store
@@ -81,7 +82,7 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
     ]
 });
 
-// EditorConf card1 - Theme Config
+// EditorConf card1 - mainApp
 ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-1',
@@ -226,10 +227,67 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
     }
 });
 
-// EditorConf card2 - Module "Files Need Update" Config
+// EditorConf card2 - Module "Files Need Translate" Config
 ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
 {
     id        : 'conf-card-2',
+    autoScroll: true,
+    bodyStyle : 'padding: 10px;',
+
+    poolCommitChange : new Ext.util.DelayedTask(function(args) {
+
+        var tmp = new ui.task.UpdateConfTask({
+            item  : this.name,
+            value : this.getValue()
+        });
+
+    }),
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                xtype       : 'fieldset',
+                title       : _('Nb files to display'),
+                autoHeight  : true,
+                defaults    : { hideLabel: true },
+                defaultType : 'spinnerfield',
+                items       : [{
+                    autoHeight : true,
+                    width      : 60,
+                    name       : 'newFileNbDisplay',
+                    value      : phpDoc.userConf["newFileNbDisplay"] || 0,
+                    boxLabel   : _('files to display'),
+                    minValue   : 0,
+                    maxValue   : 10000,
+                    accelerate : true,
+                    enableKeyEvents : true,
+                    listeners  : {
+                        keyup : function(field)
+                        {
+                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                        },
+                        spin : function(field)
+                        {
+                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                        }
+                    }
+                }, {
+                    xtype: 'displayfield',
+                    value: _('0 means no limit'),
+                    style: { fontStyle: 'italic'}
+                }]
+            }]
+        });
+        ui.component._EditorConf.card2.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card3 - Module "Files Need Update" Config
+ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
+{
+    id        : 'conf-card-3',
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
@@ -356,14 +414,14 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card2.superclass.initComponent.call(this);
+        ui.component._EditorConf.card3.superclass.initComponent.call(this);
     }
 });
 
-// EditorConf card3 - Module "Files with Error" Config
-ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
+// EditorConf card4 - Module "Files with Error" Config
+ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
 {
-    id        : 'conf-card-3',
+    id        : 'conf-card-4',
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
@@ -429,14 +487,14 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card3.superclass.initComponent.call(this);
+        ui.component._EditorConf.card4.superclass.initComponent.call(this);
     }
 });
 
-// EditorConf card4 - Module "Files need Reviewed" Config
-ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
+// EditorConf card5 - Module "Files need Reviewed" Config
+ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
 {
-    id        : 'conf-card-4',
+    id        : 'conf-card-5',
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
@@ -522,14 +580,14 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card4.superclass.initComponent.call(this);
+        ui.component._EditorConf.card5.superclass.initComponent.call(this);
     }
 });
 
-// EditorConf card5 - Module "All files" Config
-ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
+// EditorConf card6 - Module "All files" Config
+ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
 {
-    id        : 'conf-card-5',
+    id        : 'conf-card-6',
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
@@ -560,14 +618,14 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card5.superclass.initComponent.call(this);
+        ui.component._EditorConf.card6.superclass.initComponent.call(this);
     }
 });
 
-// EditorConf card6 - Module "Pending Patch" Config
-ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
+// EditorConf card7 - Module "Pending Patch" Config
+ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
 {
-    id        : 'conf-card-6',
+    id        : 'conf-card-7',
     autoScroll: true,
     bodyStyle : 'padding: 10px;',
 
@@ -612,7 +670,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card6.superclass.initComponent.call(this);
+        ui.component._EditorConf.card7.superclass.initComponent.call(this);
     }
 });
 
@@ -683,7 +741,8 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
                     new ui.component._EditorConf.card3(),
                     new ui.component._EditorConf.card4(),
                     new ui.component._EditorConf.card5(),
-                    new ui.component._EditorConf.card6()
+                    new ui.component._EditorConf.card6(),
+                    new ui.component._EditorConf.card7()
                 ]
             }]
         });

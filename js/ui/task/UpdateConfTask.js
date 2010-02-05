@@ -28,6 +28,9 @@ ui.task.UpdateConfTask = function(config)
             if( this.item == "reviewedNbDisplay" ) {
                 ui.component.PendingReviewGrid.getInstance().store.reload();
             }
+            if( this.item == "newFileNbDisplay" ) {
+                ui.component.PendingTranslateGrid.getInstance().store.reload();
+            }
 
             // Notify
             phpDoc.notify('info', _('Option saved'), _('Option has been saved successfully !'));
