@@ -145,6 +145,7 @@
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}
 .iconViewDiff          { background-image: url(./img/code-class.png)            !important;}
+.iconVCSLog            { background-image: url(./img/text-x-log.png)            !important;}
 .iconWinManageLog      { background-image: url(./img/text-x-log.png)            !important;}
 
 
@@ -154,21 +155,25 @@
     background: transparent url(./img/help-browser.png) no-repeat 0 2px;
     padding-left: 20px !important;
 }
+/*
 #main-panel .x-layout-collapsed-west {
     background-image: url(./img/vcs_log.png);
     background-repeat: no-repeat;
     background-position: center;
 }
+
 #main-panel .x-layout-collapsed-east {
     background-image: url(./img/en_version.png);
     background-repeat: no-repeat;
     background-position: center;
 }
+
 #main-panel .x-layout-collapsed-north {
     background-image: url(./img/diff_vcs.png);
     background-repeat: no-repeat;
     background-position: center;
 }
+
 .x-layout-collapsed-east-error-desc {
     background-image: url(./img/error_description.png) !important;
     background-repeat: no-repeat;
@@ -179,6 +184,7 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+*/
 .file-need-commit {
     color: red !important;
     font-weight: bold !important;

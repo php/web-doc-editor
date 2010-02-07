@@ -6,8 +6,11 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
 {
     layout     : 'fit',
     title      : _('Diff From VCS'),
+    iconCls    : 'iconDiffView',
+    collapsedIconCls : 'iconDiffView',
     height     : 150,
     autoScroll : true,
+    plugins    : [Ext.ux.PanelCollapsedTitle],
     listeners  : {
         render : function()
         {
