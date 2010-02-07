@@ -294,6 +294,12 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                 }
             }, '-', {
+                id      : 'menuLang',
+                iconCls : 'iconSwitchLang',
+                text    : _('Switch to language...'),
+                handler : function() { return false; },
+                menu    : MenuLang
+            }, {
                 text     : _('Erase my personal data'),
                 disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconErasePersonalData',
@@ -335,11 +341,6 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         }
                     );
                 }
-            }, '-', {
-                id      : 'menuLang',
-                text    : _('Switch to language...'),
-                handler : function() { return false; },
-                menu    : MenuLang
             }, {
                 text    : _('Log out'),
                 iconCls : 'iconLogOut',

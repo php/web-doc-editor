@@ -102,7 +102,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
             items : [{
                 scope   : this,
                 text    : '<b>' + _('Edit in a new Tab') + '</b>',
-                iconCls : 'PendingPatch',
+                iconCls : 'iconPendingPatch',
                 handler : function()
                 {
                     this.grid.fireEvent('rowdblclick',
@@ -113,7 +113,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
                 scope   : this,
                 text    : _('Reject this patch'),
                 disabled : (phpDoc.userLogin === 'anonymous'),
-                iconCls : 'iconPageDelete',
+                iconCls : 'iconTrash',
                 handler : function()
                 {
                     var tmp = new ui.task.RejectPatchTask({

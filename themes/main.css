@@ -74,78 +74,83 @@
 }
 
 .MainMenu {
-    background-image: url(./img/application_home.png) !important;
+    background-image: url(./img/go-home.png) !important;
     background-position: 0 1px !important;
 }
 
 /* Icons */
 
-.iconAllFiles          { background-image: url(./img/application_side_tree.png) !important;}
+.iconAllFiles          { background-image: url(./img/view-list-tree.png)        !important;}
 .iconArrowLeft         { background-image: url(./img/arrow_left.png)            !important;}
 .iconArrowRight        { background-image: url(./img/arrow_right.png)           !important;}
-.iconBook              { background-image: url(./img/book.png)                  !important;}
+.iconBook              { background-image: url(./img/documentation.png)         !important;}
 .iconBugs              { background-image: url(./img/bug.png)                   !important;}
-.iconBuildStatus       { background-image: url(./img/error_delete.png)          !important;}
-.iconCheckBuild        { background-image: url(./img/bug_delete.png)            !important;}
-.iconCheckDoc          { background-image: url(./img/lightbulb_add.png)         !important;}
-.iconCheckEntities     { background-image: url(./img/link_break.png)            !important;}
+.iconBuildStatus       { background-image: url(./img/run-build-install-root.png)!important;}
+.iconCheckBuild        { background-image: url(./img/run-build.png)             !important;}
+.iconCheckDoc          { background-image: url(./img/utilities-terminal.png)    !important;}
+.iconCheckEntities     { background-image: url(./img/insert-link.png)           !important;}
 .iconClose             { background-image: url(./img/cancel.png)                !important;}
 .iconCloseOthersTabs   { background-image: url(./img/tab_delete.png)            !important;}
-.iconCommitFileVcs     { background-image: url(./img/database_go.png)           !important;}
-.iconConf              { background-image: url(./img/wrench_orange.png)         !important;}
+.iconCommitFileVcs     { background-image: url(./img/mail-mark-notjunk.png)     !important;}
+.iconConf              { background-image: url(./img/configure.png)             !important;}
 .iconDelete            { background-image: url(./img/delete.png)                !important;}
-.iconErasePersonalData { background-image: url(./img/layout_delete.png)         !important;}
+.iconDiffView          { background-image: url(./img/code-class.png)            !important;}
+.iconEditor            { background-image: url(./img/document-edit.png)         !important;}
+.iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
+.iconExternalData      { background-image: url(./img/svn-update.png)            !important;}
 .iconFiles             { background-image: url(./img/page.png)                  !important;} 
-.iconFilesError        { background-image: url(./img/error_delete.png)          !important;}
-.iconFilesNeedReviewed { background-image: url(./img/page_edit.png)             !important;}
+.iconFilesError        { background-image: url(./img/security-medium.png)       !important;}
+.iconFilesNeedReviewed { background-image: url(./img/document-edit.png)         !important;}
 .iconFilesNeedTranslate{ background-image: url(./img/page_add.png)              !important;}
+.iconFilesToDisplay    { background-image: url(./img/video-display.png)         !important;}
 .iconFilesNeedUpdate   { background-image: url(./img/arrow_refresh.png)         !important;}
 .iconFinishRefresh     { background-image: url(./img/accept.png)                !important;}
 .iconFolderOpen        { background-image: url(./img/folder-open.gif)           !important;}
 .iconFolderClose       { background-image: url(./img/folder.gif)                !important;}
 .iconGraphic           { background-image: url(./img/chart_pie.png)             !important;}
-.iconHelp              { background-image: url(./img/help.png)                  !important;}
-.iconIndent            { background-image: url(./img/text_indent.png)           !important;}
-.iconInfo              { background-image: url(./img/information.gif)           !important;}
+.iconHelp              { background-image: url(./img/help-browser.png)          !important;}
+.iconIndent            { background-image: url(./img/format-indent-more.png)    !important;}
+.iconInfo              { background-image: url(./img/help-about.png)            !important;}
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
-.iconLogOut            { background-image: url(./img/door_in.png)               !important;}
+.iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
 .iconNotInEn           { background-image: url(./img/delete.png)                !important;}
-.iconOpenInTab         { background-image: url(./img/tab_go.png)                !important;}
-.iconPageDelete        { background-image: url(./img/page_delete.png)           !important;}
+.iconOpenInTab         { background-image: url(./img/tab-new-background.png)    !important;}
+.iconPageDelete        { background-image: url(./img/user-trash-full.png)       !important;}
 .iconPatchAlert        { background-image: url(./img/bell.png)                  !important;}
-.iconPendingCommit     { background-image: url(./img/arrow_down.png)            !important;}
-.iconPendingPatch      { background-image: url(./img/arrow_switch.png)          !important;}
-.iconRedo              { background-image: url(./img/arrow_redo.png)            !important;}
+.iconPendingCommit     { background-image: url(./img/svn-commit.png)            !important;}
+.iconPendingPatch      { background-image: url(./img/text-x-patch.png)          !important;}
+.iconRedo              { background-image: url(./img/edit-redo.png)             !important;}
 .iconRefresh           { background-image: url(./img/arrow_refresh.png)         !important;}
-.iconRun               { background-image: url(./img/cog.png)                   !important;}
-.iconSaveAsFile        { background-image: url(./img/table_save.png)            !important;}
-.iconSaveFile          { background-image: url(./img/disk.png)                  !important;}
-.iconSendEmail         { background-image: url(./img/email_edit.png)            !important;}
-
+.iconRun               { background-image: url(./img/run-build.png)             !important;}
+.iconSaveAsFile        { background-image: url(./img/text-x-patch.png)          !important;}
+.iconSaveFile          { background-image: url(./img/save.png)                  !important;}
+.iconSendEmail         { background-image: url(./img/mail-message-new.png)      !important;}
 .iconSpellCheck        { background-image: url(./img/tools-check-spelling.png)  !important;}
-
-.iconStartRefresh      { background-image: url(./img/hourglass_go.png)          !important;}
-.iconSummary           { background-image: url(./img/details.gif)               !important;}
-.iconTabError          { background-image: url(./img/error_delete.png)          !important;}
+.iconStartRefresh      { background-image: url(./img/go-last.png)               !important;}
+.iconSummary           { background-image: url(./img/align-vertical-bottom-out.png) !important;}
+.iconSwitchLang        { background-image: url(./img/system-switch-user.png)    !important;}
+.iconTabError          { background-image: url(./img/security-medium.png)       !important;}
 .iconTabLink           { background-image: url(./img/page_link.png)             !important;}
-.iconTabNeedReviewed   { background-image: url(./img/page_edit.png)             !important;}
+.iconTabNeedReviewed   { background-image: url(./img/document-edit.png)         !important;}
 .iconTabNeedTranslate  { background-image: url(./img/page_add.png)              !important;}
 .iconTabNeedUpdate     { background-image: url(./img/arrow_refresh.png)         !important;}
 .iconTabView           { background-image: url(./img/eye.png)                   !important;}
 .iconTranslator        { background-image: url(./img/group.png)                 !important;}
-.iconUndo              { background-image: url(./img/arrow_undo.png)            !important;}
+.iconTrash             { background-image: url(./img/delete.png)                !important;}
+.iconThemes            { background-image: url(./img/fill-color.png)            !important;}
+.iconUndo              { background-image: url(./img/edit-undo.png)             !important;}
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}
-.iconViewDiff          { background-image: url(./img/chart_organisation.png)    !important;}
-.iconWinManageLog      { background-image: url(./img/page_white_gear.png)       !important;}
+.iconViewDiff          { background-image: url(./img/code-class.png)            !important;}
+.iconWinManageLog      { background-image: url(./img/text-x-log.png)            !important;}
 
 
 
 
 .confStatusBar {
-    background: transparent url(./img/help.png) no-repeat 0 2px;
+    background: transparent url(./img/help-browser.png) no-repeat 0 2px;
     padding-left: 20px !important;
 }
 #main-panel .x-layout-collapsed-west {
@@ -251,7 +256,7 @@
     background-color: #f7f7f7;
 }
 .diff-content table.code td.line {
-    background: #eed url(./img/help.png) no-repeat 0 0;
+    background: #eed url(./img/help-browser.png) no-repeat 0 0;
     padding-left: 20px;
     color: #886;
     border: 1px solid #d7d7d7;
@@ -273,23 +278,23 @@
 }
 
 #confMenu .card1 {
-    background-position: 0 -212px !important; width: 48px; height: 47px;
-}
-
-#confMenu .card2 {
     background-position: 0 0 !important; width: 48px; height: 47px;
 }
 
-#confMenu .card3 {
-    background-position: 0 -160px !important; width: 48px; height: 47px;
-}
-
-#confMenu .card4 {
+#confMenu .card2 {
     background-position: 0 -55px !important; width: 48px; height: 44px;
 }
 
-#confMenu .card5 {
+#confMenu .card3 {
     background-position: 0 -105px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card4 {
+    background-position: 0 -160px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card5 {
+    background-position: 0 -212px !important; width: 48px; height: 47px;
 }
 
 #confMenu .card6 {
