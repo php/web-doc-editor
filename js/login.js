@@ -188,7 +188,16 @@ var loginPage = function()
                             maxHeight     : 150,
                             editable      : true,
                             id            : 'login-form-lang',
-                            name          : 'langDisplay'
+                            name          : 'langDisplay',
+                            enableKeyEvents: true,
+                            listeners : {
+                                keypress : function(field, e)
+                                {
+                                    if (e.getKey() == e.ENTER) {
+                                        Ext.getCmp('login-btn').fireEvent('click');
+                                    }
+                                }
+                            }
                         }]
                     }],
                     buttonAlign: 'left',
