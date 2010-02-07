@@ -1317,6 +1317,8 @@ class ExtJsController
      */
     public function downloadPatch()
     {
+        AccountManager::getInstance()->isLogged();
+
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
