@@ -16,7 +16,8 @@ ui.task.SavePatchTask = function(config)
         Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
     );
 
-    if ( ( this.prefix === 'AF') ||
+    if ( ( this.prefix === 'AF')  ||
+         ( this.prefix === 'FNT') ||
          ( this.lang === 'en' && !Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified ) ||
          ( this.lang !== 'en' && !Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified )
        ) {

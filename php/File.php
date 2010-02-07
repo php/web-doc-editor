@@ -12,6 +12,7 @@ class File
     public $name;
 
     public $full_path;
+    public $full_path_fallback;
 
     /**
      * Constructor will normalize the lang, path, name as specified as parameters
@@ -34,6 +35,9 @@ class File
         $this->path = $path;
 
         $this->full_path = $GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name;
+
+        // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
+        $this->full_path_fallback = $GLOBALS['DOC_EDITOR_VCS_PATH'].'en'.$path.$name;
     }
 
     public function fileExist()
@@ -54,7 +58,15 @@ class File
                 ? $this->full_path
                 : $this->full_path . '.new';
 
-        return file_get_contents($path);
+        if( is_file($path) ) {
+            return file_get_contents($path);
+        } elseif( is_file($this->full_path_fallback) ) {
+            // usefull for a patch from the FNT module.
+            return file_get_contents($this->full_path_fallback);
+        } else {
+            return false;
+        }
+
     }
 
     /**
