@@ -282,7 +282,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                 }, {
                     scope   : this,
                     text    : _('Download the diff as a patch'),
-                    iconCls : 'iconCommitFileVcs',
+                    iconCls : 'iconDownloadDiff',
                     handler : function()
                     {
                         window.location.href = './do/downloadPatch' +

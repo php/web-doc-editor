@@ -95,6 +95,7 @@
 .iconConf              { background-image: url(./img/configure.png)             !important;}
 .iconDelete            { background-image: url(./img/delete.png)                !important;}
 .iconDiffView          { background-image: url(./img/code-class.png)            !important;}
+.iconDownloadDiff      { background-image: url(./img/download-later.png)        !important;}
 .iconEditor            { background-image: url(./img/document-edit.png)         !important;}
 .iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
