@@ -169,11 +169,16 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         panelWest = {};
 
                         panelCenter = {
-                            xtype: 'panel',
-                            layout: 'fit',
-                            bodyStyle: 'padding:5px 5px 0',
-                            html: '<img src="/data/' + this.userLogin +
-                                    '/phpdoc-' + this.userLang + FilePath + '" />'
+                            id        : 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
+                            xtype     : 'panel',
+                            region    : 'center',
+                            layout    : 'fit',
+                            bodyStyle : 'padding:5px 5px 0',
+                            html      : '<img src="./do/getImageContent?' +
+                                    'FileLang=' + FileLang + '&' +
+                                    'FilePath=' + FilePath + '&' +
+                                    'FileName=' + FileName +
+                                    '" />'
                         };
 
                     } else {

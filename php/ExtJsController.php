@@ -1467,4 +1467,23 @@ class ExtJsController
         );
     }
 
+    public function getImageContent() {
+        AccountManager::getInstance()->isLogged();
+
+        $FileLang = $this->getRequestVariable('FileLang');
+        $FilePath = $this->getRequestVariable('FilePath');
+        $FileName = $this->getRequestVariable('FileName');
+
+        $file  = new File($FileLang, $FilePath, $FileName);
+        $imageContent = $file->getImageContent();
+
+        header("Content-Type: ".$imageContent['content-type']);
+        header("Expires: 0");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+
+        return $imageContent['content'];
+
+    }
+
 }

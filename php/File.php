@@ -382,6 +382,20 @@ class File
 
         return $return;
     }
+
+    /**
+     * Get the image content.
+     * @return An associative array with 'content-type' and 'content' keys
+     */
+    public function getImageContent()
+    {
+        $t = explode('.', $this->full_path);
+
+        $return['content-type'] = 'image/'.$t[count($t)-1];
+        $return['content'] = file_get_contents($this->full_path);
+
+        return $return;
+    }
 }
 
 ?>
