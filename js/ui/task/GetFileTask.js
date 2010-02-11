@@ -28,7 +28,7 @@ ui.task.GetFileTask = function(config)
         {
             var o    = Ext.util.JSON.decode(response.responseText),
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
-                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php',
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + phpDoc.project,
                 perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 

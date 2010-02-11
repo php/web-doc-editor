@@ -37,7 +37,14 @@ echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
 echo jsLoadTemplate('js/main-all.js');
 
 if (isset($_REQUEST['perm'])) {
+
+    require_once dirname(__FILE__) . '/php/ProjectManager.php';
     require_once dirname(__FILE__) . '/php/RepositoryFetcher.php';
+
+    $_project = $_REQUEST['project'];
+
+    // Set the project
+    ProjectManager::getInstance()->setProject($_project);
 
     $_p    = explode('/', trim($_REQUEST['perm'], '/'));
     $_lang = array_shift($_p);

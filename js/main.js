@@ -65,8 +65,22 @@ var phpDoc = function()
             );
         },
 
+        runDirectAccess: function() {
+
+            if (directAccess) {
+                ui.component.RepositoryTree.getInstance().openFile(
+                    directAccess.lang + directAccess.path,
+                    directAccess.name
+                );
+            }
+
+        },
+
         // All we want to do after all dataStore are loaded
         afterLoadAllStore: function() {
+
+            // Run DirectAccess if present
+            this.runDirectAccess();
 
             //Load external data
             // Mails ?
@@ -432,13 +446,6 @@ var phpDoc = function()
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 
-            // Direct access to a file as anonymous user
-            if (directAccess) {
-                ui.component.RepositoryTree.getInstance().openFile(
-                    directAccess.lang + directAccess.path,
-                    directAccess.name
-                );
-            }
         } // drawInterface
     }; // Return
 }();

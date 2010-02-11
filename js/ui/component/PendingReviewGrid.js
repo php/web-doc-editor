@@ -234,7 +234,9 @@ Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
                     fname  : this.fname,
                     rowIdx : this.rowIdx,
                     hidden : this.hideDiff
-                }), '-', new ui.component._PendingReviewGrid.menu.group({
+                }), new Ext.menu.Separator({ // Only display a separator when we display the group menu
+                    hidden : this.hideGroup
+                }), new ui.component._PendingReviewGrid.menu.group({
                     gname  : this.gname,
                     hidden : this.hideGroup
                 })
