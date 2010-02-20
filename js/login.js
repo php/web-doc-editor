@@ -142,7 +142,19 @@ var loginPage = function()
                             maxHeight     : 150,
                             editable      : true,
                             id            : 'login-form-project',
-                            name          : 'projectDisplay'
+                            name          : 'projectDisplay',
+                            listeners: {
+                                afterrender: function(c) {
+                                    if( directAccess )
+                                    {
+                                        c.focus();
+                                        c.onLoad();
+                                        c.setValue(directAccess.project);
+                                        c.collapse();
+                                        c.disable();
+                                    }
+                                }
+                            }
                         }, {
                             fieldLabel : 'VCS login',
                             name       : 'vcsLogin',
@@ -195,6 +207,16 @@ var loginPage = function()
                                 {
                                     if (e.getKey() == e.ENTER) {
                                         Ext.getCmp('login-btn').fireEvent('click');
+                                    }
+                                },
+                                afterrender: function(c) {
+                                    if( directAccess )
+                                    {
+                                        c.focus();
+                                        c.onLoad();
+                                        c.setValue(directAccess.lang);
+                                        c.collapse();
+                                        c.disable();
                                     }
                                 }
                             }
@@ -278,6 +300,7 @@ var loginPage = function()
             // Remove the global loading message
             Ext.get('loading').remove();
             Ext.fly('loading-mask').fadeOut({ remove : true });
+
         }
     };
 }();
