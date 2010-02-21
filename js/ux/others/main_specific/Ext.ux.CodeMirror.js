@@ -88,6 +88,15 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     },
 
+    onCursorActivity: function(cmId) {
+        var cmp      = Ext.getCmp(cmId),
+            mirror   = cmp.mirror,
+            r        = mirror.cursorPosition(),
+            line     = mirror.lineNumber(r.line),
+            caracter = r.character;
+            cmp.fireEvent('cursormove', line, caracter);
+    },
+
     manageCodeChange: function(cmId) {
 
         var cmp             = Ext.getCmp(cmId),
@@ -151,7 +160,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             initCallback       : this.onInit,
             autoMatchParens    : true,
             disableSpellcheck  : !this.spellCheck,
-            onChange           : this.manageCodeChange
+            onChange           : this.manageCodeChange,
+            cursorActivity     : this.onCursorActivity
         });
 
         this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {

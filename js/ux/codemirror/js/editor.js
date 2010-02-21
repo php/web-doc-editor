@@ -1053,7 +1053,7 @@ var Editor = (function(){
         var cursor = select.selectionTopNode(this.container, false);
         if (cursor === false || !this.container.firstChild) return;
         cursor = cursor || this.container.firstChild;
-        if (activity) activity(cursor);
+        if (activity) activity(this.options.cmId, cursor);
         if (!safe) {
           this.scheduleHighlight();
           this.addDirtyNode(cursor);
