@@ -1,4 +1,4 @@
-Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.1/resources/images/default/s.gif';
 
 // javascript debug-logging wrapper
 function log()
