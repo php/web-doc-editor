@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.0.0
- * Copyright(c) 2006-2009 Ext JS, LLC
+ * Ext JS Library 3.1.1
+ * Copyright(c) 2006-2010 Ext JS, LLC
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
@@ -10,12 +10,12 @@
 .x-row-editor-header {
     height:2px;
     overflow:hidden;
-    background: transparent url(../js/extjs/examples/ux/images/row-editor-bg.gif) repeat-x 0 0;
+    background: transparent url(http://extjs.cachefly.net/ext-3.1.1/examples/ux/images/row-editor-bg.gif) repeat-x 0 0;
 }
 .x-row-editor-footer {
     height:2px;
     overflow:hidden;
-    background: transparent url(../js/extjs/examples/ux/images/row-editor-bg.gif) repeat-x 0 -2px;
+    background: transparent url(http://extjs.cachefly.net/ext-3.1.1/examples/ux/images/row-editor-bg.gif) repeat-x 0 -2px;
 }
 .ext-ie .x-row-editor-footer {
     margin-top:-1px;
@@ -32,18 +32,27 @@
     top:28px;
     left:20px;
     padding-left:5px;
-    background: transparent url(../js/extjs/examples/ux/images/row-editor-btns.gif) no-repeat 0 0;
+    background: transparent url(http://extjs.cachefly.net/ext-3.1.1/examples/ux/images/row-editor-btns.gif) no-repeat 0 0;
 }
 .x-row-editor .x-btns .x-plain-bwrap {
     padding-right:5px;
-    background: transparent url(../js/extjs/examples/ux/images/row-editor-btns.gif) no-repeat right -31px;
+    background: transparent url(http://extjs.cachefly.net/ext-3.1.1/examples/ux/images/row-editor-btns.gif) no-repeat right -31px;
 }
 .x-row-editor .x-btns .x-plain-body {
-    background: transparent url(../js/extjs/examples/ux/images/row-editor-btns.gif) repeat-x 0 -62px;
+    background: transparent url(http://extjs.cachefly.net/ext-3.1.1/examples/ux/images/row-editor-btns.gif) repeat-x 0 -62px;
     height:31px;
 }
 .x-row-editor .x-btns .x-table-layout-cell {
     padding:3px;
+}
+
+/* Fixes for IE6/7 trigger fields */
+.ext-ie6 .x-row-editor .x-form-field-wrap .x-form-trigger, .ext-ie7 .x-row-editor .x-form-field-wrap .x-form-trigger {
+  top: 1px;
+}
+
+.ext-ie6 .x-row-editor .x-form-field-trigger-wrap, .ext-ie7 .x-row-editor .x-form-field-trigger-wrap {
+  margin-top: -1px;
 }
 
 .errorTip .x-tip-body ul{

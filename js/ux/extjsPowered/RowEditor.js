@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.0.0
- * Copyright(c) 2006-2009 Ext JS, LLC
+ * Ext JS Library 3.1.1
+ * Copyright(c) 2006-2010 Ext JS, LLC
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
@@ -8,11 +8,11 @@ Ext.ns('Ext.ux.grid');
 
 /**
  * @class Ext.ux.grid.RowEditor
- * @extends Ext.Panel 
+ * @extends Ext.Panel
  * Plugin (ptype = 'roweditor') that adds the ability to rapidly edit full rows in a grid.
  * A validation mode may be enabled which uses AnchorTips to notify the user of all
  * validation errors at once.
- * 
+ *
  * @ptype roweditor
  */
 Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
@@ -30,6 +30,11 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     focusDelay: 250,
     errorSummary: true,
 
+    saveText: 'Save',
+    cancelText: 'Cancel',
+    commitChangesText: 'You need to commit or cancel your changes',
+    errorText: 'Errors',
+
     defaults: {
         normalWidth: true
     },
@@ -45,6 +50,13 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
              * @param {Number} rowIndex The rowIndex of the row just edited
              */
             'beforeedit',
+            /**
+             * @event canceledit
+             * Fired when the editor is cancelled.
+             * @param {Ext.ux.grid.RowEditor} roweditor This object
+             * @param {Boolean} forced True if the cancel button is pressed, false is the editor was invalid.
+             */
+            'canceledit',
             /**
              * @event validateedit
              * Fired after a row is edited and passes validation.
@@ -91,7 +103,8 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             columnresize: this.verifyLayout,
             columnmove: this.refreshFields,
             reconfigure: this.refreshFields,
-	    destroy : this.destroy,
+            beforedestroy : this.beforedestroy,
+            destroy : this.destroy,
             bodyscroll: {
                 buffer: 250,
                 fn: this.positionButtons
@@ -99,6 +112,12 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         });
         grid.getColumnModel().on('hiddenchange', this.verifyLayout, this, {delay:1});
         grid.getView().on('refresh', this.stopEditing.createDelegate(this, []));
+    },
+
+    beforedestroy: function() {
+        this.grid.getStore().un('remove', this.onStoreRemove, this);
+        this.stopEditing(false);
+        Ext.destroy(this.btns);
     },
 
     refreshFields: function(){
@@ -119,17 +138,18 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
 
     startEditing: function(rowIndex, doFocus){
         if(this.editing && this.isDirty()){
-            this.showTooltip(_('You need to commit or cancel your changes'));
+            this.showTooltip(this.commitChangesText);
             return;
         }
-        this.editing = true;
-        if(typeof rowIndex == 'object'){
+        if(Ext.isObject(rowIndex)){
             rowIndex = this.grid.getStore().indexOf(rowIndex);
         }
         if(this.fireEvent('beforeedit', this, rowIndex) !== false){
-            var g = this.grid, view = g.getView();
-            var row = view.getRow(rowIndex);
-            var record = g.store.getAt(rowIndex);
+            this.editing = true;
+            var g = this.grid, view = g.getView(),
+                row = view.getRow(rowIndex),
+                record = g.store.getAt(rowIndex);
+
             this.record = record;
             this.rowIndex = rowIndex;
             this.values = {};
@@ -146,7 +166,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
                 val = this.preEditValue(record, cm.getDataIndex(i));
                 f = fields[i];
                 f.setValue(val);
-                this.values[f.id] = val || '';
+                this.values[f.id] = Ext.isEmpty(val) ? '' : val;
             }
             this.verifyLayout(true);
             if(!this.isVisible()){
@@ -170,16 +190,20 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         }
         if(saveChanges === false || !this.isValid()){
             this.hide();
+            this.fireEvent('canceledit', this, saveChanges === false);
             return;
         }
-        var changes = {}, r = this.record, hasChange = false;
-        var cm = this.grid.colModel, fields = this.items.items;
+        var changes = {},
+            r = this.record,
+            hasChange = false,
+            cm = this.grid.colModel,
+            fields = this.items.items;
         for(var i = 0, len = cm.getColumnCount(); i < len; i++){
             if(!cm.isHidden(i)){
                 var dindex = cm.getDataIndex(i);
                 if(!Ext.isEmpty(dindex)){
-                    var oldValue = r.data[dindex];
-                    var value = this.postEditValue(fields[i].getValue(), oldValue, r, dindex);
+                    var oldValue = r.data[dindex],
+                        value = this.postEditValue(fields[i].getValue(), oldValue, r, dindex);
                     if(String(oldValue) !== String(value)){
                         changes[dindex] = value;
                         hasChange = true;
@@ -189,11 +213,9 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         }
         if(hasChange && this.fireEvent('validateedit', this, changes, r, this.rowIndex) !== false){
             r.beginEdit();
-            for(var k in changes){
-                if(changes.hasOwnProperty(k)){
-                    r.set(k, changes[k]);
-                }
-            }
+            Ext.iterate(changes, function(name, value){
+                r.set(name, value);
+            });
             r.endEdit();
             this.fireEvent('afteredit', this, changes, r, this.rowIndex);
         }
@@ -203,14 +225,11 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     verifyLayout: function(force){
         if(this.el && (this.isVisible() || force === true)){
             var row = this.grid.getView().getRow(this.rowIndex);
-            this.setSize(Ext.fly(row).getWidth(), Ext.isIE ? Ext.fly(row).getHeight() + (Ext.isBorderBox ? 9 : 0) : undefined);
+            this.setSize(Ext.fly(row).getWidth(), Ext.isIE ? Ext.fly(row).getHeight() + 9 : undefined);
             var cm = this.grid.colModel, fields = this.items.items;
             for(var i = 0, len = cm.getColumnCount(); i < len; i++){
                 if(!cm.isHidden(i)){
                     var adjust = 0;
-                    if(i === 0){
-                        adjust += 0; // outer padding
-                    }
                     if(i === (len - 1)){
                         adjust += 3; // outer padding
                     } else{
@@ -235,10 +254,12 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         var cm = this.grid.getColumnModel(), pm = Ext.layout.ContainerLayout.prototype.parseMargins;
         this.removeAll(false);
         for(var i = 0, len = cm.getColumnCount(); i < len; i++){
-            var c = cm.getColumnAt(i);
-            var ed = c.getEditor();
+            var c = cm.getColumnAt(i),
+                ed = c.getEditor();
             if(!ed){
                 ed = c.displayEditor || new Ext.form.DisplayField();
+            }else{
+                ed = ed.field;
             }
             if(i == 0){
                 ed.margins = pm('0 1 2 1');
@@ -312,12 +333,12 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
                 ref: 'saveBtn',
                 itemId: 'saveBtn',
                 xtype: 'button',
-                text: this.saveText || 'Save',
+                text: this.saveText,
                 width: this.minButtonWidth,
                 handler: this.stopEditing.createDelegate(this, [true])
             }, {
                 xtype: 'button',
-                text: this.cancelText || 'Cancel',
+                text: this.cancelText,
                 width: this.minButtonWidth,
                 handler: this.stopEditing.createDelegate(this, [false])
             }]
@@ -348,11 +369,13 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
 
     positionButtons: function(){
         if(this.btns){
-            var h = this.el.dom.clientHeight;
-            var view = this.grid.getView();
-            var scroll = view.scroller.dom.scrollLeft;
-            var width =  view.mainBody.getWidth();
-            var bw = this.btns.getWidth();
+            var g = this.grid,
+                h = this.el.dom.clientHeight,
+                view = g.getView(),
+                scroll = view.scroller.dom.scrollLeft,
+                bw = this.btns.getWidth(),
+                width = Math.min(g.getWidth(), g.getColumnModel().getTotalWidth());
+
             this.btns.el.shift({left: (width/2)-(bw/2)+scroll, top: h - 2, stopFx: true, duration:0.2});
         }
     },
@@ -370,15 +393,18 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
 
     doFocus: function(pt){
         if(this.isVisible()){
-            var index = 0;
+            var index = 0,
+                cm = this.grid.getColumnModel(),
+                c,
+                ed;
             if(pt){
                 index = this.getTargetColumnIndex(pt);
             }
-            var cm = this.grid.getColumnModel();
             for(var i = index||0, len = cm.getColumnCount(); i < len; i++){
-                var c = cm.getColumnAt(i);
-                if(!c.hidden && c.getEditor()){
-                    c.getEditor().focus();
+                c = cm.getColumnAt(i);
+                ed = c.getEditor();
+                if(!c.hidden && ed){
+                    ed.field.focus();
                     break;
                 }
             }
@@ -386,10 +412,12 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     },
 
     getTargetColumnIndex: function(pt){
-        var grid = this.grid, v = grid.view;
-        var x = pt.left;
-        var cms = grid.colModel.config;
-        var i = 0, match = false;
+        var grid = this.grid,
+            v = grid.view,
+            x = pt.left,
+            cms = grid.colModel.config,
+            i = 0,
+            match = false;
         for(var len = cms.length, c; c = cms[i]; i++){
             if(!c.hidden){
                 if(Ext.fly(v.getHeaderCell(i)).getRegion().right >= x){
@@ -450,28 +478,37 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
                 maxWidth: 600,
                 cls: 'errorTip',
                 width: 300,
-                title: _('Errors'),
+                title: this.errorText,
                 autoHide: false,
                 anchor: 'left',
                 anchorToTarget: true,
                 mouseOffset: [40,0]
             });
         }
-        t.initTarget(this.items.last().getEl());
-        if(!t.rendered){
+        var v = this.grid.getView(),
+            top = parseInt(this.el.dom.style.top, 10),
+            scroll = v.scroller.dom.scrollTop,
+            h = this.el.getHeight();
+
+        if(top + h >= scroll){
+            t.initTarget(this.items.last().getEl());
+            if(!t.rendered){
+                t.show();
+                t.hide();
+            }
+            t.body.update(msg);
+            t.doAutoWidth(20);
             t.show();
+        }else if(t.rendered){
             t.hide();
         }
-        t.body.update(msg);
-        t.doAutoWidth();
-        t.show();
     },
 
     getErrorText: function(){
         var data = ['<ul>'];
         this.items.each(function(f){
             if(!f.isValid(true)){
-                data.push('<li>', f.activeError, '</li>');
+                data.push('<li>', f.getActiveError(), '</li>');
             }
         });
         data.push('</ul>');
@@ -479,43 +516,3 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     }
 });
 Ext.preg('roweditor', Ext.ux.grid.RowEditor);
-
-Ext.override(Ext.form.Field, {
-    markInvalid : function(msg){
-        if(!this.rendered || this.preventMark){ // not rendered
-            return;
-        }
-        msg = msg || this.invalidText;
-
-        var mt = this.getMessageHandler();
-        if(mt){
-            mt.mark(this, msg);
-        }else if(this.msgTarget){
-            this.el.addClass(this.invalidClass);
-            var t = Ext.getDom(this.msgTarget);
-            if(t){
-                t.innerHTML = msg;
-                t.style.display = this.msgDisplay;
-            }
-        }
-        this.activeError = msg;
-        this.fireEvent('invalid', this, msg);
-    }
-});
-
-Ext.override(Ext.ToolTip, {
-    doAutoWidth : function(){
-        var bw = this.body.getTextWidth();
-        if(this.title){
-            bw = Math.max(bw, this.header.child('span').getTextWidth(this.title));
-        }
-        bw += this.getFrameWidth() + (this.closable ? 20 : 0) + this.body.getPadding("lr") + 20;
-        this.setWidth(bw.constrain(this.minWidth, this.maxWidth));
-
-        // IE7 repaint bug on initial show
-        if(Ext.isIE7 && !this.repainted){
-            this.el.repaint();
-            this.repainted = true;
-        }
-    }
-});
