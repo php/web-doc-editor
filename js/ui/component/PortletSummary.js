@@ -109,26 +109,26 @@ ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
     store      : ui.component._PortletSummary.store,
     columns    : ui.component._PortletSummary.gridColumns,
     view       : ui.component._PortletSummary.gridView,
-    listeners : {
-        rowdblclick : function ( grid, rowIndex, e )
-        {
-            var id = grid.store.getAt(rowIndex).data.id;
 
-            // Stales files
-            if( id === 2 ) {
-                Ext.getCmp('acc-need-update').expand();
-            }
-            
-            // Available for translation
-            if( id === 3 ) {
-                Ext.getCmp('acc-need-translate').expand();
-            }
+    onRowdblclick : function ( grid, rowIndex, e )
+    {
+        var id = grid.store.getAt(rowIndex).data.id;
+
+        // Stales files
+        if( id === 2 ) {
+            Ext.getCmp('acc-need-update').expand();
+        }
+        
+        // Available for translation
+        if( id === 3 ) {
+            Ext.getCmp('acc-need-translate').expand();
         }
     },
     initComponent: function(config)
     {
         ui.component._PortletSummary.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
+        this.on('rowdblclick',    this.onRowdblclick,  this);
     }
 });
 
