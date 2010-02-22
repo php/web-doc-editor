@@ -28,6 +28,7 @@ i18n["Document saved"] = "Document sauvegardé";
 i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
 
 // Generic
+i18n["Warning"] = "Alerte";
 i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
 i18n["Nb files to display"] = "Nombre de fichiers à afficher";
 i18n["files to display"] = "fichiers à afficher";
