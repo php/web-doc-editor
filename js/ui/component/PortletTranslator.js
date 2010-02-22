@@ -146,23 +146,28 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     lang             : this.lang,
     EmailPrompt      : new ui.component.EmailPrompt(),
-    listeners        : {
-        rowdblclick : function(grid, rowIndex, e)
-        {
 
-            this.getSelectionModel().selectRow(rowIndex);
+    onRowDblClick : function(grid, rowIndex, e)
+    {
 
-            if( this.ctxTranslatorName ) {
-                this.ctxTranslatorEmail = null;
-                this.ctxTranslatorName  = null;
-            }
+        this.getSelectionModel().selectRow(rowIndex);
 
-            this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
-            this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
-
-            this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
-            this.EmailPrompt.show('lastUpdateTime');
+        if( this.ctxTranslatorName ) {
+            this.ctxTranslatorEmail = null;
+            this.ctxTranslatorName  = null;
         }
+
+        this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
+        this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
+        var nick  = this.store.getAt(rowIndex).data.nick;
+
+        // Don't open the email Prompt if the user is "nobody"
+        if( nick == 'nobody' ) {
+            return;
+        }
+
+        this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
+        this.EmailPrompt.show('lastUpdateTime');
     },
 
     onContextClick : function(grid, rowIndex, e)
@@ -203,6 +208,13 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
         this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
         this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
 
+        var nick  = this.store.getAt(rowIndex).data.nick;
+
+        // Don't open the contextMenu if the user is "nobody"
+        if( nick == 'nobody' ) {
+            return;
+        }
+
         // Set the title for items[0]
         this.menu.items.items[0].setText('<b>' + String.format(_('Send an email to {0}'), this.ctxTranslatorName) + '</b>');
 
@@ -214,8 +226,8 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
     {
         ui.component._PortletTranslator.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
-
         this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick, this);
     }
 });
 
