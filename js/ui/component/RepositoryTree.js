@@ -141,22 +141,23 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
             if (node.attributes.type === 'file') { // files only
 
                 var FilePath  = node.attributes.id,
-                    FileID    = Ext.util.md5('AF-' + FilePath),
                     extension = node.attributes.extension,
-                    t, FileLang, FileName, parser,
+                    t, FileID, FileLang, FileName, parser,
                     panelWest, panelCenter;
+
+                // CleanUp the path
+                t = FilePath.split('/');
+                t.shift();
+
+                FileName = t.pop();
+
+                FileLang = t.shift();
+                FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
+
+                FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
 
                 // Render only if this tab don't exist yet
                 if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
-
-                    // CleanUp the path
-                    t = FilePath.split('/');
-                    t.shift();
-
-                    FileName = t.pop();
-
-                    FileLang = t.shift();
-                    FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
 
                     if (extension !== 'html' && extension !== 'php') {
                         parser = extension;

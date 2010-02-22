@@ -161,18 +161,32 @@ ui.task.VCSCommitTask = function()
     for (i = 0; i < files.length; ++i) {
         checkNode = files[i].attributes;
 
-        paneID_FE  = 'FE-'  + Ext.util.md5('FE-'  + checkNode.FilePath + checkNode.FileName);
-        paneID_FNU = 'FNU-' + Ext.util.md5('FNU-' + checkNode.FilePath + checkNode.FileName);
-        paneID_FNR = 'FNR-' + Ext.util.md5('FNR-' + checkNode.FilePath + checkNode.FileName);
-        paneID_FNT = 'FNT-' + Ext.util.md5('FNT-' + checkNode.FilePath + checkNode.FileName);
+        paneID_AF    = 'AF-'    + Ext.util.md5('AF-'  + checkNode.FilePath + checkNode.FileName);
+        paneID_FE    = 'FE-'    + Ext.util.md5('FE-'  + checkNode.FilePath + checkNode.FileName);
+        paneID_FNU   = 'FNU-'   + Ext.util.md5('FNU-' + checkNode.FilePath + checkNode.FileName);
+        paneID_FNIEN = 'FNIEN-' + Ext.util.md5('FNIEN-' + checkNode.FilePath + checkNode.FileName);
+        paneID_FNR   = 'FNR-'   + Ext.util.md5('FNR-' + checkNode.FilePath + checkNode.FileName);
+        paneID_FNT   = 'FNT-'   + Ext.util.md5('FNT-' + checkNode.FilePath + checkNode.FileName);
 
-        if ( Ext.getCmp('main-panel').findById(paneID_FE) || Ext.getCmp('main-panel').findById(paneID_FNU) || Ext.getCmp('main-panel').findById(paneID_FNR) || Ext.getCmp('main-panel').findById(paneID_FNT) ) {
+        if ( Ext.getCmp('main-panel').findById(paneID_AF)    ||
+             Ext.getCmp('main-panel').findById(paneID_FE)    ||
+             Ext.getCmp('main-panel').findById(paneID_FNIEN) ||
+             Ext.getCmp('main-panel').findById(paneID_FNU)   ||
+             Ext.getCmp('main-panel').findById(paneID_FNR)   ||
+             Ext.getCmp('main-panel').findById(paneID_FNT) )
+        {
 
+            if (Ext.getCmp('main-panel').findById(paneID_AF)) {
+                paneID = paneID_AF;
+            }
             if (Ext.getCmp('main-panel').findById(paneID_FE)) {
                 paneID = paneID_FE;
             }
             if (Ext.getCmp('main-panel').findById(paneID_FNU)) {
                 paneID = paneID_FNU;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNIEN)) {
+                paneID = paneID_FNIEN;
             }
             if (Ext.getCmp('main-panel').findById(paneID_FNR)) {
                 paneID = paneID_FNR;

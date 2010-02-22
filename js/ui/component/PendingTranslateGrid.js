@@ -141,7 +141,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
+            FileID      = Ext.util.md5('FNT-' + phpDoc.userLang + FilePath + FileName),
             diff        = '';
 
         // Render only if this tab don't exist yet
