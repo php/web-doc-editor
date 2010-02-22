@@ -83,22 +83,22 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect : true }),
     view             : new Ext.grid.GridView({ forceFit : true }),
 
-    listeners: {
-        render: function() {
-            this.store.load.defer(20, this.store);
-        }
+    onRender: function(ct, position)
+    {
+        ui.component.CheckEntities.superclass.onRender.call(this, ct, position);
+        this.store.load.defer(20, this.store);
     },
 
-    openTab: function(rowIndex) {
-
+    openTab: function(rowIndex)
+    {
         var storeRecord = this.store.getAt(rowIndex),
             url         = storeRecord.data.url;
             urlMd5      = Ext.util.md5(url),
             tabId       = 'tab-check-entities-'+urlMd5,
             tab         = Ext.getCmp(tabId);
 
-        if( ! tab ) {
-
+        if( ! tab )
+        {
             Ext.getCmp('main-panel').add({
                 id         : tabId,
                 xtype      : 'panel',
@@ -111,10 +111,10 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
             });
         }
         Ext.getCmp('main-panel').setActiveTab(tabId);
-
     },
 
-    onRowdblclick: function(grid, rowIndex, e) {
+    onRowdblclick: function(grid, rowIndex, e)
+    {
         this.openTab(rowIndex);
     },
 
@@ -147,12 +147,10 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
 
         this.menu.showAt(e.getXY());
 
-
     },
 
     initComponent: function(config)
     {
-
         this.tbar = [{
             xtype : 'label',
             text  : _('Status: ')
@@ -202,7 +200,7 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
         ui.component.CheckEntities.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.on('rowdblclick',    this.onRowdblclick,  this);
         this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowdblclick,  this);
     }
 });
