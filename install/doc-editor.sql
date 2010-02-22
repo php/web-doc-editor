@@ -13,6 +13,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `checkEntities` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `entities` varchar(255) NOT NULL,
   `url` varchar(255) NOT NULL,
   `result` varchar(50) NOT NULL,
