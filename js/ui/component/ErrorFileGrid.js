@@ -355,19 +355,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     })
                 ]
             });
-            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
-
-            // Set the bg image for north collapsed el
-            if (Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl) {
-                Ext.getCmp('FE-' + FileID).getLayout().north.collapsedEl.addClass(
-                    'x-layout-collapsed-east-error-desc'
-                );
-            }
-
-        } else {
-            // This tab already exist. We focus it.
-            Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
         }
+        Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
     },
 
     initComponent : function()
