@@ -388,7 +388,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     trigger1Class   : 'x-form-clear-trigger',
                     trigger2Class   : 'x-form-search-trigger',
                     listeners : {
-                        keypress : function(field, e)
+                        specialkey : function(field, e)
                         {
                             if (e.getKey() == e.ENTER) {
                                 this.onTrigger2Click();
