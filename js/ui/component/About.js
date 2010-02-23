@@ -47,7 +47,7 @@ ui.component.About = Ext.extend(Ext.Window,
                     html      : '<div id="phd-oe-credit"><ul>' +
                                     '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">' + _('Javascript FrameWork') + '</div></li>' +
                                     '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">' + _('Code editor') + '</div></li>' +
-                                    '<li><a href="http://famfamfam.com" target="_blank">famfamfam.com</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
+                                    '<li><a href="http://www.oxygen-icons.org/" target="_blank">Oxygen project from KDE</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
                                 '</ul></div>'
                 }, {
                     title    : _('License'),
