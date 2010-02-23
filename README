@@ -21,12 +21,13 @@
 * Create a MySQL database as per php/config.inc.php [If you're a developer and don't want to overwrite the default config, create a file local.conf.inc.php that can override the config
 * Import install/doc-editor.sql into this new database
 * Setup configuration options inside php/config.inc.php
+* Setup configuration options for each project inside php/config.XXX.inc.php (php/config.php.inc.php for the php project, php/config.pear.inc.php for the pear project, etc.)
 
 == Initial (first) run ==
 * Execute install/firstRun.php either in the browser or via CLI
-  It will take a long time to execute, as it performs the following duties:
+  It will take a long time to execute, as it performs the following duties, for each project:
   - Applies tools such as revcheck, doc_check, and error_check
-  - Checks out the phpdoc-all CVS module into the data directory
+  - Checks out the phpdoc-all VCS module into the data directory
 
 == Other notes ==
 * Anonymous authentication : anonymous with blank password
