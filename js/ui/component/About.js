@@ -37,7 +37,7 @@ ui.component.About = Ext.extend(Ext.Window,
                             '</div>' +
                             '<div id="phd-oe-about-info">' + phpDoc.appName + ' ver ' + phpDoc.appVer + '<br/>' +
                                 'UI: ' + phpDoc.uiRevision + '<br/>' +
-                                ' Copyright &copy; 2008-2009 The PHP Group<br/>' +
+                                ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
                             '</div>'
