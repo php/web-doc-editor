@@ -9,25 +9,12 @@ GENERAL:
   - Other VCS Systems (SVN, GIT)
   - Generic projects (not php.net related)
 
-CVS2SVN:
-====
-  - svn diff failed due to different in revision numbering scheme (see File.php getinfo)
-  - svn diff failed due to cvs2svn diff info lost
-  - using svn native-client over HTTP may sometimes fail and need to redo the operation
-
 PHP:
 ====
 
 * Security
   - Fix XSS holes
   - Redo the folder tree to keep classes and data out of web server reach (can we do this in mod_rewrite?)
-
-* Translation Status
-  - At the current time, the french translation graph is useless/unreadable. We need to find
-    a better way to display the information
-
-* Automatic upgrade
-  - Add an automatic system to upgrade dataBase (when it's needed) uppon the application version number. (idea by Richard Quadling, crontab?)
 
 JAVASCRIPT:
 ===========
@@ -50,10 +37,6 @@ USER INTERFACE:
 
 BUGS:
 =====
-
-* Saving patch / file
-  - when a file is saved, file.new is created. when a patch is saved, file.new is replaced by file.###.patch
-    Some ui component may issue a diff between file & file.new but sometimes file.new is removed as .patch
 
 * Translator vcs account parsing failed
   - check php parsing scripts
