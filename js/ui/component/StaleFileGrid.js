@@ -180,6 +180,7 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
             XHR({
                 params  : {
                     task     : 'getDiff',
+                    DiffType : 'file',
                     FilePath : lang + fpath,
                     FileName : fname
                 },

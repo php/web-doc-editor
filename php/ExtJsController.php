@@ -695,11 +695,12 @@ class ExtJsController
     }
 
     /**
-     * Get the diff of a given file, between the modified and the original version
+     * Get the diff of a given file
      */
     public function getDiff()
     {
         AccountManager::getInstance()->isLogged();
+        $DiffType = $this->getRequestVariable('DiffType');
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
@@ -707,50 +708,36 @@ class ExtJsController
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
-        $type     = $this->hasRequestVariable('type')
-                    ? $this->getRequestVariable('type')
-                    : '';
-        $uniqID   = $this->hasRequestVariable('uniqID')
-                    ? $this->getRequestVariable('uniqID')
-                    : '';
+        $opt = null;
 
-        $file = new File($FileLang, $FilePath, $FileName);
-        $info = $file->htmlDiff(($type=='patch'), $uniqID);
+        if( $DiffType == 'vcs' ) {
+            $Rev1 = $this->getRequestVariable('Rev1');
+            $Rev2 = $this->getRequestVariable('Rev2');
 
-        return JsonResponseBuilder::success(
-            array(
-                'content'  => $info['content'],
-                'encoding' => $info['charset']
-            )
-        );
-    }
+            // Ensure Rev2 is always a value greater than Rev1
+            if( $Rev2 < $Rev1 )
+            {
+                $tmp  = $Rev2;
+                $Rev2 = $Rev1;
+                $Rev1 = $tmp;
+            }
 
-    /**
-     * Get the diff of a given file, between REV1 & REV2
-     */
-    public function getDiff2()
-    {
-        AccountManager::getInstance()->isLogged();
-        $FilePath = $this->getRequestVariable('FilePath');
-        $FileName = $this->getRequestVariable('FileName');
+            $opt = Array('rev1'=>$Rev1, 'rev2' => $Rev2);
 
-        $t = explode('/', $FilePath);
-        $FileLang = array_shift($t);
-        $FilePath = implode('/', $t);
+        } elseif( $DiffType == 'file' ) {
 
-        $Rev1 = $this->getRequestVariable('Rev1');
-        $Rev2 = $this->getRequestVariable('Rev2');
+            $opt['type'] = 'file';
 
-        // Ensure Rev2 is always a value greater than Rev1
-        if( $Rev2 < $Rev1 )
-        {
-            $tmp = $Rev2;
-            $Rev2 = $Rev1;
-            $Rev1 = $tmp;
+        } elseif( $DiffType == 'patch' ) {
+
+            $uniqID = $this->getRequestVariable('uniqID');
+            $opt['type'] = 'patch';
+            $opt['uniqID'] = $uniqID;
+
         }
 
         $file = new File($FileLang, $FilePath, $FileName);
-        $r = $file->vcsDiff($Rev1, $Rev2);
+        $r = $file->Diff($DiffType, $opt);
 
         return JsonResponseBuilder::success(
             array(

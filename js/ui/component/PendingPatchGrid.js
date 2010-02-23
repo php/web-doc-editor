@@ -207,7 +207,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                             task     : 'getDiff',
                                             FilePath : FilePath,
                                             FileName : FileName,
-                                            type     : 'patch',
+                                            DiffType : 'patch',
                                             uniqID   : FileUniqID
                                         },
                                         success : function(response)

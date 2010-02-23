@@ -263,6 +263,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                 scope   : this,
                                 params  : {
                                     task     : 'getDiff',
+                                    DiffType : 'file',
                                     FilePath : this.fpath,
                                     FileName : this.fname
                                 },

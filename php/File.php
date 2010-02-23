@@ -291,40 +291,38 @@ class File
     }
 
     /**
-     * Get the diff of a file with its modified/patched version.
-     *
-     * @param $isPatch Indicate whether diff with patch (default=false)
-     * @param $uniqID Patch unique ID (to be provided if isPatch=true)
-     * @return The diff of the file with its modified/patched version, as HTML, ready to be display.
-     */
-    public function htmlDiff($isPatch=false, $uniqID='')
-    {
-        include dirname(__FILE__) . '/class.fileDiff.php';
-
-        $charset = $this->getEncoding();
-        $ext     = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-
-        $diff = new diff();
-        $info['content'] = $diff->inline($this->full_path, $this->full_path.$ext, 2, $charset);
-        $info['charset'] = $charset;
-
-        return $info;
-    }
-
-
-    /**
      * Get the diff of a file with his modified version.
      *
      * @param $rev1 First revison.
      * @param $rev2 Second revision.
      * @return The diff a the file with his modified version, as HTML, ready to be display.
      */
-    public function vcsDiff($rev1, $rev2)
+    public function Diff($type, $options)
     {
-        $output = VCSFactory::getInstance()->diff(
-            $this->lang.$this->path,
-            $this->name, $rev1, $rev2
-        );
+
+        if( $type == 'vcs' ) {
+
+            $output = VCSFactory::getInstance()->diff(
+                $this->lang.$this->path,
+                $this->name, $options['rev1'], $options['rev2']
+            );
+
+        } elseif( $type == 'file' || $type == 'patch' ) {
+
+            $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
+            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$this->path.'; '
+                  .'diff -uN '.$this->name.' '.$this->name.$ext;
+
+            $output = array();
+            $trial_threshold = 3;
+            while ($trial_threshold-- > 0) {
+                $output = array();
+                exec($cmd, $output);
+                if (strlen(trim(implode('', $output))) != 0) break;
+            }
+
+        }
+
         $output = htmlentities(join("\n", $output));
         $match = array();
         preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $output, $match);

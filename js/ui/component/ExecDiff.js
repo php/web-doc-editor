@@ -24,7 +24,8 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
             XHR({
                 scope   : this,
                 params  : {
-                    task     : 'getDiff2',
+                    task     : 'getDiff',
+                    DiffType : 'vcs',
                     FilePath : 'en' + this.fpath,
                     FileName : this.fname,
                     Rev1     : this.rev1,

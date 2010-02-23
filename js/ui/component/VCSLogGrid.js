@@ -162,7 +162,8 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                     // Load diff data
                     XHR({
                         params : {
-                            task     : 'getDiff2',
+                            task     : 'getDiff',
+                            DiffType : 'vcs',
                             FilePath : this.fpath,
                             FileName : this.fname,
                             Rev1     : rev1,
