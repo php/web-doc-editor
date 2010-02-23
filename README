@@ -13,11 +13,7 @@
 
 == File structure ==
 * A checkout of the SVN copy named doc-editor
-  - svn co http://svn.php.net/repository/web/doc-editor/trunk doc-editor 
-* A copy of the ExtJs 3.1 or higher series
-  - Download from here: http://extjs.com/products/extjs/download.php
-  - Unpack it like so: doc-editor/js/extjs/
-  - Note: extjs does not unzip into a new directory by default, so beware
+  - svn co http://svn.php.net/repository/web/doc-editor/trunk doc-editor
 * Make sure the data directory has read/write permissions for the web server user
   - Default data directory location: doc-editor/data
 
