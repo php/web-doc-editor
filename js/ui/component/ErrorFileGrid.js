@@ -147,6 +147,7 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
                         scope   : this,
                         params  : {
                             task     : 'getDiff',
+                            DiffType : 'file',
                             FilePath : this.lang + this.fpath,
                             FileName : this.fname
                         },
