@@ -13,17 +13,17 @@ class ToolsCheckEntities {
 
     private static $instance;
 
-    private static $urlConnectTimeout;
-    private static $userAgent;
-    private static $pathEntities;
+    private $urlConnectTimeout;
+    private $userAgent;
+    private $pathEntities;
 
-    private static $forkUrlAllow;
-    private static $forkNumAllowed;
+    private $forkUrlAllow;
+    private $forkNumAllowed;
 
-    private static $supportedSchemes;
+    private $supportedSchemes;
 
-    private static $entityNames;
-    private static $entityUrls;
+    private $entityNames;
+    private $entityUrls;
 
 
     /**
