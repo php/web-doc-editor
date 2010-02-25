@@ -102,7 +102,9 @@ class ToolsCheckEntities {
      */
     private function cleanUpDatabase()
     {
-        DBConnection::getInstance()->query("TRUNCATE TABLE `checkEntities`");
+        $project = ProjectManager::getInstance()->project;
+
+        DBConnection::getInstance()->query('DELETE FROM `checkEntities` WHERE `project`="'.$project.'"');
     }
 
 
