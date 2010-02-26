@@ -3,10 +3,11 @@
 == Requirements ==
 * PHP 5.2.1+
 * The MySQLi extension
+* The cURL extension
 * Shell exec privileges
 * native vcs-client (e.g. using Subversion should have native svn-client)
 * Php mail function must be activate
-* mod-rewrite module
+* Apache mod-rewrite module
 
 == Configuration ==
 * Configuration is set in php/config.inc.php

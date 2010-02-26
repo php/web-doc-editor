@@ -460,8 +460,13 @@ class ExtJsController
                         ? $this->getRequestVariable('readOriginal')
                         : false;
 
+        $ggTranslate  = $this->hasRequestVariable('ggTranslate')
+                        ? $this->getRequestVariable('ggTranslate')
+                        : false;
+
         // ExtJs pass false as a string ; fix it
         if( $readOriginal == "false" ) $readOriginal = false;
+        if( $ggTranslate  == "false" ) $ggTranslate = false;
 
         $t = explode('/', $FilePath);
         $FileLang = array_shift($t);
@@ -470,7 +475,17 @@ class ExtJsController
         // We must detect the encoding of the file with the first line "xml version="1.0" encoding="utf-8"
         // If this utf-8, we don't need to use utf8_encode to pass to this app, else, we apply it
 
-        $file     = new File($FileLang, $FilePath, $FileName);
+        $file = new File($FileLang, $FilePath, $FileName);
+
+        // If we want to get the translation from google translate API
+        if( $ggTranslate ) {
+            $content  = $file->translate();
+            $return['content'] = $content;
+            $return['warn_tab'] = false;
+            $return['xmlid'] = '';
+            return JsonResponseBuilder::success($return);
+        }
+
         $content  = $file->read($readOriginal);
         $encoding = $file->getEncoding($content);
         $info     = $file->getInfo($content);

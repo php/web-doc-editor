@@ -426,9 +426,9 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
             items : [{
                 scope   : this,
                 tooltip : _('<b>Enable / Disable</b> spellChecking'),
-                enableToggle: true,
+                enableToggle : true,
                 iconCls : 'iconSpellCheck',
-                pressed: phpDoc.userConf[this.spellCheckConf],
+                pressed : phpDoc.userConf[this.spellCheckConf],
                 handler : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);

@@ -6,7 +6,8 @@ ui.task.GetFileTask = function(config)
     Ext.apply(this, config);
 
     var id_prefix    = this.prefix + '-' + this.ftype,
-        readOriginal = (this.ftype == 'NotInEN') ? true : false;
+        readOriginal = (this.ftype == 'NotInEN')    ? true : false,
+        ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false
 
     // Mask the panel
     Ext.get(id_prefix + '-PANEL-' + this.fid).mask(
@@ -22,7 +23,8 @@ ui.task.GetFileTask = function(config)
             task     : 'getFile',
             FilePath : this.fpath,
             FileName : this.fname,
-            readOriginal: readOriginal
+            readOriginal: readOriginal,
+            ggTranslate : ggTranslate
         },
         success : function(response)
         {
@@ -39,6 +41,9 @@ ui.task.GetFileTask = function(config)
               )
             {
                 p.permlink = '';
+            } else if( this.ftype  === 'GGTRANS' )
+            {
+                p.setTitle('<img src="themes/img/google.png" alt="permlink" style="vertical-align: middle;"> ' + p.originTitle);
             } else {
                 p.permlink = (o.xmlid != 'NULL') ? perm : '';
                 p.setTitle(p.permlink + p.originTitle);
@@ -46,6 +51,11 @@ ui.task.GetFileTask = function(config)
 
             // We define the content into the editor
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
+
+            // If this is and automatic translation from Google API, we reint the file now.
+            if( this.ftype  === 'GGTRANS' ) {
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+            }
 
             // Remove the mask from the editor
             Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();

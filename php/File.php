@@ -4,6 +4,7 @@ require_once dirname(__FILE__) . '/conf.inc.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
+require_once dirname(__FILE__) . '/GTranslate.php';
 
 class File
 {
@@ -45,6 +46,40 @@ class File
         return is_file($this->full_path);
     }
 
+
+    /**
+     * Translate the content of a file with Google Translate API.
+     * 
+     * @return The automatic translation.
+     */
+    public function translate() {
+
+        $originalContent = file_get_contents($this->full_path);
+
+        // We search for new line caracters and mark it ! (Google API delete new line)
+        $originalContent = str_replace("\n", "[@]", $originalContent);
+
+        $lang = AccountManager::getInstance()->vcsLang;
+
+        $translation = false;
+
+        $gt = new Gtranslate;
+        $gt->setRequestType('curl');
+        $translation = $gt->translate('en', $lang, $originalContent);
+
+        // Replace new line mark
+        $translation = str_replace("[@]", "\n", $translation);
+
+        // Few substitutions
+        $translation = str_replace("&amp;" , "&", $translation);
+        $translation = str_replace("&amp;  ", "&", $translation);
+        $translation = str_replace("&#39;" , "'", $translation);
+        $translation = str_replace("&quot;", '"', $translation);
+        $translation = str_replace("&lt;"  , '<', $translation);
+        $translation = str_replace("&gt;"  , '>', $translation);
+
+        return $translation;
+    }
 
     /**
      * Read the content of a file.

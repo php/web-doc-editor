@@ -176,6 +176,24 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScrollCB   : false
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-GGTRANS-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 550,
+                        //hidden         : true,
+                        title          : _('Automatic translation: ') + phpDoc.userLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'GGTRANS',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        readOnly       : true,
+                        lang           : phpDoc.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : false
                     })
                 ]
             });
