@@ -391,6 +391,15 @@ var phpDoc = function()
                         iconCls   : 'iconPendingPatch',
                         items     : [ ui.component.PendingPatchGrid.getInstance() ],
                         collapsed : true
+                    }, {
+                        id        : 'acc-google-translate',
+                        title     : _('Google Translation'),
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconGoogle',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.GoogleTranslationPanel.getInstance() ],
+                        collapsed : true
                     }]
                 }, {
                     // main panel

@@ -8,6 +8,7 @@
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/BugReader.php';
 require_once dirname(__FILE__) . '/File.php';
+require_once dirname(__FILE__) . '/GTranslate.php';
 require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/LogManager.php';
 require_once dirname(__FILE__) . '/LockFile.php';
@@ -444,6 +445,44 @@ class ExtJsController
                 )
             );
         }
+    }
+
+    /**
+     * Get the translation from a given string using Google Translate API
+     */
+    public function getGGTranslation()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $str = $this->getRequestVariable('str');
+
+        $lang = AccountManager::getInstance()->vcsLang;
+
+        $translation = false;
+
+        $str = str_replace("\n", "[@]", $str);
+
+        $gt = new Gtranslate;
+        $gt->setRequestType('curl');
+        $translation = $gt->translate('en', $lang, $str);
+
+        // Replace new line mark
+        $translation = str_replace("[@]", "<br>", $translation);
+
+        // Few substitutions
+        $translation = str_replace("&amp;" , "&", $translation);
+        $translation = str_replace("&amp;  ", "&", $translation);
+        $translation = str_replace("&#39;" , "'", $translation);
+        $translation = str_replace("&quot;", '"', $translation);
+        $translation = str_replace("&lt;"  , '<', $translation);
+        $translation = str_replace("&gt;"  , '>', $translation);
+
+        return JsonResponseBuilder::success(
+            array(
+                'translation' => $translation
+            )
+         );
+
     }
 
     /**

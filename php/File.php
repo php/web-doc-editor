@@ -2,9 +2,9 @@
 
 require_once dirname(__FILE__) . '/conf.inc.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
+require_once dirname(__FILE__) . '/RepositoryManager.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class File
 {

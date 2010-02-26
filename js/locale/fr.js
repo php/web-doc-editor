@@ -30,6 +30,11 @@ i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le docum
 // Generic
 i18n["Warning"] = "Alerte";
 i18n["Automatic translation: "] = "Traduction automatique : ";
+
+i18n["String to translate (en => {0})"] = "Message à traduire (en => {0}) ";
+i18n["Translate !"] = "Traduire !";
+i18n["Google Translation"] = "Traduire avec Google";
+
 i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
 i18n["Nb files to display"] = "Nombre de fichiers à afficher";
 i18n["files to display"] = "fichiers à afficher";
