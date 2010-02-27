@@ -33,7 +33,7 @@ while( list($key, $project) = each($availableProject) ) {
     $pm->setProject($project['code']);
 
     if ($isCLI) {
-        echo "\n * Update the repository checkout for the " . $project['name'] . "...";
+        echo "\n * Update the VCS repository for the " . $project['name'] . "...";
     }
     flush();
     // VCS update
