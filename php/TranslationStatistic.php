@@ -112,6 +112,8 @@ class TranslationStatistic
     {
         $project = AccountManager::getInstance()->project;
 
+        $result = array();
+
         if( $lang == 'all' ) {
             $where = '';
             $groupBy = 'GROUP BY `lang`';
