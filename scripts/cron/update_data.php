@@ -13,6 +13,12 @@ require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 require_once dirname(__FILE__) . '/../../php/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/../../php/TranslatorStatistic.php';
 
+$isCLI = (PHP_SAPI == 'cli');
+
+if ($isCLI) {
+    echo "\nPHP Documentation Online Editor - Update data\n\n";
+}
+
 $rm = RepositoryManager::getInstance();
 $pm = ProjectManager::getInstance();
 
@@ -26,14 +32,17 @@ while( list($key, $project) = each($availableProject) ) {
     // Define it as a project
     $pm->setProject($project['code']);
 
+    if ($isCLI) {
+        echo "\n * Update the repository checkout for the " . $project['name'] . "...";
+    }
+    flush();
     // VCS update
-    $rm->updateRepository();
+    //$rm->updateRepository();
 
-    // After update the repo, we need to chmod all file to be able to save it again as www server user & group
-    $cmd = "cd ".$DOC_EDITOR_VCS_PATH."; chmod -R 777 ./; chown -R  ".$DOC_EDITOR_WWW_USER.":".$DOC_EDITOR_WWW_GROUP." ./";
-
-    exec($cmd);
-
+    if ($isCLI) {
+        echo "\n * Clean up the database...";
+    }
+    flush();
     // Clean Up DB
     $rm->cleanUp();
 
@@ -42,15 +51,27 @@ while( list($key, $project) = each($availableProject) ) {
 
     if ($lock->lock()) {
 
+        if ($isCLI) {
+            echo "\n * Applying tools on repository...";
+        }
+        flush();
         // Start Revcheck
         $rm->applyRevCheck();
 
         // Search for NotInEN Old Files
         $rm->updateNotInEN();
 
+        if ($isCLI) {
+            echo "\n * Parsing translation data...";
+        }
+        flush();
         // Parse translators
         $rm->updateTranslatorInfo();
 
+        if ($isCLI) {
+            echo "\n * Compute all statistics...";
+        }
+        flush();
         // Compute all summary
         TranslationStatistic::getInstance()->computeSummary('all');
         TranslatorStatistic::getInstance()->computeSummary('all');    
@@ -62,6 +83,8 @@ while( list($key, $project) = each($availableProject) ) {
 
 }
 
-
+if ($isCLI) {
+    echo "\n\nUpdate completed!\n";
+}
 
 ?>
