@@ -55,6 +55,7 @@ class BugReader {
                 $result[$i]['title'] = $title;
 
                 $match = array();
+
                 if (strstr($description, "Reproduce code:")) {
                     preg_match_all('/Description:\s*?------------(.*?)Reproduce code:/s', $description, $match);
                 } else {
@@ -63,6 +64,15 @@ class BugReader {
 
                 $result[$i]['description'] = (isset($match[1][0])) ? highlight_string(trim($match[1][0]), true) : '';
                 $result[$i]['link'] = (string) $item->link;
+
+                $match = array();
+
+                // Try to find the link to this documentation bug
+                preg_match('/From manual page: (.*?)(#|\s)/s', $description, $match);
+
+                $result[$i]['xmlID'] = ( isset($match[1]) ) ? $match[1] : false;
+
+
                 $i++;
             }
         }

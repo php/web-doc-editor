@@ -25,7 +25,10 @@ ui.component._PortletBugs.store = new Ext.data.Store({
                 mapping : 'link'
             }, {
                 name    : 'description',
-                mapping : 'description'
+                mapping : 'description',
+            }, {
+                name    : 'xmlID',
+                mapping : 'xmlID',
             }
         ])
     )
@@ -98,6 +101,11 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
     },
 
+    openRelatedFile: function(xmlID)
+    {
+        var tmp = new ui.task.GetFileInfoByXmlID({xmlID: xmlID});
+    },
+
     onContextClick : function(grid, rowIndex, e)
     {
 
@@ -122,6 +130,15 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
                         this.ctxIndex = null;
                         ui.component._PortletBugs.reloadData();
                     }
+                }, {
+                    scope   : this,
+                    text    : _('Open the related file'),
+                    iconCls : 'iconAllFiles',
+                    id      : 'bugs-open-related-file',
+                    handler : function()
+                    {
+                        this.openRelatedFile(this.ctxXmlID);
+                    }
                 }]
             });
         }
@@ -132,9 +149,19 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         if(this.ctxIndex){
             this.ctxIndex = null;
         }
+        if(this.ctxXmlID){
+            this.ctxXmlID = null;
+        }
 
         this.ctxIndex = rowIndex;
+        this.ctxXmlID = grid.store.getAt(this.ctxIndex).data.xmlID;
         this.menu.showAt(e.getXY());
+
+        if( !this.ctxXmlID ) {
+          Ext.getCmp('bugs-open-related-file').disable();
+        } else {
+          Ext.getCmp('bugs-open-related-file').enable();
+        }
 
     },
 

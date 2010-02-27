@@ -486,6 +486,35 @@ class ExtJsController
     }
 
     /**
+     * Get information of a file by his xmlID
+     */
+    public function getFileInfoByXmlID()
+    {
+        $am = AccountManager::getInstance();
+
+        $am->isLogged();
+        $lang = $am->vcsLang;
+
+        $xmlID = $this->getRequestVariable('xmlID');
+
+        $r = RepositoryFetcher::getInstance()->getFileByXmlID($lang, $xmlID);
+
+        if (false == is_null($r)) {
+            return JsonResponseBuilder::success(
+                array(
+                    'lang' => $lang,
+                    'path' => $r->path,
+                    'name' => $r->name
+                )
+            );
+        } else {
+            return JsonResponseBuilder::failure();
+        }
+
+    }
+
+
+    /**
      * Get the content of a file
      */
     public function getFile()
