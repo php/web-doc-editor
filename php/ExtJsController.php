@@ -1005,6 +1005,7 @@ class ExtJsController
     public function vcsCommit()
     {
         $am = AccountManager::getInstance();
+        $rm = RepositoryManager::getInstance();
 
         $am->isLogged();
 
@@ -1025,7 +1026,7 @@ class ExtJsController
 
         if ($lock->lock()) {
 
-            $tmp = RepositoryManager::getInstance()->commitChanges($anode, $logMessage);
+            $tmp = $rm->commitChanges($anode, $logMessage);
             $commitResponse = $tmp['commitResponse'];
             $anode          = $tmp['anode'];
 
@@ -1064,10 +1065,10 @@ class ExtJsController
             if( !empty($existFiles) ) {
 
                 // Update revision & reviewed for all this files (LANG & EN)
-                RepositoryManager::getInstance()->updateFileInfo($existFiles);
+                $rm->updateFileInfo($existFiles);
 
                 // Remove all this files in needcommit
-                RepositoryManager::getInstance()->delPendingCommit($existFiles);
+                $rm->delPendingCommit($existFiles);
 
             } // End of $existFiles stuff
 
@@ -1075,10 +1076,10 @@ class ExtJsController
             if( !empty($deleteFiles) ) {
 
                 // Remove this files from the repository
-                RepositoryManager::getInstance()->delFiles($deleteFiles);
+                $rm->delFiles($deleteFiles);
 
                 // Remove all this files in needcommit
-                RepositoryManager::getInstance()->delPendingCommit($deleteFiles);
+                $rm->delPendingCommit($deleteFiles);
 
             } // End of $deleteFiles stuff
 
@@ -1087,6 +1088,7 @@ class ExtJsController
 
             // We re-compute summary statistics for the global documentation & by translators
             $lang = AccountManager::getInstance()->vcsLang;
+            $rm->updateTranslatorInfo();
             TranslationStatistic::getInstance()->computeSummary($lang);
             TranslatorStatistic::getInstance()->computeSummary($lang);
         }

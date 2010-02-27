@@ -909,6 +909,7 @@ EOD;
     public function updateTranslatorInfo()
     {
         $ExistingLanguage = $this->getExistingLanguage();
+        $db = DBConnection::getInstance();
 
         foreach ($ExistingLanguage as $lang) {
 
@@ -948,18 +949,27 @@ EOD;
 
                         $person = array_merge($default, $person);
 
+                        // We try to remove this record if it exist
+                        $query = sprintf(
+                            'DELETE FROM `translators` WHERE `project`="%s" AND `lang`="%s" AND `nick`="%s"',
+                            AccountManager::getInstance()->project,
+                            $lang,
+                            $db->real_escape_string($person['nick'])
+                        );
+                        $db->query($query);
+
                         $query = sprintf(
                             'INSERT INTO `translators` (`project`, `lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
                              VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")',
                             AccountManager::getInstance()->project,
                             $lang,
-                            DBConnection::getInstance()->real_escape_string($person['nick']),
-                            DBConnection::getInstance()->real_escape_string($name),
-                            DBConnection::getInstance()->real_escape_string($person['email']),
-                            DBConnection::getInstance()->real_escape_string($person['vcs']),
-                            DBConnection::getInstance()->real_escape_string($person['editor'])
+                            $db->real_escape_string($person['nick']),
+                            $db->real_escape_string($name),
+                            $db->real_escape_string($person['email']),
+                            $db->real_escape_string($person['vcs']),
+                            $db->real_escape_string($person['editor'])
                         );
-                        DBConnection::getInstance()->query($query);
+                        $db->query($query);
 
                     }
                 }
