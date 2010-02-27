@@ -299,8 +299,8 @@ class File
 
         // All xmlid
         $match = array();
-        if (preg_match_all('/xml:id="(.*?)"/', $content, $match)) {
-            $info['xmlid'] = implode('|',$match[1]);
+        if (preg_match_all('/xml:id=("|\')(.*?)("|\')/', $content, $match)) {
+            $info['xmlid'] = implode('|',$match[2]);
         }
 
         return $info;
