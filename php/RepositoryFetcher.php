@@ -529,8 +529,8 @@ TODO: Handle project here
     {
         $s = sprintf(
             'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
-             AND `name` LIKE \'%%%s%%\' ORDER BY `lang`, `path`, `name`',
-            AccountManager::getInstance()->project, AccountManager::getInstance()->vcsLang, $key
+             AND ( `name` LIKE \'%%%s%%\' OR `xmlid` LIKE \'%%%s%%\' ) ORDER BY `lang`, `path`, `name`',
+            AccountManager::getInstance()->project, AccountManager::getInstance()->vcsLang, $key, $key
         );
         $r = DBConnection::getInstance()->query($s);
 
