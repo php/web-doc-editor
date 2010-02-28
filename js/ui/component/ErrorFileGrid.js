@@ -395,6 +395,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         this.setValue('');
                         this.triggers[0].hide();
+                        this.setSize(180,10);
                         ui.component._ErrorFileGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
@@ -409,6 +410,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                         this.clearInvalid();
                         this.triggers[0].show();
+                        this.setSize(180,10);
                         ui.component._ErrorFileGrid.instance.store.filter('maintainer', v);
                     }
                 })

@@ -295,6 +295,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         var instance = ui.component._RepositoryTree.instance;
                         this.setValue('');
                         this.triggers[0].hide();
+                        this.setSize(180,10);
                         instance.root.setText(_('Repository'));
 
                         // clear search
@@ -313,6 +314,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         this.clearInvalid();
 
                         this.triggers[0].show();
+                        this.setSize(180,10);
 
                         // carry search
                         instance.loader.baseParams.search = v;
