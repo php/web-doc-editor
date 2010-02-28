@@ -452,6 +452,15 @@ var phpDoc = function()
                 }]
             });
 
+            new Ext.dd.DropTarget(Ext.get('main-panel'), {
+                ddGroup    : 'mainPanelDDGroup',
+                notifyDrop : function(ddSource, e, data){
+                    data.grid.openFile(data.grid.store.getAt(data.rowIndex).data.id);
+                    return true
+                }
+            });
+
+
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 

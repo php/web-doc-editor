@@ -106,6 +106,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
     view             : ui.component._PendingTranslateGrid.view,
     loadMask         : true,
     autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
     border           : false,
     listeners        : {
         rowcontextmenu : function(grid, rowIndex, e)
@@ -137,13 +139,11 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 
     openFile : function(rowId)
     {
-
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
             FileID      = Ext.util.md5('FNT-' + phpDoc.userLang + FilePath + FileName),
             diff        = '';
-
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
 

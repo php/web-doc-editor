@@ -122,6 +122,8 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
     view             : ui.component._NotInENGrid.view,
     columns          : ui.component._NotInENGrid.columns,
 
@@ -144,18 +146,16 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         },
         rowdblclick : function(grid, rowIndex, e)
         {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name;
-
-            this.openFile(FilePath, FileName);
-
+            this.openFile(grid.store.getAt(rowIndex).data.id);
         }
     },
 
-    openFile : function(FilePath, FileName) {
+    openFile : function(rowId) {
 
-        var FileID = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {

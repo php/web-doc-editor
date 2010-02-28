@@ -252,6 +252,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
     columns          : ui.component._PendingReviewGrid.columns,
     view             : ui.component._PendingReviewGrid.view,
 

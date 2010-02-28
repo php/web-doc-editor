@@ -191,8 +191,10 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
-    view    : ui.component._ErrorFileGrid.view,
-    columns : ui.component._ErrorFileGrid.columns,
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+    view             : ui.component._ErrorFileGrid.view,
+    columns          : ui.component._ErrorFileGrid.columns,
 
     listeners : {
         render : function(grid)

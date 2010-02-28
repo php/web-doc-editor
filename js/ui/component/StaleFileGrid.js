@@ -209,6 +209,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     autoExpandColumn : 'name',
     border           : false,
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
 
     onRowContextMenu: function(grid, rowIndex, e)
     {
