@@ -7,7 +7,6 @@ session_start();
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once "./class.php";
 require_once "./ExtJsController.php";
 require_once "./JsonResponseBuilder.php";
 
