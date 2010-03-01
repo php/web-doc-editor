@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/conf.inc.php';
-
 class CvsClient
 {
     private static $instance;
@@ -66,11 +64,14 @@ class CvsClient
      */
     public function authenticate($cvsLogin, $cvsPasswd)
     {
-        $fp = fsockopen($GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'], $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT']);
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $fp = fsockopen($appConf[$project]['vcs.server.host'], $appConf[$project]['vcs.server.port']);
         fwrite($fp,
             implode("\n", array(
                 'BEGIN AUTH REQUEST',
-                $GLOBALS['DOC_EDITOR_VCS_SERVER_PATH'],
+                $appConf[$project]['vcs.server.path'],
                 $cvsLogin,
                 $this->passwdEncode($cvsPasswd, 'A'),
                 'END AUTH REQUEST'."\n"
@@ -96,7 +97,9 @@ class CvsClient
      */
     public function checkout()
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_DATA_PATH'].'; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login;'
+        $appConf = AccountManager::getInstance()->appConf;
+
+        $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login;'
               .'cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;';
         exec($cmd);
     }
@@ -106,7 +109,10 @@ class CvsClient
      */
     public function update()
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; cvs -f -q update -d -P .;';
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; cvs -f -q update -d -P .;';
         exec($cmd);
     }
 
@@ -119,7 +125,10 @@ class CvsClient
      */
     public function log($path, $file)
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; cvs log '.$file;
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; cvs log '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -183,7 +192,10 @@ class CvsClient
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
 
         $output = array();
         exec($cmd, $output);
@@ -202,6 +214,9 @@ class CvsClient
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
             $create_stack[] = $create[$i]->lang.'/'.$create[$i]->path.'/'.$create[$i]->name;
@@ -212,12 +227,8 @@ class CvsClient
             $p = $update[$i]->lang.'/'.$update[$i]->path.'/'.$update[$i]->name;
             $update_stack[] = $p;
 
-            // Pre-commit : rename .new to actual file
-/*
-            @unlink(DOC_EDITOR_VCS_PATH.$p);
-*/
-            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
-            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
+            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
+            @unlink($appConf[$project]['vcs.path'].$p.'.new');
         }
 
         $delete_stack = array();
@@ -249,7 +260,7 @@ class CvsClient
                "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f commit -l -m '$log' $filesUpdate $filesDelete $filesCreate";
 
         // First, login into Cvs
-        $fullCmd = 'export CVS_PASSFILE='.realpath($GLOBALS['DOC_EDITOR_DATA_PATH']).'/.cvspass && cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].' && '
+        $fullCmd = 'export CVS_PASSFILE='.realpath($appConf['GLOBAL_CONFIGURATION']['data.path']).'/.cvspass && cd '.$appConf[$project]['vcs.path'].' && '
                   ."cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository login && $cmd";
 
         $output  = array();

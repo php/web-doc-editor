@@ -69,10 +69,13 @@ class RepositoryManager
 
     public function computeExistingLanguage()
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $this->existingLanguage = array();
 
         for( $i=0; $i < count($this->availableLang); $i++ ) {
-            if( is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->availableLang[$i]['code'].'/') ) {
+            if( is_dir($appConf[$project]['vcs.path'].$this->availableLang[$i]['code'].'/') ) {
                 $this->existingLanguage[] = $this->availableLang[$i];
             }
         }
@@ -166,15 +169,17 @@ class RepositoryManager
      */
     public function checkBuild($lang, $enable_xml_details="false")
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         $return = Array(
             "state"      => "ok",
             "logContent" => ""
         );
 
-        $cmd = 'cd '.realpath($GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_PATH']).';'
+        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'
               .'/usr/bin/php configure.php '
-              .$GLOBALS['DOC_EDITOR_VCS_CONFIGURE_SCRIPT_OPTIONS'];
+              .$appConf[$project]['vcs.configure.script.options'];
 
         $cmd = str_replace("{LangCode}", $lang, $cmd).';';
 
@@ -333,6 +338,8 @@ class RepositoryManager
      */
     public function beforeCommitChanges($files, $type)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         $stack = Array();
 
@@ -355,7 +362,7 @@ class RepositoryManager
                         // We must update this file into the app, and suppress it from this commit process
 
                         // Delete this new file from the fileSystem
-                        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
+                        @unlink($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
                         // Delete from pendingCommit table
                         $tmp = Array();
                         $tmp[0] = $files[$i];
@@ -379,7 +386,7 @@ class RepositoryManager
                 for( $i=0; $i < count($files); $i++ ) {
 
                     // We get the filemtime for this file to compare with the filemtime after the update.
-                    $oldTime = filemtime($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+                    $oldTime = filemtime($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
 
                     $updateResponse = VCSFactory::getInstance()->updateSingleFile(
                         $files[$i]->lang,
@@ -390,7 +397,7 @@ class RepositoryManager
                     if( $updateResponse ) {
 
                         // If this file haven't been deleted since last big update, $updateResponse should return true
-                        $newTime = filemtime($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+                        $newTime = filemtime($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
 
 
                         if( $newTime != $oldTime ) {
@@ -419,7 +426,7 @@ class RepositoryManager
                         // We delete our .new, and remove all reference for it from the DB
 
                         // Delete this new file from the fileSystem
-                        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
+                        @unlink($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
 
                         // Delete from pendingCommit table
                         $tmp = Array();
@@ -570,7 +577,9 @@ class RepositoryManager
      */
     public function clearLocalChange($type, $file)
     {
+        $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
+
         $lang = $file->lang;
         $path = $file->path;
         $name = $file->name;
@@ -609,8 +618,8 @@ class RepositoryManager
         }
 
         // We need check for error in this file
-        $en_content   = file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'].'en' .$path.$name);
-        $lang_content = file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name);
+        $en_content   = file_get_contents($appConf[$project]['vcs.path'].'en' .$path.$name);
+        $lang_content = file_get_contents($appConf[$project]['vcs.path'].$lang.$path.$name);
 
         $info = $file->getInfo($lang_content);
         $anode[0] = array(
@@ -673,13 +682,14 @@ class RepositoryManager
      */
     public function postPatchAccept($uniqID)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $vcsLogin = AccountManager::getInstance()->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
-
-        $project = strtoupper(AccountManager::getInstance()->project);
 
         // We need to send an email ?
         if (trim($a->email) != '' ) {
@@ -708,7 +718,7 @@ EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -720,6 +730,9 @@ EOD;
      */
     public function postPatchReject($uniqID)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $vcsLogin = AccountManager::getInstance()->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
@@ -750,7 +763,7 @@ EOD;
             AccountManager::getInstance()->email($to, $subject, $msg);
         }
 
-        @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
+        @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
         $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
         DBConnection::getInstance()->query($s);
     }
@@ -1024,7 +1037,10 @@ EOD;
      */
     private function doUpdateNotInEN($path, $lang)
     {
-        if ($dh = @opendir($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path)) {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        if ($dh = @opendir($appConf[$project]['vcs.path'].$lang.$path)) {
 
             $dirs  = array();
             $files = array();
@@ -1044,8 +1060,8 @@ EOD;
             }
 
             foreach($files as $f) {
-                $en_file   = $GLOBALS['DOC_EDITOR_VCS_PATH'] .'en'  .$f->path .$f->name;
-                $lang_file = $GLOBALS['DOC_EDITOR_VCS_PATH'] .$lang .$f->path .$f->name;
+                $en_file   = $appConf[$project]['vcs.path'] .'en'  .$f->path .$f->name;
+                $lang_file = $appConf[$project]['vcs.path'] .$lang .$f->path .$f->name;
 
                 if (!@is_file($en_file)) {
                     $query = sprintf(
@@ -1073,7 +1089,10 @@ EOD;
      */
     public function applyRevCheck($path = '/')
     {
-        if ($dh = @opendir($GLOBALS['DOC_EDITOR_VCS_PATH'].'en'.$path)) {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        if ($dh = @opendir($appConf[$project]['vcs.path'].'en'.$path)) {
 
             $dirs  = array();
             $files = array();
@@ -1239,7 +1258,8 @@ EOD;
      * @param $value The value. Can be anything who can be store into a SQL TEXT field
      * @return Nothing.
      */
-    public function setStaticValue($type, $field, $value) {
+    public function setStaticValue($type, $field, $value)
+    {
 
         $project = AccountManager::getInstance()->project;
 

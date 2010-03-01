@@ -105,7 +105,10 @@ class LogManager
      */
     public function saveOutputLog($file, $output)
     {
-        $fp = fopen($GLOBALS['DOC_EDITOR_VCS_PATH'] . '../.' . $file, 'w');
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $fp = fopen($appConf[$project]['vcs.path'] . '../.' . $file, 'w');
         fwrite($fp, implode("<br>",$output));
         fclose($fp);
     }
@@ -118,8 +121,10 @@ class LogManager
      */
     public function readOutputLog($file)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
         
-        return $this->highlightBuildLog(file_get_contents($GLOBALS['DOC_EDITOR_VCS_PATH'] . '../.' . $file));
+        return $this->highlightBuildLog(file_get_contents($appConf[$project]['vcs.path'] . '../.' . $file));
     }
 
     /**

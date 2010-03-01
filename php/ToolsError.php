@@ -6,7 +6,8 @@
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/AccountManager.php';
 
-class ToolsError {
+class ToolsError
+{
 
     /**
      * EN content of the file.

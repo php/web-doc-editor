@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) .'/conf.inc.php';
+require_once dirname(__FILE__) .'/Conf.php';
 require_once dirname(__FILE__) .'/utility.php';
 
 class DBConnection
@@ -20,12 +20,14 @@ class DBConnection
 
     private function __construct()
     {
+        $appConf = Config::getInstance()->getConf();
+
         try {
             $this->conn = new mysqli(
-                $GLOBALS['DOC_EDITOR_SQL_HOST'],
-                $GLOBALS['DOC_EDITOR_SQL_USER'],
-                $GLOBALS['DOC_EDITOR_SQL_PASS'],
-                $GLOBALS['DOC_EDITOR_SQL_BASE']
+                $appConf['GLOBAL_CONFIGURATION']['sql.host'],
+                $appConf['GLOBAL_CONFIGURATION']['sql.user'],
+                $appConf['GLOBAL_CONFIGURATION']['sql.passwd'],
+                $appConf['GLOBAL_CONFIGURATION']['sql.database']
             );
             if (mysqli_connect_errno()) {
                 throw new Exception('connect databases failed!');

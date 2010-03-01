@@ -24,6 +24,7 @@ class AccountManager
     public $vcsLang;
     public $userConf;
     public $defaultConf;
+    public $appConf;
 
     private function __construct()
     {
@@ -64,6 +65,9 @@ class AccountManager
 
             "theme"                 => 'themes/empty.css'
         );
+
+        $this->appConf = Config::getInstance()->getConf();
+
     }
 
     public function switchLang($lang) {
@@ -131,7 +135,7 @@ class AccountManager
 
         // We manage the project
         if( ProjectManager::getInstance()->setProject($project) ) {
-            $this->project = $project;
+            $this->project = strtoupper($project);
         } else {
             $return['state'] = false;
             $return['msg']   = 'Bad project';

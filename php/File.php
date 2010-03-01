@@ -1,6 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/conf.inc.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
@@ -24,6 +23,9 @@ class File
      */
     public function __construct($lang='', $path='', $name='')
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         // Security
         $path = str_replace('..', '',  $path);
         $path = str_replace('//', '/', $path);
@@ -35,10 +37,10 @@ class File
         if (substr($path, -1)   != '/') $path = $path.'/';
         $this->path = $path;
 
-        $this->full_path = $GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name;
+        $this->full_path = $appConf[$project]['vcs.path'].$lang.$path.$name;
 
         // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
-        $this->full_path_fallback = $GLOBALS['DOC_EDITOR_VCS_PATH'].'en'.$path.$name;
+        $this->full_path_fallback = $appConf[$project]['vcs.path'].'en'.$path.$name;
     }
 
     public function fileExist()
@@ -136,10 +138,13 @@ class File
      * @param $path path to create
      * @return true
      */
-    private function createFolder($path) {
+    private function createFolder($path)
+    {
+       $appConf = AccountManager::getInstance()->appConf;
+       $project = AccountManager::getInstance()->project;
 
        // We create this folder localy
-       mkdir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$path);
+       mkdir($appConf[$project]['vcs.path'].$this->lang.$path);
 
        // We register this new folder to be committed
        $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
@@ -152,7 +157,10 @@ class File
      *
      * @return true
      */
-    public function folderExist() {
+    public function folderExist()
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         $folders = array();
         $_folders = explode("/", $this->path);
@@ -170,7 +178,7 @@ class File
 
            $herePath = $path.'/'.$folders[$i];
 
-           if( !is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$herePath) ) {
+           if( !is_dir($appConf[$project]['vcs.path'].$this->lang.$herePath) ) {
               $this->createFolder($herePath);
            }
 
@@ -315,8 +323,11 @@ class File
      */
     public function rawDiff($isPatch=false, $uniqID='')
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$this->path.'; '
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
               .'diff -uN '.$this->name.' '.$this->name.$ext;
 
         $output = array();
@@ -334,6 +345,8 @@ class File
      */
     public function Diff($type, $options)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         if( $type == 'vcs' ) {
 
@@ -345,7 +358,7 @@ class File
         } elseif( $type == 'file' || $type == 'patch' ) {
 
             $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
-            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$this->lang.$this->path.'; '
+            $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
                   .'diff -uN '.$this->name.' '.$this->name.$ext;
 
             $output = array();

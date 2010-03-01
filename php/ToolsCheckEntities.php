@@ -32,11 +32,13 @@ class ToolsCheckEntities {
      */
     function __construct()
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         $this->urlConnectTimeout = 10;
 
         $this->userAgent = 'DocWeb Link Crawler (http://doc.php.net)';
-        $this->pathEntities = $GLOBALS['DOC_EDITOR_ENTITIES_URL'];
+        $this->pathEntities = $appConf[$project]['entities.url'];
 
         $this->forkUrlAllow   = ( function_exists('pcntl_fork') && isset($_ENV['NUMFORKS']) );
         $this->forkNumAllowed = ( $this->forkUrlAllow ) ? $_ENV['NUMFORKS'] : 0;

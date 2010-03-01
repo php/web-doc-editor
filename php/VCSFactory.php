@@ -1,15 +1,16 @@
 <?php
 
-require_once dirname(__FILE__) . '/conf.inc.php';
-
-class VCSFactory {
+class VCSFactory
+{
 
     private static $instance;
 
     public static function getInstance()
     {
+        $appConf = AccountManager::getInstance()->appConf;
+
         if (!isset(self::$instance)) {
-            switch ($GLOBALS['DOC_EDITOR_VCS']) {
+            switch ($appConf['GLOBAL_CONFIGURATION']['vcs.type']) {
                 case 'cvs':
                     require_once dirname(__FILE__) . '/CvsClient.php';
                     self::$instance = CvsClient::getInstance();

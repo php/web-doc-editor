@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/conf.inc.php';
-
 class SvnClient
 {
     private static $instance;
@@ -19,7 +17,8 @@ class SvnClient
     {
     }
 
-    private function getKarmaList() {
+    private function getKarmaList()
+    {
 
         // If this data is older than 1 day, we update it
         $data = RepositoryFetcher::getStaticValue('karma_list', '');
@@ -31,9 +30,12 @@ class SvnClient
         return $data["data"];
     }
 
-    private function updateKarmaList() {
+    private function updateKarmaList()
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
-        $file = @file($GLOBALS['DOC_EDITOR_VCS_KARMA_FILE']);
+        $file = @file($appConf[$project]['vcs.karma.file']);
 
         $line_avail = array();
         $user = array();
@@ -102,7 +104,7 @@ class SvnClient
                 array(
                         "token"    => getenv("TOKEN"),
                         "username" => $username,
-                        "password" => $password,
+                        "password" => $password
                 )
         );
 
@@ -139,6 +141,9 @@ class SvnClient
      */
     public function svnAuthenticate($username, $password)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $uuid = md5(uniqid(rand(), true));
         $uuid =   substr($uuid, 0, 8)  . '-'
                 . substr($uuid, 8, 4)  . '-'
@@ -146,9 +151,9 @@ class SvnClient
                 . substr($uuid, 16, 4) . '-'
                 . substr($uuid, 20);
 
-        $host = $GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'];
-        $port = $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT'];
-        $uri  = '/' . $GLOBALS['DOC_EDITOR_VCS_SERVER_REPOS'] . '!svn/act/'.$uuid;
+        $host = $appConf[$project]['vcs.server.host'];
+        $port = $appConf[$project]['vcs.server.port'];
+        $uri  = '/' . $appConf[$project]['vcs.server.repos'] . '!svn/act/'.$uuid;
 
         $ping = sprintf('MKACTIVITY %s HTTP/1.1
 Host: %s
@@ -227,12 +232,15 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function checkout()
     {
-        $host   = $GLOBALS['DOC_EDITOR_VCS_SERVER_HOST'];
-        $port   = $GLOBALS['DOC_EDITOR_VCS_SERVER_PORT'];
-        $uri    = $GLOBALS['DOC_EDITOR_VCS_SERVER_PATH'];
-        $module = $GLOBALS['DOC_EDITOR_VCS_MODULE'];
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_DATA_PATH'].'; '
+        $host   = $appConf[$project]['vcs.server.host'];
+        $port   = $appConf[$project]['vcs.server.port'];
+        $uri    = $appConf[$project]['vcs.server.path'];
+        $module = $appConf[$project]['vcs.module'];
+
+        $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; '
               ."svn co http://$host:$port/$uri $module; ";
 
         $trial_threshold = 3;
@@ -253,7 +261,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function updateSingleFile($lang, $path, $name)
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn up '.$lang.$path.$name;
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$lang.$path.$name;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -262,7 +273,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
-        if( is_file($GLOBALS['DOC_EDITOR_VCS_PATH'].$lang.$path.$name) ) {
+        if( is_file($appConf[$project]['vcs.path'].$lang.$path.$name) ) {
             return true;
         } else {
             return false;
@@ -276,7 +287,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function update()
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn up .;';
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .;';
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -295,7 +309,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function log($path, $file)
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; svn log '.$file;
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn log '.$file;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -342,7 +359,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
@@ -370,16 +390,20 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         @unlink($path);
     }
 
-    public function commitFolders($foldersPath) {
+    public function commitFolders($foldersPath)
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $vcsLogin  = AccountManager::getInstance()->vcsLogin;
+        $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
         $commitLogMessage = Array();
 
         for( $i=0; $i < count($foldersPath); $i++ ) {
             // We add this new folder into repository
-            $vcsLogin  = AccountManager::getInstance()->vcsLogin;
-            $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
-            $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; svn add --non-recursive '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
+            $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn add --non-recursive '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
 
             $trial_threshold = 3;
             while ($trial_threshold-- > 0) {
@@ -403,6 +427,11 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $vcsLogin  = AccountManager::getInstance()->vcsLogin;
+        $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
         $pathLogFile = $this->createCommitLogFile($log);
 
@@ -412,8 +441,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $create_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
-            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
+            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
+            @unlink($appConf[$project]['vcs.path'].$p.'.new');
         }
 
         $update_stack = array();
@@ -422,8 +451,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $update_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  $GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new', $GLOBALS['DOC_EDITOR_VCS_PATH'].$p);
-            @unlink($GLOBALS['DOC_EDITOR_VCS_PATH'].$p.'.new');
+            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
+            @unlink($appConf[$project]['vcs.path'].$p.'.new');
         }
 
         $delete_stack = array();
@@ -437,8 +466,6 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $filesDelete = implode($delete_stack, ' ');
 
         // Buil the command line
-        $vcsLogin  = AccountManager::getInstance()->vcsLogin;
-        $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
 
         $cmdCreate = $cmdDelete = '';
         if (trim($filesCreate) != '') {
@@ -454,7 +481,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
                $cmdCreate.
                "svn ci --no-auth-cache --non-interactive -F $pathLogFile --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
 
-        $cmd = 'cd '.$GLOBALS['DOC_EDITOR_VCS_PATH'].'; ' .$cmd;
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {

@@ -28,12 +28,15 @@ class BugReader {
      * 
      * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs
      */
-    function getOpenBugs() {
+    function getOpenBugs()
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         if( $this->lang == 'en' ) {
-            $url = $GLOBALS['DOC_EDITOR_BUGS_URL_EN'];
+            $url = $appConf[$project]['bugs.url.en'];
         } else {
-            $url = $GLOBALS['DOC_EDITOR_BUGS_URL_LANG'];
+            $url = $appConf[$project]['bugs.url.lang'];
         }
 
         $r = @file_get_contents($url);

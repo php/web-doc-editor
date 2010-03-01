@@ -17,16 +17,24 @@ class ProjectManager
     }
 
     public $project;
+    public $appConf;
 
-    public $availableProject = array(
-         0 => Array('code' => 'php',  'iconCls' => 'project-php',  'name' => 'Php Documentation'),
-         1 => Array('code' => 'pear', 'iconCls' => 'project-pear', 'name' => 'Pear Documentation')
-    );
-
+    public $availableProject = array();
 
     private function __construct()
     {
+        $this->appConf = Config::getInstance()->getConf();
 
+        $i=0;
+        while( list($k, $v) = each($this->appConf) ) {
+            if( $k == "GLOBAL_CONFIGURATION" ) { continue; }
+
+            // Check if this project is enable
+            if( $this->appConf[$k]['project.enable'] ) {
+                $this->availableProject[$i] = array('code' => $this->appConf[$k]['project.code'],  'iconCls' => $this->appConf[$k]['project.iconCls'],  'name' => $this->appConf[$k]['project.name']);
+                ++$i;
+            }
+        }
     }
 
     public function getAvailableProject()
@@ -34,41 +42,19 @@ class ProjectManager
         return $this->availableProject;
     }
 
-    public function isDefinedProject($project)
-    {
-        $isDefined = false;
-
-        for( $i=0; $i < count($this->availableProject); $i++ ) {
-            if( $this->availableProject[$i]['code'] == $project ) {
-                $isDefined = true;
-            }
-        }
-
-        return $isDefined;
-
-    }
-
     public function setProject($project)
     {
+        $project = strtoupper($project);
+
         // This project must be defined in $availableProject constant
-        if( ! $this->isDefinedProject($project) ) {
+        if( !isset($this->appConf[$project]) || $this->appConf[$project]['project.enable'] == false ) {
             return false;
         }
 
-        // This project must have a conf file
-        if( is_file(dirname(__FILE__) . '/conf.'. $project .'.inc.php') ) {
-
-            include_once dirname(__FILE__) . '/conf.inc.php';
-            include_once dirname(__FILE__) . '/conf.'. $project .'.inc.php';
-
-            $this->project = $project;
-            AccountManager::getInstance()->project = $project;
-            $_SESSION['project'] = $project;
-
-            return true;
-        } else {
-            return false;
-        }
+        $this->project = $project;
+        AccountManager::getInstance()->project = $project;
+        $_SESSION['project'] = $project;
+        return true;
     }
 }
 ?>

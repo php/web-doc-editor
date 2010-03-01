@@ -3,7 +3,8 @@
  * A class for locking tasks
  *
  */
-class lockFile {
+class lockFile
+{
     
     /**
      * Lock file identifier
@@ -19,8 +20,11 @@ class lockFile {
      */
     function __construct($id)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         $this->id   = $id;
-        $this->path = $GLOBALS['DOC_EDITOR_DATA_PATH'] . '.' . preg_replace('![^0-9a-z.]!i', '', $this->id);
+        $this->path = $appConf[$project]['vcs.path'] . '.' . preg_replace('![^0-9a-z.]!i', '', $this->id);
     }
     
     /**

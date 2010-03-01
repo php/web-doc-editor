@@ -4,7 +4,8 @@
  * A class for read News form http://news.php.net
  *
  */
-class NewsReader {
+class NewsReader
+{
     
     /**
      * The lang
@@ -28,14 +29,17 @@ class NewsReader {
      * 
      * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs, or false if an error occurs
      */
-    function getLastNews() {
+    function getLastNews()
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
 
         $result = array();
 
         if( $this->lang == 'en' ) {
-            $url = $GLOBALS['DOC_EDITOR_NEWS_URL_EN'];
+            $url = $appConf[$project]['news.url.en'];
         } else {
-            $url = str_replace("{LANG}", strtolower(str_replace('_', '-', $this->lang)), $GLOBALS['DOC_EDITOR_NEWS_URL_LANG']);
+            $url = str_replace("{LANG}", strtolower(str_replace('_', '-', $this->lang)), $appConf[$project]['news.url.lang']);
         }
 
         $content = @file_get_contents($url);

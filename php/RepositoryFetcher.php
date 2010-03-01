@@ -558,13 +558,16 @@ TODO: Handle project here
      */
     public function getFilesByDirectory($dir)
     {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
         // Security
         $dir = str_replace('..', '', $dir);
         if (substr($dir, -1) != '/') $dir .= '/';
 
         $m = $this->getModifies();
 
-        $d = dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$dir);
+        $d = dir($appConf[$project]['vcs.path'].$dir);
 
         $files = array();
         while ($f = $d->read())
@@ -572,7 +575,7 @@ TODO: Handle project here
             // We display only 'en', 'LANG' tree
             if (   $dir == '/'
                 && $f != 'en'
-                && $f != $GLOBALS["DOC_EDITOR_ENTITIES_FOLDER"]
+                && $f != $appConf[$project]['entities.folder']
                 && $f != AccountManager::getInstance()->vcsLang
             ) {
                 continue; // skip non-en and non-user-lang
@@ -586,7 +589,7 @@ TODO: Handle project here
                 || $f == 'CVS'
             ) continue;
 
-            if (is_dir($GLOBALS['DOC_EDITOR_VCS_PATH'].$dir.$f)) {
+            if (is_dir($appConf[$project]['vcs.path'].$dir.$f)) {
 
                 $files[] = array(
                     'text' => $f,
@@ -628,7 +631,8 @@ TODO: Handle project here
      * @param $field The name of the field for this value
      * @return The value.
      */
-    public function getStaticValue($type, $field) {
+    public function getStaticValue($type, $field)
+    {
 
         // Save in DB
         $s = "SELECT id, value FROM staticValue WHERE
