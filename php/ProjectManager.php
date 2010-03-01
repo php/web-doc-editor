@@ -30,8 +30,15 @@ class ProjectManager
             if( $k == "GLOBAL_CONFIGURATION" ) { continue; }
 
             // Check if this project is enable
-            if( $this->appConf[$k]['project.enable'] ) {
-                $this->availableProject[$i] = array('code' => $this->appConf[$k]['project.code'],  'iconCls' => $this->appConf[$k]['project.iconCls'],  'name' => $this->appConf[$k]['project.name']);
+            if( $this->appConf[$k]['project.enable'] )
+            {
+                $this->availableProject[$i] = array(
+                    'code'                => $this->appConf[$k]['project.code'],
+                    'iconCls'             => $this->appConf[$k]['project.iconCls'],
+                    'name'                => $this->appConf[$k]['project.name'],
+                    'request_account_uri' => $this->appConf[$k]['account.request.url']
+                );
+
                 ++$i;
             }
         }

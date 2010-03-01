@@ -1,7 +1,7 @@
 var loginPage = function()
 {
     Ext.QuickTips.init();
-    Ext.BLANK_IMAGE_URL = 'js/extjs/resources/images/default/s.gif';
+    Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.1/resources/images/default/s.gif';
 
     return {
 
@@ -62,6 +62,9 @@ var loginPage = function()
                         }, {
                             name    : 'name',
                             mapping : 'name'
+                        }, {
+                            name    : 'request_account_uri',
+                            mapping : 'request_account_uri'
                         }
                     ])
                 )
@@ -90,7 +93,7 @@ var loginPage = function()
                     iconCls     : 'iconKey',
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
-                            html : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><a href="http://php.net/svn-php.php" target="_blank">http://php.net/svn-php.php</a></div>',
+                            html : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><span id="request-account"></span></div>',
                             side : 's',
                             bodyStyle: 'margin: 10px;',
                             animate : true,
@@ -137,7 +140,7 @@ var loginPage = function()
                             iconClsField  : 'iconCls',
                             iconClsBase   : 'project',
                             mode          : 'local',
-                            value         : 'php',
+                            //value         : 'php',
                             listWidth     : 235,
                             maxHeight     : 150,
                             editable      : true,
@@ -152,7 +155,17 @@ var loginPage = function()
                                         c.setValue(directAccess.project);
                                         c.collapse();
                                         c.disable();
-                                    }
+                                    } else {
+                                        c.setValue(c.store.data.items[0].data.code);
+
+                                        var url = c.store.data.items[0].data.request_account_uri;
+                                        Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                                    }                                   
+
+                                },
+                                select: function(c, record, numberIndex) {
+                                    var url = record.data.request_account_uri;
+                                    Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                                 }
                             }
                         }, {
