@@ -26,7 +26,7 @@ function headerTemplate($title = 'Php Docbook Online Editor', $depth = 0)
   <div id="loading-mask" style=""></div>
   <div id="loading">
    <div class="loading-indicator">
-    <img src="{$prefix}themes/img/php.png" class="loading-php-logo" alt="PHP" />PhpDocumentation Online Editor
+    <img src="{$prefix}themes/img/php.png" class="loading-php-logo" alt="PHP" />Php Docbook Online Editor
     <div id="loading-msg">Loading styles and images...</div>
     <div id="loading-progressBar"></div>
    </div>
