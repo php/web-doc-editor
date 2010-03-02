@@ -4,7 +4,7 @@ ui.task._SystemUpdateTask.refresh_ui = function()
 {
     Ext.get('wizard-step-3').replaceClass('wizard-step-before', 'wizard-step-working');
 
-    phpDoc.reloadAllStore();
+    PhDOE.reloadAllStore();
 
     Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
 
@@ -29,7 +29,7 @@ ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + phpDoc.project + '_lock_apply_tools'
+            lockFile : 'project_' + PhDOE.project + '_lock_apply_tools'
         },
         success : function(response)
         {
@@ -73,7 +73,7 @@ ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + phpDoc.project + '_lock_update_repository'
+            lockFile : 'project_' + PhDOE.project + '_lock_update_repository'
         },
         success : function(response)
         {
@@ -118,7 +118,7 @@ ui.task.SystemUpdateTask = function()
 
             if (o && o.success === false) {
                 Ext.getCmp('sys-update-win').close();
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             } else {
                 ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }

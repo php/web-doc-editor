@@ -128,7 +128,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
                     scope   : this,
                     params  : {
                         task     : 'getDiff',
-                        FilePath : phpDoc.userLang + this.fpath,
+                        FilePath : PhDOE.userLang + this.fpath,
                         FileName : this.fname
                     },
                     success : function(response)
@@ -181,19 +181,19 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                     {
                         var o = Ext.util.JSON.decode(response.responseText);
 
-                        phpDoc.filePendingOpen = [];
+                        PhDOE.filePendingOpen = [];
 
                         for (var i = 0; i < o.files.length; i = i + 1) {
-                            phpDoc.filePendingOpen[i] = {
-                                fpath : phpDoc.userLang + o.files[i].path,
+                            PhDOE.filePendingOpen[i] = {
+                                fpath : PhDOE.userLang + o.files[i].path,
                                 fname : o.files[i].name
                             };
                         }
 
                         // Start the first
                         ui.component.RepositoryTree.getInstance().openFile(
-                            phpDoc.filePendingOpen[0].fpath,
-                            phpDoc.filePendingOpen[0].fname
+                            PhDOE.filePendingOpen[0].fpath,
+                            PhDOE.filePendingOpen[0].fname
                         );
 
                         Ext.getBody().unmask();
@@ -293,7 +293,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNR-' + phpDoc.userLang + FilePath + FileName);
+            FileID      = Ext.util.md5('FNR-' + PhDOE.userLang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
@@ -335,12 +335,12 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                             items       : [
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
-                                    title     : phpDoc.userLang,
+                                    title     : PhDOE.userLang,
                                     prefix    : 'FNR-LANG',
                                     fid       : FileID,
-                                    fpath     : phpDoc.userLang + FilePath,
+                                    fpath     : PhDOE.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["reviewedDisplaylog"]
+                                    loadStore : PhDOE.userConf["reviewedDisplaylog"]
                                 }), new ui.component.VCSLogGrid({
                                     layout    : 'fit',
                                     title     : 'en',
@@ -348,7 +348,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["reviewedDisplaylog"]
+                                    loadStore : PhDOE.userConf["reviewedDisplaylog"]
                                 })
                             ]
                         }
@@ -356,15 +356,15 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FNR-LANG-PANEL-' + FileID,
                         region         : 'center',
-                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
                         prefix         : 'FNR',
                         ftype          : 'LANG',
-                        spellCheck     : phpDoc.userConf["reviewedSpellCheckLang"],
+                        spellCheck     : PhDOE.userConf["reviewedSpellCheckLang"],
                         spellCheckConf : 'reviewedSpellCheckLang',
                         fid            : FileID,
                         fpath          : FilePath,
                         fname          : FileName,
-                        lang           : phpDoc.userLang,
+                        lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
@@ -377,7 +377,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FNR',
                         ftype          : 'EN',
-                        spellCheck     : phpDoc.userConf["reviewedSpellCheckEn"],
+                        spellCheck     : PhDOE.userConf["reviewedSpellCheckEn"],
                         spellCheckConf : 'reviewedSpellCheckEn',
                         fid            : FileID,
                         fpath          : FilePath,

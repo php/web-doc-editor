@@ -115,7 +115,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, "end",
                             "\n<!-- EN-Revision: XX Maintainer: " +
-                                phpDoc.userLogin + " Status: ready -->"
+                                PhDOE.userLogin + " Status: ready -->"
                         );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -428,7 +428,7 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 tooltip : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
                 iconCls : 'iconSpellCheck',
-                pressed : phpDoc.userConf[this.spellCheckConf],
+                pressed : PhDOE.userConf[this.spellCheckConf],
                 handler : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
@@ -528,7 +528,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             xtype     : 'checkbox',
             name      : 'needUpdateScrollbars',
             hideLabel : true,
-            checked   : phpDoc.userConf[this.syncScrollConf],
+            checked   : PhDOE.userConf[this.syncScrollConf],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,
@@ -660,7 +660,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 }
 
                                 // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
-                                switch (phpDoc.userConf["onSaveLangFile"]) {
+                                switch (PhDOE.userConf["onSaveLangFile"]) {
 
                                     case 'always':
                                         tmp = new ui.task.CheckFileTask({
@@ -744,7 +744,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 fpath  : this.fpath,
                                 fname  : this.fname,
                                 lang   : this.lang,
-                                defaultEmail : (phpDoc.userLogin !== 'anonymous') ? phpDoc.userLogin + '@php.net' : ''
+                                defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
                             }).show();
                         }
                     }]
@@ -879,7 +879,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     },
                     scroll : function(scrollY)
                     {
-                        if( this.syncScroll && phpDoc.userConf[this.syncScrollConf] ) {
+                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] ) {
                             var opp_prefix;
                             switch (this.ftype) {
                                 case 'EN':     opp_prefix = this.prefix + '-LANG';   break;

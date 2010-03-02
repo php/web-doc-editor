@@ -20,7 +20,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + phpDoc.project + '_lock_'+ phpDoc.userLogin +'_commit'
+            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.userLogin +'_commit'
         },
         success : function(response)
         {
@@ -69,7 +69,7 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
     }).show();
 
     // Reload all store
-    phpDoc.reloadAllStore();
+    PhDOE.reloadAllStore();
 
 }
 
@@ -134,7 +134,7 @@ ui.task._VCSCommitTask.commit = function(files)
                 // Re-enable TaskPing
                 ui.task.PingTask.getInstance().delay(30000);
                 Ext.getBody().unmask();
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             } else {
                 // take over 30sec (max Keep-Alive time)
                 // poll every XX secondes if the check build is finish
@@ -147,9 +147,9 @@ ui.task._VCSCommitTask.commit = function(files)
 ui.task.VCSCommitTask = function()
 {
     // If the user is anonymous, we don't commit anything
-    if (phpDoc.userLogin === 'anonymous') {
+    if (PhDOE.userLogin === 'anonymous') {
         Ext.getCmp('winVCSCommit').close();
-        phpDoc.winForbidden();
+        PhDOE.winForbidden();
 
         return;
     }

@@ -220,18 +220,18 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 store = ui.component._CheckDoc.fs,
                 i;
 
-            phpDoc.filePendingOpen = [];
+            PhDOE.filePendingOpen = [];
 
             for (i = 0; i < store.getCount(); ++i) {
-                phpDoc.filePendingOpen[i] = {
+                PhDOE.filePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : store.getAt(i).data.file
                 };
             }
 
             ui.component.RepositoryTree.getInstance().openFile(
-                phpDoc.filePendingOpen[0].fpath,
-                phpDoc.filePendingOpen[0].fname
+                PhDOE.filePendingOpen[0].fpath,
+                PhDOE.filePendingOpen[0].fname
             );
             win.close();
         }
@@ -247,18 +247,18 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                       .getSelections(),
                 i;
 
-            phpDoc.filePendingOpen = [];
+            PhDOE.filePendingOpen = [];
 
             for (i = 0; i < r.length; ++i) {
-                phpDoc.filePendingOpen[i] = {
+                PhDOE.filePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : r[i].data.file
                 };
             }
 
             ui.component.RepositoryTree.getInstance().openFile(
-                phpDoc.filePendingOpen[0].fpath,
-                phpDoc.filePendingOpen[0].fname
+                PhDOE.filePendingOpen[0].fpath,
+                PhDOE.filePendingOpen[0].fname
             );
             win.close();
         }

@@ -20,7 +20,7 @@ ui.task.MarkDeleteTask = function(config)
                     scope   : this,
                     params  : {
                         task     : 'markAsNeedDelete',
-                        FilePath : phpDoc.userLang + this.fpath,
+                        FilePath : PhDOE.userLang + this.fpath,
                         FileName : this.fname
                     },
                     success : function(response)
@@ -29,7 +29,7 @@ ui.task.MarkDeleteTask = function(config)
 
                         Ext.getBody().unmask();
                         ui.component.PendingCommitGrid.getInstance().addRecord(
-                            o.id, phpDoc.userLang + this.fpath, this.fname, 'delete'
+                            o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
                         );
                         this.storeRecord.set('needcommit', true);
                     }

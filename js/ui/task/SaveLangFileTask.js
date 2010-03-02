@@ -5,8 +5,8 @@ ui.task.SaveLangFileTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 
@@ -78,7 +78,7 @@ ui.task.SaveLangFileTask = function(config)
             msg.hide();
 
             // Notify
-            phpDoc.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
         failure : function(response)
         {
@@ -87,9 +87,9 @@ ui.task.SaveLangFileTask = function(config)
             // Remove wait msg
             msg.hide();
             if( o.type ) {
-                phpDoc.winForbidden(o.type);
+                PhDOE.winForbidden(o.type);
             } else {
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             }
         }
     });

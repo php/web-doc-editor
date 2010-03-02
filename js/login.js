@@ -1,4 +1,4 @@
-var loginPage = function()
+var PhDOE_loginPage = function()
 {
     Ext.QuickTips.init();
     Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.1/resources/images/default/s.gif';
@@ -318,4 +318,4 @@ var loginPage = function()
     };
 }();
 
-Ext.EventManager.onDocumentReady(loginPage.init, loginPage, true);
+Ext.EventManager.onDocumentReady(PhDOE_loginPage.init, PhDOE_loginPage, true);

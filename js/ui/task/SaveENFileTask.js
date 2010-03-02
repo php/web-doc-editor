@@ -8,9 +8,9 @@ ui.task.SaveENFileTask = function(config)
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
 
-    if (phpDoc.userLogin === 'anonymous') {
+    if (PhDOE.userLogin === 'anonymous') {
         msg.hide();
-        phpDoc.winForbidden();
+        PhDOE.winForbidden();
         return;
     }
 
@@ -74,7 +74,7 @@ ui.task.SaveENFileTask = function(config)
             msg.hide();
 
             // Notify
-            phpDoc.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), 'en' + this.fpath + this.fname));
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), 'en' + this.fpath + this.fname));
 
         },
         failure : function(response)
@@ -84,9 +84,9 @@ ui.task.SaveENFileTask = function(config)
             // Remove wait msg
             msg.hide();
             if( o.type ) {
-                phpDoc.winForbidden(o.type);
+                PhDOE.winForbidden(o.type);
             } else {
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             }
         }
     });

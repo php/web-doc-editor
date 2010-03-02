@@ -155,7 +155,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNIEN-' + phpDoc.userLang + FilePath + FileName);
+            FileID      = Ext.util.md5('FNIEN-' + PhDOE.userLang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {
@@ -184,7 +184,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                         fpath          : FilePath,
                         fname          : FileName,
                         readOnly       : true,
-                        lang           : phpDoc.userLang,
+                        lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : '',
                         syncScroll     : false

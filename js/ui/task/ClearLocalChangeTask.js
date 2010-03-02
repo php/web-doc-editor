@@ -5,8 +5,8 @@ ui.task.ClearLocalChangeTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 
@@ -74,24 +74,13 @@ ui.task.ClearLocalChangeTask = function(config)
 
                         // All after this is only available for LANG file
 
-
-/*
-                        // clear local change success
-                        if (phpDoc.userLang === 'en') {
-                            // We reload all store
-                            ui.component.StaleFileGrid.getInstance().store.reload();
-                            ui.component.ErrorFileGrid.getInstance().store.reload();
-                            ui.component.PendingReviewGrid.getInstance().store.reload();
-                        }
-*/
-
                         // We try to search in others stores if this file is marked as needCommit
 
                         // trow storeNotInEn
                         ui.component.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             }
@@ -101,7 +90,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             }
@@ -111,7 +100,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needCommitLang', false);
                                     record.set('revision', o.revision);
                                     record.set('maintainer', o.maintainer);
@@ -124,7 +113,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.component.ErrorFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((phpDoc.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
                             }
@@ -142,7 +131,7 @@ ui.task.ClearLocalChangeTask = function(config)
                     {
                         // clear local change failure
                         Ext.getBody().unmask();
-                        phpDoc.winForbidden();
+                        PhDOE.winForbidden();
                     }
                 });
             }

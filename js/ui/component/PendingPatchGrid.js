@@ -112,7 +112,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
             }, '-', {
                 scope   : this,
                 text    : _('Reject this patch'),
-                disabled : (phpDoc.userLogin === 'anonymous'),
+                disabled : (PhDOE.userLogin === 'anonymous'),
                 iconCls : 'iconTrash',
                 handler : function()
                 {
@@ -243,7 +243,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["patchDisplayLog"]
+                                    loadStore : PhDOE.userConf["patchDisplayLog"]
                                 })
                             }
                         }, new ui.component.FilePanel(
@@ -253,7 +253,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
                             prefix         : 'PP',
                             ftype          : 'PATCH',
-                            spellCheck     : phpDoc.userConf["patchSpellCheck"],
+                            spellCheck     : PhDOE.userConf["patchSpellCheck"],
                             spellCheckConf : 'patchSpellCheck',
                             fid            : FileID,
                             fpath          : FilePath,

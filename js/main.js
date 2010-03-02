@@ -1,4 +1,4 @@
-var phpDoc = function()
+var PhDOE = function()
 {
     Ext.QuickTips.init();
 
@@ -6,7 +6,7 @@ var phpDoc = function()
         // Variable
         userLogin  : null,
         userLang   : null,
-        appName    : 'PhpDocumentation Online Editor',
+        appName    : 'Php Docbook Online Editor',
         appVer     : '0.2',
         uiRevision : '$Revision$',
 
@@ -103,7 +103,7 @@ var phpDoc = function()
             progressBar.show();;
 
             // Store to load for LANG project
-            if (phpDoc.userLang !== 'en') {
+            if (PhDOE.userLang !== 'en') {
 
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
@@ -147,7 +147,7 @@ var phpDoc = function()
                                                                                                                 Ext.get('loading').remove();
                                                                                                                 Ext.fly('loading-mask').fadeOut({ remove : true });
                                                                                                                 progressBar.destroy();
-                                                                                                                phpDoc.afterLoadAllStore();
+                                                                                                                PhDOE.afterLoadAllStore();
                                                                                                             }
                                                                                                         });
                                                                                                     }
@@ -191,7 +191,7 @@ var phpDoc = function()
                                                 Ext.get('loading').remove();
                                                 Ext.fly('loading-mask').fadeOut({ remove : true });
                                                 progressBar.destroy();
-                                                phpDoc.afterLoadAllStore();
+                                                PhDOE.afterLoadAllStore();
                                             }
                                         });
                                     }
@@ -206,7 +206,7 @@ var phpDoc = function()
         reloadAllStore: function() {
 
             // Store to reload for LANG project
-            if (phpDoc.userLang !== 'en') {
+            if (PhDOE.userLang !== 'en') {
                 // We reload all stores, one after the others
                 ui.component.PendingTranslateGrid.getInstance().store.reload({
                     callback: function() {
@@ -467,4 +467,4 @@ var phpDoc = function()
         } // drawInterface
     }; // Return
 }();
-Ext.EventManager.onDocumentReady(phpDoc.init, phpDoc, true);
+Ext.EventManager.onDocumentReady(PhDOE.init, PhDOE, true);

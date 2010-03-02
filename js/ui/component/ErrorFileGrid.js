@@ -217,7 +217,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 grid       : grid,
                 event      : e,
                 rowIdx     : rowIndex,
-                lang       : phpDoc.userLang,
+                lang       : PhDOE.userLang,
                 fpath      : FilePath,
                 fname      : FileName
             }).showAt(e.getXY());
@@ -234,7 +234,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FE-' + phpDoc.userLang + FilePath + FileName),
+            FileID      = Ext.util.md5('FE-' + PhDOE.userLang + FilePath + FileName),
             error       = [];
 
         // Render only if this tab don't exist yet
@@ -302,12 +302,12 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             items       : [
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
-                                    title     : phpDoc.userLang,
+                                    title     : PhDOE.userLang,
                                     prefix    : 'FE-LANG',
                                     fid       : FileID,
-                                    fpath     : phpDoc.userLang + FilePath,
+                                    fpath     : PhDOE.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["errorDisplayLog"]
+                                    loadStore : PhDOE.userConf["errorDisplayLog"]
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -316,7 +316,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["errorDisplayLog"]
+                                    loadStore : PhDOE.userConf["errorDisplayLog"]
                                 })
                             ]
                         }
@@ -324,15 +324,15 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FE-LANG-PANEL-' + FileID,
                         region         : 'center',
-                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
                         prefix         : 'FE',
                         ftype          : 'LANG',
-                        spellCheck     : phpDoc.userConf["errorSpellCheckLang"],
+                        spellCheck     : PhDOE.userConf["errorSpellCheckLang"],
                         spellCheckConf : 'errorSpellCheckLang',
                         fid            : FileID,
                         fpath          : FilePath,
                         fname          : FileName,
-                        lang           : phpDoc.userLang,
+                        lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
@@ -345,7 +345,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FE',
                         ftype          : 'EN',
-                        spellCheck     : phpDoc.userConf["errorSpellCheckEn"],
+                        spellCheck     : PhDOE.userConf["errorSpellCheckEn"],
                         spellCheckConf : 'errorSpellCheckEn',
                         fid            : FileID,
                         fpath          : FilePath,

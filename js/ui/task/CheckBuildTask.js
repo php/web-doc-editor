@@ -5,7 +5,7 @@ ui.task._CheckBuildTask.display = function()
     XHR({
         params  : {
             task : 'getLogFile',
-            file : 'project_' + phpDoc.project + '_log_check_build_' + phpDoc.userLang
+            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.userLang
         },
         success : function(response)
         {
@@ -17,21 +17,21 @@ ui.task._CheckBuildTask.display = function()
             ui.task.PingTask.getInstance().delay(30000);
 
             // Display
-            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + phpDoc.userLang) ) {
-                Ext.getCmp('main-panel').remove('check_build_panel_' + phpDoc.userLang);
+            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.userLang) ) {
+                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.userLang);
             }
 
             Ext.getCmp('main-panel').add({
                 xtype      : 'panel',
-                id         : 'check_build_panel_' + phpDoc.userLang,
-                title      : String.format(_('Check Build Result for {0}'),Ext.util.Format.uppercase(phpDoc.userLang)),
-                tabTip     : String.format(_('Check Build Result for the documentation {0}'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                id         : 'check_build_panel_' + PhDOE.userLang,
+                title      : String.format(_('Check Build Result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
+                tabTip     : String.format(_('Check Build Result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
                 closable   : true,
                 autoScroll : true,
                 iconCls    : 'iconCheckBuild',
                 html       : '<div class="check-build-content">' + o.mess + '</div>'
             });
-            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + phpDoc.userLang);
+            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.userLang);
         }
     });
 };
@@ -41,7 +41,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + phpDoc.project + '_lock_check_build_' + phpDoc.userLang
+            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
         },
         success : function(response)
         {
@@ -86,7 +86,7 @@ ui.task.CheckBuildTask = function(config)
                 // Re-enable TaskPing
                 ui.task.PingTask.getInstance().delay(30000);
                 Ext.getBody().unmask();
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             } else {
                 // take over 30sec (max Keep-Alive time)
                 // poll every XX secondes if the check build is finish

@@ -30,7 +30,7 @@ ui.task.GetFileTask = function(config)
         {
             var o    = Ext.util.JSON.decode(response.responseText),
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
-                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + phpDoc.project,
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + PhDOE.project,
                 perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
@@ -80,13 +80,13 @@ ui.task.GetFileTask = function(config)
         callback : function()
         {
             // Reviewed function to open all files of an extension
-            if (phpDoc.filePendingOpen[0]) {
-                phpDoc.filePendingOpen.shift();
-                if (phpDoc.filePendingOpen[0]) {
-                    if (phpDoc.filePendingOpen[0].fpath) {
+            if (PhDOE.filePendingOpen[0]) {
+                PhDOE.filePendingOpen.shift();
+                if (PhDOE.filePendingOpen[0]) {
+                    if (PhDOE.filePendingOpen[0].fpath) {
                         ui.component.RepositoryTree.getInstance().openFile(
-                            phpDoc.filePendingOpen[0].fpath,
-                            phpDoc.filePendingOpen[0].fname
+                            PhDOE.filePendingOpen[0].fpath,
+                            PhDOE.filePendingOpen[0].fname
                         );
                     }
                 }

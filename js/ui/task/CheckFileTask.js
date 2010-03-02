@@ -5,8 +5,8 @@ ui.task.CheckFileTask = function(config)
 {
     Ext.apply(this,config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 

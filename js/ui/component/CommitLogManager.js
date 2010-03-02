@@ -37,11 +37,11 @@ ui.component._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
                 {
                    record.commit();
                    // Notify
-                   phpDoc.notify('info', _('Message updated'), _('Log Message was updated successfully !'));
+                   PhDOE.notify('info', _('Message updated'), _('Log Message was updated successfully !'));
                 },
                 failure : function(response)
                 {
-                    phpDoc.winForbidden();
+                    PhDOE.winForbidden();
                 }
             });
         }
@@ -96,12 +96,12 @@ ui.component._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
                             ui.component._CommitLogManager.store.remove(ui.component._CommitLogManager.store.getAt(this.rowIdx));
 
                             // Notify
-                            phpDoc.notify('info', _('Message deleted'), _('Log Message was deleted successfully !'));
+                            PhDOE.notify('info', _('Message deleted'), _('Log Message was deleted successfully !'));
 
                         },
                         failure : function(response)
                         {
-                            phpDoc.winForbidden();
+                            PhDOE.winForbidden();
                         }
                     });
                 }

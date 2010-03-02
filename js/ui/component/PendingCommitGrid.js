@@ -114,7 +114,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
         {
             text     : _('Commit...'),
             iconCls  : 'iconCommitFileVcs',
-            disabled : (phpDoc.userLogin === 'anonymous'),
+            disabled : (PhDOE.userLogin === 'anonymous'),
             handler  : function() { return false; },
             menu     : new Ext.menu.Menu({
                 items : [{
@@ -151,7 +151,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
 
                         grid.store.each(function(record)
                         {
-                            if (record.data.by === phpDoc.userLogin) {
+                            if (record.data.by === PhDOE.userLogin) {
                                 var fdbid  = record.data.id,
                                     fpath  = record.data.path,
                                     fname  = record.data.name,
@@ -294,7 +294,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     scope    : this,
                     text     : _('Clear this change'),
                     iconCls  : 'iconPageDelete',
-                    disabled : (phpDoc.userLogin === 'anonymous'),
+                    disabled : (PhDOE.userLogin === 'anonymous'),
                     handler  : function()
                     {
                         var tmp = new ui.task.ClearLocalChangeTask({
@@ -341,7 +341,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                     scope    : this,
                     text     : _('Cancel this deletion'),
                     iconCls  : 'iconPageDelete',
-                    disabled : (phpDoc.userLogin === 'anonymous'),
+                    disabled : (PhDOE.userLogin === 'anonymous'),
                     handler : function()
                     {
 
@@ -395,7 +395,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
                     scope    : this,
                     text     : _('Clear this change'),
                     iconCls  : 'iconPageDelete',
-                    disabled : (phpDoc.userLogin === 'anonymous'),
+                    disabled : (PhDOE.userLogin === 'anonymous'),
                     handler  : function()
                     {
                        var storeRecord = this.grid.store.getAt(this.rowIdx),
@@ -594,7 +594,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                     id   : fid,
                     path : fpath,
                     name : fname,
-                    by   : phpDoc.userLogin,
+                    by   : PhDOE.userLogin,
                     date : new Date(),
                     type : type
                 })

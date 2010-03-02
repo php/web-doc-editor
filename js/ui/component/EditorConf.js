@@ -108,7 +108,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                     mode           : 'local',
                     forceSelection : true,
                     editable       : false,
-                    value          : phpDoc.userConf["theme"],
+                    value          : PhDOE.userConf["theme"],
                     store          : ui.component._EditorConf.themeStore,
 
                     listeners : {
@@ -139,7 +139,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight  : true,
                     name        : 'mainAppLoadMailsAtStartUp',
-                    checked     : phpDoc.userConf["mainAppLoadMailsAtStartUp"],
+                    checked     : PhDOE.userConf["mainAppLoadMailsAtStartUp"],
                     boxLabel    : _('Load Mails at startUp'),
                     listeners   : {
                         check : function(field)
@@ -153,7 +153,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'mainAppLoadBugsAtStartUp',
-                    checked     : phpDoc.userConf["mainAppLoadBugsAtStartUp"],
+                    checked     : PhDOE.userConf["mainAppLoadBugsAtStartUp"],
                     boxLabel    : _('Load Bugs at startUp'),
                     listeners   : {
                         check : function(field)
@@ -175,7 +175,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                 items      : [{
                     autoHeight : true,
                     name       : 'onSaveLangFile',
-                    checked    : (phpDoc.userConf["onSaveLangFile"] === "ask-me") ? true : false,
+                    checked    : (PhDOE.userConf["onSaveLangFile"] === "ask-me") ? true : false,
                     boxLabel   : _('Ask me if I want to check for error before saving the file'),
                     inputValue : 'ask-me',
                     listeners  : {
@@ -192,7 +192,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'onSaveLangFile',
-                    checked    : (phpDoc.userConf["onSaveLangFile"] === "always") ? true : false,
+                    checked    : (PhDOE.userConf["onSaveLangFile"] === "always") ? true : false,
                     boxLabel   : _('Always check for error before saving the file'),
                     inputValue : 'always',
                     listeners : {
@@ -209,7 +209,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'onSaveLangFile',
-                    checked    : (phpDoc.userConf["onSaveLangFile"] === "never") ? true : false,
+                    checked    : (PhDOE.userConf["onSaveLangFile"] === "never") ? true : false,
                     boxLabel   : _('Never check for error before saving the file'),
                     inputValue : 'never',
                     listeners : {
@@ -261,7 +261,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                     autoHeight : true,
                     width      : 60,
                     name       : 'newFileNbDisplay',
-                    value      : phpDoc.userConf["newFileNbDisplay"] || 0,
+                    value      : PhDOE.userConf["newFileNbDisplay"] || 0,
                     boxLabel   : _('files to display'),
                     minValue   : 0,
                     maxValue   : 10000,
@@ -292,7 +292,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight  : true,
                     name        : 'newFileSpellCheck',
-                    checked     : phpDoc.userConf["newFileSpellCheck"],
+                    checked     : PhDOE.userConf["newFileSpellCheck"],
                     boxLabel    : _('Enable spellChecking'),
                     listeners   : {
                         check : function(field)
@@ -341,7 +341,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                     autoHeight : true,
                     width      : 60,
                     name       : 'needUpdateNbDisplay',
-                    value      : phpDoc.userConf["needUpdateNbDisplay"] || 0,
+                    value      : PhDOE.userConf["needUpdateNbDisplay"] || 0,
                     boxLabel   : _('files to display'),
                     minValue   : 0,
                     maxValue   : 10000,
@@ -373,7 +373,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'needUpdateDiff',
-                    checked    : (phpDoc.userConf["needUpdateDiff"] === "using-viewvc") ? true : false,
+                    checked    : (PhDOE.userConf["needUpdateDiff"] === "using-viewvc") ? true : false,
                     boxLabel   : _('Using ViewVc from php web site'),
                     inputValue : 'using-viewvc',
                     listeners  : {
@@ -390,7 +390,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'needUpdateDiff',
-                    checked    : (phpDoc.userConf["needUpdateDiff"] === "using-exec") ? true : false,
+                    checked    : (PhDOE.userConf["needUpdateDiff"] === "using-exec") ? true : false,
                     boxLabel   : _('Using diff -kk -u command line'),
                     inputValue : 'using-exec',
                     listeners : {
@@ -415,7 +415,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight  : true,
                     name        : 'needUpdateScrollbars',
-                    checked     : phpDoc.userConf["needUpdateScrollbars"],
+                    checked     : PhDOE.userConf["needUpdateScrollbars"],
                     boxLabel    : _('Synchronize scroll bars'),
                     listeners   : {
                         check : function(field)
@@ -429,7 +429,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'needUpdateDisplaylog',
-                    checked     : phpDoc.userConf["needUpdateDisplaylog"],
+                    checked     : PhDOE.userConf["needUpdateDisplaylog"],
                     boxLabel    : _('Automatically load the log when displaying the file'),
                     listeners   : {
                         check : function(field)
@@ -443,7 +443,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'needUpdateSpellCheckEn',
-                    checked     : phpDoc.userConf["needUpdateSpellCheckEn"],
+                    checked     : PhDOE.userConf["needUpdateSpellCheckEn"],
                     boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
                     listeners   : {
                         check : function(field)
@@ -457,8 +457,8 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'needUpdateSpellCheckLang',
-                    checked     : phpDoc.userConf["needUpdateSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    checked     : PhDOE.userConf["needUpdateSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                     listeners   : {
                         check : function(field)
                         {
@@ -496,7 +496,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'errorSkipNbLiteralTag',
-                    checked    : phpDoc.userConf["errorSkipNbLiteralTag"],
+                    checked    : PhDOE.userConf["errorSkipNbLiteralTag"],
                     boxLabel   : _('Skip nbLiteralTag error'),
                     listeners  : {
                         check  : function(field)
@@ -518,7 +518,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'errorScrollbars',
-                    checked    : phpDoc.userConf["errorScrollbars"],
+                    checked    : PhDOE.userConf["errorScrollbars"],
                     boxLabel   : _('Synchronize scroll bars'),
                     listeners  : {
                         check : function(field)
@@ -532,7 +532,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'errorDisplayLog',
-                    checked    : phpDoc.userConf["errorDisplayLog"],
+                    checked    : PhDOE.userConf["errorDisplayLog"],
                     boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners : {
                         check : function(field)
@@ -546,7 +546,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'errorSpellCheckEn',
-                    checked     : phpDoc.userConf["errorSpellCheckEn"],
+                    checked     : PhDOE.userConf["errorSpellCheckEn"],
                     boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
                     listeners   : {
                         check : function(field)
@@ -560,8 +560,8 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'errorSpellCheckLang',
-                    checked     : phpDoc.userConf["errorSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    checked     : PhDOE.userConf["errorSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                     listeners   : {
                         check : function(field)
                         {
@@ -609,7 +609,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                     autoHeight : true,
                     width      : 60,
                     name       : 'reviewedNbDisplay',
-                    value      : phpDoc.userConf["reviewedNbDisplay"] || 0,
+                    value      : PhDOE.userConf["reviewedNbDisplay"] || 0,
                     boxLabel   : _('files to display'),
                     minValue   : 0,
                     maxValue   : 10000,
@@ -641,7 +641,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'reviewedScrollbars',
-                    checked    : phpDoc.userConf["reviewedScrollbars"],
+                    checked    : PhDOE.userConf["reviewedScrollbars"],
                     boxLabel   : _('Synchronize scroll bars'),
                     listeners  : {
                         check : function(field)
@@ -655,7 +655,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'reviewedDisplaylog',
-                    checked    : phpDoc.userConf["reviewedDisplaylog"],
+                    checked    : PhDOE.userConf["reviewedDisplaylog"],
                     boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners  : {
                         check : function(field)
@@ -669,7 +669,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'reviewedSpellCheckEn',
-                    checked     : phpDoc.userConf["reviewedSpellCheckEn"],
+                    checked     : PhDOE.userConf["reviewedSpellCheckEn"],
                     boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
                     listeners   : {
                         check : function(field)
@@ -683,8 +683,8 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'reviewedSpellCheckLang',
-                    checked     : phpDoc.userConf["reviewedSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(phpDoc.userLang)),
+                    checked     : PhDOE.userConf["reviewedSpellCheckLang"],
+                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                     listeners   : {
                         check : function(field)
                         {
@@ -722,7 +722,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'allFilesDisplayLog',
-                    checked    : phpDoc.userConf["allFilesDisplayLog"],
+                    checked    : PhDOE.userConf["allFilesDisplayLog"],
                     boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners  : {
                         check : function(field)
@@ -736,7 +736,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'allFilesSpellCheck',
-                    checked     : phpDoc.userConf["allFilesSpellCheck"],
+                    checked     : PhDOE.userConf["allFilesSpellCheck"],
                     boxLabel    : _('Enable spellChecking'),
                     listeners   : {
                         check : function(field)
@@ -775,7 +775,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
                 items       : [{
                     autoHeight : true,
                     name       : 'patchScrollbars',
-                    checked    : phpDoc.userConf["patchScrollbars"],
+                    checked    : PhDOE.userConf["patchScrollbars"],
                     boxLabel   : _('Synchronize scroll bars'),
                     listeners  : {
                         check : function(field)
@@ -789,7 +789,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight : true,
                     name       : 'patchDisplayLog',
-                    checked    : phpDoc.userConf["patchDisplayLog"],
+                    checked    : PhDOE.userConf["patchDisplayLog"],
                     boxLabel   : _('Automatically load the log when displaying the file'),
                     listeners : {
                         check : function(field)
@@ -803,7 +803,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
                 }, {
                     autoHeight  : true,
                     name        : 'patchSpellCheck',
-                    checked     : phpDoc.userConf["patchSpellCheck"],
+                    checked     : PhDOE.userConf["patchSpellCheck"],
                     boxLabel    : _('Enable spellChecking'),
                     listeners   : {
                         check : function(field)
@@ -853,7 +853,7 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
 
     initComponent : function()
     {
-        if (phpDoc.userLang === 'en') {
+        if (PhDOE.userLang === 'en') {
             ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefEn);
         } else {
             ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefNonEn);

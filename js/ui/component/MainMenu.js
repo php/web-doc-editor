@@ -38,14 +38,14 @@ ui.component._MainMenu.store.on('load', function(store) {
     var tmp; 
 
     // We put the lang libel into Info-Language
-    Ext.getDom('Info-Language').innerHTML = store.getById(phpDoc.userLang).data["name"];
+    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data["name"];
 
     store.each(function(record){
 
         tmp = new Ext.menu.Item({
             text    : record.data["name"],
             iconCls : 'mainMenuLang flags ' + record.data["iconCls"],
-            disabled: (record.data["code"] === phpDoc.userLang),
+            disabled: (record.data["code"] === PhDOE.userLang),
             handler : function() {
                 
                 XHR({
@@ -77,7 +77,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
+                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconRefresh',
                 handler  : function()
                 {
@@ -119,7 +119,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 menu : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check Build'),
-                        disabled : (phpDoc.userLogin === 'anonymous'),
+                        disabled : (PhDOE.userLogin === 'anonymous'),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {
@@ -133,7 +133,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                 params  :
                                 {
                                     task     : 'checkLockFile',
-                                    lockFile : 'project_' + phpDoc.project + '_lock_check_build_' + phpDoc.userLang
+                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
                                 },
                                 success : function()
                                 {
@@ -216,7 +216,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }, {
                                 text    : _('Run this script'),
                                 iconCls : 'iconRun',
-                                disabled: (phpDoc.userLogin === 'anonymous'),
+                                disabled: (PhDOE.userLogin === 'anonymous'),
                                 handler : function()
                                 {
                                     // We test if there is a check in progress for this language
@@ -229,7 +229,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                         params  :
                                         {
                                             task     : 'checkLockFile',
-                                            lockFile : 'project_' + phpDoc.project + '_lock_check_entities'
+                                            lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
                                         },
                                         success : function()
                                         {
@@ -301,7 +301,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 menu    : MenuLang
             }, {
                 text     : _('Erase my personal data'),
-                disabled : (phpDoc.userLogin === 'anonymous') ? true : false,
+                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconErasePersonalData',
                 handler  : function()
                 {
@@ -334,7 +334,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     },
                                     failure : function(response)
                                     {
-                                        phpDoc.winForbidden();
+                                        PhDOE.winForbidden();
                                     }
                                 });
                             } // btn yes

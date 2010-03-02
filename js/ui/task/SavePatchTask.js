@@ -49,7 +49,7 @@ ui.task.SavePatchTask = function(config)
                     id     : Ext.id('', ''),
                     path   : this.lang + this.fpath,
                     name   : this.fname,
-                    by     : phpDoc.userLogin,
+                    by     : PhDOE.userLogin,
                     uniqID : o.uniqId,
                     date   : new Date()
                 })
@@ -59,7 +59,7 @@ ui.task.SavePatchTask = function(config)
             msg.hide();
 
             // Notify
-            phpDoc.notify('info', _('Patch saved'), _('Patch saved successfully !'));
+            PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
 
         }
     });

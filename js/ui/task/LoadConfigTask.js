@@ -10,18 +10,18 @@ ui.task.LoadConfigTask = function(config)
         {
             var o = Ext.decode(response.responseText);
 
-            phpDoc.userLogin = o.mess.userLogin;
-            phpDoc.userLang  = o.mess.userLang;
+            PhDOE.userLogin = o.mess.userLogin;
+            PhDOE.userLang  = o.mess.userLang;
 
-            phpDoc.userConf  = o.mess.userConf;
-            phpDoc.project   = o.mess.project;
+            PhDOE.userConf  = o.mess.userConf;
+            PhDOE.project   = o.mess.project;
 
             //For the theme, we apply this.
-            Ext.get('appTheme').dom.href = phpDoc.userConf["theme"];
+            Ext.get('appTheme').dom.href = PhDOE.userConf["theme"];
 
 
             // Draw the interface
-            phpDoc.drawInterface();
+            PhDOE.drawInterface();
         }
     });
 };

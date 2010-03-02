@@ -139,9 +139,9 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                     }, {
                         scope: this,
                         hidden: (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
-                        text: String.format(_('... of the {0} file'), phpDoc.userLang),
+                        text: String.format(_('... of the {0} file'), PhDOE.userLang),
                         handler: function() {
-                            this.openTab(this.rowIdx, phpDoc.userLang, this.fpath, this.fname);
+                            this.openTab(this.rowIdx, PhDOE.userLang, this.fpath, this.fname);
                         }
                     }]
                 })
@@ -227,7 +227,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             grid       : this,
             event      : e,
             rowIdx     : rowIndex,
-            lang       : phpDoc.userLang,
+            lang       : PhDOE.userLang,
             fpath      : FilePath,
             fname      : FileName
         }).showAt(e.getXY());
@@ -246,15 +246,15 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
             en_revision      = storeRecord.data.en_revision,
             revision         = storeRecord.data.revision,
             originalRevision = storeRecord.data.original_revision,
-            FileID           = Ext.util.md5('FNU-' + phpDoc.userLang + FilePath + FileName),
+            FileID           = Ext.util.md5('FNU-' + PhDOE.userLang + FilePath + FileName),
             diff             = '';
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
 
-            if (phpDoc.userConf["needUpdateDiff"] === "using-viewvc") {
+            if (PhDOE.userConf["needUpdateDiff"] === "using-viewvc") {
                 diff = ui.component.ViewVCDiff;
-            } else if (phpDoc.userConf["needUpdateDiff"] === "using-exec") {
+            } else if (PhDOE.userConf["needUpdateDiff"] === "using-exec") {
                 diff = ui.component.ExecDiff;
             }
 
@@ -305,12 +305,12 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             items       : [
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
-                                    title     : phpDoc.userLang,
+                                    title     : PhDOE.userLang,
                                     prefix    : 'FNU-LANG',
                                     fid       : FileID,
-                                    fpath     : phpDoc.userLang + FilePath,
+                                    fpath     : PhDOE.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["needUpdateDisplaylog"]
+                                    loadStore : PhDOE.userConf["needUpdateDisplaylog"]
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -319,7 +319,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : phpDoc.userConf["needUpdateDisplaylog"]
+                                    loadStore : PhDOE.userConf["needUpdateDisplaylog"]
                                 })
                             ]
                         }
@@ -327,15 +327,15 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     {
                         id             : 'FNU-LANG-PANEL-' + FileID,
                         region         : 'center',
-                        title          : String.format(_('{0} File: '), phpDoc.userLang) + FilePath + FileName,
+                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
                         prefix         : 'FNU',
                         ftype          : 'LANG',
-                        spellCheck     : phpDoc.userConf["needUpdateSpellCheckLang"],
+                        spellCheck     : PhDOE.userConf["needUpdateSpellCheckLang"],
                         spellCheckConf : 'needUpdateSpellCheckLang',
                         fid            : FileID,
                         fpath          : FilePath,
                         fname          : FileName,
-                        lang           : phpDoc.userLang,
+                        lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
                         syncScrollCB   : true,
@@ -348,7 +348,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FNU',
                         ftype          : 'EN',
-                        spellCheck     : phpDoc.userConf["needUpdateSpellCheckEn"],
+                        spellCheck     : PhDOE.userConf["needUpdateSpellCheckEn"],
                         spellCheckConf : 'needUpdateSpellCheckEn',
                         fid            : FileID,
                         fpath          : FilePath,
@@ -368,7 +368,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     initComponent : function()
     {
         ui.component._StaleFileGrid.columns[2].header = String.format(
-            _('{0} revision'), Ext.util.Format.uppercase(phpDoc.userLang)
+            _('{0} revision'), Ext.util.Format.uppercase(PhDOE.userLang)
         );
 
         Ext.apply(this,

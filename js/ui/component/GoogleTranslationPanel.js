@@ -27,7 +27,7 @@ ui.component.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
                 {
                     xtype: 'textarea',
                     anchor: '90%',
-                    fieldLabel: String.format(_('String to translate (en => {0})'), phpDoc.userLang),
+                    fieldLabel: String.format(_('String to translate (en => {0})'), PhDOE.userLang),
                     name: 'GGTranslate-string',
                     id: 'GGTranslate-string',
                     allowBlank:false

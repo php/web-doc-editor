@@ -23,7 +23,7 @@ ui.component.About = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            title : String.format(_('About {0}'), phpDoc.appName),
+            title : String.format(_('About {0}'), PhDOE.appName),
             items : {
                 xtype     : 'tabpanel',
                 activeTab : 0,
@@ -33,10 +33,10 @@ ui.component.About = Ext.extend(Ext.Window,
                 items     : [{
                     title : _('About'),
                     html  : '<div id="phd-oe-about">' +
-                                '<img src="themes/img/logo.png" alt="' + phpDoc.appName + '" />' +
+                                '<img src="themes/img/logo.png" alt="' + PhDOE.appName + '" />' +
                             '</div>' +
-                            '<div id="phd-oe-about-info">' + phpDoc.appName + ' ver ' + phpDoc.appVer + '<br/>' +
-                                'UI: ' + phpDoc.uiRevision + '<br/>' +
+                            '<div id="phd-oe-about-info">' + PhDOE.appName + ' ver ' + PhDOE.appVer + '<br/>' +
+                                'UI: ' + PhDOE.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +

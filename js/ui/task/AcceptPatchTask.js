@@ -5,8 +5,8 @@ ui.task.AcceptPatchTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 
@@ -68,7 +68,7 @@ ui.task.AcceptPatchTask = function(config)
                         msg.hide();
 
                         // Notify
-                        phpDoc.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
+                        PhDOE.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
                     },
                     failure : function(response) {
                         // Remove wait msg

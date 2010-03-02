@@ -38,7 +38,7 @@ ui.task.PingTask = function()
                     }
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
-                    if( phpDoc.userLang !== 'en' ) {
+                    if( PhDOE.userLang !== 'en' ) {
 
                         var needReloadSummary = false;
 

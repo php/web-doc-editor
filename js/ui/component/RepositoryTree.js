@@ -82,15 +82,15 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                     ui.component._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
-                hidden  : (this.node.attributes.from === 'search' || phpDoc.userLang == 'en' ),
-                text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(phpDoc.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
+                hidden  : (this.node.attributes.from === 'search' || PhDOE.userLang == 'en' ),
+                text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
                 iconCls : 'iconTabNeedReviewed',
                 scope   : this,
                 handler : function()
                 {
                     if (FileLang === 'en') {
                         ui.component._RepositoryTree.instance.openFile(
-                            phpDoc.userLang + '/' + FilePath, FileName
+                            PhDOE.userLang + '/' + FilePath, FileName
                         );
                     } else {
                         ui.component._RepositoryTree.instance.openFile(
@@ -210,7 +210,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                                         fid       : FileID,
                                         fpath     : FileLang + FilePath,
                                         fname     : FileName,
-                                        loadStore : phpDoc.userConf["allFilesDisplayLog"]
+                                        loadStore : PhDOE.userConf["allFilesDisplayLog"]
                                     })]
                                 }]
                             }
@@ -222,7 +222,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                             title          : _('File: ') + FileLang + FilePath + FileName,
                             prefix         : 'AF',
                             ftype          : 'ALL',
-                            spellCheck     : phpDoc.userConf["allFilesSpellCheck"],
+                            spellCheck     : PhDOE.userConf["allFilesSpellCheck"],
                             spellCheckConf : 'allFilesSpellCheck',
                             fid            : FileID,
                             fpath          : FilePath,
@@ -252,12 +252,12 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                     // This tab already exist. We focus it.
                     Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
                     // if opening multiple files, dequeue and continue
-                    if (phpDoc.filePendingOpen[0]) {
-                        if (phpDoc.filePendingOpen[0]) {
-                            if (phpDoc.filePendingOpen[0].fpath) {
+                    if (PhDOE.filePendingOpen[0]) {
+                        if (PhDOE.filePendingOpen[0]) {
+                            if (PhDOE.filePendingOpen[0].fpath) {
                                 this.openFile(
-                                    phpDoc.filePendingOpen[0].fpath,
-                                    phpDoc.filePendingOpen[0].fname
+                                    PhDOE.filePendingOpen[0].fpath,
+                                    PhDOE.filePendingOpen[0].fname
                                 );
                             }
                         }

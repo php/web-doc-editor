@@ -5,8 +5,8 @@ ui.task.SaveTransFileTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 
@@ -53,13 +53,13 @@ ui.task.SaveTransFileTask = function(config)
             msg.hide();
 
             // Notify
-            phpDoc.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
         failure : function(response)
         {
             // Remove wait msg
             msg.hide();
-            phpDoc.winForbidden();
+            PhDOE.winForbidden();
         }
     });
 };

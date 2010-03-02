@@ -5,8 +5,8 @@ ui.task.RejectPatchTask = function(config)
 {
     Ext.apply(this,config);
 
-    if (phpDoc.userLogin === 'anonymous') {
-        phpDoc.winForbidden();
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
         return;
     }
 
@@ -40,13 +40,13 @@ ui.task.RejectPatchTask = function(config)
                         msg.hide();
 
                         // Notify
-                        phpDoc.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
+                        PhDOE.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
                     },
                     failure : function(response)
                     {
                         // Remove wait msg
                         msg.hide();
-                        phpDoc.winForbidden();
+                        PhDOE.winForbidden();
                     }
                 });
             } // btn = yes

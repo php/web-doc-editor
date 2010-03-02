@@ -23,7 +23,7 @@ ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + phpDoc.project + '_lock_check_entities'
+            lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
         },
         success : function(response)
         {
@@ -67,7 +67,7 @@ ui.task.CheckEntitiesTask = function(config)
                 // Re-enable TaskPing
                 ui.task.PingTask.getInstance().delay(30000);
                 Ext.getBody().unmask();
-                phpDoc.winForbidden();
+                PhDOE.winForbidden();
             } else {
                 // take over 30sec (max Keep-Alive time)
                 // poll every XX secondes if the check build is finish
