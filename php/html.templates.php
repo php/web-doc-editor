@@ -9,7 +9,7 @@
  * @param string $title The HTML page title. Default to the tool name
  * @return string
  */
-function headerTemplate($title = 'PHP Documentation Online Editor', $depth = 0)
+function headerTemplate($title = 'Php Docbook Online Editor', $depth = 0)
 {
     $prefix = str_repeat('../', $depth);
     return <<<EOD
