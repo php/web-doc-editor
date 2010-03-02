@@ -7,7 +7,7 @@ var PhDOE = function()
         userLogin  : null,
         userLang   : null,
         appName    : 'Php Docbook Online Editor',
-        appVer     : '0.2',
+        appVer     : 'X.XX',
         uiRevision : '$Revision$',
 
         userConf : '',
