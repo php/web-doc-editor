@@ -291,6 +291,20 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
                 defaultType : 'checkbox',
                 items       : [{
                     autoHeight  : true,
+                    name        : 'newFileScrollbars',
+                    checked     : PhDOE.userConf["newFileScrollbars"],
+                    boxLabel    : _('Synchronize scroll bars'),
+                    listeners   : {
+                        check : function(field)
+                        {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'newFileScrollbars',
+                                value : field.getValue()
+                            });
+                        }
+                    }
+                }, {
+                    autoHeight  : true,
                     name        : 'newFileSpellCheck',
                     checked     : PhDOE.userConf["newFileSpellCheck"],
                     boxLabel    : _('Enable spellChecking'),

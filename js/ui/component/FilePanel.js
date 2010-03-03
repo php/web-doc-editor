@@ -886,6 +886,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 case 'LANG':   opp_prefix = this.prefix + '-EN';     break;
                                 case 'PATCH':  opp_prefix = this.prefix + '-ORIGIN'; break;
                                 case 'ORIGIN': opp_prefix = this.prefix + '-PATCH';  break;
+                                case 'TRANS':  opp_prefix = this.prefix + '-GGTRANS';break;
+                                case 'GGTRANS':opp_prefix = this.prefix + '-TRANS';  break;
                             }
                             var opp_panel  = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
                                 opp_file   = Ext.getCmp(opp_prefix + '-FILE-' + this.fid);

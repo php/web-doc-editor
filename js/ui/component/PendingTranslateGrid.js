@@ -159,6 +159,11 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 tabTip         : String.format(
                     _('Need Translate: in {0}'), FilePath
                 ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
                 items : [new ui.component.FilePanel(
                     {
                         id             : 'FNT-TRANS-PANEL-' + FileID,
@@ -175,13 +180,13 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
-                        syncScrollCB   : false
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'newFileScrollbars'
                     }), new ui.component.FilePanel(
                     {
                         id             : 'FNT-GGTRANS-PANEL-' + FileID,
                         region         : 'east',
-                        width          : 550,
-                        //hidden         : true,
                         title          : _('Automatic translation: ') + PhDOE.userLang + FilePath + FileName,
                         isTrans        : true,
                         prefix         : 'FNT',
@@ -193,7 +198,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
-                        syncScroll     : false
+                        syncScroll     : true,
+                        syncScrollConf : 'newFileScrollbars'
                     })
                 ]
             });
