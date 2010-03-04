@@ -105,9 +105,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
                 iconCls : 'iconPendingPatch',
                 handler : function()
                 {
-                    this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
-                    );
+                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
                 }
             }, '-', {
                 scope   : this,
@@ -137,156 +135,162 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
 
-    listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
 
-            e.stopEvent();
+    openFile: function(rowId)
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileUniqID  = storeRecord.data.uniqID,
+            FileID      = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
 
-            var FilePath   = grid.store.getAt(rowIndex).data.path,
-                FileName   = grid.store.getAt(rowIndex).data.name,
-                FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
-                FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName),
-                tmp;
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
 
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            tmp = new ui.component._PendingPatchGrid.menu({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e,
-                fid    : FileID,
-                fpath  : FilePath,
-                fname  : FileName,
-                fuid   : FileUniqID
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileUniqID  = storeRecord.data.uniqID,
-                FileID      = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
-
-            // Render only if this tab don't exist yet
-            if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
-
-                Ext.getCmp('main-panel').add({
-                    id          : 'PP-' + FileID,
-                    layout      : 'border',
-                    iconCls     : 'iconPendingPatch',
-                    title       : FileName,
-                    originTitle : FileName,
-                    tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
-                    closable    : true,
-                    defaults    : { split : true },
-                    items       : [
-                        {
-                            xtype       : 'panel',
-                            id          : 'PP-patch-desc-' + FileID,
-                            title       : _('Patch content'),
-                            iconCls     : 'iconPendingPatch',
-                            collapsedIconCls : 'iconPendingPatch',
-                            plugins     : [Ext.ux.PanelCollapsedTitle],
-                            layout      : 'fit',
-                            region      : 'north',
-                            border      : false,
-                            height      : 250,
-                            autoScroll  : true,
-                            collapsible : true,
-                            collapsed   : true,
-                            html        : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
-                            listeners   : {
-                                render : function()
-                                {
-                                    // Load diff data
-                                    XHR({
-                                        params  : {
-                                            task     : 'getDiff',
-                                            FilePath : FilePath,
-                                            FileName : FileName,
-                                            DiffType : 'patch',
-                                            uniqID   : FileUniqID
-                                        },
-                                        success : function(response)
-                                        {
-                                            var o = Ext.util.JSON.decode(response.responseText);
-                                            // We display in diff div
-                                            Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
-                                        }
-                                    });
-                                }
+            Ext.getCmp('main-panel').add({
+                id          : 'PP-' + FileID,
+                layout      : 'border',
+                iconCls     : 'iconPendingPatch',
+                title       : FileName,
+                originTitle : FileName,
+                tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
+                closable    : true,
+                defaults    : { split : true },
+                items       : [
+                    {
+                        xtype       : 'panel',
+                        id          : 'PP-patch-desc-' + FileID,
+                        title       : _('Patch content'),
+                        iconCls     : 'iconPendingPatch',
+                        collapsedIconCls : 'iconPendingPatch',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        layout      : 'fit',
+                        region      : 'north',
+                        border      : false,
+                        height      : 250,
+                        autoScroll  : true,
+                        collapsible : true,
+                        collapsed   : true,
+                        html        : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
+                        listeners   : {
+                            render : function()
+                            {
+                                // Load diff data
+                                XHR({
+                                    params  : {
+                                        task     : 'getDiff',
+                                        FilePath : FilePath,
+                                        FileName : FileName,
+                                        DiffType : 'patch',
+                                        uniqID   : FileUniqID
+                                    },
+                                    success : function(response)
+                                    {
+                                        var o = Ext.util.JSON.decode(response.responseText);
+                                        // We display in diff div
+                                        Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
+                                    }
+                                });
                             }
-                        }, {
-                            region      : 'west',
-                            xtype       : 'panel',
-                            title       : _('VCSLog'),
-                            iconCls     : 'iconVCSLog',
-                            collapsedIconCls : 'iconVCSLog',
-                            plugins     : [Ext.ux.PanelCollapsedTitle],
-                            layout      : 'fit',
-                            bodyBorder  : false,
-                            collapsible : true,
-                            collapsed   : true,
-                            width       : 375,
-                            items       : {
-                                xtype       : 'tabpanel',
-                                activeTab   : 0,
-                                tabPosition : 'bottom',
-                                defaults    : { autoScroll : true },
-                                items       : new ui.component.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : _('Log'),
-                                    prefix    : 'PP',
-                                    fid       : FileID,
-                                    fpath     : FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf["patchDisplayLog"]
-                                })
-                            }
-                        }, new ui.component.FilePanel(
-                        {
-                            id             : 'PP-PATCH-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
-                            prefix         : 'PP',
-                            ftype          : 'PATCH',
-                            spellCheck     : PhDOE.userConf["patchSpellCheck"],
-                            spellCheckConf : 'patchSpellCheck',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            isPatch        : true,
-                            fuid           : FileUniqID,
-                            parser         : 'xml',
-                            storeRecord    : storeRecord,
-                            syncScrollCB   : true,
-                            syncScroll     : true,
-                            syncScrollConf : 'patchScrollbars'
-                        }), new ui.component.FilePanel(
-                        {
-                            id             : 'PP-ORIGIN-PANEL-' + FileID,
-                            region         : 'east',
-                            width          : 575,
-                            title          : _('Original File: ') + FilePath + FileName,
-                            prefix         : 'PP',
-                            ftype          : 'ORIGIN',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : '',
-                            readOnly       : true,
-                            parser         : 'xml',
-                            syncScroll     : true,
-                            syncScrollConf : 'patchScrollbars'
-                        })
-                    ]
-                });
-            }
-            Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
+                        }
+                    }, {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('VCSLog'),
+                        iconCls     : 'iconVCSLog',
+                        collapsedIconCls : 'iconVCSLog',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        collapsible : true,
+                        collapsed   : true,
+                        width       : 375,
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll : true },
+                            items       : new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : _('Log'),
+                                prefix    : 'PP',
+                                fid       : FileID,
+                                fpath     : FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf["patchDisplayLog"]
+                            })
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'PP-PATCH-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
+                        prefix         : 'PP',
+                        ftype          : 'PATCH',
+                        spellCheck     : PhDOE.userConf["patchSpellCheck"],
+                        spellCheckConf : 'patchSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        isPatch        : true,
+                        fuid           : FileUniqID,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'patchScrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'PP-ORIGIN-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 575,
+                        title          : _('Original File: ') + FilePath + FileName,
+                        prefix         : 'PP',
+                        ftype          : 'ORIGIN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : '',
+                        readOnly       : true,
+                        parser         : 'xml',
+                        syncScroll     : true,
+                        syncScrollConf : 'patchScrollbars'
+                    })
+                ]
+            });
         }
+        Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
+    },
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+
+        e.stopEvent();
+
+        var FilePath   = grid.store.getAt(rowIndex).data.path,
+            FileName   = grid.store.getAt(rowIndex).data.name,
+            FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
+            FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName),
+            tmp;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        tmp = new ui.component._PendingPatchGrid.menu({
+            grid   : grid,
+            rowIdx : rowIndex,
+            event  : e,
+            fid    : FileID,
+            fpath  : FilePath,
+            fname  : FileName,
+            fuid   : FileUniqID
+        }).showAt(e.getXY());
     },
 
     initComponent : function()
@@ -300,6 +304,9 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
             })
         });
         ui.component.PendingPatchGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 
