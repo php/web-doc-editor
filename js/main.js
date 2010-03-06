@@ -461,7 +461,7 @@ var PhDOE = function()
             new Ext.dd.DropTarget(Ext.get('main-panel'), {
                 ddGroup    : 'mainPanelDDGroup',
                 notifyDrop : function(ddSource, e, data) {
-console.log(data);
+
                     // On stock les données
                     for( var i=0; i < data.selections.length; i++ ) {
                         if( data.grid.ownerCt.id === 'acc-need-translate' ) {
