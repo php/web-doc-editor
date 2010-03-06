@@ -58,6 +58,9 @@ class GTranslateException extends Exception
 
 class GTranslate
 {
+
+        private $returnTranslation = '';
+
         /**
         * Google Translate(TM) Api endpoint
         * @access private
@@ -277,6 +280,16 @@ class GTranslate
         {
             $languages = Array($langFrom, $langTo);
 
+            // If the passed string is to large, we try to truncate it and make multi-query
+            if( strlen($string) > 5000 ) {
+
+                $strings = explode('§',wordwrap($string, 4000, '§'));
+
+                for( $i=0; $i < count($strings); $i++ ) {
+                    $this->returnTranslation .= $this->query($languages,$strings[$i]);
+                }
+                return $this->returnTranslation;
+            }
             return $this->query($languages,$string);
         }
 
