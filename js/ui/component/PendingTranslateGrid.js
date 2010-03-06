@@ -109,32 +109,31 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
     border           : false,
-    listeners        : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
 
-            e.stopEvent();
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
 
-            var FilePath = grid.store.getAt(rowIndex).data.path,
-                FileName = grid.store.getAt(rowIndex).data.name,
-                tmp;
+        var FilePath = grid.store.getAt(rowIndex).data.path,
+            FileName = grid.store.getAt(rowIndex).data.name,
+            tmp;
 
-            grid.getSelectionModel().selectRow(rowIndex);
+        grid.getSelectionModel().selectRow(rowIndex);
 
-            tmp = new ui.component._PendingTranslateGrid.menu({
-                hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
-                grid       : grid,
-                event      : e,
-                rowIdx     : rowIndex,
-                lang       : PhDOE.userLang,
-                fpath      : FilePath,
-                fname      : FileName
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            this.openFile(grid.store.getAt(rowIndex).data.id);
-        }
+        tmp = new ui.component._PendingTranslateGrid.menu({
+            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
+            grid       : grid,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : PhDOE.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick : function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
     },
 
     openFile : function(rowId)
@@ -263,6 +262,9 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
             ]
         });
         ui.component.PendingTranslateGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 

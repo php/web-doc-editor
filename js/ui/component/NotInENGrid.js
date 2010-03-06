@@ -127,31 +127,29 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     view             : ui.component._NotInENGrid.view,
     columns          : ui.component._NotInENGrid.columns,
 
-    listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        grid.getSelectionModel().selectRow(rowIndex);
 
-            e.stopEvent();
-        
-            grid.getSelectionModel().selectRow(rowIndex);
+        if (!grid.store.getAt(rowIndex).data.needcommit) {
 
-            if (!grid.store.getAt(rowIndex).data.needcommit) {
-
-                var tmp = new ui.component._NotInENGrid.menu({
-                    grid   : grid,
-                    rowIdx : rowIndex,
-                    event  : e
-                }).showAt(e.getXY());
-            }
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            this.openFile(grid.store.getAt(rowIndex).data.id);
+            var tmp = new ui.component._NotInENGrid.menu({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
         }
     },
 
-    openFile : function(rowId) {
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
 
+    openFile: function(rowId)
+    {
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
@@ -206,6 +204,9 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
             })
         });
         ui.component.NotInENGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 

@@ -224,9 +224,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     iconCls : 'iconPendingCommit',
                     handler : function()
                     {
-                        this.grid.fireEvent('rowdblclick',
-                            this.grid, this.rowIdx, this.event
-                        );
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
                     }
                 }, '-', {
                     scope   : this,
@@ -333,9 +331,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
                     iconCls : 'iconPendingCommit',
                     handler : function()
                     {
-                        this.grid.fireEvent('rowdblclick',
-                            this.grid, this.rowIdx, this.event
-                        );
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
                     }
                 }, {
                     scope    : this,
@@ -387,9 +383,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
                     iconCls : 'iconPendingCommit',
                     handler : function()
                     {
-                        this.grid.fireEvent('rowdblclick',
-                            this.grid, this.rowIdx, this.event
-                        );
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
                     }
                 }, '-',{
                     scope    : this,
@@ -424,142 +418,166 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
     autoExpandColumn : 'name',
     columns          : ui.component._PendingCommitGrid.columns,
     view             : ui.component._PendingCommitGrid.view,
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
 
-    listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        var storeRecord = grid.store.getAt(rowIndex),
+            FileType    = storeRecord.data.type,
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            tmp;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        if (FileType === 'new') {
+            tmp = new ui.component._PendingCommitGrid.menu.newFile({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+
+        if (FileType === 'delete') {
+            tmp = new ui.component._PendingCommitGrid.menu.del({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+
+        if (FileType === 'update') {
+            tmp = new ui.component._PendingCommitGrid.menu.update({
+                fpath  : FilePath,
+                fname  : FileName,
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+
+        var storeRecord = false;
+
+        this.store.each(function(r)
         {
-
-            e.stopEvent();
-        
-            var storeRecord = grid.store.getAt(rowIndex),
-                FileType    = storeRecord.data.type,
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                tmp;
-
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            if (FileType === 'new') {
-                tmp = new ui.component._PendingCommitGrid.menu.newFile({
-                    grid   : grid,
-                    rowIdx : rowIndex,
-                    event  : e
-                }).showAt(e.getXY());
+            if (r.data.id === rowId) {
+                storeRecord = r;
             }
+        });
 
-            if (FileType === 'delete') {
-                tmp = new ui.component._PendingCommitGrid.menu.del({
-                    grid   : grid,
-                    rowIdx : rowIndex,
-                    event  : e
-                }).showAt(e.getXY());
-            }
+        var FileType    = storeRecord.data.type,
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileLang, tmp, found;
 
-            if (FileType === 'update') {
-                tmp = new ui.component._PendingCommitGrid.menu.update({
-                    fpath  : FilePath,
-                    fname  : FileName,
-                    grid   : grid,
-                    rowIdx : rowIndex,
-                    event  : e
-                }).showAt(e.getXY());
-            }
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            var storeRecord = grid.store.getAt(rowIndex),
-                FileType    = storeRecord.data.type,
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                FileLang, tmp, found;
+        if (FileType === 'new') {
 
-            if (FileType === 'new') {
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
 
-                tmp = FilePath.split('/');
-                FileLang = tmp[0];
-                tmp.shift();
+            FilePath = "/" + tmp.join('/');
 
-                FilePath = "/" + tmp.join('/');
+            // Find the id of this row into PendingTranslateGrid.store and open it !
+            ui.component.PendingTranslateGrid.getInstance().store.each(function(row) {
 
-                // Find the id of this row into PendingTranslateGrid.store and open it !
-                ui.component.PendingTranslateGrid.getInstance().store.each(function(row) {
+                if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                    ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                    return;
+                }
+            });
+        }
+
+        if (FileType === 'update') {
+
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
+
+            FilePath = "/" + tmp.join('/');
+
+            // For EN file, we open this new file into the "All files" module
+            if( FileLang === 'en' ) {
+                ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+            } else {
+
+                found = false;
+
+                // Find the id of this row into StaleFileGrid.store and open it !
+                ui.component.StaleFileGrid.getInstance().store.each(function(row) {
 
                     if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
-                        ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                        ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                        found = true;
                         return;
                     }
                 });
-            }
 
-            if (FileType === 'update') {
+                // If we haven't found this file in StaleFileGrid, we try into File in error grid.
+                if( !found ) {
 
-                tmp = FilePath.split('/');
-                FileLang = tmp[0];
-                tmp.shift();
-
-                FilePath = "/" + tmp.join('/');
-
-                // For EN file, we open this new file into the "All files" module
-                if( FileLang === 'en' ) {
-                    ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
-                } else {
-
-                    found = false;
-
-                    // Find the id of this row into StaleFileGrid.store and open it !
-                    ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+                    // Find the id of this row into ErrorFileGrid.store and open it !
+                    ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
 
                         if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
-                            ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                            ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
                         }
                     });
-
-                    // If we haven't found this file in StaleFileGrid, we try into File in error grid.
-                    if( !found ) {
-
-                        // Find the id of this row into ErrorFileGrid.store and open it !
-                        ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
-
-                            if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
-                                ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
-                                found = true;
-                                return;
-                            }
-                        });
-                    }
-
-                    // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
-                    if( !found ) {
-
-                        // Find the id of this row into PendingReviewGrid.store and open it !
-                        ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
-
-                            if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
-                                ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
-                                found = true;
-                                return;
-                            }
-                        });
-                    }
-
-                    // FallBack : We open it into "All files" modules
-                    if( !found ) {
-                        ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
-                    }
-
                 }
+
+                // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
+                if( !found ) {
+
+                    // Find the id of this row into PendingReviewGrid.store and open it !
+                    ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
+
+                        if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                            ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
+                            found = true;
+                            return;
+                        }
+                    });
+                }
+
+                // FallBack : We open it into "All files" modules
+                if( !found ) {
+                    ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+                }
+
             }
+        }
 
-            if (FileType === 'delete') {
+        if (FileType === 'delete') {
+            
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
 
-                // CleanUp the path - Del the first element => LANG (Automatic added by FilePanel.js)
-                tmp = FilePath.split('/');
-                tmp.shift();
+            FilePath = "/" + tmp.join('/');
 
-                ui.component.NotInENGrid.getInstance().openFile('/' + tmp.join('/'), FileName);
-            }
+            // Find the id of this row into NotInENGrid.store and open it !
+            ui.component.NotInENGrid.getInstance().store.each(function(row) {
+
+                if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                    ui.component.NotInENGrid.getInstance().openFile(row.data.id);
+                    return;
+                }
+            });
+
         }
     },
 
@@ -574,6 +592,9 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             })
         });
         ui.component.PendingCommitGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     },
 
     addRecord : function(fid, fpath, fname, type)
