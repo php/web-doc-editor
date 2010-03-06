@@ -148,14 +148,16 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 
             Ext.getCmp('main-panel').add(
             {
-                id             : 'FNT-' + FileID,
-                layout         : 'border',
-                title          : FileName,
-                originTitle    : FileName,
-                iconCls        : 'iconTabNeedTranslate',
-                closable       : true,
-                defaults       : { split : true },
-                tabTip         : String.format(
+                id               : 'FNT-' + FileID,
+                layout           : 'border',
+                title            : FileName,
+                originTitle      : FileName,
+                iconCls          : 'iconTabNeedTranslate',
+                closable         : true,
+                panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
+                panGGTRANSLoaded : false, // Use to monitor if the google translation panel is loaded
+                defaults         : { split : true },
+                tabTip           : String.format(
                     _('Need Translate: in {0}'), FilePath
                 ),
                 listeners: {

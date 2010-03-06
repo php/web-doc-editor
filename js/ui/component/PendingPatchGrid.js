@@ -162,6 +162,12 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle : FileName,
                 tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
                 closable    : true,
+
+                panPatchContent: false,
+                panVCS         : !PhDOE.userConf["patchDisplayLog"],
+                panPatchLoaded : false,
+                panOriginLoaded: false,
+
                 defaults    : { split : true },
                 items       : [
                     {
@@ -196,6 +202,10 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                         var o = Ext.util.JSON.decode(response.responseText);
                                         // We display in diff div
                                         Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
+                                    },
+                                    callback: function() {
+                                        Ext.getCmp('PP-' + FileID).panPatchContent = true;
+                                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', FileID);
                                     }
                                 });
                             }

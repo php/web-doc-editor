@@ -39,6 +39,10 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
 
                     this.el.unmask();
 
+                },
+                callback: function() {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panDiffLoaded = true;
+                    Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
                 }
             });
         }

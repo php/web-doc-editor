@@ -75,10 +75,72 @@ ui.task.GetFileTask = function(config)
 
             }
 
-
         },
         callback : function()
         {
+
+            // Mark FNT panel as loaded
+            if( this.prefix == 'FNT' ) {
+                if( this.ftype == 'TRANS' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panTRANSLoaded = true;
+                }
+                if( this.ftype == 'GGTRANS' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panGGTRANSLoaded = true;
+                }
+            }
+
+            // Mark FNU panel as loaded
+            if( this.prefix == 'FNU' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FE panel as loaded
+            if( this.prefix == 'FE' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FNR panel as loaded
+            if( this.prefix == 'FNR' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FNIEN panel as loaded
+            if( this.prefix == 'FNIEN' ) {
+                Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+            }
+
+            // Mark AF panel as loaded
+            if( this.prefix == 'AF' ) {
+                Ext.getCmp(this.prefix + '-' + this.fid).panLoaded = true;
+            }
+
+            // Mark PP panel as loaded
+            if( this.prefix == 'PP' ) {
+                if( this.ftype == 'PATCH' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panPatchLoaded = true;
+                }
+                if( this.ftype == 'ORIGIN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panOriginLoaded = true;
+                }
+            }
+
+            Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
+/*
             // Reviewed function to open all files of an extension
             if (PhDOE.filePendingOpen[0]) {
                 PhDOE.filePendingOpen.shift();
@@ -91,6 +153,7 @@ ui.task.GetFileTask = function(config)
                     }
                 }
             }
+*/
         }
     });
 };

@@ -14,7 +14,13 @@ var PhDOE = function()
 
         project : '',
 
-        filePendingOpen : '',
+        FNTfilePendingOpen   : [],
+        FNUfilePendingOpen   : [],
+        FEfilePendingOpen    : [],
+        FNRfilePendingOpen   : [],
+        FNIENfilePendingOpen : [],
+        AFfilePendingOpen    : [],
+        PPfilePendingOpen    : [],
 
         init : function()
         {
@@ -454,12 +460,159 @@ var PhDOE = function()
 
             new Ext.dd.DropTarget(Ext.get('main-panel'), {
                 ddGroup    : 'mainPanelDDGroup',
-                notifyDrop : function(ddSource, e, data){
-                    data.grid.openFile(data.grid.store.getAt(data.rowIndex).data.id);
+                notifyDrop : function(ddSource, e, data) {
+console.log(data);
+                    // On stock les données
+                    for( var i=0; i < data.selections.length; i++ ) {
+                        if( data.grid.ownerCt.id === 'acc-need-translate' ) {
+                            PhDOE.FNTfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-update' ) {
+                            PhDOE.FNUfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-error' ) {
+                            PhDOE.FEfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-reviewed' ) {
+                            PhDOE.FNRfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-notInEn' ) {
+                            PhDOE.FNIENfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                            PhDOE.PPfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                            PhDOE.PPfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                    }
+
+                    // On ouvre le premier
+                    var idToOpen;
+
+                    if( data.grid.ownerCt.id === 'acc-need-translate' ) {
+                        idToOpen = PhDOE.FNTfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.FNTfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-update' ) {
+                        idToOpen = PhDOE.FNUfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.FNUfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-error' ) {
+                        idToOpen = PhDOE.FEfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.FEfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-reviewed' ) {
+                        idToOpen = PhDOE.FNRfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.FNRfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-notInEn' ) {
+                        idToOpen = PhDOE.FNIENfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.FNIENfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                        idToOpen = PhDOE.PPfilePendingOpen[0];
+                        // On le supprime de la pile
+                        PhDOE.PPfilePendingOpen.shift();
+                    }
+
+                    data.grid.openFile(idToOpen.id);
+
                     return true
                 }
             });
 
+            // Add Events to main-panel
+            Ext.getCmp('main-panel').addEvents('tabLoaded');
+
+            //
+            Ext.getCmp('main-panel').on('tabLoaded', function(prefix, fid) {
+
+                var cmp = Ext.getCmp(prefix + '-' + fid);
+
+                // FNT panel
+                if( prefix == 'FNT' ) {
+                    if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
+                        cmp.panTRANSLoaded = panGGTRANSLoaded = false;
+
+                        if (PhDOE.FNTfilePendingOpen[0]) {
+                            ui.component.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
+                            PhDOE.FNTfilePendingOpen.shift();
+                        }
+
+                    }
+                }
+                // FNU panel
+                if( prefix == 'FNU' ) {
+                    if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panDiffLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+                        cmp.panLANGLoaded = cmp.panENLoaded = cmp.panDiffLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+
+                        if (PhDOE.FNUfilePendingOpen[0]) {
+                            ui.component.StaleFileGrid.getInstance().openFile(PhDOE.FNUfilePendingOpen[0].id);
+                            PhDOE.FNUfilePendingOpen.shift();
+                        }
+                    }
+                }
+                // FE panel
+                if( prefix == 'FE' ) {
+                    if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+                        cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+                        
+                        if (PhDOE.FEfilePendingOpen[0]) {
+                            ui.component.ErrorFileGrid.getInstance().openFile(PhDOE.FEfilePendingOpen[0].id);
+                            PhDOE.FEfilePendingOpen.shift();
+                        }
+                    }
+                }
+                // FNR panel
+                if( prefix == 'FNR' ) {
+                    if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+                        cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+                        
+                        if (PhDOE.FNRfilePendingOpen[0]) {
+                            ui.component.PendingReviewGrid.getInstance().openFile(PhDOE.FNRfilePendingOpen[0].id);
+                            PhDOE.FNRfilePendingOpen.shift();
+                        }
+                    }
+                }
+
+                // FNIEN panel
+                if( prefix == 'FNIEN' ) {
+                    if( cmp.panLANGLoaded ) {
+                        cmp.panLANGLoaded = false;
+                        if (PhDOE.FNIENfilePendingOpen[0]) {
+                            ui.component.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
+                            PhDOE.FNIENfilePendingOpen.shift();
+                        }
+                    }
+                }
+
+                // AF panel
+                if( prefix == 'AF' ) {
+                    if( cmp.panLoaded && cmp.panVCS ) {
+                        cmp.panLoaded = cmp.panVCS = false;
+                        //console.log('all tab loaded');
+                    }
+                }
+
+                // AF panel
+                if( prefix == 'PP' ) {
+                    if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
+                        cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;
+                        if (PhDOE.PPfilePendingOpen[0]) {
+                            ui.component.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);
+                            PhDOE.PPfilePendingOpen.shift();
+                        }
+                    }
+                }
+
+
+            }, this);
 
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();

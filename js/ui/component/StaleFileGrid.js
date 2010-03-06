@@ -266,6 +266,11 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle    : FileName,
                 iconCls        : 'iconTabNeedUpdate',
                 closable       : true,
+                panVCSLang     : !PhDOE.userConf["needUpdateDisplaylog"],
+                panVCSEn       : !PhDOE.userConf["needUpdateDisplaylog"],
+                panDiffLoaded  : (PhDOE.userConf["needUpdateDiff"] === "using-viewvc"), // Use to monitor if the Diff panel is loaded
+                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
+                panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 defaults       : { split : true },
                 tabTip         : String.format(
                     _('Need Update: in {0}'), FilePath

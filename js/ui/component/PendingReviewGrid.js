@@ -304,6 +304,10 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 layout      : 'border',
                 iconCls     : 'iconTabNeedReviewed',
                 closable    : true,
+                panVCSLang     : !PhDOE.userConf["reviewedDisplaylog"],
+                panVCSEn       : !PhDOE.userConf["reviewedDisplaylog"],
+                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
+                panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 originTitle : FileName,
                 defaults    : { split : true },
                 tabTip      : String.format(

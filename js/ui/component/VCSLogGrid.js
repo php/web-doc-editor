@@ -124,6 +124,56 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
             baseParams : {
                 Path : this.fpath,
                 File : this.fname
+            },
+            listeners: {
+                scope: this,
+                load: function(store, records) {
+
+                    // FNU Panel
+                    if( this.prefix === 'FNU-EN' ) {
+                        Ext.getCmp('FNU-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNU', this.fid);
+                    }
+                    if( this.prefix === 'FNU-LANG' ) {
+                        Ext.getCmp('FNU-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNU', this.fid);
+                    }
+
+                    // FE panel
+                    if( this.prefix === 'FE-EN' ) {
+                        Ext.getCmp('FE-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FE', this.fid);
+                    }
+                    if( this.prefix === 'FE-LANG' ) {
+                        Ext.getCmp('FE-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FE', this.fid);
+                    }
+
+                    // FE panel
+                    if( this.prefix === 'FNR-EN' ) {
+                        Ext.getCmp('FNR-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNR', this.fid);
+                    }
+                    if( this.prefix === 'FNR-LANG' ) {
+                        Ext.getCmp('FNR-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNR', this.fid);
+                    }
+
+                    // AF panel
+                    if( this.prefix === 'AF' ) {
+                        Ext.getCmp('AF-' + this.fid).panVCS = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
+                    }
+
+                    // PP panel
+                    if( this.prefix === 'PP' ) {
+                        Ext.getCmp('PP-' + this.fid).panVCS = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', this.fid);
+                    }
+
+                   
+
+                }
             }
         }),
         columns = [];

@@ -241,6 +241,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
                         title       : FileName,
                         originTitle : FileName,
                         closable    : true,
+                        panVCS      : !PhDOE.userConf["allFilesDisplayLog"],
+                        panLoaded   : false, // Use to monitor if the LANG panel is loaded
                         tabTip      : String.format(_('in {0}'), FilePath),
                         iconCls     : 'iconAllFiles',
                         items       : [panelCenter, panelWest]
