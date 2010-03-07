@@ -145,8 +145,16 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 
     openFile: function(rowId)
     {
-        var storeRecord = this.store.getById(rowId),
-            FilePath    = storeRecord.data.path,
+        var storeRecord = false;
+
+        this.store.each(function(r)
+        {
+            if (r.data.id === rowId) {
+                storeRecord = r;
+            }
+        });
+
+        var FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
             FileUniqID  = storeRecord.data.uniqID,
             FileID      = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
