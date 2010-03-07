@@ -140,20 +140,7 @@ ui.task.GetFileTask = function(config)
             }
 
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
-/*
-            // Reviewed function to open all files of an extension
-            if (PhDOE.filePendingOpen[0]) {
-                PhDOE.filePendingOpen.shift();
-                if (PhDOE.filePendingOpen[0]) {
-                    if (PhDOE.filePendingOpen[0].fpath) {
-                        ui.component.RepositoryTree.getInstance().openFile(
-                            PhDOE.filePendingOpen[0].fpath,
-                            PhDOE.filePendingOpen[0].fname
-                        );
-                    }
-                }
-            }
-*/
+
         }
     });
 };

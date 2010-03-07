@@ -7,7 +7,8 @@ Ext.namespace('ui','ui.component','ui.component._RepositoryTree');
 ui.component._RepositoryTree.root = {
     nodeType  : 'async',
     id        : '/',
-    text      : _('Repository')
+    text      : _('Repository'),
+    draggable : false
 };
 
 // RepositoryTree default tree loader
@@ -90,11 +91,15 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                 {
                     if (FileLang === 'en') {
                         ui.component._RepositoryTree.instance.openFile(
-                            PhDOE.userLang + '/' + FilePath, FileName
+                            'byPath',
+                            PhDOE.userLang + '/' + FilePath,
+                            FileName
                         );
                     } else {
                         ui.component._RepositoryTree.instance.openFile(
-                            'en/' + FilePath, FileName
+                            'byPath',
+                            'en/' + FilePath,
+                            FileName
                         );
                     }
                 }
@@ -105,168 +110,200 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // RepositoryTree
-ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
+ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
 {
     animate         : true,
-    enableDD        : false,
+    enableDD        : true,
+    ddGroup         : 'mainPanelDDGroup',
     useArrows       : true,
     autoScroll      : true,
     border          : false,
     containerScroll : true,
+    root            : ui.component._RepositoryTree.root,
+    loader          : ui.component._RepositoryTree.loader,
 
-    root   : ui.component._RepositoryTree.root,
-    loader : ui.component._RepositoryTree.loader,
+    onContextMenu : function(node, e)
+    {
+        e.stopEvent();
 
-    listeners: {
-        contextmenu : function(node, e)
-        {
+        var tmp;
+        node.select();
 
-            e.stopEvent();
+        if (node.attributes.type === 'folder' || node.isRoot) {
+            tmp = new ui.component._RepositoryTree.menu.folder({
+                node : node
+            }).showAt(e.getXY());
+        } else if (node.attributes.type === 'file') {
+            tmp = new ui.component._RepositoryTree.menu.file({
+                node : node
+            }).showAt(e.getXY());
+        }
+    },
 
-            var tmp;
-            node.select();
+    onDblClick : function(node, e)
+    {
+        if (node.attributes.type === 'file') { // files only
 
-            if (node.attributes.type === 'folder' || node.isRoot) {
-                tmp = new ui.component._RepositoryTree.menu.folder({
-                    node : node
-                }).showAt(e.getXY());
-            } else if (node.attributes.type === 'file') {
-                tmp = new ui.component._RepositoryTree.menu.file({
-                    node : node
-                }).showAt(e.getXY());
-            }
-        },
-        dblclick : function(node, e)
-        {
-            if (node.attributes.type === 'file') { // files only
+            this.openFile(
+                'byId',
+                node.attributes.id,
+                false
+            );
+        }
+    },
 
-                var FilePath  = node.attributes.id,
-                    extension = node.attributes.extension,
-                    t, FileID, FileLang, FileName, parser,
-                    panelWest, panelCenter;
+    openFile: function(ftype, first, second)
+    {
+        // Here, first argument is fpath and second, fname
+        if( ftype === 'byPath' ) {
+            Ext.getCmp('acc-all-files').expand();
 
-                // CleanUp the path
-                t = FilePath.split('/');
-                t.shift();
-
-                FileName = t.pop();
-
-                FileLang = t.shift();
-                FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
-
-                FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
-
-                // Render only if this tab don't exist yet
-                if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
-
-                    if (extension !== 'html' && extension !== 'php') {
-                        parser = extension;
-                    } else {
-                        parser = 'xml';
+            var fpath = first, fname = second,
+            t = fpath.split('/'), cb = function(node)
+            {
+                node.ensureVisible();
+                if (t[0] && t[0] !== '') {
+                    // walk into childs
+                    for (var j = 0; j < node.childNodes.length; ++j) {
+                        if (node.childNodes[j].text === t[0]) {
+                            t.shift();
+                            node.childNodes[j].expand(false, true, cb.createDelegate(this));
+                        }
                     }
-
-                    if (extension === 'gif' || extension === 'png') {
-
-                        panelWest = {};
-
-                        panelCenter = {
-                            id        : 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
-                            xtype     : 'panel',
-                            region    : 'center',
-                            layout    : 'fit',
-                            bodyStyle : 'padding:5px 5px 0',
-                            html      : '<img src="./do/getImageContent?' +
-                                    'FileLang=' + FileLang + '&' +
-                                    'FilePath=' + FilePath + '&' +
-                                    'FileName=' + FileName +
-                                    '" />'
-                        };
-
-                    } else {
-
-                        panelWest = {
-                            xtype       : 'panel',
-                            region      : 'west',
-                            title       : _('VCSLog'),
-                            iconCls     : 'iconVCSLog',
-                            collapsedIconCls : 'iconVCSLog',
-                            plugins     : [Ext.ux.PanelCollapsedTitle],
-                            layout      : 'fit',
-                            bodyBorder  : false,
-                            split       : true,
-                            collapsible : true,
-                            collapsed   : true,
-                            width       : 375,
-                            items       : {
-                                xtype       : 'tabpanel',
-                                activeTab   : 0,
-                                tabPosition : 'bottom',
-                                defaults    : { autoScroll: true },
-                                items       : [{
-                                    title  : 'Log',
-                                    layout : 'fit',
-                                    items  : [new ui.component.VCSLogGrid({
-                                        prefix    : 'AF',
-                                        fid       : FileID,
-                                        fpath     : FileLang + FilePath,
-                                        fname     : FileName,
-                                        loadStore : PhDOE.userConf["allFilesDisplayLog"]
-                                    })]
-                                }]
-                            }
-                        };
-
-                        panelCenter = new ui.component.FilePanel({
-                            id             : 'AF' + '-ALL-PANEL-' + FileID,
-                            region         : 'center',
-                            title          : _('File: ') + FileLang + FilePath + FileName,
-                            prefix         : 'AF',
-                            ftype          : 'ALL',
-                            spellCheck     : PhDOE.userConf["allFilesSpellCheck"],
-                            spellCheckConf : 'allFilesSpellCheck',
-                            fid            : FileID,
-                            fpath          : FilePath,
-                            fname          : FileName,
-                            lang           : FileLang,
-                            parser         : parser,
-                            storeRecord    : node,
-                            syncScrollCB   : false,
-                            syncScroll     : false
-                        });
-                    }
-
-                    Ext.getCmp('main-panel').add({
-                        id          : 'AF-' + FileID,
-                        layout      : 'border',
-                        title       : FileName,
-                        originTitle : FileName,
-                        closable    : true,
-                        panVCS      : !PhDOE.userConf["allFilesDisplayLog"],
-                        panLoaded   : false, // Use to monitor if the LANG panel is loaded
-                        tabTip      : String.format(_('in {0}'), FilePath),
-                        iconCls     : 'iconAllFiles',
-                        items       : [panelCenter, panelWest]
-                    });
-
-                    Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
-
                 } else {
-                    // This tab already exist. We focus it.
-                    Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
-                    // if opening multiple files, dequeue and continue
-                    if (PhDOE.filePendingOpen[0]) {
-                        if (PhDOE.filePendingOpen[0]) {
-                            if (PhDOE.filePendingOpen[0].fpath) {
-                                this.openFile(
-                                    PhDOE.filePendingOpen[0].fpath,
-                                    PhDOE.filePendingOpen[0].fname
-                                );
-                            }
+                    // leaf node
+                    for (var i = 0; i < node.childNodes.length; ++i) {
+                        if (node.childNodes[i].text === fname) {
+                            node.childNodes[i].ensureVisible();
+                            node.childNodes[i].ui.highlight();
+                            this.openFile('byId', node.childNodes[i].id, false);
+                            //this.fireEvent('dblclick', node.childNodes[i]);
                         }
                     }
                 }
-            }
+            };
+            this.root.expand(false, true, cb.createDelegate(this));
         }
+
+        // Here, first argument is a nodeID. Second arguments don't exist
+        if( ftype === 'byId' ) {
+
+            var node      = this.getNodeById(first),
+                FilePath  = node.attributes.id,
+                extension = node.attributes.extension,
+                t, FileID, FileLang, FileName, parser,
+                panelWest, panelCenter;
+
+            // CleanUp the path
+            t = FilePath.split('/');
+            t.shift();
+
+            FileName = t.pop();
+
+            FileLang = t.shift();
+            FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
+
+            FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
+
+            // Render only if this tab don't exist yet
+            if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
+
+                if ( extension !== 'html' ) {
+                    parser = extension;
+                } else {
+                    parser = 'xml';
+                }
+
+                if (extension === 'gif' || extension === 'png') {
+
+                    panelWest = {};
+
+                    panelCenter = {
+                        id        : 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
+                        xtype     : 'panel',
+                        region    : 'center',
+                        layout    : 'fit',
+                        bodyStyle : 'padding:5px 5px 0',
+                        html      : '<img src="./do/getImageContent?' +
+                                'FileLang=' + FileLang + '&' +
+                                'FilePath=' + FilePath + '&' +
+                                'FileName=' + FileName +
+                                '" />'
+                    };
+
+                } else {
+
+                    panelWest = {
+                        xtype       : 'panel',
+                        region      : 'west',
+                        title       : _('VCSLog'),
+                        iconCls     : 'iconVCSLog',
+                        collapsedIconCls : 'iconVCSLog',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        split       : true,
+                        collapsible : true,
+                        collapsed   : true,
+                        width       : 375,
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll: true },
+                            items       : [{
+                                title  : 'Log',
+                                layout : 'fit',
+                                items  : [new ui.component.VCSLogGrid({
+                                    prefix    : 'AF',
+                                    fid       : FileID,
+                                    fpath     : FileLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : PhDOE.userConf["allFilesDisplayLog"]
+                                })]
+                            }]
+                        }
+                    };
+
+                    panelCenter = new ui.component.FilePanel({
+                        id             : 'AF' + '-ALL-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('File: ') + FileLang + FilePath + FileName,
+                        prefix         : 'AF',
+                        ftype          : 'ALL',
+                        spellCheck     : PhDOE.userConf["allFilesSpellCheck"],
+                        spellCheckConf : 'allFilesSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : FileLang,
+                        parser         : parser,
+                        storeRecord    : node,
+                        syncScrollCB   : false,
+                        syncScroll     : false
+                    });
+                }
+
+                Ext.getCmp('main-panel').add({
+                    id          : 'AF-' + FileID,
+                    layout      : 'border',
+                    title       : FileName,
+                    originTitle : FileName,
+                    closable    : true,
+                    panVCS      : !PhDOE.userConf["allFilesDisplayLog"],
+                    panLoaded   : false, // Use to monitor if the LANG panel is loaded
+                    tabTip      : String.format(_('in {0}'), FilePath),
+                    iconCls     : 'iconAllFiles',
+                    items       : [panelCenter, panelWest]
+                });
+            }
+            Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
+        }
+    },
+
+    openNotExpandFile : function(fpath, fname)
+    {
+
     },
 
     initComponent : function()
@@ -336,39 +373,12 @@ ui.component.RepositoryTree = Ext.extend(Ext.tree.TreePanel,
         });
         ui.component.RepositoryTree.superclass.initComponent.call(this);
 
+        this.on('contextmenu', this.onContextMenu, this);
+        this.on('dblclick',    this.onDblClick,  this);
+
         var tmp = new Ext.tree.TreeSorter(this, {
             folderSort : true
         });
-    },
-
-    openFile : function(fpath, fname)
-    {
-        Ext.getCmp('acc-all-files').expand();
-
-        var t = fpath.split('/'), cb = function(node)
-        {
-
-            node.ensureVisible();
-            if (t[0] && t[0] !== '') {
-                // walk into childs
-                for (var j = 0; j < node.childNodes.length; ++j) {
-                    if (node.childNodes[j].text === t[0]) {
-                        t.shift();
-                        node.childNodes[j].expand(false, true, cb.createDelegate(this));
-                    }
-                }
-            } else {
-                // leaf node
-                for (var i = 0; i < node.childNodes.length; ++i) {
-                    if (node.childNodes[i].text === fname) {
-                        node.childNodes[i].ensureVisible();
-                        node.childNodes[i].ui.highlight();
-                        this.fireEvent('dblclick', node.childNodes[i]);
-                    }
-                }
-            }
-        };
-        this.root.expand(false, true, cb.createDelegate(this));
     }
 });
 

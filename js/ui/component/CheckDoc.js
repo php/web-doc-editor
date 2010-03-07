@@ -181,6 +181,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
     onRowDblClick: function(grid, rowIndex, e)
     {
         ui.component.RepositoryTree.getInstance().openFile(
+            'byPath',
             'en' + grid.fpath,
             grid.store.getAt(rowIndex).data.file
         );
@@ -220,19 +221,23 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 store = ui.component._CheckDoc.fs,
                 i;
 
-            PhDOE.filePendingOpen = [];
+            PhDOE.AFfilePendingOpen = [];
 
             for (i = 0; i < store.getCount(); ++i) {
-                PhDOE.filePendingOpen[i] = {
+                PhDOE.AFfilePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : store.getAt(i).data.file
                 };
             }
 
             ui.component.RepositoryTree.getInstance().openFile(
-                PhDOE.filePendingOpen[0].fpath,
-                PhDOE.filePendingOpen[0].fname
+                'byPath',
+                PhDOE.AFfilePendingOpen[0].fpath,
+                PhDOE.AFfilePendingOpen[0].fname
             );
+
+            PhDOE.AFfilePendingOpen.shift();
+
             win.close();
         }
     }, {

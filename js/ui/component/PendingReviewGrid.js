@@ -181,10 +181,10 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                     {
                         var o = Ext.util.JSON.decode(response.responseText);
 
-                        PhDOE.filePendingOpen = [];
+                        PhDOE.AFfilePendingOpen = [];
 
                         for (var i = 0; i < o.files.length; i = i + 1) {
-                            PhDOE.filePendingOpen[i] = {
+                            PhDOE.AFfilePendingOpen[i] = {
                                 fpath : PhDOE.userLang + o.files[i].path,
                                 fname : o.files[i].name
                             };
@@ -192,9 +192,12 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
 
                         // Start the first
                         ui.component.RepositoryTree.getInstance().openFile(
-                            PhDOE.filePendingOpen[0].fpath,
-                            PhDOE.filePendingOpen[0].fname
+                            'byPath',
+                            PhDOE.AFfilePendingOpen[0].fpath,
+                            PhDOE.AFfilePendingOpen[0].fname
                         );
+
+                        PhDOE.AFfilePendingOpen.shift();
 
                         Ext.getBody().unmask();
                     }

@@ -445,11 +445,11 @@ var PhDOE = function()
                             xtype      : 'portal',
                             border: false,
                             items:[{
-                                columnWidth : .5,
+                                columnWidth : 0.5,
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentLeft
                             },{
-                                columnWidth : .5,
+                                columnWidth : 0.5,
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentRight
                             }]
@@ -462,7 +462,26 @@ var PhDOE = function()
                 ddGroup    : 'mainPanelDDGroup',
                 notifyDrop : function(ddSource, e, data) {
 
-                    // On stock les données
+                    // Special case for the repositoryTree
+                    if( data.nodes ) {
+                        for( var i=0; i < data.nodes.length; i++ ) {
+                            PhDOE.AFfilePendingOpen[i] = {
+                                nodeID: data.nodes[i].attributes.id
+                            };
+                        }
+                        
+                        // Start the first
+                        ui.component.RepositoryTree.getInstance().openFile(
+                            'byId',
+                            PhDOE.AFfilePendingOpen[0].nodeID,
+                            false
+                        );
+
+                        PhDOE.AFfilePendingOpen.shift();
+                        return true;
+                    }
+
+                    // We store the data
                     for( var i=0; i < data.selections.length; i++ ) {
                         if( data.grid.ownerCt.id === 'acc-need-translate' ) {
                             PhDOE.FNTfilePendingOpen[i] = { id: data.selections[i].data.id };
@@ -523,7 +542,7 @@ var PhDOE = function()
 
                     data.grid.openFile(idToOpen.id);
 
-                    return true
+                    return true;
                 }
             });
 
@@ -596,11 +615,18 @@ var PhDOE = function()
                 if( prefix == 'AF' ) {
                     if( cmp.panLoaded && cmp.panVCS ) {
                         cmp.panLoaded = cmp.panVCS = false;
-                        //console.log('all tab loaded');
+                        if (PhDOE.AFfilePendingOpen[0]) {
+                            ui.component.RepositoryTree.getInstance().openFile(
+                                ( PhDOE.AFfilePendingOpen[0].nodeID ) ? 'byId' : 'byPath',
+                                ( PhDOE.AFfilePendingOpen[0].nodeID ) ? PhDOE.AFfilePendingOpen[0].nodeID : PhDOE.AFfilePendingOpen[0].fpath,
+                                ( PhDOE.AFfilePendingOpen[0].nodeID ) ? false                             : PhDOE.AFfilePendingOpen[0].fname
+                            );
+                            PhDOE.AFfilePendingOpen.shift();
+                        }
                     }
                 }
 
-                // AF panel
+                // PP panel
                 if( prefix == 'PP' ) {
                     if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
                         cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;

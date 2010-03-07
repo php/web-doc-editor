@@ -595,7 +595,8 @@ TODO: Handle project here
                     'text' => $f,
                     'id'   => $dir.$f,
                     'cls'  => 'folder',
-                    'type' => 'folder'
+                    'type' => 'folder',
+                    'allowDrag' => false
                 );
 
             } else {
