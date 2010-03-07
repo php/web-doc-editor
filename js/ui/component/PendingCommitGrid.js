@@ -419,6 +419,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
     columns          : ui.component._PendingCommitGrid.columns,
     view             : ui.component._PendingCommitGrid.view,
     enableDragDrop   : true,
+    sm               : new Ext.grid.RowSelectionModel({ singleSelect: true}),
     ddGroup          : 'mainPanelDDGroup',
 
     onRowContextMenu : function(grid, rowIndex, e)

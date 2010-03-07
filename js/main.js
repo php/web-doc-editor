@@ -481,6 +481,12 @@ var PhDOE = function()
                         return true;
                     }
 
+                    // Special case for PendingCommit grid. As this grid can open a file in all modules, we can't use this mechanism. As it, we have disable the possibility to open multi-files. Just one can be open at once.
+                    if( data.grid.ownerCt.id === 'acc-need-pendingCommit' ) {
+                        data.grid.openFile(data.selections[0].data.id);
+                        return true;
+                    }
+
                     // We store the data
                     for( var i=0; i < data.selections.length; i++ ) {
                         if( data.grid.ownerCt.id === 'acc-need-translate' ) {
