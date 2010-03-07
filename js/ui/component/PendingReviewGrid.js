@@ -260,38 +260,36 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
     columns          : ui.component._PendingReviewGrid.columns,
     view             : ui.component._PendingReviewGrid.view,
 
-    listeners : {
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
 
-            e.stopEvent();
+        var storeRecord = grid.store.getAt(rowIndex),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            fpath_split = FilePath.split('/'),
+            tmp;
 
-            var storeRecord = grid.store.getAt(rowIndex),
-                FilePath    = storeRecord.data.path,
-                FileName    = storeRecord.data.name,
-                fpath_split = FilePath.split('/'),
-                tmp;
+        grid.getSelectionModel().selectRow(rowIndex);
 
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            tmp = new ui.component._PendingReviewGrid.menu.main({
-                grid      : grid,
-                rowIdx    : rowIndex,
-                event     : e,
-                fpath     : FilePath,
-                fname     : FileName,
-                hideDiff  : (!storeRecord.data.needcommit),
-                hideGroup : (fpath_split[1] !== 'reference'),
-                gname     : fpath_split[2]
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            this.openFile(grid.store.getAt(rowIndex).data.id);
-        }
+        tmp = new ui.component._PendingReviewGrid.menu.main({
+            grid      : grid,
+            rowIdx    : rowIndex,
+            event     : e,
+            fpath     : FilePath,
+            fname     : FileName,
+            hideDiff  : (!storeRecord.data.needcommit),
+            hideGroup : (fpath_split[1] !== 'reference'),
+            gname     : fpath_split[2]
+        }).showAt(e.getXY());
     },
 
-    openFile : function(rowId)
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
     {
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
@@ -456,6 +454,9 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
             ]
         });
         ui.component.PendingReviewGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 
