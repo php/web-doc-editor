@@ -467,7 +467,6 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
     openFile: function(rowId)
     {
-
         var storeRecord = false;
 
         this.store.each(function(r)
@@ -510,7 +509,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
             // For EN file, we open this new file into the "All files" module
             if( FileLang === 'en' ) {
-                ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+                ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
             } else {
 
                 found = false;
@@ -555,7 +554,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
                 // FallBack : We open it into "All files" modules
                 if( !found ) {
-                    ui.component.RepositoryTree.getInstance().openFile(FileLang+FilePath, FileName);
+                    ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
                 }
 
             }
