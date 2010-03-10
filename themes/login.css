@@ -21,3 +21,19 @@
     height: 11px;
     width: 11px;
 }
+
+#app-title {
+    margin: 5px 0px 5px 110px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#app-description {
+    margin-left: 110px;
+    font: bold 13px tahoma, arial, helvetica;
+    color: #444;
+}
+
+#app-logo {
+    float: left;
+}

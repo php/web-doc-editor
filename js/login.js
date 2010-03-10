@@ -115,7 +115,7 @@ var PhDOE_loginPage = function()
                         id        : 'login-logo',
                         region    : 'center',
                         bodyStyle : 'margin:4px 4px 4px 8px',
-                        html      : '<img src="themes/img/logo.png" />'
+                        html      : '<div id="app-logo"><img src="themes/img/php.png"></div><div id="app-title">PhD O.E.</div><div id="app-description">Php Docbook Online Editor</div>'
                     }, {
                         xtype       : 'form',
                         region      : 'south',
