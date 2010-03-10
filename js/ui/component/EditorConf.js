@@ -320,12 +320,10 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function(field)
                             {
-                                PhDOE.userConf.newFileNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function(field)
                             {
-                                PhDOE.userConf.newFileNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
@@ -422,12 +420,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function(field)
                             {
-                                PhDOE.userConf.needUpdateNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function(field)
                             {
-                                PhDOE.userConf.needUpdateNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
@@ -514,12 +510,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.needUpdateDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.needUpdateDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -565,12 +559,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.needUpdateDiffPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.needUpdateDiffPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -619,10 +611,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'needUpdateSpellCheckEn',
-                        checked     : PhDOE.userConf.needUpdateSpellCheckEn,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
-                        listeners   : {
+                        name      : 'needUpdateSpellCheckEn',
+                        checked   : PhDOE.userConf.needUpdateSpellCheckEn,
+                        boxLabel  : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        listeners : {
                             check : function(field)
                             {
                                 var tmp = new ui.task.UpdateConfTask({
@@ -632,10 +624,10 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             }
                         }
                     },{
-                        name        : 'needUpdateSpellCheckLang',
-                        checked     : PhDOE.userConf.needUpdateSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
-                        listeners   : {
+                        name      : 'needUpdateSpellCheckLang',
+                        checked   : PhDOE.userConf.needUpdateSpellCheckLang,
+                        boxLabel  : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners : {
                             check : function(field)
                             {
                                 var tmp = new ui.task.UpdateConfTask({
@@ -764,12 +756,10 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.errorDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.errorDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -815,12 +805,10 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.errorDescPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.errorDescPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -902,12 +890,10 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function(field)
                             {
-                                PhDOE.userConf.reviewedNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function(field)
                             {
-                                PhDOE.userConf.reviewedNbDisplay = this.getValue();
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
@@ -994,12 +980,10 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.reviewedNbDisplay = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.reviewedNbDisplay = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -1116,12 +1100,10 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.allFilesDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.allFilesDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -1245,12 +1227,10 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.patchDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.patchDisplaylogPanelWidth = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
@@ -1296,12 +1276,10 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function(field)
                                 {
-                                    PhDOE.userConf.patchDisplayContentPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function(field)
                                 {
-                                    PhDOE.userConf.patchDisplayContentPanelHeight = this.getValue();
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
