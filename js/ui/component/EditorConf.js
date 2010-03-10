@@ -83,7 +83,7 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
 
 ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function() {
 
-    var tmp = new ui.task.UpdateConfTask({
+    new ui.task.UpdateConfTask({
         item  : this.name,
         value : this.getValue()
     });
@@ -192,7 +192,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             check  : function(field)
                             {
                                 if (field.checked) {
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'onSaveLangFile',
                                         value : field.getRawValue()
                                     });
@@ -209,7 +209,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             check : function(field)
                             {
                                 if (field.checked) {
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'onSaveLangFile',
                                         value : field.getRawValue()
                                     });
@@ -226,7 +226,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             check : function(field)
                             {
                                 if (field.checked) {
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'onSaveLangFile',
                                         value : field.getRawValue()
                                     });
@@ -252,7 +252,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'mainAppLoadMailsAtStartUp',
                                     value : field.getValue()
                                 });
@@ -273,7 +273,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'mainAppLoadBugsAtStartUp',
                                     value : field.getValue()
                                 });
@@ -348,7 +348,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'newFileScrollbars',
                                     value : field.getValue()
                                 });
@@ -373,7 +373,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'newFileSpellCheck',
                                     value : field.getValue()
                                 });
@@ -449,7 +449,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateScrollbars',
                                     value : field.getValue()
                                 });
@@ -469,7 +469,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDisplaylog',
                                     value : field.getValue()
                                 });
@@ -483,14 +483,14 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDisplaylogPanel',
                                     value : true
                                 });
@@ -532,14 +532,14 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDiffPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDiffPanel',
                                     value : true
                                 });
@@ -575,7 +575,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             check  : function(field)
                             {
                                 if (field.checked) {
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiff',
                                         value : field.getRawValue()
                                     });
@@ -591,7 +591,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             check : function(field)
                             {
                                 if (field.checked) {
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiff',
                                         value : field.getRawValue()
                                     });
@@ -616,7 +616,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateSpellCheckEn',
                                     value : field.getValue()
                                 });
@@ -629,7 +629,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateSpellCheckLang',
                                     value : field.getValue()
                                 });
@@ -670,7 +670,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             check  : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorSkipNbLiteralTag',
                                     value : field.getValue()
                                 });
@@ -694,7 +694,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorScrollbars',
                                     value : field.getValue()
                                 });
@@ -714,7 +714,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDisplayLog',
                                     value : field.getValue()
                                 });
@@ -728,14 +728,14 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDisplaylogPanel',
                                     value : true
                                 });
@@ -777,14 +777,14 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDescPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDescPanel',
                                     value : true
                                 });
@@ -829,7 +829,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorSpellCheckEn',
                                     value : field.getValue()
                                 });
@@ -842,7 +842,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorSpellCheckLang',
                                     value : field.getValue()
                                 });
@@ -918,7 +918,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedScrollbars',
                                     value : field.getValue()
                                 });
@@ -938,7 +938,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylog',
                                     value : field.getValue()
                                 });
@@ -952,14 +952,14 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanel',
                                     value : true
                                 });
@@ -1004,7 +1004,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedSpellCheckEn',
                                     value : field.getValue()
                                 });
@@ -1017,7 +1017,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedSpellCheckLang',
                                     value : field.getValue()
                                 });
@@ -1058,7 +1058,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplayLog',
                                     value : field.getValue()
                                 });
@@ -1072,14 +1072,14 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplaylogPanel',
                                     value : true
                                 });
@@ -1124,7 +1124,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesSpellCheck',
                                     value : field.getValue()
                                 });
@@ -1165,7 +1165,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchScrollbars',
                                     value : field.getValue()
                                 });
@@ -1185,7 +1185,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                         listeners : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplaylog',
                                     value : field.getValue()
                                 });
@@ -1199,14 +1199,14 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplaylogPanel',
                                     value : true
                                 });
@@ -1248,14 +1248,14 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                         listeners      : {
                             collapse : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplayContentPanel',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplayContentPanel',
                                     value : true
                                 });
@@ -1300,7 +1300,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                         listeners   : {
                             check : function(field)
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchSpellCheck',
                                     value : field.getValue()
                                 });
