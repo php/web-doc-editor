@@ -106,7 +106,7 @@ var PhDOE = function()
                     width:300,
                     renderTo:'loading-progressBar'
                 });
-            progressBar.show();;
+            progressBar.show();
 
             // Store to load for LANG project
             if (PhDOE.userLang !== 'en') {
