@@ -116,6 +116,7 @@
 .iconInfo              { background-image: url(./img/help-about.png)            !important;}
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
+.iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
 .iconNotInEn           { background-image: url(./img/delete.png)                !important;}
 .iconOpenInTab         { background-image: url(./img/tab-new-background.png)    !important;}
@@ -128,6 +129,7 @@
 .iconRun               { background-image: url(./img/run-build.png)             !important;}
 .iconSaveAsFile        { background-image: url(./img/text-x-patch.png)          !important;}
 .iconSaveFile          { background-image: url(./img/save.png)                  !important;}
+.iconScrollBar         { background-image: url(./img/ui-scroll-bar.png)         !important;}
 .iconSendEmail         { background-image: url(./img/mail-message-new.png)      !important;}
 .iconSpellCheck        { background-image: url(./img/tools-check-spelling.png)  !important;}
 .iconStartRefresh      { background-image: url(./img/go-last.png)               !important;}
@@ -142,6 +144,7 @@
 .iconTranslator        { background-image: url(./img/group.png)                 !important;}
 .iconTrash             { background-image: url(./img/delete.png)                !important;}
 .iconThemes            { background-image: url(./img/fill-color.png)            !important;}
+.iconUI                { background-image: url(./img/view-choose.png)           !important;}
 .iconUndo              { background-image: url(./img/edit-undo.png)             !important;}
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}

@@ -29,8 +29,9 @@ class AccountManager
     private function __construct()
     {
         $this->defaultConf = array(
-            "onSaveLangFile"       => 'ask-me',
+            "onSaveLangFile"            => 'ask-me',
 
+            "mainAppMainMenuWidth"      => 300,
             "mainAppLoadMailsAtStartUp" => false,
             "mainAppLoadBugsAtStartUp"  => false,
 
@@ -38,33 +39,49 @@ class AccountManager
             "newFileSpellCheck"     => false,
             "newFileScrollbars"     => false,
 
-            "needUpdateNbDisplay"      => 0, // 0 means no limit
-            "needUpdateDiff"           => 'using-exec',
-            "needUpdateDisplaylog"     => false,
-            "needUpdateScrollbars"     => true,
-            "needUpdateSpellCheckEn"   => false,
-            "needUpdateSpellCheckLang" => false,
+            "needUpdateNbDisplay"            => 0, // 0 means no limit
+            "needUpdateDiff"                 => 'using-exec',
+            "needUpdateDiffPanel"            => true,
+            "needUpdateDiffPanelHeight"      => 150,
+            "needUpdateDisplaylog"           => false,
+            "needUpdateDisplaylogPanel"      => false,
+            "needUpdateDisplaylogPanelWidth" => 375,
+            "needUpdateScrollbars"           => true,
+            "needUpdateSpellCheckEn"         => false,
+            "needUpdateSpellCheckLang"       => false,
 
-            "errorDisplayLog"       => false,
-            "errorScrollbars"       => true,
-            "errorSkipNbLiteralTag" => true,
-            "errorSpellCheckEn"     => false,
-            "errorSpellCheckLang"   => false,
+            "errorDisplayLog"           => false,
+            "errorDisplaylogPanel"      => false,
+            "errorDisplaylogPanelWidth" => 375,
+            "errorDescPanel"            => true,
+            "errorDescPanelHeight"      => 150,
+            "errorScrollbars"           => true,
+            "errorSkipNbLiteralTag"     => true,
+            "errorSpellCheckEn"         => false,
+            "errorSpellCheckLang"       => false,
 
-            "reviewedNbDisplay"      => 0, // 0 means no limit
-            "reviewedDisplaylog"     => false,
-            "reviewedScrollbars"     => true,
-            "reviewedSpellCheckEn"   => false,
-            "reviewedSpellCheckLang" => false,
+            "reviewedNbDisplay"            => 0, // 0 means no limit
+            "reviewedDisplaylog"           => false,
+            "reviewedDisplaylogPanel"      => false,
+            "reviewedDisplaylogPanelWidth" => 375,
+            "reviewedScrollbars"           => true,
+            "reviewedSpellCheckEn"         => false,
+            "reviewedSpellCheckLang"       => false,
 
-            "allFilesDisplayLog"    => false,
-            "allFilesSpellCheck"    => false,
+            "allFilesDisplayLog"           => false,
+            "allFilesDisplaylogPanel"      => false,
+            "allFilesDisplaylogPanelWidth" => 375,
+            "allFilesSpellCheck"           => false,
 
-            "patchDisplayLog"       => false,
-            "patchScrollbars"       => true,
-            "patchSpellCheck"       => false,
+            "patchDisplayLog"                => false,
+            "patchDisplaylogPanel"           => false,
+            "patchDisplaylogPanelWidth"      => 375,
+            "patchDisplayContentPanel"       => true,
+            "patchDisplayContentPanelHeight" => 150,
+            "patchScrollbars"                => true,
+            "patchSpellCheck"                => false,
 
-            "theme"                 => 'themes/empty.css'
+            "theme"                          => 'themes/empty.css'
         );
 
         $this->appConf = Config::getInstance()->getConf();

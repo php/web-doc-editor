@@ -51,7 +51,6 @@ ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
     overClass    : 'x-view-over',
     itemSelector : 'div.menu-wrap',
     store        : ui.component._EditorConf.menuStore,
-
     listeners : {
         selectionchange : function(view, select)
         {
@@ -68,161 +67,219 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
         type : 'string'
     }],
     data : [
-        ['themes/ExtJsThemes/black/css/xtheme-black.css', _('Black')],
-        ['themes/empty.css', _('Default')],
-        ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css', _('DarkGray')],
+        ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
+        ['themes/empty.css',                                                  _('Default')],
+        ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
         ['http://extjs.cachefly.net/ext-3.1.1/resources/css/xtheme-gray.css', _('Gray')],
-        ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css', _('Gray Extend')],
-        ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css', _('Indigo')],
-        ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css', _('Midnight')],
-        ['themes/ExtJsThemes/olive/css/xtheme-olive.css', _('Olive')],
-        ['themes/ExtJsThemes/purple/css/xtheme-purple.css', _('Purple')],
-        ['themes/ExtJsThemes/silverCherry/css/xtheme-silverCherry.css', _('SilverCherry')],
-        ['themes/ExtJsThemes/ubuntu_human/css/xtheme-human.css', _('Ubuntu Human')]
+        ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
+        ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
+        ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],
+        ['themes/ExtJsThemes/olive/css/xtheme-olive.css',                     _('Olive')],
+        ['themes/ExtJsThemes/purple/css/xtheme-purple.css',                   _('Purple')],
+        ['themes/ExtJsThemes/silverCherry/css/xtheme-silverCherry.css',       _('SilverCherry')],
+        ['themes/ExtJsThemes/ubuntu_human/css/xtheme-human.css',              _('Ubuntu Human')]
     ]
 });
 
+ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function() {
+
+    var tmp = new ui.task.UpdateConfTask({
+        item  : this.name,
+        value : this.getValue()
+    });
+
+}),
+
 // EditorConf card1 - mainApp
-ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
 {
     id        : 'conf-card-1',
     autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype      : 'fieldset',
-                iconCls    : 'iconThemes',
-                title      : _('Themes'),
-                autoHeight : true,
-                defaults   : { hideLabel: true },
-                items      : [{
-                    xtype          : 'combo',
-                    id             : 'conf-combo-theme',
-                    valueField     : 'themeFile',
-                    displayField   : 'themeName',
-                    triggerAction  : 'all',
-                    mode           : 'local',
-                    forceSelection : true,
-                    editable       : false,
-                    value          : PhDOE.userConf["theme"],
-                    store          : ui.component._EditorConf.themeStore,
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('Main Menu'),
+                    iconCls     : 'iconMenu',
+                    items       : [{
+                        xtype      : 'spinnerfield',
+                        width      : 60,
+                        name       : 'mainAppMainMenuWidth',
+                        value      : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                        fieldLabel : _('Main Menu width'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function(field)
+                            {
+                                    var cmp = Ext.getCmp('main-menu-panel'),
+                                        val = this.getValue();
+                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    cmp.setWidth(val);
+                                    cmp.ownerCt.doLayout();
 
-                    listeners : {
-                        render : function()
-                        {
-                            Ext.getCmp('conf-combo-theme').store.sort('themeName');
-                        },
-                        select : function(c, record, numIndex)
-                        {
-                            var hrefTheme = c.getValue(),
-                            tmp;
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function(field)
+                            {
+                                    var cmp = Ext.getCmp('main-menu-panel'),
+                                        val = this.getValue();
+                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    cmp.setWidth(val);
+                                    cmp.ownerCt.doLayout();
 
-                            Ext.get('appTheme').dom.href = hrefTheme;
-                            tmp = new ui.task.UpdateConfTask({
-                                item  : 'theme',
-                                value : hrefTheme
-                            });
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
                         }
-                    }
-                }]
-            },{
-                xtype       : 'fieldset',
+                    }]
+                }, {
+                    xtype      : 'fieldset',
+                    iconCls    : 'iconThemes',
+                    title      : _('Appearance'),
+                    items      : [{
+                        xtype          : 'combo',
+                        fieldLabel     : _('Choose a theme'),
+                        id             : 'conf-combo-theme',
+                        valueField     : 'themeFile',
+                        displayField   : 'themeName',
+                        triggerAction  : 'all',
+                        mode           : 'local',
+                        forceSelection : true,
+                        editable       : false,
+                        value          : PhDOE.userConf.theme,
+                        store          : ui.component._EditorConf.themeStore,
+                        listeners      : {
+                            render : function()
+                            {
+                                Ext.getCmp('conf-combo-theme').store.sort('themeName');
+                            },
+                            select : function(c, record, numIndex)
+                            {
+                                var hrefTheme = c.getValue(),
+                                tmp;
+
+                                Ext.get('appTheme').dom.href = hrefTheme;
+                                tmp = new ui.task.UpdateConfTask({
+                                    item  : 'theme',
+                                    value : hrefTheme
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype      : 'fieldset',
+                    title      : _('On save lang file'),
+                    iconCls     : 'iconSaveFile',
+                    autoHeight : true,
+                    defaults   : { hideLabel: true },
+                    defaultType : 'radio',
+                    items      : [{
+                        autoHeight : true,
+                        name       : 'onSaveLangFile',
+                        checked    : (PhDOE.userConf.onSaveLangFile === "ask-me") ? true : false,
+                        boxLabel   : _('Ask me if I want to check for error before saving the file'),
+                        inputValue : 'ask-me',
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                if (field.checked) {
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'onSaveLangFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        autoHeight : true,
+                        name       : 'onSaveLangFile',
+                        checked    : (PhDOE.userConf.onSaveLangFile === "always") ? true : false,
+                        boxLabel   : _('Always check for error before saving the file'),
+                        inputValue : 'always',
+                        listeners : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'onSaveLangFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        autoHeight : true,
+                        name       : 'onSaveLangFile',
+                        checked    : (PhDOE.userConf.onSaveLangFile === "never") ? true : false,
+                        boxLabel   : _('Never check for error before saving the file'),
+                        inputValue : 'never',
+                        listeners : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'onSaveLangFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }]
+                 }]
+             }, {
                 title       : _('External Data'),
                 iconCls     : 'iconExternalData',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
                 items       : [{
-                    autoHeight  : true,
-                    name        : 'mainAppLoadMailsAtStartUp',
-                    checked     : PhDOE.userConf["mainAppLoadMailsAtStartUp"],
-                    boxLabel    : _('Load Mails at startUp'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'mainAppLoadMailsAtStartUp',
-                                value : field.getValue()
-                            });
-                        }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'mainAppLoadBugsAtStartUp',
-                    checked     : PhDOE.userConf["mainAppLoadBugsAtStartUp"],
-                    boxLabel    : _('Load Bugs at startUp'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'mainAppLoadBugsAtStartUp',
-                                value : field.getValue()
-                            });
-                        }
-                    }
-                }]
-            },{
-                xtype      : 'fieldset',
-                title      : _('On save lang file'),
-                iconCls     : 'iconSaveFile',
-                autoHeight : true,
-                defaults   : { hideLabel: true },
-                defaultType : 'radio',
-                items      : [{
-                    autoHeight : true,
-                    name       : 'onSaveLangFile',
-                    checked    : (PhDOE.userConf["onSaveLangFile"] === "ask-me") ? true : false,
-                    boxLabel   : _('Ask me if I want to check for error before saving the file'),
-                    inputValue : 'ask-me',
-                    listeners  : {
-                        check  : function(field)
-                        {
-                            if (field.checked) {
+                    xtype       : 'fieldset',
+                    title       : _('About mails'),
+                    iconCls     : 'iconMailing',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'mainAppLoadMailsAtStartUp',
+                        checked     : PhDOE.userConf.mainAppLoadMailsAtStartUp,
+                        boxLabel    : _('Load Mails at startUp'),
+                        listeners   : {
+                            check : function(field)
+                            {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'onSaveLangFile',
-                                    value : field.getRawValue()
+                                    item  : 'mainAppLoadMailsAtStartUp',
+                                    value : field.getValue()
                                 });
                             }
                         }
-                    }
+                    }]
                 }, {
-                    autoHeight : true,
-                    name       : 'onSaveLangFile',
-                    checked    : (PhDOE.userConf["onSaveLangFile"] === "always") ? true : false,
-                    boxLabel   : _('Always check for error before saving the file'),
-                    inputValue : 'always',
-                    listeners : {
-                        check : function(field)
-                        {
-                            if (field.checked) {
+                    xtype       : 'fieldset',
+                    title       : _('About bugs'),
+                    iconCls     : 'iconBugs',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'mainAppLoadBugsAtStartUp',
+                        checked     : PhDOE.userConf.mainAppLoadBugsAtStartUp,
+                        boxLabel    : _('Load Bugs at startUp'),
+                        listeners   : {
+                            check : function(field)
+                            {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'onSaveLangFile',
-                                    value : field.getRawValue()
+                                    item  : 'mainAppLoadBugsAtStartUp',
+                                    value : field.getValue()
                                 });
                             }
                         }
-                    }
-                }, {
-                    autoHeight : true,
-                    name       : 'onSaveLangFile',
-                    checked    : (PhDOE.userConf["onSaveLangFile"] === "never") ? true : false,
-                    boxLabel   : _('Never check for error before saving the file'),
-                    inputValue : 'never',
-                    listeners : {
-                        check : function(field)
-                        {
-                            if (field.checked) {
-                                var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'onSaveLangFile',
-                                    value : field.getRawValue()
-                                });
-                            }
-                        }
-                    }
+                    }]
                 }]
              }]
         });
@@ -231,92 +288,101 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card2 - Module "Files Need Translate" Config
-ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-2',
-    autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
-    poolCommitChange : new Ext.util.DelayedTask(function(args) {
-
-        var tmp = new ui.task.UpdateConfTask({
-            item  : this.name,
-            value : this.getValue()
-        });
-
-    }),
-
+    id         : 'conf-card-2',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
-                title       : _('Nb files to display'),
-                iconCls     : 'iconFilesToDisplay',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'spinnerfield',
-                items       : [{
-                    autoHeight : true,
-                    width      : 60,
-                    name       : 'newFileNbDisplay',
-                    value      : PhDOE.userConf["newFileNbDisplay"] || 0,
-                    boxLabel   : _('files to display'),
-                    minValue   : 0,
-                    maxValue   : 10000,
-                    accelerate : true,
-                    enableKeyEvents : true,
-                    listeners  : {
-                        keyup : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
-                        },
-                        spin : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                title       : _('Menu'),
+                layout      : 'fit',
+                iconCls     : 'iconMenu',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    items       : [{
+                        xtype      : 'spinnerfield',
+                        width      : 60,
+                        name       : 'newFileNbDisplay',
+                        value      : PhDOE.userConf.newFileNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function(field)
+                            {
+                                PhDOE.userConf.newFileNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function(field)
+                            {
+                                PhDOE.userConf.newFileNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
                         }
-                    }
-                }, {
-                    xtype: 'displayfield',
-                    value: _('0 means no limit'),
-                    style: { fontStyle: 'italic'}
+                    }, {
+                        xtype: 'displayfield',
+                        value: _('0 means no limit'),
+                        style: { fontStyle: 'italic'}
+                    }]
                 }]
             }, {
-                xtype       : 'fieldset',
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
+                items       : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'newFileScrollbars',
+                        checked     : PhDOE.userConf.newFileScrollbars,
+                        boxLabel    : _('Synchronize scroll bars'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'newFileScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }, {
                 title       : _('Editor'),
                 iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
-                items       : [{
-                    autoHeight  : true,
-                    name        : 'newFileScrollbars',
-                    checked     : PhDOE.userConf["newFileScrollbars"],
-                    boxLabel    : _('Synchronize scroll bars'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'newFileScrollbars',
-                                value : field.getValue()
-                            });
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'newFileSpellCheck',
+                        checked     : PhDOE.userConf.newFileSpellCheck,
+                        boxLabel    : _('Enable spellChecking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'newFileSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'newFileSpellCheck',
-                    checked     : PhDOE.userConf["newFileSpellCheck"],
-                    boxLabel    : _('Enable spellChecking'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'newFileSpellCheck',
-                                value : field.getValue()
-                            });
-                        }
-                    }
+                    }]
                 }]
             }]
         });
@@ -325,163 +391,260 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card3 - Module "Files Need Update" Config
-ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-3',
-    autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
-    poolCommitChange : new Ext.util.DelayedTask(function(args) {
-
-        var tmp = new ui.task.UpdateConfTask({
-            item  : this.name,
-            value : this.getValue()
-        });
-
-    }),
-
+    id         : 'conf-card-3',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
-                title       : _('Nb files to display'),
-                iconCls     : 'iconFilesToDisplay',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'spinnerfield',
-                items       : [{
-                    autoHeight : true,
-                    width      : 60,
-                    name       : 'needUpdateNbDisplay',
-                    value      : PhDOE.userConf["needUpdateNbDisplay"] || 0,
-                    boxLabel   : _('files to display'),
-                    minValue   : 0,
-                    maxValue   : 10000,
-                    accelerate : true,
-                    enableKeyEvents : true,
-                    listeners  : {
-                        keyup : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
-                        },
-                        spin : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                title       : _('Menu'),
+                iconCls     : 'iconMenu',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'spinnerfield',
+                    items       : [{
+                        width      : 60,
+                        name       : 'needUpdateNbDisplay',
+                        value      : PhDOE.userConf.needUpdateNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function(field)
+                            {
+                                PhDOE.userConf.needUpdateNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function(field)
+                            {
+                                PhDOE.userConf.needUpdateNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
                         }
-                    }
 
-                }, {
-                    xtype: 'displayfield',
-                    value: _('0 means no limit'),
-                    style: { fontStyle: 'italic'}
+                    }, {
+                        xtype: 'displayfield',
+                        value: _('0 means no limit'),
+                        style: { fontStyle: 'italic'}
+                    }]
                 }]
             }, {
-                xtype       : 'fieldset',
-                title       : _('Diff view'),
-                iconCls     : 'iconDiffView',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'radio',
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
                 items       : [{
-                    autoHeight : true,
-                    name       : 'needUpdateDiff',
-                    checked    : (PhDOE.userConf["needUpdateDiff"] === "using-viewvc") ? true : false,
-                    boxLabel   : _('Using ViewVc from php web site'),
-                    inputValue : 'using-viewvc',
-                    listeners  : {
-                        check  : function(field)
-                        {
-                            if (field.checked) {
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'needUpdateScrollbars',
+                        checked     : PhDOE.userConf.needUpdateScrollbars,
+                        boxLabel    : _('Synchronize scroll bars'),
+                        listeners   : {
+                            check : function(field)
+                            {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiff',
-                                    value : field.getRawValue()
+                                    item  : 'needUpdateScrollbars',
+                                    value : field.getValue()
                                 });
                             }
                         }
-                    }
+                    }]
                 }, {
-                    autoHeight : true,
-                    name       : 'needUpdateDiff',
-                    checked    : (PhDOE.userConf["needUpdateDiff"] === "using-exec") ? true : false,
-                    boxLabel   : _('Using diff -kk -u command line'),
-                    inputValue : 'using-exec',
-                    listeners : {
-                        check : function(field)
-                        {
-                            if (field.checked) {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'needUpdateDisplaylog',
+                        checked     : PhDOE.userConf.needUpdateDisplaylog,
+                        boxLabel    : _('Automatically load the log when displaying the file'),
+                        listeners   : {
+                            check : function(field)
+                            {
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiff',
-                                    value : field.getRawValue()
+                                    item  : 'needUpdateDisplaylog',
+                                    value : field.getValue()
                                 });
                             }
                         }
-                    }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'needUpdateDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.needUpdateDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.needUpdateDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Diff view'),
+                    iconCls     : 'iconDiffView',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'radio',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.needUpdateDiffPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'needUpdateDiffPanelHeight',
+                            value      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.needUpdateDiffPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.needUpdateDiffPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }, {
+                        name       : 'needUpdateDiff',
+                        checked    : (PhDOE.userConf.needUpdateDiff === "using-viewvc") ? true : false,
+                        boxLabel   : _('Using ViewVc from php web site'),
+                        inputValue : 'using-viewvc',
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                if (field.checked) {
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiff',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        name       : 'needUpdateDiff',
+                        checked    : (PhDOE.userConf.needUpdateDiff === "using-exec") ? true : false,
+                        boxLabel   : _('Using diff -kk -u command line'),
+                        inputValue : 'using-exec',
+                        listeners : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiff',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }]
                 }]
             }, {
-                xtype       : 'fieldset',
                 title       : _('Editor'),
                 iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
-                items       : [{
-                    autoHeight  : true,
-                    name        : 'needUpdateScrollbars',
-                    checked     : PhDOE.userConf["needUpdateScrollbars"],
-                    boxLabel    : _('Synchronize scroll bars'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'needUpdateScrollbars',
-                                value : field.getValue()
-                            });
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'needUpdateSpellCheckEn',
+                        checked     : PhDOE.userConf.needUpdateSpellCheckEn,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'needUpdateDisplaylog',
-                    checked     : PhDOE.userConf["needUpdateDisplaylog"],
-                    boxLabel    : _('Automatically load the log when displaying the file'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'needUpdateDisplaylog',
-                                value : field.getValue()
-                            });
+                    },{
+                        name        : 'needUpdateSpellCheckLang',
+                        checked     : PhDOE.userConf.needUpdateSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'needUpdateSpellCheckEn',
-                    checked     : PhDOE.userConf["needUpdateSpellCheckEn"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'needUpdateSpellCheckEn',
-                                value : field.getValue()
-                            });
-                        }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'needUpdateSpellCheckLang',
-                    checked     : PhDOE.userConf["needUpdateSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'needUpdateSpellCheckLang',
-                                value : field.getValue()
-                            });
-                        }
-                    }
+                    }]
                 }]
             }]
         });
@@ -490,101 +653,216 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card4 - Module "Files with Error" Config
-ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-4',
-    autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
+    id         : 'conf-card-4',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle : 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
-                title       : _('Error type'),
-                iconCls     : 'iconFilesError',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
-                items       : [{
-                    autoHeight : true,
-                    name       : 'errorSkipNbLiteralTag',
-                    checked    : PhDOE.userConf["errorSkipNbLiteralTag"],
-                    boxLabel   : _('Skip nbLiteralTag error'),
-                    listeners  : {
-                        check  : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'errorSkipNbLiteralTag',
-                                value : field.getValue()
-                            });
+                title       : _('Menu'),
+                layout      : 'fit',
+                iconCls     : 'iconMenu',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('Error type'),
+                    iconCls     : 'iconFilesError',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorSkipNbLiteralTag',
+                        checked    : PhDOE.userConf.errorSkipNbLiteralTag,
+                        boxLabel   : _('Skip nbLiteralTag error'),
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorSkipNbLiteralTag',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
+                    }]
                 }]
             }, {
-                xtype       : 'fieldset',
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
+                items       : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorScrollbars',
+                        checked    : PhDOE.userConf.errorScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorDisplayLog',
+                        checked    : PhDOE.userConf.errorDisplayLog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplayLog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.errorDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'errorDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.errorDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.errorDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Error description'),
+                    iconCls     : 'iconFilesError',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'radio',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.errorDescPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'errorDescPanelHeight',
+                            value      : PhDOE.userConf.errorDescPanelHeight || 150,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.errorDescPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.errorDescPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
                 title       : _('Editor'),
                 iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
                 items       : [{
-                    autoHeight : true,
-                    name       : 'errorScrollbars',
-                    checked    : PhDOE.userConf["errorScrollbars"],
-                    boxLabel   : _('Synchronize scroll bars'),
-                    listeners  : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'errorScrollbars',
-                                value : field.getValue()
-                            });
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'errorSpellCheckEn',
+                        checked     : PhDOE.userConf.errorSpellCheckEn,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight : true,
-                    name       : 'errorDisplayLog',
-                    checked    : PhDOE.userConf["errorDisplayLog"],
-                    boxLabel   : _('Automatically load the log when displaying the file'),
-                    listeners : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'errorDisplayLog',
-                                value : field.getValue()
-                            });
+                    }, {
+                        name        : 'errorSpellCheckLang',
+                        checked     : PhDOE.userConf.errorSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'errorSpellCheckEn',
-                    checked     : PhDOE.userConf["errorSpellCheckEn"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'errorSpellCheckEn',
-                                value : field.getValue()
-                            });
-                        }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'errorSpellCheckLang',
-                    checked     : PhDOE.userConf["errorSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'errorSpellCheckLang',
-                                value : field.getValue()
-                            });
-                        }
-                    }
+                    }]
                 }]
             }]
         });
@@ -593,121 +871,177 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card5 - Module "Files need Reviewed" Config
-ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
 {
     id        : 'conf-card-5',
     autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
-    poolCommitChange : new Ext.util.DelayedTask(function(args) {
-
-        var tmp = new ui.task.UpdateConfTask({
-            item  : this.name,
-            value : this.getValue()
-        });
-
-    }),
-
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
-                title       : _('Nb files to display'),
-                iconCls     : 'iconFilesToDisplay',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'spinnerfield',
-                items       : [{
-                    autoHeight : true,
-                    width      : 60,
-                    name       : 'reviewedNbDisplay',
-                    value      : PhDOE.userConf["reviewedNbDisplay"] || 0,
-                    boxLabel   : _('files to display'),
-                    minValue   : 0,
-                    maxValue   : 10000,
-                    accelerate : true,
-                    enableKeyEvents : true,
-                    listeners  : {
-                        keyup : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
-                        },
-                        spin : function(field)
-                        {
-                            this.ownerCt.ownerCt.poolCommitChange.delay(1000, null, this);
+                title       : _('Menu'),
+                iconCls     : 'iconMenu',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'spinnerfield',
+                    items       : [{
+                        width      : 60,
+                        name       : 'reviewedNbDisplay',
+                        value      : PhDOE.userConf.reviewedNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function(field)
+                            {
+                                PhDOE.userConf.reviewedNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function(field)
+                            {
+                                PhDOE.userConf.reviewedNbDisplay = this.getValue();
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
                         }
-                    }
 
-                }, {
-                    xtype: 'displayfield',
-                    value: _('0 means no limit'),
-                    style: { fontStyle: 'italic'}
+                    }, {
+                        xtype: 'displayfield',
+                        value: _('0 means no limit'),
+                        style: { fontStyle: 'italic'}
+                    }]
                 }]
             }, {
-                xtype       : 'fieldset',
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
+                title       : 'User Interface',
+                iconCls     : 'iconUI',
                 items       : [{
-                    autoHeight : true,
-                    name       : 'reviewedScrollbars',
-                    checked    : PhDOE.userConf["reviewedScrollbars"],
-                    boxLabel   : _('Synchronize scroll bars'),
-                    listeners  : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'reviewedScrollbars',
-                                value : field.getValue()
-                            });
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'reviewedScrollbars',
+                        checked    : PhDOE.userConf.reviewedScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
+                    }]
                 }, {
-                    autoHeight : true,
-                    name       : 'reviewedDisplaylog',
-                    checked    : PhDOE.userConf["reviewedDisplaylog"],
-                    boxLabel   : _('Automatically load the log when displaying the file'),
-                    listeners  : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'reviewedDisplaylog',
-                                value : field.getValue()
-                            });
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'reviewedDisplaylog',
+                        checked    : PhDOE.userConf.reviewedDisplaylog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylog',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'reviewedSpellCheckEn',
-                    checked     : PhDOE.userConf["reviewedSpellCheckEn"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'reviewedSpellCheckEn',
-                                value : field.getValue()
-                            });
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.reviewedDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'reviewedDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.reviewedNbDisplay = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.reviewedNbDisplay = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                title       : 'Editor',
+                iconCls     : 'iconEditor',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'reviewedSpellCheckEn',
+                        checked     : PhDOE.userConf.reviewedSpellCheckEn,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'reviewedSpellCheckLang',
-                    checked     : PhDOE.userConf["reviewedSpellCheckLang"],
-                    boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'reviewedSpellCheckLang',
-                                value : field.getValue()
-                            });
+                    }, {
+                        name        : 'reviewedSpellCheckLang',
+                        checked     : PhDOE.userConf.reviewedSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
+                    }]
                 }]
             }]
         });
@@ -716,51 +1050,107 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card6 - Module "All files" Config
-ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-6',
-    autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
+    id         : 'conf-card-6',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'allFilesDisplayLog',
+                        checked    : PhDOE.userConf.allFilesDisplayLog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplayLog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'allFilesDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.allFilesDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.allFilesDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
                 title       : _('Editor'),
                 iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
-                items       : [{
-                    autoHeight : true,
-                    name       : 'allFilesDisplayLog',
-                    checked    : PhDOE.userConf["allFilesDisplayLog"],
-                    boxLabel   : _('Automatically load the log when displaying the file'),
-                    listeners  : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'allFilesDisplayLog',
-                                value : field.getValue()
-                            });
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'allFilesSpellCheck',
+                        checked     : PhDOE.userConf.allFilesSpellCheck,
+                        boxLabel    : _('Enable spellChecking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'allFilesSpellCheck',
-                    checked     : PhDOE.userConf["allFilesSpellCheck"],
-                    boxLabel    : _('Enable spellChecking'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'allFilesSpellCheck',
-                                value : field.getValue()
-                            });
-                        }
-                    }
+                    }]
                 }]
             }]
         });
@@ -769,65 +1159,178 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.form.FormPanel,
 });
 
 // EditorConf card7 - Module "Pending Patch" Config
-ui.component._EditorConf.card7 = Ext.extend(Ext.form.FormPanel,
+ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
 {
     id        : 'conf-card-7',
     autoScroll: true,
-    bodyStyle : 'padding: 10px;',
-
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                xtype       : 'fieldset',
+                title       : _('User Interface'),
+                iconCls     : 'iconUI',
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'patchScrollbars',
+                        checked    : PhDOE.userConf.patchScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'patchDisplaylog',
+                        checked    : PhDOE.userConf.patchDisplaylog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.patchDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'patchDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.patchDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.patchDisplaylogPanelWidth = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Patch content'),
+                    iconCls     : 'iconPendingPatch',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.patchDisplayContentPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'patchDisplayContentPanelHeight',
+                            value      : PhDOE.userConf.patchDisplayContentPanelHeight || 375,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function(field)
+                                {
+                                    PhDOE.userConf.patchDisplayContentPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function(field)
+                                {
+                                    PhDOE.userConf.patchDisplayContentPanelHeight = this.getValue();
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
                 title       : _('Editor'),
                 iconCls     : 'iconEditor',
-                autoHeight  : true,
-                defaults    : { hideLabel: true },
-                defaultType : 'checkbox',
-                items       : [{
-                    autoHeight : true,
-                    name       : 'patchScrollbars',
-                    checked    : PhDOE.userConf["patchScrollbars"],
-                    boxLabel   : _('Synchronize scroll bars'),
-                    listeners  : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'patchScrollbars',
-                                value : field.getValue()
-                            });
+                items: [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'patchSpellCheck',
+                        checked     : PhDOE.userConf.patchSpellCheck,
+                        boxLabel    : _('Enable spellChecking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
                         }
-                    }
-                }, {
-                    autoHeight : true,
-                    name       : 'patchDisplayLog',
-                    checked    : PhDOE.userConf["patchDisplayLog"],
-                    boxLabel   : _('Automatically load the log when displaying the file'),
-                    listeners : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'patchDisplayLog',
-                                value : field.getValue()
-                            });
-                        }
-                    }
-                }, {
-                    autoHeight  : true,
-                    name        : 'patchSpellCheck',
-                    checked     : PhDOE.userConf["patchSpellCheck"],
-                    boxLabel    : _('Enable spellChecking'),
-                    listeners   : {
-                        check : function(field)
-                        {
-                            var tmp = new ui.task.UpdateConfTask({
-                                item  : 'patchSpellCheck',
-                                value : field.getValue()
-                            });
-                        }
-                    }
+                    }]
                 }]
             }]
         });
@@ -841,7 +1344,7 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
 {
     id          : 'win-conf',
     layout      : 'border',
-    width       : 600,
+    width       : 700,
     height      : 470,
     iconCls     : 'iconConf',
     title       : _('Configuration'),

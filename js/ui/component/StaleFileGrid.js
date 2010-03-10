@@ -149,8 +149,8 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
         });
     },
 
-    openTab: function(rowIdx, lang, fpath, fname) {
-
+    openTab: function(rowIdx, lang, fpath, fname)
+    {
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
 
@@ -252,9 +252,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
 
-            if (PhDOE.userConf["needUpdateDiff"] === "using-viewvc") {
+            if (PhDOE.userConf.needUpdateDiff === "using-viewvc") {
                 diff = ui.component.ViewVCDiff;
-            } else if (PhDOE.userConf["needUpdateDiff"] === "using-exec") {
+            } else if (PhDOE.userConf.needUpdateDiff === "using-exec") {
                 diff = ui.component.ExecDiff;
             }
 
@@ -266,9 +266,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle    : FileName,
                 iconCls        : 'iconTabNeedUpdate',
                 closable       : true,
-                panVCSLang     : !PhDOE.userConf["needUpdateDisplaylog"],
-                panVCSEn       : !PhDOE.userConf["needUpdateDisplaylog"],
-                panDiffLoaded  : (PhDOE.userConf["needUpdateDiff"] === "using-viewvc"), // Use to monitor if the Diff panel is loaded
+                panVCSLang     : !PhDOE.userConf.needUpdateDisplaylog,
+                panVCSEn       : !PhDOE.userConf.needUpdateDisplaylog,
+                panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"), // Use to monitor if the Diff panel is loaded
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 defaults       : { split : true },
@@ -284,24 +284,71 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     new diff({
                         region      : 'north',
                         collapsible : true,
+                        height      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
                         prefix      : 'FNU',
+                        collapsed   : !PhDOE.userConf.needUpdateDiffPanel,
                         fid         : FileID,
                         fpath       : FilePath,
                         fname       : FileName,
                         rev1        : (originalRevision) ? originalRevision : revision,
-                        rev2        : en_revision
+                        rev2        : en_revision,
+                        listeners   : {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,b,newHeight) {
+
+                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanelHeight',
+                                        value : newHeight
+                                    });
+                                }
+                            }
+                        }
                     }), {
                         region      : 'west',
                         xtype       : 'panel',
-                        title       : _('VCSLog'),
+                        title       : _('VCS Log'),
                         iconCls     : 'iconVCSLog',
                         collapsedIconCls : 'iconVCSLog',
                         collapsible : true,
-                        collapsed   : true,
+                        collapsed   : !PhDOE.userConf.needUpdateDisplaylogPanel,
                         layout      : 'fit',
                         bodyBorder  : false,
                         plugins     : [Ext.ux.PanelCollapsedTitle],
-                        width       : 375,
+                        width       : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                        listeners: {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,newWidth) {
+                                if( newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
@@ -315,7 +362,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : PhDOE.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : PhDOE.userConf["needUpdateDisplaylog"]
+                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -324,7 +371,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : PhDOE.userConf["needUpdateDisplaylog"]
+                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
                                 })
                             ]
                         }
@@ -335,7 +382,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
                         prefix         : 'FNU',
                         ftype          : 'LANG',
-                        spellCheck     : PhDOE.userConf["needUpdateSpellCheckLang"],
+                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckLang,
                         spellCheckConf : 'needUpdateSpellCheckLang',
                         fid            : FileID,
                         fpath          : FilePath,
@@ -353,7 +400,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FNU',
                         ftype          : 'EN',
-                        spellCheck     : PhDOE.userConf["needUpdateSpellCheckEn"],
+                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckEn,
                         spellCheckConf : 'needUpdateSpellCheckEn',
                         fid            : FileID,
                         fpath          : FilePath,

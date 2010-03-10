@@ -38,18 +38,18 @@ ui.component._MainMenu.store.on('load', function(store) {
     var tmp; 
 
     // We put the lang libel into Info-Language
-    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data["name"];
+    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
 
     store.each(function(record){
 
         tmp = new Ext.menu.Item({
-            text    : record.data["name"],
-            iconCls : 'mainMenuLang flags ' + record.data["iconCls"],
-            disabled: (record.data["code"] === PhDOE.userLang),
+            text    : record.data.name,
+            iconCls : 'mainMenuLang flags ' + record.data.iconCls,
+            disabled: (record.data.code === PhDOE.userLang),
             handler : function() {
                 
                 XHR({
-                    params  : { task : 'switchLang', lang: record.data["code"] },
+                    params  : { task : 'switchLang', lang: record.data.code },
                     success : function()
                     {
                         window.location.reload();

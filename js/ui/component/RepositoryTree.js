@@ -236,7 +236,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     panelWest = {
                         xtype       : 'panel',
                         region      : 'west',
-                        title       : _('VCSLog'),
+                        title       : _('VCS Log'),
                         iconCls     : 'iconVCSLog',
                         collapsedIconCls : 'iconVCSLog',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
@@ -244,22 +244,44 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         bodyBorder  : false,
                         split       : true,
                         collapsible : true,
-                        collapsed   : true,
-                        width       : 375,
+                        collapsed   : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        width       : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                        listeners   : {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,newWidth) {
+                                if( newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             tabPosition : 'bottom',
                             defaults    : { autoScroll: true },
                             items       : [{
-                                title  : 'Log',
+                                title  : _('Log'),
                                 layout : 'fit',
                                 items  : [new ui.component.VCSLogGrid({
                                     prefix    : 'AF',
                                     fid       : FileID,
                                     fpath     : FileLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : PhDOE.userConf["allFilesDisplayLog"]
+                                    loadStore : PhDOE.userConf.allFilesDisplayLog
                                 })]
                             }]
                         }
@@ -271,7 +293,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         title          : _('File: ') + FileLang + FilePath + FileName,
                         prefix         : 'AF',
                         ftype          : 'ALL',
-                        spellCheck     : PhDOE.userConf["allFilesSpellCheck"],
+                        spellCheck     : PhDOE.userConf.allFilesSpellCheck,
                         spellCheckConf : 'allFilesSpellCheck',
                         fid            : FileID,
                         fpath          : FilePath,
@@ -290,7 +312,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     title       : FileName,
                     originTitle : FileName,
                     closable    : true,
-                    panVCS      : !PhDOE.userConf["allFilesDisplayLog"],
+                    panVCS      : !PhDOE.userConf.allFilesDisplayLog,
                     panLoaded   : false, // Use to monitor if the LANG panel is loaded
                     tabTip      : String.format(_('in {0}'), FilePath),
                     iconCls     : 'iconAllFiles',

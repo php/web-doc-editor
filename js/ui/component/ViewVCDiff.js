@@ -8,7 +8,7 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
     title     : _('Diff From VCS'),
     iconCls   : 'iconDiffView',
     collapsedIconCls : 'iconDiffView',
-    height    : 150,
+    plugins    : [Ext.ux.PanelCollapsedTitle],
 
     initComponent : function()
     {

@@ -289,6 +289,7 @@ var PhDOE = function()
 
             new Ext.Viewport({
                 layout : 'border',
+                    id           : 'main-app',
                 items : [{
                     // logo
                     region     : 'north',
@@ -303,14 +304,25 @@ var PhDOE = function()
                 }, {
                     // accordion
                     region       : 'west',
+                    id           : 'main-menu-panel',
                     layout       : 'accordion',
-
                     collapsible  : true,
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    width        : 300,
+                    width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
                     header       : false,
+                    listeners: {
+                        resize: function(a,newWidth) {
+
+                            if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'mainAppMainMenuWidth',
+                                    value : newWidth
+                                });
+                            }
+                        }
+                    },
                     tbar : [{
                         text    : _('Main Menu'),
                         iconCls : 'MainMenu',

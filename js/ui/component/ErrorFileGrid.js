@@ -80,7 +80,7 @@ ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
     deferEmptyText: false,
     forceFit     : true,
     startCollapsed : true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
+    groupTextTpl : '{[values.rs[0].data.path]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
     getRowClass  : function(record, numIndex, rowParams, store)
@@ -256,8 +256,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 layout      : 'border',
                 iconCls     : 'iconTabError',
                 closable    : true,
-                panVCSLang     : !PhDOE.userConf["errorDisplayLog"],
-                panVCSEn       : !PhDOE.userConf["errorDisplayLog"],
+                panVCSLang     : !PhDOE.userConf.errorDisplayLog,
+                panVCSEn       : !PhDOE.userConf.errorDisplayLog,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 originTitle : FileName,
@@ -280,24 +280,69 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         iconCls     : 'iconFilesError',
                         collapsedIconCls : 'iconFilesError',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
-                        height      : 150,
+                        height      : PhDOE.userConf.errorDescPanelHeight || 150,
                         collapsible : true,
-                        collapsed   : true,
+                        collapsed   : !PhDOE.userConf.errorDescPanel,
                         autoScroll  : true,
                         autoLoad    : './error?dir=' + FilePath +
-                                                '&file=' + FileName
+                                            '&file=' + FileName,
+                        listeners   : {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,b,newHeight) {
+
+                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanelHeight',
+                                        value : newHeight
+                                    });
+                                }
+                            }
+                        }
                     }, {
                         region      : 'west',
                         xtype       : 'panel',
-                        title       : _('VCSLog'),
+                        title       : _('VCS Log'),
                         iconCls     : 'iconVCSLog',
                         collapsedIconCls : 'iconVCSLog',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
                         collapsible : true,
-                        collapsed   : true,
+                        collapsed   : !PhDOE.userConf.errorDisplaylogPanel,
                         layout      : 'fit',
                         bodyBorder  : false,
-                        width       : 375,
+                        width       : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                        listeners: {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,newWidth) {
+                                if( newWidth && newWidth != PhDOE.userConf.errorDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'errorDisplaylogPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
@@ -311,7 +356,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : PhDOE.userLang + FilePath,
                                     fname     : FileName,
-                                    loadStore : PhDOE.userConf["errorDisplayLog"]
+                                    loadStore : PhDOE.userConf.errorDisplayLog
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -320,7 +365,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
-                                    loadStore : PhDOE.userConf["errorDisplayLog"]
+                                    loadStore : PhDOE.userConf.errorDisplayLog
                                 })
                             ]
                         }
@@ -331,7 +376,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
                         prefix         : 'FE',
                         ftype          : 'LANG',
-                        spellCheck     : PhDOE.userConf["errorSpellCheckLang"],
+                        spellCheck     : PhDOE.userConf.errorSpellCheckLang,
                         spellCheckConf : 'errorSpellCheckLang',
                         fid            : FileID,
                         fpath          : FilePath,
@@ -349,7 +394,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : _('en File: ') + FilePath + FileName,
                         prefix         : 'FE',
                         ftype          : 'EN',
-                        spellCheck     : PhDOE.userConf["errorSpellCheckEn"],
+                        spellCheck     : PhDOE.userConf.errorSpellCheckEn,
                         spellCheckConf : 'errorSpellCheckEn',
                         fid            : FileID,
                         fpath          : FilePath,

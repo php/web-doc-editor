@@ -660,7 +660,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 }
 
                                 // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
-                                switch (PhDOE.userConf["onSaveLangFile"]) {
+                                switch (PhDOE.userConf.onSaveLangFile) {
 
                                     case 'always':
                                         tmp = new ui.task.CheckFileTask({

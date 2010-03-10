@@ -305,8 +305,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 layout      : 'border',
                 iconCls     : 'iconTabNeedReviewed',
                 closable    : true,
-                panVCSLang     : !PhDOE.userConf["reviewedDisplaylog"],
-                panVCSEn       : !PhDOE.userConf["reviewedDisplaylog"],
+                panVCSLang     : !PhDOE.userConf.reviewedDisplaylog,
+                panVCSEn       : !PhDOE.userConf.reviewedDisplaylog,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 originTitle : FileName,
@@ -319,81 +319,99 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         Ext.getCmp('FNR-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
                     }
                 },
-                items : [
-                    {
-                        region      : 'west',
-                        xtype       : 'panel',
-                        title       : _('VCSLog'),
-                        iconCls     : 'iconVCSLog',
-                        collapsedIconCls : 'iconVCSLog',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        collapsible : true,
-                        collapsed   : true,
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        width       : 375,
-                        items : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            tabPosition : 'bottom',
-                            defaults    : { autoScroll : true },
-                            items       : [
-                                new ui.component.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : PhDOE.userLang,
-                                    prefix    : 'FNR-LANG',
-                                    fid       : FileID,
-                                    fpath     : PhDOE.userLang + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf["reviewedDisplaylog"]
-                                }), new ui.component.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : 'en',
-                                    prefix    : 'FNR-EN',
-                                    fid       : FileID,
-                                    fpath     : 'en' + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf["reviewedDisplaylog"]
-                                })
-                            ]
+                items : [{
+                    region      : 'west',
+                    xtype       : 'panel',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    collapsedIconCls : 'iconVCSLog',
+                    plugins     : [Ext.ux.PanelCollapsedTitle],
+                    collapsible : true,
+                    collapsed   : !PhDOE.userConf.reviewedDisplaylogPanel,
+                    layout      : 'fit',
+                    bodyBorder  : false,
+                    width       : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                    listeners   : {
+                        collapse: function() {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'reviewedDisplaylogPanel',
+                                value : false
+                            });
+                        },
+                        expand: function() {
+                            var tmp = new ui.task.UpdateConfTask({
+                                item  : 'reviewedDisplaylogPanel',
+                                value : true
+                            });
+                        },
+                        resize: function(a,newWidth) {
+                            if( newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanelWidth',
+                                    value : newWidth
+                                });
+                            }
                         }
-                    }, new ui.component.FilePanel(
-                    {
-                        id             : 'FNR-LANG-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                        prefix         : 'FNR',
-                        ftype          : 'LANG',
-                        spellCheck     : PhDOE.userConf["reviewedSpellCheckLang"],
-                        spellCheckConf : 'reviewedSpellCheckLang',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : PhDOE.userLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
-                        syncScrollConf : 'reviewedScrollbars'
-                    }), new ui.component.FilePanel(
-                    {
-                        id             : 'FNR-EN-PANEL-' + FileID,
-                        region         : 'east',
-                        title          : _('en File: ') + FilePath + FileName,
-                        prefix         : 'FNR',
-                        ftype          : 'EN',
-                        spellCheck     : PhDOE.userConf["reviewedSpellCheckEn"],
-                        spellCheckConf : 'reviewedSpellCheckEn',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : 'en',
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScroll     : true,
-                        syncScrollConf : 'reviewedScrollbars'
-                    })
-                ]
+                    },
+                    items : {
+                        xtype       : 'tabpanel',
+                        activeTab   : 0,
+                        tabPosition : 'bottom',
+                        defaults    : { autoScroll : true },
+                        items       : [
+                            new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : PhDOE.userLang,
+                                prefix    : 'FNR-LANG',
+                                fid       : FileID,
+                                fpath     : PhDOE.userLang + FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf.reviewedDisplaylog
+                            }), new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : 'en',
+                                prefix    : 'FNR-EN',
+                                fid       : FileID,
+                                fpath     : 'en' + FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf.reviewedDisplaylog
+                            })
+                        ]
+                    }
+                }, new ui.component.FilePanel({
+                    id             : 'FNR-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FNR',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.reviewedSpellCheckLang,
+                    spellCheckConf : 'reviewedSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : true,
+                    syncScroll     : true,
+                    syncScrollConf : 'reviewedScrollbars'
+                }), new ui.component.FilePanel({
+                    id             : 'FNR-EN-PANEL-' + FileID,
+                    region         : 'east',
+                    title          : _('en File: ') + FilePath + FileName,
+                    prefix         : 'FNR',
+                    ftype          : 'EN',
+                    spellCheck     : PhDOE.userConf.reviewedSpellCheckEn,
+                    spellCheckConf : 'reviewedSpellCheckEn',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : 'en',
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScroll     : true,
+                    syncScrollConf : 'reviewedScrollbars'
+                })]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);

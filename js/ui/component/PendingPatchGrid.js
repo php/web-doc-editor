@@ -170,15 +170,13 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle : FileName,
                 tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
                 closable    : true,
-
                 panPatchContent: false,
-                panVCS         : !PhDOE.userConf["patchDisplayLog"],
+                panVCS         : !PhDOE.userConf.patchDisplayLog,
                 panPatchLoaded : false,
                 panOriginLoaded: false,
 
                 defaults    : { split : true },
-                items       : [
-                    {
+                items       : [{
                         xtype       : 'panel',
                         id          : 'PP-patch-desc-' + FileID,
                         title       : _('Patch content'),
@@ -188,12 +186,35 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         layout      : 'fit',
                         region      : 'north',
                         border      : false,
-                        height      : 250,
+                        height      : PhDOE.userConf.patchDisplayContentPanelHeight || 150,
                         autoScroll  : true,
                         collapsible : true,
-                        collapsed   : true,
+                        collapsed   : !PhDOE.userConf.patchDisplayContentPanel,
                         html        : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
                         listeners   : {
+                            collapse: function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function()
+                            {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,b,newHeight)
+                            {
+                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanelHeight',
+                                        value : newHeight
+                                    });
+                                }
+                            },
                             render : function()
                             {
                                 // Load diff data
@@ -221,15 +242,37 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                     }, {
                         region      : 'west',
                         xtype       : 'panel',
-                        title       : _('VCSLog'),
+                        title       : _('VCS Log'),
                         iconCls     : 'iconVCSLog',
                         collapsedIconCls : 'iconVCSLog',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
                         layout      : 'fit',
                         bodyBorder  : false,
                         collapsible : true,
-                        collapsed   : true,
-                        width       : 375,
+                        collapsed   : !PhDOE.userConf.patchDisplaylogPanel,
+                        width       : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                        listeners   : {
+                            collapse: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand: function() {
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : true
+                                });
+                            },
+                            resize: function(a,newWidth) {
+                                if( newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    var tmp = new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
@@ -242,7 +285,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 fid       : FileID,
                                 fpath     : FilePath,
                                 fname     : FileName,
-                                loadStore : PhDOE.userConf["patchDisplayLog"]
+                                loadStore : PhDOE.userConf.patchDisplayLog
                             })
                         }
                     }, new ui.component.FilePanel(
@@ -252,7 +295,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
                         prefix         : 'PP',
                         ftype          : 'PATCH',
-                        spellCheck     : PhDOE.userConf["patchSpellCheck"],
+                        spellCheck     : PhDOE.userConf.patchSpellCheck,
                         spellCheckConf : 'patchSpellCheck',
                         fid            : FileID,
                         fpath          : FilePath,

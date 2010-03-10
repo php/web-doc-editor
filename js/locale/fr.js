@@ -29,6 +29,16 @@ i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le docum
 
 // Generic
 i18n["Warning"] = "Alerte";
+
+i18n["ScrollBars"] = "Barres de défilement";
+i18n["User Interface"] = "Interface utilisateur";
+i18n["Menu"] = "Menu";
+
+i18n["Start with the panel open"] = "Commencer avec le panneau ouvert";
+i18n["Panel width"] = "Largeur du panneau";
+i18n["Panel height"] = "Hauteur du panneau";
+
+
 i18n["Automatic translation: "] = "Traduction automatique : ";
 
 i18n["String to translate (en => {0})"] = "Message à traduire (en => {0}) ";
@@ -36,6 +46,7 @@ i18n["Translate !"] = "Traduire !";
 i18n["Google Translation"] = "Traduire avec Google";
 
 i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
+i18n["SpellChecking"] = "Vérification orthographique";
 i18n["Nb files to display"] = "Nombre de fichiers à afficher";
 i18n["files to display"] = "fichiers à afficher";
 i18n["0 means no limit"] = "La valeur 0 signifie 'Aucune limite'";
@@ -118,7 +129,7 @@ i18n["Author"] = "Auteur";
 i18n["<b>View</b> the diff"] = "<b>Voir</b> les différences";
 i18n["<b>Load/Refresh</b> revisions"] = "<b>Charger/Rafraîchir</b> les versions";
 i18n["Diff From VCS"] = "Différence depuis VCS";
-i18n["VCSLog"] = "Historique VCS";
+i18n["VCS Log"] = "Historique VCS";
 i18n["{0} File: "] = "Fichier {0} : ";
 i18n["en File: "] = "Fichier En : ";
 i18n["File: "] = "Fichier : ";
@@ -229,6 +240,7 @@ i18n["Language"] = "Langage";
 
 // Main Menu
 i18n["Main Menu"] = "Menu principal";
+i18n["Main Menu width"] = "Largeur du menu principal";
 
 i18n["Refresh all data"]                                       = "Rafraîchir les données";
     i18n["Update all files from VCS"]                          = "Mise à jour de tous les fichiers depuis VCS";
@@ -280,7 +292,12 @@ i18n["Configure"] = "Configuration";
     i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
     i18n["Configuration"] = "Configuration";
     i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
-    i18n["Themes"] = "Thèmes";
+    i18n["Appearance"] = "Apparence";
+    i18n["Choose a theme"] = "Choisissez un thème ";
+
+    i18n["About mails"] = "À propos des mails";
+    i18n["About bugs"] = "À propos des bogues";
+
     i18n["Black"] = "Noir";
     i18n["Default"] = "Par défault";
     i18n["DarkGray"] = "Gris foncé";
