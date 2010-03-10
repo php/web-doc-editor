@@ -300,7 +300,6 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
         {
             items : [{
                 title       : _('Menu'),
-                layout      : 'fit',
                 iconCls     : 'iconMenu',
                 items: [{
                     xtype       : 'fieldset',
@@ -657,7 +656,6 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
         {
             items : [{
                 title       : _('Menu'),
-                layout      : 'fit',
                 iconCls     : 'iconMenu',
                 items: [{
                     xtype       : 'fieldset',
