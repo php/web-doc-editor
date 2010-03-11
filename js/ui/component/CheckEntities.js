@@ -92,7 +92,7 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
     openTab: function(rowIndex)
     {
         var storeRecord = this.store.getAt(rowIndex),
-            url         = storeRecord.data.url;
+            url         = storeRecord.data.url,
             urlMd5      = Ext.util.md5(url),
             tabId       = 'tab-check-entities-'+urlMd5,
             tab         = Ext.getCmp(tabId);

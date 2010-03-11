@@ -6,9 +6,10 @@ ui.task.PingTask = function()
     {
         XHR({
             params  : { task : 'ping' },
-            success : function(response)
+            success : function(r)
             {
-                var o = Ext.util.JSON.decode(response.responseText);
+                var o = Ext.util.JSON.decode(r.responseText),
+                    dt;
                 if (o.ping !== 'pong') {
                     window.location.href = './';
                 } else {
@@ -17,7 +18,7 @@ ui.task.PingTask = function()
                     if( o.lastupdatedata === 'in_progress' ) {
                         Ext.getDom('Info-LastUpdateData').innerHTML = _('update in progress...');
                     } else if( o.lastupdatedata !== '-' ) {
-                        var dt = Date.parseDate(o.lastupdatedata, "Y-m-d H:i:s");
+                        dt = Date.parseDate(o.lastupdatedata, "Y-m-d H:i:s");
 
                         // We update the lastupdate date/time
                         Ext.getDom('Info-LastUpdateData').innerHTML = dt.format(_('Y-m-d, H:i'));
@@ -29,7 +30,7 @@ ui.task.PingTask = function()
                     if( o.lastcheckentities === 'in_progress' ) {
                         Ext.getDom('Info-LastCheckEntities').innerHTML = _('check in progress...');
                     } else if( o.lastcheckentities !== '-' ) {
-                        var dt = Date.parseDate(o.lastcheckentities, "Y-m-d H:i:s");
+                        dt = Date.parseDate(o.lastcheckentities, "Y-m-d H:i:s");
 
                         // We update the lastupdate date/time
                         Ext.getDom('Info-LastCheckEntities').innerHTML = dt.format(_('Y-m-d, H:i'));
@@ -86,6 +87,7 @@ ui.task.PingTask = function()
             },
             failure: function()
             {
+                // TODO: Handle when we loose the connection. Actually, there is a lot of error who are return from the controller
                 //window.location.href = './';
             }
         });

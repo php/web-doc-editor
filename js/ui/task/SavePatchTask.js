@@ -38,9 +38,10 @@ ui.task.SavePatchTask = function(config)
             type        : 'patch',
             emailAlert  : this.email
         },
-        success : function(response)
+
+        success : function(r)
         {
-            var o    = Ext.util.JSON.decode(response.responseText),
+            var o    = Ext.util.JSON.decode(r.responseText),
                 grid = ui.component.PendingPatchGrid.getInstance();
 
             // Add this files into storePendingPatch

@@ -75,11 +75,12 @@ ui.component._PendingReviewGrid.view = new Ext.grid.GroupingView({
     groupTextTpl : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    getRowClass  : function(record, numIndex, rowParams, store)
+    getRowClass  : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
+        return false;
     },
     deferEmptyText: false,
     emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
@@ -267,12 +268,11 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = grid.store.getAt(rowIndex),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            fpath_split = FilePath.split('/'),
-            tmp;
+            fpath_split = FilePath.split('/');
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        tmp = new ui.component._PendingReviewGrid.menu.main({
+        new ui.component._PendingReviewGrid.menu.main({
             grid      : grid,
             rowIdx    : rowIndex,
             event     : e,
@@ -333,20 +333,20 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     width       : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
                     listeners   : {
                         collapse: function() {
-                            var tmp = new ui.task.UpdateConfTask({
+                            new ui.task.UpdateConfTask({
                                 item  : 'reviewedDisplaylogPanel',
                                 value : false
                             });
                         },
                         expand: function() {
-                            var tmp = new ui.task.UpdateConfTask({
+                            new ui.task.UpdateConfTask({
                                 item  : 'reviewedDisplaylogPanel',
                                 value : true
                             });
                         },
                         resize: function(a,newWidth) {
                             if( newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanelWidth',
                                     value : newWidth
                                 });
@@ -415,7 +415,6 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
-
     },
 
     initComponent : function()

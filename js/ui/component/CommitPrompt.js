@@ -14,15 +14,14 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelAlign : 'top',
-
-    tools: [{
+    tools      : [{
         id      : 'gear',
         qtip    : _('Configure this tools'),
         handler : function()
         {
             if( ! Ext.getCmp('commit-log-win') )
             {
-                var win = new ui.component.CommitLogManager();
+                new ui.component.CommitLogManager();
             }
             Ext.getCmp('commit-log-win').show(this.id);
         }
@@ -32,7 +31,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         text    : _('Submit'),
         handler : function()
         {
-            var tmp = new ui.task.VCSCommitTask();
+            new ui.task.VCSCommitTask();
         }
     }, {
         id      : 'win-commit-btn-close',
@@ -47,8 +46,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         var root = new Ext.tree.TreeNode({
             text     : 'root',
             expanded : true
-        }),
-            i;
+        }), i;
 
         for (i = 0; i < this.files.length; ++i) {
             root.appendChild(

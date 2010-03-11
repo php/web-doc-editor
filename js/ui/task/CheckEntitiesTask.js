@@ -25,15 +25,15 @@ ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
             task     : 'checkLockFile',
             lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
         },
-        success : function(response)
+        success : function()
         {
             ui.task._CheckEntitiesTask.poll.delay(5000);
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText);
             if (o && o.success === false) {
-                tmp = new ui.task._CheckEntitiesTask.display();
+                new ui.task._CheckEntitiesTask.display();
             } else {
                 ui.task._CheckEntitiesTask.poll.delay(5000);
             }
@@ -57,11 +57,11 @@ ui.task.CheckEntitiesTask = function(config)
         },
         success : function(response)
         {
-            var tmp = new ui.task._CheckEntitiesTask.display();
+            new ui.task._CheckEntitiesTask.display();
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (o && o.success === false) {
                 // Re-enable TaskPing

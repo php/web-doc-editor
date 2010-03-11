@@ -23,9 +23,9 @@ ui.task.SaveLangFileTask = function(config)
             fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
                                         '-FILE-' + this.fid).getCode()
         },
-        success : function(response)
+        success : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (this.prefix === 'FE') {
                 // Update our store
@@ -80,9 +80,9 @@ ui.task.SaveLangFileTask = function(config)
             // Notify
             PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             // Remove wait msg
             msg.hide();

@@ -15,7 +15,7 @@ ui.component.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
     autoScroll : true,
     getTranslation: function(str) {
 
-        var tmp = new ui.task.GetGGTranslation({
+        new ui.task.GetGGTranslation({
             str : str
         });
 

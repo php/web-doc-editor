@@ -19,26 +19,26 @@ Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
         Ext.apply(this,
         {
             items : [{
-               id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
-               scope   : this,
-               tooltip : _('<b>Undo</b>'),
-               disabled: true,
-               iconCls : 'iconUndo',
-               handler : function()
-               {
-                   Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo(this.id_prefix, this.fid);
-               }
-           },{
-               id      : this.id_prefix + '-FILE-' + this.fid + '-btn-redo',
-               scope   : this,
-               tooltip : _('<b>Redo</b>'),
-               disabled: true,
-               iconCls : 'iconRedo',
-               handler : function()
-               {
-                   Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo(this.id_prefix, this.fid);
-               }
-           }]
+                id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
+                scope   : this,
+                tooltip : _('<b>Undo</b>'),
+                disabled: true,
+                iconCls : 'iconUndo',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo(this.id_prefix, this.fid);
+                }
+            },{
+                id      : this.id_prefix + '-FILE-' + this.fid + '-btn-redo',
+                scope   : this,
+                tooltip : _('<b>Redo</b>'),
+                disabled: true,
+                iconCls : 'iconRedo',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo(this.id_prefix, this.fid);
+                }
+            }]
         });
     }
 });
@@ -104,7 +104,7 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                     {
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, 'end', "\n<!-- Reviewed: no -->"
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -115,8 +115,8 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, "end",
                             "\n<!-- EN-Revision: XX Maintainer: " +
-                                PhDOE.userLogin + " Status: ready -->"
-                        );
+                            PhDOE.userLogin + " Status: ready -->"
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }]
@@ -151,24 +151,24 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                " <refsect1 role=\"description\"><!-- {{{ -->\r\n  ",
-                                    "&reftitle.description;\r\n  ",
-                                    "<methodsynopsis>\r\n   ",
-                                        "<!-- Example: All functions have this -->\r\n   ",
-                                        "<type>thereturned type</type><methodname>func_name</methodname>\r\n   ",
-                                        "<!-- Example: Required parameter -->\r\n   ",
-                                        "<methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   ",
-                                        "<!-- Example: Optional parameter, also by reference -->\r\n   ",
-                                        "<methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   ",
-                                        "<!-- Example: If no methodparams exist (void), use this -->\r\n   ",
-                                        "<void />\r\n  ",
-                                    "</methodsynopsis>\r\n  ",
-                                    "<para>\r\n   ",
-                                        "The function description goes here.\r\n  ",
-                                    "</para>\r\n ",
-                                "</refsect1><!-- }}} -->"
+                            " <refsect1 role=\"description\"><!-- {{{ -->\r\n  ",
+                            "&reftitle.description;\r\n  ",
+                            "<methodsynopsis>\r\n   ",
+                            "<!-- Example: All functions have this -->\r\n   ",
+                            "<type>thereturned type</type><methodname>func_name</methodname>\r\n   ",
+                            "<!-- Example: Required parameter -->\r\n   ",
+                            "<methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   ",
+                            "<!-- Example: Optional parameter, also by reference -->\r\n   ",
+                            "<methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   ",
+                            "<!-- Example: If no methodparams exist (void), use this -->\r\n   ",
+                            "<void />\r\n  ",
+                            "</methodsynopsis>\r\n  ",
+                            "<para>\r\n   ",
+                            "The function description goes here.\r\n  ",
+                            "</para>\r\n ",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -181,33 +181,33 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n",
-                                    "&reftitle.parameters;\r\n",
-                                    "<para>\r\n",
-                                        "<variablelist>\r\n",
-                                            "<varlistentry>\r\n",
-                                                "<term><parameter>firstparameter</parameter></term>\r\n",
-                                                "<listitem>\r\n",
-                                                    "<para>\r\n",
-                                                        "Its description\r\n",
-                                                    "</para>\r\n",
-                                                "</listitem>\r\n",
-                                            "</varlistentry>\r\n",
-                                            "<varlistentry>\r\n",
-                                                "<term>\r\n",
-                                                    "<parameter>secondparameter</parameter>\r\n",
-                                                "</term>\r\n",
-                                                "<listitem>\r\n",
-                                                    "<para>\r\n",
-                                                        "Its description\r\n",
-                                                    "</para>\r\n",
-                                                "</listitem>\r\n",
-                                            "</varlistentry>\r\n",
-                                        "</variablelist>\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n",
+                            "&reftitle.parameters;\r\n",
+                            "<para>\r\n",
+                            "<variablelist>\r\n",
+                            "<varlistentry>\r\n",
+                            "<term><parameter>firstparameter</parameter></term>\r\n",
+                            "<listitem>\r\n",
+                            "<para>\r\n",
+                            "Its description\r\n",
+                            "</para>\r\n",
+                            "</listitem>\r\n",
+                            "</varlistentry>\r\n",
+                            "<varlistentry>\r\n",
+                            "<term>\r\n",
+                            "<parameter>secondparameter</parameter>\r\n",
+                            "</term>\r\n",
+                            "<listitem>\r\n",
+                            "<para>\r\n",
+                            "Its description\r\n",
+                            "</para>\r\n",
+                            "</listitem>\r\n",
+                            "</varlistentry>\r\n",
+                            "</variablelist>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -220,15 +220,15 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n",
-                                    "&reftitle.returnvalues;\r\n",
-                                    "<para>\r\n",
-                                        "What this function returns, first on success, then failure.\r\n",
-                                        "If simply true on success and false on failure, just use &return.success; here.\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n",
+                            "&reftitle.returnvalues;\r\n",
+                            "<para>\r\n",
+                            "What this function returns, first on success, then failure.\r\n",
+                            "If simply true on success and false on failure, just use &return.success; here.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -241,14 +241,14 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n",
-                                    "&reftitle.errors;\r\n",
-                                    "<para>\r\n",
-                                        "When does this function issue E_* level errors, and/or throw exceptions.\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->\r\n"
+                            "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n",
+                            "&reftitle.errors;\r\n",
+                            "<para>\r\n",
+                            "When does this function issue E_* level errors, and/or throw exceptions.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->\r\n"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -261,14 +261,14 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n",
-                                    "&reftitle.unicode;\r\n",
-                                    "<para>\r\n",
-                                        "Information specific to unicode, from the PHP 6 changes.\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n",
+                            "&reftitle.unicode;\r\n",
+                            "<para>\r\n",
+                            "Information specific to unicode, from the PHP 6 changes.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -281,31 +281,31 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n",
-                                    "&reftitle.changelog;\r\n",
-                                    "<para>\r\n",
-                                        "<informaltable>\r\n",
-                                            "<tgroup cols=\"2\">\r\n",
-                                                "<thead>\r\n",
-                                                    "<row>\r\n",
-                                                        "<entry>&Version;</entry>\r\n",
-                                                        "<entry>&Description;</entry>\r\n",
-                                                    "</row>\r\n",
-                                                "</thead>\r\n",
-                                                "<tbody>\r\n",
-                                                    "<row>\r\n",
-                                                        "<entry>Enter the version of change here</entry>\r\n",
-                                                        "<entry>\r\n",
-                                                            "Describe the change\r\n",
-                                                        "</entry>\r\n",
-                                                    "</row>\r\n",
-                                                "</tbody>\r\n",
-                                            "</tgroup>\r\n",
-                                        "</informaltable>\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n",
+                            "&reftitle.changelog;\r\n",
+                            "<para>\r\n",
+                            "<informaltable>\r\n",
+                            "<tgroup cols=\"2\">\r\n",
+                            "<thead>\r\n",
+                            "<row>\r\n",
+                            "<entry>&Version;</entry>\r\n",
+                            "<entry>&Description;</entry>\r\n",
+                            "</row>\r\n",
+                            "</thead>\r\n",
+                            "<tbody>\r\n",
+                            "<row>\r\n",
+                            "<entry>Enter the version of change here</entry>\r\n",
+                            "<entry>\r\n",
+                            "Describe the change\r\n",
+                            "</entry>\r\n",
+                            "</row>\r\n",
+                            "</tbody>\r\n",
+                            "</tgroup>\r\n",
+                            "</informaltable>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -318,39 +318,39 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n",
-                                    "&reftitle.examples;\r\n",
-                                    "<para>\r\n",
-                                        "<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n",
-                                            "<title><function>function-name</function> example</title>\r\n",
-                                            "<para>\r\n",
-                                                "Any text that describes the purpose of the example, or what\r\n",
-                                                "goes on in the example should be here. (Inside the <example> tag, not out).\r\n",
-                                            "</para>\r\n",
-                                            "<programlisting role=\"php\">\r\n",
-                                                "<![CDATA[\r\n",
-                                                    "<?php\r\n",
-                                                        "if ($anexample === true) {\r\n",
-                                                            "echo 'Use the PEAR Coding standards';\r\n",
-                                                        "}\r\n",
-                                                        "if ($thereisoutput === 'and it is multiple lines') {\r\n",
-                                                            "echo 'Use a screen like we did below';\r\n",
-                                                        "}\r\n",
-                                                    "?>\r\n",
-                                                "]]>\r\n",
-                                            "</programlisting>\r\n",
-                                            "&example.outputs.similar;\r\n",
-                                            "<screen>\r\n",
-                                                "<![CDATA[\r\n",
-                                                    "Use the PEAR Coding standards\r\n",
-                                                    "Use a screen like we did below\r\n",
-                                                "]]>\r\n",
-                                            "</screen>\r\n",
-                                        "</example><!-- }}} -->\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n",
+                            "&reftitle.examples;\r\n",
+                            "<para>\r\n",
+                            "<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n",
+                            "<title><function>function-name</function> example</title>\r\n",
+                            "<para>\r\n",
+                            "Any text that describes the purpose of the example, or what\r\n",
+                            "goes on in the example should be here. (Inside the <example> tag, not out).\r\n",
+                            "</para>\r\n",
+                            "<programlisting role=\"php\">\r\n",
+                            "<![CDATA[\r\n",
+                            "<?php\r\n",
+                            "if ($anexample === true) {\r\n",
+                            "echo 'Use the PEAR Coding standards';\r\n",
+                            "}\r\n",
+                            "if ($thereisoutput === 'and it is multiple lines') {\r\n",
+                            "echo 'Use a screen like we did below';\r\n",
+                            "}\r\n",
+                            "?>\r\n",
+                            "]]>\r\n",
+                            "</programlisting>\r\n",
+                            "&example.outputs.similar;\r\n",
+                            "<screen>\r\n",
+                            "<![CDATA[\r\n",
+                            "Use the PEAR Coding standards\r\n",
+                            "Use a screen like we did below\r\n",
+                            "]]>\r\n",
+                            "</screen>\r\n",
+                            "</example><!-- }}} -->\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -363,21 +363,21 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n",
-                                    "&reftitle.notes;\r\n",
-                                    "<caution>\r\n",
-                                        "<para>\r\n",
-                                            "Any notes that don't fit anywhere else should go here.\r\n",
-                                            "90% of the time, notes, warnings or cautions are better placed in the\r\n",
-                                            "parameters section. Consider that before using this section!\r\n",
-                                        "</para>\r\n",
-                                    "</caution>\r\n",
-                                    "&note.language-construct;\r\n",
-                                    "&note.not-bin-safe;\r\n",
-                                    "&note.registerglobals;\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n",
+                            "&reftitle.notes;\r\n",
+                            "<caution>\r\n",
+                            "<para>\r\n",
+                            "Any notes that don't fit anywhere else should go here.\r\n",
+                            "90% of the time, notes, warnings or cautions are better placed in the\r\n",
+                            "parameters section. Consider that before using this section!\r\n",
+                            "</para>\r\n",
+                            "</caution>\r\n",
+                            "&note.language-construct;\r\n",
+                            "&note.not-bin-safe;\r\n",
+                            "&note.registerglobals;\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }, {
@@ -390,18 +390,18 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             position.line, 0,
                             [
-                                "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n",
-                                    "&reftitle.seealso;\r\n",
-                                    "<para>\r\n",
-                                        "<simplelist>\r\n",
-                                            "<member><function>somefunc</function></member>\r\n",
-                                            "<member><function>another_func</function></member>\r\n",
-                                            "<member>The <link linkend=\"something\">something appendix</link></member>\r\n",
-                                        "</simplelist>\r\n",
-                                    "</para>\r\n",
-                                "</refsect1><!-- }}} -->"
+                            "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n",
+                            "&reftitle.seealso;\r\n",
+                            "<para>\r\n",
+                            "<simplelist>\r\n",
+                            "<member><function>somefunc</function></member>\r\n",
+                            "<member><function>another_func</function></member>\r\n",
+                            "<member>The <link linkend=\"something\">something appendix</link></member>\r\n",
+                            "</simplelist>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
                             ].join('')
-                        );
+                            );
                         Ext.getCmp(this.comp_id).focus();
                     }
                 }]
@@ -432,7 +432,10 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 handler : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
-                    var tmp = new ui.task.UpdateConfTask({item: this.spellCheckConf, value: btn.pressed});
+                    new ui.task.UpdateConfTask({
+                        item: this.spellCheckConf,
+                        value: btn.pressed
+                    });
                 }
             },{
                 scope   : this,
@@ -442,8 +445,12 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
                 }
-            },(this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({ comp_id : this.id_prefix + '-FILE-' + this.fid }) :
-                                     new ui.component._FilePanel.tbar.menu.lang({ comp_id : this.id_prefix + '-FILE-' + this.fid})
+            },(this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({
+                comp_id : this.id_prefix + '-FILE-' + this.fid
+            }) :
+            new ui.component._FilePanel.tbar.menu.lang({
+                comp_id : this.id_prefix + '-FILE-' + this.fid
+            })
             ]
         });
     }
@@ -471,10 +478,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
     goToPreviousTab : function()
     {
         var currentTabId = this.prefix+'-'+this.fid,
-            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
-            previousTabId,
-            currentTabIndex,
-            i;
+        tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+        previousTabId,
+        currentTabIndex,
+        i;
 
         for( i=0; i < tabs.length; i++ ) {
             if( tabs[i].id === currentTabId ) {
@@ -499,10 +506,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
     {
 
         var currentTabId = this.prefix+'-'+this.fid,
-            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
-            nextTabId    = false,
-            currentTabIndex,
-            i;
+        tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+        nextTabId    = false,
+        currentTabIndex,
+        i;
 
         for( i=0; i < tabs.length; i++ ) {
             if( tabs[i].id === currentTabId ) {
@@ -534,21 +541,24 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 scope : this,
                 check : function(c)
                 {
-                    var tmp = new ui.task.UpdateConfTask({item: this.syncScrollConf, value: c.getValue()});
+                    new ui.task.UpdateConfTask({
+                        item: this.syncScrollConf,
+                        value: c.getValue()
+                    });
                 },
                 render : function(c)
                 {
                     Ext.DomHelper.insertHtml(
                         'beforeBegin', c.el.dom,
                         [
-                            '<div style="display: inline;" class="x-statusbar">',
-                                '<span class="x-status-text-panel">', _('Line: '),
-                                '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
-                                '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
-                                '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
-                            '</div>&nbsp;&nbsp;'
+                        '<div style="display: inline;" class="x-statusbar">',
+                        '<span class="x-status-text-panel">', _('Line: '),
+                        '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+                        '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+                        '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+                        '</div>&nbsp;&nbsp;'
                         ].join('')
-                    );
+                        );
                 }
             }
         }] : [{
@@ -557,83 +567,146 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             baseCls   : '',
             bodyStyle : 'padding-top:5px;',
             html      : [
-                            '<div style="display: inline;" class="x-statusbar">',
-                                '<span class="x-status-text-panel">', _('Line: '),
-                                '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
-                                '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
-                                '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
-                            '</div>&nbsp;&nbsp;'
-                        ].join('')
+            '<div style="display: inline;" class="x-statusbar">',
+            '<span class="x-status-text-panel">', _('Line: '),
+            '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+            '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+            '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+            '</div>&nbsp;&nbsp;'
+            ].join('')
         }];
 
         if (!this.readOnly) {
             this.tbar = (this.isPatch) ? [
-                // patch file pane tbar
-                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab}),
-                {
-                    xtype :'buttongroup',
-                    items : [{
-                        id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
-                        scope    : this,
-                        tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
-                        iconCls  : 'iconSaveFile',
-                        handler  : function()
-                        {
-                            var tmp = new ui.task.AcceptPatchTask({
+            // patch file pane tbar
+            new ui.component._FilePanel.tbar.items.common({
+                prefix: this.prefix,
+                fid: this.fid,
+                ftype: this.ftype,
+                goToPreviousTab: this.goToPreviousTab,
+                goToNextTab: this.goToNextTab
+            }),
+
+            {
+                xtype :'buttongroup',
+                items : [{
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                    scope    : this,
+                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
+                    iconCls  : 'iconSaveFile',
+                    handler  : function()
+                    {
+                        new ui.task.AcceptPatchTask({
+                            fid         : this.fid,
+                            fpath       : this.fpath,
+                            fname       : this.fname,
+                            fuid        : this.fuid,
+                            storeRecord : this.storeRecord
+                        });
+                    }
+                }, {
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
+                    scope    : this,
+                    tooltip  : _('<b>Reject</b> this patch'),
+                    iconCls  : 'iconPageDelete',
+                    handler  : function()
+                    {
+                        new ui.task.RejectPatchTask({
+                            fid         : this.fid,
+                            fuid        : this.fuid,
+                            storeRecord : this.storeRecord
+                        });
+                    }
+                }]
+            }, new ui.component._FilePanel.tbar.items.undoRedo({
+                id_prefix: id_prefix,
+                fid: this.fid
+            }),
+            new ui.component._FilePanel.tbar.items.reindentTags({
+                id_prefix: id_prefix,
+                fid: this.fid,
+                lang: this.lang,
+                spellCheck: this.spellCheck,
+                spellCheckConf: this.spellCheckConf
+            })
+            ] : [
+            // en/lang file pane tbar
+            new ui.component._FilePanel.tbar.items.common({
+                prefix: this.prefix,
+                fid: this.fid,
+                ftype: this.ftype,
+                goToPreviousTab: this.goToPreviousTab,
+                goToNextTab: this.goToNextTab
+            }), {
+                xtype :'buttongroup',
+                items : [{
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                    scope    : this,
+                    tooltip  : _('<b>Save</b> this file (CTRL+s)'),
+                    iconCls  : 'iconSaveFile',
+                    disabled : true,
+                    handler  : function()
+                    {
+                        if (this.lang === 'en') {
+
+                            new ui.task.SaveENFileTask({
+                                prefix      : this.prefix,
+                                ftype       : this.ftype,
                                 fid         : this.fid,
                                 fpath       : this.fpath,
                                 fname       : this.fname,
-                                fuid        : this.fuid,
                                 storeRecord : this.storeRecord
                             });
-                        }
-                    }, {
-                        id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
-                        scope    : this,
-                        tooltip  : _('<b>Reject</b> this patch'),
-                        iconCls  : 'iconPageDelete',
-                        handler  : function()
-                        {
-                            var tmp = new ui.task.RejectPatchTask({
-                                fid         : this.fid,
-                                fuid        : this.fuid,
-                                storeRecord : this.storeRecord
-                            });
-                        }
-                    }]
-                }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
-                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang, spellCheck: this.spellCheck, spellCheckConf: this.spellCheckConf})
-            ] : [
-                // en/lang file pane tbar
-                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab}), {
-                    xtype :'buttongroup',
-                    items : [{
-                        id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
-                        scope    : this,
-                        tooltip  : _('<b>Save</b> this file (CTRL+s)'),
-                        iconCls  : 'iconSaveFile',
-                        disabled : true,
-                        handler  : function()
-                        {
-                            var tmp;
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
-                            if (this.lang === 'en') {
+                        } else {
 
-                                tmp = new ui.task.SaveENFileTask({
+                            // From "All files" or "Need translate file", we only save the file
+                            if (this.prefix === 'AF') {
+                                new ui.task.SaveLangFileTask({
                                     prefix      : this.prefix,
                                     ftype       : this.ftype,
                                     fid         : this.fid,
                                     fpath       : this.fpath,
                                     fname       : this.fname,
+                                    lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 });
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                return;
+                            }
+                            if (this.prefix === 'FNT' ) {
+                                new ui.task.SaveTransFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                });
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                return;
+                            }
 
-                            } else {
+                            // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
+                            switch (PhDOE.userConf.onSaveLangFile) {
 
-                                // From "All files" or "Need translate file", we only save the file
-                                if (this.prefix === 'AF') {
-                                    tmp = new ui.task.SaveLangFileTask({
+                                case 'always':
+                                    new ui.task.CheckFileTask({
+                                        prefix      : this.prefix,
+                                        ftype       : this.ftype,
+                                        fid         : this.fid,
+                                        fpath       : this.fpath,
+                                        fname       : this.fname,
+                                        lang        : this.lang,
+                                        storeRecord : this.storeRecord
+                                    }); // include SaveLangFileTask when no err
+                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                    break;
+
+                                case 'never':
+                                    new ui.task.SaveLangFileTask({
                                         prefix      : this.prefix,
                                         ftype       : this.ftype,
                                         fid         : this.fid,
@@ -643,117 +716,89 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                         storeRecord : this.storeRecord
                                     });
                                     Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    return;
-                                }
-                                if (this.prefix === 'FNT' ) {
-                                    tmp = new ui.task.SaveTransFileTask({
-                                        prefix      : this.prefix,
-                                        ftype       : this.ftype,
-                                        fid         : this.fid,
-                                        fpath       : this.fpath,
-                                        fname       : this.fname,
-                                        lang        : this.lang,
-                                        storeRecord : this.storeRecord
-                                    });
-                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    return;
-                                }
+                                    break;
 
-                                // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
-                                switch (PhDOE.userConf.onSaveLangFile) {
+                                case 'ask-me':
+                                    Ext.MessageBox.show({
+                                        title   : _('Confirm'),
+                                        msg     : _('Do you want to check for error before saving?'),
+                                        icon    : Ext.MessageBox.INFO,
+                                        buttons : Ext.MessageBox.YESNOCANCEL,
+                                        scope   : this,
+                                        fn      : function (btn)
+                                        {
+                                            if (btn === 'no') {
 
-                                    case 'always':
-                                        tmp = new ui.task.CheckFileTask({
-                                            prefix      : this.prefix,
-                                            ftype       : this.ftype,
-                                            fid         : this.fid,
-                                            fpath       : this.fpath,
-                                            fname       : this.fname,
-                                            lang        : this.lang,
-                                            storeRecord : this.storeRecord
-                                        }); // include SaveLangFileTask when no err
-                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                        break;
+                                                new ui.task.SaveLangFileTask({
+                                                    prefix      : this.prefix,
+                                                    ftype       : this.ftype,
+                                                    fid         : this.fid,
+                                                    fpath       : this.fpath,
+                                                    fname       : this.fname,
+                                                    lang        : this.lang,
+                                                    storeRecord : this.storeRecord
+                                                });
+                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
-                                    case 'never':
-                                        tmp = new ui.task.SaveLangFileTask({
-                                            prefix      : this.prefix,
-                                            ftype       : this.ftype,
-                                            fid         : this.fid,
-                                            fpath       : this.fpath,
-                                            fname       : this.fname,
-                                            lang        : this.lang,
-                                            storeRecord : this.storeRecord
-                                        });
-                                        Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                        break;
+                                            } else if (btn === 'yes') {
 
-                                    case 'ask-me':
-                                        Ext.MessageBox.show({
-                                            title   : _('Confirm'),
-                                            msg     : _('Do you want to check for error before saving?'),
-                                            icon    : Ext.MessageBox.INFO,
-                                            buttons : Ext.MessageBox.YESNOCANCEL,
-                                            scope   : this,
-                                            fn      : function (btn)
-                                            {
-                                                if (btn === 'no') {
-
-                                                    tmp = new ui.task.SaveLangFileTask({
-                                                        prefix      : this.prefix,
-                                                        ftype       : this.ftype,
-                                                        fid         : this.fid,
-                                                        fpath       : this.fpath,
-                                                        fname       : this.fname,
-                                                        lang        : this.lang,
-                                                        storeRecord : this.storeRecord
-                                                    });
-                                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-
-                                                } else if (btn === 'yes') {
-
-                                                    tmp = new ui.task.CheckFileTask({
-                                                        prefix      : this.prefix,
-                                                        ftype       : this.ftype,
-                                                        fid         : this.fid,
-                                                        fpath       : this.fpath,
-                                                        fname       : this.fname,
-                                                        lang        : this.lang,
-                                                        storeRecord : this.storeRecord
-                                                    }); // include SaveLangFileTask when no err
-                                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                                }
+                                                new ui.task.CheckFileTask({
+                                                    prefix      : this.prefix,
+                                                    ftype       : this.ftype,
+                                                    fid         : this.fid,
+                                                    fpath       : this.fpath,
+                                                    fname       : this.fname,
+                                                    lang        : this.lang,
+                                                    storeRecord : this.storeRecord
+                                                }); // include SaveLangFileTask when no err
+                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                             }
-                                        });
-                                        break;
-                                }
+                                        }
+                                    });
+                                    break;
                             }
                         }
-                    }, {
-                        id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
-                        scope    : this,
-                        tooltip  : _('<b>Save as</b> a patch'),
-                        iconCls  : 'iconSaveAsFile',
-                        disabled : true,
-                        handler  : function()
-                        {
-                            var tmp = new ui.component.PatchPrompt({
-                                prefix : this.prefix,
-                                ftype  : this.ftype,
-                                fid    : this.fid,
-                                fpath  : this.fpath,
-                                fname  : this.fname,
-                                lang   : this.lang,
-                                defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
-                            }).show();
-                        }
-                    }]
-                }, new ui.component._FilePanel.tbar.items.undoRedo({id_prefix: id_prefix, fid: this.fid}),
-                   new ui.component._FilePanel.tbar.items.reindentTags({id_prefix: id_prefix, fid: this.fid, lang: this.lang, spellCheck: this.spellCheck, spellCheckConf: this.spellCheckConf})
-                ]
+                    }
+                }, {
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
+                    scope    : this,
+                    tooltip  : _('<b>Save as</b> a patch'),
+                    iconCls  : 'iconSaveAsFile',
+                    disabled : true,
+                    handler  : function()
+                    {
+                        var tmp = new ui.component.PatchPrompt({
+                            prefix : this.prefix,
+                            ftype  : this.ftype,
+                            fid    : this.fid,
+                            fpath  : this.fpath,
+                            fname  : this.fname,
+                            lang   : this.lang,
+                            defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
+                        }).show();
+                    }
+                }]
+            }, new ui.component._FilePanel.tbar.items.undoRedo({
+                id_prefix: id_prefix,
+                fid: this.fid
+            }),
+            new ui.component._FilePanel.tbar.items.reindentTags({
+                id_prefix: id_prefix,
+                fid: this.fid,
+                lang: this.lang,
+                spellCheck: this.spellCheck,
+                spellCheckConf: this.spellCheckConf
+            })
+            ]
         } else {
             this.tbar = [
-                new ui.component._FilePanel.tbar.items.common({prefix: this.prefix, fid: this.fid, ftype: this.ftype, goToPreviousTab: this.goToPreviousTab, goToNextTab: this.goToNextTab})
+            new ui.component._FilePanel.tbar.items.common({
+                prefix: this.prefix,
+                fid: this.fid,
+                ftype: this.ftype,
+                goToPreviousTab: this.goToPreviousTab,
+                goToNextTab: this.goToNextTab
+            })
             ];
         }
 
@@ -774,25 +819,25 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     initialize : function()
                     {
 
-                        var herePath, hereName, tmp;
+                        var herePath, hereName;
 
                         if( this.isPatch ) {
-                          herePath = this.fpath;
-                          hereName = this.fname + '.' + this.fuid + '.patch';
+                            herePath = this.fpath;
+                            hereName = this.fname + '.' + this.fuid + '.patch';
                         } else if ( this.isTrans ) {
-                             if( this.storeRecord.data['needcommit'] ) {
+                            if( this.storeRecord.data['needcommit'] ) {
                                 herePath = this.lang + this.fpath;
                                 hereName = this.fname+'.new';
-                             } else {
+                            } else {
                                 herePath = 'en' + this.fpath;
                                 hereName = this.fname;
-                             }
+                            }
                         } else {
-                          herePath = this.lang + this.fpath;
-                          hereName = this.fname;
+                            herePath = this.lang + this.fpath;
+                            hereName = this.fname;
                         }
 
-                        tmp = new ui.task.GetFileTask({
+                        new ui.task.GetFileTask({
                             prefix : this.prefix,
                             ftype  : this.ftype,
                             fid    : this.fid,
@@ -807,7 +852,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
                                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
-                            );
+                                );
 
                             // Do we need to remove the red mark into the Tab title ?
                             if( this.ftype === 'EN' || this.ftype === 'LANG' ) {
@@ -817,12 +862,12 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                                     Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                         Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                                    );
+                                        );
                                 }
                             } else {
                                 Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                     Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                                );
+                                    );
                             }
 
                             // Desactivate save button
@@ -840,7 +885,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     codemodified : function() {
 
                         var cmpFile = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-                            cmpPanel= Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+                        cmpPanel= Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
                         if (!cmpFile.isModified) {
                             // Add an [modified] in title
@@ -848,13 +893,13 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 cmpPanel.permlink    +
                                 cmpPanel.originTitle +
                                 ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
-                            );
+                                );
 
                             // Add in tabpanel
                             Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
                                 ' <t style="color:#ff0000; font-weight: bold;">*</t>'
-                            );
+                                );
 
                             // Activate save button
                             if (! this.isPatch) {
@@ -867,10 +912,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                             // Mark as modified
                             cmpFile.isModified = true;
-
                         }
-
-
                     },
                     cursormove : function(line, caracter)
                     {
@@ -882,15 +924,27 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] ) {
                             var opp_prefix;
                             switch (this.ftype) {
-                                case 'EN':     opp_prefix = this.prefix + '-LANG';   break;
-                                case 'LANG':   opp_prefix = this.prefix + '-EN';     break;
-                                case 'PATCH':  opp_prefix = this.prefix + '-ORIGIN'; break;
-                                case 'ORIGIN': opp_prefix = this.prefix + '-PATCH';  break;
-                                case 'TRANS':  opp_prefix = this.prefix + '-GGTRANS';break;
-                                case 'GGTRANS':opp_prefix = this.prefix + '-TRANS';  break;
+                                case 'EN':
+                                    opp_prefix = this.prefix + '-LANG';
+                                    break;
+                                case 'LANG':
+                                    opp_prefix = this.prefix + '-EN';
+                                    break;
+                                case 'PATCH':
+                                    opp_prefix = this.prefix + '-ORIGIN';
+                                    break;
+                                case 'ORIGIN':
+                                    opp_prefix = this.prefix + '-PATCH';
+                                    break;
+                                case 'TRANS':
+                                    opp_prefix = this.prefix + '-GGTRANS';
+                                    break;
+                                case 'GGTRANS':
+                                    opp_prefix = this.prefix + '-TRANS';
+                                    break;
                             }
                             var opp_panel  = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
-                                opp_file   = Ext.getCmp(opp_prefix + '-FILE-' + this.fid);
+                            opp_file   = Ext.getCmp(opp_prefix + '-FILE-' + this.fid);
 
                             // scroll lock logic:
                             // 1. panel-A gains lock if panel-B is not scrolling

@@ -11,8 +11,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     parserFile       : "parsexml.js",
     parserStylesheet : "js/ux/codemirror/css/xmlcolors.css",
 
-    initComponent : function() {
-
+    initComponent : function()
+    {
         Ext.ux.CodeMirror.superclass.initComponent.apply(this);
 
         this.addEvents({
@@ -41,17 +41,19 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
         }
     },
-    onRender : function(ct, position){
+    onRender : function(ct, position)
+    {
         Ext.ux.CodeMirror.superclass.onRender.apply(this, [ct, position]);
     },
 
-    resize: function() {
+    resize: function()
+    {
         this.mirror.frame.style.height = this.ownerCt.lastSize.height - 89 +"px";
         this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
     },
 
-    onInit: function(t, cmId) {
-
+    onInit: function(t, cmId)
+    {
         var cmp    = Ext.getCmp(cmId),
             mirror = cmp.mirror;
 
@@ -85,10 +87,10 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         };
 
         Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);
-
     },
 
-    onCursorActivity: function(cmId) {
+    onCursorActivity: function(cmId)
+    {
         var cmp      = Ext.getCmp(cmId),
             mirror   = cmp.mirror,
             r        = mirror.cursorPosition(),
@@ -97,8 +99,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             cmp.fireEvent('cursormove', line, caracter);
     },
 
-    manageCodeChange: function(cmId) {
-
+    manageCodeChange: function(cmId)
+    {
         var cmp             = Ext.getCmp(cmId),
             mirror          = cmp.mirror,
             originalContent = mirror.originalContent,
@@ -120,27 +122,25 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                     cmp.documentDurty = true;
                 }
             }
-
         }
-
     },
 
-    saveFunction: function(cmId) {
-
-        var cmp     = Ext.getCmp(cmId),
-            saveBtn = Ext.getCmp(cmId + '-btn-save');
+    saveFunction: function(cmId)
+    {
+        var saveBtn = Ext.getCmp(cmId + '-btn-save');
 
         if( ! saveBtn.disabled ) {
             saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
         }
-
     },
 
-    monitorScroll: function(e, cmp) {
+    monitorScroll: function(e, cmp)
+    {
         cmp.fireEvent('scroll',e.target.body.scrollTop, this);
     },
 
-    afterRender: function() {
+    afterRender: function()
+    {
         this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
             textWrapping       : false,
             saveFunction       : this.saveFunction,
@@ -167,14 +167,15 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
            this.resize();
         }, this);
-
     },
 
-    getCode: function() {
+    getCode : function()
+    {
         return this.mirror.getCode();
     },
 
-    setCode: function(code) {
+    setCode : function(code)
+    {
         if( !this.initialised ) {
             var wait = new Ext.util.DelayedTask(function() { this.setCode(code); }, this );
             wait.delay(500);
@@ -184,12 +185,13 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         }
     },
 
-    reIndentAll : function() {
+    reIndentAll : function()
+    {
         this.mirror.reindent();
     },
 
-    undo : function(id_prefix, fid) {
-
+    undo : function(id_prefix, fid)
+    {
         this.mirror.undo();
 
         // Enable the Redo btn
@@ -201,8 +203,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         }
     },
 
-    redo : function(id_prefix, fid) {
-
+    redo : function(id_prefix, fid)
+    {
         this.mirror.redo();
 
         // Enable the undo btn
@@ -214,25 +216,30 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         }
     },
 
-    insertIntoLine : function(line, position, text) {
+    insertIntoLine : function(line, position, text)
+    {
         var lineObj = this.mirror.nthLine(line);
         this.mirror.insertIntoLine(lineObj, position, text);
     },
 
-    scrollTo : function(scrollY) {
+    scrollTo : function(scrollY)
+    {
         this.mirror.frame.contentWindow.document.body.scrollTop = scrollY;
     },
 
-    focus: function() {
+    focus : function()
+    {
         this.mirror.focus();
     },
 
-    setOriginalCode : function() {
+    setOriginalCode : function()
+    {
         this.mirror.originalContent = this.getCode();
         this.documentDurty = false;
     },
 
-    getCursorPosition : function() {
+    getCursorPosition : function()
+    {
         var r        = this.mirror.cursorPosition(),
             line     = this.mirror.lineNumber(r.line),
             caracter = r.character;
@@ -240,11 +247,13 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         return '{line:'+line+', caracter:'+caracter+'}';
     },
 
-    nthLine : function(number) {
+    nthLine : function(number)
+    {
         return this.mirror.nthLine(number);
     },
 
-    setSpellcheck : function(choice) {
+    setSpellcheck : function(choice)
+    {
         return this.mirror.setSpellcheck(choice);
     }
 

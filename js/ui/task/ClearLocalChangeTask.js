@@ -34,10 +34,11 @@ ui.task.ClearLocalChangeTask = function(config)
                         FilePath : this.fpath,
                         FileName : this.fname
                     },
-                    success : function(response)
+                    success : function(r)
                     {
                         var pending_commit_grid = ui.component.PendingCommitGrid.getInstance(),
-                            o = Ext.util.JSON.decode(response.responseText);
+                            o                   = Ext.util.JSON.decode(r.responseText),
+                            node;
 
                         // We delete this record from the pending commit store
                         pending_commit_grid.store.remove(this.storeRecord);
@@ -63,7 +64,8 @@ ui.task.ClearLocalChangeTask = function(config)
                             , this);
 
                             // find open node in All Files modules
-                            var node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                            node = false;
+                            node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                             if (node) {
                               node.getUI().removeClass('modified');
                             }
@@ -120,14 +122,15 @@ ui.task.ClearLocalChangeTask = function(config)
                         , this);
 
                         // find open node in All Files modules
-                        var node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                        node = false;
+                        node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
                           node.getUI().removeClass('modified');
                         }
 
                         Ext.getBody().unmask();
                     },
-                    failure : function(response)
+                    failure : function()
                     {
                         // clear local change failure
                         Ext.getBody().unmask();

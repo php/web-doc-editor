@@ -36,9 +36,9 @@ ui.task.AcceptPatchTask = function(config)
                         fileLang    : 'all',
                         fileContent : Ext.getCmp('PP-PATCH-FILE-' + this.fid).getCode()
                     },
-                    success : function(response)
+                    success : function(r)
                     {
-                        var o    = Ext.util.JSON.decode(response.responseText),
+                        var o    = Ext.util.JSON.decode(r.responseText),
                             grid = ui.component.PendingPatchGrid.getInstance();
 
                         // Add this files into storePendingCommit
@@ -70,7 +70,7 @@ ui.task.AcceptPatchTask = function(config)
                         // Notify
                         PhDOE.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
                     },
-                    failure : function(response) {
+                    failure : function() {
                         // Remove wait msg
                         msg.hide();
                     }

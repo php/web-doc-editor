@@ -125,16 +125,14 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
     onContextMenu : function(node, e)
     {
         e.stopEvent();
-
-        var tmp;
         node.select();
 
         if (node.attributes.type === 'folder' || node.isRoot) {
-            tmp = new ui.component._RepositoryTree.menu.folder({
+            new ui.component._RepositoryTree.menu.folder({
                 node : node
             }).showAt(e.getXY());
         } else if (node.attributes.type === 'file') {
-            tmp = new ui.component._RepositoryTree.menu.file({
+            new ui.component._RepositoryTree.menu.file({
                 node : node
             }).showAt(e.getXY());
         }
@@ -142,8 +140,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
 
     onDblClick : function(node, e)
     {
-        if (node.attributes.type === 'file') { // files only
-
+        if (node.attributes.type === 'file') // files only
+        {
             this.openFile(
                 'byId',
                 node.attributes.id,
@@ -155,7 +153,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
     openFile: function(ftype, first, second)
     {
         // Here, first argument is fpath and second, fname
-        if( ftype === 'byPath' ) {
+        if( ftype === 'byPath' )
+        {
             Ext.getCmp('acc-all-files').expand();
 
             var fpath = first, fname = second,
@@ -186,8 +185,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
         }
 
         // Here, first argument is a nodeID. Second arguments don't exist
-        if( ftype === 'byId' ) {
-
+        if( ftype === 'byId' )
+        {
             var node      = this.getNodeById(first),
                 FilePath  = node.attributes.id,
                 extension = node.attributes.extension,
@@ -214,8 +213,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     parser = 'xml';
                 }
 
-                if (extension === 'gif' || extension === 'png') {
-
+                if (extension === 'gif' || extension === 'png')
+                {
                     panelWest = {};
 
                     panelCenter = {
@@ -248,20 +247,20 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         width       : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
                         listeners   : {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplaylogPanel',
                                     value : true
                                 });
                             },
                             resize: function(a,newWidth) {
                                 if( newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanelWidth',
                                         value : newWidth
                                     });
@@ -321,11 +320,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
             }
             Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
         }
-    },
-
-    openNotExpandFile : function(fpath, fname)
-    {
-
     },
 
     initComponent : function()
@@ -398,7 +392,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
         this.on('contextmenu', this.onContextMenu, this);
         this.on('dblclick',    this.onDblClick,  this);
 
-        var tmp = new Ext.tree.TreeSorter(this, {
+        new Ext.tree.TreeSorter(this, {
             folderSort : true
         });
     }

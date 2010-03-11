@@ -52,7 +52,7 @@ ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
     itemSelector : 'div.menu-wrap',
     store        : ui.component._EditorConf.menuStore,
     listeners : {
-        selectionchange : function(view, select)
+        selectionchange : function(view)
         {
             var r = view.getSelectedRecords();
             Ext.getCmp('confCard').layout.setActiveItem('conf-card-' + r[0].data.id);
@@ -81,34 +81,34 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
     ]
 });
 
-ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function() {
-
+ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
+{
     new ui.task.UpdateConfTask({
         item  : this.name,
         value : this.getValue()
     });
-
 }),
 
 // EditorConf card1 - mainApp
 ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-1',
-    autoScroll: true,
+    id         : 'conf-card-1',
+    autoScroll : true,
     activeTab  : 0,
     defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items: [{
-                    xtype       : 'fieldset',
-                    title       : _('Main Menu'),
-                    iconCls     : 'iconMenu',
-                    items       : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype   : 'fieldset',
+                    title   : _('Main Menu'),
+                    iconCls : 'iconMenu',
+                    items   : [{
                         xtype      : 'spinnerfield',
                         width      : 60,
                         name       : 'mainAppMainMenuWidth',
@@ -119,7 +119,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         accelerate : true,
                         enableKeyEvents : true,
                         listeners  : {
-                            keyup : function(field)
+                            keyup : function()
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
@@ -129,7 +129,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
 
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
-                            spin : function(field)
+                            spin : function()
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
@@ -142,10 +142,10 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }]
                 }, {
-                    xtype      : 'fieldset',
-                    iconCls    : 'iconThemes',
-                    title      : _('Appearance'),
-                    items      : [{
+                    xtype   : 'fieldset',
+                    iconCls : 'iconThemes',
+                    title   : _('Appearance'),
+                    items   : [{
                         xtype          : 'combo',
                         fieldLabel     : _('Choose a theme'),
                         id             : 'conf-combo-theme',
@@ -162,13 +162,13 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 Ext.getCmp('conf-combo-theme').store.sort('themeName');
                             },
-                            select : function(c, record, numIndex)
+                            select : function(c)
                             {
-                                var hrefTheme = c.getValue(),
-                                tmp;
+                                var hrefTheme = c.getValue();
 
                                 Ext.get('appTheme').dom.href = hrefTheme;
-                                tmp = new ui.task.UpdateConfTask({
+
+                                new ui.task.UpdateConfTask({
                                     item  : 'theme',
                                     value : hrefTheme
                                 });
@@ -178,10 +178,10 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                 }, {
                     xtype      : 'fieldset',
                     title      : _('On save lang file'),
-                    iconCls     : 'iconSaveFile',
+                    iconCls    : 'iconSaveFile',
                     autoHeight : true,
                     defaults   : { hideLabel: true },
-                    defaultType : 'radio',
+                    defaultType: 'radio',
                     items      : [{
                         autoHeight : true,
                         name       : 'onSaveLangFile',
@@ -205,7 +205,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         checked    : (PhDOE.userConf.onSaveLangFile === "always") ? true : false,
                         boxLabel   : _('Always check for error before saving the file'),
                         inputValue : 'always',
-                        listeners : {
+                        listeners  : {
                             check : function(field)
                             {
                                 if (field.checked) {
@@ -222,7 +222,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         checked    : (PhDOE.userConf.onSaveLangFile === "never") ? true : false,
                         boxLabel   : _('Never check for error before saving the file'),
                         inputValue : 'never',
-                        listeners : {
+                        listeners  : {
                             check : function(field)
                             {
                                 if (field.checked) {
@@ -236,9 +236,9 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }]
                  }]
              }, {
-                title       : _('External Data'),
-                iconCls     : 'iconExternalData',
-                items       : [{
+                title   : _('External Data'),
+                iconCls : 'iconExternalData',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('About mails'),
                     iconCls     : 'iconMailing',
@@ -294,14 +294,15 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
     autoScroll : true,
     activeTab  : 0,
     defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('Menu'),
-                iconCls     : 'iconMenu',
-                items: [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('Nb files to display'),
                     iconCls     : 'iconFilesToDisplay',
@@ -317,25 +318,25 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         accelerate : true,
                         enableKeyEvents : true,
                         listeners  : {
-                            keyup : function(field)
+                            keyup : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
-                            spin : function(field)
+                            spin : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
                     }, {
-                        xtype: 'displayfield',
-                        value: _('0 means no limit'),
-                        style: { fontStyle: 'italic'}
+                        xtype : 'displayfield',
+                        value : _('0 means no limit'),
+                        style : { fontStyle: 'italic'}
                     }]
                 }]
             }, {
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items       : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('ScrollBars'),
                     iconCls     : 'iconScrollBar',
@@ -357,9 +358,9 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                items: [{
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',
@@ -399,9 +400,9 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
         Ext.apply(this,
         {
             items : [{
-                title       : _('Menu'),
-                iconCls     : 'iconMenu',
-                items: [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('Nb files to display'),
                     iconCls     : 'iconFilesToDisplay',
@@ -417,11 +418,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         accelerate : true,
                         enableKeyEvents : true,
                         listeners  : {
-                            keyup : function(field)
+                            keyup : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
-                            spin : function(field)
+                            spin : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
@@ -434,9 +435,9 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items       : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('ScrollBars'),
                     iconCls     : 'iconScrollBar',
@@ -496,7 +497,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                                 });
                             }
                         },
-                        items: [{
+                        items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDisplaylogPanelWidth',
@@ -507,11 +508,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -545,7 +546,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                                 });
                             }
                         },
-                        items: [{
+                        items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDiffPanelHeight',
@@ -556,11 +557,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -601,9 +602,9 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                items: [{
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',
@@ -650,14 +651,15 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
     autoScroll : true,
     activeTab  : 0,
     defaults   : { bodyStyle : 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('Menu'),
-                iconCls     : 'iconMenu',
-                items: [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('Error type'),
                     iconCls     : 'iconFilesError',
@@ -679,9 +681,9 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items       : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('ScrollBars'),
                     iconCls     : 'iconScrollBar',
@@ -752,11 +754,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -790,7 +792,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                                 });
                             }
                         },
-                        items: [{
+                        items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'errorDescPanelHeight',
@@ -801,11 +803,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -814,9 +816,9 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                items       : [{
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',
@@ -859,18 +861,19 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
 // EditorConf card5 - Module "Files need Reviewed" Config
 ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-5',
-    autoScroll: true,
+    id         : 'conf-card-5',
+    autoScroll : true,
     activeTab  : 0,
     defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('Menu'),
-                iconCls     : 'iconMenu',
-                items: [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('Nb files to display'),
                     iconCls     : 'iconFilesToDisplay',
@@ -886,11 +889,11 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         accelerate : true,
                         enableKeyEvents : true,
                         listeners  : {
-                            keyup : function(field)
+                            keyup : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             },
-                            spin : function(field)
+                            spin : function()
                             {
                                 ui.component._EditorConf.CommitChange.delay(1000, null, this);
                             }
@@ -903,9 +906,9 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : 'User Interface',
-                iconCls     : 'iconUI',
-                items       : [{
+                title   : 'User Interface',
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('ScrollBars'),
                     iconCls     : 'iconScrollBar',
@@ -965,7 +968,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                                 });
                             }
                         },
-                        items: [{
+                        items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'reviewedDisplaylogPanelWidth',
@@ -976,11 +979,11 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -989,9 +992,9 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : 'Editor',
-                iconCls     : 'iconEditor',
-                items: [{
+                title   : 'Editor',
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',
@@ -1038,14 +1041,15 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
     autoScroll : true,
     activeTab  : 0,
     defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items: [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('VCS Log'),
                     iconCls     : 'iconVCSLog',
@@ -1096,11 +1100,11 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -1109,9 +1113,9 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                items: [{
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',
@@ -1145,14 +1149,15 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
     autoScroll: true,
     activeTab  : 0,
     defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
     initComponent : function()
     {
         Ext.apply(this,
         {
             items : [{
-                title       : _('User Interface'),
-                iconCls     : 'iconUI',
-                items: [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('ScrollBars'),
                     iconCls     : 'iconScrollBar',
@@ -1223,11 +1228,11 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -1261,7 +1266,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                                 });
                             }
                         },
-                        items: [{
+                        items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'patchDisplayContentPanelHeight',
@@ -1272,11 +1277,11 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             accelerate : true,
                             enableKeyEvents : true,
                             listeners  : {
-                                keyup : function(field)
+                                keyup : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 },
-                                spin : function(field)
+                                spin : function()
                                 {
                                     ui.component._EditorConf.CommitChange.delay(1000, null, this);
                                 }
@@ -1285,9 +1290,9 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title       : _('Editor'),
-                iconCls     : 'iconEditor',
-                items: [{
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
                     xtype       : 'fieldset',
                     title       : _('SpellChecking'),
                     iconCls     : 'iconSpellCheck',

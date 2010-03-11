@@ -25,11 +25,11 @@ ui.task.CheckFileTask = function(config)
             FileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
                                         '-FILE-' + this.fid).getCode()
         },
-        success : function(response)
+        success : function(r)
         {
             Ext.getBody().unmask();
 
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText);
 
             // If there is some errors, we display this
             if (o.error && o.error_first !== '-No error-') {
@@ -57,7 +57,7 @@ ui.task.CheckFileTask = function(config)
             }
 
             // Now, We save LANG File
-            tmp = new ui.task.SaveLangFileTask({
+            new ui.task.SaveLangFileTask({
                 prefix      : this.prefix,
                 ftype       : this.ftype,
                 fid         : this.fid,

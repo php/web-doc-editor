@@ -12,7 +12,8 @@ Ext.namespace('Ext.ux.plugins');
   */
 
 Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
-    initComponent:function() {
+    initComponent : function()
+    {
  
         Ext.apply(this, {
             tpl:  '<tpl for=".">'
@@ -27,7 +28,8 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
  
     }, // end of function initComponent
  
-    onRender:function(ct, position) {
+    onRender:function(ct, position)
+    {
         // call parent onRender
         Ext.ux.IconCombo.superclass.onRender.call(this, ct, position);
  
@@ -42,14 +44,16 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
 
     }, // end of function onRender
  
-    setIconCls:function() {
+    setIconCls : function()
+    {
         var rec = this.store.query(this.valueField, this.getValue()).itemAt(0);
         if(rec) {
             this.icon.className = rec.get(this.iconClsField);
         }
     }, // end of function setIconCls
  
-    setValue: function(value) {
+    setValue : function(value)
+    {
         Ext.ux.IconCombo.superclass.setValue.call(this, value);
         this.setIconCls();
     } // end of function setValue
@@ -57,4 +61,3 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
  
 // register xtype
 Ext.reg('iconcombo', Ext.ux.IconCombo);
-

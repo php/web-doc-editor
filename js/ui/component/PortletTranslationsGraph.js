@@ -28,7 +28,6 @@ ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
 
 ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 {
-
     height : 400,
     url    : 'http://extjs.cachefly.net/ext-3.1.1/resources/charts.swf',
     xField : 'libel',

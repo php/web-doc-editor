@@ -54,9 +54,8 @@ ui.component._PortletBugs.gridView = new Ext.grid.GridView({
     deferEmptyText: false,
     enableRowBody : true,
     showPreview   : false,
-    getRowClass   : function(record, rowIndex, p, store)
+    getRowClass   : function(record, rowIndex, p)
     {
-
         if (this.showPreview) {
             p.body = '<p>' + record.data.description + '</p>';
             return 'x-grid3-row-expanded';

@@ -19,7 +19,6 @@ ui.task.LoadConfigTask = function(config)
             //For the theme, we apply this.
             Ext.get('appTheme').dom.href = PhDOE.userConf["theme"];
 
-
             // Draw the interface
             PhDOE.drawInterface();
         }

@@ -13,7 +13,7 @@ ui.task.UpdateConfTask = function(config)
             item  : this.item,
             value : this.value
         },
-        success : function(response)
+        success : function()
         {
             // Update userConf object
             PhDOE.userConf[this.item] = this.value;
@@ -34,7 +34,6 @@ ui.task.UpdateConfTask = function(config)
 
             // Notify
             PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));
-
 
         }
     });

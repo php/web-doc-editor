@@ -54,7 +54,7 @@ ui.component._PortletTranslator.translatorSumRenderer = function(value)
         var v = (value === 0 || value > 1) ? value : 1;
         return String.format('('+_('{0} Translators')+')', v);
     } else {
-        return;
+        return false;
     }
 };
 
@@ -62,7 +62,7 @@ ui.component._PortletTranslator.translatorSumRenderer = function(value)
 ui.component._PortletTranslator.uptodateRenderer = function(value)
 {
     if (value === '0') {
-        return;
+        return false;
     } else {
         return '<span style="color:green; font-weight: bold;">' + value + '</span>';
     }
@@ -72,7 +72,7 @@ ui.component._PortletTranslator.uptodateRenderer = function(value)
 ui.component._PortletTranslator.staleRenderer = function(value)
 {
     if (value === '0') {
-        return;
+        return false;
     } else {
         return '<span style="color:red; font-weight: bold;">' + value + '</span>';
     }
@@ -147,7 +147,7 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
     lang             : this.lang,
     EmailPrompt      : new ui.component.EmailPrompt(),
 
-    onRowDblClick : function(grid, rowIndex, e)
+    onRowDblClick : function(grid, rowIndex)
     {
 
         this.getSelectionModel().selectRow(rowIndex);

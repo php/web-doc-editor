@@ -16,8 +16,8 @@ ui.task.GetGGTranslation = function(config)
     XHR({
         scope  : this,
         params : {
-            task     : 'getGGTranslation',
-            str : this.str
+            task : 'getGGTranslation',
+            str  : this.str
         },
         success : function(response)
         {
@@ -26,7 +26,6 @@ ui.task.GetGGTranslation = function(config)
             Ext.get('GGTranslate-result').dom.innerHTML = o.translation;
             Ext.getCmp('GGTranslate-btn').setText(_('Translate !'));
             Ext.getCmp('GGTranslate-btn').enable();
-
         }
     });
 };

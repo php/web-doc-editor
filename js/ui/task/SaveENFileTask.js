@@ -24,9 +24,10 @@ ui.task.SaveENFileTask = function(config)
             fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
                                         '-FILE-' + this.fid).getCode()
         },
-        success : function(response)
+
+        success : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (this.prefix === 'FNU') {
                 // Update our store
@@ -77,9 +78,10 @@ ui.task.SaveENFileTask = function(config)
             PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), 'en' + this.fpath + this.fname));
 
         },
-        failure : function(response)
+
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             // Remove wait msg
             msg.hide();

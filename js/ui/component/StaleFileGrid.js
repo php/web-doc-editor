@@ -61,11 +61,12 @@ ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText: false,
-    getRowClass : function(record, numIndex, rowParams, store)
+    getRowClass : function(record)
     {
         if (record.data.needCommitEN || record.data.needCommitLang) {
             return 'file-need-commit';
         }
+        return false;
     },
     emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
@@ -217,12 +218,11 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         e.stopEvent();
     
         var FilePath = this.store.getAt(rowIndex).data.path,
-            FileName = this.store.getAt(rowIndex).data.name,
-            tmp;
+            FileName = this.store.getAt(rowIndex).data.name;
 
         this.getSelectionModel().selectRow(rowIndex);
 
-        tmp = new ui.component._StaleFileGrid.menu({
+        new ui.component._StaleFileGrid.menu({
             hideCommit : (this.store.getAt(rowIndex).data.needCommitEN === false && this.store.getAt(rowIndex).data.needCommitLang === false),
             grid       : this,
             event      : e,
@@ -294,13 +294,13 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         rev2        : en_revision,
                         listeners   : {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDiffPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDiffPanel',
                                     value : true
                                 });
@@ -308,7 +308,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             resize: function(a,b,newHeight) {
 
                                 if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiffPanelHeight',
                                         value : newHeight
                                     });
@@ -329,20 +329,20 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         width       : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
                         listeners: {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'needUpdateDisplaylogPanel',
                                     value : true
                                 });
                             },
                             resize: function(a,newWidth) {
                                 if( newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanelWidth',
                                         value : newWidth
                                     });

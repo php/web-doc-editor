@@ -23,9 +23,9 @@ ui.task.MarkDeleteTask = function(config)
                         FilePath : PhDOE.userLang + this.fpath,
                         FileName : this.fname
                     },
-                    success : function(response)
+                    success : function(r)
                     {
-                        var o = Ext.util.JSON.decode(response.responseText);
+                        var o = Ext.util.JSON.decode(r.responseText);
 
                         Ext.getBody().unmask();
                         ui.component.PendingCommitGrid.getInstance().addRecord(
@@ -35,6 +35,6 @@ ui.task.MarkDeleteTask = function(config)
                     }
                 });
             }
-        }, this
-    );
+        }
+    , this);
 };

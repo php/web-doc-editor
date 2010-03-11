@@ -30,7 +30,7 @@ ui.component._PendingTranslateGrid.store = Ext.extend(Ext.data.GroupingStore,
         direction : "ASC"
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         datachanged : function(ds)
         {
             Ext.getDom('acc-need-translate-nb').innerHTML = ds.getCount();
@@ -40,17 +40,18 @@ ui.component._PendingTranslateGrid.store = Ext.extend(Ext.data.GroupingStore,
 
 // PendingTranslateGrid view
 ui.component._PendingTranslateGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
-    startCollapsed: true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    forceFit       : true,
+    startCollapsed : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText: false,
-    getRowClass : function(record, numIndex, rowParams, store)
+    getRowClass : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
+        return false;
     },
     emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
@@ -115,12 +116,11 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         e.stopEvent();
 
         var FilePath = grid.store.getAt(rowIndex).data.path,
-            FileName = grid.store.getAt(rowIndex).data.name,
-            tmp;
+            FileName = grid.store.getAt(rowIndex).data.name;
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        tmp = new ui.component._PendingTranslateGrid.menu({
+        new ui.component._PendingTranslateGrid.menu({
             hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
             grid       : grid,
             event      : e,
@@ -141,8 +141,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName),
-            diff        = '';
+            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName);
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
 
@@ -160,7 +160,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 tabTip           : String.format(
                     _('Need Translate: in {0}'), FilePath
                 ),
-                listeners: {
+                listeners : {
                     resize: function(panel) {
                         Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
                     }
@@ -210,14 +210,13 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-
         Ext.apply(this,
         {
             columns : ui.component._PendingTranslateGrid.columns,
             store   : new ui.component._PendingTranslateGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesNeedTranslate'
-                })
+                          proxy : new Ext.data.HttpProxy({
+                              url : './do/getFilesNeedTranslate'
+                          })
             }),
             tbar:[
                 _('Filter: '), ' ',

@@ -33,8 +33,8 @@ ui.component._MainMenu.store = new Ext.data.Store({
     )
 });
 
-ui.component._MainMenu.store.on('load', function(store) {
-
+ui.component._MainMenu.store.on('load', function(store)
+{
     var tmp; 
 
     // We put the lang libel into Info-Language
@@ -69,9 +69,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
     id : 'mainMenu',
     init : function()
     {
-
         var MenuLang = new Ext.menu.Menu({id: 'MenuLang-ct'});
-
 
         Ext.apply(this,
         {
@@ -97,7 +95,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             // Remove wait msg
                             Ext.getBody().unmask();
 
-                            var o = Ext.util.JSON.decode(response.responseText), tmp;
+                            var o = Ext.util.JSON.decode(response.responseText);
 
                             if( o.lastupdate === 'in_progress' ) {
                                 Ext.MessageBox.show({
@@ -108,7 +106,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     icon    : Ext.MessageBox.INFO
                                 });
                             } else {
-                                tmp = new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
+                                new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
                             }
                         }
                     });
@@ -153,10 +151,9 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     // Remove wait msg
                                     Ext.getBody().unmask();
 
-                                    var tmp = new ui.component.CheckBuildPrompt().show(
+                                    new ui.component.CheckBuildPrompt().show(
                                         Ext.get('acc-need-update')
                                     );
-
                                 }
                             });
                         }
@@ -249,7 +246,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                             Ext.getBody().unmask();
 
                                             if( ! Ext.getCmp('win-check-entities') ) {
-                                                var win = new ui.component.CheckEntitiesPrompt();
+                                                new ui.component.CheckEntitiesPrompt();
                                             }
                                             Ext.getCmp('win-check-entities').show(Ext.get('mainMenu'));
 
@@ -288,7 +285,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function()
                 {
                     if( ! Ext.getCmp('win-conf') ) {
-                        var win = new ui.component.EditorConf();
+                        new ui.component.EditorConf();
                     }
                     Ext.getCmp('win-conf').show(Ext.get('mainMenu'));
 
@@ -410,7 +407,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls : 'iconHelp',
                 handler : function()
                 {
-                    var tmp = new ui.component.About().show(Ext.get('winabout-btn'));
+                    new ui.component.About().show(Ext.get('winabout-btn'));
                 }
             }]
         });

@@ -34,13 +34,13 @@ var PhDOE_loginPage = function()
                     ])
                 )
             });
+
             this.storeLang.load({
                 scope: this,
                 callback: function() {
                     this.storeProject.load();
                 }
             });
-
 
             // Load all available language
             this.storeProject = new Ext.data.Store({

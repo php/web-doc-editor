@@ -73,7 +73,7 @@ ui.component._CheckDoc.renderer = function(value, metadata)
         metadata.attr = 'ext:qtip="<img src=\'themes/img/help.png\' style=\'vertical-align: middle;\' /> ' + _('Double-click the cell to open the file selection') + '"';
         return value;
     } else {
-        return;
+        return false;
     }
 };
 
@@ -167,7 +167,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
                            dataIndex : 'file'
                        } ],
 
-    onRowClick: function(grid, rowIndex, e)
+    onRowClick: function()
     {
         Ext.getCmp('check-doc-btn-open-selected-files').enable();
     },
@@ -282,21 +282,21 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.CellSelectionModel({ singleSelect : true }),
     view             : new Ext.grid.GridView({ forceFit : true }),
 
-    listeners: {
-        render: function(grid)
+    listeners : {
+        render : function(grid)
         {
             // on render, load data
             this.store.load.defer(20, grid.store);
         }
     },
 
-    onCellContextMenu: function (grid, rowIndex, cellIndex, e)
+    onCellContextMenu : function (grid, rowIndex, cellIndex, e)
     {
         e.stopEvent();
         this.sm.select(rowIndex, cellIndex);
     },
 
-    onCellDblClick: function(grid, rowIndex, columnIndex, e)
+    onCellDblClick : function(grid, rowIndex, columnIndex, e)
     {
         var record    = this.store.getAt(rowIndex),
             errorType = this.getColumnModel().getDataIndex(columnIndex),
@@ -333,7 +333,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
 
                     grid.el.unmask();
 
-                    tmp = new ui.component._CheckDoc.FileWin({
+                    new ui.component._CheckDoc.FileWin({
                         fpath : fpath,
                         items : [
                             new ui.component._CheckDoc.FileGrid({

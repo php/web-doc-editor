@@ -40,7 +40,7 @@ ui.component._PendingCommitGrid.store = Ext.extend(Ext.data.GroupingStore,
         direction : "ASC"
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         add : function(ds)
         {
             Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
@@ -83,7 +83,7 @@ ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
                      '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     emptyText      : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
     deferEmptyText : false,
-    getRowClass  : function(record, numIndex, rowParams, store)
+    getRowClass    : function(record, numIndex, rowParams, store)
     {
         if ( record.data.type === 'update' ) {
             return 'file-needcommit-update';
@@ -127,10 +127,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             fdbid  = record.data.id,
                             fpath  = record.data.path,
                             fname  = record.data.name,
-                            fid    = Ext.util.md5(fpath + fname),
-                            tmp;
+                            fid    = Ext.util.md5(fpath + fname);
 
-                        tmp = new ui.component.CommitPrompt({
+                        new ui.component.CommitPrompt({
                             files : [{
                                 fid : fid,
                                 fpath : fpath,
@@ -146,8 +145,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     handler : function()
                     {
                         var files = [],
-                            grid  = ui.component.PendingCommitGrid.getInstance(),
-                            tmp;
+                            grid  = ui.component.PendingCommitGrid.getInstance();
 
                         grid.store.each(function(record)
                         {
@@ -165,7 +163,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             }
                         });
 
-                        tmp = new ui.component.CommitPrompt({
+                        new ui.component.CommitPrompt({
                             files : files
                         }).show();
                     }
@@ -176,8 +174,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     handler : function()
                     {
                         var files = [],
-                            grid  = ui.component.PendingCommitGrid.getInstance(),
-                            tmp;
+                            grid  = ui.component.PendingCommitGrid.getInstance();
 
                         grid.store.each(function(record)
                         {
@@ -193,7 +190,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             });
                         });
 
-                        tmp = new ui.component.CommitPrompt({
+                        new ui.component.CommitPrompt({
                             files : files
                         }).show();
                     }
@@ -295,7 +292,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     disabled : (PhDOE.userLogin === 'anonymous'),
                     handler  : function()
                     {
-                        var tmp = new ui.task.ClearLocalChangeTask({
+                        new ui.task.ClearLocalChangeTask({
                             storeRecord : this.grid.store.getAt(this.rowIdx),
                             ftype       : 'update',
                             fpath       : this.fpath,
@@ -343,9 +340,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
 
                        var storeRecord = this.grid.store.getAt(this.rowIdx),
                            FilePath    = storeRecord.data.path,
-                           FileName    = storeRecord.data.name
+                           FileName    = storeRecord.data.name;
 
-                       tmp = new ui.task.ClearLocalChangeTask({
+                       new ui.task.ClearLocalChangeTask({
                            storeRecord : storeRecord,
                            ftype       : 'delete',
                            fpath       : FilePath,
@@ -394,8 +391,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
                     {
                        var storeRecord = this.grid.store.getAt(this.rowIdx),
                            FilePath    = storeRecord.data.path,
-                           FileName    = storeRecord.data.name,
-                           tmp = new ui.task.ClearLocalChangeTask({
+                           FileName    = storeRecord.data.name;
+
+                       new ui.task.ClearLocalChangeTask({
                             storeRecord : storeRecord,
                             ftype       : 'new',
                             fpath       : FilePath,
@@ -429,13 +427,12 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = grid.store.getAt(rowIndex),
             FileType    = storeRecord.data.type,
             FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            tmp;
+            FileName    = storeRecord.data.name;
 
         grid.getSelectionModel().selectRow(rowIndex);
 
         if (FileType === 'new') {
-            tmp = new ui.component._PendingCommitGrid.menu.newFile({
+            new ui.component._PendingCommitGrid.menu.newFile({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
@@ -443,7 +440,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         }
 
         if (FileType === 'delete') {
-            tmp = new ui.component._PendingCommitGrid.menu.del({
+            new ui.component._PendingCommitGrid.menu.del({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
@@ -451,7 +448,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         }
 
         if (FileType === 'update') {
-            tmp = new ui.component._PendingCommitGrid.menu.update({
+            new ui.component._PendingCommitGrid.menu.update({
                 fpath  : FilePath,
                 fname  : FileName,
                 grid   : grid,
@@ -491,8 +488,8 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             FilePath = "/" + tmp.join('/');
 
             // Find the id of this row into PendingTranslateGrid.store and open it !
-            ui.component.PendingTranslateGrid.getInstance().store.each(function(row) {
-
+            ui.component.PendingTranslateGrid.getInstance().store.each(function(row)
+            {
                 if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
                     ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
                     return;

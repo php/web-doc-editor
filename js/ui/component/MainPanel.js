@@ -28,7 +28,6 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
             var currentTabId = tab.id,
                 tabs         = Ext.getCmp('main-panel').layout.container.items.items,
-                nextTabId    = false,
                 currentTabIndex,
                 i;
 

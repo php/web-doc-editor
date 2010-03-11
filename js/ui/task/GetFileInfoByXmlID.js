@@ -7,21 +7,19 @@ ui.task.GetFileInfoByXmlID = function(config)
 
     // We load the File
     XHR({
-        scope  : this,
-        params : {
-            task     : 'getFileInfoByXmlID',
+        scope   : this,
+        params  : {
+            task  : 'getFileInfoByXmlID',
             xmlID : this.xmlID
         },
-        success : function(response)
+        success : function(r)
         {
-
-            var o    = Ext.util.JSON.decode(response.responseText);
+            var o    = Ext.util.JSON.decode(r.responseText);
 
             ui.component.RepositoryTree.getInstance().openFile(
                 o.lang + o.path,
                 o.name
             );
-
         }
     });
 };

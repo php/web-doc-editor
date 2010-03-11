@@ -22,7 +22,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
             task     : 'checkLockFile',
             lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.userLogin +'_commit'
         },
-        success : function(response)
+        success : function()
         {
             ui.task._VCSCommitTask.poll.delay(5000);
         },
@@ -31,7 +31,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
             var o = Ext.util.JSON.decode(response.responseText), tmp;
             
             if (o && o.success === false) {
-                tmp = new ui.task._VCSCommitTask.getCommitResponse();
+                new ui.task._VCSCommitTask.getCommitResponse();
 
             } else {
                 ui.task._VCSCommitTask.poll.delay(5000);
@@ -42,15 +42,13 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
 
 ui.task._VCSCommitTask.afterCommit = function(mess)
 {
-    var mess, tmp;
-
     Ext.getBody().unmask();
 
     // Re-enable TaskPing
     ui.task.PingTask.getInstance().delay(30000);
 
     // Display commit output message
-    tmp = new Ext.Window({
+    new Ext.Window({
         title      : _('Status'),
         width      : 450,
         height     : 350,
@@ -80,7 +78,7 @@ ui.task._VCSCommitTask.commit = function(files)
         _('Please, wait until commit...')
     );
 
-    var nodes = [], node, LogMessage, tmp, i;
+    var nodes = [], node, LogMessage, i;
 
     // Go for VCS commit
     for (i = 0; i < files.length; i = i + 1) {
@@ -120,15 +118,15 @@ ui.task._VCSCommitTask.commit = function(files)
             nodes      : Ext.util.JSON.encode(nodes),
             logMessage : LogMessage
         },
-        success : function(response)
+        success : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
             
             ui.task._VCSCommitTask.afterCommit(o.mess);
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (o && o.success === false) {
                 // Re-enable TaskPing
@@ -156,7 +154,7 @@ ui.task.VCSCommitTask = function()
 
     var files         = Ext.getCmp('commit-tree-panel').getChecked(),
         NeedToBeClose = [],
-        checkNode, paneID_FE, paneID_FNU, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i;
+        checkNode, paneID_AF, paneID_FE, paneID_FNU, paneID_FNIEN, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i;
 
     for (i = 0; i < files.length; ++i) {
         checkNode = files[i].attributes;

@@ -114,7 +114,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
                 iconCls : 'iconTrash',
                 handler : function()
                 {
-                    var tmp = new ui.task.RejectPatchTask({
+                    new ui.task.RejectPatchTask({
                         fid         : this.fid,
                         fuid        : this.fuid,
                         storeRecord : this.grid.store.getAt(this.rowIdx)
@@ -194,14 +194,14 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         listeners   : {
                             collapse: function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplayContentPanel',
                                     value : false
                                 });
                             },
                             expand: function()
                             {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplayContentPanel',
                                     value : true
                                 });
@@ -209,7 +209,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             resize: function(a,b,newHeight)
                             {
                                 if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'patchDisplayContentPanelHeight',
                                         value : newHeight
                                     });
@@ -253,20 +253,20 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         width       : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
                         listeners   : {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'patchDisplaylogPanel',
                                     value : true
                                 });
                             },
                             resize: function(a,newWidth) {
                                 if( newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'patchDisplaylogPanelWidth',
                                         value : newWidth
                                     });
@@ -338,12 +338,11 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
         var FilePath   = grid.store.getAt(rowIndex).data.path,
             FileName   = grid.store.getAt(rowIndex).data.name,
             FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
-            FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName),
-            tmp;
+            FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        tmp = new ui.component._PendingPatchGrid.menu({
+        new ui.component._PendingPatchGrid.menu({
             grid   : grid,
             rowIdx : rowIndex,
             event  : e,

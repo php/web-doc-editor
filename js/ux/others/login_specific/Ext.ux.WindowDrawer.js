@@ -15,7 +15,8 @@
 // Need to override the Window DnD to allow events to fire.
 Ext.override(Ext.Window.DD, {
     // private - used for dragging
-    startDrag : function() {
+    startDrag : function()
+    {
         var w = this.win;
         w.fireEvent('ghost', []);
         this.proxy = w.ghost();
@@ -29,10 +30,10 @@ Ext.override(Ext.Window.DD, {
     }
 });
 
-
 // Need to override the Window class to allow events to fire for front and back movement.
 Ext.override(Ext.Window, {
-    setZIndex : function(index) {
+    setZIndex : function(index)
+    {
         var newZIndex = ++index;
 
         if (this.modal) {
@@ -59,7 +60,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     closable : false,
     resizable : false,
 
-    show : function(skipAnim, cb, scope) {
+    show : function(skipAnim, cb, scope)
+    {
         if (this.hidden && this.fireEvent("beforeshow", this) !== false) {
             this.hidden = false;
             this.onBeforeShow();
@@ -67,7 +69,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
         }
     },
 
-    hide : function(skipAnim, cb, scope) {
+    hide : function(skipAnim, cb, scope)
+    {
         if (this.hidden) {
             return;
         }
@@ -97,7 +100,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    init : function(parent) {
+    init : function(parent)
+    {
         this.win = parent;
         this.resizeHandles = this.side; // allow resizing only on 1 side (if resizing is allowed)
         this.shim = parent.shim; // shim the kids too (modification by @hendricd -- http://extjs.com/forum/showthread.php?p=281140#post281140)
@@ -105,31 +109,35 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
         parent.drawers = parent.drawers || {};
         parent.drawers[this.side] = this; // add this WindowDrawer to the parent's drawer collection
         parent.on({
-            scope           : this,
-            tofront         : this.onBeforeShow,
-            toback          : this.onBeforeShow,
-            ghost           : this.onBeforeResize,
-            move            : this.alignAndShow,
-            resize          : this.alignAndShow,
-            destroy         : this.destroy,
+            scope   : this,
+            tofront : this.onBeforeShow,
+            toback  : this.onBeforeShow,
+            ghost   : this.onBeforeResize,
+            move    : this.alignAndShow,
+            resize  : this.alignAndShow,
+            destroy : this.destroy,
 
             // modifications by @hendricd -- http://extjs.com/forum/showthread.php?p=281140#post281140
-            render  : function(p) {
+            render  : function(p)
+            {
                 // render WindowDrawer to parent's container, if available
                 this.render(p.el.parent());
             },
-            beforecollapse : function() {
+            beforecollapse : function()
+            {
                 if (!this.hidden) {
                     this.wasVisible = true;
                     this.hide(true);
                 }
             },
-            expand : function() {
-                if (this.showAgain = this.wasVisible) {
+            expand : function()
+            {
+                if (this.showAgain === this.wasVisible) {
                     this.alignAndShow();
                 }
             },
-            beforehide: function() {
+            beforehide: function()
+            {
                 this.wasVisible = !this.hidden;
                 this.hide(true);
             }
@@ -137,19 +145,20 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    initComponent : function() {
+    initComponent : function()
+    {
         Ext.apply(this, {
-            frame           : true,
-            draggable       : false,
-            modal           : false,
-            closeAction     : 'hide',
-            alignToParams   : {}
+            frame         : true,
+            draggable     : false,
+            modal         : false,
+            closeAction   : 'hide',
+            alignToParams : {}
         });
 
         this.on({
-            scope       : this,
-            beforeshow  : this.onBeforeShow,
-            beforehide  : this.onBeforeHide
+            scope      : this,
+            beforeshow : this.onBeforeShow,
+            beforehide : this.onBeforeHide
         });
 
         if (this.size) {
@@ -161,11 +170,11 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
         }
 
         Ext.ux.plugins.WindowDrawer.superclass.initComponent.call(this);
-
     },
 
     // private
-    onBeforeResize : function() {
+    onBeforeResize : function()
+    {
         if (!this.hidden) {
             this.showAgain = true;
         }
@@ -173,14 +182,16 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    onBeforeHide : function() {
+    onBeforeHide : function()
+    {
         if (this.animate) {
             this.getEl().addClass('x-panel-animated');
         }
     },
 
     // private
-    onBeforeShow : function() {
+    onBeforeShow : function()
+    {
         if (this.animate) {
             this.el.addClass('x-panel-animated');
         }
@@ -189,7 +200,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    afterShow : function(skipAnim, cb, scope) {
+    afterShow : function(skipAnim, cb, scope)
+    {
         if (this.animate && !skipAnim) {
             this.el.slideIn(this.alignToParams.slideDirection, {
                 scope    : this,
@@ -223,7 +235,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    alignAndShow : function() {
+    alignAndShow : function()
+    {
         this.setAlignment();
 
         if (this.showAgain) {
@@ -233,7 +246,8 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     },
 
     // private
-    setAlignment:  function() {
+    setAlignment:  function()
+    {
         switch(this.side) {
             case 'n' :
                 this.setWidth(this.win.el.getWidth() - 10);

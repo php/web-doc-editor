@@ -7,9 +7,9 @@ ui.task._CheckBuildTask.display = function()
             task : 'getLogFile',
             file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.userLang
         },
-        success : function(response)
+        success : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             Ext.getBody().unmask();
 
@@ -43,15 +43,15 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
             task     : 'checkLockFile',
             lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
         },
-        success : function(response)
+        success : function()
         {
             ui.task._CheckBuildTask.poll.delay(5000);
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText), tmp;
             if (o && o.success === false) {
-                tmp = new ui.task._CheckBuildTask.display();
+                new ui.task._CheckBuildTask.display();
             } else {
                 ui.task._CheckBuildTask.poll.delay(5000);
             }
@@ -74,13 +74,13 @@ ui.task.CheckBuildTask = function(config)
             task       : 'checkBuild',
             xmlDetails : Ext.getCmp('option-xml-details').checked
         },
-        success : function(response)
+        success : function()
         {
-            var tmp = new ui.task._CheckBuildTask.display();
+            new ui.task._CheckBuildTask.display();
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (o && o.success === false) {
                 // Re-enable TaskPing

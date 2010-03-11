@@ -31,16 +31,16 @@ ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
             task     : 'checkLockFile',
             lockFile : 'project_' + PhDOE.project + '_lock_apply_tools'
         },
-        success : function(response)
+        success : function()
         {
             ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText);
             if (o && o.success === false) {
                 Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
-                tmp = new ui.task._SystemUpdateTask.refresh_ui();
+                new ui.task._SystemUpdateTask.refresh_ui();
             } else {
                 ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
             }
@@ -55,13 +55,12 @@ ui.task._SystemUpdateTask.apply_tool = function()
         params  : {
             task: 'applyTools'
         },
-        success : function(response)
+        success : function()
         {
-            var tmp;
             Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
-            tmp = new ui.task._SystemUpdateTask.refresh_ui();
+            new ui.task._SystemUpdateTask.refresh_ui();
         },
-        failure : function(response)
+        failure : function()
         {
             ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
         }
@@ -79,15 +78,15 @@ ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
         {
             ui.task._SystemUpdateTask.vcs_poll.delay(5000);
         },
-        failure : function(response)
+        failure : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (o && o.success === false) {
                 Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
                 Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
 
-                tmp = new ui.task._SystemUpdateTask.apply_tool();
+                new ui.task._SystemUpdateTask.apply_tool();
             } else {
                 ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }
@@ -104,17 +103,16 @@ ui.task.SystemUpdateTask = function()
 
     XHR({
         params  : { task: 'updateRepository' },
-        success : function(response)
+        success : function()
         {
-            var tmp;
             Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
             Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
 
-            tmp = new ui.task._SystemUpdateTask.apply_tool();
+            new ui.task._SystemUpdateTask.apply_tool();
         },
-        failure: function(response)
+        failure: function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
             if (o && o.success === false) {
                 Ext.getCmp('sys-update-win').close();

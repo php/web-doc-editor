@@ -27,14 +27,14 @@ ui.component._BuildStatus.display = function(config)
     Ext.getCmp('main-panel').el.mask(_('Please, wait...'));
 
     XHR({
-        scope: this,
+        scope   : this,
         params  : {
             task          : 'getFailedBuildData',
             idFailedBuild : this.idFailedBuild
         },
-        success : function(response)
+        success : function(r)
         {
-            var o    = Ext.decode(response.responseText),
+            var o    = Ext.decode(r.responseText),
                 mess = o.mess.join("<br/>");
 
             // If the result is too large, the controller have limitated it. So, we add a button to allow the download of the full content
@@ -46,7 +46,7 @@ ui.component._BuildStatus.display = function(config)
                     scope: this,
                     text: _('Download the full content of this log'),
                     renderTo: 'check-build-content-download-btn',
-                    style: { margin: 'auto' },
+                    style: {margin: 'auto'},
                     handler : function()
                     {
                         window.location.href = './do/downloadFailedBuildLog' +
@@ -156,32 +156,30 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
                            forceFit: true
     }),
     listeners : {
-        render : function(grid)
+        render : function()
         {
             this.store.load.defer(20, this.store);
         }
     },
 
-    onRowdblclick: function(grid, rowIndex, e) {
+    onRowdblclick: function(grid, rowIndex, e)
+    {
+        var storeRecord = this.store.getAt(rowIndex);
 
-            var storeRecord = this.store.getAt(rowIndex),
-                tmp         = new ui.component._BuildStatus.display({
-                    idFailedBuild : storeRecord.id,
-                    lang          : storeRecord.data["lang"]
-                });
-
+        new ui.component._BuildStatus.display({
+            idFailedBuild : storeRecord.id,
+            lang          : storeRecord.data["lang"]
+        });
     },
 
-    onRowContextMenu: function(grid, rowIndex, e) {
-
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
             if( ! this.menu ) {
-
                 this.menu = new ui.component._BuildStatus.menu({
                     grid   : grid,
                     rowIdx : '',
                     event  : e
                 });
-
             }
 
             e.stopEvent();

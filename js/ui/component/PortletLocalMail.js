@@ -103,7 +103,6 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
 
     onContextClick: function(grid, rowIndex, e)
     {
-
         if(!this.menu) {
             this.menu = new Ext.menu.Menu({
                 id    : 'submenu-mail',
@@ -179,14 +178,13 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletLocalMail.reloadData();
         }
     }],
-    initComponent: function(config) {
-
+    initComponent: function(config)
+    {
         ui.component.PortletLocalMail.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.title = String.format(_('Mails from {0}'), 'doc-' + this.lang);
         this.add(new ui.component._PortletLocalMail.grid());
-
     }
 });
 

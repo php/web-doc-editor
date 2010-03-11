@@ -18,7 +18,7 @@ ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
         text    : _('Go !'),
         handler : function()
         {
-            var tmp = new ui.task.CheckEntitiesTask();
+            new ui.task.CheckEntitiesTask();
             Ext.getCmp('win-check-entities').hide();
         }
     }],

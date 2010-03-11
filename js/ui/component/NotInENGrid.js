@@ -101,10 +101,9 @@ Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
                 {
                    var storeRecord = this.grid.store.getAt(this.rowIdx),
                        FilePath    = storeRecord.data.path,
-                       FileName    = storeRecord.data.name,
-                       tmp;
+                       FileName    = storeRecord.data.name;
 
-                   tmp = new ui.task.MarkDeleteTask({
+                   new ui.task.MarkDeleteTask({
                        fpath       : FilePath,
                        fname       : FileName,
                        storeRecord : storeRecord
@@ -133,9 +132,9 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     
         grid.getSelectionModel().selectRow(rowIndex);
 
-        if (!grid.store.getAt(rowIndex).data.needcommit) {
-
-            var tmp = new ui.component._NotInENGrid.menu({
+        if (!grid.store.getAt(rowIndex).data.needcommit)
+        {
+            new ui.component._NotInENGrid.menu({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
@@ -156,8 +155,8 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
             FileID      = Ext.util.md5('FNIEN-' + PhDOE.userLang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
-        if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID)) {
-
+        if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID))
+        {
             Ext.getCmp('main-panel').add(
             {
                 id             : 'FNIEN-' + FileID,

@@ -24,7 +24,8 @@ ui.task.RejectPatchTask = function(config)
                         task        : 'afterPatchReject',
                         PatchUniqID : this.fuid
                     },
-                    success : function(response)
+
+                    success : function()
                     {
                         var grid = ui.component.PendingPatchGrid.getInstance();
                         // Remove this patch from the PendingPatchStore
@@ -42,7 +43,8 @@ ui.task.RejectPatchTask = function(config)
                         // Notify
                         PhDOE.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
                     },
-                    failure : function(response)
+
+                    failure : function()
                     {
                         // Remove wait msg
                         msg.hide();

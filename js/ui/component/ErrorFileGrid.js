@@ -83,11 +83,12 @@ ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
     groupTextTpl : '{[values.rs[0].data.path]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-    getRowClass  : function(record, numIndex, rowParams, store)
+    getRowClass  : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
+        return false;
     }
 });
 
@@ -151,9 +152,9 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
                             FilePath : this.lang + this.fpath,
                             FileName : this.fname
                         },
-                        success : function(response)
+                        success : function(r)
                         {
-                            var o = Ext.util.JSON.decode(response.responseText);
+                            var o = Ext.util.JSON.decode(r.responseText);
                             // We display in diff div
                             Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
                             Ext.get('diff_panel_' + this.rowIdx).unmask();
@@ -185,6 +186,7 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 });
 
 //------------------------------------------------------------------------------
+// TODO: put listeners's function into the initComponent
 // ErrorFileGrid
 ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
@@ -288,13 +290,13 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                             '&file=' + FileName,
                         listeners   : {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDescPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDescPanel',
                                     value : true
                                 });
@@ -302,7 +304,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             resize: function(a,b,newHeight) {
 
                                 if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'errorDescPanelHeight',
                                         value : newHeight
                                     });
@@ -323,20 +325,20 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         width       : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
                         listeners: {
                             collapse: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDisplaylogPanel',
                                     value : false
                                 });
                             },
                             expand: function() {
-                                var tmp = new ui.task.UpdateConfTask({
+                                new ui.task.UpdateConfTask({
                                     item  : 'errorDisplaylogPanel',
                                     value : true
                                 });
                             },
                             resize: function(a,newWidth) {
                                 if( newWidth && newWidth != PhDOE.userConf.errorDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    var tmp = new ui.task.UpdateConfTask({
+                                    new ui.task.UpdateConfTask({
                                         item  : 'errorDisplaylogPanelWidth',
                                         value : newWidth
                                     });

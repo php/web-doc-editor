@@ -1,4 +1,3 @@
-
 Ext.namespace('ui','ui.component','ui.component._PortletSummary');
 
 //------------------------------------------------------------------------------
@@ -87,7 +86,7 @@ ui.component._PortletSummary.gridColumns = [
 
 // PortletSummary gridview
 ui.component._PortletSummary.gridView = new Ext.grid.GridView({
-    getRowClass : function(record, numIndex, rowParams, store)
+    getRowClass : function(record)
     {
         switch (record.data.id) {
             case 1: return 'summary_1';
@@ -110,7 +109,7 @@ ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
     columns    : ui.component._PortletSummary.gridColumns,
     view       : ui.component._PortletSummary.gridView,
 
-    onRowdblclick : function ( grid, rowIndex, e )
+    onRowdblclick : function ( grid, rowIndex )
     {
         var id = grid.store.getAt(rowIndex).data.id;
 
@@ -128,7 +127,7 @@ ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
     {
         ui.component._PortletSummary.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
-        this.on('rowdblclick',    this.onRowdblclick,  this);
+        this.on('rowdblclick', this.onRowdblclick, this);
     }
 });
 
@@ -147,8 +146,9 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletSummary.store.reload();
         }
     }],
-    initComponent: function(config) {
 
+    initComponent: function(config)
+    {
         ui.component.PortletSummary.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
@@ -156,19 +156,17 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
 
     },
 
-    afterRender: function() {
-
+    afterRender: function()
+    {
         ui.component.PortletSummary.superclass.afterRender.call(this);
 
         this.header.insertFirst({
             tag   : 'div',
             id    : Ext.id(),
             style : 'float: left; margin-right: 2px;',
-            cls   : 'flags flag-'+this.lang,
+            cls   : 'flags flag-'+this.lang
         }, 'first');
-
     }
-
 });
 
 // singleton

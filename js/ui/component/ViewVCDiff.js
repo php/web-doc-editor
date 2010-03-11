@@ -1,5 +1,6 @@
 Ext.namespace('ui','ui.component');
 
+// TODO: Extract the URI specific at php's project into the config file to allow use of others projects
 // ViewVCDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
 ui.component.ViewVCDiff = Ext.extend(Ext.Panel,

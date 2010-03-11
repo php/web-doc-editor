@@ -54,7 +54,6 @@ var PhDOE = function()
 
         winForbidden : function(type)
         {
-
             var title = _('Forbidden'),
                 mess  = _('You can\'t do this action as anonymous user.');
 
@@ -71,20 +70,19 @@ var PhDOE = function()
             );
         },
 
-        runDirectAccess: function() {
-
+        runDirectAccess: function()
+        {
             if (directAccess) {
                 ui.component.RepositoryTree.getInstance().openFile(
                     directAccess.lang + directAccess.path,
                     directAccess.name
                 );
             }
-
         },
 
         // All we want to do after all dataStore are loaded
-        afterLoadAllStore: function() {
-
+        afterLoadAllStore: function()
+        {
             // Run DirectAccess if present
             this.runDirectAccess();
 
@@ -97,11 +95,10 @@ var PhDOE = function()
             if( this.userConf['mainAppLoadBugsAtStartUp'] ) {
                 ui.component.PortletBugs.getInstance().reloadData();
             }
-
         },
 
-        loadAllStore: function() {
-
+        loadAllStore: function()
+        {
             var progressBar = new Ext.ProgressBar({
                     width:300,
                     renderTo:'loading-progressBar'
@@ -474,9 +471,11 @@ var PhDOE = function()
                 ddGroup    : 'mainPanelDDGroup',
                 notifyDrop : function(ddSource, e, data) {
 
+                    var i, idToOpen;
+
                     // Special case for the repositoryTree
                     if( data.nodes ) {
-                        for( var i=0; i < data.nodes.length; i++ ) {
+                        for( i=0; i < data.nodes.length; i++ ) {
                             PhDOE.AFfilePendingOpen[i] = {
                                 nodeID: data.nodes[i].attributes.id
                             };
@@ -500,7 +499,7 @@ var PhDOE = function()
                     }
 
                     // We store the data
-                    for( var i=0; i < data.selections.length; i++ ) {
+                    for( i=0; i < data.selections.length; i++ ) {
                         if( data.grid.ownerCt.id === 'acc-need-translate' ) {
                             PhDOE.FNTfilePendingOpen[i] = { id: data.selections[i].data.id };
                         }
@@ -525,7 +524,6 @@ var PhDOE = function()
                     }
 
                     // On ouvre le premier
-                    var idToOpen;
 
                     if( data.grid.ownerCt.id === 'acc-need-translate' ) {
                         idToOpen = PhDOE.FNTfilePendingOpen[0];
@@ -654,7 +652,6 @@ var PhDOE = function()
                         }
                     }
                 }
-
 
             }, this);
 

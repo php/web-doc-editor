@@ -24,9 +24,10 @@ ui.task.SaveTransFileTask = function(config)
             fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
                                         '-FILE-' + this.fid).getCode()
         },
-        success : function(response)
+
+        success : function(r)
         {
-            var o = Ext.util.JSON.decode(response.responseText);
+            var o = Ext.util.JSON.decode(r.responseText);
 
                 this.storeRecord.set('needcommit', true);
                 //this.storeRecord.set('maintainer', o.maintainer);
@@ -55,7 +56,8 @@ ui.task.SaveTransFileTask = function(config)
             // Notify
             PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
-        failure : function(response)
+
+        failure : function()
         {
             // Remove wait msg
             msg.hide();

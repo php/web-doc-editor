@@ -11,7 +11,7 @@ ui.component.About = Ext.extend(Ext.Window,
     plain     : true,
     bodyStyle : 'color:#000',
 
-    buttons : [{
+    buttons   : [{
         text    : _('Close'),
         handler : function()
         {

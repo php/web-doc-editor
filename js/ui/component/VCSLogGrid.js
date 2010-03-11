@@ -49,6 +49,7 @@ ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
             if (nbRowsSelected === 2) {
                 return false;
             }
+            return true;
         },
         rowselect : function(sm)
         {
@@ -170,9 +171,6 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                         Ext.getCmp('PP-' + this.fid).panVCS = true;
                         Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', this.fid);
                     }
-
-                   
-
                 }
             }
         }),
@@ -219,9 +217,9 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                             Rev1     : rev1,
                             Rev2     : rev2
                         },
-                        success : function(response)
+                        success : function(r)
                         {
-                            var o = Ext.util.JSON.decode(response.responseText);
+                            var o = Ext.util.JSON.decode(r.responseText);
 
                             Ext.getBody().unmask();
 
