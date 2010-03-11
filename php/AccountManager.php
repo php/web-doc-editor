@@ -265,7 +265,6 @@ class AccountManager
     /**
      * Register a new valid user on the application.
      *
-     * @todo The VCS password is stored in plain text into the database for later use. We need to find something better
      * @return int The database insert id
      */
     private function register()
