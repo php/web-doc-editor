@@ -94,6 +94,7 @@ ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
         if ( record.data.type === 'new' ) {
             return 'file-needcommit-new';
         }
+        return false;
     }
 });
 

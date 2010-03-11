@@ -66,6 +66,7 @@ ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
+        return false;
     }
 });
 

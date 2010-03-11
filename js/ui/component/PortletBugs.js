@@ -19,16 +19,16 @@ ui.component._PortletBugs.store = new Ext.data.Store({
                 mapping : 'id'
             }, {
                 name    : 'title',
-                mapping : 'title',
+                mapping : 'title'
             }, {
                 name    : 'link',
                 mapping : 'link'
             }, {
                 name    : 'description',
-                mapping : 'description',
+                mapping : 'description'
             }, {
                 name    : 'xmlID',
-                mapping : 'xmlID',
+                mapping : 'xmlID'
             }
         ])
     )
