@@ -93,12 +93,12 @@ var PhDOE_loginPage = function()
                     iconCls     : 'iconKey',
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
-                            html : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><span id="request-account"></span></div>',
-                            side : 's',
-                            bodyStyle: 'margin: 10px;',
-                            animate : true,
+                            html      : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><span id="request-account"></span></div>',
+                            side      : 's',
+                            bodyStyle : 'margin: 10px;',
+                            animate   : true,
                             resizable : false,
-                            height : 80
+                            height    : 80
                         })
                     ],
                     listeners : {
@@ -156,7 +156,7 @@ var PhDOE_loginPage = function()
                                         c.collapse();
                                         c.disable();
                                     } else {
-                                        c.setValue(c.store.data.items[0].data.code);
+                                        c.setValue('php');
 
                                         var url = c.store.data.items[0].data.request_account_uri;
                                         Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
