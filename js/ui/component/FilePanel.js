@@ -52,7 +52,7 @@ ui.component._FilePanel.tbar.items.common = function(config)
 };
 Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
 {
-    init    : function()
+    init : function()
     {
         Ext.apply(this,
         {
@@ -69,14 +69,14 @@ Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
                 scope   : this,
                 tooltip : _('Go to previous tab'),
                 iconCls : 'iconArrowLeft',
-                handler :  this.goToPreviousTab
+                handler : this.goToPreviousTab
             },{
                 id      : this.prefix + '-' + this.fid + '-btn-tabRight-' + this.ftype,
-                scope    : this,
+                scope   : this,
                 tooltip : _('Go to next tab'),
-                disabled : true,
-                iconCls  : 'iconArrowRight',
-                handler  : this.goToNextTab
+                disabled: true,
+                iconCls : 'iconArrowRight',
+                handler : this.goToNextTab
             }]
         });
     }
@@ -478,10 +478,8 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
     goToPreviousTab : function()
     {
         var currentTabId = this.prefix+'-'+this.fid,
-        tabs         = Ext.getCmp('main-panel').layout.container.items.items,
-        previousTabId,
-        currentTabIndex,
-        i;
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            previousTabId, currentTabIndex, i;
 
         for( i=0; i < tabs.length; i++ ) {
             if( tabs[i].id === currentTabId ) {
@@ -499,17 +497,13 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
         // We go to the previous
         Ext.getCmp('main-panel').setActiveTab(previousTabId);
-
     },
 
     goToNextTab : function()
     {
-
         var currentTabId = this.prefix+'-'+this.fid,
-        tabs         = Ext.getCmp('main-panel').layout.container.items.items,
-        nextTabId    = false,
-        currentTabIndex,
-        i;
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            nextTabId    = false, currentTabIndex, i;
 
         for( i=0; i < tabs.length; i++ ) {
             if( tabs[i].id === currentTabId ) {
@@ -523,7 +517,6 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             nextTabId = tabs[currentTabIndex + 1].id;
             Ext.getCmp('main-panel').setActiveTab(nextTabId);
         }
-
     },
 
     initComponent : function()
@@ -619,26 +612,26 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     }
                 }]
             }, new ui.component._FilePanel.tbar.items.undoRedo({
-                id_prefix: id_prefix,
-                fid: this.fid
+                id_prefix : id_prefix,
+                fid       : this.fid
             }),
             new ui.component._FilePanel.tbar.items.reindentTags({
-                id_prefix: id_prefix,
-                fid: this.fid,
-                lang: this.lang,
-                spellCheck: this.spellCheck,
-                spellCheckConf: this.spellCheckConf
+                id_prefix      : id_prefix,
+                fid            : this.fid,
+                lang           : this.lang,
+                spellCheck     : this.spellCheck,
+                spellCheckConf : this.spellCheckConf
             })
             ] : [
             // en/lang file pane tbar
             new ui.component._FilePanel.tbar.items.common({
-                prefix: this.prefix,
-                fid: this.fid,
-                ftype: this.ftype,
-                goToPreviousTab: this.goToPreviousTab,
-                goToNextTab: this.goToNextTab
+                prefix          : this.prefix,
+                fid             : this.fid,
+                ftype           : this.ftype,
+                goToPreviousTab : this.goToPreviousTab,
+                goToNextTab     : this.goToNextTab
             }), {
-                xtype :'buttongroup',
+                xtype : 'buttongroup',
                 items : [{
                     id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
                     scope    : this,
@@ -767,47 +760,47 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
-                        var tmp = new ui.component.PatchPrompt({
-                            prefix : this.prefix,
-                            ftype  : this.ftype,
-                            fid    : this.fid,
-                            fpath  : this.fpath,
-                            fname  : this.fname,
-                            lang   : this.lang,
+                        new ui.component.PatchPrompt({
+                            prefix       : this.prefix,
+                            ftype        : this.ftype,
+                            fid          : this.fid,
+                            fpath        : this.fpath,
+                            fname        : this.fname,
+                            lang         : this.lang,
                             defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
                         }).show();
                     }
                 }]
             }, new ui.component._FilePanel.tbar.items.undoRedo({
-                id_prefix: id_prefix,
-                fid: this.fid
+                id_prefix : id_prefix,
+                fid       : this.fid
             }),
             new ui.component._FilePanel.tbar.items.reindentTags({
-                id_prefix: id_prefix,
-                fid: this.fid,
-                lang: this.lang,
-                spellCheck: this.spellCheck,
-                spellCheckConf: this.spellCheckConf
+                id_prefix      : id_prefix,
+                fid            : this.fid,
+                lang           : this.lang,
+                spellCheck     : this.spellCheck,
+                spellCheckConf : this.spellCheckConf
             })
             ]
         } else {
             this.tbar = [
-            new ui.component._FilePanel.tbar.items.common({
-                prefix: this.prefix,
-                fid: this.fid,
-                ftype: this.ftype,
-                goToPreviousTab: this.goToPreviousTab,
-                goToNextTab: this.goToNextTab
-            })
+                new ui.component._FilePanel.tbar.items.common({
+                    prefix          : this.prefix,
+                    fid             : this.fid,
+                    ftype           : this.ftype,
+                    goToPreviousTab : this.goToPreviousTab,
+                    goToNextTab     : this.goToNextTab
+                })
             ];
         }
 
         Ext.apply(this,
         {
-            title : this.title,
-            cls: 'code-mirror-panel',
+            title       : this.title,
+            cls         : 'code-mirror-panel',
             originTitle : this.title,
-            items : [{
+            items       : [{
                 xtype      : 'codemirror',
                 id         : id_prefix + '-FILE-' + this.fid,
                 readOnly   : this.readOnly,
@@ -816,16 +809,19 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 isModified : false,
                 listeners  : {
                     scope  : this,
+
                     initialize : function()
                     {
-
                         var herePath, hereName;
 
-                        if( this.isPatch ) {
+                        if( this.isPatch )
+                        {
                             herePath = this.fpath;
                             hereName = this.fname + '.' + this.fuid + '.patch';
-                        } else if ( this.isTrans ) {
-                            if( this.storeRecord.data['needcommit'] ) {
+                        } else if ( this.isTrans )
+                        {
+                            if( this.storeRecord.data['needcommit'] )
+                            {
                                 herePath = this.lang + this.fpath;
                                 hereName = this.fname+'.new';
                             } else {
@@ -845,7 +841,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             fname  : hereName
                         });
                     },
-                    coderestored : function() {
+
+                    coderestored : function()
+                    {
 
                         if ( Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified ) {
                             // Remove [modified] in title
@@ -862,47 +860,49 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                                     Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                         Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                                        );
+                                    );
                                 }
                             } else {
                                 Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                     Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-                                    );
+                                );
                             }
 
                             // Desactivate save button
-                            if ( ! this.isPatch) {
+                            if ( ! this.isPatch ) {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
                             }
 
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
-
                         }
-
                     },
-                    codemodified : function() {
 
-                        var cmpFile = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-                        cmpPanel= Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+                    codemodified : function()
+                    {
 
-                        if (!cmpFile.isModified) {
+                        var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
+                            cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+
+                        if ( !cmpFile.isModified )
+                        {
                             // Add an [modified] in title
                             cmpPanel.setTitle(
                                 cmpPanel.permlink    +
                                 cmpPanel.originTitle +
                                 ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
-                                );
+                            );
 
                             // Add in tabpanel
                             Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
                                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
                                 ' <t style="color:#ff0000; font-weight: bold;">*</t>'
-                                );
+                            );
 
                             // Activate save button
-                            if (! this.isPatch) {
+                            if (! this.isPatch)
+                            {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
                             }
@@ -914,15 +914,19 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             cmpFile.isModified = true;
                         }
                     },
+
                     cursormove : function(line, caracter)
                     {
                         Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = line;
-                        Ext.get(id_prefix + '-status-col-'  + this.fid).dom.innerHTML  = caracter;
+                        Ext.get(id_prefix + '-status-col-'  + this.fid).dom.innerHTML = caracter;
                     },
+
                     scroll : function(scrollY)
                     {
-                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] ) {
-                            var opp_prefix;
+                        var opp_prefix, opp_panel, opp_file;
+
+                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] )
+                        {
                             switch (this.ftype) {
                                 case 'EN':
                                     opp_prefix = this.prefix + '-LANG';
@@ -943,8 +947,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     opp_prefix = this.prefix + '-TRANS';
                                     break;
                             }
-                            var opp_panel  = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
-                            opp_file   = Ext.getCmp(opp_prefix + '-FILE-' + this.fid);
+
+                            opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
+                            opp_file  = Ext.getCmp(opp_prefix + '-FILE-'  + this.fid);
 
                             // scroll lock logic:
                             // 1. panel-A gains lock if panel-B is not scrolling

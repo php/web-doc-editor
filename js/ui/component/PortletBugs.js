@@ -102,7 +102,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 
     openRelatedFile: function(xmlID)
     {
-        var tmp = new ui.task.GetFileInfoByXmlID({xmlID: xmlID});
+        new ui.task.GetFileInfoByXmlID({xmlID: xmlID});
     },
 
     onContextClick : function(grid, rowIndex, e)

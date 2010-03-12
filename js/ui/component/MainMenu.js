@@ -35,14 +35,12 @@ ui.component._MainMenu.store = new Ext.data.Store({
 
 ui.component._MainMenu.store.on('load', function(store)
 {
-    var tmp; 
-
     // We put the lang libel into Info-Language
     Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
 
-    store.each(function(record){
+    store.each(function(record) {
 
-        tmp = new Ext.menu.Item({
+        new Ext.menu.Item({
             text    : record.data.name,
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
             disabled: (record.data.code === PhDOE.userLang),
@@ -60,7 +58,6 @@ ui.component._MainMenu.store.on('load', function(store)
 
         Ext.getCmp('MenuLang-ct').add(tmp);
     });
-
 
 }, this);
 

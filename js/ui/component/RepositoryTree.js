@@ -13,7 +13,7 @@ ui.component._RepositoryTree.root = {
 
 // RepositoryTree default tree loader
 ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
-    dataUrl    : './do/getAllFiles'
+    dataUrl : './do/getAllFiles'
 });
 
 Ext.namespace('ui.component._RepositoryTree.menu');

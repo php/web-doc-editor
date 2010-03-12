@@ -316,7 +316,7 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                 {
                     // Must choose the file
                     var o = Ext.decode(response.responseText),
-                        i, tmp;
+                        i;
 
                     // file store
                     ui.component._CheckDoc.fs.removeAll();

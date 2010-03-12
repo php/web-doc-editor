@@ -28,7 +28,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
         },
         failure : function(response)
         {
-            var o = Ext.util.JSON.decode(response.responseText), tmp;
+            var o = Ext.util.JSON.decode(response.responseText);
             
             if (o && o.success === false) {
                 new ui.task._VCSCommitTask.getCommitResponse();
@@ -154,7 +154,7 @@ ui.task.VCSCommitTask = function()
 
     var files         = Ext.getCmp('commit-tree-panel').getChecked(),
         NeedToBeClose = [],
-        checkNode, paneID_AF, paneID_FE, paneID_FNU, paneID_FNIEN, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i;
+        checkNode, paneID_AF, paneID_FE, paneID_FNU, paneID_FNIEN, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i, j;
 
     for (i = 0; i < files.length; ++i) {
         checkNode = files[i].attributes;
@@ -198,7 +198,7 @@ ui.task.VCSCommitTask = function()
     }
 
     if (NeedToBeClose.length > 0) {
-        for (var j = 0; j < NeedToBeClose.length; ++j) {
+        for ( j = 0; j < NeedToBeClose.length; ++j ) {
             labelNeedToBeClose += NeedToBeClose[j][1] + '<br/>';
         }
 

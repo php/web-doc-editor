@@ -76,14 +76,14 @@ ui.component._ErrorFileGrid.columns = [{
 
 // ErrorFileGrid view
 ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
-    emptyText    : '<div style="text-align: center;">'+_('No Files')+'</div>',
-    deferEmptyText: false,
-    forceFit     : true,
+    emptyText      : '<div style="text-align: center;">'+_('No Files')+'</div>',
+    deferEmptyText : false,
+    forceFit       : true,
     startCollapsed : true,
-    groupTextTpl : '{[values.rs[0].data.path]} ' +
+    groupTextTpl   : '{[values.rs[0].data.path]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-    getRowClass  : function(record)
+    getRowClass : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
@@ -430,8 +430,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     validateOnBlur  :  false,
                     validationEvent : false,
 
-                    trigger1Class : 'x-form-clear-trigger',
-                    trigger2Class : 'x-form-search-trigger',
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
 
                     listeners : {
                         keypress : function(field, e)

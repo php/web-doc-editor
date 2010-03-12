@@ -49,7 +49,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
         },
         failure : function(r)
         {
-            var o = Ext.util.JSON.decode(r.responseText), tmp;
+            var o = Ext.util.JSON.decode(r.responseText);
             if (o && o.success === false) {
                 new ui.task._CheckBuildTask.display();
             } else {
