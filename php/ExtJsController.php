@@ -217,7 +217,10 @@ class ExtJsController
      */
     public function ping()
     {
-        AccountManager::getInstance()->isLogged();
+
+        if( ! AccountManager::getInstance()->isLogged() ) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = RepositoryFetcher::getInstance()->getLastUpdate();
 

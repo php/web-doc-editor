@@ -87,8 +87,7 @@ ui.task.PingTask = function()
             },
             failure: function()
             {
-                // TODO: Handle when we loose the connection. Actually, there is a lot of error who are return from the controller
-                //window.location.href = './';
+                window.location.href = './';
             }
         });
         this.task.delay(30000);
