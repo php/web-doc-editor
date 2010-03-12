@@ -198,7 +198,7 @@ i18n["View Diff"] = "Voir la différence";
 i18n["View Diff..."] = "Voir la différence...";
 i18n["... of the {0} file"] = "... du fichier {0}";
 i18n["Forbidden"] = "Interdit";
-i18n["You can\'t do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
+i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
 i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
 i18n["If you want to be notified when your patch will be dealt with, thank you to leave an email address below."] = "Si vous voulez être averti lors du traitement de votre patch, merci de laisser une adresse email ci-dessous.";
 i18n["Collapse"] = "Plier ce dossier";
@@ -210,12 +210,12 @@ i18n["Last data update: "] = "Dernière mise à jour des données : ";
 i18n["Last entities check: "] = "Dernière vérification des entités : ";
 i18n["update in progress..."] = "Mise à jour en cours...";
 i18n["check in progress..."] = "Vérification en cours...";
-i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l\'état de la mise à jour. Merci de patienter...";
-i18n["There is currently an update in progress.<br/>You can\'t perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l\'effectuer maintenant";
+i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l'état de la mise à jour. Merci de patienter...";
+i18n["There is currently an update in progress.<br/>You can't perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l'effectuer maintenant";
 
 
-i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s\'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
-i18n["There is currently a check in progress for this language.<br/>You can\'t perform a new check now."] = "Il y a actuellement une vérification de la compilation de ce langage en cours.<br/>Vous ne pouvez pas effectuer un maintenant.";
+i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
+i18n["There is currently a check in progress for this language.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification de la compilation de ce langage en cours.<br/>Vous ne pouvez pas effectuer un maintenant.";
 
 i18n["in {0}"] = "dans le dossier {0}";
 i18n["Up to date files"] = "Fichiers à jour";
@@ -269,8 +269,8 @@ i18n["EN tools"] = "Outils EN";
     i18n["Script Check Entities"] = "Script de vérification des entités";
     i18n["View the last result"] = "Voir le résultat de la dernière vérification";
     i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";
-    i18n["There is currently a check in progress for the entities.<br/>You can\'t perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
-    i18n["You\'re about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
+    i18n["There is currently a check in progress for the entities.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
+    i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
     i18n["Please, wait until entities are checked..."] = "Merci de patienter pendant la vérification des entités...";
     i18n["Run this script"] = "Exécuter ce script";
     i18n["Check Entities"] = "Vérification des entités";
@@ -282,12 +282,12 @@ i18n["EN tools"] = "Outils EN";
 
 i18n["Configure"] = "Configuration";
     i18n["Main"] = "Principal";
-    i18n["Module \"Files Need Translate\""] = 'Module "Nouveaux Fichiers à traduire"';
-    i18n["Module \"Files Need Update\""] = 'Module "Fichiers à mettre à jour"';
-    i18n["Module \"Files with Error\""] = 'Module "Fichiers avec des erreurs"';
-    i18n["Module \"Files need Reviewed\""] = 'Module "À relire"';
-    i18n["Module \"All files\""] = 'Module "Tous les fichiers"';
-    i18n["Module \"Pending Patch\""] = 'Module "Patchs en attente"';
+    i18n["Module \"Files Need Translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
+    i18n["Module \"Files Need Update\""] = "Module \"Fichiers à mettre à jour\"";
+    i18n["Module \"Files with Error\""] = "Module \"Fichiers avec des erreurs\"";
+    i18n["Module \"Files need Reviewed\""] = "Module \"À relire\"";
+    i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
+    i18n["Module \"Pending Patch\""] = "Module \"Patchs en attente\"";
     i18n["Enable spellChecking"] = "Activer la vérification orthographique";
     i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
     i18n["Configuration"] = "Configuration";
@@ -394,6 +394,7 @@ i18n["No see also"] = "Pas de section \"See also\"";
 i18n["Refsect1 role error"] = "Erreur dans le rôle du Refsect1";
 i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
 i18n["Open all files"] = "Ouvrir tous les fichiers";
+i18n["Open the related file"] = "Ouvrir le fichier associé";
 
 // Error
 i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
