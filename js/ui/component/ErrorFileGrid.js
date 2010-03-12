@@ -186,7 +186,6 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 });
 
 //------------------------------------------------------------------------------
-// TODO: put listeners's function into the initComponent
 // ErrorFileGrid
 ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
@@ -197,42 +196,40 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
     ddGroup          : 'mainPanelDDGroup',
     view             : ui.component._ErrorFileGrid.view,
     columns          : ui.component._ErrorFileGrid.columns,
-
-    listeners : {
+    listeners        : {
         render : function(grid)
         {
             grid.view.refresh();
-        },
-        rowcontextmenu : function(grid, rowIndex, e)
-        {
-
-            e.stopEvent();
-        
-            var FilePath = grid.store.getAt(rowIndex).data.path,
-                FileName = grid.store.getAt(rowIndex).data.name,
-                tmp;
-
-            grid.getSelectionModel().selectRow(rowIndex);
-
-            tmp = new ui.component._ErrorFileGrid.menu({
-                hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
-                grid       : grid,
-                event      : e,
-                rowIdx     : rowIndex,
-                lang       : PhDOE.userLang,
-                fpath      : FilePath,
-                fname      : FileName
-            }).showAt(e.getXY());
-        },
-        rowdblclick : function(grid, rowIndex, e)
-        {
-            this.openFile(grid.store.getAt(rowIndex).data.id);
         }
+    },
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+
+        var FilePath = grid.store.getAt(rowIndex).data.path,
+            FileName = grid.store.getAt(rowIndex).data.name;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._ErrorFileGrid.menu({
+            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
+            grid       : grid,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : PhDOE.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick : function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
     },
 
     openFile : function(rowId) 
     {
-
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
@@ -263,7 +260,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
                 originTitle : FileName,
-                defaults    : { split : true },
+                defaults    : {split : true},
                 tabTip      : String.format(
                     _('File with error : in {0}'), FilePath
                 ),
@@ -349,7 +346,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             tabPosition : 'bottom',
-                            defaults    : { autoScroll : true },
+                            defaults    : {autoScroll : true},
                             items       : [
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
@@ -470,6 +467,9 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             ]
         });
         ui.component.ErrorFileGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 
