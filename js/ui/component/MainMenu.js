@@ -40,7 +40,7 @@ ui.component._MainMenu.store.on('load', function(store)
 
     store.each(function(record) {
 
-        new Ext.menu.Item({
+        var tmp = new Ext.menu.Item({
             text    : record.data.name,
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
             disabled: (record.data.code === PhDOE.userLang),
