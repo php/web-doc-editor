@@ -158,7 +158,7 @@ var PhDOE_loginPage = function()
                                     } else {
                                         c.setValue('php');
 
-                                        var url = c.store.data.items[0].data.request_account_uri;
+                                        var url = c.store.getById('php').data.request_account_uri;
                                         Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                                     }                                   
 
