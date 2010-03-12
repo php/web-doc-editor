@@ -108,7 +108,7 @@ ui.component._BuildStatus.columns = [
         dataIndex : 'date',
         renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
     }, {
-        header    : _("Language"),
+        header    : _('Language'),
         width     : 45,
         sortable  : true,
         dataIndex : 'lang',

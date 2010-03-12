@@ -1,400 +1,484 @@
 /*
 This file must be encoded in UTF-8
-TODO: We must reorder the generic section
 */
 
 var i18n = new Array();
 
-// Date/Time
-i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
-
-// Notify
-i18n["Patch saved"] = "Patch sauvegardé";
-i18n["Patch saved successfully !"] = "Patch sauvegardé avec succès !";
-
-i18n["Patch accepted successfully"] = "Patch accepté avec succès";
-i18n["The Patch was accepted successfully !"] = "Le patch a été accepté avec succès !";
-
-i18n["Patch rejected successfully"] = "Patch rejeté avec succès";
-i18n["The Patch was rejected successfully !"] = "Le patch a été rejeté avec succès !";
-
-i18n["Message updated"] = "Message mis à jour";
-i18n["Log Message was updated successfully !"] = "Le message a été mis à jour avec succès !";
-i18n["Message deleted"] = "Message effacé";
-i18n["Log Message was deleted successfully !"] = "Le message a été effacé avec succès !";
-i18n["Option saved"] = "Option sauvegardée";
-i18n["Option has been saved successfully !"] = "L'option a été sauvegardée avec succès !";
-i18n["Document saved"] = "Document sauvegardé";
-i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
-
-// Generic
-i18n["Warning"] = "Alerte";
-
-i18n["ScrollBars"] = "Barres de défilement";
-i18n["User Interface"] = "Interface utilisateur";
-i18n["Menu"] = "Menu";
-
-i18n["Start with the panel open"] = "Commencer avec le panneau ouvert";
-i18n["Panel width"] = "Largeur du panneau";
-i18n["Panel height"] = "Hauteur du panneau";
+// In file: ../../js/main.js
+  i18n["Forbidden"] = "Interdit";
+  i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
+  i18n["Error"] = "Erreur";
+  i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
+  i18n["Main Menu"] = "Menu principal";
+  i18n["Files Need Translate"] = "Nouveaux Fichiers à traduire";
+  i18n["Files Need Update"] = "Fichiers à mettre à jour";
+  i18n["Error in current translation"] = "Fichiers avec des erreurs";
+  i18n["Files Need Reviewed"] = "À relire";
+  i18n["Not in EN tree"] = "Non présent en EN";
+  i18n["All files"] = "Tous les fichiers";
+  i18n["Open the Log Message Manager"] = "Ouvrir le gestionnaire de messages d'historisation";
+  i18n["Pending for commit"] = "Commit en attente";
+  i18n["Pending Patch"] = "Patchs en attente";
+  i18n["Google Translation"] = "Traduire avec Google";
+  i18n["Home"] = "Accueil";
+  i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
+  i18n["anonymous"] = "Utilisateur anonyme";
+  i18n["Project / Language: "] = "Projet / Langue : ";
+  i18n["Last data update: "] = "Dernière mise à jour des données : ";
+  i18n["Last entities check: "] = "Dernière vérification des entités : ";
 
 
-i18n["Automatic translation: "] = "Traduction automatique : ";
-
-i18n["String to translate (en => {0})"] = "Message à traduire (en => {0}) ";
-i18n["Translate !"] = "Traduire !";
-i18n["Google Translation"] = "Traduire avec Google";
-
-i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
-i18n["SpellChecking"] = "Vérification orthographique";
-i18n["Nb files to display"] = "Nombre de fichiers à afficher";
-i18n["files to display"] = "fichiers à afficher";
-i18n["0 means no limit"] = "La valeur 0 signifie 'Aucune limite'";
-
-i18n["Permanent link to this page"] = "Lien permanent vers cette page";
-i18n["Go to next tab"] = "Aller à l'onglet précédent";
-i18n["Go to previous tab"] = "Aller à l'onglet suivant";
-i18n["On save lang file"] = "Lors de la sauvegarde d'un fichier de langue";
-i18n["Ask me if I want to check for error before saving the file"] = "Demander systématiquement si une vérification des erreurs doit être effectuée avant la sauvegarde";
-i18n["Always check for error before saving the file"] = "Toujours effectuer une vérification des erreurs avant la sauvegarde";
-i18n["Never check for error before saving the file"] = "Jamais vérifier les erreurs avant la sauvegarde";
-
-i18n["Status: "] = "Statut : ";
-i18n["All status"] = "Tous les statuts";
-
-i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
-
-i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le boutton ci-dessous pour télécharger le contenu complet.";
-i18n["Download the full content of this log"] = "Télécharger le contenu complet de l'historique";
-
-i18n["External Data"] = "Données externes";
-i18n["Load Mails at startUp"] = "Charger les mails de la liste au démarrage";
-i18n["Load Bugs at startUp"] = "Charger les bogues ouverts au démarrage";
-
-i18n["<b>Undo</b>"] = "<b>Annuler</b>";
-i18n["<b>Redo</b>"] = "<b>Refaire</b>";
-i18n["The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
-
-i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
-i18n["(You can change this behavior by setting an option in the configuration window)"] = "(Vous pouvez modifier ce comportement en définissant une option dans la fenêtre de configuration)";
-i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";
-i18n["Error when loading open bugs from Php.net !"] = "Erreur lors du chargement des bogues ouverts depuis Php.net !";
-
-i18n["Errors"] = "Erreurs";
-i18n["Update"] = "Mettre à jour";
-i18n["You need to commit or cancel your changes"] = "Vous devez valider ou annuler vos modifications";
+// In file: ../../js/ui/component/CheckDoc.js
+  i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
+  i18n["Extension"] = "Extension";
+  i18n["Not documented"] = "Non documenté";
+  i18n["Old style"] = "Ancien style";
+  i18n["Bad refsect1 order"] = "Refsect1 : Ordre incorrect";
+  i18n["No parameters"] = "Aucun paramètre";
+  i18n["No return values"] = "Aucune valeur retournée";
+  i18n["No examples"] = "Pas d'exemple";
+  i18n["No errors section"] = "Pas de section \"Error\"";
+  i18n["No see also"] = "Pas de section \"See also\"";
+  i18n["Refsect1 role error"] = "Erreur dans le rôle du Refsect1";
+  i18n["Files"] = "Fichiers";
+  i18n["Open all files"] = "Ouvrir tous les fichiers";
+  i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
+  i18n["Please, wait..."] = "Veuillez patienter...";
 
 
-i18n["Open the Log Message Manager"] = "Ouvrir le gestionnaire de messages d'historisation";
-i18n["Switch to language..."] = "Basculer vers la langue ...";
-
-i18n["Report bugs"] = "Rapporter un bogue";
-i18n["Documentation"] = "Documentation";
-
-i18n["Close Tab"] = "Fermer cet onglet";
-i18n["Close Other Tabs"] = "Fermer tous les autres onglets";
-
-i18n["Error"] = "Erreur";
-i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
-
-i18n["Log"] = "Journal";
-i18n["Cancel this deletion"] = "Annuler cette suppression";
-i18n["anonymous"] = "Utilisateur anonyme";
-i18n["Close"] = "Fermer";
-i18n["Confirm"] = "Confirmation";
-i18n["Save"] = "Sauvegarder";
-i18n["Cancel"] = "Annuler";
-i18n["Send"] = "Envoyer";
-i18n["Status"] = "Statut";
-i18n["Title"] = "Titre";
-i18n["By"] = "Par";
-i18n["Date"] = "Date";
-i18n["Refresh this grid"] = "Rafraîchir ces données";
-i18n["Refresh this graph"] = "Rafraîchir ce graphique";
-i18n["Open in a new Tab"] = "Ouvrir dans un nouvel onglet";
-i18n["Edit in a new Tab"] = "Éditer dans un nouvel onglet";
-i18n["Files"] = "Fichiers";
-i18n["File"] = "Fichier";
-i18n["EN revision"] = "Version EN";
-i18n["{0} revision"] = "Version {0}";
-i18n["Maintainer"] = "Mainteneur";
-i18n["Path"] = "Chemin";
-i18n["No Files"] = "Aucun fichier";
-i18n["Please, wait..."] = "Veuillez patienter...";
-i18n["Loading..."] = "Chargement...";
-i18n["Saving data..."] = "Enregistrement des données...";
-i18n["Rev."] = "Ver.";
-i18n["Content"] = "Contenu";
-i18n["Author"] = "Auteur";
-i18n["<b>View</b> the diff"] = "<b>Voir</b> les différences";
-i18n["<b>Load/Refresh</b> revisions"] = "<b>Charger/Rafraîchir</b> les versions";
-i18n["Diff From VCS"] = "Différence depuis VCS";
-i18n["VCS Log"] = "Historique VCS";
-i18n["{0} File: "] = "Fichier {0} : ";
-i18n["en File: "] = "Fichier En : ";
-i18n["File: "] = "Fichier : ";
-i18n["Line: "] = "Ligne : ";
-i18n["Col: "] = "Col. : ";
-i18n["<b>Save</b> this file (CTRL+s)"] = "<b>Sauvegarder</b> ce fichier (CTRL+s)";
-i18n["<b>Save as</b> a patch"] = "<b>Sauvegarder sous</b> la forme d'un patch";
-i18n["<b>Re-indent</b> all this file"] = "<b>Ré-indenter</b> tout le fichier";
-i18n["Reviewed tag"] = "Balise de relecture";
-i18n["Revcheck tag"] = "Balise Revcheck";
-i18n["MarkUp"] = "Balises";
-i18n["Description section"] = "Section \"Description\"";
-i18n["Parameters section"] = "Section \"Parameters\"";
-i18n["Return section"] = "Section \"Return\"";
-i18n["Error section"] = "Section \"Error\"";
-i18n["Unicode section"] = "Section \"Unicode\"";
-i18n["Changelog section"] = "Section \"Changelog\"";
-i18n["Examples section"] = "Section \"Examples\"";
-i18n["Notes section"] = "Section \"Notes\"";
-i18n["SeeAlso section"] = "Section \"SeeAlso\"";
-i18n["modified"] = "modifié";
-i18n["Do you want to check for error before saving?"] = "Voulez-vous vérifier si le fichier contient des erreurs avant de le sauvegarder ?";
-i18n["Checking for error. Please, wait..."] = "Vérification du fichier. Veuillez patienter...";
-i18n["Check for errors"] = "Vérification du fichier";
-i18n["There is no error."] = "Il n'y a aucune erreur.";
-i18n["Error description"] = "Description de l'erreur";
-i18n["File with error : in {0}"] = "Fichier contenant des erreurs : dans {0}";
-i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
-i18n["Clear this change"] = "Effacer cette modification";
-i18n["This action will clear your local modification and take back this file from his original stats.<br/>You need confirm."] = "Cette action va effacer la modification faite sur ce fichier et le restaurer à sa version originale.<br/>Vous devez confirmer.";
-i18n["Commit..."] = "Valider...";
-i18n["...this file"] = "...ce fichier";
-i18n["...all files modified by me"] = "...tous les fichiers que j'ai modifié";
-i18n["...all files modified"] = "...tous les fichiers modifiés";
-i18n["Reviewed"] = "Relu";
-i18n["No pending Patch"] = "Aucun patch en attente";
-i18n["Reject this patch"] = "Rejeter ce patch";
-i18n["Patch for {0}"] = "Patch pour {0}";
-i18n["Patch content"] = "Contenu du patch";
-i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
-i18n["<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)"] = "<b>Accepter</b> ce patch et <b>Sauvegarder</b> le fichier (CTRL+s)";
-i18n["<b>Reject</b> this patch"] = "<b>Rejeter</b> ce patch";
-i18n["Original File: "] = "Fichier original : ";
-i18n["Modified by"] = "Modifié par";
-i18n["No pending for Commit"] = "Aucun commit en attente";
-i18n["Diff"] = "Différence";
-i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
-
-i18n["Open all files about {0} extension"] = "Ouvrir tous les fichiers à propos de l'extension <b>{0}</b>";
-i18n["Saving data as a patch..."] = "Sauvegarde des données sous forme de patch";
-i18n["Finding the diff. Please, wait..."] = "Calcul de la différence. Veuillez patienter...";
-i18n["Diff between {0} & {1}"] = "Différence entre {0} et {1}";
-i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Ce fichier a été modifié sans être sauvegardé.<br/>Voulez-vous vraiment fermer cet onglet ?";
-i18n["VCS commit"] = "Commit VCS";
-i18n["Older messages"] = "Anciens messages";
-i18n["Log message"] = "Message";
-i18n["Configure this tools"] = "Configurer cet utilitaire";
-i18n["Manage Log Message"] = "Gestion des messages d'historisation";
-i18n["Delete this Log Message"] = "Effacer ce message";
-i18n["Submit"] = "Envoyer";
-i18n["There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?"] = "Il y a {0} fichiers à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
-i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>{1}<br/><br/>Would you like me to close it for you ?"] = "Il y a {0} fichier à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
-i18n["Please, wait until commit..."] = "Veuillez patienter...";
-i18n["Type"] = "Type";
-i18n["View Diff"] = "Voir la différence";
-i18n["View Diff..."] = "Voir la différence...";
-i18n["... of the {0} file"] = "... du fichier {0}";
-i18n["Forbidden"] = "Interdit";
-i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
-i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
-i18n["If you want to be notified when your patch will be dealt with, thank you to leave an email address below."] = "Si vous voulez être averti lors du traitement de votre patch, merci de laisser une adresse email ci-dessous.";
-i18n["Collapse"] = "Plier ce dossier";
-i18n["Expand"] = "Déplier ce dossier";
-i18n["Open the same file in <b>{0}</b>"] = "Ouvrir le même fichier en <b>{0}</b>";
-i18n["Repository"] = "Dépôt VCS";
-i18n["Project / Language: "] = "Projet / Langue : ";
-i18n["Last data update: "] = "Dernière mise à jour des données : ";
-i18n["Last entities check: "] = "Dernière vérification des entités : ";
-i18n["update in progress..."] = "Mise à jour en cours...";
-i18n["check in progress..."] = "Vérification en cours...";
-i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l'état de la mise à jour. Merci de patienter...";
-i18n["There is currently an update in progress.<br/>You can't perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l'effectuer maintenant";
+// In file: ../../js/ui/component/ViewVCDiff.js
+  i18n["Diff From VCS"] = "Différence depuis VCS";
 
 
-i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
-i18n["There is currently a check in progress for this language.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification de la compilation de ce langage en cours.<br/>Vous ne pouvez pas effectuer un maintenant.";
-
-i18n["in {0}"] = "dans le dossier {0}";
-i18n["Up to date files"] = "Fichiers à jour";
-i18n["Stale files"] = "Fichiers à mettre à jour";
-i18n["Files available for translation"] = "Fichiers à traduire";
-i18n["Total"] = "Total";
-i18n["Posted by"] = "Proposé par";
-i18n["This action will <b>reject</b> this patch, send an email to his author and close this tab."] = "Cette action va <b>rejeter</b> ce patch, envoyer un email à son auteur et fermer cet onglet.";
-i18n["This action will accept this patch, send an email to his author, save the file and close this tab."] = "Cette action va accepter ce patch, envoyer un email à son auteur et fermer cet onglet.";
-i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
-i18n["Search: "] = "Recherche : ";
-i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
-i18n["Filter: "] = "Filtrer : ";
-i18n["Your filter must contain at least 3 characters"] = "Votre filtre doit comporter au moins 3 caractères";
-i18n["Not in EN tree"] = "Non présent en EN";
-i18n["Not In EN: in {0}"] = "Non présent en EN : dans {0}";
-i18n["Remove this file"] = "Supprimer ce fichier";
-i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "Voulez-vous marquer ce fichier comme devant être effacé ?<br/><br/>L'effacement sera effectif qu'une fois le commit émis.<br/><br/>Vous devez confirmer cette action.";
-i18n["View in a new Tab"] = "Voir dans un nouvel onglet";
-i18n["Last failed build"] = "Dernier échec de la compilation";
-i18n["Language"] = "Langage";
-
-// Main Menu
-i18n["Main Menu"] = "Menu principal";
-i18n["Main Menu width"] = "Largeur du menu principal";
-
-i18n["Refresh all data"]                                       = "Rafraîchir les données";
-    i18n["Update all files from VCS"]                          = "Mise à jour de tous les fichiers depuis VCS";
-    i18n["This may take time. Thank you for your patience..."] = "Ceci peut prendre du temps. Merci de patienter.";
-    i18n["Apply all tools"]                                    = "Application des différents traitements";
-    i18n["Reload data"]                                        = "Rechargement des données";
-    i18n["Start"]                                              = "Commencer";
-    i18n["Finish !"]                                           = "Terminer !";
-
-i18n["Build tools"]                                           = "Outils de compilation";
-
-i18n["Check Build"]                                           = "Vérifier la compilation";
-    i18n["Go !"]                                              = "Commencer !";
-    i18n["Please, wait until the build is checked..."]        = "Merci de patienter pendant la vérification.";
-    i18n["Check Build Result for {0}"]                        = "Résultat de la compilation pour {0}";
-    i18n["Check Build Result for the documentation {0}"]      = "Résultat de la compilation pour la documentation {0}";
-    i18n["Last failed build for {0}"]                         = "Dernier échec pour {0}";
-    i18n["Last failed build for the documentation {0}"]       = "Dernier échec pour la documentation {0}";
-    i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";
-    i18n["Enable detailed XML error messages"]                = "Activer les messages d'erreur XML détaillés";
-    i18n["<b>WARNING !</b><br/> This option use a lot of server ressource. If you don't know what are the consequence, please, don't use it."]   =
-       "<b>ATTENTION !</b><br/> Cette option utilise énormément de ressource serveur. Si vous ne savez pas ce que cela implique, merci de ne pas utiliser cette option.";
-
-i18n["EN tools"] = "Outils EN";
-    i18n["Script Check doc"] = "Script Check doc";
-    i18n["Script Check Entities"] = "Script de vérification des entités";
-    i18n["View the last result"] = "Voir le résultat de la dernière vérification";
-    i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";
-    i18n["There is currently a check in progress for the entities.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
-    i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
-    i18n["Please, wait until entities are checked..."] = "Merci de patienter pendant la vérification des entités...";
-    i18n["Run this script"] = "Exécuter ce script";
-    i18n["Check Entities"] = "Vérification des entités";
-
-    i18n["Entities"] = "Entitiés";
-    i18n["Url"] = "Url";
-    i18n["Result"] = "Résultat";
+// In file: ../../js/ui/component/CommitPrompt.js
+  i18n["VCS commit"] = "Commit VCS";
+  i18n["Configure this tools"] = "Configurer cet utilitaire";
+  i18n["Submit"] = "Envoyer";
+  i18n["Close"] = "Fermer";
+  i18n["Older messages"] = "Anciens messages";
+  i18n["Log message"] = "Message";
 
 
-i18n["Configure"] = "Configuration";
-    i18n["Main"] = "Principal";
-    i18n["Module \"Files Need Translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
-    i18n["Module \"Files Need Update\""] = "Module \"Fichiers à mettre à jour\"";
-    i18n["Module \"Files with Error\""] = "Module \"Fichiers avec des erreurs\"";
-    i18n["Module \"Files need Reviewed\""] = "Module \"À relire\"";
-    i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
-    i18n["Module \"Pending Patch\""] = "Module \"Patchs en attente\"";
-    i18n["Enable spellChecking"] = "Activer la vérification orthographique";
-    i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
-    i18n["Configuration"] = "Configuration";
-    i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
-    i18n["Appearance"] = "Apparence";
-    i18n["Choose a theme"] = "Choisissez un thème ";
+// In file: ../../js/ui/component/PortletTranslationGraph.js
+  i18n["Graphics"] = "Graphiques";
+  i18n["Refresh this graph"] = "Rafraîchir ce graphique";
 
-    i18n["About mails"] = "À propos des mails";
-    i18n["About bugs"] = "À propos des bogues";
 
-    i18n["Black"] = "Noir";
-    i18n["Default"] = "Par défault";
-    i18n["DarkGray"] = "Gris foncé";
-    i18n["Gray"] = "Gris";
-    i18n["Gray Extend"] = "Gris étendu";
-    i18n["Indigo"] = "Indigo";
-    i18n["Midnight"] = "Indigo foncé";
-    i18n["Olive"] = "Vert clair";
-    i18n["Purple"] = "Violet";
-    i18n["Slate"] = "Slate";
-    i18n["SilverCherry"] = "SilverCherry";
-    i18n["Ubuntu Human"] = "Ubuntu Human";
-    i18n["Diff view"] = "Visualisation de la différence";
-    i18n["Using ViewVc from php web site"] = "Utilisation de viewVc depuis le site web de Php";
-    i18n["Using diff -kk -u command line"] = "Utilisation de la ligne de commande \"$ diff -kk -u\"";
-    i18n["Editor"] = "Éditeur";
-    i18n["Synchronize scroll bars"] = "Synchroniser les barres de défilement";
-    i18n["Automatically load the log when displaying the file"] = "Charger automatiquement l'historique lors de l'édition d'un fichier";
-    i18n["Error type"] = "Type d'erreurs";
-    i18n["Skip nbLiteralTag error"] = "Ignorer les erreurs de type \"nbLiteralTag\"";
+// In file: ../../js/ui/component/ErrorFileGrid.js
+  i18n["Type"] = "Type";
+  i18n["Maintainer"] = "Mainteneur";
+  i18n["Path"] = "Chemin";
+  i18n["No Files"] = "Aucun fichier";
+  i18n["File"] = "Fichier";
+  i18n["Edit in a new Tab"] = "Éditer dans un nouvel onglet";
+  i18n["Diff"] = "Différence";
+  i18n["About error type"] = "À propos des types d'erreurs";
+  i18n["File with error : in {0}"] = "Fichier contenant des erreurs : dans {0}";
+  i18n["Error description"] = "Description de l'erreur";
+  i18n["VCS Log"] = "Historique VCS";
+  i18n["{0} File: "] = "Fichier {0} : ";
+  i18n["en File: "] = "Fichier En : ";
+  i18n["Filter: "] = "Filtrer : ";
+  i18n["Your filter must contain at least 3 characters"] = "Votre filtre doit comporter au moins 3 caractères";
 
-i18n["Erase my personal data"] = "Effacer mes données personnelles";
-    i18n["This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?"] = "Cette action va effacer vos données personnelles. Toutes les données relatives à ce compte seront effacées définitivement de cette application. Êtes-vous sûr de vouloir faire cela ?";
-    i18n["Thanks !"] = "Merci !";
-    i18n["Thank you for using this application !"] = "Merci d'avoir utilisé cette application !";
 
-i18n["Log out"] = "Se déconnecter";
-    i18n["Are you sure you want to logout?"] = "Êtes-vous sûr de vouloir vous déconnecter ?";
+// In file: ../../js/ui/component/PortletTranslationsGraph.js
+  i18n["Graphics for all language"] = "Graphiques pour toutes les langues";
 
-i18n["About"] = "À propos";
-    i18n["About {0}"] = "À propos de {0}";
-    i18n["Author:"] = "Auteur :";
-    i18n["and <a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">others</a>"] = "et d'<a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">autres personnes</a>";
-    i18n["Credits"] = "Remerciements";
-    i18n["Javascript FrameWork"] = "Bibliothèque Javascript";
-    i18n["Code editor"] = "Éditeur de code";
-    i18n["Icon pack"] = "Les icones";
-    i18n["License"] = "Licence";
 
-// Home tab
-i18n["Home"] = "Accueil";
-    i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
-    i18n["Summary"] = "Résumé";
-        i18n["File status type"] = "Statut du fichier";
-        i18n["Number of files"] = "Nombre de fichiers";
-        i18n["Percent of files"] = "% de fichiers";
-        i18n["Size of files (kB)"] = "Taille des fichiers (kB)";
-        i18n["Percent of size"] = "% de la taille";
-        i18n["{0} Translators"] = "{0} Traducteurs";
-        i18n["Translators"] = "Traducteurs";
-        i18n["Name"] = "Nom";
-        i18n["Email"] = "Email";
-        i18n["Nick"] = "Nick";
-        i18n["VCS"] = "VCS";
-        i18n["UptoDate"] = "À jour";
-        i18n["Stale"] = "À mettre à jour";
-        i18n["Sum"] = "Total";
-            i18n["Send an email to {0}"] = "Envoyer un email à {0}";
-            i18n["Send an email to the {0}"] = "Envoyer un email à la liste {0}";
-                i18n["Send an email"] = "Envoyer un email";
-                i18n["Send To"] = "À ";
-                i18n["Subject"] = "Sujet ";
-                i18n["Email sent to {0} with success!"] = "Email envoyé à {0} avec succès !";
-    i18n["Mails from {0}"] = "Emails depuis {0}";
-    i18n["Open bugs for {0}"] = "Bogues en cours pour {0}";
-        i18n["No open Bugs"] = "Aucun bogue ouvert actuellement";
-    i18n["Graphics"] = "Graphiques";
-    i18n["Graphics for all language"] = "Graphiques pour toutes les langues";
+// In file: ../../js/ui/component/RepositoryTree.js
+  i18n["Repository"] = "Dépôt VCS";
+  i18n["Collapse"] = "Plier ce dossier";
+  i18n["Expand"] = "Déplier ce dossier";
+  i18n["Open the same file in <b>{0}</b>"] = "Ouvrir le même fichier en <b>{0}</b>";
+  i18n["Log"] = "Journal";
+  i18n["File: "] = "Fichier : ";
+  i18n["in {0}"] = "dans le dossier {0}";
+  i18n["Search: "] = "Recherche : ";
+  i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
+  i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
 
-// Module
-i18n["Files Need Translate"] = "Nouveaux Fichiers à traduire";
-    i18n["Need Translate: in {0}"] = "Nouveau fichier à traduire : dans {0}";
-    i18n["New File: "] = "Nouveau fichier : ";
-i18n["Files Need Update"] = "Fichiers à mettre à jour";
-    i18n["Need Update: in {0}"] = "Fichiers à mettre à jour : dans {0}";
-i18n["Error in current translation"] = "Fichiers avec des erreurs";
-    i18n["About error type"] = "À propos des types d'erreurs";
-i18n["Files Need Reviewed"] = "À relire";
-i18n["Need Reviewed in: {0}"] = "À relire dans : {0}";
-i18n["All files"] = "Tous les fichiers";
-i18n["Pending for commit"] = "Commit en attente";
-i18n["Pending Patch"] = "Patchs en attente";
 
-// Check doc
-i18n["Extension"] = "Extension";
-i18n["Not documented"] = "Non documenté";
-i18n["Old style"] = "Ancien style";
-i18n["Bad refsect1 order"] = "Refsect1 : Ordre incorrect";
-i18n["No parameters"] = "Aucun paramètre";
-i18n["No return values"] = "Aucune valeur retournée";
-i18n["No examples"] = "Pas d'exemple";
-i18n["No errors section"] = "Pas de section \"Error\"";
-i18n["No see also"] = "Pas de section \"See also\"";
-i18n["Refsect1 role error"] = "Erreur dans le rôle du Refsect1";
-i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
-i18n["Open all files"] = "Ouvrir tous les fichiers";
-i18n["Open the related file"] = "Ouvrir le fichier associé";
+// In file: ../../js/ui/component/PendingCommitGrid.js
+  i18n["Modified by"] = "Modifié par";
+  i18n["Date"] = "Date";
+  i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
+  i18n["No pending for Commit"] = "Aucun commit en attente";
+  i18n["Commit..."] = "Valider...";
+  i18n["...this file"] = "...ce fichier";
+  i18n["...all files modified by me"] = "...tous les fichiers que j'ai modifié";
+  i18n["...all files modified"] = "...tous les fichiers modifiés";
+  i18n["View Diff"] = "Voir la différence";
+  i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
+  i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
+  i18n["Clear this change"] = "Effacer cette modification";
+  i18n["View in a new Tab"] = "Voir dans un nouvel onglet";
+  i18n["Cancel this deletion"] = "Annuler cette suppression";
 
-// Error
-i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
+
+// In file: ../../js/ui/component/CheckEntitiesPrompt.js
+  i18n["Check Entities"] = "Vérification des entités";
+  i18n["Go !"] = "Commencer !";
+  i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
+
+
+// In file: ../../js/ui/component/PortletTranslator.js
+  i18n["{0} Translators"] = "{0} Traducteurs";
+  i18n["Name"] = "Nom";
+  i18n["Email"] = "Email";
+  i18n["Nick"] = "Nick";
+  i18n["VCS"] = "VCS";
+  i18n["UptoDate"] = "À jour";
+  i18n["Stale"] = "À mettre à jour";
+  i18n["Sum"] = "Total";
+  i18n["Send an email to the {0}"] = "Envoyer un email à la liste {0}";
+  i18n["Send an email to {0}"] = "Envoyer un email à {0}";
+  i18n["Translators"] = "Traducteurs";
+  i18n["Refresh this grid"] = "Rafraîchir ces données";
+
+
+// In file: ../../js/ui/component/BuildStatus.js
+  i18n["Last failed build for {0}"] = "Dernier échec pour {0}";
+  i18n["Last failed build for the documentation {0}"] = "Dernier échec pour la documentation {0}";
+  i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le boutton ci-dessous pour télécharger le contenu complet.";
+  i18n["Download the full content of this log"] = "Télécharger le contenu complet de l'historique";
+  i18n["Language"] = "Langage";
+
+
+// In file: ../../js/ui/component/SystemUpdatePrompt.js
+  i18n["Refresh all data"] = "Rafraîchir les données";
+  i18n["Update all files from VCS"] = "Mise à jour de tous les fichiers depuis VCS";
+  i18n["This may take time. Thank you for your patience..."] = "Ceci peut prendre du temps. Merci de patienter.";
+  i18n["Apply all tools"] = "Application des différents traitements";
+  i18n["Reload data"] = "Rechargement des données";
+  i18n["Start"] = "Commencer";
+  i18n["update in progress..."] = "Mise à jour en cours...";
+
+
+// In file: ../../js/ui/component/PortletBugs.js
+  i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
+  i18n["Open in a new Tab"] = "Ouvrir dans un nouvel onglet";
+  i18n["Open the related file"] = "Ouvrir le fichier associé";
+  i18n["Summary"] = "Résumé";
+  i18n["Error when loading open bugs from Php.net !"] = "Erreur lors du chargement des bogues ouverts depuis Php.net !";
+  i18n["No open Bugs"] = "Aucun bogue ouvert actuellement";
+  i18n["Open bugs for {0}"] = "Bogues en cours pour {0}";
+
+
+// In file: ../../js/ui/component/MainPanel.js
+  i18n["Confirm"] = "Confirmation";
+
+
+// In file: ../../js/ui/component/FilePanel.js
+  i18n["<b>Undo</b>"] = "<b>Annuler</b>";
+  i18n["<b>Redo</b>"] = "<b>Refaire</b>";
+  i18n["Close Tab"] = "Fermer cet onglet";
+  i18n["Go to previous tab"] = "Aller à l'onglet suivant";
+  i18n["Go to next tab"] = "Aller à l'onglet précédent";
+  i18n["MarkUp"] = "Balises";
+  i18n["Reviewed tag"] = "Balise de relecture";
+  i18n["Revcheck tag"] = "Balise Revcheck";
+  i18n["Description section"] = "Section \"Description\"";
+  i18n["Parameters section"] = "Section \"Parameters\"";
+  i18n["Return section"] = "Section \"Return\"";
+  i18n["Error section"] = "Section \"Error\"";
+  i18n["Unicode section"] = "Section \"Unicode\"";
+  i18n["Changelog section"] = "Section \"Changelog\"";
+  i18n["Examples section"] = "Section \"Examples\"";
+  i18n["Notes section"] = "Section \"Notes\"";
+  i18n["SeeAlso section"] = "Section \"SeeAlso\"";
+  i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
+  i18n["<b>Re-indent</b> all this file"] = "<b>Ré-indenter</b> tout le fichier";
+  i18n["Synchronize scroll bars"] = "Synchroniser les barres de défilement";
+  i18n["Line: "] = "Ligne : ";
+  i18n["Col: "] = "Col. : ";
+  i18n["<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)"] = "<b>Accepter</b> ce patch et <b>Sauvegarder</b> le fichier (CTRL+s)";
+  i18n["<b>Reject</b> this patch"] = "<b>Rejeter</b> ce patch";
+  i18n["<b>Save</b> this file (CTRL+s)"] = "<b>Sauvegarder</b> ce fichier (CTRL+s)";
+  i18n["Do you want to check for error before saving?"] = "Voulez-vous vérifier si le fichier contient des erreurs avant de le sauvegarder ?";
+  i18n["<b>Save as</b> a patch"] = "<b>Sauvegarder sous</b> la forme d'un patch";
+  i18n["modified"] = "modifié";
+
+
+// In file: ../../js/ui/component/EditorConf.js
+  i18n["Main"] = "Principal";
+  i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
+  i18n["Module \"Pending Patch\""] = "Module \"Patchs en attente\"";
+  i18n["Module \"Files Need Translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
+  i18n["Module \"Files Need Update\""] = "Module \"Fichiers à mettre à jour\"";
+  i18n["Module \"Files with Error\""] = "Module \"Fichiers avec des erreurs\"";
+  i18n["Module \"Files need Reviewed\""] = "Module \"À relire\"";
+  i18n["Black"] = "Noir";
+  i18n["Default"] = "Par défault";
+  i18n["DarkGray"] = "Gris foncé";
+  i18n["Gray"] = "Gris";
+  i18n["Gray Extend"] = "Gris étendu";
+  i18n["Indigo"] = "Indigo";
+  i18n["Midnight"] = "Indigo foncé";
+  i18n["Olive"] = "Vert clair";
+  i18n["Purple"] = "Violet";
+  i18n["SilverCherry"] = "SilverCherry";
+  i18n["Ubuntu Human"] = "Ubuntu Human";
+  i18n["User Interface"] = "Interface utilisateur";
+  i18n["Main Menu width"] = "Largeur du menu principal";
+  i18n["Appearance"] = "Apparence";
+  i18n["Choose a theme"] = "Choisissez un thème ";
+  i18n["On save lang file"] = "Lors de la sauvegarde d'un fichier de langue";
+  i18n["Ask me if I want to check for error before saving the file"] = "Demander systématiquement si une vérification des erreurs doit être effectuée avant la sauvegarde";
+  i18n["Always check for error before saving the file"] = "Toujours effectuer une vérification des erreurs avant la sauvegarde";
+  i18n["Never check for error before saving the file"] = "Jamais vérifier les erreurs avant la sauvegarde";
+  i18n["External Data"] = "Données externes";
+  i18n["About mails"] = "À propos des mails";
+  i18n["Load Mails at startUp"] = "Charger les mails de la liste au démarrage";
+  i18n["About bugs"] = "À propos des bogues";
+  i18n["Load Bugs at startUp"] = "Charger les bogues ouverts au démarrage";
+  i18n["Menu"] = "Menu";
+  i18n["Nb files to display"] = "Nombre de fichiers à afficher";
+  i18n["files to display"] = "fichiers à afficher";
+  i18n["0 means no limit"] = "La valeur 0 signifie 'Aucune limite'";
+  i18n["ScrollBars"] = "Barres de défilement";
+  i18n["Editor"] = "Éditeur";
+  i18n["SpellChecking"] = "Vérification orthographique";
+  i18n["Enable spellChecking"] = "Activer la vérification orthographique";
+  i18n["Automatically load the log when displaying the file"] = "Charger automatiquement l'historique lors de l'édition d'un fichier";
+  i18n["Start with the panel open"] = "Commencer avec le panneau ouvert";
+  i18n["Panel width"] = "Largeur du panneau";
+  i18n["Diff view"] = "Visualisation de la différence";
+  i18n["Panel height"] = "Hauteur du panneau";
+  i18n["Using ViewVc from php web site"] = "Utilisation de viewVc depuis le site web de Php";
+  i18n["Using diff -kk -u command line"] = "Utilisation de la ligne de commande \"$ diff -kk -u\"";
+  i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
+  i18n["Error type"] = "Type d'erreurs";
+  i18n["Skip nbLiteralTag error"] = "Ignorer les erreurs de type \"nbLiteralTag\"";
+  i18n["Patch content"] = "Contenu du patch";
+  i18n["Configuration"] = "Configuration";
+  i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
+
+
+// In file: ../../js/ui/component/CheckEntities.js
+  i18n["Entities"] = "Entitiés";
+  i18n["Url"] = "Url";
+  i18n["Result"] = "Résultat";
+  i18n["Status: "] = "Statut : ";
+  i18n["All status"] = "Tous les statuts";
+
+
+// In file: ../../js/ui/component/PendingTranslateGrid.js
+  i18n["Need Translate: in {0}"] = "Nouveau fichier à traduire : dans {0}";
+  i18n["New File: "] = "Nouveau fichier : ";
+  i18n["Automatic translation: "] = "Traduction automatique : ";
+
+
+// In file: ../../js/ui/component/EmailPrompt.js
+  i18n["Send an email"] = "Envoyer un email";
+  i18n["Send"] = "Envoyer";
+  i18n["Status"] = "Statut";
+  i18n["Email sent to {0} with success!"] = "Email envoyé à {0} avec succès !";
+  i18n["Cancel"] = "Annuler";
+  i18n["Send To"] = "À ";
+  i18n["Subject"] = "Sujet ";
+
+
+// In file: ../../js/ui/component/PatchPrompt.js
+  i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
+  i18n["Save"] = "Sauvegarder";
+
+
+// In file: ../../js/ui/component/ExecDiff.js
+  i18n["Loading..."] = "Chargement...";
+
+
+// In file: ../../js/ui/component/MainMenu.js
+  i18n["Verify if there is an update in progress. Please, wait..."] = "Vérification de l'état de la mise à jour. Merci de patienter...";
+  i18n["Build tools"] = "Outils de compilation";
+  i18n["Check Build"] = "Vérifier la compilation";
+  i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
+  i18n["Last failed build"] = "Dernier échec de la compilation";
+  i18n["EN tools"] = "Outils EN";
+  i18n["Script Check Entities"] = "Script de vérification des entités";
+  i18n["View the last result"] = "Voir le résultat de la dernière vérification";
+  i18n["Run this script"] = "Exécuter ce script";
+  i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";
+  i18n["There is currently a check in progress for the entities.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
+  i18n["Script Check doc"] = "Script Check doc";
+  i18n["Configure"] = "Configuration";
+  i18n["Switch to language..."] = "Basculer vers la langue ...";
+  i18n["Erase my personal data"] = "Effacer mes données personnelles";
+  i18n["This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?"] = "Cette action va effacer vos données personnelles. Toutes les données relatives à ce compte seront effacées définitivement de cette application. Êtes-vous sûr de vouloir faire cela ?";
+  i18n["Thanks !"] = "Merci !";
+  i18n["Thank you for using this application !"] = "Merci d'avoir utilisé cette application !";
+  i18n["Log out"] = "Se déconnecter";
+  i18n["Are you sure you want to logout?"] = "Êtes-vous sûr de vouloir vous déconnecter ?";
+  i18n["Report bugs"] = "Rapporter un bogue";
+  i18n["Documentation"] = "Documentation";
+  i18n["About"] = "À propos";
+
+
+// In file: ../../js/ui/component/VCSLogGrid.js
+  i18n["Rev."] = "Ver.";
+  i18n["Content"] = "Contenu";
+  i18n["By"] = "Par";
+  i18n["(You can change this behavior by setting an option in the configuration window)"] = "(Vous pouvez modifier ce comportement en définissant une option dans la fenêtre de configuration)";
+  i18n["<b>View</b> the diff"] = "<b>Voir</b> les différences";
+  i18n["Finding the diff. Please, wait..."] = "Calcul de la différence. Veuillez patienter...";
+  i18n["Diff between {0} & {1}"] = "Différence entre {0} et {1}";
+  i18n["<b>Load/Refresh</b> revisions"] = "<b>Charger/Rafraîchir</b> les versions";
+
+
+// In file: ../../js/ui/component/PendingReviewGrid.js
+  i18n["Reviewed"] = "Relu";
+  i18n["Open all files about {0} extension"] = "Ouvrir tous les fichiers à propos de l'extension <b>{0}</b>";
+  i18n["Need Reviewed in: {0}"] = "À relire dans : {0}";
+
+
+// In file: ../../js/ui/component/GoogleTranslationPanel.js
+  i18n["String to translate (en => {0})"] = "Message à traduire (en => {0}) ";
+  i18n["Translate !"] = "Traduire !";
+
+
+// In file: ../../js/ui/component/PortletSummary.js
+  i18n["Up to date files"] = "Fichiers à jour";
+  i18n["Stale files"] = "Fichiers à mettre à jour";
+  i18n["Files available for translation"] = "Fichiers à traduire";
+  i18n["Total"] = "Total";
+  i18n["File status type"] = "Statut du fichier";
+  i18n["Number of files"] = "Nombre de fichiers";
+  i18n["Percent of files"] = "% de fichiers";
+  i18n["Size of files (kB)"] = "Taille des fichiers (kB)";
+  i18n["Percent of size"] = "% de la taille";
+
+
+// In file: ../../js/ui/component/PortletLocalMail.js
+  i18n["Title"] = "Titre";
+  i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";
+  i18n["Mails from {0}"] = "Emails depuis {0}";
+
+
+// In file: ../../js/ui/component/CheckBuildPrompt.js
+  i18n["You're about to check the build via this command:"] = "Vous allez vérifier la compilation avec la commande suivante :";
+  i18n["<b>WARNING !</b><br/> This option use a lot of server ressource. If you don't know what are the consequence, please, don't use it."] = "<b>ATTENTION !</b><br/> Cette option utilise énormément de ressource serveur. Si vous ne savez pas ce que cela implique, merci de ne pas utiliser cette option.";
+  i18n["Enable detailed XML error messages"] = "Activer les messages d'erreur XML détaillés";
+
+
+// In file: ../../js/ui/component/About.js
+  i18n["About {0}"] = "À propos de {0}";
+  i18n["Author:"] = "Auteur :";
+  i18n["and <a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">others</a>"] = "et d'<a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">autres personnes</a>";
+  i18n["Credits"] = "Remerciements";
+  i18n["Javascript FrameWork"] = "Bibliothèque Javascript";
+  i18n["Code editor"] = "Éditeur de code";
+  i18n["Icon pack"] = "Les icones";
+  i18n["License"] = "Licence";
+
+
+// In file: ../../js/ui/component/NotInENGrid.js
+  i18n["Remove this file"] = "Supprimer ce fichier";
+  i18n["Not In EN: in {0}"] = "Non présent en EN : dans {0}";
+
+
+// In file: ../../js/ui/component/CommitLogManager.js
+  i18n["Update"] = "Mettre à jour";
+  i18n["Message updated"] = "Message mis à jour";
+  i18n["Log Message was updated successfully !"] = "Le message a été mis à jour avec succès !";
+  i18n["Delete this Log Message"] = "Effacer ce message";
+  i18n["Message deleted"] = "Message effacé";
+  i18n["Log Message was deleted successfully !"] = "Le message a été effacé avec succès !";
+  i18n["Manage Log Message"] = "Gestion des messages d'historisation";
+
+
+// In file: ../../js/ui/component/PendingPatchGrid.js
+  i18n["Posted by"] = "Proposé par";
+  i18n["No pending Patch"] = "Aucun patch en attente";
+  i18n["Reject this patch"] = "Rejeter ce patch";
+  i18n["Patch for {0}"] = "Patch pour {0}";
+  i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
+  i18n["Original File: "] = "Fichier original : ";
+
+
+// In file: ../../js/ui/component/StaleFileGrid.js
+  i18n["EN revision"] = "Version EN";
+  i18n["View Diff..."] = "Voir la différence...";
+  i18n["... of the {0} file"] = "... du fichier {0}";
+  i18n["Need Update: in {0}"] = "Fichiers à mettre à jour : dans {0}";
+  i18n["{0} revision"] = "Version {0}";
+
+
+// In file: ../../js/ui/task/PingTask.js
+  i18n["check in progress..."] = "Vérification en cours...";
+
+
+// In file: ../../js/ui/task/SaveTransFileTask.js
+  i18n["Saving data..."] = "Enregistrement des données...";
+  i18n["Document saved"] = "Document sauvegardé";
+  i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
+
+
+// In file: ../../js/ui/task/GetGGTranslation.js
+
+
+// In file: ../../js/ui/task/SaveLangFileTask.js
+
+
+// In file: ../../js/ui/task/SystemUpdateTask.js
+  i18n["Finish !"] = "Terminer !";
+
+
+// In file: ../../js/ui/task/SavePatchTask.js
+  i18n["Saving data as a patch..."] = "Sauvegarde des données sous forme de patch";
+  i18n["Patch saved"] = "Patch sauvegardé";
+  i18n["Patch saved successfully !"] = "Patch sauvegardé avec succès !";
+
+
+// In file: ../../js/ui/task/CheckEntitiesTask.js
+  i18n["Please, wait until entities are checked..."] = "Merci de patienter pendant la vérification des entités...";
+
+
+// In file: ../../js/ui/task/VCSCommitTask.js
+  i18n["Please, wait until commit..."] = "Veuillez patienter...";
+  i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
+
+
+// In file: ../../js/ui/task/SaveENFileTask.js
+
+
+// In file: ../../js/ui/task/MarkDeleteTask.js
+  i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "Voulez-vous marquer ce fichier comme devant être effacé ?<br/><br/>L'effacement sera effectif qu'une fois le commit émis.<br/><br/>Vous devez confirmer cette action.";
+
+
+// In file: ../../js/ui/task/ClearLocalChangeTask.js
+  i18n["This action will clear your local modification and take back this file from his original stats.<br/>You need confirm."] = "Cette action va effacer la modification faite sur ce fichier et le restaurer à sa version originale.<br/>Vous devez confirmer.";
+
+
+// In file: ../../js/ui/task/GetFileTask.js
+  i18n["Permanent link to this page"] = "Lien permanent vers cette page";
+  i18n["Warning"] = "Alerte";
+  i18n["The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
+
+
+// In file: ../../js/ui/task/UpdateConfTask.js
+  i18n["Option saved"] = "Option sauvegardée";
+  i18n["Option has been saved successfully !"] = "L'option a été sauvegardée avec succès !";
+
+
+// In file: ../../js/ui/task/RejectPatchTask.js
+  i18n["This action will <b>reject</b> this patch, send an email to his author and close this tab."] = "Cette action va <b>rejeter</b> ce patch, envoyer un email à son auteur et fermer cet onglet.";
+  i18n["Patch rejected successfully"] = "Patch rejeté avec succès";
+  i18n["The Patch was rejected successfully !"] = "Le patch a été rejeté avec succès !";
+
+
+// In file: ../../js/ui/task/CheckBuildTask.js
+  i18n["Check Build Result for {0}"] = "Résultat de la compilation pour {0}";
+  i18n["Check Build Result for the documentation {0}"] = "Résultat de la compilation pour la documentation {0}";
+  i18n["Please, wait until the build is checked..."] = "Merci de patienter pendant la vérification.";
+
+
+// In file: ../../js/ui/task/CheckFileTask.js
+  i18n["Checking for error. Please, wait..."] = "Vérification du fichier. Veuillez patienter...";
+  i18n["Check for errors"] = "Vérification du fichier";
+  i18n["There is no error."] = "Il n'y a aucune erreur.";
+
+
+// In file: ../../js/ui/task/AcceptPatchTask.js
+  i18n["This action will accept this patch, send an email to his author, save the file and close this tab."] = "Cette action va accepter ce patch, envoyer un email à son auteur et fermer cet onglet.";
+  i18n["Patch accepted successfully"] = "Patch accepté avec succès";
+  i18n["The Patch was accepted successfully !"] = "Le patch a été accepté avec succès !";
