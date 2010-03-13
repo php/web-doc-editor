@@ -278,12 +278,19 @@ class GTranslate
 
         public function translate($langFrom, $langTo, $string)
         {
+            // Wrapper to $langTo for google API
+            $notFound["pt_BR"] = "pt"; // Bug #51287 by moacir
+
+            if( $notFound[$langTo] ) {
+                      $langTo = $notFound[$langTo];
+            }
+
             $languages = Array($langFrom, $langTo);
 
             // If the passed string is to large, we try to truncate it and make multi-query
             if( strlen($string) > 5000 ) {
 
-                $strings = explode('ง',wordwrap($string, 4000, 'ง'));
+                $strings = explode('ยง',wordwrap($string, 4000, 'ยง'));
 
                 for( $i=0; $i < count($strings); $i++ ) {
                     $this->returnTranslation .= $this->query($languages,$strings[$i]);
