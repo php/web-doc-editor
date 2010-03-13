@@ -452,7 +452,7 @@ var i18n = new Array();
 // In file: ../../js/ui/task/GetFileTask.js
   i18n["Permanent link to this page"] = "Lien permanent vers cette page";
   i18n["Warning"] = "Alerte";
-  i18n["The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
 
 
 // In file: ../../js/ui/task/UpdateConfTask.js

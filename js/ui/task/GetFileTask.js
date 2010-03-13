@@ -65,7 +65,7 @@ ui.task.GetFileTask = function(config)
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
                     title: _('Warning'),
-                    msg: String.format(_('The file <b> {0}</b> contains some tab caracters.<br>The editor have replace it with space caracters.'), this.fpath+this.fname),
+                    msg: String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
                     buttons: Ext.MessageBox.OK,
                     icon: Ext.MessageBox.WARNING
                 });
