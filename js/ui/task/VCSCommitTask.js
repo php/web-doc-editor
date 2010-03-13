@@ -69,7 +69,7 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
     // Reload all store
     PhDOE.reloadAllStore();
 
-}
+};
 
 ui.task._VCSCommitTask.commit = function(files)
 {

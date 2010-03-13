@@ -168,7 +168,7 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
 
         new ui.component._BuildStatus.display({
             idFailedBuild : storeRecord.id,
-            lang          : storeRecord.data["lang"]
+            lang          : storeRecord.data.lang
         });
     },
 

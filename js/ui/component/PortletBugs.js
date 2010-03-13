@@ -201,7 +201,7 @@ ui.component._PortletBugs.reloadData = function() {
               Ext.get('PortletBugs-grid-defaultMess-id').highlight();
 
           } else {
-              if (ui.component._PortletBugs.store.getTotalCount() == 0 ) {
+              if (ui.component._PortletBugs.store.getTotalCount() === 0 ) {
                   Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open Bugs')+'</div>');
                   Ext.get('PortletBugs-grid-defaultMess-id').highlight();
               }

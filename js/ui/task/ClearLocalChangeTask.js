@@ -60,8 +60,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                         record.set('en_revision', o.revision);
                                         record.commit();
                                     }
-                                }
-                            , this);
+                                }, this);
 
                             // find open node in All Files modules
                             node = false;
@@ -85,8 +84,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            }
-                        , this);
+                            }, this);
 
                         // trow storeFilesNeedReviewed
                         ui.component.PendingReviewGrid.getInstance().store.each(
@@ -95,8 +93,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            }
-                        , this);
+                            }, this);
 
                         // trow StaleFile store
                         ui.component.StaleFileGrid.getInstance().store.each(
@@ -108,8 +105,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                     record.set('maintainer', o.maintainer);
                                     record.commit();
                                 }
-                            }
-                        , this);
+                            }, this);
 
                         // trow FileError
                         ui.component.ErrorFileGrid.getInstance().store.each(
@@ -118,8 +114,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
                                     record.set('needcommit', false);
                                 }
-                            }
-                        , this);
+                            }, this);
 
                         // find open node in All Files modules
                         node = false;

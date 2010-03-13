@@ -491,7 +491,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             // Find the id of this row into PendingTranslateGrid.store and open it !
             ui.component.PendingTranslateGrid.getInstance().store.each(function(row)
             {
-                if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                if( ( row.data.path ) === FilePath && row.data.name === FileName ) {
                     ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
                     return;
                 }
@@ -516,7 +516,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 // Find the id of this row into StaleFileGrid.store and open it !
                 ui.component.StaleFileGrid.getInstance().store.each(function(row) {
 
-                    if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                    if( (row.data.path) === FilePath && row.data.name === FileName ) {
                         ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
                         found = true;
                         return;
@@ -529,7 +529,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                     // Find the id of this row into ErrorFileGrid.store and open it !
                     ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
 
-                        if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
                             ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
@@ -543,7 +543,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                     // Find the id of this row into PendingReviewGrid.store and open it !
                     ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
 
-                        if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
                             ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
@@ -570,7 +570,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             // Find the id of this row into NotInENGrid.store and open it !
             ui.component.NotInENGrid.getInstance().store.each(function(row) {
 
-                if( (row.data['path']) === FilePath && row.data['name'] === FileName ) {
+                if( (row.data.path) === FilePath && row.data.name === FileName ) {
                     ui.component.NotInENGrid.getInstance().openFile(row.data.id);
                     return;
                 }

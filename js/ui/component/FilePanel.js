@@ -12,6 +12,7 @@ ui.component._FilePanel.tbar.items.undoRedo = function(config)
     this.init();
     ui.component._FilePanel.tbar.items.undoRedo.superclass.constructor.call(this);
 };
+
 Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
 {
     init : function()
@@ -50,6 +51,7 @@ ui.component._FilePanel.tbar.items.common = function(config)
     this.init();
     ui.component._FilePanel.tbar.items.common.superclass.constructor.call(this);
 };
+
 Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
 {
     init : function()
@@ -81,6 +83,7 @@ Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
         });
     }
 });
+
 // FilePanel editor menu for LangFile
 ui.component._FilePanel.tbar.menu.lang = function(config)
 {
@@ -88,6 +91,7 @@ ui.component._FilePanel.tbar.menu.lang = function(config)
     this.init();
     ui.component._FilePanel.tbar.menu.lang.superclass.constructor.call(this);
 };
+
 Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
@@ -132,6 +136,7 @@ ui.component._FilePanel.tbar.menu.en = function(config)
     this.init();
     ui.component._FilePanel.tbar.menu.en.superclass.constructor.call(this);
 };
+
 Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
@@ -417,6 +422,7 @@ ui.component._FilePanel.tbar.items.reindentTags = function(config)
     this.init();
     ui.component._FilePanel.tbar.items.reindentTags.superclass.constructor.call(this);
 };
+
 Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 {
     init : function()
@@ -782,7 +788,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
             })
-            ]
+            ];
         } else {
             this.tbar = [
                 new ui.component._FilePanel.tbar.items.common({
@@ -820,7 +826,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             hereName = this.fname + '.' + this.fuid + '.patch';
                         } else if ( this.isTrans )
                         {
-                            if( this.storeRecord.data['needcommit'] )
+                            if( this.storeRecord.data.needcommit )
                             {
                                 herePath = this.lang + this.fpath;
                                 hereName = this.fname+'.new';
@@ -948,7 +954,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     break;
                             }
 
-                            opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid),
+                            opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid);
                             opp_file  = Ext.getCmp(opp_prefix + '-FILE-'  + this.fid);
 
                             // scroll lock logic:

@@ -87,7 +87,7 @@ ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
         item  : this.name,
         value : this.getValue()
     });
-}),
+});
 
 // EditorConf card1 - mainApp
 ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
