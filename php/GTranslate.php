@@ -281,7 +281,7 @@ class GTranslate
             // Wrapper to $langTo for google API
             $notFound["pt_BR"] = "pt"; // Bug #51287 by moacir
 
-            if( $notFound[$langTo] ) {
+            if( isset($notFound[$langTo]) ) {
                       $langTo = $notFound[$langTo];
             }
 
