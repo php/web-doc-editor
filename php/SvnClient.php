@@ -467,18 +467,21 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         // Buil the command line
 
-        $cmdCreate = $cmdDelete = '';
+        $cmdCreate = $cmdDelete = $cmdUpdate = '';
+        
         if (trim($filesCreate) != '') {
             $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesCreate ; svn propset svn:eol-style \"native\" $filesCreate ; ";
         }
         if (trim($filesDelete) != '') {
             $cmdDelete = "svn delete $filesDelete ; ";
         }
+        if (trim($filesUpdate) != '') {
+            $cmdUpdate = "svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesUpdate ; svn propset svn:eol-style \"native\" $filesUpdate ; ";
+        }
 
-        // Escape single quote
-        $log = str_replace("'", "\\'", $log);
         $cmd = $cmdDelete.
                $cmdCreate.
+               $cmdUpdate.
                "svn ci --no-auth-cache --non-interactive -F $pathLogFile --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
