@@ -104,9 +104,11 @@ var PhDOE_loginPage = function()
                     listeners : {
                         render : function()
                         {
-                            new Ext.util.DelayedTask(function() {
+                            var t = new Ext.util.DelayedTask(function() {
                                 Ext.getCmp('login-form-vcsLogin').focus();
-                            }).delay(200);
+                            });
+
+                            t.delay(200);
                         }
                     },
                     items : [{
