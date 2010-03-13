@@ -3,14 +3,16 @@ Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.1/resources/images/defa
 // javascript debug-logging wrapper
 function log()
 {
-    if(console) console.log.apply(this, arguments);
+    if(console) {
+        console.log.apply(this, arguments);
+    }
 }
 
 // i18n function
 function _(key)
 {
     try {
-        var str = i18n[key]
+        var str = i18n[key];
 
         if (str === undefined) {
             str = key;
@@ -56,7 +58,7 @@ function XHR(config)
         if (original_cb !== undefined) {
             Ext.callback(original_cb, config.scope, [options, success, response]);
         }
-    }
+    };
 
     Ext.Ajax.request(config);
 }

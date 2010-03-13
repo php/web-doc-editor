@@ -88,11 +88,11 @@ var PhDOE = function()
 
             //Load external data
             // Mails ?
-            if( this.userConf['mainAppLoadMailsAtStartUp'] ) {
+            if( this.userConf.mainAppLoadMailsAtStartUp ) {
                 ui.component.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
-            if( this.userConf['mainAppLoadBugsAtStartUp'] ) {
+            if( this.userConf.mainAppLoadBugsAtStartUp ) {
                 ui.component.PortletBugs.getInstance().reloadData();
             }
         },
