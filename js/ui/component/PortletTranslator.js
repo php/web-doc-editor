@@ -172,7 +172,6 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
 
     onContextClick : function(grid, rowIndex, e)
     {
-
         if(!this.menu) {
             this.menu = new Ext.menu.Menu({
                 id    : 'submenu-translators',
@@ -187,11 +186,11 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
                     }
                 }, '-', {
                     scope   : this,
-                    text    : String.format(_('Send an email to the {0}'), 'doc-' + this.lang + '@lists.php.net'),
+                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.appConf.projectMailList, this.lang)),
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, 'doc-' + this.lang + '@lists.php.net');
+                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.appConf.projectMailList, this.lang));
                         this.EmailPrompt.show('lastUpdateTime');
                     }
                 }]
@@ -227,7 +226,7 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
         ui.component._PortletTranslator.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
         this.on('rowcontextmenu', this.onContextClick, this);
-        this.on('rowdblclick',    this.onRowDblClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
     }
 });
 

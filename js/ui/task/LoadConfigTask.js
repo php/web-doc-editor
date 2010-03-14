@@ -16,6 +16,8 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.userConf  = o.mess.userConf;
             PhDOE.project   = o.mess.project;
 
+            PhDOE.appConf   = o.mess.appConf;
+
             //For the theme, we apply this.
             Ext.get('appTheme').dom.href = PhDOE.userConf.theme;
 
