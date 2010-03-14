@@ -33,7 +33,7 @@ ui.component.About = Ext.extend(Ext.Window,
                 items     : [{
                     title : _('About'),
                     html  : '<div id="phd-oe-about">' +
-                                '<img src="themes/img/logo.png" alt="' + PhDOE.appName + '" />' +
+                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.appName +
                             '</div>' +
                             '<div id="phd-oe-about-info">' + PhDOE.appName + ' ver ' + PhDOE.appVer + '<br/>' +
                                 'UI: ' + PhDOE.uiRevision + '<br/>' +

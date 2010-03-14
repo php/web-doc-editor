@@ -2,7 +2,9 @@
 
 #phd-oe-about {
     text-align: center;
-    margin: 70px 0px 50px 0;
+    margin: 60px 0px 50px 0;
+    color: #444;
+    font: bold 13px tahoma, arial, helvetica;
 } #phd-oe-about-info {
     font-size: 10px;
     text-align: center;
