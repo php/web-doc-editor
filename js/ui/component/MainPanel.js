@@ -10,6 +10,10 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         Ext.apply(this, config);
         ui.component.MainPanel.superclass.initComponent.call(this);
 
+        this.addEvents({
+            tabLoaded : true
+        });
+
         this.on('beforeremove', this.onBeforeRemove, this);
         this.on('tabchange',    this.onTabChange,    this);
         this.on('endDrag',    this.onTabChange,    this);

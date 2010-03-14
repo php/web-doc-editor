@@ -562,9 +562,6 @@ var PhDOE = function()
                 }
             });
 
-            // Add Events to main-panel
-            Ext.getCmp('main-panel').addEvents('tabLoaded');
-
             //
             Ext.getCmp('main-panel').on('tabLoaded', function(prefix, fid) {
 
