@@ -250,18 +250,19 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             });
 
             Ext.getCmp('main-panel').add({
-                id          : 'FE-' + FileID,
-                title       : FileName,
-                layout      : 'border',
-                iconCls     : 'iconTabError',
-                closable    : true,
+                id             : 'FE-' + FileID,
+                title          : FileName,
+                layout         : 'border',
+                iconCls        : 'iconTabError',
+                closable       : true,
+                tabLoaded      : false,
                 panVCSLang     : !PhDOE.userConf.errorDisplayLog,
                 panVCSEn       : !PhDOE.userConf.errorDisplayLog,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
-                originTitle : FileName,
-                defaults    : {split : true},
-                tabTip      : String.format(
+                originTitle    : FileName,
+                defaults       : {split : true},
+                tabTip         : String.format(
                     _('File with error : in {0}'), FilePath
                 ),
                 listeners: {
@@ -287,20 +288,24 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                             '&file=' + FileName,
                         listeners   : {
                             collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'errorDescPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'errorDescPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,b,newHeight) {
 
-                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'errorDescPanelHeight',
                                         value : newHeight
@@ -322,19 +327,23 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         width       : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
                         listeners: {
                             collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'errorDisplaylogPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDisplaylogPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'errorDisplaylogPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDisplaylogPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,newWidth) {
-                                if( newWidth && newWidth != PhDOE.userConf.errorDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.errorDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'errorDisplaylogPanelWidth',
                                         value : newWidth

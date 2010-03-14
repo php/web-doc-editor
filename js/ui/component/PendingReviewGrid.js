@@ -300,18 +300,19 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
         if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
 
             Ext.getCmp('main-panel').add({
-                id          : 'FNR-' + FileID,
-                title       : FileName,
-                layout      : 'border',
-                iconCls     : 'iconTabNeedReviewed',
-                closable    : true,
+                id             : 'FNR-' + FileID,
+                title          : FileName,
+                layout         : 'border',
+                iconCls        : 'iconTabNeedReviewed',
+                closable       : true,
+                tabLoaded      : false,
                 panVCSLang     : !PhDOE.userConf.reviewedDisplaylog,
                 panVCSEn       : !PhDOE.userConf.reviewedDisplaylog,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 panENLoaded    : false, // Use to monitor if the EN panel is loaded
-                originTitle : FileName,
-                defaults    : { split : true },
-                tabTip      : String.format(
+                originTitle    : FileName,
+                defaults       : { split : true },
+                tabTip         : String.format(
                     _('Need Reviewed in: {0}'), FilePath
                 ),
                 listeners: {
@@ -320,32 +321,36 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     }
                 },
                 items : [{
-                    region      : 'west',
-                    xtype       : 'panel',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
+                    region           : 'west',
+                    xtype            : 'panel',
+                    title            : _('VCS Log'),
+                    iconCls          : 'iconVCSLog',
                     collapsedIconCls : 'iconVCSLog',
-                    plugins     : [Ext.ux.PanelCollapsedTitle],
-                    collapsible : true,
-                    collapsed   : !PhDOE.userConf.reviewedDisplaylogPanel,
-                    layout      : 'fit',
-                    bodyBorder  : false,
-                    width       : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
-                    listeners   : {
+                    plugins          : [Ext.ux.PanelCollapsedTitle],
+                    collapsible      : true,
+                    collapsed        : !PhDOE.userConf.reviewedDisplaylogPanel,
+                    layout           : 'fit',
+                    bodyBorder       : false,
+                    width            : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                    listeners        : {
                         collapse: function() {
-                            new ui.task.UpdateConfTask({
-                                item  : 'reviewedDisplaylogPanel',
-                                value : false
-                            });
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false
+                                });
+                            }
                         },
                         expand: function() {
-                            new ui.task.UpdateConfTask({
-                                item  : 'reviewedDisplaylogPanel',
-                                value : true
-                            });
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true
+                                });
+                            }
                         },
                         resize: function(a,newWidth) {
-                            if( newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanelWidth',
                                     value : newWidth

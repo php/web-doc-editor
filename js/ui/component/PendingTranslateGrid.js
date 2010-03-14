@@ -154,6 +154,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle      : FileName,
                 iconCls          : 'iconTabNeedTranslate',
                 closable         : true,
+                tabLoaded        : false,
                 panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
                 panGGTRANSLoaded : false, // Use to monitor if the google translation panel is loaded
                 defaults         : { split : true },

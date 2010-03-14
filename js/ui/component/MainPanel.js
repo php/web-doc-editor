@@ -28,6 +28,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // FNT panel
         if( prefix == 'FNT' ) {
             if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
+
+                cmp.tabLoaded = true;
+
                 cmp.panTRANSLoaded = panGGTRANSLoaded = false;
 
                 if (PhDOE.FNTfilePendingOpen[0]) {
@@ -40,6 +43,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // FNU panel
         if( prefix == 'FNU' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panDiffLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panDiffLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FNUfilePendingOpen[0]) {
@@ -51,6 +57,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // FE panel
         if( prefix == 'FE' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+                
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FEfilePendingOpen[0]) {
@@ -62,6 +71,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // FNR panel
         if( prefix == 'FNR' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+                
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FNRfilePendingOpen[0]) {
@@ -74,6 +86,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // FNIEN panel
         if( prefix == 'FNIEN' ) {
             if( cmp.panLANGLoaded ) {
+
+                cmp.tabLoaded = true;
+                
                 cmp.panLANGLoaded = false;
                 if (PhDOE.FNIENfilePendingOpen[0]) {
                     ui.component.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
@@ -85,6 +100,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // AF panel
         if( prefix == 'AF' ) {
             if( cmp.panLoaded && cmp.panVCS ) {
+
+                cmp.tabLoaded = true;
+                
                 cmp.panLoaded = cmp.panVCS = false;
                 if (PhDOE.AFfilePendingOpen[0]) {
                     ui.component.RepositoryTree.getInstance().openFile(
@@ -100,6 +118,9 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // PP panel
         if( prefix == 'PP' ) {
             if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
+
+                cmp.tabLoaded = true;
+                
                 cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;
                 if (PhDOE.PPfilePendingOpen[0]) {
                     ui.component.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);

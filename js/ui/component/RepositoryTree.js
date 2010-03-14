@@ -247,19 +247,23 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         width       : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
                         listeners   : {
                             collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesDisplaylogPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesDisplaylogPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,newWidth) {
-                                if( newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanelWidth',
                                         value : newWidth
@@ -311,6 +315,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     title       : FileName,
                     originTitle : FileName,
                     closable    : true,
+                    tabLoaded   : false,
                     panVCS      : !PhDOE.userConf.allFilesDisplayLog,
                     panLoaded   : false, // Use to monitor if the LANG panel is loaded
                     tabTip      : String.format(_('in {0}'), FilePath),

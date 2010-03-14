@@ -166,6 +166,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle    : FileName,
                 iconCls        : 'iconTabView',
                 closable       : true,
+                tabLoaded      : false,
                 panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
                 defaults       : { split : true },
                 tabTip         : String.format(

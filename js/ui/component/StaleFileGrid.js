@@ -45,7 +45,7 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
         direction : "ASC"
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         datachanged : function(ds)
         {
             Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
@@ -55,20 +55,20 @@ ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
 
 // StaleFileGrid view
 ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
-    startCollapsed: true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    deferEmptyText: false,
-    getRowClass : function(record)
+    forceFit       : true,
+    startCollapsed : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText : false,
+    getRowClass    : function(record)
     {
         if (record.data.needCommitEN || record.data.needCommitLang) {
             return 'file-need-commit';
         }
         return false;
     },
-    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    emptyText      : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
 // StaleFileGrid columns definition
@@ -130,17 +130,17 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                 text    : _('View Diff...'),
                 iconCls : 'iconViewDiff',
                 menu    : new Ext.menu.Menu({
-                    items: [{
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.needCommitEN === false),
-                        text: String.format(_('... of the {0} file'), 'EN'),
+                    items : [{
+                        scope  : this,
+                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitEN === false),
+                        text   : String.format(_('... of the {0} file'), 'EN'),
                         handler: function() {
                             this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
                         }
                     }, {
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
-                        text: String.format(_('... of the {0} file'), PhDOE.userLang),
+                        scope  : this,
+                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
+                        text   : String.format(_('... of the {0} file'), PhDOE.userLang),
                         handler: function() {
                             this.openTab(this.rowIdx, PhDOE.userLang, this.fpath, this.fname);
                         }
@@ -165,7 +165,7 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                 autoScroll : true,
                 iconCls    : 'iconTabLink',
                 html       : '<div id="diff_content_' + lang + '_' + rowIdx +
-                      '" class="diff-content"></div>'
+                             '" class="diff-content"></div>'
             });
 
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
@@ -213,7 +213,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
 
-    onRowContextMenu: function(grid, rowIndex, e)
+    onRowContextMenu : function(grid, rowIndex, e)
     {
         e.stopEvent();
     
@@ -266,6 +266,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 originTitle    : FileName,
                 iconCls        : 'iconTabNeedUpdate',
                 closable       : true,
+                tabLoaded      : false,
                 panVCSLang     : !PhDOE.userConf.needUpdateDisplaylog,
                 panVCSEn       : !PhDOE.userConf.needUpdateDisplaylog,
                 panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"), // Use to monitor if the Diff panel is loaded
@@ -294,20 +295,24 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         rev2        : en_revision,
                         listeners   : {
                             collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiffPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiffPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,b,newHeight) {
 
-                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiffPanelHeight',
                                         value : newHeight
@@ -329,19 +334,23 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         width       : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
                         listeners: {
                             collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDisplaylogPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDisplaylogPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,newWidth) {
-                                if( newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanelWidth',
                                         value : newWidth

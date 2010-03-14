@@ -163,52 +163,56 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
         if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
 
             Ext.getCmp('main-panel').add({
-                id          : 'PP-' + FileID,
-                layout      : 'border',
-                iconCls     : 'iconPendingPatch',
-                title       : FileName,
-                originTitle : FileName,
-                tabTip      : String.format(_('Patch for {0}'), FilePath + FileName),
-                closable    : true,
+                id             : 'PP-' + FileID,
+                layout         : 'border',
+                iconCls        : 'iconPendingPatch',
+                title          : FileName,
+                originTitle    : FileName,
+                tabTip         : String.format(_('Patch for {0}'), FilePath + FileName),
+                closable       : true,
+                tabLoaded      : false,
                 panPatchContent: false,
                 panVCS         : !PhDOE.userConf.patchDisplayLog,
                 panPatchLoaded : false,
                 panOriginLoaded: false,
-
-                defaults    : { split : true },
-                items       : [{
-                        xtype       : 'panel',
-                        id          : 'PP-patch-desc-' + FileID,
-                        title       : _('Patch content'),
-                        iconCls     : 'iconPendingPatch',
+                defaults       : { split : true },
+                items          : [{
+                        xtype            : 'panel',
+                        id               : 'PP-patch-desc-' + FileID,
+                        title            : _('Patch content'),
+                        iconCls          : 'iconPendingPatch',
                         collapsedIconCls : 'iconPendingPatch',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        layout      : 'fit',
-                        region      : 'north',
-                        border      : false,
-                        height      : PhDOE.userConf.patchDisplayContentPanelHeight || 150,
-                        autoScroll  : true,
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.patchDisplayContentPanel,
-                        html        : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
-                        listeners   : {
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        region           : 'north',
+                        border           : false,
+                        height           : PhDOE.userConf.patchDisplayContentPanelHeight || 150,
+                        autoScroll       : true,
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.patchDisplayContentPanel,
+                        html             : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
+                        listeners        : {
                             collapse: function()
                             {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplayContentPanel',
-                                    value : false
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanel',
+                                        value : false
+                                    });
+                                }
                             },
                             expand: function()
                             {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplayContentPanel',
-                                    value : true
-                                });
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanel',
+                                        value : true
+                                    });
+                                }
                             },
                             resize: function(a,b,newHeight)
                             {
-                                if( newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplayContentPanelHeight',
                                         value : newHeight
@@ -240,32 +244,36 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             }
                         }
                     }, {
-                        region      : 'west',
-                        xtype       : 'panel',
-                        title       : _('VCS Log'),
-                        iconCls     : 'iconVCSLog',
+                        region           : 'west',
+                        xtype            : 'panel',
+                        title            : _('VCS Log'),
+                        iconCls          : 'iconVCSLog',
                         collapsedIconCls : 'iconVCSLog',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.patchDisplaylogPanel,
-                        width       : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
-                        listeners   : {
-                            collapse: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplaylogPanel',
-                                    value : false
-                                });
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        bodyBorder       : false,
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.patchDisplaylogPanel,
+                        width            : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                        listeners        : {
+                            collapse : function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanel',
+                                        value : false
+                                    });
+                                }
                             },
-                            expand: function() {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplaylogPanel',
-                                    value : true
-                                });
+                            expand : function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanel',
+                                        value : true
+                                    });
+                                }
                             },
-                            resize: function(a,newWidth) {
-                                if( newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                            resize : function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplaylogPanelWidth',
                                         value : newWidth
@@ -332,7 +340,6 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 
     onRowContextMenu : function(grid, rowIndex, e)
     {
-
         e.stopEvent();
 
         var FilePath   = grid.store.getAt(rowIndex).data.path,
@@ -366,7 +373,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
         ui.component.PendingPatchGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
+        this.on('rowdblclick',    this.onRowDblClick,    this);
     }
 });
 

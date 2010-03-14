@@ -297,9 +297,13 @@ class AccountManager
             $value = true;
         }
 
+        unset($this->userConf->$item);
+        $this->userConf->$item = ( is_numeric($value) ) ? (int) $value : $value;
+        
         // In session
-        $this->userConf->$item = $value;
-        $_SESSION['userConf']->$item = $value;
+        unset($_SESSION['userConf']->$item);
+        $_SESSION['userConf']->$item = ( is_numeric($value) ) ? (int) $value : $value;
+        
         $db = DBConnection::getInstance();
 
         // In DB

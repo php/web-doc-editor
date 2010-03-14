@@ -1111,13 +1111,15 @@ class ExtJsController
      */
     public function getConf()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+
+        $am->isLogged();
 
         $r = array();
-        $r['project']   = AccountManager::getInstance()->project;
-        $r['userLang']  = AccountManager::getInstance()->vcsLang;
-        $r['userLogin'] = AccountManager::getInstance()->vcsLogin;
-        $r['userConf']  = AccountManager::getInstance()->userConf;
+        $r['project']   = $am->project;
+        $r['userLang']  = $am->vcsLang;
+        $r['userLogin'] = $am->vcsLogin;
+        $r['userConf']  = $am->userConf;
 
         return JsonResponseBuilder::success(
             array(
