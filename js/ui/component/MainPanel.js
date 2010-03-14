@@ -93,8 +93,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 Ext.Msg.show({
                     scope   : this,
                     title   : _('Confirm'),
-                    msg     : _('This file has been modified without being saved.<br/>' +
-                                'Do you really want to close?'),
+                    msg     : _('This file has been modified without being saved.<br/>Do you really want to close?'),
                     buttons : Ext.Msg.YESNO,
                     icon    : Ext.Msg.QUESTION,
                     fn : function(btn, text)
