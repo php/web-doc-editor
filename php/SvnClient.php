@@ -19,7 +19,6 @@ class SvnClient
 
     private function getKarmaList()
     {
-
         // If this data is older than 1 day, we update it
         $data = RepositoryFetcher::getStaticValue('karma_list', '');
 
@@ -32,8 +31,9 @@ class SvnClient
 
     private function updateKarmaList()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $file = @file($appConf[$project]['vcs.karma.file']);
 
@@ -78,7 +78,6 @@ class SvnClient
     // Return true if the $user have the right karma for $module
     public function checkKarma($user, $lang)
     {
-
         $userList = $this->getKarmaList();
 
         if( isset($userList[$user]) ) {
@@ -141,8 +140,9 @@ class SvnClient
      */
     public function svnAuthenticate($username, $password)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $uuid = md5(uniqid(rand(), true));
         $uuid =   substr($uuid, 0, 8)  . '-'
@@ -232,8 +232,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function checkout()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $host   = $appConf[$project]['vcs.server.host'];
         $port   = $appConf[$project]['vcs.server.port'];
@@ -261,8 +262,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function updateSingleFile($lang, $path, $name)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$lang.$path.$name;
 
@@ -287,8 +289,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function update()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .;';
 
@@ -309,8 +312,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function log($path, $file)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn log '.$file;
 
@@ -359,8 +363,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function diff($path, $file, $rev1, $rev2)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
 
