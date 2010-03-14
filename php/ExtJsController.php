@@ -1121,7 +1121,8 @@ class ExtJsController
         $r['userLogin'] = $am->vcsLogin;
         $r['userConf']  = $am->userConf;
         $r['appConf']   = Array(
-            "projectMailList" => $am->appConf[$am->project]['project.mail.list']
+            "projectMailList" => $am->appConf[$am->project]['project.mail.list'],
+            "viewVcUrl"       => $am->appConf[$am->project]['viewVc.url']
         );
 
         return JsonResponseBuilder::success(

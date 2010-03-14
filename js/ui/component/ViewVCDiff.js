@@ -19,9 +19,11 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
                 id         : this.prefix + '-diff-' + this.fid,
                 xtype      : 'panel',
                 layout     : 'fit',
-                items: [ new Ext.ux.IFrameComponent({ id: 'frame-' + this.prefix + '-diff-' + this.fid, url: 'http://svn.php.net/viewvc/phpdoc/en/trunk' +
-                                this.fpath + this.fname +
-                                '?r1=' + this.rev1 + '&r2=' + this.rev2 }) ]
+                items: [ new Ext.ux.IFrameComponent({
+                             id  : 'frame-' + this.prefix + '-diff-' + this.fid,
+                             url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
+                         })
+                ]
             }
         });
         ui.component.ViewVCDiff.superclass.initComponent.call(this);
