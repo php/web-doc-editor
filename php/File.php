@@ -278,7 +278,7 @@ class File
             'en-rev'     => 0,
             'maintainer' => 'NULL',
             'reviewed'   => 'NULL',
-            'status'     => 'NULL',
+            'status'     => '-',
             'xmlid'      => 'NULL',
             'content'    => $content
         );

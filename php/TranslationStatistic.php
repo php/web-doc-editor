@@ -130,7 +130,7 @@ class TranslationStatistic
                 `files`
             WHERE
                 ' . $where . '
-                (`en_revision` != `revision` AND `revision` != 0 )
+                `en_revision` != `revision`
             AND
                 `size` is not NULL
             AND
@@ -181,9 +181,8 @@ class TranslationStatistic
              WHERE
                  ' . $where . '
                  `revision` is NULL AND
-                 `size` is NULL AND
-                 `project` = \''.$project.'\' AND
-                 ( `status` != "NotInEN" OR `status` IS NULL )
+                 `status` is NULL AND
+                 `project` = \''.$project.'\'
        ';
 
        $r = DBConnection::getInstance()->query($s);

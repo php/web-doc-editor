@@ -69,14 +69,21 @@ class RepositoryFetcher
      */
     public function getModifies()
     {
+        $am = AccountManager::getInstance();
+
         $s = sprintf(
-            'SELECT `id`, `lang`, `path`, `name`, `revision`,
-            `en_revision`, `maintainer`, `reviewed` FROM `pendingCommit` WHERE
-            `project` = "%s" AND
-            ( `lang`="%s" OR `lang`="en" ) ',
-            AccountManager::getInstance()->project,
-            AccountManager::getInstance()->vcsLang
+            'SELECT
+                `id`, `lang`, `path`, `name`, `revision`, `en_revision`, `maintainer`, `reviewed`
+             FROM
+                `pendingCommit`
+             WHERE
+                `project` = "%s" AND
+                ( `lang`="%s" OR `lang`="en" ) ',
+
+            $am->project,
+            $am->vcsLang
         );
+
         $r = DBConnection::getInstance()->query($s);
 
         $infos = array();
@@ -95,15 +102,23 @@ class RepositoryFetcher
      */
     public function getModifiesById($id)
     {
+        $am = AccountManager::getInstance();
+
         $ids = is_array($id) ? implode($id, ',') : $id;
 
         $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE
-            `project` = "%s" AND
-            (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
-            AccountManager::getInstance()->project,
-            AccountManager::getInstance()->vcsLang, $ids
+            'SELECT *
+             FROM
+                `pendingCommit`
+             WHERE
+                `project` = "%s" AND
+               (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
+                
+            $am->project,
+            $am->vcsLang,
+            $ids
         );
+
         $r = DBConnection::getInstance()->query($s);
 
         $infos = array();
@@ -123,8 +138,17 @@ class RepositoryFetcher
         $project = $ac->project;
 
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0',
-            $project, $vcsLang
+            'SELECT
+                count(*) as total
+             FROM
+                `files`
+             WHERE
+                `project`   = "%s" AND
+                `lang`      = "%s"  AND
+                `revision` != `en_revision` AND
+                `status` is not null',
+            $project,
+            $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -149,8 +173,19 @@ class RepositoryFetcher
         $m = $this->getModifies();
 
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND `revision` != `en_revision` AND `revision` != 0  %s',
-            $project, $vcsLang, $limit
+            'SELECT
+                *
+             FROM
+                `files`
+             WHERE
+                `project`="%s" AND
+                `lang` = "%s" AND
+                `revision` != `en_revision` AND
+                `status` is not NULL
+                %s',
+            $project,
+            $vcsLang,
+            $limit
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -211,8 +246,16 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\'',
-            $project, $vcsLang
+            'SELECT
+                count(*) as total
+             FROM
+                `files`
+             WHERE
+                `project`="%s" AND
+                `lang` = "%s" AND
+                reviewed != \'yes\'',
+            $project,
+            $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
@@ -235,8 +278,21 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
         $s = sprintf(
-            'SELECT * FROM `files` WHERE `project`="%s" AND `lang` = "%s" AND reviewed != \'yes\' ORDER BY `path`, `name` %s',
-            $project, $vcsLang, $limit
+            'SELECT
+                *
+             FROM
+                `files`
+             WHERE
+                `project`="%s" AND
+                `lang` = "%s" AND
+                reviewed != \'yes\'
+             ORDER BY
+                `path`,
+                `name`
+                %s',
+            $project,
+            $vcsLang,
+            $limit
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -321,7 +377,20 @@ class RepositoryFetcher
         $vcsLang = $ac->vcsLang;
         $project = $ac->project;
 
-        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL', $project, $vcsLang);
+        $s = sprintf('
+            SELECT
+                count(*) as total
+            FROM
+                `files`
+            WHERE
+                `project`="%s" AND
+                `lang`="%s" AND
+                `status` is NULL AND
+                `revision` is NULL',
+            $project,
+            $vcsLang
+        );
+        
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -342,7 +411,22 @@ class RepositoryFetcher
         $limit = ( $ac->userConf->newFileNbDisplay ) ? 'LIMIT '.$ac->userConf->newFileNbDisplay : '';
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status` is NULL AND `revision` is NULL %s', $project, $vcsLang, $limit);
+        $s = sprintf('
+            SELECT
+                `id`, `path`, `name`
+            FROM
+                `files`
+            WHERE
+                `project`="%s" AND
+                `lang`="%s" AND
+                `status` is NULL AND
+                `revision` is NULL
+                %s',
+            $project,
+            $vcsLang,
+            $limit
+        );
+
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();

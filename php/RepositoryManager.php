@@ -1090,8 +1090,9 @@ EOD;
      */
     public function applyRevCheck($path = '/')
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         if ($dh = @opendir($appConf[$project]['vcs.path'].'en'.$path)) {
 
@@ -1126,7 +1127,7 @@ EOD;
                 $tmp = explode('/', $f->path);
 
                 // Only for Php project
-                if( AccountManager::getInstance()->project == 'php' ) {
+                if( $am->project == 'php' ) {
                     $check_doc = new ToolsCheckDoc();
                     $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
                 } else {
@@ -1145,7 +1146,7 @@ EOD;
                 $query = sprintf(
                     'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
                         VALUES ("%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                    AccountManager::getInstance()->project,
+                    $am->project,
                     'en', $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
                     $ToolsCheckDocResult['check_oldstyle'],
                     $ToolsCheckDocResult['check_undoc'],
@@ -1191,7 +1192,7 @@ EOD;
                         $query = sprintf(
                             'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
                                 VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
-                            AccountManager::getInstance()->project,
+                            $am->project,
                             $lang, $xmlid, $lang_file->path, $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
@@ -1211,10 +1212,13 @@ EOD;
                         }
                     } else {
                         $query = sprintf(
-                            'INSERT INTO `files` (`project`, `lang`, `path`, `name`)
-                                VALUES ("%s", "%s", "%s", "%s")',
-                            AccountManager::getInstance()->project,
-                            $lang, $lang_file->path, $lang_file->name
+                            'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
+                                VALUES ("%s", "%s", "%s", "%s", %s)',
+                            $am->project,
+                            $lang,
+                            $lang_file->path,
+                            $lang_file->name,
+                            $en_size
                         );
                         DBConnection::getInstance()->query($query);
                     }
