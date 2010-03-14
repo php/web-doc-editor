@@ -110,7 +110,7 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
             }, '-', {
                 scope   : this,
                 text    : _('Reject this patch'),
-                disabled : (PhDOE.userLogin === 'anonymous'),
+                disabled: (PhDOE.userLogin === 'anonymous'),
                 iconCls : 'iconTrash',
                 handler : function()
                 {

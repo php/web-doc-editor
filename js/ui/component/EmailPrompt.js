@@ -14,9 +14,9 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
     buttonAlign : 'center',
     iconCls     : 'iconSendEmail',
     closeAction : 'hide',
-    buttons : [{
-        text    : _('Send'),
-        handler : function()
+    buttons     : [{
+        text   : _('Send'),
+        handler: function()
         {
             var win    = this.ownerCt.ownerCt,
                 values = win.findByType('form').shift().getForm().getValues();
@@ -51,7 +51,7 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
 
     setData : function (name, email)
     {
-        this.name = name;
+        this.name  = name;
         this.email = email;
 
         this.items.items[0].items.items[0].setValue('"' + this.name + '" <' + this.email + '>');

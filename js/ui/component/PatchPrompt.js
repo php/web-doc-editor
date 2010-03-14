@@ -22,8 +22,7 @@ ui.component.PatchPrompt = Ext.extend(Ext.Window,
                 xtype     : 'panel',
                 baseCls   : 'x-plain',
                 bodyStyle : 'padding-bottom: 10px;',
-                html      : _('If you want to be notified when your patch ' +
-                              'will be dealt with, thank you to leave an email address below.')
+                html      : _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
             }, {
                 id         : 'patch-email-alert',
                 xtype      : 'textfield',

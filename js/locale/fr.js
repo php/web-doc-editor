@@ -283,6 +283,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/PatchPrompt.js
   i18n["Do you want to be alerted ?"] = "Voulez-vous être averti ?";
   i18n["Save"] = "Sauvegarder";
+  i18n["If you want to be notified when your patch will be dealt with, thank you to leave an email address below."] = "Si vous voulez être averti lors du traitement de votre patch, merci de laisser une adresse email ci-dessous.";
 
 
 // In file: ../../js/ui/component/ExecDiff.js
