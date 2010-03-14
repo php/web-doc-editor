@@ -927,18 +927,19 @@ EOD;
         foreach ($ExistingLanguage as $lang) {
 
             $lang = $lang["code"];
+            $txml = false;
 
             // Path to find translation.xml file, set default values,
             // in case we can't find the translation file
             $translation_xml = new File($lang, '/', 'translation.xml');
 
-            if (file_exists($translation_xml->full_path)) {
+            if ( file_exists($translation_xml->full_path) ) {
                 // Else go on, and load in the file, replacing all
                 // space type chars with one space
                 $txml = preg_replace('/\\s+/', ' ', $translation_xml->read(true));
             }
 
-            if (isset($txml)) {
+            if ( $txml ) {
                 // Find all persons matching the pattern
                 $matches = array();
                 if (preg_match_all('!<person (.+)/\\s?>!U', $txml, $matches)) {
