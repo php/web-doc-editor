@@ -747,17 +747,24 @@ class ExtJsController
             }
         } else {
 
-            $uniqID = RepositoryManager::getInstance()->addPendingPatch(
-                $file, $emailAlert
-            );
+            // We must ensure that this folder exist localy
+            if( $file->folderExist() ) {
 
-            $file->save($fileContent, true, $uniqID);
+                $uniqID = RepositoryManager::getInstance()->addPendingPatch(
+                    $file, $emailAlert
+                );
 
-            return JsonResponseBuilder::success(
-                array(
-                    'uniqId' => $uniqID
-                )
-            );
+                $file->save($fileContent, true, $uniqID);
+
+                return JsonResponseBuilder::success(
+                    array(
+                        'uniqId' => $uniqID
+                    )
+                );
+
+            } else {
+              return JsonResponseBuilder::failure();
+            }
         }
     }
 
