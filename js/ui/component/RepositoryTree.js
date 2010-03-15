@@ -109,7 +109,49 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
                    ])
                )
            }),
-           tbar: ['test']
+           tbar: [
+               _('Filter: '), ' ',
+               new Ext.form.TwinTriggerField({
+                    id              : 'AF-entities-filter',
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    listeners : {
+                        specialkey : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click: function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        this.ownerCt.ownerCt.store.clearFilter();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var v = this.getValue();
+
+                        if (v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+                        this.ownerCt.ownerCt.store.filter('entities', v, true);
+                    }
+                })
+           ]
        });
        ui.component._RepositoryTree.grid.superclass.initComponent.call(this);
 
