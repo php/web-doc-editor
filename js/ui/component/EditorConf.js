@@ -586,7 +586,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }, {
                         name       : 'needUpdateDiff',
                         checked    : (PhDOE.userConf.needUpdateDiff === "using-exec") ? true : false,
-                        boxLabel   : _('Using diff -uN command line'),
+                        boxLabel   : _('Using diff -u command line'),
                         inputValue : 'using-exec',
                         listeners : {
                             check : function(field)

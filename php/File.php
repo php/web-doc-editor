@@ -331,7 +331,7 @@ class File
 
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
         $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
-              .'diff -uN '.$this->name.' '.$this->name.$ext;
+              .'diff -u '.$this->name.' '.$this->name.$ext;
 
         $output = array();
         exec($cmd, $output);
