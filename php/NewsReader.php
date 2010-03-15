@@ -31,8 +31,9 @@ class NewsReader
      */
     function getLastNews()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $result = array();
 
@@ -64,3 +65,4 @@ class NewsReader
     }
     
 }
+?>

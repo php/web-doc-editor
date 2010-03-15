@@ -9,11 +9,12 @@ require_once dirname(__FILE__) . '/AccountManager.php';
  */
 function debug($mess)
 {
-    $appConf = AccountManager::getInstance()->appConf;
-    $project = AccountManager::getInstance()->project;
+    $am      = AccountManager::getInstance();
+    $appConf = $am->appConf;
+    $project = $am->project;
 
     $mess = '['.@date('d/m/Y H:i:s').'] by '
-            .AccountManager::getInstance()->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
+            .$am->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
 
     $fp = fopen($appConf[$project]['vcs.path'].'../.debug', 'a+');
     fwrite($fp, $mess);

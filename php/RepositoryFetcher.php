@@ -29,8 +29,8 @@ class RepositoryFetcher
      */
     public function getLastUpdate()
     {
-
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
 
         $return = array();
         $return["lastupdatedata"] = '-';
@@ -40,8 +40,6 @@ class RepositoryFetcher
         $lock_update   = new LockFile('project_'.$project.'_lock_update_repository');
         $lock_apply    = new LockFile('project_'.$project.'_lock_apply_tools');
         $lock_entities = new LockFile('project_'.$project.'_lock_check_entities');
-
-        $project = AccountManager::getInstance()->project;
 
         if ( $lock_update->isLocked() || $lock_apply->isLocked() ) {
             $return["lastupdatedata"] = 'in_progress';
@@ -58,8 +56,6 @@ class RepositoryFetcher
         }
 
         return $return;
-
-
     }
 
     /**
@@ -132,10 +128,10 @@ class RepositoryFetcher
 
     public function getNbPendingUpdate()
     {
-        $ac = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $s = sprintf(
             'SELECT
@@ -153,7 +149,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $ac->userConf->needUpdateNbDisplay && $ac->userConf->needUpdateNbDisplay != 0 ) ? $ac->userConf->needUpdateNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->needUpdateNbDisplay && $am->userConf->needUpdateNbDisplay != 0 ) ? $am->userConf->needUpdateNbDisplay : $a->total;
        
     }
     /**
@@ -163,12 +159,12 @@ class RepositoryFetcher
      */
     public function getPendingUpdate()
     {
-        $ac = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
-        $limit = ( $ac->userConf->needUpdateNbDisplay ) ? 'LIMIT '.$ac->userConf->needUpdateNbDisplay : '';
+        $limit = ( $am->userConf->needUpdateNbDisplay ) ? 'LIMIT '.$am->userConf->needUpdateNbDisplay : '';
 
         $m = $this->getModifies();
 
@@ -239,10 +235,10 @@ class RepositoryFetcher
 
     public function getNbPendingReview()
     {
-        $ac = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $m = $this->getModifies();
         $s = sprintf(
@@ -260,7 +256,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $ac->userConf->reviewedNbDisplay && $ac->userConf->reviewedNbDisplay != 0 ) ? $ac->userConf->reviewedNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->reviewedNbDisplay && $am->userConf->reviewedNbDisplay != 0 ) ? $am->userConf->reviewedNbDisplay : $a->total;
     }
     /**
      * Get all files witch need to be reviewed.
@@ -269,12 +265,12 @@ class RepositoryFetcher
      */
     public function getPendingReview()
     {
-        $ac = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
-        $limit = ( $ac->userConf->reviewedNbDisplay ) ? 'LIMIT '.$ac->userConf->reviewedNbDisplay : '';
+        $limit = ( $am->userConf->reviewedNbDisplay ) ? 'LIMIT '.$am->userConf->reviewedNbDisplay : '';
 
         $m = $this->getModifies();
         $s = sprintf(
@@ -333,8 +329,9 @@ class RepositoryFetcher
 
     public function getNbNotInEn()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $m = $this->getModifies();
         $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
@@ -350,8 +347,9 @@ class RepositoryFetcher
      */
     public function getNotInEn()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $m = $this->getModifies();
         $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
@@ -372,10 +370,9 @@ class RepositoryFetcher
 
     public function getNbPendingTranslate()
     {
-        $ac = AccountManager::getInstance();
-
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $am = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $s = sprintf('
             SELECT
@@ -394,7 +391,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $ac->userConf->newFileNbDisplay && $ac->userConf->newFileNbDisplay != 0 ) ? $ac->userConf->newFileNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->newFileNbDisplay && $am->userConf->newFileNbDisplay != 0 ) ? $am->userConf->newFileNbDisplay : $a->total;
     }
     /**
      * Get all files which need to be translated
@@ -403,12 +400,12 @@ class RepositoryFetcher
      */
     public function getPendingTranslate()
     {
-        $ac = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-        $vcsLang = $ac->vcsLang;
-        $project = $ac->project;
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
-        $limit = ( $ac->userConf->newFileNbDisplay ) ? 'LIMIT '.$ac->userConf->newFileNbDisplay : '';
+        $limit = ( $am->userConf->newFileNbDisplay ) ? 'LIMIT '.$am->userConf->newFileNbDisplay : '';
 
         $m = $this->getModifies();
         $s = sprintf('
@@ -445,8 +442,9 @@ class RepositoryFetcher
 
     public function getNbPendingPatch()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $s = sprintf(
             'SELECT count(*) as total FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
@@ -464,8 +462,9 @@ class RepositoryFetcher
      */
     public function getPendingPatch()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $s = sprintf(
             'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
@@ -489,8 +488,9 @@ class RepositoryFetcher
      */
     public function getPendingFoldersCommit()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         $s = sprintf(
             'SELECT * FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
@@ -515,8 +515,9 @@ class RepositoryFetcher
 
     public function getNbPendingCommit()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = sprintf(
@@ -535,8 +536,9 @@ class RepositoryFetcher
      */
     public function getPendingCommit()
     {
-        $vcsLang = AccountManager::getInstance()->vcsLang;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = sprintf(
@@ -569,10 +571,14 @@ TODO: Handle project here
      */
     public function getFilesByExtension($ext)
     {
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
+
         $s = sprintf(
             'SELECT `path`, `name` FROM `files` WHERE `path`
              LIKE \'/reference/%s/%%\' AND `lang`="%s" AND `project`="%s" ORDER BY `path`, `name`',
-            $ext, AccountManager::getInstance()->vcsLang, AccountManager::getInstance()->project
+            $ext, $vcsLang, $project
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -611,10 +617,14 @@ TODO: Handle project here
      */
     public function getFileByKeyword($key)
     {
+        $am      = AccountManager::getInstance();
+        $vcsLang = $am->vcsLang;
+        $project = $am->project;
+
         $s = sprintf(
             'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
              AND ( `name` LIKE \'%%%s%%\' OR `xmlid` LIKE \'%%%s%%\' ) ORDER BY `lang`, `path`, `name`',
-            AccountManager::getInstance()->project, AccountManager::getInstance()->vcsLang, $key, $key
+            $project, $vcsLang, $key, $key
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -642,8 +652,9 @@ TODO: Handle project here
      */
     public function getFilesByDirectory($dir)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         // Security
         $dir = str_replace('..', '', $dir);
@@ -660,7 +671,7 @@ TODO: Handle project here
             if (   $dir == '/'
                 && $f != 'en'
                 && $f != $appConf[$project]['entities.folder']
-                && $f != AccountManager::getInstance()->vcsLang
+                && $f != $am->vcsLang
             ) {
                 continue; // skip non-en and non-user-lang
             }

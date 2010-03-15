@@ -140,8 +140,9 @@ class File
      */
     private function createFolder($path)
     {
-       $appConf = AccountManager::getInstance()->appConf;
-       $project = AccountManager::getInstance()->project;
+       $am      = AccountManager::getInstance();
+       $appConf = $am->appConf;
+       $project = $am->project;
 
        // We create this folder localy
        mkdir($appConf[$project]['vcs.path'].$this->lang.$path);
@@ -159,8 +160,9 @@ class File
      */
     public function folderExist()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $folders = array();
         $_folders = explode("/", $this->path);
@@ -323,8 +325,9 @@ class File
      */
     public function rawDiff($isPatch=false, $uniqID='')
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
         $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
@@ -345,8 +348,9 @@ class File
      */
     public function Diff($type, $options)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         if( $type == 'vcs' ) {
 

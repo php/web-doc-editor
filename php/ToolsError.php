@@ -149,11 +149,12 @@ class ToolsError
      *
      * @return An array of information
      */
-    function getInfo() {
+    function getInfo()
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
 
-        $project = AccountManager::getInstance()->project;
-
-        if ( AccountManager::getInstance()->userConf->errorSkipNbLiteralTag ) {
+        if ( $am->userConf->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
@@ -194,11 +195,12 @@ class ToolsError
      * @param array $ModifiedFiles An array containing all modified files in order to display them in red
      * @return An array of information
      */
-    function getFilesError($ModifiedFiles) {
+    function getFilesError($ModifiedFiles)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
 
-        $project = AccountManager::getInstance()->project;
-
-        if ( AccountManager::getInstance()->userConf->errorSkipNbLiteralTag ) {
+        if ( $am->userConf->errorSkipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
@@ -268,7 +270,7 @@ class ToolsError
      */
     function saveError()
     {
-
+        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         if( count($this->errorStack) > 0 ) {
@@ -277,12 +279,12 @@ class ToolsError
             $pattern = ' ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"),';
 
             foreach ($this->errorStack as $error) {
-                $sql .= sprintf($pattern, $project, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), DBConnection::getInstance()->real_escape_string($error['value_en']),
-                DBConnection::getInstance()->real_escape_string($error['value_lang']), $error['type']);
+                $sql .= sprintf($pattern, $project, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), $db->real_escape_string($error['value_en']),
+                $db->real_escape_string($error['value_lang']), $error['type']);
             }
 
             $sql = substr($sql, 0, -1);
-            DBConnection::getInstance()->query($sql);
+            $db->query($sql);
 
         }
 

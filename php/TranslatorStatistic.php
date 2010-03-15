@@ -151,13 +151,13 @@ class TranslatorStatistic
      */
     public function computeSummary($lang='all')
     {
-
+        $rm        = RepositoryManager::getInstance();
         $translators = $this->getTranslators($lang);
         $uptodate    = $this->getUptodateFileCount($lang);
         $stale       = $this->getStaleFileCount($lang);
 
         if( $lang == 'all' ) {
-            $hereLang = RepositoryManager::getInstance()->getExistingLanguage();
+            $hereLang = $rm->getExistingLanguage();
         } else {
             $hereLang = array(0 => Array("code" => $lang));
         }
@@ -171,13 +171,13 @@ class TranslatorStatistic
                 $persons[$i]              = $data;
                 $persons[$i]['nick']      = $nick;
                 $persons[$i]['uptodate']  = isset($uptodate[$lang][$nick]) ? $uptodate[$lang][$nick] : '0';
-                $persons[$i]['stale']     = isset($stale[$lang][$nick])      ? $stale[$lang][$nick]      : '0';
+                $persons[$i]['stale']     = isset($stale[$lang][$nick])    ? $stale[$lang][$nick]    : '0';
                 $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['stale'];
                 $i++;
             }
 
             // Save $summary into DB
-            RepositoryManager::getInstance()->setStaticValue('translator_summary', $lang, json_encode($persons));
+            $rm->setStaticValue('translator_summary', $lang, json_encode($persons));
         }
     }
 }

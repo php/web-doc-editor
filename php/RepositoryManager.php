@@ -69,8 +69,9 @@ class RepositoryManager
 
     public function computeExistingLanguage()
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $this->existingLanguage = array();
 
@@ -118,12 +119,13 @@ class RepositoryManager
      */
     public function cleanUp()
     {
+        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         // We cleanUp the database before update vcs and apply again all tools
         foreach (array('files', 'translators', 'errorfiles') as $table) {
-            DBConnection::getInstance()->query("DELETE FROM `$table` WHERE `project`='$project'");
-            DBConnection::getInstance()->query("OPTIMIZE TABLE `$table` ");
+            $db->query("DELETE FROM `$table` WHERE `project`='$project'");
+            $db->query("OPTIMIZE TABLE `$table` ");
         }
     }
 
@@ -169,8 +171,9 @@ class RepositoryManager
      */
     public function checkBuild($lang, $enable_xml_details="false")
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $return = Array(
             "state"      => "ok",
@@ -221,24 +224,29 @@ class RepositoryManager
      */
     public function addPendingCommit($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
     {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
         $s = sprintf(
             'SELECT id FROM `pendingCommit` WHERE `project`="%s" AND `lang`="%s" AND `path`="%s" AND `name`="%s"',
-            AccountManager::getInstance()->project,
+            $project,
             $file->lang, $file->path, $file->name
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         // We insert or update the pendingCommit table
         if ($r->num_rows == 0) {
 
             $s = sprintf(
                 'INSERT into `pendingCommit` (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
-                AccountManager::getInstance()->project,
+                $project,
                 $file->lang, $file->path, $file->name, $revision, $en_revision,
-                $reviewed, $maintainer, AccountManager::getInstance()->vcsLogin, $type
+                $reviewed, $maintainer, $vcsLogin, $type
             );
-            DBConnection::getInstance()->query($s);
-            $fileID = DBConnection::getInstance()->insert_id();
+            $db->query($s);
+            $fileID = $db->insert_id();
 
         } else {
 
@@ -248,7 +256,7 @@ class RepositoryManager
                 'UPDATE `pendingCommit` SET `revision`="%s", `en_revision`="%s", `reviewed`="%s", `maintainer`="%s" WHERE id="%s"',
                 $revision, $en_revision, $reviewed, $maintainer, $a->id
             );
-            DBConnection::getInstance()->query($s);
+            $db->query($s);
             $fileID = $a->id;
         }
 
@@ -263,6 +271,9 @@ class RepositoryManager
      */
     public function delPendingCommit($files)
     {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $project  = $am->project;
     
         for ($i = 0; $i < count($files); $i++) {
             $query = sprintf('DELETE FROM `pendingCommit`
@@ -271,10 +282,10 @@ class RepositoryManager
                     `lang` = "%s" AND
                     `path` = "%s" AND
                     `name` = "%s"',
-                AccountManager::getInstance()->project,
+                $project,
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
-            DBConnection::getInstance()->query($query);
+            $db->query($query);
         }
     }
 
@@ -287,12 +298,16 @@ class RepositoryManager
      */
     public function addPendingPatch($file, $email)
     {
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
         $uniqID = md5(uniqid(rand(), true));
 
         $s = sprintf(
             'INSERT into `pendingPatch` (`project`, `lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", "%s", now(), "%s", "%s")',
-            AccountManager::getInstance()->project,
-            $file->lang, $file->path, $file->name, AccountManager::getInstance()->vcsLogin, $email, $uniqID
+            $project,
+            $file->lang, $file->path, $file->name, $vcsLogin, $email, $uniqID
         );
         DBConnection::getInstance()->query($s);
 
@@ -307,6 +322,11 @@ class RepositoryManager
      */
     public function addPendingDelete($file)
     {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
         $date = @date("Y-m-d H:i:s");
 
         $s = sprintf(
@@ -314,16 +334,16 @@ class RepositoryManager
                 (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`)
             VALUES
                 ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")',
-            AccountManager::getInstance()->project,
+            $project,
             $file->lang, $file->path, $file->name,
-            AccountManager::getInstance()->vcsLogin,
+            $vcsLogin,
             $date
         );
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
 
         return array(
-            'id'   => DBConnection::getInstance()->insert_id(),
-            'by'   => AccountManager::getInstance()->vcsLogin,
+            'id'   => $db->insert_id(),
+            'by'   => $vcsLogin,
             'date' => $date
         );
     }
@@ -338,8 +358,9 @@ class RepositoryManager
      */
     public function beforeCommitChanges($files, $type)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $stack = Array();
 
@@ -492,11 +513,11 @@ class RepositoryManager
      */
     public function commitChanges($ids, $log)
     {
-
+        $rf        = RepositoryFetcher::getInstance();
         $commitLog = Array();
 
         // Task for folders
-        $foldersInfos = RepositoryFetcher::getInstance()->getPendingFoldersCommit();
+        $foldersInfos = $rf->getPendingFoldersCommit();
 
         if( $foldersInfos ) {
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
@@ -505,7 +526,7 @@ class RepositoryManager
         }
 
         // Task for files
-        $fileInfos   = RepositoryFetcher::getInstance()->getModifiesById($ids);
+        $fileInfos   = $rf->getModifiesById($ids);
         // Loop over $fileInfos to find files to be create, update or delete
         $create_stack = array();
         $update_stack = array();
@@ -554,7 +575,7 @@ class RepositoryManager
         );
 
         // We fetch again the file witch have been commited. All file witch have been skip from beforeCommitChanges haren't into DB for now.
-        $fileInfos   = RepositoryFetcher::getInstance()->getModifiesById($ids);
+        $fileInfos   = $rf->getModifiesById($ids);
 
         // Get all ids witch have been really commited
         $ids = Array();
@@ -577,8 +598,10 @@ class RepositoryManager
      */
     public function clearLocalChange($type, $file)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $db      = DBConnection::getInstance();
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $lang = $file->lang;
         $path = $file->path;
@@ -596,12 +619,12 @@ class RepositoryManager
         // We need select row from pendingCommit table
         $s = "SELECT `id` FROM `pendingCommit`
               WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
         $a = $r->fetch_object();
 
         // We need delete row from pendingCommit table
         $s = 'DELETE FROM `pendingCommit` WHERE `id`="' .$a->id. '"';
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
 
         // If type == delete, we stop here and return
         if ($type == 'delete') {
@@ -637,7 +660,7 @@ class RepositoryManager
         // We need reload original information
         $s = "SELECT `revision`, `en_revision`, `maintainer`, `reviewed` FROM `files`
               WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
         $a = $r->fetch_object();
 
         $return['rev']        = $a->revision;
@@ -663,10 +686,12 @@ class RepositoryManager
      */
     public function setLastUpdate($type)
     {
-        $project = AccountManager::getInstance()->project;
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
 
-        $vcsLogin = isset(AccountManager::getInstance()->vcsLogin)
-                    ? AccountManager::getInstance()->vcsLogin : '-';
+        $vcsLogin = isset($vcsLogin)
+                    ? $vcsLogin : '-';
 
         $value = array();
         $value['date'] = @date("Y-m-d H:i:s");
@@ -682,10 +707,10 @@ class RepositoryManager
      */
     public function postPatchAccept($uniqID)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
-
-        $vcsLogin = AccountManager::getInstance()->vcsLogin;
+        $am       = AccountManager::getInstance();
+        $appConf  = $am->appConf;
+        $project  = $am->project;
+        $vcsLogin = $am->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
         $r = DBConnection::getInstance()->query($s);
@@ -715,7 +740,7 @@ Thank you for your submission, and for helping us make our documentation better.
 --
 {$vcsLogin}@php.net
 EOD;
-            AccountManager::getInstance()->email($to, $subject, $msg);
+            $am->email($to, $subject, $msg);
         }
 
         @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
@@ -730,10 +755,10 @@ EOD;
      */
     public function postPatchReject($uniqID)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
-
-        $vcsLogin = AccountManager::getInstance()->vcsLogin;
+        $am       = AccountManager::getInstance();
+        $appConf  = $am->appConf;
+        $project  = $am->project;
+        $vcsLogin = $am->vcsLogin;
 
         $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
         $r = DBConnection::getInstance()->query($s);
@@ -760,7 +785,7 @@ Thank you for your submission.
 --
 {$vcsLogin}@php.net
 EOD;
-            AccountManager::getInstance()->email($to, $subject, $msg);
+            $am->email($to, $subject, $msg);
         }
 
         @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
@@ -776,6 +801,7 @@ EOD;
     public function updateFileInfo($files)
     {
 
+        $db = DBConnection::getInstance();
         $am = AccountManager::getInstance();
 
         foreach ($files as $file) {
@@ -800,7 +826,7 @@ EOD;
                             `name` = "%s"',
                     $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
                 );
-                DBConnection::getInstance()->query($s);
+                $db->query($s);
 
                 // update LANG file info
                 $s = sprintf(
@@ -814,7 +840,7 @@ EOD;
                             `name`  = "%s"',
                     $info['rev'], $am->project, $file->lang, $file->path, $file->name
                 );
-                DBConnection::getInstance()->query($s);
+                $db->query($s);
 
             } else { // lang file
 
@@ -855,7 +881,7 @@ EOD;
                         trim($info['maintainer']), trim($info['status']),   $size_diff,
                         $date_diff, $am->project, $file->lang, $file->path, $file->name
                     );
-                    DBConnection::getInstance()->query($s);
+                    $db->query($s);
 
                     // Run the errorTools under this file
                     $tmpFile[0]['en_content']   = $en->read(true);
@@ -894,7 +920,7 @@ EOD;
                         trim($info['maintainer']), trim($info['status']),   0,
                         0, $am->project, $file->lang, $file->path, $file->name
                     );
-                    DBConnection::getInstance()->query($s);
+                    $db->query($s);
 
                     // Run the errorTools under this file
                         // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
@@ -909,7 +935,6 @@ EOD;
                     $errorTools = new ToolsError();
                     $errorTools->updateFilesError($tmpFile);
 
-
                 }
             }
         }
@@ -923,6 +948,7 @@ EOD;
     {
         $ExistingLanguage = $this->getExistingLanguage();
         $db = DBConnection::getInstance();
+        $am = AccountManager::getInstance();
 
         foreach ($ExistingLanguage as $lang) {
 
@@ -966,7 +992,7 @@ EOD;
                         // We try to remove this record if it exist
                         $query = sprintf(
                             'DELETE FROM `translators` WHERE `project`="%s" AND `lang`="%s" AND `nick`="%s"',
-                            AccountManager::getInstance()->project,
+                            $am->project,
                             $lang,
                             $db->real_escape_string($person['nick'])
                         );
@@ -975,7 +1001,7 @@ EOD;
                         $query = sprintf(
                             'INSERT INTO `translators` (`project`, `lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
                              VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")',
-                            AccountManager::getInstance()->project,
+                            $am->project,
                             $lang,
                             $db->real_escape_string($person['nick']),
                             $db->real_escape_string($name),
@@ -1038,8 +1064,9 @@ EOD;
      */
     private function doUpdateNotInEN($path, $lang)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         if ($dh = @opendir($appConf[$project]['vcs.path'].$lang.$path)) {
 
@@ -1068,7 +1095,7 @@ EOD;
                     $query = sprintf(
                         'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `status`)
                          VALUES ("%s", "%s", "%s", "%s", "%s")',
-                        AccountManager::getInstance()->project,
+                        $project,
                         $lang, $f->path, $f->name, 'NotInEN'
                     );
                     DBConnection::getInstance()->query($query);
@@ -1090,6 +1117,7 @@ EOD;
      */
     public function applyRevCheck($path = '/')
     {
+        $db      = DBConnection::getInstance();
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
@@ -1127,7 +1155,7 @@ EOD;
                 $tmp = explode('/', $f->path);
 
                 // Only for Php project
-                if( $am->project == 'php' ) {
+                if( $project == 'php' ) {
                     $check_doc = new ToolsCheckDoc();
                     $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
                 } else {
@@ -1158,7 +1186,7 @@ EOD;
                     $ToolsCheckDocResult['check_noexamples'],
                     $ToolsCheckDocResult['check_noerrors']
                 );
-                DBConnection::getInstance()->query($query);
+                $db->query($query);
 
                 $ExistingLanguage = $this->getExistingLanguage();
 
@@ -1192,13 +1220,13 @@ EOD;
                         $query = sprintf(
                             'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
                                 VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
-                            $am->project,
+                            $project,
                             $lang, $xmlid, $lang_file->path, $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
                             $maintainer, $status
                         );
-                        DBConnection::getInstance()->query($query);
+                        $db->query($query);
 
                         // Check for error in this file ONLY if this file is uptodate
                         if ($revision == $en_revision &&  $revision != 0 ) {
@@ -1214,13 +1242,13 @@ EOD;
                         $query = sprintf(
                             'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
                                 VALUES ("%s", "%s", "%s", "%s", %s)',
-                            $am->project,
+                            $project,
                             $lang,
                             $lang_file->path,
                             $lang_file->name,
                             $en_size
                         );
-                        DBConnection::getInstance()->query($query);
+                        $db->query($query);
                     }
                 }
             }
@@ -1265,7 +1293,7 @@ EOD;
      */
     public function setStaticValue($type, $field, $value)
     {
-
+        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         $s = "SELECT id FROM staticValue WHERE
@@ -1273,15 +1301,15 @@ EOD;
               `type`    = '".$type."' AND
               `field`   = '".$field."'
              ";
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         if( $r->num_rows == 0 ) {
-            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`) VALUES ('".$project."' , '".$type."' , '".$field."', '".DBConnection::getInstance()->real_escape_string($value)."')";
-            DBConnection::getInstance()->query($s);
+            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`) VALUES ('".$project."' , '".$type."' , '".$field."', '".$db->real_escape_string($value)."')";
+            $db->query($s);
         } else {
             $a = $r->fetch_object();
-            $s = "UPDATE staticValue SET `value`= '".DBConnection::getInstance()->real_escape_string($value)."' WHERE `id`='".$a->id."'";
-            DBConnection::getInstance()->query($s);
+            $s = "UPDATE staticValue SET `value`= '".$db->real_escape_string($value)."' WHERE `id`='".$a->id."'";
+            $db->query($s);
         }
     }
 }

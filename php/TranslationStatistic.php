@@ -154,6 +154,7 @@ class TranslationStatistic
      */
     public function getNoTransFileCount($lang='all')
     {
+        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         $result = $summary = array();
@@ -168,7 +169,7 @@ class TranslationStatistic
 
        $s = 'SELECT * FROM files WHERE `lang`=\'en\' AND `project`=\''.$project.'\'';
 
-       $r = DBConnection::getInstance()->query($s);
+       $r = $db->query($s);
 
        while( $a = $r->fetch_object() ) {
           $resultEN[$a->path.$a->name] = $a->size;
@@ -185,7 +186,7 @@ class TranslationStatistic
                  `project` = \''.$project.'\'
        ';
 
-       $r = DBConnection::getInstance()->query($s);
+       $r = $db->query($s);
 
        while( $a = $r->fetch_object() ) {
           $result[$a->lang][$a->path.$a->name] = 'exist';
@@ -214,14 +215,14 @@ class TranslationStatistic
      */
     public function computeSummary($lang='all')
     {
-
+        $rm        = RepositoryManager::getInstance();
         $nbFiles   = $this->getFileCount($lang);
         $uptodate  = $this->getTransFileCount($lang);
         $stale     = $this->getStaleFileCount($lang);
         $missFiles = $this->getNoTransFileCount($lang);
 
         if( $lang == 'all' ) {
-            $hereLang = RepositoryManager::getInstance()->getExistingLanguage();
+            $hereLang = $rm->getExistingLanguage();
         } else {
             $hereLang = array(0 => Array("code" => $lang));
         }
@@ -263,7 +264,7 @@ class TranslationStatistic
             $summary[3]['percentSize']   = '100%';
 
             // Save $summary into DB
-            RepositoryManager::getInstance()->setStaticValue('translation_summary', $lang, json_encode($summary));
+            $rm->setStaticValue('translation_summary', $lang, json_encode($summary));
         }
     }
 

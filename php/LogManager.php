@@ -50,21 +50,22 @@ class LogManager
      */
     public function addCommitLog($log)
     {
-        $log    = DBConnection::getInstance()->real_escape_string($log);
+        $db     = DBConnection::getInstance();
+        $log    = $db->real_escape_string($log);
         $userID = AccountManager::getInstance()->userID;
 
         $s = sprintf(
             'SELECT id FROM `commitMessage` WHERE `text`="%s" AND `userID`="%s"',
             $log, $userID
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         if ($r->num_rows == 0 ) {
             $s = sprintf(
                 'INSERT INTO `commitMessage` (`text`,`userID`) VALUES ("%s", "%s")',
                 $log, $userID
             );
-            DBConnection::getInstance()->query($s);
+            $db->query($s);
         }
     }
 
@@ -76,11 +77,12 @@ class LogManager
      */
     public function updateCommitLog($logID, $log)
     {
+        $db= DBConnection::getInstance();
         $s = sprintf(
             'UPDATE `commitMessage` SET `text`="%s" WHERE `id`="%s"',
-            DBConnection::getInstance()->real_escape_string($log), $logID
+            $db->real_escape_string($log), $logID
         );
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
     }
 
     /**
@@ -105,8 +107,9 @@ class LogManager
      */
     public function saveOutputLog($file, $output)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $fp = fopen($appConf[$project]['vcs.path'] . '../.' . $file, 'w');
         fwrite($fp, implode("<br>",$output));
@@ -121,8 +124,9 @@ class LogManager
      */
     public function readOutputLog($file)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
         
         return $this->highlightBuildLog(file_get_contents($appConf[$project]['vcs.path'] . '../.' . $file));
     }
@@ -135,14 +139,15 @@ class LogManager
      */
     public function saveFailedBuild($lang, $log)
     {
+        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         $s = sprintf(
             'INSERT INTO `failedBuildLog` (`project`, `lang`, `log`, `date`)
              VALUES ("%s","%s", "%s", now())',
-            $project, $lang, DBConnection::getInstance()->real_escape_string(json_encode($log))
+            $project, $lang, $db->real_escape_string(json_encode($log))
         );
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
     }
 
     /**
