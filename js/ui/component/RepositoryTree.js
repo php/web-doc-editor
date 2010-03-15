@@ -397,9 +397,9 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                                 id         : 'entities-details',
                                                 region     : 'south',
                                                 split      : true,
-                                                height     : 50,
+                                                height     : 100,
                                                 autoScroll : true,
-                                                html       : 'Please select a book to see additional details.'
+                                                html       : 'Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.'
                                             }
                                         ]
                                     })
