@@ -363,7 +363,7 @@ class File
 
             $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
             $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
-                  .'diff -uN '.$this->name.' '.$this->name.$ext;
+                  .'diff -u '.$this->name.' '.$this->name.$ext;
 
             $output = array();
             $trial_threshold = 3;
@@ -375,7 +375,7 @@ class File
 
         }
 
-        $output = htmlentities(join("\n", $output));
+        $output = htmlentities(join("\n", $output), ENT_QUOTES, 'UTF-8');
         $match = array();
         preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $output, $match);
 
@@ -390,11 +390,7 @@ class File
         for ($i = 0; $i < count($diff); $i++) {
 
             // Line
-            $return .= '
-             <tr>
-              <td class="line">'.$diff[$i]['line'].'</td>
-             </tr>
-            ';
+            $return .= '<tr><td class="line">'.$diff[$i]['line'].'</td></tr>';
 
             // Content
             $tmp = explode("\n", trim($diff[$i]['content']));
@@ -414,19 +410,11 @@ class File
                         break;
                 }
 
-                $return .= '
-                 <tr>
-                  <td class="'.$class.'">'.$tmp[$j].'</td>
-                 </tr>
-                ';
+                $return .= '<tr><td class="'.$class.'">'.$tmp[$j].'</td></tr>';
             }
 
             // Separator
-            $return .= '
-             <tr>
-              <td class="truncated">&nbsp;</td>
-             </tr>
-            ';
+            $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
         }
         $return .= '<table>';
 
