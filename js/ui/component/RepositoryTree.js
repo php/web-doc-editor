@@ -49,6 +49,76 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
     }
 });
 
+// Grid for entities & acronyms
+ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    onRowClick: function(grid, rowIdx, e)
+    {
+        var data = grid.getSelectionModel().getSelected().data;
+
+        Ext.getCmp('entities-details').update(data.value);
+
+    },
+    onRowDblClick: function(grid, rowIdx, e)
+    {
+        var data           = grid.getSelectionModel().getSelected().data,
+            cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
+            cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition());
+
+        cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, '&' + data.entities + ';');
+    },
+    initComponent : function()
+    {
+       Ext.apply(this, {    
+           region           : 'center',
+           split            : true,
+           loadMask         : true,
+           autoScroll       : true,
+           bodyBorder       : false,
+           autoExpandColumn : 'entities',
+           columns          : [
+               { id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
+               { header: _('From'), sortable: true, dataIndex: 'from' }
+           ],
+           viewConfig : {forceFit: true},
+           sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
+           store      : new Ext.data.Store({
+               autoLoad : true,
+               proxy    : new Ext.data.HttpProxy({
+                   url : './do/getEntities'
+               }),
+               reader : new Ext.data.JsonReader(
+               {
+                   root          : 'Items',
+                   totalProperty : 'nbItems',
+                   id            : 'id'
+               }, Ext.data.Record.create([
+                   {
+                       name    : 'id',
+                       mapping : 'id'
+                   }, {
+                       name    : 'from',
+                       mapping : 'from'
+                   }, {
+                       name    : 'entities',
+                       mapping : 'entities'
+                   }, {
+                       name    : 'value',
+                       mapping : 'value'
+                   }
+                   ])
+               )
+           }),
+           tbar: ['test']
+       });
+       ui.component._RepositoryTree.grid.superclass.initComponent.call(this);
+
+       this.on('rowclick',    this.onRowClick,    this);
+       this.on('rowdblclick', this.onRowDblClick, this);
+
+    }
+});
+
 // RepositoryTree file context menu
 // config - { node }
 ui.component._RepositoryTree.menu.file = function(config)
@@ -191,7 +261,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                 FilePath  = node.attributes.id,
                 extension = node.attributes.extension,
                 t, FileID, FileLang, FileName, parser,
-                panelWest, panelCenter;
+                panelWest, panelEast, panelCenter;
 
             // CleanUp the path
             t = FilePath.split('/');
@@ -275,7 +345,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             tabPosition : 'bottom',
-                            defaults    : { autoScroll: true },
+                            defaults    : {autoScroll: true},
                             items       : [{
                                 title  : _('Log'),
                                 layout : 'fit',
@@ -286,6 +356,54 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.allFilesDisplayLog
                                 })]
+                            }]
+                        }
+                    };
+
+                    panelEast = {
+                        xtype       : 'panel',
+                        region      : 'east',
+                        title       : _('Entities & acronyms'),
+                        iconCls     : 'iconVCSLog',
+                        collapsedIconCls : 'iconVCSLog',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        split       : true,
+                        collapsible : true,
+                        width: 500,
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : {autoScroll: true},
+                            items       : [{
+                                title  : _('Entities'),
+                                layout : 'fit',
+                                items  : [
+                                    
+                                    new Ext.Panel({
+                                        border: false,
+                                        layout: 'border',
+                                        split: true,
+                                        items: [
+                                            new ui.component._RepositoryTree.grid({
+                                                prefix    : 'AF',
+                                                fid       : FileID,
+                                                ftype     : 'ALL'
+                                            }),
+                                            {
+                                                xtype      : 'panel',
+                                                id         : 'entities-details',
+                                                region     : 'south',
+                                                split      : true,
+                                                height     : 50,
+                                                autoScroll : true,
+                                                html       : 'Please select a book to see additional details.'
+                                            }
+                                        ]
+                                    })
+                                 ]
                             }]
                         }
                     };
@@ -320,7 +438,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     panLoaded   : false, // Use to monitor if the LANG panel is loaded
                     tabTip      : String.format(_('in {0}'), FilePath),
                     iconCls     : 'iconAllFiles',
-                    items       : [panelCenter, panelWest]
+                    items       : [panelCenter, panelWest, panelEast]
                 });
             }
             Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);

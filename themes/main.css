@@ -388,3 +388,11 @@
     background-image: url(./img/page_add.png) !important;
     background-repeat: no-repeat !important;
 }
+
+#entities-details .x-panel-body {
+    background-color: #ffffff;
+    padding: 7px;
+    font-family: tahoma, arial, sans-serif;
+    font-size: 14px;
+
+}

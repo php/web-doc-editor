@@ -7,6 +7,7 @@
 
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/BugReader.php';
+require_once dirname(__FILE__) . '/EntitiesFetcher.php';
 require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
 require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
@@ -778,6 +779,23 @@ class ExtJsController
         $File = $this->getRequestVariable('File');
 
         $r = VCSFactory::getInstance()->log($Path, $File);
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+    }
+
+    /**
+     * Get Entities to be display into a grid into the "All files modules"
+     */
+    public function getEntities()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $r = EntitiesFetcher::getInstance()->getEntities();
 
         return JsonResponseBuilder::success(
             array(
