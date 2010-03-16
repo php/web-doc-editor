@@ -65,6 +65,7 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
             cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
             cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition());
 
+        //Insert the entities at the cursor position
         cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, '&' + data.entities + ';');
     },
     initComponent : function()
@@ -441,7 +442,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                                 split      : true,
                                                 height     : 100,
                                                 autoScroll : true,
-                                                html       : 'Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.'
+                                                html       : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
                                             }
                                         ]
                                     })

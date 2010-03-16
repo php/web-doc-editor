@@ -97,6 +97,9 @@ var i18n = new Array();
   i18n["Search: "] = "Recherche : ";
   i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
   i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
+  i18n["Entities & acronyms"] = "Entitiés & Acronymes";
+  i18n["From"] = "Depuis";
+  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
 
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
