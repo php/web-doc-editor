@@ -56,7 +56,7 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
     {
         var data = grid.getSelectionModel().getSelected().data;
 
-        Ext.getCmp('entities-details').update(data.value);
+        Ext.getCmp('entities-details-'+this.fid).update(data.value);
 
     },
     onRowDblClick: function(grid, rowIdx, e)
@@ -113,7 +113,6 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
            tbar: [
                _('Filter: '), ' ',
                new Ext.form.TwinTriggerField({
-                    id              : 'AF-entities-filter',
                     width           : 180,
                     hideTrigger1    : true,
                     enableKeyEvents : true,
@@ -436,13 +435,14 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                                 ftype     : 'ALL'
                                             }),
                                             {
-                                                xtype      : 'panel',
-                                                id         : 'entities-details',
-                                                region     : 'south',
-                                                split      : true,
-                                                height     : 100,
-                                                autoScroll : true,
-                                                html       : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
+                                                xtype        : 'panel',
+                                                id           : 'entities-details-'+FileID,
+                                                region       : 'south',
+                                                split        : true,
+                                                height       : 100,
+                                                autoScroll   : true,
+                                                bodyCssClass : 'entities-details',
+                                                html         : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
                                             }
                                         ]
                                     })
