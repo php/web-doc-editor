@@ -62,6 +62,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('File system error. Check read/write permission under data folder.');
                     break;
+                case 'encoding_error' :
+                    title = _('Error');
+                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
+                    break;
             }
 
             Ext.MessageBox.alert(

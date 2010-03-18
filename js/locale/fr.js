@@ -26,6 +26,7 @@ var i18n = new Array();
   i18n["Project / Language: "] = "Projet / Langue : ";
   i18n["Last data update: "] = "Dernière mise à jour des données : ";
   i18n["Last entities check: "] = "Dernière vérification des entités : ";
+  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
 
 
 // In file: ../../js/ui/component/CheckDoc.js

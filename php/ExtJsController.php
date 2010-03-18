@@ -563,6 +563,7 @@ class ExtJsController
         $info     = $file->getInfo($content);
 
         $return = array();
+
         if (strtoupper($encoding) == 'UTF-8') {
             $return['content'] = $content;
         } else {
@@ -677,8 +678,6 @@ class ExtJsController
 
         // If the new charset is set to utf-8, we don't need to decode it
         if ($charset != 'utf-8') {
-            // Utf8_decode
-            //$fileContent = utf8_decode($fileContent);
             $fileContent = iconv("UTF-8", $charset, $fileContent);
         }
 
@@ -688,6 +687,7 @@ class ExtJsController
         if ($type == 'file') {
 
             $er = $file->save($fileContent, false);
+
 
             if( $er['state'] ) {
 

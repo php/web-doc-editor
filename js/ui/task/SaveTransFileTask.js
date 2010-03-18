@@ -57,11 +57,17 @@ ui.task.SaveTransFileTask = function(config)
             PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
         },
 
-        failure : function()
+        failure : function(r)
         {
+            var o = Ext.util.JSON.decode(r.responseText);
+
             // Remove wait msg
             msg.hide();
-            PhDOE.winForbidden();
+            if( o.type ) {
+                PhDOE.winForbidden(o.type);
+            } else {
+                PhDOE.winForbidden();
+            }
         }
     });
 };

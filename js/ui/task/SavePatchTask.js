@@ -62,6 +62,19 @@ ui.task.SavePatchTask = function(config)
             // Notify
             PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
 
+        },
+
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+            if( o.type ) {
+                PhDOE.winForbidden(o.type);
+            } else {
+                PhDOE.winForbidden();
+            }
         }
     });
 };
