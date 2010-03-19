@@ -1,5 +1,5 @@
 /*
-This file must be encoded in UTF-8
+* This file must be encoded in UTF-8
 */
 
 var i18n = new Array();
@@ -488,3 +488,7 @@ var i18n = new Array();
   i18n["This action will accept this patch, send an email to his author, save the file and close this tab."] = "Cette action va accepter ce patch, envoyer un email à son auteur et fermer cet onglet.";
   i18n["Patch accepted successfully"] = "Patch accepté avec succès";
   i18n["The Patch was accepted successfully !"] = "Le patch a été accepté avec succès !";
+
+
+// In file: ../../ux/extjsPowered/TabCloseMenu.js
+  i18n["Close Other Tabs"] = "Fermer tous les autres onglets";

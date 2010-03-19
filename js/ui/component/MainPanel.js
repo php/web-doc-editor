@@ -3,7 +3,7 @@ Ext.namespace('ui','ui.component','ui.component.MainPanel');
 ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     activeTab         : 0,
     enableTabScroll   : true,
-    plugins           : new Ext.ux.TabCloseMenu(),
+    plugins           : ['tabclosemenu', 'dblclickclosetabs'], //new Ext.ux.TabCloseMenu(),
 
     initComponent: function(config)
     {
