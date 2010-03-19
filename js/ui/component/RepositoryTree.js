@@ -570,7 +570,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                         height       : 100,
                                         autoScroll   : true,
                                         bodyCssClass : 'acronym-details',
-                                        html         : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
+                                        html         : _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.')
                                     }
                                 ]
                             }]

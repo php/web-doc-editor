@@ -102,6 +102,7 @@ var i18n = new Array();
   i18n["From"] = "Depuis";
   i18n["Acronyms"] = "Acronymes";
   i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
+  i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'acronyme.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
 
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
