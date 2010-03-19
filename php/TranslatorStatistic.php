@@ -166,6 +166,8 @@ class TranslatorStatistic
 
             $lang = $lang["code"];
 
+            if( $lang == 'en' ) { continue; }
+
             $i=0; $persons=array();
             foreach ($translators[$lang] as $nick => $data) {
                 $persons[$i]              = $data;
