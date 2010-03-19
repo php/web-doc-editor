@@ -22,8 +22,13 @@ ui.task.ClearLocalChangeTask = function(config)
                 );
 
                 // Before clear local change, we close the file if there is open
-                if (Ext.getCmp('main-panel').findById('FNU-' + Ext.util.md5('FNU-' + this.fpath + this.fname))) {
-                    Ext.getCmp('main-panel').remove('FNU-' + Ext.util.md5('FNU-' + this.fpath + this.fname));
+
+                var panel = ["FNT", "FNU", "FE", "FNR", "FNIEN", "AF"];
+
+                for( var i=0; i < panel.length; i++) {
+                    if (Ext.getCmp('main-panel').findById(panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname))) {
+                        Ext.getCmp('main-panel').remove(  panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname));
+                    }
                 }
 
                 XHR({
@@ -77,8 +82,8 @@ ui.task.ClearLocalChangeTask = function(config)
 
                         // We try to search in others stores if this file is marked as needCommit
 
-                        // trow storeNotInEn
-                        ui.component.NotInENGrid.getInstance().store.each(
+                        // Browse PendingTranslate store
+                        ui.component.PendingTranslateGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -86,16 +91,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 }
                             }, this);
 
-                        // trow storeFilesNeedReviewed
-                        ui.component.PendingReviewGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
-                                }
-                            }, this);
-
-                        // trow StaleFile store
+                        // Browse StaleFile store
                         ui.component.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
@@ -107,8 +103,26 @@ ui.task.ClearLocalChangeTask = function(config)
                                 }
                             }, this);
 
-                        // trow FileError
+                        // Browse FileError
                         ui.component.ErrorFileGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needcommit', false);
+                                }
+                            }, this);
+
+                        // Browse storeFilesNeedReviewed
+                        ui.component.PendingReviewGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needcommit', false);
+                                }
+                            }, this);
+
+                        // Browse storeNotInEn
+                        ui.component.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -125,6 +139,7 @@ ui.task.ClearLocalChangeTask = function(config)
 
                         Ext.getBody().unmask();
                     },
+
                     failure : function()
                     {
                         // clear local change failure
