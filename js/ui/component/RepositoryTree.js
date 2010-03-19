@@ -80,7 +80,7 @@ ui.component._RepositoryTree.gridAcronym = Ext.extend(Ext.grid.GridPanel,
            autoExpandColumn : 'acronyms',
            columns          : [
                {id: 'acronyms', header: _('Acronyms'), sortable: true, dataIndex: 'acronym'},
-               {header: _('From'), sortable: true, dataIndex: 'from'}
+               {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
            ],
            viewConfig : {forceFit: true},
            sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
@@ -184,7 +184,7 @@ ui.component._RepositoryTree.gridEntities = Ext.extend(Ext.grid.GridPanel,
            autoExpandColumn : 'entities',
            columns          : [
                {id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
-               {header: _('From'), sortable: true, dataIndex: 'from'}
+               {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
            ],
            viewConfig : {forceFit: true},
            sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
