@@ -389,7 +389,7 @@
     background-repeat: no-repeat !important;
 }
 
-.entities-details {
+.entities-details, .acronym-details {
     background-color: #ffffff;
     padding: 7px;
     font-family: tahoma, arial, sans-serif;

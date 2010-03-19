@@ -4,9 +4,10 @@
  * 
  */
 
-class EntitiesFetcher {
+class EntitiesAcronymsFetcher {
 
     private static $instance;
+    public $acronyms;
     public $entities;
 
     public static function getInstance()
@@ -20,7 +21,37 @@ class EntitiesFetcher {
 
     public function __construct()
     {
+        $this->parseAcronyms();
         $this->parseEntities();
+    }
+
+    private function parseAcronyms()
+    {
+        $am = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        $files = explode("|", $appConf[$project]['acronym.usedbyeditor.location']);
+
+        $count = 0;
+        while( list($k, $file) = each($files))
+        {
+            $content = file_get_contents($file);
+            preg_match_all('/<varlistentry>(.*?)<term>(.*?)<\/term>(.*?)<simpara>(.*?)<\/simpara>(.*?)<\/varlistentry>/s', $content, $match);
+
+            $from = explode('/',$file);
+
+            for( $i=0; $i < count($match[2]); $i++ ) {
+                if( trim($match[2][$i]) != "" ) {
+                    $this->acronyms[$count]['id']       = $count;
+                    $this->acronyms[$count]['from']     = $from[count($from)-1];
+                    $this->acronyms[$count]['acronym']  = $match[2][$i];
+                    $this->acronyms[$count]['value']    = htmlentities($match[4][$i]);
+                    $count ++;
+                }
+            }
+        }
+
     }
 
     private function parseEntities()
@@ -53,6 +84,11 @@ class EntitiesFetcher {
     public function getEntities()
     {
         return $this->entities;
+    }
+
+    public function getAcronyms()
+    {
+        return $this->acronyms;
     }
 
 }

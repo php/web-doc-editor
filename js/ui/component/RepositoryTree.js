@@ -50,7 +50,112 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
 });
 
 // Grid for entities & acronyms
-ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
+
+ui.component._RepositoryTree.gridAcronym = Ext.extend(Ext.grid.GridPanel,
+{
+    onRowClick: function(grid, rowIdx, e)
+    {
+        var data = grid.getSelectionModel().getSelected().data;
+
+        Ext.getCmp('acronym-details-'+this.fid).update(data.value);
+
+    },
+    onRowDblClick: function(grid, rowIdx, e)
+    {
+        var data           = grid.getSelectionModel().getSelected().data,
+            cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
+            cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition());
+
+        //Insert the entities at the cursor position
+        cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, '<acronym>' + data.acronym + '</acronym>');
+    },
+    initComponent : function()
+    {
+       Ext.apply(this, {
+           region           : 'center',
+           split            : true,
+           loadMask         : true,
+           autoScroll       : true,
+           bodyBorder       : false,
+           autoExpandColumn : 'acronyms',
+           columns          : [
+               {id: 'acronyms', header: _('Acronyms'), sortable: true, dataIndex: 'acronym'},
+               {header: _('From'), sortable: true, dataIndex: 'from'}
+           ],
+           viewConfig : {forceFit: true},
+           sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
+           store      : new Ext.data.Store({
+               autoLoad : true,
+               proxy    : new Ext.data.HttpProxy({
+                   url : './do/getAcronyms'
+               }),
+               reader : new Ext.data.JsonReader(
+               {
+                   root          : 'Items',
+                   totalProperty : 'nbItems',
+                   id            : 'id'
+               }, Ext.data.Record.create([
+                   {
+                       name    : 'id',
+                       mapping : 'id'
+                   }, {
+                       name    : 'from',
+                       mapping : 'from'
+                   }, {
+                       name    : 'acronym',
+                       mapping : 'acronym'
+                   }, {
+                       name    : 'value',
+                       mapping : 'value'
+                   }
+                   ])
+               )
+           }),
+           tbar: [
+               _('Filter: '), ' ',
+               new Ext.form.TwinTriggerField({
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    listeners : {
+                        specialkey : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click: function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        this.ownerCt.ownerCt.store.clearFilter();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var v = this.getValue();
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+                        this.ownerCt.ownerCt.store.filter('acronym', v, true);
+                    }
+                })
+           ]
+       });
+       ui.component._RepositoryTree.gridAcronym.superclass.initComponent.call(this);
+
+       this.on('rowclick',    this.onRowClick,    this);
+       this.on('rowdblclick', this.onRowDblClick, this);
+
+    }
+});
+
+ui.component._RepositoryTree.gridEntities = Ext.extend(Ext.grid.GridPanel,
 {
     onRowClick: function(grid, rowIdx, e)
     {
@@ -78,8 +183,8 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
            bodyBorder       : false,
            autoExpandColumn : 'entities',
            columns          : [
-               { id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
-               { header: _('From'), sortable: true, dataIndex: 'from' }
+               {id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
+               {header: _('From'), sortable: true, dataIndex: 'from'}
            ],
            viewConfig : {forceFit: true},
            sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
@@ -153,7 +258,7 @@ ui.component._RepositoryTree.grid = Ext.extend(Ext.grid.GridPanel,
                 })
            ]
        });
-       ui.component._RepositoryTree.grid.superclass.initComponent.call(this);
+       ui.component._RepositoryTree.gridEntities.superclass.initComponent.call(this);
 
        this.on('rowclick',    this.onRowClick,    this);
        this.on('rowdblclick', this.onRowDblClick, this);
@@ -427,9 +532,9 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                     new Ext.Panel({
                                         border: false,
                                         layout: 'border',
-                                        split: true,
-                                        items: [
-                                            new ui.component._RepositoryTree.grid({
+                                        split : true,
+                                        items : [
+                                            new ui.component._RepositoryTree.gridEntities({
                                                 prefix    : 'AF',
                                                 fid       : FileID,
                                                 ftype     : 'ALL'
@@ -447,6 +552,27 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                         ]
                                     })
                                  ]
+                            }, {
+                                title : _('Acronyms'),
+                                layout: 'border',
+                                items : [
+                                    new ui.component._RepositoryTree.gridAcronym({
+                                        layout    : 'fit',
+                                        prefix    : 'AF',
+                                        fid       : FileID,
+                                        ftype     : 'ALL'
+                                    }),
+                                    {
+                                        xtype        : 'panel',
+                                        id           : 'acronym-details-'+FileID,
+                                        region       : 'south',
+                                        split        : true,
+                                        height       : 100,
+                                        autoScroll   : true,
+                                        bodyCssClass : 'acronym-details',
+                                        html         : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
+                                    }
+                                ]
                             }]
                         }
                     };
