@@ -112,6 +112,15 @@ ui.component._RepositoryTree.gridAcronym = Ext.extend(Ext.grid.GridPanel,
                )
            }),
            tbar: [
+           {
+                scope   : this,
+                tooltip : _('<b>Load/Refresh</b>'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+            },
                _('Filter: '), ' ',
                new Ext.form.TwinTriggerField({
                     width           : 180,
@@ -216,6 +225,15 @@ ui.component._RepositoryTree.gridEntities = Ext.extend(Ext.grid.GridPanel,
                )
            }),
            tbar: [
+           {
+                scope   : this,
+                tooltip : _('<b>Load/Refresh</b>'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+            },
                _('Filter: '), ' ',
                new Ext.form.TwinTriggerField({
                     width           : 180,
