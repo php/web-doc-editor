@@ -1111,6 +1111,81 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             }
                         }]
                     }]
+                },{
+                    xtype       : 'fieldset',
+                    title       : _('Entities & acronyms'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'allFilesEntitiesLoadData',
+                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
+                        boxLabel   : _('Automatically load entities data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesEntitiesLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    },{
+                        name       : 'allFilesAcronymsLoadData',
+                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
+                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesAcronymsLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.allFilesEntitiesAcronymsPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesEntitiesAcronymsPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesEntitiesAcronymsPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'allFilesEntitiesAcronymsPanelWidth',
+                            value      : PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
                 }]
             }, {
                 title   : _('Editor'),

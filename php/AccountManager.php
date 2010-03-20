@@ -68,10 +68,14 @@ class AccountManager
             "reviewedSpellCheckEn"         => false,
             "reviewedSpellCheckLang"       => false,
 
-            "allFilesDisplayLog"           => false,
-            "allFilesDisplaylogPanel"      => false,
-            "allFilesDisplaylogPanelWidth" => 375,
-            "allFilesSpellCheck"           => false,
+            "allFilesEntitiesLoadData"           => false,
+            "allFilesAcronymsLoadData"           => false,
+            "allFilesEntitiesAcronymsPanel"      => false,
+            "allFilesEntitiesAcronymsPanelWidth" => 375,
+            "allFilesDisplayLog"                 => false,
+            "allFilesDisplaylogPanel"            => false,
+            "allFilesDisplaylogPanelWidth"       => 375,
+            "allFilesSpellCheck"                 => false,
 
             "patchDisplayLog"                => false,
             "patchDisplaylogPanel"           => false,

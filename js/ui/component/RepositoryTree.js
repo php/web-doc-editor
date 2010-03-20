@@ -82,13 +82,25 @@ ui.component._RepositoryTree.gridAcronym = Ext.extend(Ext.grid.GridPanel,
                {id: 'acronyms', header: _('Acronyms'), sortable: true, dataIndex: 'acronym'},
                {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
            ],
-           viewConfig : {forceFit: true},
+           viewConfig : {
+               forceFit      : true,
+               emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
+               deferEmptyText: false
+           },
            sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
            store      : new Ext.data.Store({
-               autoLoad : true,
+               autoLoad : PhDOE.userConf.allFilesAcronymsLoadData,
                proxy    : new Ext.data.HttpProxy({
                    url : './do/getAcronyms'
                }),
+               listeners: {
+                   scope: this,
+                   load: function() {
+                       Ext.getCmp('AF-' + this.fid).panAcronyms = true;
+                       Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
+                   }
+
+               },
                reader : new Ext.data.JsonReader(
                {
                    root          : 'Items',
@@ -195,13 +207,25 @@ ui.component._RepositoryTree.gridEntities = Ext.extend(Ext.grid.GridPanel,
                {id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
                {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
            ],
-           viewConfig : {forceFit: true},
+           viewConfig : {
+               forceFit      : true,
+               emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
+               deferEmptyText: false
+           },
            sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
            store      : new Ext.data.Store({
-               autoLoad : true,
+               autoLoad : PhDOE.userConf.allFilesEntitiesLoadData,
                proxy    : new Ext.data.HttpProxy({
                    url : './do/getEntities'
                }),
+               listeners: {
+                   scope: this,
+                   load: function() {
+                       Ext.getCmp('AF-' + this.fid).panEntities = true;
+                       Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
+                   }
+
+               },
                reader : new Ext.data.JsonReader(
                {
                    root          : 'Items',
@@ -526,18 +550,45 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     };
 
                     panelEast = {
-                        xtype       : 'panel',
-                        region      : 'east',
-                        title       : _('Entities & acronyms'),
-                        iconCls     : 'iconVCSLog',
+                        xtype            : 'panel',
+                        region           : 'east',
+                        title            : _('Entities & acronyms'),
+                        iconCls          : 'iconVCSLog',
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.allFilesEntitiesAcronymsPanel,
                         collapsedIconCls : 'iconVCSLog',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        split       : true,
-                        collapsible : true,
-                        width: 500,
-                        items       : {
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        bodyBorder       : false,
+                        split            : true,
+                        width            : PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth || 375,
+                        listeners        : {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesEntitiesAcronymsPanel',
+                                        value : false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesEntitiesAcronymsPanel',
+                                        value : true
+                                    });
+                                }
+                            },
+                            resize: function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesEntitiesAcronymsPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
+                        items            : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             tabPosition : 'bottom',
@@ -621,6 +672,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     originTitle : FileName,
                     closable    : true,
                     tabLoaded   : false,
+                    panEntities : !PhDOE.userConf.allFilesEntitiesLoadData,
+                    panAcronyms : !PhDOE.userConf.allFilesAcronymsLoadData,
                     panVCS      : !PhDOE.userConf.allFilesDisplayLog,
                     panLoaded   : false, // Use to monitor if the LANG panel is loaded
                     tabTip      : String.format(_('in {0}'), FilePath),

@@ -99,7 +99,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
         // AF panel
         if( prefix == 'AF' ) {
-            if( cmp.panLoaded && cmp.panVCS ) {
+            if( cmp.panLoaded && cmp.panVCS && cmp.panEntities && cmp.panAcronyms ) {
 
                 cmp.tabLoaded = true;
                 
