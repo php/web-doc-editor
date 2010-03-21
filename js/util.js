@@ -1,5 +1,10 @@
 Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.1/resources/images/default/s.gif';
 
+// Add ucFirst to string object
+String.prototype.ucFirst = function () {
+	return this.substr(0,1).toUpperCase() + this.substr(1,this.length);
+};
+
 // javascript debug-logging wrapper
 function log()
 {
