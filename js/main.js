@@ -182,23 +182,28 @@ var PhDOE = function()
             } else {
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/4, '1 of 4...');
+                progressBar.updateProgress(1/4, '1 of 5...');
                 ui.component._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/4, '2 of 4...');
+                        progressBar.updateProgress(2/4, '2 of 5...');
                         ui.component.PendingPatchGrid.getInstance().store.load({
                             callback: function() {
-                                progressBar.updateProgress(3/4, '3 of 4...');
+                                progressBar.updateProgress(3/4, '3 of 5...');
                                 ui.component.PortletTranslationsGraph.getInstance().store.load({
                                     callback: function() {
-                                        progressBar.updateProgress(4/4, '4 of 4...');
+                                        progressBar.updateProgress(4/4, '4 of 5...');
                                         ui.component.PendingCommitGrid.getInstance().store.load({
                                             callback: function() {
-                                                // Now, we can to remove the global mask
-                                                Ext.get('loading').remove();
-                                                Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                progressBar.destroy();
-                                                PhDOE.afterLoadAllStore();
+                                                progressBar.updateProgress(4/4, '5 of 5...');
+                                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                                    callback: function() {
+                                                        // Now, we can to remove the global mask
+                                                        Ext.get('loading').remove();
+                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                        progressBar.destroy();
+                                                        PhDOE.afterLoadAllStore();
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -353,7 +358,6 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
-                        hidden    : (this.userLang === 'en'),
                         items     : [ ui.component.ErrorFileGrid.getInstance() ],
                         collapsed : true
                     }, {
