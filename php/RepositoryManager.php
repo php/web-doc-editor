@@ -1188,6 +1188,12 @@ EOD;
                 );
                 $db->query($query);
 
+                $error = new ToolsError();
+                $error->setParams($infoEN['content'], '', 'en', $f->path, $f->name, '');
+                $error->run();
+                $error->saveError();
+
+
                 $ExistingLanguage = $this->getExistingLanguage();
 
                 foreach($ExistingLanguage as $lang) {
