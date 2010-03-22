@@ -174,22 +174,17 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
             if (PanType[0] === 'FE') {
                 stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
-            }
-            if (PanType[0] === 'FNU') {
-                stateLang = Ext.getCmp('FNU-LANG-FILE-' + PanType[1]).isModified;
-            }
-            if (PanType[0] === 'FNR') {
-                stateLang = Ext.getCmp('FNR-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = ( PhDOE.userLang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
             }
 
-            if (PanType[0] === 'FE') {
-                stateEn = Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
-            }
             if (PanType[0] === 'FNU') {
-                stateEn = Ext.getCmp('FNU-EN-FILE-' + PanType[1]).isModified;
+                stateLang = Ext.getCmp('FNU-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = Ext.getCmp('FNU-EN-FILE-' + PanType[1]).isModified;
             }
+
             if (PanType[0] === 'FNR') {
-                stateEn = Ext.getCmp('FNR-EN-FILE-' + PanType[1]).isModified;
+                stateLang = Ext.getCmp('FNR-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = Ext.getCmp('FNR-EN-FILE-' + PanType[1]).isModified;
             }
 
             if (PanType[0] === 'PP') {
