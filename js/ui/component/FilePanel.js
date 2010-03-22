@@ -646,23 +646,52 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
-                        if (this.lang === 'en') {
-
-                            new ui.task.SaveENFileTask({
+                        // From "All files" or "Need translate file", we only save the file
+                        if (this.prefix === 'AF') {
+                            new ui.task.SaveFileTask({
                                 prefix      : this.prefix,
                                 ftype       : this.ftype,
                                 fid         : this.fid,
                                 fpath       : this.fpath,
                                 fname       : this.fname,
+                                lang        : this.lang,
                                 storeRecord : this.storeRecord
                             });
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                            return;
+                        }
+                        if (this.prefix === 'FNT' ) {
+                            new ui.task.SaveTransFileTask({
+                                prefix      : this.prefix,
+                                ftype       : this.ftype,
+                                fid         : this.fid,
+                                fpath       : this.fpath,
+                                fname       : this.fname,
+                                lang        : this.lang,
+                                storeRecord : this.storeRecord
+                            });
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                            return;
+                        }
 
-                        } else {
+                        // We check the conf option : onSaveFile. Can be : ask-me, always or never
+                        switch (PhDOE.userConf.onSaveFile) {
 
-                            // From "All files" or "Need translate file", we only save the file
-                            if (this.prefix === 'AF') {
-                                new ui.task.SaveLangFileTask({
+                            case 'always':
+                                new ui.task.CheckFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                }); // include SaveFileTask when no err
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                break;
+
+                            case 'never':
+                                new ui.task.SaveFileTask({
                                     prefix      : this.prefix,
                                     ftype       : this.ftype,
                                     fid         : this.fid,
@@ -672,90 +701,46 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     storeRecord : this.storeRecord
                                 });
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                return;
-                            }
-                            if (this.prefix === 'FNT' ) {
-                                new ui.task.SaveTransFileTask({
-                                    prefix      : this.prefix,
-                                    ftype       : this.ftype,
-                                    fid         : this.fid,
-                                    fpath       : this.fpath,
-                                    fname       : this.fname,
-                                    lang        : this.lang,
-                                    storeRecord : this.storeRecord
-                                });
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                return;
-                            }
+                                break;
 
-                            // We check the conf option : onSaveLangFile. Can be : ask-me, always or never
-                            switch (PhDOE.userConf.onSaveLangFile) {
+                            case 'ask-me':
+                                Ext.MessageBox.show({
+                                    title   : _('Confirm'),
+                                    msg     : _('Do you want to check for error before saving?'),
+                                    icon    : Ext.MessageBox.INFO,
+                                    buttons : Ext.MessageBox.YESNOCANCEL,
+                                    scope   : this,
+                                    fn      : function (btn)
+                                    {
+                                        if (btn === 'no') {
 
-                                case 'always':
-                                    new ui.task.CheckFileTask({
-                                        prefix      : this.prefix,
-                                        ftype       : this.ftype,
-                                        fid         : this.fid,
-                                        fpath       : this.fpath,
-                                        fname       : this.fname,
-                                        lang        : this.lang,
-                                        storeRecord : this.storeRecord
-                                    }); // include SaveLangFileTask when no err
-                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    break;
+                                            new ui.task.SaveFileTask({
+                                                prefix      : this.prefix,
+                                                ftype       : this.ftype,
+                                                fid         : this.fid,
+                                                fpath       : this.fpath,
+                                                fname       : this.fname,
+                                                lang        : this.lang,
+                                                storeRecord : this.storeRecord
+                                            });
+                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
-                                case 'never':
-                                    new ui.task.SaveLangFileTask({
-                                        prefix      : this.prefix,
-                                        ftype       : this.ftype,
-                                        fid         : this.fid,
-                                        fpath       : this.fpath,
-                                        fname       : this.fname,
-                                        lang        : this.lang,
-                                        storeRecord : this.storeRecord
-                                    });
-                                    Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                    break;
+                                        } else if (btn === 'yes') {
 
-                                case 'ask-me':
-                                    Ext.MessageBox.show({
-                                        title   : _('Confirm'),
-                                        msg     : _('Do you want to check for error before saving?'),
-                                        icon    : Ext.MessageBox.INFO,
-                                        buttons : Ext.MessageBox.YESNOCANCEL,
-                                        scope   : this,
-                                        fn      : function (btn)
-                                        {
-                                            if (btn === 'no') {
-
-                                                new ui.task.SaveLangFileTask({
-                                                    prefix      : this.prefix,
-                                                    ftype       : this.ftype,
-                                                    fid         : this.fid,
-                                                    fpath       : this.fpath,
-                                                    fname       : this.fname,
-                                                    lang        : this.lang,
-                                                    storeRecord : this.storeRecord
-                                                });
-                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-
-                                            } else if (btn === 'yes') {
-
-                                                new ui.task.CheckFileTask({
-                                                    prefix      : this.prefix,
-                                                    ftype       : this.ftype,
-                                                    fid         : this.fid,
-                                                    fpath       : this.fpath,
-                                                    fname       : this.fname,
-                                                    lang        : this.lang,
-                                                    storeRecord : this.storeRecord
-                                                }); // include SaveLangFileTask when no err
-                                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
-                                            }
+                                            new ui.task.CheckFileTask({
+                                                prefix      : this.prefix,
+                                                ftype       : this.ftype,
+                                                fid         : this.fid,
+                                                fpath       : this.fpath,
+                                                fname       : this.fname,
+                                                lang        : this.lang,
+                                                storeRecord : this.storeRecord
+                                            }); // include SaveFileTask when no err
+                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                         }
-                                    });
-                                    break;
-                            }
+                                    }
+                                });
+                                break;
                         }
                     }
                 }, {
@@ -859,7 +844,11 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 );
 
                             // Do we need to remove the red mark into the Tab title ?
-                            if( this.ftype === 'EN' || this.ftype === 'LANG' ) {
+                            if(
+                                ( this.ftype === 'LANG' && PhDOE.userLang !== 'en' )
+                                ||
+                                this.ftype === 'EN'
+                            ) {
 
                                 if( (this.ftype === 'EN'   && !Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid).isModified ) ||
                                     (this.ftype === 'LANG' && !Ext.getCmp(this.prefix + '-EN-FILE-'   + this.fid).isModified ) ) {
