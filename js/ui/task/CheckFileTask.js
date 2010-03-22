@@ -56,8 +56,8 @@ ui.task.CheckFileTask = function(config)
                 });
             }
 
-            // Now, We save LANG File
-            new ui.task.SaveLangFileTask({
+            // Now, We save  File
+            new ui.task.SaveFileTask({
                 prefix      : this.prefix,
                 ftype       : this.ftype,
                 fid         : this.fid,
