@@ -67,6 +67,15 @@ ui.task.ClearLocalChangeTask = function(config)
                                     }
                                 }, this);
 
+                            // Browse FileError
+                            ui.component.ErrorFileGrid.getInstance().store.each(
+                                function(record)
+                                {
+                                    if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
                             // find open node in All Files modules
                             node = false;
                             node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
@@ -100,15 +109,6 @@ ui.task.ClearLocalChangeTask = function(config)
                                     record.set('revision', o.revision);
                                     record.set('maintainer', o.maintainer);
                                     record.commit();
-                                }
-                            }, this);
-
-                        // Browse FileError
-                        ui.component.ErrorFileGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
                                 }
                             }, this);
 
