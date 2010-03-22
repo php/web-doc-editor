@@ -220,10 +220,6 @@ class File
     /**
      * Test if the file is a modified file.
      *
-     * @param $lang The lang of the tested file.
-     * @param $path The path of the tested file.
-     * @param $name The name of the tested file.
-     *
      * @return Boolean TRUE if the file is a modified file, FALSE otherwise.
      */
     public function isModified()
@@ -423,6 +419,7 @@ class File
 
     /**
      * Get the image content.
+     *
      * @return An associative array with 'content-type' and 'content' keys
      */
     public function getImageContent()
