@@ -45,7 +45,7 @@ class EntitiesAcronymsFetcher {
                 if( trim($match[2][$i]) != "" ) {
                     $this->acronyms[$count]['id']       = $count;
                     $this->acronyms[$count]['from']     = $from[count($from)-1];
-                    $this->acronyms[$count]['acronym']  = $match[2][$i];
+                    $this->acronyms[$count]['items']    = $match[2][$i];
                     $this->acronyms[$count]['value']    = htmlentities($match[4][$i]);
                     $count ++;
                 }
@@ -73,7 +73,7 @@ class EntitiesAcronymsFetcher {
             for( $i=0; $i < count($match[1]); $i++ ) {
                 $this->entities[$count]['id']       = $count;
                 $this->entities[$count]['from']     = $from[count($from)-1];
-                $this->entities[$count]['entities'] = $match[1][$i];
+                $this->entities[$count]['items']    = $match[1][$i];
                 $this->entities[$count]['value']    = htmlentities($match[3][$i]);
                 $count ++;
             }
