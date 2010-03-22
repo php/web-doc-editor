@@ -3,8 +3,9 @@
  * Class file for checking errors
  */
 
-require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/AccountManager.php';
+require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
+require_once dirname(__FILE__) . '/DBConnection.php';
 
 class ToolsError
 {
@@ -111,7 +112,12 @@ class ToolsError
 
             DBConnection::getInstance()->query($s);
 
-            $this->setParams($nodes[$i]['en_content'], $nodes[$i]['lang_content'], $FileLang, $FilePath, $FileName, $nodes[$i]['maintainer']);
+            if( $FileLang != 'en' ) {
+                $this->setParams($nodes[$i]['en_content'], $nodes[$i]['lang_content'], $FileLang, $FilePath, $FileName, $nodes[$i]['maintainer']);
+            } else {
+                $this->setParams($nodes[$i]['lang_content'], '', 'en', $FilePath, $FileName, '');
+            }
+            
             $this->clearError();
             $this->run();
 
@@ -314,28 +320,66 @@ class ToolsError
      */
     function run()
     {
+        // Check Error specific to EN files
+        if( $this->lang == 'en' )
+        {
+            $this->checkAcronym();
+            $this->spaceOrPeriodRefpurposeTag($this->lang);
+        }
 
-        $this->attributAppendixTag();
-        $this->attributBookTag();
-        $this->attributChapterTag();
-        $this->attributLinkTag();
-        $this->attributXrefTag();
-        $this->attributPrefaceTag();
-        $this->attributQandaentryTag();
-        $this->attributRefsec1Tag();
-        $this->attributRefentryTag();
-        $this->attributReferenceTag();
-        $this->attributSect1Tag();
-        $this->attributSectionTag();
-        $this->attributVarlistentryTag();
-        $this->classsynopsis();
-        $this->methodsynopsis();
-        $this->nbCdataTag();
-        $this->nbElInTable();
-        $this->nbMemberInSeeAlso();
-        $this->nbTag();
-        $this->spaceOrPeriodRefpurposeTag();
+        // Check Error specific to LANG files
+        else
+        {
+            $this->attributAppendixTag();
+            $this->attributBookTag();
+            $this->attributChapterTag();
+            $this->attributLinkTag();
+            $this->attributXrefTag();
+            $this->attributPrefaceTag();
+            $this->attributQandaentryTag();
+            $this->attributRefsec1Tag();
+            $this->attributRefentryTag();
+            $this->attributReferenceTag();
+            $this->attributSect1Tag();
+            $this->attributSectionTag();
+            $this->attributVarlistentryTag();
+            $this->classsynopsis();
+            $this->methodsynopsis();
+            $this->nbCdataTag();
+            $this->nbElInTable();
+            $this->nbMemberInSeeAlso();
+            $this->nbTag();
+            $this->spaceOrPeriodRefpurposeTag($this->lang);
+        }
 
+    }
+
+    /**
+     * Check all acronyms
+     * Add an entry into the error's stack if an acronym is found without <acronym> tag
+     *
+     */
+    function checkAcronym()
+    {
+        // Get acronyms
+        $acronyms = EntitiesAcronymsFetcher::getInstance()->getAcronyms();
+
+        for( $i=0; $i < count($acronyms); $i++ ) {
+
+            $match = array();
+            $acronym = $acronyms[$i]['items'];
+            preg_match_all("/\s($acronym)\s/si", $this->en_content, $match);
+
+            for( $j=0; $j < count($match[1]); $j++ ) {
+
+                $this->addError(array(
+                        'value_en'   => $match[1][$j],
+                        'value_lang' => '',
+                        'type'       => 'acronym'
+                ));
+
+            }
+        }
     }
 
     /**
@@ -1055,10 +1099,16 @@ class ToolsError
      * Add an entry into the error's stack if an error is found
      *
      */
-    function spaceOrPeriodRefpurposeTag()
+    function spaceOrPeriodRefpurposeTag($lang)
     {
 
         $reg = '/<refpurpose>.*([^A-Za-z1-9 ])<\/refpurpose>/s';
+
+        if( $lang == 'en' ) {
+            $content = $this->en_content;
+        } else {
+            $content = $this->lang_content;
+        }
 
         $match = array();
         preg_match_all($reg, $this->lang_content, $match);
