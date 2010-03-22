@@ -17,6 +17,7 @@ ui.component._EditorConf.tplMenu.compile();
 // EditorConf Win-Menu items definition for EN
 ui.component._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
+    ['4', 'card4', _('Module "Files with Error"')],
     ['6', 'card6', _('Module "All files"')],
     ['7', 'card7', _('Module "Pending Patch"')]
 ];
@@ -177,15 +178,15 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype      : 'fieldset',
-                    title      : _('On save lang file'),
+                    title      : _('On save file'),
                     iconCls    : 'iconSaveFile',
                     autoHeight : true,
                     defaults   : { hideLabel: true },
                     defaultType: 'radio',
                     items      : [{
                         autoHeight : true,
-                        name       : 'onSaveLangFile',
-                        checked    : (PhDOE.userConf.onSaveLangFile === "ask-me") ? true : false,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "ask-me") ? true : false,
                         boxLabel   : _('Ask me if I want to check for error before saving the file'),
                         inputValue : 'ask-me',
                         listeners  : {
@@ -193,7 +194,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveLangFile',
+                                        item  : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -201,8 +202,8 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         autoHeight : true,
-                        name       : 'onSaveLangFile',
-                        checked    : (PhDOE.userConf.onSaveLangFile === "always") ? true : false,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "always") ? true : false,
                         boxLabel   : _('Always check for error before saving the file'),
                         inputValue : 'always',
                         listeners  : {
@@ -210,7 +211,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveLangFile',
+                                        item  : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -218,8 +219,8 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         autoHeight : true,
-                        name       : 'onSaveLangFile',
-                        checked    : (PhDOE.userConf.onSaveLangFile === "never") ? true : false,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "never") ? true : false,
                         boxLabel   : _('Never check for error before saving the file'),
                         inputValue : 'never',
                         listeners  : {
@@ -227,7 +228,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveLangFile',
+                                        item  : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -660,6 +661,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                 title   : _('Menu'),
                 iconCls : 'iconMenu',
                 items   : [{
+                    hidden      : ( PhDOE.userLang === 'en' ),
                     xtype       : 'fieldset',
                     title       : _('Error type'),
                     iconCls     : 'iconFilesError',
@@ -705,19 +707,45 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype       : 'fieldset',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'errorDisplayLog',
-                        checked    : PhDOE.userConf.errorDisplayLog,
+                        name       : 'errorLogLoadData',
+                        checked    : PhDOE.userConf.errorLogLoadData,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorDisplayLog',
+                                    item  : 'errorLogLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'errorEntitiesLoadData',
+                        checked    : PhDOE.userConf.errorEntitiesLoadData,
+                        boxLabel   : _('Automatically load entities data when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorEntitiesLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'errorAcronymsLoadData',
+                        checked    : PhDOE.userConf.errorAcronymsLoadData,
+                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorAcronymsLoadData',
                                     value : field.getValue()
                                 });
                             }
@@ -825,6 +853,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
+                        hidden      : ( PhDOE.userLang === 'en' ),
                         name        : 'errorSpellCheckEn',
                         checked     : PhDOE.userConf.errorSpellCheckEn,
                         boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
@@ -1051,8 +1080,8 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                 iconCls : 'iconUI',
                 items   : [{
                     xtype       : 'fieldset',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
@@ -1064,6 +1093,32 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             {
                                 new ui.task.UpdateConfTask({
                                     item  : 'allFilesDisplayLog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'allFilesEntitiesLoadData',
+                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
+                        boxLabel   : _('Automatically load entities data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesEntitiesLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    },{
+                        name       : 'allFilesAcronymsLoadData',
+                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
+                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesAcronymsLoadData',
                                     value : field.getValue()
                                 });
                             }
@@ -1094,81 +1149,6 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             width      : 60,
                             name       : 'allFilesDisplaylogPanelWidth',
                             value      : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
-                            fieldLabel : _('Panel width'),
-                            minValue   : 0,
-                            maxValue   : 10000,
-                            accelerate : true,
-                            enableKeyEvents : true,
-                            listeners  : {
-                                keyup : function()
-                                {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
-                                },
-                                spin : function()
-                                {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
-                                }
-                            }
-                        }]
-                    }]
-                },{
-                    xtype       : 'fieldset',
-                    title       : _('Entities & acronyms'),
-                    iconCls     : 'iconVCSLog',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name       : 'allFilesEntitiesLoadData',
-                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
-                        boxLabel   : _('Automatically load entities data when displaying the file'),
-                        listeners  : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesEntitiesLoadData',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    },{
-                        name       : 'allFilesAcronymsLoadData',
-                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
-                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
-                        listeners  : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesAcronymsLoadData',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }, {
-                        xtype          : 'fieldset',
-                        checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.allFilesEntitiesAcronymsPanel,
-                        title          : _('Start with the panel open'),
-                        listeners      : {
-                            collapse : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesEntitiesAcronymsPanel',
-                                    value : false
-                                });
-                            },
-                            expand : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'allFilesEntitiesAcronymsPanel',
-                                    value : true
-                                });
-                            }
-                        },
-                        items: [{
-                            xtype      : 'spinnerfield',
-                            width      : 60,
-                            name       : 'allFilesEntitiesAcronymsPanelWidth',
-                            value      : PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
