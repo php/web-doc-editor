@@ -256,6 +256,9 @@ $error['nbTheadTag']['desc'] = 'Throw if the number of <b>thead</b> tags is diff
 $error['attributXmlIdVarlistentry']['head'] = 'Varlistentry tag';
 $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
 
+$error['acronym']['head'] = 'Missing acronym tag';
+$error['acronym']['desc'] = 'An acronym have been found but without <acronym> tag around him.';
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)
@@ -300,7 +303,7 @@ while (list($k, $v) = each($to_display)) {
         if (isset($error_to_display[$k2]['error'])) {
             for ($i = 0; $i < count($error_to_display[$k2]['error']); $i++) {
                 echo 'value in En : ' . $error_to_display[$k2]['error'][$i]['value_en'] . '<br/>';
-                echo 'value in ' . ucfirst($am->vcsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>';
+                if( $am->vcsLang != 'en' ) { echo 'value in ' . ucfirst($am->vcsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>'; }
             }
         }
 ?>
