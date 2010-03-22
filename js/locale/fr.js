@@ -77,6 +77,7 @@ var i18n = new Array();
   i18n["File with error : in {0}"] = "Fichier contenant des erreurs : dans {0}";
   i18n["Error description"] = "Description de l'erreur";
   i18n["VCS Log"] = "Historique VCS";
+  i18n["Tools"] = "Outils";
   i18n["{0} File: "] = "Fichier {0} : ";
   i18n["en File: "] = "Fichier En : ";
   i18n["Filter: "] = "Filtrer : ";
@@ -88,21 +89,27 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/RepositoryTree.js
+  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
+  i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'acronyme.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
+  i18n["Items"] = "Éléments";
+  i18n["From"] = "Depuis";
+  i18n["<b>Load/Refresh</b>"] = "<b>Charger/Rafraîchir</b>";
+
+
+// In file: ../../js/ui/component/RepositoryTree.js
   i18n["Repository"] = "Dépôt VCS";
   i18n["Collapse"] = "Plier ce dossier";
   i18n["Expand"] = "Déplier ce dossier";
   i18n["Open the same file in <b>{0}</b>"] = "Ouvrir le même fichier en <b>{0}</b>";
   i18n["Log"] = "Journal";
+  i18n["{0} Log"] = "Journal {0}";
   i18n["File: "] = "Fichier : ";
   i18n["in {0}"] = "dans le dossier {0}";
   i18n["Search: "] = "Recherche : ";
   i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
   i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
   i18n["Entities & acronyms"] = "Entitiés & Acronymes";
-  i18n["From"] = "Depuis";
   i18n["Acronyms"] = "Acronymes";
-  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
-  i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'acronyme.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
 
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
@@ -260,6 +267,8 @@ var i18n = new Array();
   i18n["Patch content"] = "Contenu du patch";
   i18n["Configuration"] = "Configuration";
   i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
+  i18n["Automatically load acronyms data when displaying the file"] = "Charger automatiquement les acronymes lors de l'édition d'un fichier";
+  i18n["Automatically load entities data when displaying the file"] = "Charger automatiquement les entités lors de l'édition d'un fichier";
 
 
 // In file: ../../js/ui/component/CheckEntities.js
@@ -424,9 +433,6 @@ var i18n = new Array();
 // In file: ../../js/ui/task/GetGGTranslation.js
 
 
-// In file: ../../js/ui/task/SaveLangFileTask.js
-
-
 // In file: ../../js/ui/task/SystemUpdateTask.js
   i18n["Finish !"] = "Terminer !";
 
@@ -444,9 +450,6 @@ var i18n = new Array();
 // In file: ../../js/ui/task/VCSCommitTask.js
   i18n["Please, wait until commit..."] = "Veuillez patienter...";
   i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
-
-
-// In file: ../../js/ui/task/SaveENFileTask.js
 
 
 // In file: ../../js/ui/task/MarkDeleteTask.js
