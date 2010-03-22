@@ -109,6 +109,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
     loadMask         : true,
     autoScroll       : true,
     bodyBorder       : false,
+    border           : false,
     autoExpandColumn : 'content',
 
     initComponent : function()
@@ -194,6 +195,15 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 deferEmptyText: false
             }),
             tbar  : [{
+                scope   : this,
+                id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
+                tooltip : _('<b>Load/Refresh</b> revisions'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+            }, {
                 scope    : this,
                 id       : this.prefix + '-PANEL-btn-log-' + this.fid,
                 tooltip  : _('<b>View</b> the diff'),
@@ -244,15 +254,6 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                             winStatus.show();
                         }
                     });
-                }
-            }, {
-                scope   : this,
-                id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
-                tooltip : _('<b>Load/Refresh</b> revisions'),
-                iconCls : 'iconRefresh',
-                handler : function()
-                {
-                    this.store.reload();
                 }
             }]
         });
