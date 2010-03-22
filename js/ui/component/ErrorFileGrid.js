@@ -234,7 +234,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
             FileID      = Ext.util.md5('FE-' + PhDOE.userLang + FilePath + FileName),
-            error       = [];
+            error       = [],
+            vcsPanel, filePanel;
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
@@ -249,6 +250,95 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 }
             });
 
+            vcsPanel = ( PhDOE.userLang === 'en' ) ? [
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                    prefix    : 'FE-LANG',
+                    fid       : FileID,
+                    fpath     : PhDOE.userLang + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                })
+            ] : [
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                    prefix    : 'FE-LANG',
+                    fid       : FileID,
+                    fpath     : PhDOE.userLang + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                }),
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), 'En'),
+                    prefix    : 'FE-EN',
+                    fid       : FileID,
+                    fpath     : 'en' + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                })
+            ];
+
+            filePanel = ( PhDOE.userLang === 'en' ) ? [
+                new ui.component.FilePanel(
+                {
+                    id             : 'FE-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
+                    spellCheckConf : 'errorSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : false,
+                    syncScroll     : false
+                })
+            ] : [
+                new ui.component.FilePanel(
+                {
+                    id             : 'FE-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
+                    spellCheckConf : 'errorSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : true,
+                    syncScroll     : true,
+                    syncScrollConf : 'errorScrollbars'
+                }), new ui.component.FilePanel(
+                {
+                    id             : 'FE-EN-PANEL-' + FileID,
+                    region         : 'east',
+                    title          : _('en File: ') + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'EN',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckEn,
+                    spellCheckConf : 'errorSpellCheckEn',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : 'en',
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScroll     : true,
+                    syncScrollConf : 'errorScrollbars'
+                })
+            ];
+
             Ext.getCmp('main-panel').add({
                 id             : 'FE-' + FileID,
                 title          : FileName,
@@ -257,9 +347,9 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 closable       : true,
                 tabLoaded      : false,
                 panVCSLang     : !PhDOE.userConf.errorDisplayLog,
-                panVCSEn       : !PhDOE.userConf.errorDisplayLog,
-                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
-                panENLoaded    : false, // Use to monitor if the EN panel is loaded
+                panVCSEn       : ( PhDOE.userLang === 'en' ) ? true : !PhDOE.userConf.errorDisplayLog,
+                panLANGLoaded  : false,
+                panENLoaded    : ( PhDOE.userLang === 'en' ) ? true : false,
                 originTitle    : FileName,
                 defaults       : {split : true},
                 tabTip         : String.format(
@@ -267,7 +357,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 ),
                 listeners: {
                     resize: function(panel) {
-                        Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                        ( PhDOE.userLang !== 'en' ) ? Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2) : '';
                     }
                 },
                 items : [
@@ -316,20 +406,20 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     }, {
                         region      : 'west',
                         xtype       : 'panel',
-                        title       : _('VCS Log'),
-                        iconCls     : 'iconVCSLog',
-                        collapsedIconCls : 'iconVCSLog',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
                         collapsible : true,
-                        collapsed   : !PhDOE.userConf.errorDisplaylogPanel,
+                        collapsed   : !PhDOE.userConf.errorLogPanel,
                         layout      : 'fit',
                         bodyBorder  : false,
-                        width       : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                        width       : PhDOE.userConf.errorLogPanelWidth || 375,
                         listeners: {
                             collapse: function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'errorDisplaylogPanel',
+                                        item  : 'errorLogPanel',
                                         value : false
                                     });
                                 }
@@ -337,15 +427,15 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             expand: function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'errorDisplaylogPanel',
+                                        item  : 'errorLogPanel',
                                         value : true
                                     });
                                 }
                             },
                             resize: function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.errorDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.errorLogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
-                                        item  : 'errorDisplaylogPanelWidth',
+                                        item  : 'errorLogPanelWidth',
                                         value : newWidth
                                     });
                                 }
@@ -354,65 +444,30 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
-                            tabPosition : 'bottom',
                             defaults    : {autoScroll : true},
-                            items       : [
-                                new ui.component.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : PhDOE.userLang,
-                                    prefix    : 'FE-LANG',
+                            items       : [vcsPanel, {
+                                title  : _('Entities'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'entities',
+                                    prefix    : 'FE',
+                                    ftype     : 'LANG',
                                     fid       : FileID,
-                                    fpath     : PhDOE.userLang + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf.errorDisplayLog
-                                }),
-                                new ui.component.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : 'en',
-                                    prefix    : 'FE-EN',
+                                    loadStore : PhDOE.userConf.errorEntitiesLoadData
+                                })]
+                            }, {
+                                title  : _('Acronyms'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'acronyms',
+                                    prefix    : 'FE',
+                                    ftype     : 'LANG',
                                     fid       : FileID,
-                                    fpath     : 'en' + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf.errorDisplayLog
-                                })
-                            ]
+                                    loadStore : PhDOE.userConf.errorAcronymsLoadData
+                                })]
+                            }]
                         }
-                    }, new ui.component.FilePanel(
-                    {
-                        id             : 'FE-LANG-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                        prefix         : 'FE',
-                        ftype          : 'LANG',
-                        spellCheck     : PhDOE.userConf.errorSpellCheckLang,
-                        spellCheckConf : 'errorSpellCheckLang',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : PhDOE.userLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
-                        syncScrollConf : 'errorScrollbars'
-                    }), new ui.component.FilePanel(
-                    {
-                        id             : 'FE-EN-PANEL-' + FileID,
-                        region         : 'east',
-                        title          : _('en File: ') + FilePath + FileName,
-                        prefix         : 'FE',
-                        ftype          : 'EN',
-                        spellCheck     : PhDOE.userConf.errorSpellCheckEn,
-                        spellCheckConf : 'errorSpellCheckEn',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : 'en',
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScroll     : true,
-                        syncScrollConf : 'errorScrollbars'
-                    })
+                    }, filePanel
                 ]
             });
         }
@@ -479,6 +534,12 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
+
+        // For EN, we hide the column 'maintainer'
+        if( PhDOE.userLang === 'en' ) {
+            this.getColumnModel().setHidden(2, true);
+        }
+
     }
 });
 
