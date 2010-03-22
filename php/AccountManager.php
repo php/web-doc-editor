@@ -29,7 +29,7 @@ class AccountManager
     private function __construct()
     {
         $this->defaultConf = array(
-            "onSaveLangFile"            => 'ask-me',
+            "onSaveFile"                => 'ask-me',
 
             "mainAppMainMenuWidth"      => 300,
             "mainAppLoadMailsAtStartUp" => false,
@@ -50,9 +50,11 @@ class AccountManager
             "needUpdateSpellCheckEn"         => false,
             "needUpdateSpellCheckLang"       => false,
 
-            "errorDisplayLog"           => false,
-            "errorDisplaylogPanel"      => false,
-            "errorDisplaylogPanelWidth" => 375,
+            "errorEntitiesLoadData"     => false,
+            "errorAcronymsLoadData"     => false,
+            "errorLogLoadData"          => false,
+            "errorLogPanel"             => false,
+            "errorLogPanelWidth"        => 375,
             "errorDescPanel"            => true,
             "errorDescPanelHeight"      => 150,
             "errorScrollbars"           => true,
@@ -70,8 +72,6 @@ class AccountManager
 
             "allFilesEntitiesLoadData"           => false,
             "allFilesAcronymsLoadData"           => false,
-            "allFilesEntitiesAcronymsPanel"      => false,
-            "allFilesEntitiesAcronymsPanelWidth" => 375,
             "allFilesDisplayLog"                 => false,
             "allFilesDisplaylogPanel"            => false,
             "allFilesDisplaylogPanelWidth"       => 375,
