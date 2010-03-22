@@ -30,7 +30,6 @@ ui.task.SaveTransFileTask = function(config)
             var o = Ext.util.JSON.decode(r.responseText);
 
                 this.storeRecord.set('needcommit', true);
-                //this.storeRecord.set('maintainer', o.maintainer);
                 this.storeRecord.commit();
 
             // Add this files into storePendingCommit
