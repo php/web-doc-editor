@@ -49,265 +49,6 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
     }
 });
 
-// Grid for entities & acronyms
-
-ui.component._RepositoryTree.gridAcronym = Ext.extend(Ext.grid.GridPanel,
-{
-    onRowClick: function(grid, rowIdx, e)
-    {
-        var data = grid.getSelectionModel().getSelected().data;
-
-        Ext.getCmp('acronym-details-'+this.fid).update(data.value);
-
-    },
-    onRowDblClick: function(grid, rowIdx, e)
-    {
-        var data           = grid.getSelectionModel().getSelected().data,
-            cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
-            cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition());
-
-        //Insert the entities at the cursor position
-        cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, '<acronym>' + data.acronym + '</acronym>');
-    },
-    initComponent : function()
-    {
-       Ext.apply(this, {
-           region           : 'center',
-           split            : true,
-           loadMask         : true,
-           autoScroll       : true,
-           bodyBorder       : false,
-           autoExpandColumn : 'acronyms',
-           columns          : [
-               {id: 'acronyms', header: _('Acronyms'), sortable: true, dataIndex: 'acronym'},
-               {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
-           ],
-           viewConfig : {
-               forceFit      : true,
-               emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
-               deferEmptyText: false
-           },
-           sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
-           store      : new Ext.data.Store({
-               autoLoad : PhDOE.userConf.allFilesAcronymsLoadData,
-               proxy    : new Ext.data.HttpProxy({
-                   url : './do/getAcronyms'
-               }),
-               listeners: {
-                   scope: this,
-                   load: function() {
-                       Ext.getCmp('AF-' + this.fid).panAcronyms = true;
-                       Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
-                   }
-
-               },
-               reader : new Ext.data.JsonReader(
-               {
-                   root          : 'Items',
-                   totalProperty : 'nbItems',
-                   id            : 'id'
-               }, Ext.data.Record.create([
-                   {
-                       name    : 'id',
-                       mapping : 'id'
-                   }, {
-                       name    : 'from',
-                       mapping : 'from'
-                   }, {
-                       name    : 'acronym',
-                       mapping : 'acronym'
-                   }, {
-                       name    : 'value',
-                       mapping : 'value'
-                   }
-                   ])
-               )
-           }),
-           tbar: [
-           {
-                scope   : this,
-                tooltip : _('<b>Load/Refresh</b>'),
-                iconCls : 'iconRefresh',
-                handler : function()
-                {
-                    this.store.reload();
-                }
-            },
-               _('Filter: '), ' ',
-               new Ext.form.TwinTriggerField({
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-                    validateOnBlur  : false,
-                    validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    listeners : {
-                        specialkey : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
-                        }
-                    },
-                    onTrigger1Click: function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        this.ownerCt.ownerCt.store.clearFilter();
-                    },
-                    onTrigger2Click: function()
-                    {
-                        var v = this.getValue();
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-                        this.ownerCt.ownerCt.store.filter('acronym', v, true);
-                    }
-                })
-           ]
-       });
-       ui.component._RepositoryTree.gridAcronym.superclass.initComponent.call(this);
-
-       this.on('rowclick',    this.onRowClick,    this);
-       this.on('rowdblclick', this.onRowDblClick, this);
-
-    }
-});
-
-ui.component._RepositoryTree.gridEntities = Ext.extend(Ext.grid.GridPanel,
-{
-    onRowClick: function(grid, rowIdx, e)
-    {
-        var data = grid.getSelectionModel().getSelected().data;
-
-        Ext.getCmp('entities-details-'+this.fid).update(data.value);
-
-    },
-    onRowDblClick: function(grid, rowIdx, e)
-    {
-        var data           = grid.getSelectionModel().getSelected().data,
-            cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
-            cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition());
-
-        //Insert the entities at the cursor position
-        cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, '&' + data.entities + ';');
-    },
-    initComponent : function()
-    {
-       Ext.apply(this, {    
-           region           : 'center',
-           split            : true,
-           loadMask         : true,
-           autoScroll       : true,
-           bodyBorder       : false,
-           autoExpandColumn : 'entities',
-           columns          : [
-               {id: 'entities', header: _('Entities'), sortable: true, dataIndex: 'entities'},
-               {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
-           ],
-           viewConfig : {
-               forceFit      : true,
-               emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
-               deferEmptyText: false
-           },
-           sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
-           store      : new Ext.data.Store({
-               autoLoad : PhDOE.userConf.allFilesEntitiesLoadData,
-               proxy    : new Ext.data.HttpProxy({
-                   url : './do/getEntities'
-               }),
-               listeners: {
-                   scope: this,
-                   load: function() {
-                       Ext.getCmp('AF-' + this.fid).panEntities = true;
-                       Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
-                   }
-
-               },
-               reader : new Ext.data.JsonReader(
-               {
-                   root          : 'Items',
-                   totalProperty : 'nbItems',
-                   id            : 'id'
-               }, Ext.data.Record.create([
-                   {
-                       name    : 'id',
-                       mapping : 'id'
-                   }, {
-                       name    : 'from',
-                       mapping : 'from'
-                   }, {
-                       name    : 'entities',
-                       mapping : 'entities'
-                   }, {
-                       name    : 'value',
-                       mapping : 'value'
-                   }
-                   ])
-               )
-           }),
-           tbar: [
-           {
-                scope   : this,
-                tooltip : _('<b>Load/Refresh</b>'),
-                iconCls : 'iconRefresh',
-                handler : function()
-                {
-                    this.store.reload();
-                }
-            },
-               _('Filter: '), ' ',
-               new Ext.form.TwinTriggerField({
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-                    validateOnBlur  : false,
-                    validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    listeners : {
-                        specialkey : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
-                        }
-                    },
-                    onTrigger1Click: function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        this.ownerCt.ownerCt.store.clearFilter();
-                    },
-                    onTrigger2Click: function()
-                    {
-                        var v = this.getValue();
-
-                        if (v === '' || v.length < 3) {
-                            this.markInvalid(
-                                _('Your filter must contain at least 3 characters')
-                            );
-                            return;
-                        }
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-                        this.ownerCt.ownerCt.store.filter('entities', v, true);
-                    }
-                })
-           ]
-       });
-       ui.component._RepositoryTree.gridEntities.superclass.initComponent.call(this);
-
-       this.on('rowclick',    this.onRowClick,    this);
-       this.on('rowdblclick', this.onRowDblClick, this);
-
-    }
-});
-
 // RepositoryTree file context menu
 // config - { node }
 ui.component._RepositoryTree.menu.file = function(config)
@@ -450,7 +191,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                 FilePath  = node.attributes.id,
                 extension = node.attributes.extension,
                 t, FileID, FileLang, FileName, parser,
-                panelWest, panelEast, panelCenter;
+                panelWest, panelCenter;
 
             // CleanUp the path
             t = FilePath.split('/');
@@ -494,9 +235,9 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     panelWest = {
                         xtype       : 'panel',
                         region      : 'west',
-                        title       : _('VCS Log'),
-                        iconCls     : 'iconVCSLog',
-                        collapsedIconCls : 'iconVCSLog',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
                         plugins     : [Ext.ux.PanelCollapsedTitle],
                         layout      : 'fit',
                         bodyBorder  : false,
@@ -533,7 +274,6 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
-                            tabPosition : 'bottom',
                             defaults    : {autoScroll: true},
                             items       : [{
                                 title  : _('Log'),
@@ -545,103 +285,26 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.allFilesDisplayLog
                                 })]
-                            }]
-                        }
-                    };
-
-                    panelEast = {
-                        xtype            : 'panel',
-                        region           : 'east',
-                        title            : _('Entities & acronyms'),
-                        iconCls          : 'iconVCSLog',
-                        collapsible      : true,
-                        collapsed        : !PhDOE.userConf.allFilesEntitiesAcronymsPanel,
-                        collapsedIconCls : 'iconVCSLog',
-                        plugins          : [Ext.ux.PanelCollapsedTitle],
-                        layout           : 'fit',
-                        bodyBorder       : false,
-                        split            : true,
-                        width            : PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth || 375,
-                        listeners        : {
-                            collapse: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'allFilesEntitiesAcronymsPanel',
-                                        value : false
-                                    });
-                                }
-                            },
-                            expand: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'allFilesEntitiesAcronymsPanel',
-                                        value : true
-                                    });
-                                }
-                            },
-                            resize: function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesEntitiesAcronymsPanelWidth ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'allFilesEntitiesAcronymsPanelWidth',
-                                        value : newWidth
-                                    });
-                                }
-                            }
-                        },
-                        items            : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            tabPosition : 'bottom',
-                            defaults    : {autoScroll: true},
-                            items       : [{
+                            }, {
                                 title  : _('Entities'),
                                 layout : 'fit',
-                                items  : [
-                                    
-                                    new Ext.Panel({
-                                        border: false,
-                                        layout: 'border',
-                                        split : true,
-                                        items : [
-                                            new ui.component._RepositoryTree.gridEntities({
-                                                prefix    : 'AF',
-                                                fid       : FileID,
-                                                ftype     : 'ALL'
-                                            }),
-                                            {
-                                                xtype        : 'panel',
-                                                id           : 'entities-details-'+FileID,
-                                                region       : 'south',
-                                                split        : true,
-                                                height       : 100,
-                                                autoScroll   : true,
-                                                bodyCssClass : 'entities-details',
-                                                html         : _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.')
-                                            }
-                                        ]
-                                    })
-                                 ]
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'entities',
+                                    prefix    : 'AF',
+                                    ftype     : 'ALL',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.allFilesEntitiesLoadData
+                                })]
                             }, {
-                                title : _('Acronyms'),
-                                layout: 'border',
-                                items : [
-                                    new ui.component._RepositoryTree.gridAcronym({
-                                        layout    : 'fit',
-                                        prefix    : 'AF',
-                                        fid       : FileID,
-                                        ftype     : 'ALL'
-                                    }),
-                                    {
-                                        xtype        : 'panel',
-                                        id           : 'acronym-details-'+FileID,
-                                        region       : 'south',
-                                        split        : true,
-                                        height       : 100,
-                                        autoScroll   : true,
-                                        bodyCssClass : 'acronym-details',
-                                        html         : _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.')
-                                    }
-                                ]
+                                title  : _('Acronyms'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'acronyms',
+                                    prefix    : 'AF',
+                                    ftype     : 'ALL',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.allFilesAcronymsLoadData
+                                })]
                             }]
                         }
                     };
@@ -675,10 +338,10 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     panEntities : !PhDOE.userConf.allFilesEntitiesLoadData,
                     panAcronyms : !PhDOE.userConf.allFilesAcronymsLoadData,
                     panVCS      : !PhDOE.userConf.allFilesDisplayLog,
-                    panLoaded   : false, // Use to monitor if the LANG panel is loaded
+                    panLoaded   : false,
                     tabTip      : String.format(_('in {0}'), FilePath),
                     iconCls     : 'iconAllFiles',
-                    items       : [panelCenter, panelWest, panelEast]
+                    items       : [panelCenter, panelWest]
                 });
             }
             Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
