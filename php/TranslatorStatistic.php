@@ -169,17 +169,21 @@ class TranslatorStatistic
             if( $lang == 'en' ) { continue; }
 
             $i=0; $persons=array();
-            foreach ($translators[$lang] as $nick => $data) {
-                $persons[$i]              = $data;
-                $persons[$i]['nick']      = $nick;
-                $persons[$i]['uptodate']  = isset($uptodate[$lang][$nick]) ? $uptodate[$lang][$nick] : '0';
-                $persons[$i]['stale']     = isset($stale[$lang][$nick])    ? $stale[$lang][$nick]    : '0';
-                $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['stale'];
-                $i++;
-            }
 
-            // Save $summary into DB
-            $rm->setStaticValue('translator_summary', $lang, json_encode($persons));
+            if( isset($translators[$lang]) ) {
+
+                foreach ($translators[$lang] as $nick => $data) {
+                    $persons[$i]              = $data;
+                    $persons[$i]['nick']      = $nick;
+                    $persons[$i]['uptodate']  = isset($uptodate[$lang][$nick]) ? $uptodate[$lang][$nick] : '0';
+                    $persons[$i]['stale']     = isset($stale[$lang][$nick])    ? $stale[$lang][$nick]    : '0';
+                    $persons[$i]['sum']       = $persons[$i]['uptodate'] + $persons[$i]['stale'];
+                    $i++;
+                }
+
+                // Save $summary into DB
+                $rm->setStaticValue('translator_summary', $lang, json_encode($persons));
+            }
         }
     }
 }
