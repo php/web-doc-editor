@@ -324,6 +324,7 @@ class ToolsError
         if( $this->lang == 'en' )
         {
             $this->checkAcronym();
+            $this->missingInitializer();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
         }
@@ -1124,6 +1125,34 @@ class ToolsError
                 ));
             }
         }
+    }
+
+    /**
+     * Check for missing <initializer> tag
+     * Add an entry into the error's stack if a missing <initializer> tag was found
+     *
+     * This is the convertion of the following script :
+     * http://svn.php.net/viewvc/phpdoc/doc-base/trunk/scripts/check-missing-initializers.php?view=markup
+     *
+     * This method is only available for EN files.
+     */
+    function missingInitializer()
+    {
+	$matches = array();
+	preg_match_all('@<methodparam choice="opt"><type>(.*)</type><parameter>(.*)</parameter>(.*)</methodparam>@', $this->en_content, $matches);
+
+	if ( !empty($matches))
+	{
+	    foreach ($matches[3] as $match) {
+		if (empty($match) || (false === strpos($match, '<initializer>'))) {
+		    $this->addError(array(
+			'value_en'   => 'N/A',
+			'value_lang' => 'N/A',
+			'type'       => 'missingInitializer'
+		    ));
+		}
+	    }
+	}
     }
 
     /**

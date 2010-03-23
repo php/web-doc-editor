@@ -262,6 +262,9 @@ $error['acronym']['desc'] = 'An acronym have been found but without <acronym> ta
 $error['tabCharacterInDocument']['head'] = 'Tab character in the document';
 $error['tabCharacterInDocument']['desc'] = 'A tab character have been found in the document We must change it to spaces.';
 
+$error['missingInitializer']['head'] = 'Missing <initializer> tag';
+$error['missingInitializer']['desc'] = 'A missing <initializer> tag was found.';
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)
