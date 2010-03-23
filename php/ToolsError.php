@@ -325,6 +325,7 @@ class ToolsError
         {
             $this->checkAcronym();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
+            $this->tabCharacterInDocument($this->lang);
         }
 
         // Check Error specific to LANG files
@@ -350,6 +351,7 @@ class ToolsError
             $this->nbMemberInSeeAlso();
             $this->nbTag();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
+            $this->tabCharacterInDocument($this->lang);
         }
 
     }
@@ -1093,7 +1095,6 @@ class ToolsError
             }
         }
     }
-
     /**
      * Check Space or period at the end of Refpurpose tag
      * Add an entry into the error's stack if an error is found
@@ -1122,6 +1123,30 @@ class ToolsError
                     'type'       => 'spaceOrPeriodRefpurpose'
                 ));
             }
+        }
+    }
+
+    /**
+     * Check for tabs into the document
+     * Add an entry into the error's stack if a tab is found in the document
+     *
+     */
+    function tabCharacterInDocument($lang)
+    {
+
+        if( $lang == 'en' ) {
+            $content = $this->en_content;
+        } else {
+            $content = $this->lang_content;
+        }
+
+        if ( strstr($content, "\t")) {
+
+            $this->addError(array(
+                'value_en'   => 'N/A',
+                'value_lang' => 'N/A',
+                'type'       => 'tabCharacterInDocument'
+            ));
         }
     }
 

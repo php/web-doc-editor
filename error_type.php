@@ -259,6 +259,9 @@ $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribu
 $error['acronym']['head'] = 'Missing acronym tag';
 $error['acronym']['desc'] = 'An acronym have been found but without <acronym> tag around him.';
 
+$error['tabCharacterInDocument']['head'] = 'Tab character in the document';
+$error['tabCharacterInDocument']['desc'] = 'A tab character have been found in the document We must change it to spaces.';
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)
