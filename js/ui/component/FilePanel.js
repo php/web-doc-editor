@@ -675,6 +675,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         // We check the conf option : onSaveFile. Can be : ask-me, always or never
+                        if( !PhDOE.userConf.onSaveFile ) {
+                            PhDOE.userConf.onSaveFile = 'ask-me';
+                        }
+
                         switch (PhDOE.userConf.onSaveFile) {
 
                             case 'always':
