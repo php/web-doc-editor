@@ -1521,16 +1521,23 @@ class ExtJsController
         $return = array();
 
         $j=0;
-        foreach (RepositoryManager::getInstance()->availableLang as $lang) {
+        
+        $langs = RepositoryManager::getInstance()->availableLang;
+        
+        sort($langs);
+
+        foreach ($langs as $lang) {
 
             $lang = $lang["code"];
             $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
 
-            $return[$j]['id'] = $j;
-            $return[$j]['libel'] = str_replace("_", "", $lang);
-            $return[$j]['total'] = ( !isset($summary[0]) || $summary[0]->nbFiles == NULL ) ? 0 : $summary[0]->nbFiles;
+            if( isset($summary[0]) && !empty($summary[0]->nbFiles) ) {
+                $return[$j]['id'] = $j;
+                $return[$j]['libel'] = $lang; //str_replace("_", "", $lang);
+                $return[$j]['total'] = ( !isset($summary[0]) || $summary[0]->nbFiles == NULL ) ? 0 : $summary[0]->nbFiles;
 
-            $j ++;
+                $j ++;
+            }
         }
 
         return JsonResponseBuilder::success(
