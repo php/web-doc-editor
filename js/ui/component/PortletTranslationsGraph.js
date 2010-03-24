@@ -28,7 +28,7 @@ ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
             }, {
                 name    : 'percent',
                 mapping : 'percent',
-                type    : 'int'
+                type    : 'float'
             }
         ])
     )
