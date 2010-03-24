@@ -33,10 +33,15 @@ class EntitiesAcronymsFetcher {
 
         $files = explode("|", $appConf[$project]['acronym.usedbyeditor.location']);
 
+        unset($this->acronyms);
+
         $count = 0;
         while( list($k, $file) = each($files))
         {
-            $content = file_get_contents($file);
+            if( $content = file_get_contents($file) ) {
+                continue;
+            }
+
             preg_match_all('/<varlistentry>(.*?)<term>(.*?)<\/term>(.*?)<simpara>(.*?)<\/simpara>(.*?)<\/varlistentry>/s', $content, $match);
 
             $from = explode('/',$file);
@@ -62,10 +67,15 @@ class EntitiesAcronymsFetcher {
 
         $files = explode("|", $appConf[$project]['entities.usedbyeditor.location']);
 
+        unset($this->entities);
+            
         $count = 0;
         while( list($k, $file) = each($files))
-        {
-            $content = file_get_contents($file);
+        {        
+            if( $content = file_get_contents($file) ) {
+                continue;
+            }
+            
             preg_match_all('/<!ENTITY\s(.*?)\s(\'|")(.*?)(\2)>/s', $content, $match);
 
             $from = explode('/',$file);
