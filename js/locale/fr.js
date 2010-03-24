@@ -86,6 +86,9 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
   i18n["Graphics for all language"] = "Graphiques pour toutes les langues";
+  i18n["Lang:"] = "Langue :";
+  i18n["Total:"] = "Total :";
+  i18n["files"] = "fichiers";
 
 
 // In file: ../../js/ui/component/RepositoryTree.js

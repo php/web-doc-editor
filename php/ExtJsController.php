@@ -1528,13 +1528,16 @@ class ExtJsController
 
         foreach ($langs as $lang) {
 
-            $lang = $lang["code"];
-            $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
+            $langCode = $lang["code"];
+            $langName = $lang["name"];
+            $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $langCode);
 
             if( isset($summary[0]) && !empty($summary[0]->nbFiles) ) {
-                $return[$j]['id'] = $j;
-                $return[$j]['libel'] = $lang; //str_replace("_", "", $lang);
-                $return[$j]['total'] = ( !isset($summary[0]) || $summary[0]->nbFiles == NULL ) ? 0 : $summary[0]->nbFiles;
+                $return[$j]['id']        = $j;
+                $return[$j]['libel']     = $langCode;
+                $return[$j]['fullLibel'] = $langName;
+                $return[$j]['total']     = $summary[0]->nbFiles;
+                $return[$j]['percent']   = $summary[0]->percentFiles;
 
                 $j ++;
             }

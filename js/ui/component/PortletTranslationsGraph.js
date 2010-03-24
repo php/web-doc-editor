@@ -16,10 +16,18 @@ ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
             }, {
                 name    : 'libel',
                 mapping : 'libel',
-                 type   : 'string'
+                type    : 'string'
+            }, {
+                name    : 'fullLibel',
+                mapping : 'fullLibel',
+                type    : 'string'
             }, {
                 name    : 'total',
                 mapping : 'total',
+                type    : 'int'
+            }, {
+                name    : 'percent',
+                mapping : 'percent',
                 type    : 'int'
             }
         ])
@@ -31,6 +39,10 @@ ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
     height : 400,
     url    : 'http://extjs.cachefly.net/ext-3.1.1/resources/charts.swf',
     xField : 'libel',
+    tipRenderer : function(chart, record, index, series){
+        return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
+    },
+
     series : [{
         type        : 'column',
         displayName : 'Total',
