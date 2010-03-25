@@ -1305,17 +1305,16 @@ EOD;
         $s = "SELECT id FROM staticValue WHERE
               `project` = '".$project."' AND
               `type`    = '".$type."' AND
-              `field`   = '".$field."' AND
-              `date`    = now()
+              `field`   = '".$field."'
              ";
         $r = $db->query($s);
 
         if( $r->num_rows == 0 ) {
-            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`) VALUES ('".$project."' , '".$type."' , '".$field."', '".$db->real_escape_string($value)."')";
+            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`, `date`) VALUES ('".$project."' , '".$type."' , '".$field."', '".$db->real_escape_string($value)."', now())";
             $db->query($s);
         } else {
             $a = $r->fetch_object();
-            $s = "UPDATE staticValue SET `value`= '".$db->real_escape_string($value)."' WHERE `id`='".$a->id."'";
+            $s = "UPDATE staticValue SET `value`= '".$db->real_escape_string($value)."', `date`=now() WHERE `id`='".$a->id."'";
             $db->query($s);
         }
     }

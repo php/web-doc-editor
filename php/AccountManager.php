@@ -248,7 +248,7 @@ class AccountManager
 
               // We construct the return's var for ExtJs
               $return['state'] = true;
-
+              
            }
         } elseif ($AuthReturn == 'Bad password') {
 
