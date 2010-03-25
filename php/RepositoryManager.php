@@ -1305,7 +1305,8 @@ EOD;
         $s = "SELECT id FROM staticValue WHERE
               `project` = '".$project."' AND
               `type`    = '".$type."' AND
-              `field`   = '".$field."'
+              `field`   = '".$field."' AND
+              `date`    = now()
              ";
         $r = $db->query($s);
 
