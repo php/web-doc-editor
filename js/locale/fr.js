@@ -65,6 +65,14 @@ var i18n = new Array();
   i18n["Refresh this graph"] = "Rafraîchir ce graphique";
 
 
+// In file: ../../js/ui/component/PortletInfo.js
+  i18n["Infos"] = "Informations";
+  i18n["{0} is log out"] = "{0} s'est déconnecté";
+  i18n["{0} is log in {1} language !"] = "{0} s'est connecté en langue {1} !";
+  i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
+  i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
+
+
 // In file: ../../js/ui/component/ErrorFileGrid.js
   i18n["Type"] = "Type";
   i18n["Maintainer"] = "Mainteneur";

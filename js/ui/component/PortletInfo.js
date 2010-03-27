@@ -40,13 +40,61 @@ ui.component._PortletInfo.store.setDefaultSort('date', 'desc');
 // PortletInfo cell renderer for type column
 ui.component._PortletInfo.typeRenderer = function(value, md, record)
 {
-    switch (value) {
-        case 'logout' :
-            return record.data.value.user + ' is log out';
-        break;
+    var user, lang, nbFolders, nbFilesCreate, nbFilesDelete, nbFilesUpdate, nbFiles;
 
+    switch (value) {
+
+        // Login / logout
+        case 'logout' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} is log out'),
+                    user.ucFirst());
+
+        break;
         case 'login' :
-            return record.data.value.user + ' is log in ' + record.data.value.lang.ucFirst() + ' language !';
+            user = record.data.value.user;
+            lang = record.data.value.lang;
+
+            return String.format(
+                    _('{0} is log in {1} language !'),
+                    user.ucFirst(),
+                    lang.ucFirst());
+
+        break;
+        
+        // Commit
+        case 'commitFolders' :
+            user      = record.data.value.user;
+            lang      = record.data.value.lang;
+            nbFolders = record.data.value.nbFolders;
+
+            return String.format(
+                    _('{0} commit {1} new folder(s) in {2} language'),
+                    user.ucFirst(),
+                    nbFolders,
+                    lang.ucFirst());
+
+        break;
+        case 'commitFiles' :
+            user          = record.data.value.user;
+            lang          = record.data.value.lang;
+            nbFilesCreate = record.data.value.nbFilesCreate;
+            nbFilesDelete = record.data.value.nbFilesDelete;
+            nbFilesUpdate = record.data.value.nbFilesUpdate;
+            nbFiles       = nbFilesCreate + nbFilesDelete + nbFilesUpdate;
+
+            return String.format(
+                    _('{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language'),
+                    user.ucFirst(),
+                    nbFiles,
+                    nbFilesCreate,
+                    nbFilesUpdate,
+                    nbFilesDelete,
+                    lang.ucFirst()
+                   );
+
         break;
 
     }

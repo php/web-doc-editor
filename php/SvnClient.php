@@ -397,11 +397,12 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
     public function commitFolders($foldersPath)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
-
-        $vcsLogin  = AccountManager::getInstance()->vcsLogin;
-        $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
+        $am        = AccountManager::getInstance();
+        $appConf   = $am->appConf;
+        $project   = $am->project;
+        $vcsLang   = $am->vcsLang;
+        $vcsLogin  = $am->vcsLogin;
+        $vcsPasswd = $am->vcsPasswd;
 
         $commitLogMessage = Array();
 
@@ -418,6 +419,14 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             }
             $commitLogMessage = array_merge($commitLogMessage, $output);
         }
+
+        // We stock this info into DB
+        $value = array();
+        $value['user'] = $vcsLogin;
+        $value['lang'] = $vcsLang;
+        $value['nbFolders'] = count($foldersPath);
+        RepositoryManager::getInstance()->setStaticValue('info', 'commitFolders', json_encode($value), true);
+
         return $commitLogMessage;
     }
 
@@ -432,11 +441,16 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am        = AccountManager::getInstance();
 
-        $vcsLogin  = AccountManager::getInstance()->vcsLogin;
-        $vcsPasswd = AccountManager::getInstance()->vcsPasswd;
+        $appConf   = $am->appConf;
+        $project   = $am->project;
+        $vcsLang   = $am->vcsLang;
+        $vcsLogin  = $am->vcsLogin;
+        $vcsPasswd = $am->vcsPasswd;
+        
+        // Info we must store into DB
+        $info = array();
 
         $pathLogFile = $this->createCommitLogFile($log);
 
@@ -464,6 +478,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         for ($i = 0; $delete && $i < count($delete); $i++) {
             $delete_stack[] = $delete[$i]->lang.'/'.$delete[$i]->path.'/'.$delete[$i]->name;
         }
+
+        $info['nbFilesCreate'] = count($create_stack);
+        $info['nbFilesDelete'] = count($delete_stack);
+        $info['nbFilesUpdate'] = count($update_stack);
 
         // Linearization
         $filesCreate = implode($create_stack, ' ');
@@ -500,6 +518,11 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         // Delete tmp logMessage file
         $this->deleteCommitLogFile($pathLogFile);
+
+        // We stock this info into DB
+        $info['user'] = $vcsLogin;
+        $info['lang'] = $vcsLang;
+        RepositoryManager::getInstance()->setStaticValue('info', 'commitFiles', json_encode($info), true);
 
         return $output;
     }
