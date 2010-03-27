@@ -87,6 +87,7 @@ class ExtJsController
             // We stock this info into DB
             $value = array();
             $value['user'] = $vcsLogin;
+            $value['lang'] = $lang;
             RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
             return JsonResponseBuilder::success();

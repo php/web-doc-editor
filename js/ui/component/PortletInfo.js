@@ -46,7 +46,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
         break;
 
         case 'login' :
-            return record.data.value.user + ' is log in !';
+            return record.data.value.user + ' is log in ' + record.data.value.lang.ucFirst() + ' language !';
         break;
 
     }
@@ -102,8 +102,8 @@ ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 // PortletInfo
 ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
-    title   : _('Info'),
-    iconCls : '',
+    title   : _('Infos'),
+    iconCls : 'iconInfo',
     layout  : 'fit',
     store   : ui.component._PortletInfo.store,
     tools   : [{
