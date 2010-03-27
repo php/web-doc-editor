@@ -23,6 +23,61 @@ class RepositoryFetcher
     }
 
     /**
+     * Get infos about this apps
+     *
+     * @return Array
+     */
+    public function getInfos($start, $limit)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $infos = array();
+
+        $s = sprintf(
+            'SELECT
+                count(*) as total
+             FROM
+                `staticValue`
+             WHERE
+                `project` = "%s" AND
+                `type`="info"',
+
+            $am->project
+        );
+        $r = DBConnection::getInstance()->query($s);
+
+        $a = $r->fetch_assoc();
+        $infos['total'] = $a['total'];
+
+        $s = sprintf(
+            'SELECT
+                `field`, `value`, `date`
+             FROM
+                `staticValue`
+             WHERE
+                `project` = "%s" AND
+                `type`="info"
+             ORDER BY `date` DESC
+             LIMIT %s, %s',
+
+            $am->project, $start, $limit
+        );
+        $r = DBConnection::getInstance()->query($s);
+
+        $i=0;
+        while ($a = $r->fetch_assoc()) {
+            $infos['value'][$i]['id'] = $i;
+            $infos['value'][$i]['field'] = $a['field'];
+            $infos['value'][$i]['value'] = json_decode($a['value']);
+            $infos['value'][$i]['date']  = $a['date'];
+            $i++;
+        }
+
+        return $infos;
+    }
+
+    /**
      * Get the last update datetime
      *
      * @return The last update datetime or "in_progress" if the update is in progress

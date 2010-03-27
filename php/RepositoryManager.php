@@ -1295,9 +1295,10 @@ EOD;
      * @param $type The type of this value
      * @param $field The name of the field for this value
      * @param $value The value. Can be anything who can be store into a SQL TEXT field
+     * @param $forceNew TRUE to indicate that this value must be added e.g. not updated. By default, the value is updated.
      * @return Nothing.
      */
-    public function setStaticValue($type, $field, $value)
+    public function setStaticValue($type, $field, $value, $forceNew=false)
     {
         $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
@@ -1309,7 +1310,7 @@ EOD;
              ";
         $r = $db->query($s);
 
-        if( $r->num_rows == 0 ) {
+        if( $r->num_rows == 0 || $forceNew) {
             $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`, `date`) VALUES ('".$project."' , '".$type."' , '".$field."', '".$db->real_escape_string($value)."', now())";
             $db->query($s);
         } else {

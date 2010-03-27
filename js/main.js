@@ -286,8 +286,10 @@ var PhDOE = function()
                 ];
 
                 mainContentRight = (this.userLang === 'en') ? [
+                    ui.component.PortletInfo.getInstance(),
                     ui.component.PortletTranslationsGraph.getInstance()
                 ] : [
+                    ui.component.PortletInfo.getInstance() ,
                     ui.component.PortletTranslationGraph.getInstance() ,
                     ui.component.PortletTranslationsGraph.getInstance(),
                     ui.component.PortletBugs.getInstance({lang: this.userLang})

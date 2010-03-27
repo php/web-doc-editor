@@ -87,7 +87,7 @@ class ExtJsController
             // We stock this info into DB
             $value = array();
             $value['user'] = $vcsLogin;
-            RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value));
+            RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
             return JsonResponseBuilder::success();
         } elseif ($response['state'] === false) {
@@ -391,6 +391,26 @@ class ExtJsController
             array(
                 'nbItems' => count($translators),
                 'Items'   => $translators
+            )
+        );
+    }
+
+    /**
+     * Get informations about apps
+     */
+    public function getInfos()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $start = $this->getRequestVariable('start');
+        $limit = $this->getRequestVariable('limit');
+
+        $infos = RepositoryFetcher::getInstance()->getInfos($start, $limit);
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => $infos['total'],
+                'Items'   => $infos['value']
             )
         );
     }
@@ -1482,7 +1502,7 @@ class ExtJsController
         
         $value = array();
         $value['user'] = $am->vcsLogin;
-        RepositoryManager::getInstance()->setStaticValue('info', 'logout', json_encode($value));
+        RepositoryManager::getInstance()->setStaticValue('info', 'logout', json_encode($value), true);
 
         $_SESSION = array();
         setcookie(session_name(), '', time()-42000, '/');
