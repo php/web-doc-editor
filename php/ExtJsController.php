@@ -82,7 +82,13 @@ class ExtJsController
         $response = AccountManager::getInstance()->login($project, $vcsLogin, $vcsPasswd, $lang);
 
         if ($response['state'] === true) {
-            // This user is already know in a valid user
+            // This user is already know as a valid user
+
+            // We stock this info into DB
+            $value = array();
+            $value['user'] = $vcsLogin;
+            RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value));
+
             return JsonResponseBuilder::success();
         } elseif ($response['state'] === false) {
             // This user is unknow from this server
@@ -1471,6 +1477,13 @@ class ExtJsController
      */
     public function logout()
     {
+        $am = AccountManager::getInstance();
+        $am->isLogged();
+        
+        $value = array();
+        $value['user'] = $am->vcsLogin;
+        RepositoryManager::getInstance()->setStaticValue('info', 'logout', json_encode($value));
+
         $_SESSION = array();
         setcookie(session_name(), '', time()-42000, '/');
         session_destroy();
