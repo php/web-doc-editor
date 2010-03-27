@@ -282,7 +282,8 @@ var PhDOE = function()
                 ] : [
                     ui.component.PortletSummary.getInstance({lang: this.userLang}),
                     ui.component.PortletTranslator.getInstance({lang: this.userLang}),
-                    ui.component.PortletLocalMail.getInstance({lang: this.userLang})
+                    ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
+                    ui.component.PortletBugs.getInstance({lang: this.userLang})
                 ];
 
                 mainContentRight = (this.userLang === 'en') ? [
@@ -291,8 +292,7 @@ var PhDOE = function()
                 ] : [
                     ui.component.PortletInfo.getInstance() ,
                     ui.component.PortletTranslationGraph.getInstance() ,
-                    ui.component.PortletTranslationsGraph.getInstance(),
-                    ui.component.PortletBugs.getInstance({lang: this.userLang})
+                    ui.component.PortletTranslationsGraph.getInstance()
                 ];
 
             new Ext.Viewport({
