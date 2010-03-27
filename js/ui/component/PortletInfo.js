@@ -29,8 +29,10 @@ ui.component._PortletInfo.store = new Ext.data.Store({
                 name    : 'value',
                 mapping : 'value'
             }, {
-                name    : 'date',
-                mapping : 'date'
+                name       : 'date',
+                mapping    : 'date',
+                type       : 'date',
+                dateFormat : 'Y-m-d H:i:s'
             }
         ])
     )
@@ -113,7 +115,8 @@ ui.component._PortletInfo.gridColumns = [
         header    : _('Date'),
         width     : 110,
         sortable  : true,
-        dataIndex : 'date'
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
     }
 ];
 
