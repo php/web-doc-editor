@@ -24,8 +24,8 @@ var i18n = new Array();
   i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
   i18n["anonymous"] = "Utilisateur anonyme";
   i18n["Project / Language: "] = "Projet / Langue : ";
-  i18n["Last data update: "] = "Dernière mise à jour des données : ";
-  i18n["Last entities check: "] = "Dernière vérification des entités : ";
+  //i18n["Last data update: "] = "Dernière mise à jour des données : ";
+  //i18n["Last entities check: "] = "Dernière vérification des entités : ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
 
 
@@ -67,6 +67,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Infos"] = "Informations";
+  i18n["{0} update app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} is log out"] = "{0} s'est déconnecté";
   i18n["{0} is log in {1} language !"] = "{0} s'est connecté en langue {1} !";
   i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
@@ -328,6 +329,8 @@ var i18n = new Array();
   i18n["Run this script"] = "Exécuter ce script";
   i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";
   i18n["There is currently a check in progress for the entities.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification des entités en cours.<br>Vous ne pouvez pas en faire une maintenant.";
+  i18n["There is currently a check in progress for this language.<br/>You can't perform a new check now."] = "Il y a actuellement une vérification de la compilation de ce langage en cours.<br/>Vous ne pouvez pas effectuer un maintenant.";
+  i18n["There is currently an update in progress.<br/>You can't perform an update now."] = "Il y a actuellement une mise à jour en cours.<br/>Vous ne pouvez pas l'effectuer maintenant";
   i18n["Script Check doc"] = "Script Check doc";
   i18n["Configure"] = "Configuration";
   i18n["Switch to language..."] = "Basculer vers la langue ...";
