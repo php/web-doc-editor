@@ -216,6 +216,7 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
 {
     title   : '',
     iconCls : 'iconBugs',
+    id      : 'portletBugs',
     layout  : 'fit',
     store   : ui.component._PortletBugs.store,
     reloadData : ui.component._PortletBugs.reloadData,
