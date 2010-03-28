@@ -20,11 +20,11 @@ class lockFile
      */
     function __construct($id)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am = AccountManager::getInstance();
+        $appConf = $am->appConf;
 
         $this->id   = $id;
-        $this->path = $appConf[$project]['vcs.path'] . '.' . preg_replace('![^0-9a-z.]!i', '', $this->id);
+        $this->path = $appConf['GLOBAL_CONFIGURATION']['data.path'] . '.' . $this->id;
     }
     
     /**
