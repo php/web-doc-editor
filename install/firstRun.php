@@ -72,9 +72,11 @@ while( list($key, $project) = each($availableProject) ) {
     TranslationStatistic::getInstance()->computeSummary('all');
     TranslatorStatistic::getInstance()->computeSummary('all');
 
-    // We update the last update date/time into DB
-    $rm->setLastUpdate('data');
+    // Store this info
+    $info = array();
+    $info['user']   = 'root';
 
+    $rm->setStaticValue('info', 'updateData', json_encode($info), true);
 
 }
 
