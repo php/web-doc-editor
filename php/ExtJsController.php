@@ -124,12 +124,38 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $lockFile = $this->getRequestVariable('lockFile');
-        $lock     = new LockFile($lockFile);
+        $lockFile  = $this->getRequestVariable('lockFile');
+        $lockFiles = $this->getRequestVariable('lockFiles');
 
-        return $lock->isLocked()
-            ? JsonResponseBuilder::success()
-            : JsonResponseBuilder::failure();
+        if( $lockFile )
+        {
+            $lock = new LockFile($lockFile);
+
+            return $lock->isLocked()
+                ? JsonResponseBuilder::success()
+                : JsonResponseBuilder::failure();
+        }
+
+        if( $lockFiles )
+        {
+            $ok = false;
+            $files = explode("|", $lockFiles);
+
+            foreach ($files as $i => $file)
+            {
+                $lock = new LockFile($file);
+                if( $lock->isLocked() )
+                {
+                    $ok = true;
+                }
+            }
+            if( $ok )
+            {
+                return JsonResponseBuilder::success();
+            } else {
+                return JsonResponseBuilder::failure();
+            }
+        }
     }
 
     /**
@@ -184,11 +210,14 @@ class ExtJsController
      */
     public function applyTools()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+        $am->isLogged();
 
         $rm = RepositoryManager::getInstance();
 
-        $project = AccountManager::getInstance()->project;
+        $project = $am->project;
+        $vcsLogin = $am->vcsLogin;
+        $vcsLang = $am->vcsLang;
 
         $rm->cleanUp();
 
@@ -210,8 +239,11 @@ class ExtJsController
             TranslationStatistic::getInstance()->computeSummary('all');
             TranslatorStatistic::getInstance()->computeSummary('all');
 
-            // Set lastUpdate date/time
-            $rm->setLastUpdate('data');
+            // Store this info
+            $info = array();
+            $info['user']   = $vcsLogin;
+
+            $rm->setStaticValue('info', 'updateData', json_encode($info), true);
         }
         $lock->release();
 
@@ -225,39 +257,38 @@ class ExtJsController
      */
     public function ping()
     {
+        $am = AccountManager::getInstance();
 
-        if( ! AccountManager::getInstance()->isLogged() ) {
+        if( ! $am->isLogged() ) {
             return JsonResponseBuilder::failure();
         }
 
-        $r = RepositoryFetcher::getInstance()->getLastUpdate();
+        $rf = RepositoryFetcher::getInstance();
 
-        $lang = AccountManager::getInstance()->vcsLang;
+        $lang = $am->vcsLang;
 
         if( $lang != 'en' ) {
-            $data['NbPendingTranslate'] = RepositoryFetcher::getInstance()->getNbPendingTranslate();
-            $data['NbPendingUpdate'] = RepositoryFetcher::getInstance()->getNbPendingUpdate();
+            $data['NbPendingTranslate'] = $rf->getNbPendingTranslate();
+            $data['NbPendingUpdate']    = $rf->getNbPendingUpdate();
 
             $errorTools = new ToolsError();
-            $errorTools->setParams('', '', AccountManager::getInstance()->vcsLang, '', '', '');
-            $t = $errorTools->getFilesError(RepositoryFetcher::getInstance()->getModifies());
+            $errorTools->setParams('', '', $am->vcsLang, '', '', '');
+            $t = $errorTools->getFilesError($rf->getModifies());
             $data['NbFilesError'] = $t['nb'];
 
-            $data['NbPendingReview'] = RepositoryFetcher::getInstance()->getNbPendingReview();
-            $data['NbNotInEn']       = RepositoryFetcher::getInstance()->getNbNotInEn();
+            $data['NbPendingReview'] = $rf->getNbPendingReview();
+            $data['NbNotInEn']       = $rf->getNbNotInEn();
         }
 
-        $data['NbPendingCommit'] = RepositoryFetcher::getInstance()->getNbPendingCommit();
-        $data['NbPendingPatch']  = RepositoryFetcher::getInstance()->getNbPendingPatch();
+        $data['NbPendingCommit'] = $rf->getNbPendingCommit();
+        $data['NbPendingPatch']  = $rf->getNbPendingPatch();
 
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
         return JsonResponseBuilder::success(
             array(
-                'ping'              => $response,
-                'lastupdatedata'    => $r['lastupdatedata'],
-                'lastcheckentities' => $r['lastcheckentities'],
-                'totalData'         => $data
+                'ping'      => $response,
+                'totalData' => $data
             )
         );
     }
@@ -1010,8 +1041,10 @@ class ExtJsController
         // Remove the lock File
         $lock->release();
 
-        // Set lastUpdate date/time
-        RepositoryManager::getInstance()->setLastUpdate('entities');
+        $info = array();
+        $info['user']   = $ac->vcsLogin;
+
+        RepositoryManager::getInstance()->setStaticValue('info', 'checkEntities', json_encode($info), true);
 
         return JsonResponseBuilder::success();
     }
@@ -1584,27 +1617,6 @@ class ExtJsController
             )
         );
 
-    }
-
-    /**
-     * Get the date/time of the last update (data or entities)
-     */
-    public function getLastUpdate()
-    {
-        AccountManager::getInstance()->isLogged();
-
-        $type = $this->getRequestVariable('type');
-
-        $r = RepositoryFetcher::getInstance()->getLastUpdate();
-
-        $data = ($type == 'data' ) ? $r['lastupdatedata'] : $r['lastcheckentities'];
-
-        return JsonResponseBuilder::success(
-            array(
-                'success'    => true,
-                'lastupdate' => $data
-            )
-        );
     }
 
     /**
