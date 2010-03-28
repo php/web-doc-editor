@@ -68,7 +68,8 @@ ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 // PortletTranslationGraph
 ui.component.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
 {
-    title: _('Graphics'),
+    title   : _('Graphics'),
+    id      : 'portletTranslationGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
     store   : ui.component._PortletTranslationGraph.store,
