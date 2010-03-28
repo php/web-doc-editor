@@ -84,27 +84,23 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                     XHR({
                         params  : {
-                            task : 'getLastUpdate',
-                            type : 'data'
+                            task      : 'checkLockFile',
+                            lockFiles : 'project_' + PhDOE.project + '_lock_update_repository|project_' + PhDOE.project + '_lock_apply_tools'
                         },
-                        success : function(response)
+                        success : function()
                         {
                             // Remove wait msg
                             Ext.getBody().unmask();
-
-                            var o = Ext.util.JSON.decode(response.responseText);
-
-                            if( o.lastupdate === 'in_progress' ) {
-                                Ext.MessageBox.show({
-                                    title   : _('Status'),
-                                    msg     : _('There is currently an update in progress.<br/>' +
-                                                'You can\'t perform an update now.'),
-                                    buttons : Ext.MessageBox.OK,
-                                    icon    : Ext.MessageBox.INFO
-                                });
-                            } else {
-                                new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
-                            }
+                            Ext.MessageBox.show({
+                                title   : _('Status'),
+                                msg     : _('There is currently an update in progress.<br/>You can\'t perform an update now.'),
+                                buttons : Ext.MessageBox.OK,
+                                icon    : Ext.MessageBox.INFO
+                            });
+                        },
+                        failure: function() {
+                            Ext.getBody().unmask();
+                            new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
                         }
                     });
                 }
@@ -137,8 +133,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                                     Ext.MessageBox.show({
                                         title   : _('Status'),
-                                        msg     : _('There is currently a check in progress for this language.<br/>' +
-                                                    'You can\'t perform a new check now.'),
+                                        msg     : _('There is currently a check in progress for this language.<br/>You can\'t perform a new check now.'),
                                         buttons : Ext.MessageBox.OK,
                                         icon    : Ext.MessageBox.INFO
                                     });
