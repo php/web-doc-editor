@@ -349,7 +349,7 @@ class RepositoryManager
     }
 
     /**
-     * Update the VCS for each file we try to cimmit before start the commit processus.
+     * Update the VCS for each file we try to commit before start the commit processus.
      * As it, we ensure all VCS conflict.
      *
      * @param $files All files to check
