@@ -7,7 +7,7 @@
 * 00 01 * * 4 /usr/bin/php /path/to/your/vcs/dir/doc-editor/scripts/cron/check_entities.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/conf.inc.php';
+require_once dirname(__FILE__) . '/../../php/Conf.php';
 require_once dirname(__FILE__) . '/../../php/LockFile.php';
 require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
@@ -28,12 +28,14 @@ while( list($key, $project) = each($availableProject) ) {
 
         ToolsCheckEntities::getInstance()->startCheck();
 
+        // Set lastUpdate date/time
+        $info = array();
+        $info['user']   = 'root';
+
+        $rm->setStaticValue('info', 'checkEntities', json_encode($info), true);
     }
     // Remove the lock File
-    $lock->release();;
-    
-    // Set lastUpdate date/time
-    $rm->setLastUpdate('entities');
+    $lock->release();
 }
 
 ?>
