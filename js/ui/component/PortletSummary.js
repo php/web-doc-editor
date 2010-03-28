@@ -137,6 +137,7 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Summary'),
     iconCls : '',
+    id      : 'portletSummary',
     layout  : 'fit',
     store   : ui.component._PortletSummary.store,
     tools   : [{
