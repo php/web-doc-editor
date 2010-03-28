@@ -74,7 +74,7 @@ ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
             task     : 'checkLockFile',
             lockFile : 'project_' + PhDOE.project + '_lock_update_repository'
         },
-        success : function(response)
+        success : function()
         {
             ui.task._SystemUpdateTask.vcs_poll.delay(5000);
         },
