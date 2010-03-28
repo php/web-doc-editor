@@ -76,8 +76,11 @@ while( list($key, $project) = each($availableProject) ) {
         TranslationStatistic::getInstance()->computeSummary('all');
         TranslatorStatistic::getInstance()->computeSummary('all');    
 
-        // Set lastUpdate date/time
-        $rm->setLastUpdate('data');
+        // Store this info
+        $info = array();
+        $info['user']   = 'root';
+
+        $rm->setStaticValue('info', 'updateData', json_encode($info), true);
     }
     $lock->release();
 
