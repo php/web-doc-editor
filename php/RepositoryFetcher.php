@@ -154,8 +154,13 @@ class RepositoryFetcher
     public function getModifiesById($id)
     {
         $am = AccountManager::getInstance();
+        $infos = array();
 
         $ids = is_array($id) ? implode($id, ',') : $id;
+
+        if( empty(trim($ids)) ) {
+            return $infos;
+        }
 
         $s = sprintf(
             'SELECT *
@@ -172,7 +177,6 @@ class RepositoryFetcher
 
         $r = DBConnection::getInstance()->query($s);
 
-        $infos = array();
         while ($a = $r->fetch_assoc()) {
             $infos[] = $a;
         }
