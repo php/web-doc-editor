@@ -37,9 +37,6 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
             // Disable the close button for this win
              this.ownerCt.ownerCt.tools.close.setVisible(false);
 
-            // Set 'in progress'
-            Ext.getDom('Info-LastUpdateData').innerHTML = _('update in progress...');
-
             new ui.task.SystemUpdateTask();
         }
     }]
