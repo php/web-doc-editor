@@ -327,6 +327,7 @@ class ToolsError
             $this->missingInitializer();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
+            $this->documentNotUTF8($this->lang);
         }
 
         // Check Error specific to LANG files
@@ -353,6 +354,7 @@ class ToolsError
             $this->nbTag();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
+            $this->documentNotUTF8($this->lang);
         }
 
     }
@@ -1175,6 +1177,32 @@ class ToolsError
                 'value_en'   => 'N/A',
                 'value_lang' => 'N/A',
                 'type'       => 'tabCharacterInDocument'
+            ));
+        }
+    }
+
+    /**
+     * Check for tabs into the document
+     * Add an entry into the error's stack if a tab is found in the document
+     *
+     */
+    function documentNotUTF8($lang)
+    {
+        if( $lang == 'en' ) {
+            $content = $this->en_content;
+        } else {
+            $content = $this->lang_content;
+        }
+
+        $matches = array();
+        preg_match('!<\?xml(.+)\s?encoding=("|\')(.*)("|\')\s?\?>!U', $content, $matches);
+
+        if ( !isset($matches[3]) || strtoupper($matches[3]) != 'UTF-8') {
+
+            $this->addError(array(
+                'value_en'   => 'N/A',
+                'value_lang' => 'N/A',
+                'type'       => 'documentNotUTF8'
             ));
         }
     }

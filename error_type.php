@@ -265,6 +265,9 @@ $error['tabCharacterInDocument']['desc'] = 'A tab character have been found in t
 $error['missingInitializer']['head'] = 'Missing &lt;initializer&gt; tag';
 $error['missingInitializer']['desc'] = 'A missing &lt;initializer&gt; tag was found.';
 
+$error['documentNotUTF8']['head'] = 'Document encoding is not UTF-8';
+$error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 encoding.';
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)
