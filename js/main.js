@@ -276,24 +276,24 @@ var PhDOE = function()
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
-                mainContentLeft = (this.userLang === 'en') ? [
-                    ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
-                    ui.component.PortletBugs.getInstance({lang: this.userLang})
-                ] : [
-                    ui.component.PortletSummary.getInstance({lang: this.userLang}),
-                    ui.component.PortletTranslator.getInstance({lang: this.userLang}),
-                    ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
-                    ui.component.PortletBugs.getInstance({lang: this.userLang})
-                ];
+            mainContentLeft = (this.userLang === 'en') ? [
+                ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
+                ui.component.PortletBugs.getInstance({lang: this.userLang})
+            ] : [
+                ui.component.PortletSummary.getInstance({lang: this.userLang}),
+                ui.component.PortletTranslator.getInstance({lang: this.userLang}),
+                ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
+                ui.component.PortletBugs.getInstance({lang: this.userLang})
+            ];
 
-                mainContentRight = (this.userLang === 'en') ? [
-                    ui.component.PortletInfo.getInstance(),
-                    ui.component.PortletTranslationsGraph.getInstance()
-                ] : [
-                    ui.component.PortletInfo.getInstance() ,
-                    ui.component.PortletTranslationGraph.getInstance() ,
-                    ui.component.PortletTranslationsGraph.getInstance()
-                ];
+            mainContentRight = (this.userLang === 'en') ? [
+                ui.component.PortletInfo.getInstance(),
+                ui.component.PortletTranslationsGraph.getInstance()
+            ] : [
+                ui.component.PortletInfo.getInstance() ,
+                ui.component.PortletTranslationGraph.getInstance() ,
+                ui.component.PortletTranslationsGraph.getInstance()
+            ];
 
             new Ext.Viewport({
                 layout : 'border',
@@ -449,21 +449,12 @@ var PhDOE = function()
                                                 _('Project / Language: ') + '<em id="Info-Project">' + this.project + '</em> / <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +
-                                     '</div>' +
-                                     '<div class="res-block">' +
-                                        '<div class="res-block-inner">' +
-                                            '<p>' +
-                                            _('Last data update: ') + '<em id="Info-LastUpdateData">-</em>' +
-                                            '<br/><br/>' +
-                                            _('Last entities check: ') + '<em id="Info-LastCheckEntities">-</em>' +
-                                            '</p>' +
-                                        '</div>' +
                                      '</div>'
 
                         }, {
-                            xtype      : 'portal',
-                            border: false,
-                            items:[{
+                            xtype  : 'portal',
+                            border : false,
+                            items  : [{
                                 columnWidth : 0.5,
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentLeft
@@ -472,6 +463,37 @@ var PhDOE = function()
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentRight
                             }]
+                        /*
+                            listeners: {
+                                drop: function(a) {
+                                    var portal, col1Sort = [], col2Sort = [], id;
+
+                                    // Column 1
+                                    for( var i=0; i < a.portal.items.items[0].items.items.length; i++ ) {
+                                        id = a.portal.items.items[0].items.items[i].id;
+                                        //console.log(id);
+                                        col1Sort.push(id);
+                                    }
+                                    // Column 2
+                                    for( var i=0; i < a.portal.items.items[1].items.items.length; i++ ) {
+                                        id = a.portal.items.items[1].items.items[i].id;
+                                        //console.log(id);
+                                        col2Sort.push(id);
+                                    }
+
+                                    portal = {
+                                        'col1' : col1Sort,
+                                        'col2' : col2Sort
+                                    };
+
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'portalSort',
+                                        value : Ext.util.JSON.encode(portal)
+                                    });
+                                    
+                                }
+                            }
+                            */
                         }]
                     }]
                 }]
