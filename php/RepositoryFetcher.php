@@ -78,42 +78,6 @@ class RepositoryFetcher
     }
 
     /**
-     * Get the last update datetime
-     *
-     * @return The last update datetime or "in_progress" if the update is in progress
-     */
-    public function getLastUpdate()
-    {
-        $am      = AccountManager::getInstance();
-        $project = $am->project;
-
-        $return = array();
-        $return["lastupdatedata"] = '-';
-        $return["lastcheckentities"] = '-';
-
-        // Test is there is an update in progress (data or entities)
-        $lock_update   = new LockFile('project_'.$project.'_lock_update_repository');
-        $lock_apply    = new LockFile('project_'.$project.'_lock_apply_tools');
-        $lock_entities = new LockFile('project_'.$project.'_lock_check_entities');
-
-        if ( $lock_update->isLocked() || $lock_apply->isLocked() ) {
-            $return["lastupdatedata"] = 'in_progress';
-        } else {
-            $t = $this->getStaticValue('last_update_data', '-');
-            if( $t ) { $return["lastupdatedata"] = $t->date; }
-        }
-
-        if ( $lock_entities->isLocked() ) {
-            $return["lastcheckentities"] = 'in_progress';
-        } else {
-            $t = $this->getStaticValue('last_update_entities', '-');
-            if( $t ) { $return["lastcheckentities"] = $t->date; }
-        }
-
-        return $return;
-    }
-
-    /**
      * Get all modified files with user lang or en.
      *
      * @return An associated array containing informations about modified files.
