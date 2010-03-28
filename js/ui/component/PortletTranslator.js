@@ -236,6 +236,7 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Translators'),
     iconCls : 'iconTranslator',
+    id      : 'portletTranslator',
     layout  : 'fit',
     store   : ui.component._PortletTranslator.store,
     tools   : [{
