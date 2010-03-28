@@ -46,6 +46,16 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
 
     switch (value) {
 
+        // Update datas
+        case 'updateData' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} update app\'s data'),
+                    user.ucFirst());
+
+        break;
+
         // Login / logout
         case 'logout' :
             user = record.data.value.user;
@@ -154,6 +164,7 @@ ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Infos'),
+    id      : 'portletInfo',
     iconCls : 'iconInfo',
     layout  : 'fit',
     store   : ui.component._PortletInfo.store,
