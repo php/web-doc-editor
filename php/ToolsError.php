@@ -1183,7 +1183,7 @@ class ToolsError
 
     /**
      * Check the document encoding
-     * Add an entry into the error's stack if the document is not UTF8
+     * Add an entry into the error's stack if the document is not UTF-8
      *
      */
     function documentNotUTF8($lang)
