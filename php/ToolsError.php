@@ -1182,8 +1182,8 @@ class ToolsError
     }
 
     /**
-     * Check for tabs into the document
-     * Add an entry into the error's stack if a tab is found in the document
+     * Check the document encoding
+     * Add an entry into the error's stack if the document is not UTF8
      *
      */
     function documentNotUTF8($lang)
