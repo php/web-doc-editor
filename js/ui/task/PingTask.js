@@ -14,30 +14,6 @@ ui.task.PingTask = function()
                     window.location.href = './';
                 } else {
 
-                    // We look if there is an update_data in progress or not
-                    if( o.lastupdatedata === 'in_progress' ) {
-                        Ext.getDom('Info-LastUpdateData').innerHTML = _('update in progress...');
-                    } else if( o.lastupdatedata !== '-' ) {
-                        dt = Date.parseDate(o.lastupdatedata, "Y-m-d H:i:s");
-
-                        // We update the lastupdate date/time
-                        Ext.getDom('Info-LastUpdateData').innerHTML = dt.format(_('Y-m-d, H:i'));
-                    } else {
-                        Ext.getDom('Info-LastUpdateData').innerHTML = '-';
-                    }
-
-                    // We look if there is an check_entities in progress or not
-                    if( o.lastcheckentities === 'in_progress' ) {
-                        Ext.getDom('Info-LastCheckEntities').innerHTML = _('check in progress...');
-                    } else if( o.lastcheckentities !== '-' ) {
-                        dt = Date.parseDate(o.lastcheckentities, "Y-m-d H:i:s");
-
-                        // We update the lastupdate date/time
-                        Ext.getDom('Info-LastCheckEntities').innerHTML = dt.format(_('Y-m-d, H:i'));
-                    } else {
-                        Ext.getDom('Info-LastCheckEntities').innerHTML = '-';
-                    }
-
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
                     if( PhDOE.userLang !== 'en' ) {
 
