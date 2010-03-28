@@ -158,7 +158,7 @@ class RepositoryFetcher
 
         $ids = is_array($id) ? implode($id, ',') : $id;
 
-        if( empty(trim($ids)) ) {
+        if( empty( $ids ) ) {
             return $infos;
         }
 
