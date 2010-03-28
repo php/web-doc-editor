@@ -168,6 +168,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 {
     title   : '',
     iconCls : 'iconMailing',
+    id      : 'portletLocalMail',
     layout  : 'fit',
     store   : ui.component._PortletLocalMail.store,
     reloadData : ui.component._PortletLocalMail.reloadData,
