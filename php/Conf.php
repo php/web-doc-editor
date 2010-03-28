@@ -27,8 +27,8 @@ class Config
 
         // First, we load the global configuration file
         $this->conf['GLOBAL_CONFIGURATION'] = parse_ini_file($p."conf.ini");
-          // We fix the data path here
-          $this->conf['GLOBAL_CONFIGURATION']['data.path'] = realpath(dirname(__FILE__).'/../'.$this->conf['GLOBAL_CONFIGURATION']['data.path']).'/';
+        // We fix the data path here
+        $this->conf['GLOBAL_CONFIGURATION']['data.path'] = realpath(dirname(__FILE__).'/../'.$this->conf['GLOBAL_CONFIGURATION']['data.path']).'/';
 
         // Second, we load all config project file
         $d = dir($p);
