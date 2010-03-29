@@ -67,6 +67,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Infos"] = "Informations";
+  i18n["{0} check all entitites"] = "{0} a vérifié toutes les entitiés";
   i18n["{0} update app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} is log out"] = "{0} s'est déconnecté";
   i18n["{0} is log in {1} language !"] = "{0} s'est connecté en langue {1} !";
