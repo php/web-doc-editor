@@ -8,6 +8,7 @@ var PhDOE = function()
         userLang   : null,
         appName    : 'Php Docbook Online Editor',
         appVer     : 'X.XX',
+        appLoaded  : false,
         uiRevision : '$Revision$',
 
         userConf : '',
@@ -87,6 +88,8 @@ var PhDOE = function()
         // All we want to do after all dataStore are loaded
         afterLoadAllStore: function()
         {
+            this.appLoaded = true;
+
             // Run DirectAccess if present
             this.runDirectAccess();
 
