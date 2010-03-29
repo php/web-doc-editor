@@ -273,27 +273,53 @@ var PhDOE = function()
 
         drawInterface: function()
         {
+            var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
+            
+            // Default value for portalEN & portalLANG sort
+            
+            portalEN = {
+                'col1' : ["portletLocalMail","portletBugs"],
+                'col2' : ["portletInfo","portletTranslationsGraph"]
+            };
+            
+            portalLANG = {
+                'col1' : ["portletSummary","portletTranslator","portletLocalMail","portletBugs"],
+                'col2' : ["portletInfo","portletTranslationGraph","portletTranslationsGraph"]
+            };
+            
+            // Get user conf
+            if ( this.userLang === 'en' ) {
+                (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
+
+                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+            }
+            else
+            {
+                (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
+                
+                allPortlet["portletSummary"] = ui.component.PortletSummary.getInstance({lang: this.userLang});
+                allPortlet["portletTranslator"] = ui.component.PortletTranslator.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+
+                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
+                allPortlet["portletTranslationGraph"] = ui.component.PortletTranslationGraph.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+            }
+
+
+            for( var i=0; i < portal.col1.length; i++ ) {
+                mainContentLeft.push(allPortlet[portal.col1[i]]);
+            }
+            for( var i=0; i < portal.col2.length; i++ ) {
+                mainContentRight.push(allPortlet[portal.col2[i]]);
+            }
+            
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
-
-            mainContentLeft = (this.userLang === 'en') ? [
-                ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
-                ui.component.PortletBugs.getInstance({lang: this.userLang})
-            ] : [
-                ui.component.PortletSummary.getInstance({lang: this.userLang}),
-                ui.component.PortletTranslator.getInstance({lang: this.userLang}),
-                ui.component.PortletLocalMail.getInstance({lang: this.userLang}),
-                ui.component.PortletBugs.getInstance({lang: this.userLang})
-            ];
-
-            mainContentRight = (this.userLang === 'en') ? [
-                ui.component.PortletInfo.getInstance(),
-                ui.component.PortletTranslationsGraph.getInstance()
-            ] : [
-                ui.component.PortletInfo.getInstance() ,
-                ui.component.PortletTranslationGraph.getInstance() ,
-                ui.component.PortletTranslationsGraph.getInstance()
-            ];
 
             new Ext.Viewport({
                 layout : 'border',
@@ -462,8 +488,7 @@ var PhDOE = function()
                                 columnWidth : 0.5,
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentRight
-                            }]
-                        /*
+                            }],
                             listeners: {
                                 drop: function(a) {
                                     var portal, col1Sort = [], col2Sort = [], id;
@@ -486,14 +511,15 @@ var PhDOE = function()
                                         'col2' : col2Sort
                                     };
 
+                                    // We store this config var into portalSortEN for EN users, and portalSortLANG for LANG users
+
                                     new ui.task.UpdateConfTask({
-                                        item  : 'portalSort',
+                                        item  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
                                         value : Ext.util.JSON.encode(portal)
                                     });
                                     
                                 }
                             }
-                            */
                         }]
                     }]
                 }]
