@@ -55,6 +55,14 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
                     user.ucFirst());
 
         break;
+        case 'checkEntities' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} check all entitites'),
+                    user.ucFirst());
+
+        break;
 
         // Login / logout
         case 'logout' :
