@@ -147,6 +147,24 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletSummary.store.reload();
         }
     }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletSummaryCollapsed',
+                    value : false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletSummaryCollapsed',
+                    value : true
+                });
+            }
+        }
+    },
 
     initComponent: function(config)
     {
@@ -167,6 +185,12 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
             style : 'float: left; margin-right: 2px;',
             cls   : 'flags flag-'+this.lang
         }, 'first');
+
+        if( PhDOE.userConf.portletSummaryCollapsed ) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
     }
 });
 

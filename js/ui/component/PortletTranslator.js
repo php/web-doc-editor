@@ -246,6 +246,32 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletTranslator.store.reload();
         }
     }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletTranslatorCollapsed',
+                    value : false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletTranslatorCollapsed',
+                    value : true
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletTranslatorCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
     initComponent: function(config) {
 
         ui.component.PortletTranslator.superclass.initComponent.call(this);

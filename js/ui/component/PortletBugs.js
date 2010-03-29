@@ -227,6 +227,32 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletBugs.reloadData();
         }
     }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletBugsCollapsed',
+                    value : false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletBugsCollapsed',
+                    value : true
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletBugsCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
     initComponent: function(config) {
 
         ui.component.PortletBugs.superclass.initComponent.call(this);

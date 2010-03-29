@@ -183,6 +183,31 @@ ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletInfo.store.reload();
         }
     }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletInfoCollapsed',
+                    value : false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletInfoCollapsed',
+                    value : true
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletInfoCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
 
     initComponent: function(config)
     {

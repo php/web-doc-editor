@@ -179,6 +179,32 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             ui.component._PortletLocalMail.reloadData();
         }
     }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletLocalMailCollapsed',
+                    value : false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletLocalMailCollapsed',
+                    value : true
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletLocalMailCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
     initComponent: function(config)
     {
         ui.component.PortletLocalMail.superclass.initComponent.call(this);
