@@ -612,6 +612,7 @@ class ExtJsController
             $content  = $file->translate();
             $return['content'] = $content;
             $return['warn_tab'] = false;
+            $return['warn_encoding'] = false;
             $return['xmlid'] = '';
             return JsonResponseBuilder::success($return);
         }
@@ -621,11 +622,16 @@ class ExtJsController
         $info     = $file->getInfo($content);
 
         $return = array();
+        $return['warn_encoding'] = false;
 
         if (strtoupper($encoding) == 'UTF-8') {
             $return['content'] = $content;
         } else {
             $return['content'] = iconv($encoding, "UTF-8", $content);
+
+            // We mark this file to be automatically modified by codemirror
+            $return['warn_encoding'] = true;
+
         }
 
         if (isset($info['xmlid'])) {

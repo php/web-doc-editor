@@ -75,6 +75,24 @@ ui.task.GetFileTask = function(config)
 
             }
 
+            if( o.warn_encoding ) {
+
+                // Display a warn message if this file containes some tab caracter.
+                Ext.MessageBox.show({
+                    title: _('Warning'),
+                    msg: String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
+
+
+                // Mark as dirty this editor now
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
+
+            }
+
         },
         callback : function()
         {

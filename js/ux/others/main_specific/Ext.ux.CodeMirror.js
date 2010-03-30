@@ -99,7 +99,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             cmp.fireEvent('cursormove', line, caracter);
     },
 
-    manageCodeChange: function(cmId)
+    manageCodeChange: function(cmId, force)
     {
         var cmp             = Ext.getCmp(cmId),
             mirror          = cmp.mirror,
@@ -214,6 +214,12 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         if( ! this.mirror.editor.history.redoHistory.length ) {
             Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').disable();
         }
+    },
+
+    setLineContent : function(line, content)
+    {
+        var lineObj = this.mirror.nthLine(line);
+        this.mirror.setLineContent(lineObj, content);
     },
 
     insertIntoLine : function(line, position, text)
