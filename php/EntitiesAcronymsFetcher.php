@@ -38,10 +38,10 @@ class EntitiesAcronymsFetcher {
         $count = 0;
         while( list($k, $file) = each($files))
         {
-            if( $content = file_get_contents($file) ) {
+            if( !$content = file_get_contents($file) ) {
                 continue;
             }
-
+            
             preg_match_all('/<varlistentry>(.*?)<term>(.*?)<\/term>(.*?)<simpara>(.*?)<\/simpara>(.*?)<\/varlistentry>/s', $content, $match);
 
             $from = explode('/',$file);
@@ -72,7 +72,7 @@ class EntitiesAcronymsFetcher {
         $count = 0;
         while( list($k, $file) = each($files))
         {        
-            if( $content = file_get_contents($file) ) {
+            if( !$content = file_get_contents($file) ) {
                 continue;
             }
             
