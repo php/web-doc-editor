@@ -385,7 +385,7 @@ var PhDOE = function()
                         collapsed : true
                     }, {
                         id        : 'acc-error',
-                        title     : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
+                        title     : (this.userLang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
