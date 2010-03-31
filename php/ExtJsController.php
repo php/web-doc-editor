@@ -629,7 +629,7 @@ class ExtJsController
         } else {
             $return['content'] = iconv($encoding, "UTF-8", $content);
 
-            // We mark this file to be automatically modified by codemirror only if this file is a lang file.
+            // We mark this file to be automatically modified by codemirror only if this file is a lang/ or en/ file.
             if( RepositoryManager::getInstance()->isValidLanguage($FileLang) ) { $return['warn_encoding'] = true; }
 
         }
