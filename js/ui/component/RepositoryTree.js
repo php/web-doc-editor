@@ -32,6 +32,18 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
         Ext.apply(this,
         {
             items : [{
+                text    : _('Update this folder'),
+                iconCls : 'iconFilesNeedUpdate',
+                scope   : this,
+                handler : function()
+                {
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    //... and fire the update processus
+                    new ui.task.UpdateSingleFolderTask(this.node);
+                }
+            }, {
                 text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
                 iconCls : 'iconFolderClose',
                 scope   : this,

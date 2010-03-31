@@ -93,6 +93,25 @@ class RepositoryManager
         return $this->existingLanguage;
     }
 
+    /**
+     * Check if a lang is valide or not.
+     * @param $lang The lang to check
+     * @return Return true if $lang is a valid language, false otherwise.
+     */
+    public function isValidLanguage($lang)
+    {
+        $existLanguage = $this->getExistingLanguage();
+
+        for( $i=0; $i < count($existLanguage); $i++ )
+        {
+            if( $existLanguage[$i]['code'] == $lang ) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
 
     /**
      * Checkout the phpdoc-all repository.
@@ -141,6 +160,130 @@ class RepositoryManager
 
         DBConnection::getInstance()->query("DELETE FROM `failedBuildLog` WHERE `project`= '$project' AND `date` < date_sub(now(),interval 1 month)");
     }
+
+
+    /**
+     * Update a single folder of the repository to sync our local copy.
+     */
+    public function updateFolder($path)
+    {
+        $db      = DBConnection::getInstance();
+        $rf      = RepositoryFetcher::getInstance();
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        // We reset the session var
+        unset($_SESSION['updateFolder']['newFolders']);
+        unset($_SESSION['updateFolder']['newFiles']);
+
+        // We search for the first folder ; can be en/ LANG/ or doc-base/ for example
+        $t = explode("/", $path);
+        $firstFolder = $t[1];
+
+        array_shift($t);
+        array_shift($t);
+
+        $pathWithoutLang = '/' . implode("/", $t).'/';
+        
+        // If we are in the root folder, we have //. We must consider this case.
+        if( $pathWithoutLang == '//' ) { $pathWithoutLang = '/'; }
+
+        if( $firstFolder == "" ) {
+            $firstFolder = 'root';
+        }
+
+        $lock = new LockFile('project_' . $project . '_' . $firstFolder . '_lock_update_folder');
+
+        if ($lock->lock()) {
+
+            if( $this->isValidLanguage($firstFolder) ) {
+
+                // This is only for EN and LANG. For others, we don't make any version's comparaison.
+                // We start be get files & folders in this folder to compare it after the update
+                $actual = $rf->getFilesByDirectory($path);
+                $actualFiles = $actualFolders = array();
+
+                for( $i=0; $i < count($actual); $i++ ) {
+                    // We get files and folders
+                    if( $actual[$i]['type'] === 'folder' ) {
+                        $actualFolders[$actual[$i]['text']] = array( "name"=> $actual[$i]['text'] );
+                    } else {
+                        $actualFiles[$actual[$i]['text']] = array( "name"=> $actual[$i]['text'], "version"=> "" );
+                    }
+                }
+                
+                // We get versions for this files
+                while( list($k, $v) = each($actualFiles) ) {
+
+                    $file = new File($firstFolder, $pathWithoutLang, $k);
+                    $info = $file->getInfo();
+                    $actualFiles[$k]['version'] = $info['rev'];
+                    
+                }
+                
+            }
+
+            // We update the repository recursively
+            VCSFactory::getInstance()->updateSingleFolder($path);
+
+            if( $this->isValidLanguage($firstFolder) ) {
+                // We throw the revCheck on this folder only if the langue is valide
+                $this->applyRevCheck($pathWithoutLang, 'update', $firstFolder);
+
+                // We get files under this folder to make comparaison after the update
+                $now = $rf->getFilesByDirectory($path);
+                $nowFiles = $nowFolders = array();
+
+                for( $i=0; $i < count($now); $i++ ) {
+                    // We get all folders & files
+                    if( $now[$i]['type'] === 'folder' ) {
+                        $nowFolders[$now[$i]['text']] = array( "name"=> $now[$i]['text'] );
+                    } else {
+                        $nowFiles[$now[$i]['text']] = array( "name"=> $now[$i]['text'], "version"=> "" );
+                    }
+                }
+
+                // We get versions of this files
+                while( list($k, $v) = each($nowFiles) )
+                {
+                    $file = new File($firstFolder, $pathWithoutLang, $k);
+                    $info = $file->getInfo();
+                    $nowFiles[$k]['version'] = $info['rev'];
+                }
+
+                debug(json_encode($nowFiles));
+                debug(json_encode($actualFiles));
+                
+                // We search for differences
+                reset($nowFiles); reset($nowFolders);
+                while( list($k, $v) = each($nowFiles) ) {
+                    // If the file exist before, and at the same version, we delete it from $nowFiles
+                    if( isset($actualFiles[$k] ) && $actualFiles[$k]['version'] == $v['version'] ) {
+                        unset($nowFiles[$k]);
+                    }
+                }
+                while( list($k, $v) = each($nowFolders) ) {
+                    // If the folder exist before, we delete it from $nowFolders
+                    if( isset($actualFolders[$k] ) ) {
+                        unset($nowFolders[$k]);
+                    }
+                }
+
+                // $nowFolders contains only new folders who don't exist before the update
+                // and $nowFiles, new files who don't exist before the update or who the version have changed
+
+                // We store this result in session to allow get it if this processus take more than 30 seconds (max execution time)
+                $_SESSION['updateFolder']['newFolders'] = $nowFolders;
+                $_SESSION['updateFolder']['newFiles']   = $nowFiles;
+            }
+
+        }
+
+        $lock->release();
+
+        return json_encode($_SESSION['updateFolder']);
+    }
+
 
     /**
      * Update the repository to sync our local copy.
@@ -1112,10 +1255,12 @@ EOD;
     /**
      * Apply the Revcheck tools recursively on all lang
      *
-     * @param $path The directory from which we start.
+     * @param $path    The directory from which we start.
+     * @param $revType Can be 'new' when we start a new revcheck with a clean database or 'update' when we revcheck just one folder (and all is sub-folders). Default to 'new'
+     * @param $revLang The lang we want to apply the recheck. By default, it's 'all' lang available.
      * @return Nothing.
      */
-    public function applyRevCheck($path = '/')
+    public function applyRevCheck($path = '/', $revType='new', $revLang='all')
     {
         $db      = DBConnection::getInstance();
         $am      = AccountManager::getInstance();
@@ -1170,6 +1315,32 @@ EOD;
                     $ToolsCheckDocResult['check_noerrors']       = 'NULL';
                 }
 
+                // If the type of this revcheck is an update, we start to remove all reference to this file from...
+                if( $revType == 'update' )
+                {
+                    //... table `files`
+                    $query = sprintf(
+                            'DELETE FROM `files`
+                             WHERE `project`="%s" AND
+                                   `lang`="%s" AND
+                                   `path`="%s" AND
+                                   `name`="%s"',
+                            $am->project, 'en', $f->path, $f->name
+                            );
+                    $db->query($query);
+
+                    //... table `errorfiles`
+                    $query = sprintf(
+                            'DELETE FROM `errorfiles`
+                             WHERE `project`="%s" AND
+                                   `lang`="%s" AND
+                                   `path`="%s" AND
+                                   `name`="%s"',
+                            $am->project, 'en', $f->path, $f->name
+                            );
+                    $db->query($query);
+                }
+
                 // Sql insert.
                 $query = sprintf(
                     'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
@@ -1194,7 +1365,21 @@ EOD;
                 $error->saveError();
 
 
-                $ExistingLanguage = $this->getExistingLanguage();
+                if( $revType == 'update' )
+                {
+                    // If we are in update, we have 2 case. $revLang can be en or LANG.
+                    // If revLang is en, we must re-check all available language to reflect changes.
+                    if( $revLang == 'en' ) {
+                        $ExistingLanguage = $this->getExistingLanguage();
+                    }
+                    // If revLang is LANG, we only re-check this LANG
+                    else {
+                        $ExistingLanguage[] = array("code" => $revLang);
+                    }
+                } else {
+                    // If this is not an update, we check all languages
+                    $ExistingLanguage = $this->getExistingLanguage();
+                }
 
                 foreach($ExistingLanguage as $lang) {
 
@@ -1206,6 +1391,32 @@ EOD;
                     }
 
                     $lang_file = new File($lang, $f->path, $f->name);
+
+                    // If the type of this revcheck is an update, we start be delete all reference to this file in table...
+                    if( $revType == 'update' )
+                    {
+                        // ... `file`
+                        $query = sprintf(
+                                'DELETE FROM `files`
+                                 WHERE `project`="%s" AND
+                                       `lang`="%s" AND
+                                       `path`="%s" AND
+                                       `name`="%s"',
+                                $project, $lang, $lang_file->path, $lang_file->name
+                                );
+                        $db->query($query);
+
+                        //... table `errorfiles`
+                        $query = sprintf(
+                                'DELETE FROM `errorfiles`
+                                 WHERE `project`="%s" AND
+                                       `lang`="%s" AND
+                                       `path`="%s" AND
+                                       `name`="%s"',
+                                $project, $lang, $lang_file->path, $lang_file->name
+                                );
+                        $db->query($query);
+                    }
 
                     if (is_file($lang_file->full_path)) {
 
@@ -1260,7 +1471,7 @@ EOD;
             }
 
             foreach ($dirs as $d) {
-                $this->applyRevCheck($d->path.$d->name.'/');
+                $this->applyRevCheck($d->path.$d->name.'/', $revType, $revLang);
             }
         }
         @closedir($dh);

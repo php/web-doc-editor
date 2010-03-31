@@ -868,6 +868,38 @@ class ExtJsController
             )
         );
     }
+    
+    /**
+     * Update a single folder recursively
+     */
+    public function updateFolder()
+    {
+        $am = AccountManager::getInstance();
+        $am->isLogged();
+
+        $rm = RepositoryManager::getInstance();
+        $path = $this->getRequestVariable('path');
+        
+        $r = $rm->updateFolder($path);
+        
+        return JsonResponseBuilder::success(
+            array(
+                'result' => $r
+            )
+        );
+    }
+
+    /**
+     * Get the response after an update single folder
+     */
+    function getUpdateFolderResponse()
+    {
+        return JsonResponseBuilder::success(
+            array(
+                'result' => json_encode($_SESSION['updateFolder'])
+            )
+        );
+    }
 
     /**
      * Get Entities to be display into a grid into the "All files modules"
@@ -875,6 +907,8 @@ class ExtJsController
     public function getEntities()
     {
         AccountManager::getInstance()->isLogged();
+        
+        $path = $this->getRequestVariable('path');
 
         $r = EntitiesAcronymsFetcher::getInstance()->getEntities();
 

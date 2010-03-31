@@ -101,12 +101,14 @@ var i18n = new Array();
   i18n["files"] = "fichiers";
 
 
-// In file: ../../js/ui/component/RepositoryTree.js
+// In file: ../../js/ui/component/EntitiesAcronymsPanel.js
   i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
   i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'acronyme.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
   i18n["Items"] = "Éléments";
   i18n["From"] = "Depuis";
   i18n["<b>Load/Refresh</b>"] = "<b>Charger/Rafraîchir</b>";
+  i18n["Entities & acronyms"] = "Entitiés & Acronymes";
+  i18n["Acronyms"] = "Acronymes";
 
 
 // In file: ../../js/ui/component/RepositoryTree.js
@@ -121,8 +123,7 @@ var i18n = new Array();
   i18n["Search: "] = "Recherche : ";
   i18n["Your search must contain at least 3 characters"] = "Votre recherche doit comporter au moins 3 caractères";
   i18n["Search result: {0}"] = "Résultat de la recherche : {0}";
-  i18n["Entities & acronyms"] = "Entitiés & Acronymes";
-  i18n["Acronyms"] = "Acronymes";
+  i18n["Update this folder"] = "Mettre à jour ce dossier";
 
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
@@ -437,6 +438,10 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/PingTask.js
   i18n["check in progress..."] = "Vérification en cours...";
+
+
+// In file: ../../js/ui/task/UpdateSingleFolderTask.js
+  i18n["Please, wait until update this folder..."] = "Merci de patienter pendant la mise à jour de ce dossier...";
 
 
 // In file: ../../js/ui/task/SaveTransFileTask.js

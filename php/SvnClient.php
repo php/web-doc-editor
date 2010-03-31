@@ -253,6 +253,36 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     }
 
     /**
+     *  "svn up" on a single folder
+     *
+     * @param $path The path.
+     * @return True if this folder exist after the update processus, false otherwise.
+     */
+    public function updateSingleFolder($path)
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .'.$path;
+
+        $trial_threshold = 3;
+        while ($trial_threshold-- > 0) {
+            $output = array();
+            exec($cmd, $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
+        }
+
+        if( is_dir($appConf[$project]['vcs.path'].$path) ) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    /**
      *  "svn up" on a single File
      *
      * @param $lang The lang of this file.
