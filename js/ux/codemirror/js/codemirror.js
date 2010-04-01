@@ -264,15 +264,41 @@ var CodeMirror = (function(){
       sizeInterval = setInterval(sizeBar, 500);
 
       function nonWrapping() {
-        var nextNum = 1;
-        function update() {
-          var target = 50 + Math.max(body.offsetHeight, frame.offsetHeight);
+        var nextNum = 1, pending, target, endTime;
+
+        //~ function update() {
+          //~ var target = 50 + Math.max(body.offsetHeight, Math.max(frame.offsetHeight, body.scrollHeight || 0));
+          //~ while (scroller.offsetHeight < target && (!scroller.firstChild || scroller.offsetHeight)) {
+            //~ scroller.appendChild(document.createElement("DIV"));
+            //~ scroller.lastChild.innerHTML = nextNum++;
+          //~ }
+          //~ doScroll();
+        //~ }
+
+        function work() {
           while (scroller.offsetHeight < target) {
             scroller.appendChild(document.createElement("DIV"));
             scroller.lastChild.innerHTML = nextNum++;
+
+            if (new Date().getTime() > endTime) {
+              // sleep the task by options.lineNumberTime
+              pending = setTimeout(work, self.options.lineNumberDelay);
+              return;
+            }
           }
+        }
+
+        function update() {
+          target = 50 + Math.max(body.offsetHeight, frame.offsetHeight);
+          endTime = new Date().getTime() + self.options.lineNumberTime;
+
+          if (pending) clearTimeout(pending);
+          pending = 0;
+
+          work();
           doScroll();
         }
+
         var onScroll = win.addEventHandler(win, "scroll", update, true),
             onResize = win.addEventHandler(win, "resize", update, true);
         clear = function(){onScroll(); onResize();};
