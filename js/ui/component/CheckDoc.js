@@ -73,7 +73,7 @@ ui.component._CheckDoc.renderer = function(value, metadata)
         metadata.attr = 'ext:qtip="<img src=\'themes/img/help.png\' style=\'vertical-align: middle;\' /> ' + _('Double-click the cell to open the file selection') + '"';
         return value;
     } else {
-        return false;
+        return;
     }
 };
 
@@ -252,19 +252,23 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                       .getSelections(),
                 i;
 
-            PhDOE.filePendingOpen = [];
+            PhDOE.AFfilePendingOpen = [];
 
             for (i = 0; i < r.length; ++i) {
-                PhDOE.filePendingOpen[i] = {
+                PhDOE.AFfilePendingOpen[i] = {
                     fpath : 'en' + win.fpath,
                     fname : r[i].data.file
                 };
             }
 
             ui.component.RepositoryTree.getInstance().openFile(
-                PhDOE.filePendingOpen[0].fpath,
-                PhDOE.filePendingOpen[0].fname
+                'byPath',
+                PhDOE.AFfilePendingOpen[0].fpath,
+                PhDOE.AFfilePendingOpen[0].fname
             );
+
+            PhDOE.AFfilePendingOpen.shift();
+            
             win.close();
         }
     }]
@@ -303,9 +307,10 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
             data      = record.get(errorType),
             fpath     = record.data.path;
 
-        this.el.mask(_('Please, wait...'));
-
         if (Ext.num(data, false) && data !== 0) {
+
+            this.el.mask(_('Please, wait...'));
+            
             XHR({
                 params   : {
                     task      : 'getCheckDocFiles',

@@ -1300,7 +1300,7 @@ EOD;
                 $tmp = explode('/', $f->path);
 
                 // Only for Php project
-                if( $project == 'php' ) {
+                if( $project == 'PHP' ) {
                     $check_doc = new ToolsCheckDoc();
                     $ToolsCheckDocResult = $check_doc->checkDoc($infoEN['content'], $f->path);
                 } else {
