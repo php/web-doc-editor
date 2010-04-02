@@ -71,7 +71,7 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
         ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
         ['themes/empty.css',                                                  _('Default')],
         ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
-        ['http://extjs.cachefly.net/ext-3.1.1/resources/css/xtheme-gray.css', _('Gray')],
+        ['http://extjs.cachefly.net/ext-3.2.0/resources/css/xtheme-gray.css', _('Gray')],
         ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
         ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
         ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],

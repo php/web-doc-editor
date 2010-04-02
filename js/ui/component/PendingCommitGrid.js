@@ -4,40 +4,27 @@ Ext.namespace('ui','ui.component','ui.component._PendingCommitGrid');
 // PendingCommitGrid internals
 
 // PendingCommitGrid store
-ui.component._PendingCommitGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._PendingCommitGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'by',
-                mapping : 'by'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }, {
-                name    : 'type',
-                mapping : 'type'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesPendingCommit'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'},
+            {name : 'type'}
+        ]
+    }),
     sortInfo : {
         field     : 'name',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners  : {
@@ -583,11 +570,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : new ui.component._PendingCommitGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesPendingCommit'
-                })
-            })
+            store : ui.component._PendingCommitGrid.store
         });
         ui.component.PendingCommitGrid.superclass.initComponent.call(this);
 

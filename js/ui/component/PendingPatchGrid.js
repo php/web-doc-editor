@@ -4,40 +4,27 @@ Ext.namespace('ui','ui.component','ui.component._PendingPatchGrid');
 // PendingPatchGrid internals
 
 // PendingPatchGrid store
-ui.component._PendingPatchGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._PendingPatchGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'by',
-                mapping : 'by'
-            }, {
-                name    : 'uniqID',
-                mapping : 'uniqID'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesPendingPatch'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'uniqID'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'}
+        ]
+    }),
     sortInfo : {
         field     : 'name',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners : {
@@ -129,7 +116,6 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
 // PendingPatchGrid
 ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 {
-    store            : ui.component._PendingPatchGrid.store,
     columns          : ui.component._PendingPatchGrid.columns,
     view             : ui.component._PendingPatchGrid.view,
     loadMask         : true,
@@ -364,11 +350,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : new ui.component._PendingPatchGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesPendingPatch'
-                })
-            })
+            store : ui.component._PendingPatchGrid.store
         });
         ui.component.PendingPatchGrid.superclass.initComponent.call(this);
 

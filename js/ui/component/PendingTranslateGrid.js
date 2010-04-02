@@ -2,32 +2,25 @@ Ext.namespace('ui','ui.component','ui.component._PendingTranslateGrid');
 
 //------------------------------------------------------------------------------
 // PendingTranslateGrid data store
-ui.component._PendingTranslateGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._PendingTranslateGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'needcommit',
-                mapping : 'needcommit'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNeedTranslate'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'needcommit'}
+        ]
+    }),
     sortInfo : {
         field     : 'name',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners  : {
@@ -214,11 +207,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             columns : ui.component._PendingTranslateGrid.columns,
-            store   : new ui.component._PendingTranslateGrid.store({
-                          proxy : new Ext.data.HttpProxy({
-                              url : './do/getFilesNeedTranslate'
-                          })
-            }),
+            store   : ui.component._PendingTranslateGrid.store,
             tbar:[
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({

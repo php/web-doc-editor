@@ -4,44 +4,29 @@ Ext.namespace('ui','ui.component','ui.component._ErrorFileGrid');
 // ErrorFileGrid internals
 
 // ErrorFileGrid store
-ui.component._ErrorFileGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._ErrorFileGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'maintainer',
-                mapping : 'maintainer'
-            }, {
-                name    : 'type',
-                mapping : 'type'
-            }, {
-                name    : 'value_en',
-                mapping : 'value_en'
-            }, {
-                name    : 'value_lang',
-                mapping : 'value_lang'
-            }, {
-                name    : 'needcommit',
-                mapping : 'needcommit'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesError'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'maintainer'},
+            {name : 'type'},
+            {name : 'value_en'},
+            {name : 'value_lang'},
+            {name : 'needcommit'}
+        ]
+    }),
     sortInfo : {
         field     : 'path',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners : {
@@ -71,7 +56,7 @@ ui.component._ErrorFileGrid.columns = [{
 }, {
     header    : _('Path'),
     dataIndex : 'path',
-    'hidden'  : true
+    hidden    : true
 }];
 
 // ErrorFileGrid view
@@ -478,11 +463,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : new ui.component._ErrorFileGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesError'
-                })
-            }),
+            store : ui.component._ErrorFileGrid.store,
             tbar : [
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({

@@ -68,9 +68,9 @@ function jsLoadi18nTemplate()
     $return='';
 
     //i18n for ExtJs library
-    if( @file_get_contents('http://extjs.cachefly.net/ext-3.1.1/src/locale/ext-lang-'.$_SESSION['lang'].'.js') )
+    if( @file_get_contents('http://extjs.cachefly.net/ext-3.2.0/src/locale/ext-lang-'.$_SESSION['lang'].'.js') )
     {
-        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'http://extjs.cachefly.net/ext-3.1.1/src/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
+        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'http://extjs.cachefly.net/ext-3.2.0/src/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
     }
 
     //i18n for the UI

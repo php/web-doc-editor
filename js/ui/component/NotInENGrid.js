@@ -4,32 +4,25 @@ Ext.namespace('ui','ui.component','ui.component._NotInENGrid');
 // NotInENGrid internals
 
 // NotInENGrid store
-ui.component._NotInENGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._NotInENGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'needcommit',
-                mapping : 'needcommit'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNotInEn'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'needcommit'}
+        ]
+    }),
     sortInfo : {
         field     : 'path',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners : {
@@ -199,11 +192,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : new ui.component._NotInENGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesNotInEn'
-                })
-            })
+            store : ui.component._NotInENGrid.store
         });
         ui.component.NotInENGrid.superclass.initComponent.call(this);
 

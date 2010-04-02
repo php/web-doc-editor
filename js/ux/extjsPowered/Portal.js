@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.1.0
- * Copyright(c) 2006-2009 Ext JS, LLC
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
@@ -9,7 +9,7 @@ Ext.ux.Portal = Ext.extend(Ext.Panel, {
     autoScroll : true,
     cls : 'x-portal',
     defaultType : 'portalcolumn',
-    
+
     initComponent : function(){
         Ext.ux.Portal.superclass.initComponent.call(this);
         this.addEvents({
@@ -25,7 +25,7 @@ Ext.ux.Portal = Ext.extend(Ext.Panel, {
         Ext.ux.Portal.superclass.initEvents.call(this);
         this.dd = new Ext.ux.Portal.DropZone(this, this.dropConfig);
     },
-    
+
     beforeDestroy : function() {
         if(this.dd){
             this.dd.unreg();
@@ -160,7 +160,7 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
 
             dd.proxy.getProxy().remove();
             dd.panel.el.dom.parentNode.removeChild(dd.panel.el.dom);
-            
+
             if(pos !== false){
                 if(c == dd.panel.ownerCt && (c.items.items.indexOf(dd.panel) <= pos)){
                     pos++;
@@ -169,7 +169,7 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
             }else{
                 c.add(dd.panel);
             }
-            
+
             c.doLayout();
 
             this.portal.fireEvent('drop', dropEvent);

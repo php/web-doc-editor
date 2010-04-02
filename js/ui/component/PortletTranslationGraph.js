@@ -33,7 +33,7 @@ ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 {
 
     height: 400,
-    url : 'http://extjs.cachefly.net/ext-3.1.1/resources/charts.swf',
+    url : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
     dataField: 'total',
     categoryField: 'libel',
     store: ui.component._PortletTranslationGraph.store,

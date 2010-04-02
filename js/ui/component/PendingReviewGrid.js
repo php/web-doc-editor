@@ -4,38 +4,27 @@ Ext.namespace('ui','ui.component','ui.component._PendingReviewGrid');
 // PendingReviewGrid internals
 
 // PendingReviewGrid store
-ui.component._PendingReviewGrid.store = Ext.extend(Ext.data.GroupingStore,
+ui.component._PendingReviewGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'reviewed',
-                mapping : 'reviewed'
-            }, {
-                name    : 'maintainer',
-                mapping : 'maintainer'
-            }, {
-                name    : 'needcommit',
-                mapping : 'needcommit'
-            }
-        ])
-    ),
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNeedReviewed'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'reviewed'},
+            {name : 'maintainer'},
+            {name : 'needcommit'}
+        ]
+    }),
     sortInfo : {
         field     : 'name',
-        direction : "ASC"
+        direction : 'ASC'
     },
     groupField : 'path',
     listeners : {
@@ -426,11 +415,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : new ui.component._PendingReviewGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesNeedReviewed'
-                })
-            }),
+            store : ui.component._PendingReviewGrid.store,
             tbar : [
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({

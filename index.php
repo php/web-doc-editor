@@ -39,12 +39,12 @@ if (isset($_REQUEST['perm'])) {
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
-    echo cssLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/resources/css/ext-all.css');
+    echo cssLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login-all.css');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-    echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/adapter/ext/ext-base.js');
+    echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-    echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/ext-all.js');
+    echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
     echo jsLoadTemplate('js/login-all.js');
     echo jsCallTemplate($directAccess);
@@ -53,15 +53,15 @@ if (!isset($_SESSION['userID'])) {
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/resources/css/ext-all.css', 'extTheme');
+echo cssLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/resources/css/ext-all.css', 'extTheme');
 echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/main-all.css');
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/adapter/ext/ext-base.js');
+echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.1.1/ext-all.js');
+echo jsLoadTemplate('http://extjs.cachefly.net/ext-3.2.0/ext-all.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');

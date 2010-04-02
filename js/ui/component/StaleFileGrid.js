@@ -2,55 +2,39 @@ Ext.namespace('ui','ui.component','ui.component._StaleFileGrid');
 
 //------------------------------------------------------------------------------
 // StaleFileGrid data store
-ui.component._StaleFileGrid.store = Ext.extend(Ext.data.GroupingStore,
+
+ui.component._StaleFileGrid.store = new Ext.data.GroupingStore(
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'revision',
-                mapping : 'revision'
-            }, {
-                name    : 'original_revision',
-                mapping : 'original_revision'
-            }, {
-                name    : 'en_revision',
-                mapping : 'en_revision'
-            }, {
-                name    : 'maintainer',
-                mapping : 'maintainer'
-            }, {
-                name    : 'needCommitEN',
-                mapping : 'needCommitEN'
-            }, {
-                name    : 'needCommitLang',
-                mapping : 'needCommitLang'
+            proxy : new Ext.data.HttpProxy({
+                url : './do/getFilesNeedUpdate'
+            }),
+            reader : new Ext.data.JsonReader({
+                root          : 'Items',
+                totalProperty : 'nbItems',
+                idProperty    : 'id',
+                fields        : [
+                    {name : 'id'},
+                    {name : 'path'},
+                    {name : 'name'},
+                    {name : 'revision'},
+                    {name : 'original_revision'},
+                    {name : 'en_revision'},
+                    {name : 'maintainer'},
+                    {name : 'needCommitEN'},
+                    {name : 'needCommitLang'}
+                ]
+            }),
+            sortInfo : {
+                field     : 'name',
+                direction : 'ASC'
+            },
+            groupField : 'path',
+            listeners  : {
+                datachanged : function(ds)
+                {
+                    Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
+                }
             }
-        ])
-    ),
-    sortInfo : {
-        field     : 'name',
-        direction : "ASC"
-    },
-    groupField : 'path',
-    listeners  : {
-        datachanged : function(ds)
-        {
-            Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
-        }
-    }
 });
 
 // StaleFileGrid view
@@ -435,11 +419,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         Ext.apply(this,
         {
             columns : ui.component._StaleFileGrid.columns,
-            store   : new ui.component._StaleFileGrid.store({
-                proxy : new Ext.data.HttpProxy({
-                    url : './do/getFilesNeedUpdate'
-                })
-            }),
+            store   : ui.component._StaleFileGrid.store,
             tbar:[
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({

@@ -1,42 +1,35 @@
 /*!
- * Ext JS Library 3.0.0
- * Copyright(c) 2006-2009 Ext JS, LLC
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
-/*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
- * licensing@extjs.com
- *
- * http://extjs.com/license
- */
-
-/* StatusBar */
-
+/* StatusBar - structure */
 .x-statusbar .x-status-text {
+    cursor: default;
+/*
     height: 21px;
     line-height: 21px;
     padding: 0 4px;
-    cursor: default;
+*/
 }
 .x-statusbar .x-status-busy {
     padding-left: 25px !important;
-    background: transparent url(../images/loading.gif) no-repeat 3px 3px;
+    background: transparent no-repeat 3px 2px;
 }
+
+.x-toolbar div.xtb-text
+
 .x-statusbar .x-status-text-panel {
-    border-top: 1px solid #99BBE8;
-    border-right: 1px solid #fff;
-    border-bottom: 1px solid #fff;
-    border-left: 1px solid #99BBE8;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
     padding: 2px 8px 2px 5px;
 }
 
 /* StatusBar word processor example styles */
 
-#word-status .x-status-text {
-    color: #777;
-}
 #word-status .x-status-text-panel .spacer {
     width: 60px;
     font-size:0;
@@ -44,33 +37,33 @@
 }
 #word-status .x-status-busy {
     padding-left: 25px !important;
-    background: transparent url(../images/saving.gif) no-repeat 3px 3px;
+    background: transparent no-repeat 3px 2px;
 }
 #word-status .x-status-saved {
     padding-left: 25px !important;
-    background: transparent url(../images/saved.png) no-repeat 3px 3px;
+    background: transparent no-repeat 3px 2px;
 }
 
 /* StatusBar form validation example styles */
 
 .x-statusbar .x-status-error {
-    color: #C33;
     cursor: pointer;
     padding-left: 25px !important;
-    background: transparent url(../images/exclamation.gif) no-repeat 3px 3px;
+    background: transparent no-repeat 3px 2px;
 }
 .x-statusbar .x-status-valid {
     padding-left: 25px !important;
-    background: transparent url(../images/accept.png) no-repeat 3px 3px;
+    background: transparent no-repeat 3px 2px;
 }
 .x-status-error-list {
     font: 11px tahoma,arial,verdana,sans-serif;
     position: absolute;
     z-index: 9999;
-    border: 1px solid #C33;
-    background: #ffa;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
     padding: 5px 10px;
-    color: #999;
 }
 .x-status-error-list li {
     cursor: pointer;
@@ -78,9 +71,51 @@
     margin-left: 10px;
 }
 .x-status-error-list li a {
-    color: #15428B;
     text-decoration: none;
 }
 .x-status-error-list li a:hover {
     text-decoration: underline;
+}
+
+
+/* *********************************************************** */
+/* *********************************************************** */
+/* *********************************************************** */
+
+
+/* StatusBar - visual */
+
+.x-statusbar .x-status-busy {
+    background-image: url(../images/loading.gif);
+}
+.x-statusbar .x-status-text-panel {
+    border-color: #99bbe8 #fff #fff #99bbe8;
+}
+
+/* StatusBar word processor example styles */
+
+#word-status .x-status-text {
+    color: #777;
+}
+#word-status .x-status-busy {
+    background-image: url(../images/saving.gif);
+}
+#word-status .x-status-saved {
+    background-image: url(../images/saved.png);
+}
+
+/* StatusBar form validation example styles */
+
+.x-statusbar .x-status-error {
+    color: #C33;
+    background-image: url(../images/exclamation.gif);
+}
+.x-statusbar .x-status-valid {
+    background-image: url(../images/accept.png);
+}
+.x-status-error-list {
+    border-color: #C33;
+}
+.x-status-error-list li a {
+    color: #15428B;
 }
