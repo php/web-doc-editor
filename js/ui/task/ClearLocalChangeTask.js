@@ -48,10 +48,8 @@ ui.task.ClearLocalChangeTask = function(config)
                         // We delete this record from the pending commit store
                         pending_commit_grid.store.remove(this.storeRecord);
 
-                        // We fire event add to update the file count
-                        pending_commit_grid.store.fireEvent(
-                            'add', pending_commit_grid.store
-                        );
+                        // We fire event datachanged to update the file count
+                        pending_commit_grid.store.fireEvent('datachanged', pending_commit_grid.store);
 
                         // Action for EN file
                         if( o.lang === 'en' && this.ftype === 'update' ) {
