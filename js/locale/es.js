@@ -10,7 +10,7 @@ var i18n = new Array();
   i18n["Error"] = "Error";
   i18n["File system error. Check read/write permission under data folder."] = "Error en el sistema de ficheros. Compruebe los permisos lectura/escritura en el directorio data.";
   i18n["Main Menu"] = "Menú principal";
-  i18n["Files Need Translate"] = "Nuevos ficheros a traducir";
+  i18n["Files Need Translate"] = "Ficheros a traducir";
   i18n["Files Need Update"] = "Ficheros a actualizar";
   i18n["Error in current translation"] = "Ficheros con errores";
   i18n["Files Need Reviewed"] = "Ficheros a revisar";
@@ -62,15 +62,15 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletTranslationGraph.js
   i18n["Graphics"] = "Gráficos";
-  i18n["Refresh this graph"] = "Refrescar gráfico";
+  i18n["Refresh this graph"] = "Actualizar gráfica";
 
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Infos"] = "Informaciones";
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} update app's data"] = "{0} datos actualizados de la aplicación";
-  i18n["{0} is log out"] = "{0} está desconectado";
-  i18n["{0} is log in {1} language !"] = "{0} Está conectado en el idioma {1} !";
+  i18n["{0} is log out"] = "{0} se ha desconectado";
+  i18n["{0} is log in {1} language !"] = "¡{0} Está conectado en el idioma {1}!";
   i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
   i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a enviado {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
 
@@ -95,7 +95,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
-  i18n["Graphics for all language"] = "Gráficos para todos los idiomas";
+  i18n["Graphics for all language"] = "Gráfica de todos los idiomas";
   i18n["Lang:"] = "Idioma :";
   i18n["Total:"] = "Total :";
   i18n["files"] = "ficheros";
@@ -107,7 +107,7 @@ var i18n = new Array();
   i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Haga clic en cualquier línea para ver el contenido del acrónimo.<br>Doble clci para insertar en la posición del cursor.";
   i18n["Items"] = "Ítems";
   i18n["From"] = "De";
-  i18n["<b>Load/Refresh</b>"] = "<b>Cargar/Refrescar</b>";
+  i18n["<b>Load/Refresh</b>"] = "<b>Cargar/Actualizar</b>";
   i18n["Entities & acronyms"] = "Entidades & acrónimos";
   i18n["Acronyms"] = "Acrónimos";
 
@@ -156,8 +156,8 @@ var i18n = new Array();
   i18n["Email"] = "E-Mail";
   i18n["Nick"] = "Alias";
   i18n["VCS"] = "VCS";
-  i18n["UptoDate"] = "Actualizado";
-  i18n["Stale"] = "Require actualización";
+  i18n["UptoDate"] = "Al día";
+  i18n["Stale"] = "Desactualizado";
   i18n["Sum"] = "Total";
   i18n["Send an email to the {0}"] = "Enviar E-Mail a la lista de correo {0}";
   i18n["Send an email to {0}"] = "Enviar un E-Mail a {0}";
@@ -184,7 +184,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletBugs.js
-  i18n["You must manually load this data.<br>Use the refresh button !"] = "Debe descargar estos datos manualmente.<br>Utilice el botón \"Refrescar\" !";
+  i18n["You must manually load this data.<br>Use the refresh button !"] = "Debe descargar estos datos manualmente.<br>Utilice el botón \"Actualizar\" !";
   i18n["Open in a new Tab"] = "Abrir en una nueva pestaña";
   i18n["Open the related file"] = "Abrir el fichero asociado";
   i18n["Summary"] = "Sumario";
@@ -233,7 +233,7 @@ var i18n = new Array();
   i18n["Main"] = "Principal";
   i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";
   i18n["Module \"Pending Patch\""] = "Módulo \"Parches pendientes\"";
-  i18n["Module \"Files Need Translate\""] = "Módulo \"Nuevos ficheros a traducir\"";
+  i18n["Module \"Files Need Translate\""] = "Módulo \"Ficheros a traducir\"";
   i18n["Module \"Files Need Update\""] = "Module \"Ficheros a actualizar\"";
   i18n["Module \"Files with Error\""] = "Module \"Ficheros con errores\"";
   i18n["Module \"Files need Reviewed\""] = "Module \"Ficheros a revisar\"";
@@ -351,12 +351,12 @@ var i18n = new Array();
 // In file: ../../js/ui/component/VCSLogGrid.js
   i18n["Rev."] = "Rev.";
   i18n["Content"] = "Contenido";
-  i18n["By"] = "Por";
+  i18n["By"] = "De";
   i18n["(You can change this behavior by setting an option in the configuration window)"] = "(Puede cambiar este comportamiento definiendo una opción en la ventana de configuración)";
   i18n["<b>View</b> the diff"] = "<b>Ver</b> las diferencias";
   i18n["Finding the diff. Please, wait..."] = "Calculando las diferencias. Por favor, espere...";
   i18n["Diff between {0} & {1}"] = "Diferencias entre {0} y {1}";
-  i18n["<b>Load/Refresh</b> revisions"] = "<b>Cargar/Refrescar</b> las revisiones";
+  i18n["<b>Load/Refresh</b> revisions"] = "<b>Cargar/Actualizar</b> las revisiones";
 
 
 // In file: ../../js/ui/component/PendingReviewGrid.js
@@ -366,7 +366,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/GoogleTranslationPanel.js
-  i18n["String to translate (en => {0})"] = "Mensaje a traducir (en => {0}) ";
+  i18n["String to translate (en => {0})"] = "Texto a traducir (en => {0}) ";
   i18n["Translate !"] = "¡Traducir!";
 
 
@@ -376,14 +376,14 @@ var i18n = new Array();
   i18n["Files available for translation"] = "Ficheros a traducir";
   i18n["Total"] = "Total";
   i18n["File status type"] = "Estado del fichero";
-  i18n["Number of files"] = "Número de ficheros";
+  i18n["Number of files"] = "Núm. de ficheros";
   i18n["Percent of files"] = "% de ficheros";
-  i18n["Size of files (kB)"] = "Tamaño de ficheros (kB)";
+  i18n["Size of files (kB)"] = "Tamaño (kB)";
   i18n["Percent of size"] = "% del tamaño";
 
 
 // In file: ../../js/ui/component/PortletLocalMail.js
-  i18n["Title"] = "Título";
+  i18n["Title"] = "Asunto";
   i18n["Error when loading mails from this mailing list !"] = "¡Se ha producido un error al cargar los E-Mail de la lista de correo!";
   i18n["Mails from {0}"] = "E-Mails de {0}";
 
