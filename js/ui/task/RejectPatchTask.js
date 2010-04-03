@@ -31,8 +31,8 @@ ui.task.RejectPatchTask = function(config)
                         // Remove this patch from the PendingPatchStore
                         grid.store.remove(this.storeRecord);
 
-                        // We fire event add to update the file count
-                        grid.store.fireEvent('add', grid.store);
+                        // We fire event datachanged to update the file count
+                        grid.store.fireEvent('datachanged', grid.store);
 
                         // Remove this tab
                         Ext.getCmp('main-panel').remove('PP-' + this.fid);

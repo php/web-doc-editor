@@ -49,8 +49,8 @@ ui.task.AcceptPatchTask = function(config)
                         // Remove this patch from the PendingPatchStore
                         grid.store.remove(this.storeRecord);
 
-                        // We fire event add to update the file count
-                        grid.store.fireEvent('add', grid.store);
+                        // We fire event datachanged to update the file count
+                        grid.store.fireEvent('datachanged', grid.store);
 
                         // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
                         XHR({
