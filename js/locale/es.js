@@ -61,12 +61,12 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationGraph.js
-  i18n["Graphics"] = "Gráficos";
+  i18n["Graphics"] = "Gráfica";
   i18n["Refresh this graph"] = "Actualizar gráfica";
 
 
 // In file: ../../js/ui/component/PortletInfo.js
-  i18n["Infos"] = "Informaciones";
+  i18n["Infos"] = "Infos";
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} update app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} is log out"] = "{0} se ha desconectado";
@@ -376,8 +376,8 @@ var i18n = new Array();
   i18n["Files available for translation"] = "Ficheros a traducir";
   i18n["Total"] = "Total";
   i18n["File status type"] = "Estado del fichero";
-  i18n["Number of files"] = "Núm. de ficheros";
-  i18n["Percent of files"] = "% de ficheros";
+  i18n["Number of files"] = "Núm. ficheros";
+  i18n["Percent of files"] = "% ficheros";
   i18n["Size of files (kB)"] = "Tamaño (kB)";
   i18n["Percent of size"] = "% del tamaño";
 
