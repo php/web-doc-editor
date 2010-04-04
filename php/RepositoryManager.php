@@ -324,7 +324,7 @@ class RepositoryManager
         );
 
         $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'
-              .'/usr/bin/php configure.php '
+              .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' configure.php '
               .$appConf[$project]['vcs.configure.script.options'];
 
         $cmd = str_replace("{LangCode}", $lang, $cmd).';';
@@ -660,6 +660,7 @@ class RepositoryManager
         $commitLog = Array();
 
         // Task for folders
+        // $foldersInfos[] = array('lang' => $a->lang, 'path' => $a->path, 'name'=> '-');
         $foldersInfos = $rf->getPendingFoldersCommit();
 
         if( $foldersInfos ) {
