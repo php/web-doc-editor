@@ -262,7 +262,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanel',
-                                        value : false
+                                        value : false,
+                                        notify: false
                                     });
                                 }
                             },
@@ -270,7 +271,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanel',
-                                        value : true
+                                        value : true,
+                                        notify: false
                                     });
                                 }
                             },
@@ -278,7 +280,8 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                 if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanelWidth',
-                                        value : newWidth
+                                        value : newWidth,
+                                        notify: false
                                     });
                                 }
                             }

@@ -355,7 +355,8 @@ var PhDOE = function()
                             if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
                                     item  : 'mainAppMainMenuWidth',
-                                    value : newWidth
+                                    value : newWidth,
+                                    notify: false
                                 });
                             }
                         }
@@ -518,7 +519,8 @@ var PhDOE = function()
 
                                     new ui.task.UpdateConfTask({
                                         item  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
-                                        value : Ext.util.JSON.encode(portal)
+                                        value : Ext.util.JSON.encode(portal),
+                                        notify: false
                                     });
                                     
                                 }

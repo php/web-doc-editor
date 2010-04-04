@@ -232,7 +232,8 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
-                    value : false
+                    value : false,
+                    notify: false
                 });
             }
         },
@@ -240,7 +241,8 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
-                    value : true
+                    value : true,
+                    notify: false
                 });
             }
         },

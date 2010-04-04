@@ -282,7 +282,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiffPanel',
-                                        value : false
+                                        value : false,
+                                        notify: false
                                     });
                                 }
                             },
@@ -290,7 +291,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiffPanel',
-                                        value : true
+                                        value : true,
+                                        notify: false
                                     });
                                 }
                             },
@@ -299,7 +301,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDiffPanelHeight',
-                                        value : newHeight
+                                        value : newHeight,
+                                        notify: false
                                     });
                                 }
                             }
@@ -321,7 +324,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanel',
-                                        value : false
+                                        value : false,
+                                        notify: false
                                     });
                                 }
                             },
@@ -329,7 +333,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanel',
-                                        value : true
+                                        value : true,
+                                        notify: false
                                     });
                                 }
                             },
@@ -337,7 +342,8 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanelWidth',
-                                        value : newWidth
+                                        value : newWidth,
+                                        notify: false
                                     });
                                 }
                             }

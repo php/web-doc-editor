@@ -251,7 +251,8 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
-                    value : false
+                    value : false,
+                    notify: false
                 });
             }
         },
@@ -259,7 +260,8 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
-                    value : true
+                    value : true,
+                    notify: false
                 });
             }
         },

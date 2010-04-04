@@ -183,7 +183,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplayContentPanel',
-                                        value : false
+                                        value : false,
+                                        notify: false
                                     });
                                 }
                             },
@@ -192,7 +193,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplayContentPanel',
-                                        value : true
+                                        value : true,
+                                        notify: false
                                     });
                                 }
                             },
@@ -201,7 +203,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplayContentPanelHeight',
-                                        value : newHeight
+                                        value : newHeight,
+                                        notify: false
                                     });
                                 }
                             },
@@ -246,7 +249,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplaylogPanel',
-                                        value : false
+                                        value : false,
+                                        notify: false
                                     });
                                 }
                             },
@@ -254,7 +258,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplaylogPanel',
-                                        value : true
+                                        value : true,
+                                        notify: false
                                     });
                                 }
                             },
@@ -262,7 +267,8 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'patchDisplaylogPanelWidth',
-                                        value : newWidth
+                                        value : newWidth,
+                                        notify: false
                                     });
                                 }
                             }

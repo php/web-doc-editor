@@ -326,7 +326,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                             if ( this.ownerCt.tabLoaded ) {
                                 new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanel',
-                                    value : false
+                                    value : false,
+                                    notify: false
                                 });
                             }
                         },
@@ -334,7 +335,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                             if ( this.ownerCt.tabLoaded ) {
                                 new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanel',
-                                    value : true
+                                    value : true,
+                                    notify: false
                                 });
                             }
                         },
@@ -342,7 +344,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                             if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
                                     item  : 'reviewedDisplaylogPanelWidth',
-                                    value : newWidth
+                                    value : newWidth,
+                                    notify: false
                                 });
                             }
                         }

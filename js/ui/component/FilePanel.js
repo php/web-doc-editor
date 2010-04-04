@@ -439,8 +439,9 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
                     new ui.task.UpdateConfTask({
-                        item: this.spellCheckConf,
-                        value: btn.pressed
+                        item  : this.spellCheckConf,
+                        value : btn.pressed,
+                        notify: false
                     });
                 }
             },{
@@ -541,8 +542,9 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 check : function(c)
                 {
                     new ui.task.UpdateConfTask({
-                        item: this.syncScrollConf,
-                        value: c.getValue()
+                        item  : this.syncScrollConf,
+                        value : c.getValue(),
+                        notify: false
                     });
                 },
                 render : function(c)

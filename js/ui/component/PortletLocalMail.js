@@ -184,7 +184,8 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
-                    value : false
+                    value : false,
+                    notify: false
                 });
             }
         },
@@ -192,7 +193,8 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
-                    value : true
+                    value : true,
+                    notify: false
                 });
             }
         },

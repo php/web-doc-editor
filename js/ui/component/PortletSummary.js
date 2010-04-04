@@ -152,7 +152,8 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
-                    value : false
+                    value : false,
+                    notify: false
                 });
             }
         },
@@ -160,7 +161,8 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
-                    value : true
+                    value : true,
+                    notify: false
                 });
             }
         }
