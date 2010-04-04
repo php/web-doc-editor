@@ -1,6 +1,6 @@
 Ext.namespace('ui','ui.task');
 
-// config - { item, value }
+// config - { item, value, [notify=true] }
 ui.task.UpdateConfTask = function(config)
 {
     Ext.apply(this, config);
@@ -31,10 +31,11 @@ ui.task.UpdateConfTask = function(config)
             if( this.item == "newFileNbDisplay" ) {
                 ui.component.PendingTranslateGrid.getInstance().store.reload();
             }
-
+            
             // Notify
-            PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));
-
+            if( this.notify !== false ) {
+                PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));
+            }
         }
     });
 };
