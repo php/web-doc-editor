@@ -35,7 +35,7 @@ class RepositoryManager
          9 => Array('code' => 'en',    'iconCls' => 'flags flag-en',    'name' => 'English'),
         10 => Array('code' => 'fi',    'iconCls' => 'flags flag-fi',    'name' => 'Finnish'),
         11 => Array('code' => 'fr',    'iconCls' => 'flags flag-fr',    'name' => 'French'),
-        12 => Array('code' => 'de',    'iconCls' => 'flags flag-de',    'name' => 'Germany'),
+        12 => Array('code' => 'de',    'iconCls' => 'flags flag-de',    'name' => 'German'),
         13 => Array('code' => 'el',    'iconCls' => 'flags flag-el',    'name' => 'Greek'),
         14 => Array('code' => 'he',    'iconCls' => 'flags flag-he',    'name' => 'Hebrew'),
         15 => Array('code' => 'hu',    'iconCls' => 'flags flag-hu',    'name' => 'Hungarian'),
