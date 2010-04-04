@@ -518,3 +518,4 @@ var i18n = new Array();
 
 // In file: ../../ux/extjsPowered/TabCloseMenu.js
   i18n["Close Other Tabs"] = "Fermer tous les autres onglets";
+  i18n["Close All Tabs"] = "Fermer tous les onglets";
