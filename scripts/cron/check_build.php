@@ -7,7 +7,7 @@
 * 00 01 * * 4 /usr/bin/php /path/to/your/vcs/dir/doc-editor/scripts/cron/check_build.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/conf.inc.php';
+require_once dirname(__FILE__) . '/../../php/Conf.php';
 require_once dirname(__FILE__) . '/../../php/AccountManager.php';
 require_once dirname(__FILE__) . '/../../php/LogManager.php';
 require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
