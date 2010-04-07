@@ -657,6 +657,10 @@ class RepositoryManager
      */
     public function getOnlyFoldersForFiles($folders, $files) {
 
+        if( !$folders ) {
+            return false;
+        }
+        
         $return = array();
 
         function parsePath($path, &$pathInfo) {
