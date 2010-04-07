@@ -16,6 +16,86 @@ ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
     dataUrl : './do/getAllFiles'
 });
 
+// RepositoryTree : window to add a new folder
+ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
+{
+    title      : _('Add a new folder'),
+    iconCls    : 'iconFolderNew',
+    id         : 'win-add-new-folder',
+    layout     : 'form',
+    width      : 350,
+    height     : 200,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelWidth : 150,
+    buttons : [{
+        id   : 'win-add-new-folder-btn',
+        text : 'Add',
+        disabled: true,
+        handler : function()
+        {
+            var cmp = Ext.getCmp('win-add-new-folder');
+            var parentFolder = cmp.node.id;
+            var newFolderName = cmp.items.items[1].getValue();
+
+            XHR({
+                params  : {
+                    task          : 'addNewFolder',
+                    parentFolder  : parentFolder,
+                    newFolderName : newFolderName
+                },
+                success : function()
+                {
+                    Ext.getCmp('win-add-new-folder').close();
+
+                    cmp.node.reload();
+
+                    // Notify
+                    PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !'), newFolderName, parentFolder));
+
+
+                },
+                failure : function()
+                {
+                    Ext.getCmp('win-add-new-folder').close();
+                    console.log('error');
+                }
+            });
+        }
+    }],
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                xtype      : 'displayfield',
+                fieldLabel : 'Parent Folder',
+                value      : this.node.id
+            }, {
+                xtype      : 'textfield',
+                fieldLabel : 'Name for the new folder',
+                name       : 'newFolderName',
+                vtype      : 'alphanum',
+                listeners: {
+                    valid: function()
+                    {
+                        Ext.getCmp('win-add-new-folder-btn').enable();
+                    },
+                    invalid: function()
+                    {
+                        Ext.getCmp('win-add-new-folder-btn').disable();
+                    }
+                }
+            },{
+                xtype : 'box',
+                html  : _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
+            }]
+        });
+        ui.component._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
+    }
+});
+
 Ext.namespace('ui.component._RepositoryTree.menu');
 // RepositoryTree folder context menu
 // config - { node }
@@ -32,6 +112,19 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
         Ext.apply(this,
         {
             items : [{
+                text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
+                iconCls : 'iconFolderClose',
+                scope   : this,
+                handler : function()
+                {
+                    if (this.node.isExpanded()) {
+                        this.node.collapse();
+                    }
+                    else {
+                        this.node.expand();
+                    }
+                }
+            },'-', {
                 text    : _('Update this folder'),
                 iconCls : 'iconFilesNeedUpdate',
                 scope   : this,
@@ -44,17 +137,18 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
                     new ui.task.UpdateSingleFolderTask(this.node);
                 }
             }, {
-                text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
-                iconCls : 'iconFolderClose',
+                text    : _('Add a new folder'),
+                iconCls : 'iconFolderNew',
+                hidden  : (this.node.id === '/'), // Don't allow to add a new folder into root system
                 scope   : this,
                 handler : function()
                 {
-                    if (this.node.isExpanded()) {
-                        this.node.collapse();
-                    }
-                    else {
-                        this.node.expand();
-                    }
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    // We display the Add New Folder window
+                    var win = new ui.component._RepositoryTree.winAddNewFolder({node : this.node});
+                    win.show(this.node.ui.getEl());
                 }
             }]
         });

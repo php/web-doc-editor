@@ -530,7 +530,7 @@ class RepositoryFetcher
 
             $obj = (object) array('lang' => $a->lang, 'path' => $a->path, 'name'=> '-');
 
-            $paths[] = $obj;
+            $paths[$a->lang.$a->path] = $obj;
         }
 
         return $paths;

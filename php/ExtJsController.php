@@ -118,6 +118,40 @@ class ExtJsController
     }
 
     /**
+     * Add a new folder
+     * 
+     */
+    public function addNewFolder()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $parentFolder  = $this->getRequestVariable('parentFolder');
+        $newFolderName = $this->getRequestVariable('newFolderName');
+
+        // Don't allow to add a new folder into root system
+        if( $parentFolder == "/" ) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $t = explode("/", $parentFolder);
+        $fileLang = $t[1];
+        array_shift($t); // skip the first witch is empty
+        array_shift($t); // skip the second witch is the lang
+
+        $filePath = "/".implode("/", $t);
+
+        $file = new File($fileLang, $filePath, '');
+        
+        if( $file->createFolder($filePath."/".$newFolderName) ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure();
+        }
+        
+    }
+
+
+    /**
      * Check if a lock file exist or not
      */
     public function checkLockFile()

@@ -417,8 +417,9 @@ class RepositoryManager
         $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $project  = $am->project;
-    
-        for ($i = 0; $i < count($files); $i++) {
+
+        while( list($path, $data) = each($files))
+        {
             $query = sprintf('DELETE FROM `pendingCommit`
                 WHERE
                     `project` = "%s" AND
@@ -426,7 +427,7 @@ class RepositoryManager
                     `path` = "%s" AND
                     `name` = "%s"',
                 $project,
-                $files[$i]->lang, $files[$i]->path, $files[$i]->name
+                $data->lang, $data->path, $data->name
             );
             $db->query($query);
         }
@@ -648,6 +649,51 @@ class RepositoryManager
     }
 
     /**
+     * Get only Folders we need to commit according to chosen files
+     *
+     * @param $folders An array of folders that are in pendingCommit queue
+     * @param $l$filesog An array of files chosen to be commited
+     * @return An associated array similar of $folders params, but contained only folders witch need to be commited for this files
+     */
+    public function getOnlyFoldersForFiles($folders, $files) {
+
+        $return = array();
+
+        function parsePath($path, &$pathInfo) {
+
+            $pathInfo[$path] = 1;
+            $t = explode("/",$path);
+            array_pop($t);
+
+            if( count($t) != 0 ) { parsePath(implode("/", $t), $pathInfo); }
+
+        }
+
+        // We walk trow files to find folders to commit
+        for( $i=0; $i < count($files); $i++) {
+
+            $filePath = rtrim($files[$i]['lang'].$files[$i]['path'], "/");
+
+            $pathInfo = array();
+            parsePath($filePath, $pathInfo);
+
+            // We walk trow folders pending commit
+            reset($folders);
+            while( list($folderPath, $data) = each($folders) ) {
+
+                // We search for path in folder path. If we find it, we add this folder into $return var
+
+                if( isset($pathInfo[$folderPath]) ) {
+                    $return[$folderPath] = $data;
+                }
+
+            }
+
+        }
+        return $return;
+    }
+    
+    /**
      * Commit file changes to repository.
      *
      * @param $ids An array of files' id to be commited.
@@ -658,19 +704,24 @@ class RepositoryManager
     {
         $rf        = RepositoryFetcher::getInstance();
         $commitLog = Array();
+        
+        // Get informations about files we need to commit
+        $fileInfos = $rf->getModifiesById($ids);
 
         // Task for folders
-        // $foldersInfos[] = array('lang' => $a->lang, 'path' => $a->path, 'name'=> '-');
         $foldersInfos = $rf->getPendingFoldersCommit();
+
+        // We filter this folders to return only this who want to commit according of files array
+        $foldersInfos = $this->getOnlyFoldersForFiles($foldersInfos, $fileInfos);
+
 
         if( $foldersInfos ) {
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
             $commitLog = array_merge($commitLog, $c);
             $this->delPendingCommit($foldersInfos);
         }
-
+        
         // Task for files
-        $fileInfos   = $rf->getModifiesById($ids);
         // Loop over $fileInfos to find files to be create, update or delete
         $create_stack = array();
         $update_stack = array();

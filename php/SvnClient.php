@@ -436,10 +436,11 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $commitLogMessage = Array();
 
-        for( $i=0; $i < count($foldersPath); $i++ ) {
+        while( list($path, $data) = each($foldersPath))
+        {
             // We add this new folder into repository
 
-            $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn add --non-recursive '.$foldersPath[$i]->lang.$foldersPath[$i]->path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from PhpDocumentation Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$foldersPath[$i]->lang.$foldersPath[$i]->path;
+            $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn add --non-recursive '.$path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$path;
 
             $trial_threshold = 3;
             while ($trial_threshold-- > 0) {

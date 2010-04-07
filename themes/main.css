@@ -111,6 +111,7 @@
 .iconFinishRefresh     { background-image: url(./img/accept.png)                !important;}
 .iconFolderOpen        { background-image: url(./img/folder-open.gif)           !important;}
 .iconFolderClose       { background-image: url(./img/folder.gif)                !important;}
+.iconFolderNew         { background-image: url(./img/folder-favorites.png)      !important;}
 .iconGoogle            { background-image: url(./img/google.png)                !important;}
 .iconGraphic           { background-image: url(./img/chart_pie.png)             !important;}
 .iconHelp              { background-image: url(./img/help-browser.png)          !important;}
