@@ -1,10 +1,11 @@
+#!/usr/bin/env php
 <?php
 
 /***
 * This script is intended to be placed in a cronjob.
 * It must be run every day, at 00hOO for example.
 * On Unix, you can use crontab -e and place this :
-* 00 00 * * * /usr/bin/php /path/to/your/vcs/dir/doc-editor/scripts/cron/update_data.php
+* 00 00 * * * /path/to/your/vcs/dir/doc-editor/scripts/cron/update_data.php
 ****/
 
 require_once dirname(__FILE__) . '/../../php/Conf.php';
