@@ -67,6 +67,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
                     break;
+                case 'tabs_found' :
+                    title = _('Error');
+                    mess  = _('It seems that you have inserted some tabs caracters into this files. Please, replace each one by one space.<br>Tip: You can use the "Re-indent all this file" button to replace all tabs by spaces.');
+                    break;
             }
 
             Ext.MessageBox.alert(

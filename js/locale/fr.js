@@ -24,10 +24,8 @@ var i18n = new Array();
   i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
   i18n["anonymous"] = "Utilisateur anonyme";
   i18n["Project / Language: "] = "Projet / Langue : ";
-  //i18n["Last data update: "] = "Dernière mise à jour des données : ";
-  //i18n["Last entities check: "] = "Dernière vérification des entités : ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-
+  i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter toutle fichier\" pour remplacer toutes les tabulations par des espaces.";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";

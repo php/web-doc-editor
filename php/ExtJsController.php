@@ -779,6 +779,16 @@ class ExtJsController
             $fileContent = iconv("UTF-8", $charset, $fileContent);
         }
 
+        // We detect tab caracters and trow an error if we find one.
+        if( strstr("\t", $fileContent) ) {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'tabs_found',
+                    'mess' => ''
+                )
+            );
+        }
+
         // Get revision
         $info = $file->getInfo($fileContent);
 
