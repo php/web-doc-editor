@@ -454,7 +454,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     },
                     onTrigger2Click: function()
                     {
-                        var v = this.getValue();
+                        var v = this.getValue(), regexp;
 
                         if (v === '' || v.length < 3) {
                             this.markInvalid(
@@ -465,7 +465,23 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         this.clearInvalid();
                         this.triggers[0].show();
                         this.setSize(180,10);
-                        ui.component._StaleFileGrid.instance.store.filter('maintainer', v);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
+                        ui.component._StaleFileGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path)        ||
+                                regexp.test(record.data.name)        ||
+                                regexp.test(record.data.revision)    ||
+                                regexp.test(record.data.en_revision) ||
+                                regexp.test(record.data.maintainer)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
                     }
                 })
             ]
