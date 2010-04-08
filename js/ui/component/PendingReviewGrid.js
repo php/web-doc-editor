@@ -447,7 +447,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     },
                     onTrigger2Click : function()
                     {
-                        var v = this.getValue();
+                        var v = this.getValue(), regexp;
 
                         if( v === '' || v.length < 3) {
                             this.markInvalid(
@@ -458,7 +458,22 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         this.clearInvalid();
                         this.triggers[0].show();
                         this.setSize(180,10);
-                        ui.component._PendingReviewGrid.instance.store.filter('maintainer', v);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path', 'name', 'reviewed', 'maintainer'
+                        ui.component._PendingReviewGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path)       ||
+                                regexp.test(record.data.name)       ||
+                                regexp.test(record.data.reviewed)   ||
+                                regexp.test(record.data.maintainer)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
                     }
                 })
             ]
