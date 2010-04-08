@@ -126,7 +126,7 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                     },
                     onTrigger2Click: function()
                     {
-                        var v = this.getValue();
+                        var v = this.getValue(), regexp;
 
                         if (v === '' || v.length < 3) {
                             this.markInvalid(
@@ -137,7 +137,21 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                         this.clearInvalid();
                         this.triggers[0].show();
                         this.setSize(180,10);
-                        this.ownerCt.ownerCt.store.filter('entities', v, true);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'from', 'items', 'value'
+                        this.ownerCt.ownerCt.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.from)  ||
+                                regexp.test(record.data.items) ||
+                                regexp.test(record.data.value)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
                     }
                 })
            ]
