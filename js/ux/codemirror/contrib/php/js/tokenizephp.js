@@ -828,12 +828,11 @@ var tokenizePHP = (function() {
     // backslash) is encountered, or the end of the line is reached.
     function nextUntilUnescaped(source, end) {
       var escaped = false;
-      var next;
       while(!source.endOfLine()){
         var next = source.next();
         if (next == end && !escaped)
           return false;
-        escaped = next == "\\";
+        escaped = next == "\\" && !escaped;
       }
       return escaped;
     }
@@ -882,7 +881,7 @@ var tokenizePHP = (function() {
           newInside = null;  // we're outside of the string now
           break;
         }
-        escaped = (next == "\\");
+        escaped = (next == "\\" && !escaped);
       }
       setInside(newInside);
       return {
