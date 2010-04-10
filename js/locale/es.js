@@ -126,7 +126,7 @@ var i18n = new Array();
 
   i18n["Add a new folder"] = "Añadir nueva carpeta";
   i18n["Folder created"] = "Carpeta creada";
-  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info: Este nuevo fichero no será cometido hasta que se comita un fichero en su interior. Si no comite ningún fichero, la carpeta será automáticamente eliminada en 8 dias.";
+  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info: Esta nueva carpeta no será enviada al repositorio hasta que se haga un commit de almenos un fichero en su interior. Si se guarda ningún fichero, la carpeta será automáticamente eliminada en 8 días.";
   i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "La carpeta <br><br><b>{0}</b><br><br> fue creada satisfactoriamente en {1} !";
 
 
