@@ -24,10 +24,8 @@ var i18n = new Array();
   i18n["Connected as <em>{0}</em>"] = "Conectado como <em>{0}</em>";
   i18n["anonymous"] = "Usar anónimo";
   i18n["Project / Language: "] = "Proyecto / Idioma : ";
-  //i18n["Last data update: "] = "Última actualización de datos: ";
-  //i18n["Last entities check: "] = "Última vertificación de entidades: ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-
+  i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Parece ser que ha introducido algunos caracteres de tabulación en este fichero. Por favor reemplacelos por espacios.<br>Pista: puede usar el botón \"re-formatear todo el fichero\" para reemplazar todas las tabulaciones por espacios.";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Doble clic en la celda para abrir la selección de ficheros";
@@ -125,6 +123,12 @@ var i18n = new Array();
   i18n["Your search must contain at least 3 characters"] = "Su búsqueda debe contener almenos 3 caracteres";
   i18n["Search result: {0}"] = "Resultado de la búsqueda: {0}";
   i18n["Update this folder"] = "Actualizar esta carpeta";
+
+  i18n["Add a new folder"] = "Añadir nueva carpeta";
+  i18n["Folder created"] = "Carpeta creada";
+  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info: Este nuevo fichero no será cometido hasta que se comita un fichero en su interior. Si no comite ningún fichero, la carpeta será automáticamente eliminada en 8 dias.";
+  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "La carpeta <br><br><b>{0}</b><br><br> fue creada satisfactoriamente en {1} !";
+
 
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
@@ -519,3 +523,4 @@ var i18n = new Array();
 
 // In file: ../../ux/extjsPowered/TabCloseMenu.js
   i18n["Close Other Tabs"] = "Cerrar las otras pestañas";
+  i18n["Close All Tabs"] = "Cerrar todas las pestañas";
