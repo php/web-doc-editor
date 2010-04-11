@@ -486,7 +486,7 @@ var PhDOE = function()
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
+                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin.ucFirst()) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
                                                 '<br/><br/>' +
                                                 _('Project / Language: ') + '<em id="Info-Project">' + this.project + '</em> / <em id="Info-Language">-</em>'+
                                             '</h3>' +
