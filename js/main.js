@@ -71,6 +71,14 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('It seems that you have inserted some tabs caracters into this files. Please, replace each one by one space.<br>Tip: You can use the "Re-indent all this file" button to replace all tabs by spaces.');
                     break;
+                case 'folder_already_exist' :
+                    title = _('Error');
+                    mess  = _('This folder already exist in the current folder.');
+                    break;
+                case 'file_already_exist' :
+                    title = _('Error');
+                    mess  = _('This file already exist in the current folder.');
+                    break;
             }
 
             Ext.MessageBox.alert(

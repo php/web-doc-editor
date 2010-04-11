@@ -139,7 +139,8 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
              Ext.getCmp(tab.id + '-btn-tabRight-ALL')     ||
              Ext.getCmp(tab.id + '-btn-tabRight-NotInEN') ||
              Ext.getCmp(tab.id + '-btn-tabRight-PATCH')   ||
-             Ext.getCmp(tab.id + '-btn-tabRight-TRANS')  ) {
+             Ext.getCmp(tab.id + '-btn-tabRight-TRANS')   ||
+             Ext.getCmp(tab.id + '-btn-tabRight-NEW')  ) {
 
             var currentTabId = tab.id,
                 tabs         = Ext.getCmp('main-panel').layout.container.items.items,
@@ -160,6 +161,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 if ( Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ).enable(); }
                 if ( Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ).enable(); }
                 if ( Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-NEW'     ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NEW'     ).enable(); }
             }
 
         }
@@ -196,7 +198,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
 
             if (PanType[0] === 'FNT') {
-                state = Ext.getCmp('FNT-TRANS-FILE-' + PanType[1]).isModified;
+                state = (Ext.getCmp('FNT-TRANS-FILE-' + PanType[1])) ? Ext.getCmp('FNT-TRANS-FILE-' + PanType[1]).isModified : Ext.getCmp('FNT-NEW-FILE-' + PanType[1]).isModified ;
             }
 
             if (stateEn || stateLang || state) {

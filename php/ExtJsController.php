@@ -123,7 +123,10 @@ class ExtJsController
      */
     public function addNewFolder()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+        $am->isLogged();
+        $project = $am->project;
+        $appConf = $am->appConf;
 
         $parentFolder  = $this->getRequestVariable('parentFolder');
         $newFolderName = $this->getRequestVariable('newFolderName');
@@ -141,6 +144,17 @@ class ExtJsController
         $filePath = "/".implode("/", $t);
 
         $file = new File($fileLang, $filePath, '');
+
+        // We test if this folder not already exist
+        if( is_dir($appConf[$project]['vcs.path'].$fileLang.$filePath."/".$newFolderName) )
+        {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'folder_already_exist',
+                    'mess' => ''
+                )
+            );
+        }
         
         if( $file->createFolder($filePath."/".$newFolderName) ) {
             return JsonResponseBuilder::success();
@@ -237,6 +251,28 @@ class ExtJsController
             )
         );
 
+    }
+
+    public function getSkeletonsNames()
+    {
+        $am = AccountManager::getInstance();
+        $am->isLogged();
+
+        $rf = RepositoryFetcher::getInstance();
+
+        $return[] = Array("name"=> "Empty file", "path"=> "-");
+
+
+        // Get skeletons info
+        $skeletons = $rf->getSkeletonsNames();
+
+        $return = array_merge($return, $skeletons);
+
+        return JsonResponseBuilder::success(
+            array(
+                'Items' => $return
+            )
+        );
     }
 
     /**
@@ -628,9 +664,22 @@ class ExtJsController
                         ? $this->getRequestVariable('ggTranslate')
                         : false;
 
+        $skeleton = $this->getRequestVariable('skeleton');
+
         // ExtJs pass false as a string ; fix it
         if( $readOriginal == "false" ) $readOriginal = false;
-        if( $ggTranslate  == "false" ) $ggTranslate = false;
+        if( $ggTranslate  == "false" ) $ggTranslate  = false;
+        if( $skeleton     == "false" ) $skeleton     = false;
+
+        // Handle if we want to load a skeleton when we create a new file
+        if( $skeleton )
+        {
+            $return['content'] = ( $skeleton == '-' ) ? '' : file_get_contents($skeleton);
+            $return['warn_tab'] = false;
+            $return['warn_encoding'] = false;
+            $return['xmlid'] = '';
+            return JsonResponseBuilder::success($return);
+        }
 
         $t = explode('/', $FilePath);
         $FileLang = array_shift($t);

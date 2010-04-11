@@ -124,10 +124,17 @@ var i18n = new Array();
   i18n["Update this folder"] = "Mettre à jour ce dossier";
 
   i18n["Add a new folder"] = "Ajouter un nouveau dossier";
+  i18n["Parent Folder"] = "Dossier parent";
+  i18n["Name for the new folder"] = "Nom du nouveau dossier";
   i18n["Folder created"] = "Dossier créé";
   i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info : Ce nouveau dossier ne sera pas commité tant qu'un nouveau fichier n'y sera pas commité. Si vous ne commitez aucun nouveau fichier dans ce dossier, il sera automatiquement supprimé sous 8 jours.";
   i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Le dossier <br><br><b>{0}</b><br><br> a été créé avec succès sous {1} !";
+  i18n["This folder already exist in the current folder."] = "Ce dossier existe déjà dans le dossier courant.";
 
+  i18n["Add a new file"] = "Ajouter un nouveau fichier";
+  i18n["This file already exist in the current folder."] = "Ce fichier existe déjà dans le dossier courant.";
+  i18n["Name for the new file"] = "Nom du nouveau fichier";
+  i18n["Chose a skeleton"] = "Choisissez un template";
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
   i18n["Modified by"] = "Modifié par";

@@ -16,6 +16,177 @@ ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
     dataUrl : './do/getAllFiles'
 });
 
+// RepositoryTree : window to add a new file
+ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
+{
+    title      : _('Add a new file'),
+    iconCls    : 'iconFileNew',
+    id         : 'win-add-new-file',
+    layout     : 'form',
+    width      : 350,
+    height     : 200,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelWidth : 150,
+    buttons : [{
+        id   : 'win-add-new-file-btn',
+        text : 'Open the editor',
+        disabled: true,
+        handler : function()
+        {
+            var cmp          = Ext.getCmp('win-add-new-file'),
+                parentFolder = cmp.node.id,
+                newFileName  = cmp.items.items[1].getValue(),
+                skeleton     = cmp.items.items[2].getValue();
+
+            if(cmp.node.findChild("id", parentFolder + "/" + newFileName)) {
+                // This file already exist.
+                PhDOE.winForbidden('file_already_exist');
+                return true;
+            }
+
+            cmp.openFile(parentFolder + "/", newFileName, skeleton);
+            cmp.close();
+            return true;
+            
+        }
+    }],
+
+    openFile: function(FilePath, FileName, skeleton)
+    {
+        var FileID      = Ext.util.md5('FNT-' + FilePath + FileName),
+            storeRecord = {
+                data: {
+                    needcommit: false,
+                    node: this.node
+                }
+
+            }, // simulate a needCommit option to fit with the classic comportement of FNT panel
+            t = FilePath.split('/'), FileLang;
+
+        t.shift();
+
+        FileLang = t[0];
+
+        t.shift();
+        t.pop();
+
+        FilePath = '/' + t.join('/') + '/';
+        if( FilePath === "//" ) {
+            FilePath = "/";
+        }
+
+        FileID   = Ext.util.md5('FNT-' + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+
+            Ext.getCmp('main-panel').add(
+            {
+                id               : 'FNT-' + FileID,
+                layout           : 'border',
+                title            : FileName,
+                originTitle      : FileName,
+                iconCls          : 'iconTabNeedTranslate',
+                closable         : true,
+                tabLoaded        : false,
+                panTRANSLoaded   : false,
+                panGGTRANSLoaded : true, // Simulate true for google translate panel
+                defaults         : { split : true },
+                tabTip           : String.format(
+                    _('New file: in {0}'), FileLang+FilePath
+                ),
+                items : [new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-NEW-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('New File: ') + FileLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'NEW',
+                        spellCheck     : PhDOE.userConf.newFileSpellCheck,
+                        spellCheckConf : 'newFileSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : FileLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : false,
+                        syncScroll     : false,
+                        skeleton       : skeleton
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                xtype      : 'displayfield',
+                fieldLabel : _('Parent Folder'),
+                value      : this.node.id
+            }, {
+                xtype      : 'textfield',
+                fieldLabel : _('Name for the new file'),
+                name       : 'newFolderName',
+                listeners: {
+                    valid: function()
+                    {
+                        Ext.getCmp('win-add-new-file-btn').enable();
+                    },
+                    invalid: function()
+                    {
+                        Ext.getCmp('win-add-new-file-btn').disable();
+                    }
+                }
+            }, {
+                xtype: 'combo',
+                triggerAction: 'all',
+                width: 160,
+                editable: false,
+                store: new Ext.data.Store({
+                    proxy : new Ext.data.HttpProxy({
+                        url : './do/getSkeletonsNames'
+                    }),
+                    reader : new Ext.data.JsonReader(
+                        {
+                            root      : 'Items',
+                            idProperty: 'name'
+                        }, Ext.data.Record.create([
+                            {
+                                name    : 'name'
+                            },
+                            {
+                                name    : 'path'
+                            }
+                        ])
+                    )
+                }),
+                listeners: {
+                    select: function(c, r, n)
+                    {
+                        // If we haven't set any name for this file, we put the name of the skeleton
+                        if( c.ownerCt.items.items[1].getValue() === "" ) {
+                            c.ownerCt.items.items[1].setValue(r.data.name);
+                        }
+
+                    }
+                },
+                valueField   : 'path',
+                displayField : 'name',
+                fieldLabel   : _('Chose a skeleton')
+            }]
+        });
+        ui.component._RepositoryTree.winAddNewFile.superclass.initComponent.call(this);
+    }
+});
+
 // RepositoryTree : window to add a new folder
 ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
 {
@@ -56,10 +227,16 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
 
 
                 },
-                failure : function()
+                failure : function(r)
                 {
-                    Ext.getCmp('win-add-new-folder').close();
-                    console.log('error');
+                    //Ext.getCmp('win-add-new-folder').close();
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    
+                    if( o.type ) {
+                        PhDOE.winForbidden(o.type);
+                    } else {
+                        PhDOE.winForbidden();
+                    }
                 }
             });
         }
@@ -70,11 +247,11 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
         {
             items: [{
                 xtype      : 'displayfield',
-                fieldLabel : 'Parent Folder',
+                fieldLabel : _('Parent Folder'),
                 value      : this.node.id
             }, {
                 xtype      : 'textfield',
-                fieldLabel : 'Name for the new folder',
+                fieldLabel : _('Name for the new folder'),
                 name       : 'newFolderName',
                 vtype      : 'alphanum',
                 listeners: {
@@ -148,6 +325,20 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
 
                     // We display the Add New Folder window
                     var win = new ui.component._RepositoryTree.winAddNewFolder({node : this.node});
+                    win.show(this.node.ui.getEl());
+                }
+            }, {
+                text    : _('Add a new file'),
+                iconCls : 'iconFileNew',
+                hidden  : (this.node.id === '/'), // Don't allow to add a new file into root system
+                scope   : this,
+                handler : function()
+                {
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    // We display the Add New Folder window
+                    var win = new ui.component._RepositoryTree.winAddNewFile({node : this.node});
                     win.show(this.node.ui.getEl());
                 }
             }]

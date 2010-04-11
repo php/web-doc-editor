@@ -143,7 +143,9 @@ class File
        $am      = AccountManager::getInstance();
        $appConf = $am->appConf;
        $project = $am->project;
-       
+
+       $path = str_replace("//", "/", $path);
+
        // We create this folder localy
        if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$path) ) {
            return false;

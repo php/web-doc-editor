@@ -29,8 +29,12 @@ ui.task.SaveTransFileTask = function(config)
         {
             var o = Ext.util.JSON.decode(r.responseText);
 
+            if( this.ftype != 'NEW' ) {
                 this.storeRecord.set('needcommit', true);
                 this.storeRecord.commit();
+            } else {
+                this.storeRecord.data.node.reload();
+            }
 
             // Add this files into storePendingCommit
             ui.component.PendingCommitGrid.getInstance().addRecord(

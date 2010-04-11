@@ -831,11 +831,12 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         new ui.task.GetFileTask({
-                            prefix : this.prefix,
-                            ftype  : this.ftype,
-                            fid    : this.fid,
-                            fpath  : herePath,
-                            fname  : hereName
+                            prefix   : this.prefix,
+                            ftype    : this.ftype,
+                            fid      : this.fid,
+                            fpath    : herePath,
+                            fname    : hereName,
+                            skeleton : this.skeleton
                         });
                     },
 

@@ -6,8 +6,9 @@ ui.task.GetFileTask = function(config)
     Ext.apply(this, config);
 
     var id_prefix    = this.prefix + '-' + this.ftype,
-        readOriginal = (this.ftype == 'NotInEN')    ? true : false,
-        ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false;
+        readOriginal = ( this.ftype === 'NotInEN')    ? true : false,
+        ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false,
+        skeleton     = ( this.ftype === 'NEW' ) ? this.skeleton : false;
 
     // Mask the panel
     Ext.get(id_prefix + '-PANEL-' + this.fid).mask(
@@ -24,7 +25,8 @@ ui.task.GetFileTask = function(config)
             FilePath    : this.fpath,
             FileName    : this.fname,
             readOriginal: readOriginal,
-            ggTranslate : ggTranslate
+            ggTranslate : ggTranslate,
+            skeleton    : skeleton
         },
         success : function(r)
         {

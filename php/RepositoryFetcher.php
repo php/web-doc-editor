@@ -77,6 +77,27 @@ class RepositoryFetcher
         return $infos;
     }
 
+    public function getSkeletonsNames()
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        $return = array();
+
+        $dir = realpath($appConf[$project]['skeletons.folder']);
+        $d = dir($dir);
+        while (false !== ($entry = $d->read())) {
+           if( is_file($dir."/".$entry) && substr($entry, 0, 1) != "." ) {
+               $return[] = Array("name" => $entry, "path" => $dir."/".$entry);
+           }
+        }
+        $d->close();
+
+        sort($return);
+        return $return;
+    }
+
     /**
      * Get all modified files with user lang or en.
      *
