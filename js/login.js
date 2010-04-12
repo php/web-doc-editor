@@ -142,7 +142,6 @@ var PhDOE_loginPage = function()
                             iconClsField  : 'iconCls',
                             iconClsBase   : 'project',
                             mode          : 'local',
-                            //value         : 'php',
                             listWidth     : 235,
                             maxHeight     : 150,
                             editable      : true,
@@ -173,7 +172,7 @@ var PhDOE_loginPage = function()
                         }, {
                             fieldLabel : 'VCS login',
                             name       : 'vcsLogin',
-                            value      : 'anonymous',
+                            value      : ( Ext.util.Cookies.get("loginApp") ) ? Ext.util.Cookies.get("loginApp") : 'anonymous',
                             id         : 'login-form-vcsLogin',
                             enableKeyEvents : true,
                             listeners : {

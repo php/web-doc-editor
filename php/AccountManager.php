@@ -250,6 +250,10 @@ class AccountManager
               $return['state'] = true;
               
            }
+
+           // We put this username into a cookie after a valid login
+           setcookie("loginApp", $_SESSION['vcsLogin'], time() + 3600*24*365, "/"); // One year ;)
+
         } elseif ($AuthReturn == 'Bad password') {
 
             // Authentication failed from the VCS server : bad password return
