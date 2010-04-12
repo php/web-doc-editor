@@ -81,10 +81,10 @@ ui.task._VCSCommitTask.commit = function(files)
     var nodes = [], node, LogMessage, i;
 
     // Go for VCS commit
-    for (i = 0; i < files.length; i = i + 1) {
-
-        node = Ext.getCmp('commit-tree-panel').getNodeById(files[i].id);
-        nodes.push(node.attributes.FileDBID);
+    for (i = 0; i < files.length; i = i + 1)
+    {
+        node = Ext.getCmp('commit-grid-panel').store.getById(files[i].id);
+        nodes.push(node.data.FileDBID);
     }
 
     // Get log message
@@ -152,19 +152,19 @@ ui.task.VCSCommitTask = function()
         return;
     }
 
-    var files         = Ext.getCmp('commit-tree-panel').getChecked(),
+    var files         = Ext.getCmp('commit-grid-panel').selModel.getSelections(),
         NeedToBeClose = [],
         checkNode, paneID_AF, paneID_FE, paneID_FNU, paneID_FNIEN, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i, j;
 
     for (i = 0; i < files.length; ++i) {
-        checkNode = files[i].attributes;
+        checkNode = files[i].data;
 
-        paneID_AF    = 'AF-'    + Ext.util.md5('AF-'  + checkNode.FilePath + checkNode.FileName);
-        paneID_FE    = 'FE-'    + Ext.util.md5('FE-'  + checkNode.FilePath + checkNode.FileName);
-        paneID_FNU   = 'FNU-'   + Ext.util.md5('FNU-' + checkNode.FilePath + checkNode.FileName);
-        paneID_FNIEN = 'FNIEN-' + Ext.util.md5('FNIEN-' + checkNode.FilePath + checkNode.FileName);
-        paneID_FNR   = 'FNR-'   + Ext.util.md5('FNR-' + checkNode.FilePath + checkNode.FileName);
-        paneID_FNT   = 'FNT-'   + Ext.util.md5('FNT-' + checkNode.FilePath + checkNode.FileName);
+        paneID_AF    = 'AF-'    + Ext.util.md5('AF-'    + checkNode.path + checkNode.name);
+        paneID_FE    = 'FE-'    + Ext.util.md5('FE-'    + checkNode.path + checkNode.name);
+        paneID_FNU   = 'FNU-'   + Ext.util.md5('FNU-'   + checkNode.path + checkNode.name);
+        paneID_FNIEN = 'FNIEN-' + Ext.util.md5('FNIEN-' + checkNode.path + checkNode.name);
+        paneID_FNR   = 'FNR-'   + Ext.util.md5('FNR-'   + checkNode.path + checkNode.name);
+        paneID_FNT   = 'FNT-'   + Ext.util.md5('FNT-'   + checkNode.path + checkNode.name);
 
         if ( Ext.getCmp('main-panel').findById(paneID_AF)    ||
              Ext.getCmp('main-panel').findById(paneID_FE)    ||
@@ -193,7 +193,7 @@ ui.task.VCSCommitTask = function()
                 paneID = paneID_FNT;
             }
 
-            NeedToBeClose.push([paneID, checkNode.FileName]);
+            NeedToBeClose.push([paneID, checkNode.name]);
         }
     }
 

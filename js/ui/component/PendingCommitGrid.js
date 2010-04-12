@@ -115,14 +115,20 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             fdbid  = record.data.id,
                             fpath  = record.data.path,
                             fname  = record.data.name,
-                            fid    = Ext.util.md5(fpath + fname);
+                            fid    = Ext.util.md5(fpath + fname),
+                            ftype  = record.data.type,
+                            fdate  = record.data.date,
+                            fby    = record.data.by;
 
                         new ui.component.CommitPrompt({
                             files : [{
                                 fid : fid,
                                 fpath : fpath,
                                 fname : fname,
-                                fdbid : fdbid
+                                fdbid : fdbid,
+                                ftype : ftype,
+                                fdate : fdate,
+                                fby   : fby
                             }]
                         }).show();
                     }
@@ -141,12 +147,19 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                                 var fdbid  = record.data.id,
                                     fpath  = record.data.path,
                                     fname  = record.data.name,
-                                    fid    = Ext.util.md5(fpath + fname);
+                                    fid    = Ext.util.md5(fpath + fname),
+                                    ftype  = record.data.type,
+                                    fdate  = record.data.date,
+                                    fby    = record.data.by;
+
                                 files.push({
                                     fid   : fid,
                                     fpath : fpath,
                                     fname : fname,
-                                    fdbid : fdbid
+                                    fdbid : fdbid,
+                                    ftype : ftype,
+                                    fdate : fdate,
+                                    fby   : fby
                                 });
                             }
                         });
@@ -169,12 +182,19 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             var fdbid  = record.data.id,
                                 fpath  = record.data.path,
                                 fname  = record.data.name,
-                                fid    = Ext.util.md5(fpath + fname);
+                                fid    = Ext.util.md5(fpath + fname),
+                                ftype  = record.data.type,
+                                fdate  = record.data.date,
+                                fby    = record.data.by;
+
                             files.push({
                                 fid   : fid,
                                 fpath : fpath,
                                 fname : fname,
-                                fdbid : fdbid
+                                fdbid : fdbid,
+                                ftype : ftype,
+                                fdate : fdate,
+                                fby   : fby
                             });
                         });
 

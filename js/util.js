@@ -5,6 +5,31 @@ String.prototype.ucFirst = function () {
 	return this.substr(0,1).toUpperCase() + this.substr(1,this.length);
 };
 
+// Allow to deselect just one row when we use CheckBoxSelectionModel, for example, in CommitPrompt
+// Found here : http://www.extjs.com/forum/showthread.php?69172-Rows-are-deselected-in-grid-CheckboxSelectionModel&p=348647#post348647
+Ext.override( Ext.grid.CheckboxSelectionModel, {
+    handleMouseDown : function(g, rowIndex, e){
+        if(e.button !== 0 || this.isLocked()){
+            return;
+        };
+        var view = this.grid.getView();
+        if(e.shiftKey && this.last !== false){
+            var last = this.last;
+            this.selectRange(last, rowIndex, e.ctrlKey);
+            this.last = last;
+            view.focusRow(rowIndex);
+        }else{
+            var isSelected = this.isSelected(rowIndex);
+            if(isSelected){
+                this.deselectRow(rowIndex);
+            }else if(!isSelected){
+                this.selectRow(rowIndex, ! this.singleSelect);
+                view.focusRow(rowIndex);
+            }
+        }
+    }
+});
+
 // javascript debug-logging wrapper
 function log()
 {

@@ -1,4 +1,86 @@
-Ext.namespace('ui','ui.component');
+Ext.namespace('ui','ui.component', 'ui.component._CommitPrompt');
+
+ui.component._CommitPrompt.store = new Ext.data.GroupingStore(
+{
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'},
+            {name : 'type'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path'
+});
+
+// PendingCommitGrid columns definition
+ui.component._CommitPrompt.columns = [
+    new Ext.grid.CheckboxSelectionModel(),
+{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Modified by'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'by'
+}, {
+    header    : _('Date'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'date',
+    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// PendingCommitGrid view
+ui.component._CommitPrompt.view = new Ext.grid.GroupingView({
+    forceFit       : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})'
+});
+
+ui.component._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    id               : 'commit-grid-panel',
+    loadMask         : true,
+    autoExpandColumn : 'name',
+    height           : 180,
+    columns          : ui.component._CommitPrompt.columns,
+    view             : ui.component._CommitPrompt.view,
+    enableDragDrop   : true,
+    sm               : new Ext.grid.CheckboxSelectionModel(),
+    listeners: {
+        viewready: function(c)
+        {
+            this.selModel.selectAll();
+        }
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._CommitPrompt.store
+        });
+        ui.component._CommitPrompt.grid.superclass.initComponent.call(this);
+    }
+});
 
 // config - { files: {fid, fpath, fname, fdbid} }
 ui.component.CommitPrompt = Ext.extend(Ext.Window,
@@ -8,7 +90,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
     title      : _('VCS commit'),
     iconCls    : 'iconPendingCommit',
     closable   : false,
-    width      : 400,
+    width      : 600,
     height     : 480,
     resizable  : false,
     modal      : true,
@@ -43,36 +125,30 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
     }],
     initComponent : function()
     {
-        var root = new Ext.tree.TreeNode({
-            text     : 'root',
-            expanded : true
-        }), i;
+        var i;
 
+        // We remove all data who are in the store
+        ui.component._CommitPrompt.store.removeAll();
+        
         for (i = 0; i < this.files.length; ++i) {
-            root.appendChild(
-                new Ext.tree.TreeNode({
-                    id         : 'need-commit-' + this.files[i].fid,
-                    text       : this.files[i].fpath + this.files[i].fname,
-                    FileDBID   : this.files[i].fdbid,
-                    FilePath   : this.files[i].fpath,
-                    FileName   : this.files[i].fname,
-                    leaf       : true,
-                    checked    : true
+
+            ui.component._CommitPrompt.store.insert(0,
+                new ui.component._CommitPrompt.store.recordType({
+                    id       : 'need-commit-' + this.files[i].fid,
+                    path     : this.files[i].fpath,
+                    name     : this.files[i].fname,
+                    by       : this.files[i].fby,
+                    date     : this.files[i].fdate,
+                    type     : this.files[i].ftype,
+                    FileDBID : this.files[i].fdbid
                 })
             );
         }
+        ui.component._CommitPrompt.store.groupBy('path', true); // regroup
 
         Ext.apply(this,
         {
-            items : [{
-                xtype       : 'treepanel',
-                id          : 'commit-tree-panel',
-                anchor      : '100%',
-                height      : 180,
-                autoScroll  : true,
-                rootVisible : false,
-                root        : root
-            }, {
+            items : [new ui.component._CommitPrompt.grid(), {
                 xtype         : 'combo',
                 name          : 'first2',
                 fieldLabel    : _('Older messages'),
