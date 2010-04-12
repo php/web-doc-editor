@@ -130,47 +130,52 @@ var PhDOE = function()
 
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/12, '1 of 12...');
+                progressBar.updateProgress(1/13, '1 of 13...');
                 ui.component._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/12, '2 of 12...');
+                        progressBar.updateProgress(2/13, '2 of 13...');
                         ui.component.StaleFileGrid.getInstance().store.load({
                             callback: function() {
-                                progressBar.updateProgress(3/12, '3 of 12...');
+                                progressBar.updateProgress(3/13, '3 of 13...');
                                 ui.component.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
-                                        progressBar.updateProgress(4/12, '4 of 12...');
+                                        progressBar.updateProgress(4/13, '4 of 13...');
                                         ui.component.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
-                                                progressBar.updateProgress(5/12, '5 of 12...');
+                                                progressBar.updateProgress(5/13, '5 of 13...');
                                                 ui.component.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
-                                                        progressBar.updateProgress(6/12, '6 of 12...');
+                                                        progressBar.updateProgress(6/13, '6 of 13...');
                                                         ui.component.PendingCommitGrid.getInstance().store.load({
                                                             callback: function() {
-                                                                progressBar.updateProgress(7/12, '7 of 12...');
+                                                                progressBar.updateProgress(7/13, '7 of 13...');
                                                                 ui.component.PendingPatchGrid.getInstance().store.load({
                                                                     callback: function() {
-                                                                        progressBar.updateProgress(8/12, '8 of 12...');
+                                                                        progressBar.updateProgress(8/13, '8 of 13...');
                                                                         ui.component.PortletSummary.getInstance().store.load({
                                                                             callback: function() {
-                                                                                progressBar.updateProgress(9/12, '9 of 12...');
+                                                                                progressBar.updateProgress(9/13, '9 of 13...');
                                                                                 ui.component.PortletTranslationGraph.getInstance().store.load({
                                                                                     callback: function() {
-                                                                                        progressBar.updateProgress(10/12, '10 of 12...');
+                                                                                        progressBar.updateProgress(10/13, '10 of 13...');
                                                                                         ui.component.PortletTranslationsGraph.getInstance().store.load({
                                                                                             callback: function() {
-                                                                                                progressBar.updateProgress(11/12, '11 of 12...');
+                                                                                                progressBar.updateProgress(11/13, '11 of 13...');
                                                                                                 ui.component.PortletTranslator.getInstance().store.load({
                                                                                                     callback: function() {
-                                                                                                        progressBar.updateProgress(12/12, '12 of 12...');
+                                                                                                        progressBar.updateProgress(12/13, '12 of 13...');
                                                                                                         ui.component.PendingTranslateGrid.getInstance().store.load({
                                                                                                             callback: function() {
-                                                                                                                // Now, we can to remove the global mask
-                                                                                                                Ext.get('loading').remove();
-                                                                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                                                                                progressBar.destroy();
-                                                                                                                PhDOE.afterLoadAllStore();
+                                                                                                                progressBar.updateProgress(13/13, '13 of 13...');
+                                                                                                                ui.component.PortletInfo.getInstance().store.load({
+                                                                                                                    callback: function() {
+                                                                                                                        // Now, we can to remove the global mask
+                                                                                                                        Ext.get('loading').remove();
+                                                                                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                                                                        progressBar.destroy();
+                                                                                                                        PhDOE.afterLoadAllStore();
+                                                                                                                    }
+                                                                                                                });
                                                                                                             }
                                                                                                         });
                                                                                                     }
@@ -198,26 +203,31 @@ var PhDOE = function()
             } else {
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/4, '1 of 5...');
+                progressBar.updateProgress(1/6, '1 of 6...');
                 ui.component._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/4, '2 of 5...');
+                        progressBar.updateProgress(2/6, '2 of 6...');
                         ui.component.PendingPatchGrid.getInstance().store.load({
                             callback: function() {
-                                progressBar.updateProgress(3/4, '3 of 5...');
+                                progressBar.updateProgress(3/6, '3 of 6...');
                                 ui.component.PortletTranslationsGraph.getInstance().store.load({
                                     callback: function() {
-                                        progressBar.updateProgress(4/4, '4 of 5...');
+                                        progressBar.updateProgress(4/6, '4 of 6...');
                                         ui.component.PendingCommitGrid.getInstance().store.load({
                                             callback: function() {
-                                                progressBar.updateProgress(4/4, '5 of 5...');
+                                                progressBar.updateProgress(5/6, '5 of 6...');
                                                 ui.component.ErrorFileGrid.getInstance().store.load({
                                                     callback: function() {
-                                                        // Now, we can to remove the global mask
-                                                        Ext.get('loading').remove();
-                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                        progressBar.destroy();
-                                                        PhDOE.afterLoadAllStore();
+                                                        progressBar.updateProgress(6/6, '5 of 6...');
+                                                        ui.component.PortletInfo.getInstance().store.load({
+                                                            callback: function() {
+                                                                // Now, we can to remove the global mask
+                                                                Ext.get('loading').remove();
+                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                progressBar.destroy();
+                                                                PhDOE.afterLoadAllStore();
+                                                            }
+                                                        });
                                                     }
                                                 });
                                             }

@@ -12,7 +12,6 @@ ui.component._PortletInfo.store = new Ext.data.Store({
         start:0,
         limit:10
     },
-    autoLoad: true,
     reader : new Ext.data.JsonReader(
         {
             root          : 'Items',
