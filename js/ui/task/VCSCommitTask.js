@@ -87,6 +87,20 @@ ui.task._VCSCommitTask.commit = function(files)
         nodes.push(node.data.FileDBID);
     }
 
+    // We must choose at least one file
+    if( nodes.length == 0 ) {
+        Ext.getBody().unmask();
+
+        Ext.MessageBox.show({
+           title   : _('Error'),
+           msg     : _('You must choose at least one file.'),
+           buttons : Ext.MessageBox.OK,
+           icon    : Ext.MessageBox.ERROR
+        });
+
+        return;
+    }
+
     // Get log message
     LogMessage = Ext.getCmp('form-commit-message-log').getValue();
 
@@ -99,10 +113,13 @@ ui.task._VCSCommitTask.commit = function(files)
 
         Ext.getCmp('form-commit-message-log').markInvalid(_('The log message is required.'));
 
-        Ext.MessageBox.alert(
-            _('Error'),
-            _('The log message is required.')
-        );
+        Ext.MessageBox.show({
+           title   : _('Error'),
+           msg     : _('The log message is required.'),
+           buttons : Ext.MessageBox.OK,
+           icon    : Ext.MessageBox.ERROR
+        });
+
         return;
     }
 

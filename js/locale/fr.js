@@ -481,6 +481,7 @@ var i18n = new Array();
 // In file: ../../js/ui/task/VCSCommitTask.js
   i18n["Please, wait until commit..."] = "Veuillez patienter...";
   i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
+  i18n["You must choose at least one file."] = "Vous devez sélectionner au moins un fichier.";
 
 
 // In file: ../../js/ui/task/MarkDeleteTask.js
