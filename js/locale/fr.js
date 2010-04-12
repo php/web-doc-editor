@@ -135,6 +135,7 @@ var i18n = new Array();
   i18n["This file already exist in the current folder."] = "Ce fichier existe déjà dans le dossier courant.";
   i18n["Name for the new file"] = "Nom du nouveau fichier";
   i18n["Chose a skeleton"] = "Choisissez un template";
+  i18n["Open the editor"] = "Ouvrir l'éditeur";
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
   i18n["Modified by"] = "Modifié par";

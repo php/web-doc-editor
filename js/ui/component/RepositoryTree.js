@@ -20,18 +20,18 @@ ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
 ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
 {
     title      : _('Add a new file'),
-    iconCls    : 'iconFileNew',
+    iconCls    : 'iconFilesNeedTranslate',
     id         : 'win-add-new-file',
     layout     : 'form',
     width      : 350,
-    height     : 200,
+    height     : 170,
     resizable  : false,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelWidth : 150,
     buttons : [{
         id   : 'win-add-new-file-btn',
-        text : 'Open the editor',
+        text : _('Open the editor'),
         disabled: true,
         handler : function()
         {
@@ -329,7 +329,7 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
                 }
             }, {
                 text    : _('Add a new file'),
-                iconCls : 'iconFileNew',
+                iconCls : 'iconFilesNeedTranslate',
                 hidden  : (this.node.id === '/'), // Don't allow to add a new file into root system
                 scope   : this,
                 handler : function()
