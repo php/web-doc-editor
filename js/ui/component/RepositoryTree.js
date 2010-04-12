@@ -316,7 +316,9 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
             }, {
                 text    : _('Add a new folder'),
                 iconCls : 'iconFolderNew',
-                hidden  : (this.node.id === '/'), // Don't allow to add a new folder into root system
+                hidden  : (  this.node.id === '/' ||
+                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
+                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope   : this,
                 handler : function()
                 {
@@ -330,7 +332,9 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
             }, {
                 text    : _('Add a new file'),
                 iconCls : 'iconFilesNeedTranslate',
-                hidden  : (this.node.id === '/'), // Don't allow to add a new file into root system
+                hidden  : (  this.node.id === '/' ||
+                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
+                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope   : this,
                 handler : function()
                 {
