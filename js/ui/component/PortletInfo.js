@@ -35,7 +35,14 @@ ui.component._PortletInfo.store = new Ext.data.Store({
                 dateFormat : 'Y-m-d H:i:s'
             }
         ])
-    )
+    ),
+    listeners: {
+        load: function(s)
+        {
+            var d = s.data.items[0].data.date;
+            PhDOE.lastInfoDate = d.format("Y-m-d H:i:s");
+        }
+    }
 });
 ui.component._PortletInfo.store.setDefaultSort('date', 'desc');
 

@@ -11,9 +11,10 @@ var PhDOE = function()
         appLoaded  : false,
         uiRevision : '$Revision$',
 
-        userConf : '',
+        lastInfoDate : null,
+        userConf   : '',
 
-        project : '',
+        project    : '',
 
         FNTfilePendingOpen   : [],
         FNUfilePendingOpen   : [],

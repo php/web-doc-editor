@@ -5,11 +5,13 @@ ui.task.PingTask = function()
     this.task = new Ext.util.DelayedTask(function()
     {
         XHR({
-            params  : { task : 'ping' },
+            params  : {
+                task : 'ping'
+            },
             success : function(r)
             {
-                var o = Ext.util.JSON.decode(r.responseText),
-                    dt;
+                var o = Ext.util.JSON.decode(r.responseText);
+
                 if (o.ping !== 'pong') {
                     window.location.href = './';
                 } else {
@@ -51,7 +53,7 @@ ui.task.PingTask = function()
 
                     }
 
-                    // This 2 modules is commun with EN and LANG
+                    // This 3 modules is commun with EN and LANG
                     if( ui.component.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
                         ui.component.PendingCommitGrid.getInstance().store.reload();
                     }
@@ -59,6 +61,11 @@ ui.task.PingTask = function()
                     if( ui.component.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
                         ui.component.PendingPatchGrid.getInstance().store.reload();
                     }
+
+                    if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
+                        ui.component.PortletInfo.getInstance().store.reload();
+                    }
+
                 }
             },
             failure: function()

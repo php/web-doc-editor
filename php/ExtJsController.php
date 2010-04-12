@@ -353,6 +353,8 @@ class ExtJsController
         $data['NbPendingCommit'] = $rf->getNbPendingCommit();
         $data['NbPendingPatch']  = $rf->getNbPendingPatch();
 
+        $data['lastInfoDate'] = $rf->getLastInfoDate();
+
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
         return JsonResponseBuilder::success(

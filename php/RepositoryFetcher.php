@@ -22,6 +22,37 @@ class RepositoryFetcher
     {
     }
 
+    
+    /**
+     * Get lst info dateTime about this apps
+     *
+     * @return The date/time of the last Info
+     */
+    public function getLastInfoDate()
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $s = sprintf(
+            'SELECT
+                `date`
+             FROM
+                `staticValue`
+             WHERE
+                `project` = "%s" AND
+                `type`="info"
+             ORDER BY `date` DESC
+             LIMIT 0, 1',
+
+            $am->project
+        );
+        $r = DBConnection::getInstance()->query($s);
+
+        $a = $r->fetch_assoc();
+
+        return $a['date'];
+    }
+
     /**
      * Get infos about this apps
      *
