@@ -323,7 +323,7 @@ class ToolsError
         // Check Error specific to EN files
         if( $this->lang == 'en' )
         {
-            $this->checkAcronym();
+            //$this->checkAcronym(); Disable acronym check for EN document
             $this->missingInitializer();
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
