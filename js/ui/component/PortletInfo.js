@@ -84,7 +84,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             lang = record.data.value.lang;
 
             return String.format(
-                    _('{0} is logged in using the {1} language !'),
+                    _('{0} is logged in using the {1} language'),
                     user.ucFirst(),
                     lang.ucFirst());
 
