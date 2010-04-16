@@ -150,7 +150,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             });
                         }
                     }, {
-                        text    : _('Last failed build'),
+                        text    : _('Show last failed build'),
                         iconCls : 'iconBuildStatus',
                         handler : function()
                         {
@@ -248,7 +248,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                             }]
                         })
                     }, {
-                        text    : _('Script Check doc'),
+                        text    : _('Script check document'),
                         iconCls : 'iconCheckDoc',
                         handler : function()
                         {

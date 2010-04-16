@@ -391,7 +391,7 @@ var PhDOE = function()
                     }],
                     items : [{
                         id        : 'acc-need-translate',
-                        title     : _('Files Need Translate') + ' (<em id="acc-need-translate-nb">0</em>)',
+                        title     : _('Files need translate') + ' (<em id="acc-need-translate-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedTranslate',
@@ -400,7 +400,7 @@ var PhDOE = function()
                         collapsed : true
                     },{
                         id        : 'acc-need-update',
-                        title     : _('Files Need Update') + ' (<em id="acc-need-update-nb">0</em>)',
+                        title     : _('Files need update') + ' (<em id="acc-need-update-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedUpdate',
@@ -417,7 +417,7 @@ var PhDOE = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-reviewed',
-                        title     : _('Files Need Reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
+                        title     : _('Files need reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedReviewed',
@@ -463,7 +463,7 @@ var PhDOE = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingPatch',
-                        title     : _('Pending Patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
+                        title     : _('Pending patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingPatch',
@@ -471,7 +471,7 @@ var PhDOE = function()
                         collapsed : true
                     }, {
                         id        : 'acc-google-translate',
-                        title     : _('Google Translation'),
+                        title     : _('Google translation'),
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconGoogle',
