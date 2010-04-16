@@ -19,7 +19,7 @@ ui.component._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
     ['4', 'card4', _('Module "Files with Error"')],
     ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending Patch"')]
+    ['7', 'card7', _('Module "Pending Patches"')]
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
@@ -30,7 +30,7 @@ ui.component._EditorConf.menuDefNonEn = [
     ['4', 'card4', _('Module "Files with Error"')],
     ['5', 'card5', _('Module "Files need Reviewed"')],
     ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending Patch"')]
+    ['7', 'card7', _('Module "Pending Patches"')]
 ];
 
 // EditorConf Win-Menu items store

@@ -18,7 +18,7 @@ var i18n = new Array();
   i18n["All files"] = "Tous les fichiers";
   i18n["Open the Log Message Manager"] = "Ouvrir le gestionnaire de messages d'historisation";
   i18n["Pending for commit"] = "Commit en attente";
-  i18n["Pending Patch"] = "Patchs en attente";
+  i18n["Pending Patches"] = "Patchs en attente";
   i18n["Google Translation"] = "Traduire avec Google";
   i18n["Home"] = "Accueil";
   i18n["Connected as <em>{0}</em>"] = "Connecté sous <em>{0}</em>";
@@ -64,13 +64,13 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletInfo.js
-  i18n["Infos"] = "Informations";
+  i18n["Information"] = "Informations";
   i18n["{0} check all entitites"] = "{0} a vérifié toutes les entitiés";
-  i18n["{0} update app's data"] = "{0} a mis à jour les données de l'application";
-  i18n["{0} is log out"] = "{0} s'est déconnecté";
-  i18n["{0} is log in {1} language !"] = "{0} s'est connecté en langue {1} !";
-  i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
-  i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
+  i18n["{0} updated app's data"] = "{0} a mis à jour les données de l'application";
+  i18n["{0} logged out"] = "{0} s'est déconnecté";
+  i18n["{0} is logged in using the {1} language !"] = "{0} s'est connecté en langue {1} !";
+  i18n["{0} committed {1} new folder(s) in {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
+  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -93,7 +93,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
-  i18n["Graphics for all language"] = "Graphiques pour toutes les langues";
+  i18n["Graphics for all languages"] = "Graphiques pour toutes les langues";
   i18n["Lang:"] = "Langue :";
   i18n["Total:"] = "Total :";
   i18n["files"] = "fichiers";
@@ -242,7 +242,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
   i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
-  i18n["Module \"Pending Patch\""] = "Module \"Patchs en attente\"";
+  i18n["Module \"Pending Patches\""] = "Module \"Patchs en attente\"";
   i18n["Module \"Files Need Translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
   i18n["Module \"Files Need Update\""] = "Module \"Fichiers à mettre à jour\"";
   i18n["Module \"Files with Error\""] = "Module \"Fichiers avec des erreurs\"";
@@ -409,7 +409,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/PortletLocalMail.js
   i18n["Title"] = "Titre";
   i18n["Error when loading mails from this mailing list !"] = "Erreur lors du chargement des mails depuis cette mailing-list !";
-  i18n["Mails from {0}"] = "Emails depuis {0}";
+  i18n["Mail from {0}"] = "Emails depuis {0}";
 
 
 // In file: ../../js/ui/component/CheckBuildPrompt.js

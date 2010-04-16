@@ -212,7 +212,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
         ui.component.PortletLocalMail.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.title = String.format(_('Mails from {0}'), 'doc-' + this.lang);
+        this.title = String.format(_('Mail from {0}'), 'doc-' + this.lang);
         this.add(new ui.component._PortletLocalMail.grid());
     }
 });

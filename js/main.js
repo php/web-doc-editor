@@ -463,7 +463,7 @@ var PhDOE = function()
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingPatch',
-                        title     : _('Pending Patch') + ' (<em id="acc-pendingPatch-nb">0</em>)',
+                        title     : _('Pending Patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingPatch',

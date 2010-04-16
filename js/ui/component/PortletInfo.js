@@ -75,7 +75,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             user = record.data.value.user;
 
             return String.format(
-                    _('{0} is log out'),
+                    _('{0} logged out'),
                     user.ucFirst());
 
         break;
@@ -84,7 +84,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             lang = record.data.value.lang;
 
             return String.format(
-                    _('{0} is log in {1} language !'),
+                    _('{0} is logged in using the {1} language !'),
                     user.ucFirst(),
                     lang.ucFirst());
 
@@ -97,7 +97,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             nbFolders = record.data.value.nbFolders;
 
             return String.format(
-                    _('{0} commit {1} new folder(s) in {2} language'),
+                    _('{0} committed {1} new folder(s) in {2} language'),
                     user.ucFirst(),
                     nbFolders,
                     lang.ucFirst());
@@ -112,7 +112,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             nbFiles       = nbFilesCreate + nbFilesDelete + nbFilesUpdate;
 
             return String.format(
-                    _('{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language'),
+                    _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in {5} language'),
                     user.ucFirst(),
                     nbFiles,
                     nbFilesCreate,
@@ -177,7 +177,7 @@ ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 // PortletInfo
 ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
-    title   : _('Infos'),
+    title   : _('Information'),
     id      : 'portletInfo',
     iconCls : 'iconInfo',
     layout  : 'fit',

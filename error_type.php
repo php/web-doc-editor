@@ -256,15 +256,15 @@ $error['nbTheadTag']['desc'] = 'Throw if the number of <b>thead</b> tags is diff
 $error['attributXmlIdVarlistentry']['head'] = 'Varlistentry tag';
 $error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
 
-// Disable acronym check
-// $error['acronym']['head'] = 'Missing &lt;acronym&gt; tag';
-// $error['acronym']['desc'] = 'An acronym have been found but without &lt;acronym&gt; tag around him.';
+
+$error['acronym']['head'] = 'Missing &lt;acronym&gt; tag';
+$error['acronym']['desc'] = 'An acronym have been found but without &lt;acronym&gt; tag around him.';
 
 $error['tabCharacterInDocument']['head'] = 'Tab character in the document';
 $error['tabCharacterInDocument']['desc'] = 'A tab character have been found in the document We must change it to spaces.';
 
 $error['missingInitializer']['head'] = 'Missing &lt;initializer&gt; tag';
-$error['missingInitializer']['desc'] = 'A missing &lt;initializer&gt; tag was found.';
+$error['missingInitializer']['desc'] = 'An &lt;initializer&gt; tag is missing.';
 
 $error['documentNotUTF8']['head'] = 'Document encoding is not UTF-8';
 $error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 encoding.';
