@@ -177,7 +177,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
-                        text    : _('Script Check Entities'),
+                        text    : _('Script check entities'),
                         iconCls : 'iconCheckEntities',
                         handler : function() { return false; },
                         menu    : new Ext.menu.Menu({
@@ -193,7 +193,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                         // if tab not exist, create new tab
                                         Ext.getCmp('main-panel').add({
                                             id       : 'tab-check-entities',
-                                            title    : _('Check Entities'),
+                                            title    : _('Check entities'),
                                             iconCls  : 'iconCheckEntities',
                                             layout   : 'fit',
                                             closable : true,

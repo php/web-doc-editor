@@ -155,7 +155,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
-  i18n["Check Entities"] = "Vérification des entités";
+  i18n["Check entities"] = "Vérification des entités";
   i18n["Go !"] = "Commencer !";
   i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
 
@@ -199,7 +199,7 @@ var i18n = new Array();
   i18n["Open the related file"] = "Ouvrir le fichier associé";
   i18n["Summary"] = "Résumé";
   i18n["Error when loading open bugs from Php.net !"] = "Erreur lors du chargement des bogues ouverts depuis Php.net !";
-  i18n["No open Bugs"] = "Aucun bogue ouvert actuellement";
+  i18n["No open bugs"] = "Aucun bogue ouvert actuellement";
   i18n["Open bugs for {0}"] = "Bogues en cours pour {0}";
 
 
@@ -242,11 +242,11 @@ var i18n = new Array();
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
   i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
-  i18n["Module \"Pending Patches\""] = "Module \"Patchs en attente\"";
-  i18n["Module \"Files Need Translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
-  i18n["Module \"Files Need Update\""] = "Module \"Fichiers à mettre à jour\"";
-  i18n["Module \"Files with Error\""] = "Module \"Fichiers avec des erreurs\"";
-  i18n["Module \"Files need Reviewed\""] = "Module \"À relire\"";
+  i18n["Module \"Pending patches\""] = "Module \"Patchs en attente\"";
+  i18n["Module \"Files need translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
+  i18n["Module \"Files need update\""] = "Module \"Fichiers à mettre à jour\"";
+  i18n["Module \"Files with error\""] = "Module \"Fichiers avec des erreurs\"";
+  i18n["Module \"Files need reviewed\""] = "Module \"À relire\"";
   i18n["Black"] = "Noir";
   i18n["Default"] = "Par défault";
   i18n["DarkGray"] = "Gris foncé";
@@ -338,7 +338,7 @@ var i18n = new Array();
   i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
   i18n["Show last failed build"] = "Dernier échec de la compilation";
   i18n["EN tools"] = "Outils EN";
-  i18n["Script Check Entities"] = "Script de vérification des entités";
+  i18n["Script check entities"] = "Script de vérification des entités";
   i18n["View the last result"] = "Voir le résultat de la dernière vérification";
   i18n["Run this script"] = "Exécuter ce script";
   i18n["Verify if there is an entities check in progress. Please, wait..."] = "Vérification si une vérification des entités n'est pas déjà en cours. Veuillez patienter...";

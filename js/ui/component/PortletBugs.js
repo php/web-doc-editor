@@ -202,7 +202,7 @@ ui.component._PortletBugs.reloadData = function() {
 
           } else {
               if (ui.component._PortletBugs.store.getTotalCount() === 0 ) {
-                  Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open Bugs')+'</div>');
+                  Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open bugs')+'</div>');
                   Ext.get('PortletBugs-grid-defaultMess-id').highlight();
               }
           }

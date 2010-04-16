@@ -17,20 +17,20 @@ ui.component._EditorConf.tplMenu.compile();
 // EditorConf Win-Menu items definition for EN
 ui.component._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
-    ['4', 'card4', _('Module "Files with Error"')],
+    ['4', 'card4', _('Module "Files with error"')],
     ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending Patches"')]
+    ['7', 'card7', _('Module "Pending patches"')]
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
 ui.component._EditorConf.menuDefNonEn = [
     ['1', 'card1', _('Main')],
-    ['2', 'card2', _('Module "Files Need Translate"')],
-    ['3', 'card3', _('Module "Files Need Update"')],
-    ['4', 'card4', _('Module "Files with Error"')],
-    ['5', 'card5', _('Module "Files need Reviewed"')],
+    ['2', 'card2', _('Module "Files need translate"')],
+    ['3', 'card3', _('Module "Files need update"')],
+    ['4', 'card4', _('Module "Files with error"')],
+    ['5', 'card5', _('Module "Files need reviewed"')],
     ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending Patches"')]
+    ['7', 'card7', _('Module "Pending patches"')]
 ];
 
 // EditorConf Win-Menu items store
