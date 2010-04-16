@@ -189,3 +189,20 @@ CREATE TABLE IF NOT EXISTS `failedBuildLog` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `dictionnary`
+--
+
+CREATE TABLE IF NOT EXISTS `dictionnary` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
+  `lang` varchar(10) NOT NULL,
+  `valueEn` int(255) NOT NULL,
+  `valueLang` int(255) NOT NULL,
+  `lastUser` varchar(255) NOT NULL,
+  `lastDate` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

@@ -312,9 +312,9 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 items : [{
                     region           : 'west',
                     xtype            : 'panel',
-                    title            : _('VCS Log'),
-                    iconCls          : 'iconVCSLog',
-                    collapsedIconCls : 'iconVCSLog',
+                    title            : _('Tools'),
+                    iconCls          : 'iconConf',
+                    collapsedIconCls : 'iconConf',
                     plugins          : [Ext.ux.PanelCollapsedTitle],
                     collapsible      : true,
                     collapsed        : !PhDOE.userConf.reviewedDisplaylogPanel,
@@ -358,20 +358,27 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         items       : [
                             new ui.component.VCSLogGrid({
                                 layout    : 'fit',
-                                title     : PhDOE.userLang,
+                                title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                                 prefix    : 'FNR-LANG',
                                 fid       : FileID,
                                 fpath     : PhDOE.userLang + FilePath,
                                 fname     : FileName,
                                 loadStore : PhDOE.userConf.reviewedDisplaylog
-                            }), new ui.component.VCSLogGrid({
+                            }),
+                            new ui.component.VCSLogGrid({
                                 layout    : 'fit',
-                                title     : 'en',
+                                title     : String.format(_('{0} Log'), 'En'),
                                 prefix    : 'FNR-EN',
                                 fid       : FileID,
                                 fpath     : 'en' + FilePath,
                                 fname     : FileName,
                                 loadStore : PhDOE.userConf.reviewedDisplaylog
+                            }),
+                            new ui.component.DictionnaryGrid({
+                                layout    : 'fit',
+                                title     : _('Dictionnary'),
+                                prefix    : 'FNR',
+                                fid       : FileID
                             })
                         ]
                     }

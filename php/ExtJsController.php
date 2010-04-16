@@ -7,6 +7,7 @@
 
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/BugReader.php';
+require_once dirname(__FILE__) . '/DictionnaryManager.php';
 require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
 require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
@@ -66,7 +67,7 @@ class ExtJsController
     {
         return isset($this->requestVariables[$name]);
     }
-
+    
     /**
      * Login to the tool
      *
@@ -1797,6 +1798,68 @@ class ExtJsController
         header("Pragma: no-cache");
 
         return $imageContent['content'];
+
+    }
+
+    /**
+     * Dictionnary : Manage a word. Delete or update it.
+     */
+    public function manageDictionnaryWord()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+            return JsonResponseBuilder::failure();
+        }
+
+        $wordId    = $this->getRequestVariable('wordId');
+        $valueEn   = $this->getRequestVariable('valueEn');
+        $valueLang = $this->getRequestVariable('valueLang');
+
+        $dateUpdate = DictionnaryManager::getInstance()->manageDictionnaryWord($wordId, $valueEn, $valueLang);
+
+        return JsonResponseBuilder::success(
+            array(
+                'dateUpdate' => $dateUpdate
+            )
+        );
+
+    }
+
+    /**
+     * Dictionnary : Get all works for a given language
+     */
+    public function getDictionnaryWords()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $r = DictionnaryManager::getInstance()->getWords();
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+        
+    }
+
+    /**
+     * Dictionnary : Delete a word
+     */
+    public function delDictionnaryWord()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+            return JsonResponseBuilder::failure();
+        }
+
+        $wordId = $this->getRequestVariable('wordId');
+
+        DictionnaryManager::getInstance()->delWord($wordId);
+
+        return JsonResponseBuilder::success();
 
     }
 

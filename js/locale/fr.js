@@ -308,6 +308,7 @@ var i18n = new Array();
   i18n["Need Translate: in {0}"] = "Nouveau fichier à traduire : dans {0}";
   i18n["New File: "] = "Nouveau fichier : ";
   i18n["Automatic translation: "] = "Traduction automatique : ";
+  i18n["Dictionnary"] = "Dictionnaire";
 
 
 // In file: ../../js/ui/component/EmailPrompt.js
@@ -367,6 +368,19 @@ var i18n = new Array();
   i18n["Finding the diff. Please, wait..."] = "Calcul de la différence. Veuillez patienter...";
   i18n["Diff between {0} & {1}"] = "Différence entre {0} et {1}";
   i18n["<b>Load/Refresh</b> revisions"] = "<b>Charger/Rafraîchir</b> les versions";
+
+
+// In file: ../../js/ui/component/DictionnaryGrid.js
+  i18n["Add a new word"] = "Ajouter un nouveau mot";
+  i18n["Delete this word"] = "Effacer ce mot";
+  i18n["En word"] = "Mot En";
+  i18n["{0} word"] = "Mot {0}";
+  i18n["Last User Update"] = "Dernière éditon par";
+  i18n["Last Date Update"] = "Dernière éditon le";
+  i18n["Word in dictionnary added/updated"] = "Mot du dictionnaire ajouté/mis à jour";
+  i18n["The word have been added/updated successfully !"] = "Le mot a été ajouté/mis à jour avec succès !";
+  i18n["Word deleted"] = "Mot effacé";
+  i18n["The word was deleted successfully !"] = "Le mot a été effacé avec succès !";
 
 
 // In file: ../../js/ui/component/PendingReviewGrid.js

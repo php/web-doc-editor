@@ -159,7 +159,68 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
                     }
                 },
-                items : [new ui.component.FilePanel(
+                items : [{
+                    region           : 'west',
+                    xtype            : 'panel',
+                    title            : _('Tools'),
+                    iconCls          : 'iconConf',
+                    collapsedIconCls : 'iconConf',
+                    plugins          : [Ext.ux.PanelCollapsedTitle],
+                    collapsible      : true,
+                    collapsed        : true, //!PhDOE.userConf.reviewedDisplaylogPanel,
+                    layout           : 'fit',
+                    bodyBorder       : false,
+                    width            : 375, //PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                    listeners        : {
+                        collapse: function() {
+                            /*
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false,
+                                    notify: false
+                                });
+                            }
+                            */
+                        },
+                        expand: function() {
+                            /*
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true,
+                                    notify: false
+                                });
+                            }
+                            */
+                        },
+                        resize: function(a,newWidth) {
+                            /*
+                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanelWidth',
+                                    value : newWidth,
+                                    notify: false
+                                });
+                            }
+                            */
+                        }
+                    },
+                    items : {
+                        xtype       : 'tabpanel',
+                        activeTab   : 0,
+                        tabPosition : 'bottom',
+                        defaults    : { autoScroll : true },
+                        items       : [
+                            new ui.component.DictionnaryGrid({
+                                layout    : 'fit',
+                                title     : _('Dictionnary'),
+                                prefix    : 'FNT',
+                                fid       : FileID
+                            })
+                        ]
+                    }
+                }, new ui.component.FilePanel(
                     {
                         id             : 'FNT-TRANS-PANEL-' + FileID,
                         region         : 'center',

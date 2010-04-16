@@ -310,9 +310,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     }), {
                         region      : 'west',
                         xtype       : 'panel',
-                        title       : _('VCS Log'),
-                        iconCls     : 'iconVCSLog',
-                        collapsedIconCls : 'iconVCSLog',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
                         collapsible : true,
                         collapsed   : !PhDOE.userConf.needUpdateDisplaylogPanel,
                         layout      : 'fit',
@@ -356,7 +356,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             items       : [
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
-                                    title     : PhDOE.userLang,
+                                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                                     prefix    : 'FNU-LANG',
                                     fid       : FileID,
                                     fpath     : PhDOE.userLang + FilePath,
@@ -365,12 +365,18 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 }),
                                 new ui.component.VCSLogGrid({
                                     layout    : 'fit',
-                                    title     : 'en',
+                                    title     : String.format(_('{0} Log'), 'En'),
                                     prefix    : 'FNU-EN',
                                     fid       : FileID,
                                     fpath     : 'en' + FilePath,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.needUpdateDisplaylog
+                                }),
+                                new ui.component.DictionnaryGrid({
+                                    layout    : 'fit',
+                                    title     : _('Dictionnary'),
+                                    prefix    : 'FNU',
+                                    fid       : FileID
                                 })
                             ]
                         }

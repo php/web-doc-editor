@@ -429,8 +429,17 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         items       : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
+                            tabPosition : 'bottom',
                             defaults    : {autoScroll : true},
-                            items       : [vcsPanel, {
+                            items       : [
+                                vcsPanel,
+                                new ui.component.DictionnaryGrid({
+                                    layout    : 'fit',
+                                    title     : _('Dictionnary'),
+                                    prefix    : 'FE',
+                                    fid       : FileID
+                                }),
+                            {
                                 title  : _('Entities'),
                                 layout : 'fit',
                                 items  : [new ui.component.EntitiesAcronymsPanel({

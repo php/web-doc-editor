@@ -121,6 +121,7 @@
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
 .iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
+.iconNewWord           { background-image: url(./img/abiword.png)               !important;}
 .iconNotInEn           { background-image: url(./img/delete.png)                !important;}
 .iconOpenInTab         { background-image: url(./img/tab-new-background.png)    !important;}
 .iconPageDelete        { background-image: url(./img/user-trash-full.png)       !important;}
@@ -400,3 +401,5 @@
 .treeFileUpdated {
     font-weight: bold !important;
 }
+
+.x-row-editor .x-form-display-field { font-family:arial,tahoma,helvetica,sans-serif; font-size:11px; text-align: center; }
