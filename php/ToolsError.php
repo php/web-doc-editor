@@ -1145,14 +1145,16 @@ class ToolsError
 
 	if ( !empty($matches))
 	{
+            $i=0;
 	    foreach ($matches[3] as $match) {
 		if (empty($match) || (false === strpos($match, '<initializer>'))) {
 		    $this->addError(array(
-			'value_en'   => 'N/A',
+			'value_en'   => $matches[2][$i],
 			'value_lang' => 'N/A',
 			'type'       => 'missingInitializer'
 		    ));
 		}
+                $i++;
 	    }
 	}
     }
