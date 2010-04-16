@@ -69,8 +69,8 @@ var i18n = new Array();
   i18n["{0} updated app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} logged out"] = "{0} s'est déconnecté";
   i18n["{0} is logged in using the {1} language !"] = "{0} s'est connecté en langue {1} !";
-  i18n["{0} committed {1} new folder(s) in {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
-  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
+  i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
+  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -446,7 +446,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PendingPatchGrid.js
   i18n["Posted by"] = "Proposé par";
-  i18n["No pending Patch"] = "Aucun patch en attente";
+  i18n["No pending patches"] = "Aucun patch en attente";
   i18n["Reject this patch"] = "Rejeter ce patch";
   i18n["Patch for {0}"] = "Patch pour {0}";
   i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";

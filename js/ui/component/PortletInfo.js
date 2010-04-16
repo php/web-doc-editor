@@ -57,7 +57,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             user = record.data.value.user;
 
             return String.format(
-                    _('{0} update app\'s data'),
+                    _('{0} updated app\'s data'),
                     user.ucFirst());
 
         break;
@@ -97,7 +97,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             nbFolders = record.data.value.nbFolders;
 
             return String.format(
-                    _('{0} committed {1} new folder(s) in {2} language'),
+                    _('{0} committed {1} new folder(s) in the {2} language'),
                     user.ucFirst(),
                     nbFolders,
                     lang.ucFirst());
@@ -112,7 +112,7 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
             nbFiles       = nbFilesCreate + nbFilesDelete + nbFilesUpdate;
 
             return String.format(
-                    _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in {5} language'),
+                    _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}'),
                     user.ucFirst(),
                     nbFiles,
                     nbFilesCreate,
