@@ -433,9 +433,9 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             defaults    : {autoScroll : true},
                             items       : [
                                 vcsPanel,
-                                new ui.component.DictionnaryGrid({
+                                new ui.component.DictionaryGrid({
                                     layout    : 'fit',
-                                    title     : _('Dictionnary'),
+                                    title     : _('Dictionary'),
                                     prefix    : 'FE',
                                     fid       : FileID
                                 }),

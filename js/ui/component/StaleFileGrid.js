@@ -372,9 +372,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.needUpdateDisplaylog
                                 }),
-                                new ui.component.DictionnaryGrid({
+                                new ui.component.DictionaryGrid({
                                     layout    : 'fit',
-                                    title     : _('Dictionnary'),
+                                    title     : _('Dictionary'),
                                     prefix    : 'FNU',
                                     fid       : FileID
                                 })

@@ -9,8 +9,8 @@ var i18n = new Array();
   i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
   i18n["Error"] = "Erreur";
   i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
-  i18n["Main Menu"] = "Menu principal";
-  i18n["Files need translate"] = "Nouveaux Fichiers à traduire";
+  i18n["Main menu"] = "Menu principal";
+  i18n["Files need translate"] = "Nouveaux fichiers à traduire";
   i18n["Files need update"] = "Fichiers à mettre à jour";
   i18n["Error in current translation"] = "Fichiers avec des erreurs";
   i18n["Files need reviewed"] = "À relire";
@@ -308,7 +308,7 @@ var i18n = new Array();
   i18n["Need Translate: in {0}"] = "Nouveau fichier à traduire : dans {0}";
   i18n["New File: "] = "Nouveau fichier : ";
   i18n["Automatic translation: "] = "Traduction automatique : ";
-  i18n["Dictionnary"] = "Dictionnaire";
+  i18n["Dictionary"] = "Dictionnaire";
 
 
 // In file: ../../js/ui/component/EmailPrompt.js

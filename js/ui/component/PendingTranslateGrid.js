@@ -212,9 +212,9 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         tabPosition : 'bottom',
                         defaults    : { autoScroll : true },
                         items       : [
-                            new ui.component.DictionnaryGrid({
+                            new ui.component.DictionaryGrid({
                                 layout    : 'fit',
-                                title     : _('Dictionnary'),
+                                title     : _('Dictionary'),
                                 prefix    : 'FNT',
                                 fid       : FileID
                             })

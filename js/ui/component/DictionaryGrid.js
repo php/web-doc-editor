@@ -1,11 +1,11 @@
-Ext.namespace('ui','ui.component','ui.component._DictionnaryGrid');
+Ext.namespace('ui','ui.component','ui.component._DictionaryGrid');
 
 //------------------------------------------------------------------------------
-// DictionnaryGrid internals
-ui.component._DictionnaryGrid.store = Ext.extend(Ext.data.Store,
+// DictionaryGrid internals
+ui.component._DictionaryGrid.store = Ext.extend(Ext.data.Store,
 {    
     proxy    : new Ext.data.HttpProxy({
-        url : "./do/getDictionnaryWords"
+        url : "./do/getDictionaryWords"
     }),
     reader : new Ext.data.JsonReader({
         root          : 'Items',
@@ -52,12 +52,12 @@ ui.component._DictionnaryGrid.store = Ext.extend(Ext.data.Store,
     initComponent : function(config)
     {
        Ext.apply(this, config);
-       ui.component._DictionnaryGrid.store.superclass.initComponent.call(this);
+       ui.component._DictionaryGrid.store.superclass.initComponent.call(this);
     }
 
 });
 
-ui.component._DictionnaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
+ui.component._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
 {
     saveText   : _('Update'),
     cancelText : _('Cancel'),
@@ -66,7 +66,7 @@ ui.component._DictionnaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
         {
             XHR({
                 params : {
-                    task      : 'manageDictionnaryWord',
+                    task      : 'manageDictionaryWord',
                     wordId    : record.data.id,
                     valueEn   : record.data.valueEn,
                     valueLang : record.data.valueLang
@@ -81,7 +81,7 @@ ui.component._DictionnaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
                     record.commit();
                     
                     // Notify
-                    PhDOE.notify('info', _('Word in dictionnary added/updated'), _('The word have been added/updated successfully !'));
+                    PhDOE.notify('info', _('Word in dictionary added/updated'), _('The word have been added/updated successfully !'));
                 },
                 failure : function()
                 {
@@ -98,19 +98,19 @@ ui.component._DictionnaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
     }
 });
 
-ui.component._DictionnaryGrid.sm = Ext.extend(Ext.grid.RowSelectionModel,
+ui.component._DictionaryGrid.sm = Ext.extend(Ext.grid.RowSelectionModel,
 {
     singleSelect: true
 }
 );
 
-ui.component._DictionnaryGrid.viewConfig = {
+ui.component._DictionaryGrid.viewConfig = {
     forceFit      : true,
     emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
     deferEmptyText: false
 };
 
-ui.component._DictionnaryGrid.menu = Ext.extend(Ext.menu.Menu,
+ui.component._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
 {
     setRowIdx: function(rowIdx) {
         this.rowIdx = rowIdx;
@@ -130,7 +130,7 @@ ui.component._DictionnaryGrid.menu = Ext.extend(Ext.menu.Menu,
                     XHR({
                         scope  : this,
                         params : {
-                            task   : 'delDictionnaryWord',
+                            task   : 'delDictionaryWord',
                             wordId : this.grid.store.getAt(this.rowIdx).data.id
                         },
                         success : function()
@@ -150,11 +150,11 @@ ui.component._DictionnaryGrid.menu = Ext.extend(Ext.menu.Menu,
                 }
             }]
         });
-        ui.component._DictionnaryGrid.menu.superclass.initComponent.call(this);
+        ui.component._DictionaryGrid.menu.superclass.initComponent.call(this);
     }
 });
 
-ui.component._DictionnaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
+ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
 {
     onRowContextMenu: function(grid, rowIndex, e)
     {
@@ -162,7 +162,7 @@ ui.component._DictionnaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
         this.getSelectionModel().selectRow(rowIndex);
 
         if( ! this.menu ) {
-            this.menu = new ui.component._DictionnaryGrid.menu({grid: grid});
+            this.menu = new ui.component._DictionaryGrid.menu({grid: grid});
         }
         this.menu.setRowIdx(rowIndex);
         this.menu.showAt(e.getXY());
@@ -216,10 +216,10 @@ ui.component._DictionnaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                }
            ],
-           viewConfig       : ui.component._DictionnaryGrid.viewConfig,
-           sm               : new ui.component._DictionnaryGrid.sm(),
-           store            : new ui.component._DictionnaryGrid.store({ fid : this.fid}),
-           plugins          : [new ui.component._DictionnaryGrid.editor()],
+           viewConfig       : ui.component._DictionaryGrid.viewConfig,
+           sm               : new ui.component._DictionaryGrid.sm(),
+           store            : new ui.component._DictionaryGrid.store({ fid : this.fid}),
+           plugins          : [new ui.component._DictionaryGrid.editor()],
            tbar: [
            {
                 scope   : this,
@@ -268,7 +268,7 @@ ui.component._DictionnaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
            }
            ]
        });
-       ui.component._DictionnaryGrid.grid.superclass.initComponent.call(this);
+       ui.component._DictionaryGrid.grid.superclass.initComponent.call(this);
 
        this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
@@ -276,9 +276,9 @@ ui.component._DictionnaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
 
 
 //------------------------------------------------------------------------------
-// DictionnaryGrid
+// DictionaryGrid
 // config - {prefix, fid, ftype, loadStore}
-ui.component.DictionnaryGrid = Ext.extend(Ext.Panel,
+ui.component.DictionaryGrid = Ext.extend(Ext.Panel,
 {
     initComponent : function()
     {
@@ -287,7 +287,7 @@ ui.component.DictionnaryGrid = Ext.extend(Ext.Panel,
             layout: 'border',
             border: false,
             items : [
-                new ui.component._DictionnaryGrid.grid({
+                new ui.component._DictionaryGrid.grid({
                     dataType          : this.dataType,
                     prefix            : this.prefix,
                     fid               : this.fid,
@@ -296,6 +296,6 @@ ui.component.DictionnaryGrid = Ext.extend(Ext.Panel,
                 })
             ]
         });
-        ui.component.DictionnaryGrid.superclass.initComponent.call(this);
+        ui.component.DictionaryGrid.superclass.initComponent.call(this);
     }
 });

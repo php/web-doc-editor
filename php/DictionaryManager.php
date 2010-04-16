@@ -1,10 +1,10 @@
 <?php
 /*
- *  A class to manage a dictionnary
+ *  A class to manage a dictionary
  * 
  */
 
-class DictionnaryManager {
+class DictionaryManager {
 
     private static $instance;
     public $acronyms;
@@ -32,7 +32,7 @@ class DictionnaryManager {
     {
         $s = sprintf(
             'DELETE FROM
-                `dictionnary`
+                `dictionary`
              WHERE
                 `id` = "%s"',
 
@@ -56,7 +56,7 @@ class DictionnaryManager {
             'SELECT
                 `id`, `valueEn`, `valueLang`, `lastUser`, `lastDate`
              FROM
-                `dictionnary`
+                `dictionary`
              WHERE
                 `project` = "%s" AND `lang`="%s"',
 
@@ -82,7 +82,7 @@ class DictionnaryManager {
      * @param $valueLang : New lang value
      *
      */
-    public function manageDictionnaryWord($wordId, $valueEn, $valueLang)
+    public function manageDictionaryWord($wordId, $valueEn, $valueLang)
     {
         $db = DBConnection::getInstance();
         $am = AccountManager::getInstance();
@@ -96,7 +96,7 @@ class DictionnaryManager {
 
             $s = sprintf(
                 'INSERT INTO
-                    `dictionnary`
+                    `dictionary`
                  (`project`, `lang`, `valueEn`, `valueLang`, `lastUser`, `lastDate`)
                  VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
                 $project,
@@ -111,7 +111,7 @@ class DictionnaryManager {
 
             $s = sprintf(
                 'UPDATE
-                    `dictionnary`
+                    `dictionary`
                  SET
                     `valueEn`  = "%s",
                     `valueLang`= "%s",

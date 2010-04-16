@@ -7,7 +7,7 @@
 
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/BugReader.php';
-require_once dirname(__FILE__) . '/DictionnaryManager.php';
+require_once dirname(__FILE__) . '/DictionaryManager.php';
 require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
 require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
@@ -1802,9 +1802,9 @@ class ExtJsController
     }
 
     /**
-     * Dictionnary : Manage a word. Delete or update it.
+     * Dictionary : Manage a word. Delete or update it.
      */
-    public function manageDictionnaryWord()
+    public function manageDictionaryWord()
     {
         AccountManager::getInstance()->isLogged();
 
@@ -1816,7 +1816,7 @@ class ExtJsController
         $valueEn   = $this->getRequestVariable('valueEn');
         $valueLang = $this->getRequestVariable('valueLang');
 
-        $dateUpdate = DictionnaryManager::getInstance()->manageDictionnaryWord($wordId, $valueEn, $valueLang);
+        $dateUpdate = DictionaryManager::getInstance()->manageDictionaryWord($wordId, $valueEn, $valueLang);
 
         return JsonResponseBuilder::success(
             array(
@@ -1827,13 +1827,13 @@ class ExtJsController
     }
 
     /**
-     * Dictionnary : Get all works for a given language
+     * Dictionary : Get all works for a given language
      */
-    public function getDictionnaryWords()
+    public function getDictionaryWords()
     {
         AccountManager::getInstance()->isLogged();
 
-        $r = DictionnaryManager::getInstance()->getWords();
+        $r = DictionaryManager::getInstance()->getWords();
 
         return JsonResponseBuilder::success(
             array(
@@ -1845,9 +1845,9 @@ class ExtJsController
     }
 
     /**
-     * Dictionnary : Delete a word
+     * Dictionary : Delete a word
      */
-    public function delDictionnaryWord()
+    public function delDictionaryWord()
     {
         AccountManager::getInstance()->isLogged();
 
@@ -1857,7 +1857,7 @@ class ExtJsController
 
         $wordId = $this->getRequestVariable('wordId');
 
-        DictionnaryManager::getInstance()->delWord($wordId);
+        DictionaryManager::getInstance()->delWord($wordId);
 
         return JsonResponseBuilder::success();
 

@@ -374,9 +374,9 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                 fname     : FileName,
                                 loadStore : PhDOE.userConf.reviewedDisplaylog
                             }),
-                            new ui.component.DictionnaryGrid({
+                            new ui.component.DictionaryGrid({
                                 layout    : 'fit',
-                                title     : _('Dictionnary'),
+                                title     : _('Dictionary'),
                                 prefix    : 'FNR',
                                 fid       : FileID
                             })

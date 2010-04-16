@@ -385,7 +385,7 @@ var PhDOE = function()
                         }
                     },
                     tbar : [{
-                        text    : _('Main Menu'),
+                        text    : _('Main menu'),
                         iconCls : 'MainMenu',
                         menu    : new ui.component.MainMenu()
                     }],

@@ -2,7 +2,7 @@ Ext.namespace('ui','ui.component');
 
 ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
 {
-    title      : _('Check Entities'),
+    title      : _('Check entities'),
     iconCls    : 'iconRun',
     id         : 'win-check-entities',
     layout     : 'fit',
