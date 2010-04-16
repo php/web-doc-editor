@@ -2,7 +2,7 @@ Ext.namespace('ui','ui.component');
 
 ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
-    title      : _('Check Build'),
+    title      : _('Check build'),
     iconCls    : 'iconCheckBuild',
     layout     : 'form',
     width      : 350,

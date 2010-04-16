@@ -24,8 +24,8 @@ ui.task._CheckBuildTask.display = function()
             Ext.getCmp('main-panel').add({
                 xtype      : 'panel',
                 id         : 'check_build_panel_' + PhDOE.userLang,
-                title      : String.format(_('Check Build Result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
-                tabTip     : String.format(_('Check Build Result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
+                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
                 closable   : true,
                 autoScroll : true,
                 iconCls    : 'iconCheckBuild',

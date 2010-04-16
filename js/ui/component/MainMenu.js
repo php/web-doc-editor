@@ -109,7 +109,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function() { return false; },
                 menu : new Ext.menu.Menu({
                     items : [{
-                        text     : _('Check Build'),
+                        text     : _('Check build'),
                         disabled : (PhDOE.userLogin === 'anonymous'),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()

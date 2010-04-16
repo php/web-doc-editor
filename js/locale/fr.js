@@ -525,8 +525,8 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/task/CheckBuildTask.js
-  i18n["Check Build Result for {0}"] = "Résultat de la compilation pour {0}";
-  i18n["Check Build Result for the documentation {0}"] = "Résultat de la compilation pour la documentation {0}";
+  i18n["Check build result for {0}"] = "Résultat de la compilation pour {0}";
+  i18n["Check build result for the documentation {0}"] = "Résultat de la compilation pour la documentation {0}";
   i18n["Please, wait until the build is checked..."] = "Merci de patienter pendant la vérification.";
 
 
