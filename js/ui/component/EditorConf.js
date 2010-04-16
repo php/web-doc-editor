@@ -249,7 +249,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         autoHeight  : true,
                         name        : 'mainAppLoadMailsAtStartUp',
                         checked     : PhDOE.userConf.mainAppLoadMailsAtStartUp,
-                        boxLabel    : _('Load Mails at startUp'),
+                        boxLabel    : _('Load mail at startUp'),
                         listeners   : {
                             check : function(field)
                             {
@@ -270,7 +270,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         autoHeight  : true,
                         name        : 'mainAppLoadBugsAtStartUp',
                         checked     : PhDOE.userConf.mainAppLoadBugsAtStartUp,
-                        boxLabel    : _('Load Bugs at startUp'),
+                        boxLabel    : _('Load bugs at startUp'),
                         listeners   : {
                             check : function(field)
                             {
@@ -371,7 +371,7 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         autoHeight  : true,
                         name        : 'newFileSpellCheck',
                         checked     : PhDOE.userConf.newFileSpellCheck,
-                        boxLabel    : _('Enable spellChecking'),
+                        boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
                             {
@@ -614,7 +614,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         name      : 'needUpdateSpellCheckEn',
                         checked   : PhDOE.userConf.needUpdateSpellCheckEn,
-                        boxLabel  : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners : {
                             check : function(field)
                             {
@@ -627,7 +627,7 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     },{
                         name      : 'needUpdateSpellCheckLang',
                         checked   : PhDOE.userConf.needUpdateSpellCheckLang,
-                        boxLabel  : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                         listeners : {
                             check : function(field)
                             {
@@ -856,7 +856,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         hidden      : ( PhDOE.userLang === 'en' ),
                         name        : 'errorSpellCheckEn',
                         checked     : PhDOE.userConf.errorSpellCheckEn,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
                             {
@@ -869,7 +869,7 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }, {
                         name        : 'errorSpellCheckLang',
                         checked     : PhDOE.userConf.errorSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -1032,7 +1032,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         name        : 'reviewedSpellCheckEn',
                         checked     : PhDOE.userConf.reviewedSpellCheckEn,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), 'EN'),
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
                             {
@@ -1045,7 +1045,7 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }, {
                         name        : 'reviewedSpellCheckLang',
                         checked     : PhDOE.userConf.reviewedSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spellChecking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -1179,7 +1179,7 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         name        : 'allFilesSpellCheck',
                         checked     : PhDOE.userConf.allFilesSpellCheck,
-                        boxLabel    : _('Enable spellChecking'),
+                        boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
                             {
@@ -1356,7 +1356,7 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         name        : 'patchSpellCheck',
                         checked     : PhDOE.userConf.patchSpellCheck,
-                        boxLabel    : _('Enable spellChecking'),
+                        boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
                             {

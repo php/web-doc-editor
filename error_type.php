@@ -116,8 +116,8 @@ foreach ($tags as $tag => $label)
     $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different from english version.';
 }
 
-$error['-No error-']['head'] = '- No error -';
-$error['-No error-']['desc'] = 'There is no more error in this file.';
+$error['-No error-']['head'] = '- No errors -';
+$error['-No error-']['desc'] = 'There are no more errors in this file.';
 
 $error['attributXmlXlinkAppendix']['head'] = 'Appendix tag';
 $error['attributXmlXlinkAppendix']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';

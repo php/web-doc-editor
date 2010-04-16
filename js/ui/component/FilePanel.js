@@ -712,7 +712,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             case 'ask-me':
                                 Ext.MessageBox.show({
                                     title   : _('Confirm'),
-                                    msg     : _('Do you want to check for error before saving?'),
+                                    msg     : _('Do you want to check for errors before saving?'),
                                     icon    : Ext.MessageBox.INFO,
                                     buttons : Ext.MessageBox.YESNOCANCEL,
                                     scope   : this,

@@ -111,7 +111,7 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 hidden  : this.hideCommit,
-                text    : _('View Diff...'),
+                text    : _('View diff...'),
                 iconCls : 'iconViewDiff',
                 menu    : new Ext.menu.Menu({
                     items : [{

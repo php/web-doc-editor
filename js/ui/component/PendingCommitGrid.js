@@ -233,7 +233,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                     }
                 }, '-', {
                     scope   : this,
-                    text    : _('View Diff'),
+                    text    : _('View diff'),
                     iconCls : 'iconViewDiff',
                     handler : function()
                     {
