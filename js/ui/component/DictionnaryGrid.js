@@ -43,7 +43,7 @@ ui.component._DictionnaryGrid.store = Ext.extend(Ext.data.Store,
     },
     listeners: {
         load: function() {
-            if( PhDOE.userLang != "anonymous" ) {
+            if( PhDOE.userLogin != "anonymous" ) {
                 // Enable the "add new word" button"
                 Ext.getCmp(this.fid + '-btn-new-word').enable();
             }
@@ -124,7 +124,7 @@ ui.component._DictionnaryGrid.menu = Ext.extend(Ext.menu.Menu,
                 scope   : this,
                 text    : _('Delete this word'),
                 iconCls : 'iconDelete',
-                disabled: (PhDOE.userLang == "anonymous"),
+                disabled: (PhDOE.userLogin == "anonymous"),
                 handler : function()
                 {
                     XHR({
