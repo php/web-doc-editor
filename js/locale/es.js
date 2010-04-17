@@ -9,21 +9,22 @@ var i18n = new Array();
   i18n["You can't do this action as anonymous user."] = "No puede realizar esta acción como usuario anónimo";
   i18n["Error"] = "Error";
   i18n["File system error. Check read/write permission under data folder."] = "Error en el sistema de ficheros. Compruebe los permisos lectura/escritura en el directorio data.";
-  i18n["Main Menu"] = "Menú principal";
-  i18n["Files Need Translate"] = "Ficheros a traducir";
-  i18n["Files Need Update"] = "Ficheros a actualizar";
+  i18n["Main menu"] = "Menú principal";
+  i18n["Files need translate"] = "Ficheros a traducir";
+  i18n["Files need update"] = "Ficheros a actualizar";
   i18n["Error in current translation"] = "Ficheros con errores";
-  i18n["Files Need Reviewed"] = "Ficheros a revisar";
+  i18n["Files need reviewed"] = "Ficheros a revisar";
   i18n["Not in EN tree"] = "No presente en EN";
   i18n["All files"] = "Todos los ficheros";
   i18n["Open the Log Message Manager"] = "Abrir el gestor de comentarios del histórico";
   i18n["Pending for commit"] = "Pendientes para commit";
-  i18n["Pending Patch"] = "Parches pendientes";
-  i18n["Google Translation"] = "Traducir con Google";
+  i18n["Pending patches"] = "Parches pendientes";
+  i18n["Google translation"] = "Traducir con Google";
   i18n["Home"] = "Inicio";
   i18n["Connected as <em>{0}</em>"] = "Conectado como <em>{0}</em>";
   i18n["anonymous"] = "Usar anónimo";
-  i18n["Project / Language: "] = "Proyecto / Idioma : ";
+  i18n["Project: "] = "Proyecto: ";
+  i18n["Language: "] = "Idioma: ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Parece ser que ha introducido algunos caracteres de tabulación en este fichero. Por favor reemplacelos por espacios.<br>Pista: puede usar el botón \"re-formatear todo el fichero\" para reemplazar todas las tabulaciones por espacios.";
 
@@ -64,11 +65,11 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletInfo.js
-  i18n["Infos"] = "Infos";
+  i18n["Information"] = "Información";
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
-  i18n["{0} update app's data"] = "{0} datos actualizados de la aplicación";
-  i18n["{0} is log out"] = "{0} se ha desconectado";
-  i18n["{0} is log in {1} language !"] = "¡{0} Está conectado en el idioma {1}!";
+  i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
+  i18n["{0} logged out"] = "{0} se ha desconectado";
+  i18n["{0} is logged in using the {1} language !"] = "¡{0} Está conectado usando el idioma {1}!";
   i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
   i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a enviado {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
 
@@ -93,9 +94,9 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
-  i18n["Graphics for all language"] = "Gráfica de todos los idiomas";
-  i18n["Lang:"] = "Idioma :";
-  i18n["Total:"] = "Total :";
+  i18n["Graphics for all languages"] = "Gráfica de todos los idiomas";
+  i18n["Lang:"] = "Idioma:";
+  i18n["Total:"] = "Total:";
   i18n["files"] = "ficheros";
 
 
@@ -124,12 +125,18 @@ var i18n = new Array();
   i18n["Search result: {0}"] = "Resultado de la búsqueda: {0}";
   i18n["Update this folder"] = "Actualizar esta carpeta";
 
-  i18n["Add a new folder"] = "Añadir nueva carpeta";
-  i18n["Folder created"] = "Carpeta creada";
+  i18n["Add a new folder"] = "Añadir nuevo directorio";
+  i18n["Parent Folder"] = "Directorio padre";
+  i18n["Folder created"] = "Directorio creado";
   i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info: Esta nueva carpeta no será enviada al repositorio hasta que se haga un commit de almenos un fichero en su interior. Si se guarda ningún fichero, la carpeta será automáticamente eliminada en 8 días.";
   i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "La carpeta <br><br><b>{0}</b><br><br> fue creada satisfactoriamente en {1} !";
+  i18n["This folder already exist in the current folder."] = "Este directorio ya existe en el directorio actual.";
 
-
+  i18n["Add a new file"] = "Añadir nuevo fichero";
+  i18n["This file already exist in the current folder."] = "Este fichero ya existe en el directorio actual.";
+  i18n["Name for the new file"] = "Nombre para el nuevo fichero";
+  i18n["Chose a skeleton"] = "Seleccionar plantilla";
+  i18n["Open the editor"] = "Abrir el editor";
 
 // In file: ../../js/ui/component/PendingCommitGrid.js
   i18n["Modified by"] = "Modificado por";
@@ -140,7 +147,7 @@ var i18n = new Array();
   i18n["...this file"] = "...este fichero";
   i18n["...all files modified by me"] = "...todos lod ficheros modificados por mi";
   i18n["...all files modified"] = "...todos los ficheros";
-  i18n["View Diff"] = "Ver la diferencia";
+  i18n["View diff"] = "Ver la diferencia";
   i18n["Diff for file: {0}"] = "Diferencia para el fichero: {0}";
   i18n["Download the diff as a patch"] = "Descargar la diferencia como parche";
   i18n["Clear this change"] = "Eliminar este cambio";
@@ -180,7 +187,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/SystemUpdatePrompt.js
   i18n["Refresh all data"] = "Actualizar datos";
   i18n["Update all files from VCS"] = "Actualización de todos los archivos VCS";
-  i18n["This may take time. Thank you for your patience..."] = "Esto puede tomar algún tiempo. Gracias por su paciencia...";
+  i18n["This may take time. Thank you for your patience..."] = "Esto puede tomar algún tiempo. Gracias por la espera...";
   i18n["Apply all tools"] = "Aplicar todas las herramientas";
   i18n["Reload data"] = "Recargar datos";
   i18n["Start"] = "Empezar";
@@ -262,7 +269,7 @@ var i18n = new Array();
   i18n["Never check for error before saving the file"] = "Nunca comprobar errores antes de guardar un archivo";
   i18n["External Data"] = "Datos externos";
   i18n["About mails"] = "Acerca de los E-Mails";
-  i18n["Load Mails at startUp"] = "Cargar E-Mails de la lista de correo al iniciar";
+  i18n["Load mail at startUp"] = "Cargar E-Mails de la lista de correo al iniciar";
   i18n["About bugs"] = "Acerca de los bugs";
   i18n["Load Bugs at startUp"] = "Cargar bugs pendientes al iniciar";
   i18n["Menu"] = "Menú";
@@ -280,7 +287,7 @@ var i18n = new Array();
   i18n["Panel height"] = "Alto del panel";
   i18n["Using ViewVc from php web site"] = "Utilizar viewVc de la página web de Php";
   i18n["Using diff -u command line"] = "Uso de la línea de comandos \"$ diff -u\"";
-  i18n["Enable spellChecking for the <b>{0}</b> file"] = "Activar el corrector ortográfico para el fichero <b>{0}</b>";
+  i18n["Enable spell checking for the <b>{0}</b> file"] = "Activar el corrector ortográfico para el fichero <b>{0}</b>";
   i18n["Error type"] = "Tipo de errores";
   i18n["Skip nbLiteralTag error"] = "Ignorar los errores del tipo \"nbLiteralTag\"";
   i18n["Patch content"] = "Contenido del parche";
@@ -302,6 +309,7 @@ var i18n = new Array();
   i18n["Need Translate: in {0}"] = "Nuevo fichero a traducir: dentro de {0}";
   i18n["New File: "] = "Nuevo fichero: ";
   i18n["Automatic translation: "] = "Traducción automática: ";
+  i18n["Dictionary"] = "Diccionario";
 
 
 // In file: ../../js/ui/component/EmailPrompt.js
@@ -327,18 +335,18 @@ var i18n = new Array();
 // In file: ../../js/ui/component/MainMenu.js
   i18n["Verify if there is an update in progress. Please, wait..."] = "Comprobando estado de la actualización. Por favor, espere...";
   i18n["Build tools"] = "Herramientas de compilación";
-  i18n["Check Build"] = "Probar de compilar";
+  i18n["Check build"] = "Probar de compilar";
   i18n["Verify if there is a check in progress. Please, wait..."] = "Comprobando si hay alguna compilación en curso. Por favor, espere...";
-  i18n["Last failed build"] = "Última compilación que falló";
+  i18n["Show last failed build"] = "Mostrar última compilación que falló";
   i18n["EN tools"] = "Herramientas EN";
-  i18n["Script Check Entities"] = "Script de verificación de entidades";
+  i18n["Script check entities"] = "Script de verificación de entidades";
   i18n["View the last result"] = "Ver el último resultado";
   i18n["Run this script"] = "Ejecutar este script";
   i18n["Verify if there is an entities check in progress. Please, wait..."] = "Comprobando si hay alguna verificación de entidades en curso. Por favor, espere...";
   i18n["There is currently a check in progress for the entities.<br/>You can't perform a new check now."] = "En este momento ya existe una verificación de entidades en curso.<br/>No puede realizar otra verificación hasta que finalice el proceso.";
   i18n["There is currently a check in progress for this language.<br/>You can't perform a new check now."] = "En este momento ya existe una compilación en curso.<br/>No puede probar de compilar otra vez hasta que finalice el proceso.";
   i18n["There is currently an update in progress.<br/>You can't perform an update now."] = "En este momento ya existe una actualización en curso.<br/>No puede actualizar hasta que finalice el proceso";
-  i18n["Script Check doc"] = "Script Check doc";
+  i18n["Script check document"] = "Script Check documento";
   i18n["Configure"] = "Configuración";
   i18n["Switch to language..."] = "Cambiar al idioma...";
   i18n["Erase my personal data"] = "Eliminar mi configuración personal";
@@ -362,6 +370,18 @@ var i18n = new Array();
   i18n["Diff between {0} & {1}"] = "Diferencias entre {0} y {1}";
   i18n["<b>Load/Refresh</b> revisions"] = "<b>Cargar/Actualizar</b> las revisiones";
 
+
+// In file: ../../js/ui/component/DictionnaryGrid.js
+  i18n["Add a new word"] = "Añadir nueva palabra";
+  i18n["Delete this word"] = "Eliminar palabra";
+  i18n["En word"] = "Palabra en";
+  i18n["{0} word"] = "Palabra {0}";
+  i18n["Last User Update"] = "Última actualización por";
+  i18n["Last Date Update"] = "Última edición en";
+  i18n["Word in dictionnary added/updated"] = "La palabra en el diccionario ha sido editada/añadida";
+  i18n["The word have been added/updated successfully !"] = "¡La palabra ha sido añadida/editada satisfactoriamente!";
+  i18n["Word deleted"] = "Palabra eliminada";
+  i18n["The word was deleted successfully !"] = "¡La palabra ha sido eliminada satisfactoriamente!";
 
 // In file: ../../js/ui/component/PendingReviewGrid.js
   i18n["Reviewed"] = "Revisado";
@@ -389,7 +409,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/PortletLocalMail.js
   i18n["Title"] = "Asunto";
   i18n["Error when loading mails from this mailing list !"] = "¡Se ha producido un error al cargar los E-Mail de la lista de correo!";
-  i18n["Mails from {0}"] = "E-Mails de {0}";
+  i18n["Mail from {0}"] = "E-Mails de {0}";
 
 
 // In file: ../../js/ui/component/CheckBuildPrompt.js
@@ -435,7 +455,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/StaleFileGrid.js
   i18n["EN revision"] = "Versión EN";
-  i18n["View Diff..."] = "Ver la diferencia...";
+  i18n["View diff..."] = "Ver la diferencia...";
   i18n["... of the {0} file"] = "... del fichero {0}";
   i18n["Need Update: in {0}"] = "Fichero que necesita actualización: en {0}";
   i18n["{0} revision"] = "Revisión {0}";
@@ -475,6 +495,7 @@ var i18n = new Array();
 // In file: ../../js/ui/task/VCSCommitTask.js
   i18n["Please, wait until commit..."] = "Por favor espere...";
   i18n["The log message is required."] = "El comentario para el histórico es obligatorio.";
+  i18n["You must choose at least one file."] = "Debe escoger almenos un fichero.";
 
 
 // In file: ../../js/ui/task/MarkDeleteTask.js
@@ -504,8 +525,8 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/task/CheckBuildTask.js
-  i18n["Check Build Result for {0}"] = "Resultado de la compilación de {0}";
-  i18n["Check Build Result for the documentation {0}"] = "Resultado de la compilación de la documentación {0}";
+  i18n["Check build result for {0}"] = "Resultado de la compilación de {0}";
+  i18n["Check build result for the documentation {0}"] = "Resultado de la compilación de la documentación {0}";
   i18n["Please, wait until the build is checked..."] = "Gracias, por favor espere mientras se prueba de compilar...";
 
 
