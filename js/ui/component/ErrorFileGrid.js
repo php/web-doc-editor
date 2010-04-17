@@ -104,7 +104,7 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 hidden  : this.hideCommit,
-                text    : ('View Diff'),
+                text    : ('View diff'),
                 iconCls : 'iconViewDiff',
                 handler : function()
                 {

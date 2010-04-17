@@ -86,7 +86,7 @@ ui.component._PendingReviewGrid.menu.diff = function(config)
 };
 Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
 {
-    text    : _('View Diff'),
+    text    : _('View diff'),
     iconCls : 'iconViewDiff',
     init : function()
     {
