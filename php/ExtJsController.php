@@ -75,19 +75,21 @@ class ExtJsController
      */
     public function login()
     {
+        $am = AccountManager::getInstance();
+
         $vcsLogin  = $this->getRequestVariable('vcsLogin');
         $vcsPasswd = $this->getRequestVariable('vcsPassword');
         $lang      = $this->getRequestVariable('lang');
         $project   = $this->getRequestVariable('project');
 
-        $response = AccountManager::getInstance()->login($project, $vcsLogin, $vcsPasswd, $lang);
+        $response = $am->login($project, $vcsLogin, $vcsPasswd, $lang);
 
         if ($response['state'] === true) {
             // This user is already know as a valid user
 
             // We stock this info into DB
             $value = array();
-            $value['user'] = $vcsLogin;
+            $value['user'] = $am->vcsLogin;
             $value['lang'] = $lang;
             RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
