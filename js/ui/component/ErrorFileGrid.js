@@ -430,6 +430,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             tabPosition : 'bottom',
+                            enableTabScroll:true,
                             defaults    : {autoScroll : true},
                             items       : [
                                 vcsPanel,
