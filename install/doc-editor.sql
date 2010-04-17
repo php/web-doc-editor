@@ -200,8 +200,8 @@ CREATE TABLE IF NOT EXISTS `dictionary` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
-  `valueEn` int(255) NOT NULL,
-  `valueLang` int(255) NOT NULL,
+  `valueEn` varchar(255) NOT NULL,
+  `valueLang` varchar(255) NOT NULL,
   `lastUser` varchar(255) NOT NULL,
   `lastDate` datetime NOT NULL,
   PRIMARY KEY (`id`)
