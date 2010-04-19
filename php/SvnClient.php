@@ -442,21 +442,25 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
             $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn add --non-recursive '.$path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$path;
 
+            $err = 1;
             $trial_threshold = 3;
-            while ($trial_threshold-- > 0) {
-                $output = array();
-                exec($cmd, $output);
-                if (strlen(trim(implode('', $output))) != 0) break;
+            $output = array();
+            for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+                array_push($output, "svn ci trial #$trial\n");
+                exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+                if ($err == 0) array_push($output, "Success.\n");
             }
             $commitLogMessage = array_merge($commitLogMessage, $output);
         }
 
+        if ($err == 0) {
         // We stock this info into DB
-        $value = array();
-        $value['user'] = $vcsLogin;
-        $value['lang'] = $vcsLang;
-        $value['nbFolders'] = count($foldersPath);
-        RepositoryManager::getInstance()->setStaticValue('info', 'commitFolders', json_encode($value), true);
+            $value = array();
+            $value['user'] = $vcsLogin;
+            $value['lang'] = $vcsLang;
+            $value['nbFolders'] = count($foldersPath);
+            RepositoryManager::getInstance()->setStaticValue('info', 'commitFolders', json_encode($value), true);
+        }
 
         return $commitLogMessage;
     }
@@ -540,20 +544,24 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
 
+        $err = 1;
         $trial_threshold = 3;
-        while ($trial_threshold-- > 0) {
-            $output = array();
-            exec($cmd, $output);
-            if (strlen(trim(implode('', $output))) != 0) break;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn ci trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
         }
 
         // Delete tmp logMessage file
         $this->deleteCommitLogFile($pathLogFile);
 
-        // We stock this info into DB
-        $info['user'] = $vcsLogin;
-        $info['lang'] = $vcsLang;
-        RepositoryManager::getInstance()->setStaticValue('info', 'commitFiles', json_encode($info), true);
+        if ($err == 0) {
+            // We stock this info into DB
+            $info['user'] = $vcsLogin;
+            $info['lang'] = $vcsLang;
+            RepositoryManager::getInstance()->setStaticValue('info', 'commitFiles', json_encode($info), true);
+        }
 
         return $output;
     }
