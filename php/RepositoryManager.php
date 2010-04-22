@@ -322,8 +322,9 @@ class RepositoryManager
             "logContent" => ""
         );
 
-        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'.
-              $appConf['GLOBAL_CONFIGURATION']['php.bin'].' configure.php '
+        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'
+              .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' configure.php --with-php='
+              .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' '
               .$appConf[$project]['vcs.configure.script.options'];
 
         $cmd = str_replace("{LangCode}", $lang, $cmd).';';
