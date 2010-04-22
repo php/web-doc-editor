@@ -216,6 +216,7 @@
     padding: 1px 2px;
 }
 .diff-content table.code td.del {
+    color: black;
     background-color: #FDD;
     border-left: 1px solid #C00;
     border-right: 1px solid #C00;
@@ -224,6 +225,7 @@
     border-top: 1px solid #C00;
 }
 .diff-content table.code td.ins {
+    color: black;
     background-color: #DFD;
     border-left: 1px solid #0A0;
     border-right: 1px solid #0A0;
@@ -302,6 +304,7 @@
     text-align: center;
 }
 #confMenu .x-view-over {
+    color: black;
     border: 1px solid #dddddd;
     background-color: #efefef;
     padding: 4px;
@@ -374,6 +377,7 @@
     cursor: pointer;
 }
 .check_doc_cell {
+    color: black;
     background-color: #DEDEDE;
     text-align: right;
 }
@@ -392,6 +396,7 @@
 }
 
 .entities-details, .acronyms-details {
+    color: black;
     background-color: #ffffff;
     padding: 7px;
     font-family: tahoma, arial, sans-serif;
