@@ -38,7 +38,7 @@ class Config
         // Second, we load all config project file
         $d = dir($p);
         while (false !== ($entry = $d->read())) {
-            if( is_file($p.$entry) && $entry != 'conf.ini' ) {
+            if( is_file($p.$entry) && ( $entry != 'conf.ini' && $entry != 'localConf.ini' ) ) {
 
                // Get the name of the project directly into the filename
                $t = explode(".", $entry);
