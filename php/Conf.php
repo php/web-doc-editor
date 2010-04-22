@@ -27,6 +27,11 @@ class Config
 
         // First, we load the global configuration file
         $this->conf['GLOBAL_CONFIGURATION'] = parse_ini_file($p."conf.ini");
+
+        if( is_file($p."localConf.ini") ) {
+            $this->conf['GLOBAL_CONFIGURATION'] = array_merge( $this->conf['GLOBAL_CONFIGURATION'], parse_ini_file($p."localConf.ini") );
+        }
+
         // We fix the data path here
         $this->conf['GLOBAL_CONFIGURATION']['data.path'] = realpath(dirname(__FILE__).'/../'.$this->conf['GLOBAL_CONFIGURATION']['data.path']).'/';
 

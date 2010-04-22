@@ -306,10 +306,9 @@ class RepositoryManager
 
     /**
      * Check the build of the documentation (using configure.php script).
-     * PHP binary should be in /usr/bin
      *
      * @param $lang The lang of the documentation we want to check the build. We must take out $lang to be able to use this method from cron script on multiple language
-     * @param $enable_xml_details Indicate whether the checking includes xml-details
+     * @param $enable_xml_details Indicate whether the check cmd include xml-details option
      * @return The output log.
      */
     public function checkBuild($lang, $enable_xml_details="false")
@@ -323,8 +322,8 @@ class RepositoryManager
             "logContent" => ""
         );
 
-        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'
-              .'./configure.php '
+        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).';'.
+              $appConf['GLOBAL_CONFIGURATION']['php.bin'].' configure.php '
               .$appConf[$project]['vcs.configure.script.options'];
 
         $cmd = str_replace("{LangCode}", $lang, $cmd).';';
