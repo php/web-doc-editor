@@ -566,7 +566,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         // Walk throw the output to filter some text
         $cleanOutput = array();
 
-        for( $i=0; $i < count($ouput); $i++ ) {
+        for( $i=0; $i < count($output); $i++ ) {
             if( $output[$i] != "svn: warning: Can't open file '/root/.subversion/servers': Permission denied" ) {
                 array_push($cleanOutput, $output[$i]);
             }
