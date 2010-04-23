@@ -116,7 +116,12 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 }
                 
             } else {
-                btnUndo.enable(); // undo
+
+                // Enable the Undo Btn if it exist (don't exist when we open a fil in readOnly mode
+                if( btnUndo ) {
+                    btnUndo.enable(); // undo
+                }
+
                 if( cmp.documentDurty === false ) {
                     cmp.fireEvent('codemodified');
                     cmp.documentDurty = true;
