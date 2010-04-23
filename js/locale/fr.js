@@ -71,7 +71,7 @@ var i18n = new Array();
   i18n["{0} logged out"] = "{0} s'est déconnecté";
   i18n["{0} is logged in using the {1} language"] = "{0} s'est connecté en langue {1}";
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
-  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the {5} language"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
+  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
