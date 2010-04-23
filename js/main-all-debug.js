@@ -7176,6 +7176,17 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
             Ext.getCmp('winVCSCommit').close();
         }
     }],
+    listeners: {
+        show: function() {
+
+            var t = new Ext.util.DelayedTask(function() {
+                Ext.getCmp('form-commit-message-log').focus();
+            });
+
+            t.delay(200);
+
+        }
+    },
     initComponent : function()
     {
         var i;
