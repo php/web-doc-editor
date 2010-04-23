@@ -878,6 +878,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                     coderestored : function()
                     {
+                        // This should never occurs on readOnly file
+                        if( this.readOnly ) {
+                            return;
+                        }
 
                         if ( Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified ) {
                             // Remove [modified] in title
@@ -907,7 +911,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
 
                             // Desactivate save button
-                            if ( ! this.isPatch ) {
+                            if ( !this.isPatch ) {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
                             }
@@ -919,6 +923,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                     codemodified : function()
                     {
+                        // This should never occurs on readOnly file
+                        if( this.readOnly ) {
+                            return;
+                        }
 
                         var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
                             cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
@@ -939,7 +947,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
 
                             // Activate save button
-                            if (! this.isPatch)
+                            if ( !this.isPatch )
                             {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
