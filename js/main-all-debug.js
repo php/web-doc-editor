@@ -1,0 +1,17473 @@
+Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.2.0/resources/images/default/s.gif';
+
+// Add ucFirst to string object
+String.prototype.ucFirst = function () {
+	return this.substr(0,1).toUpperCase() + this.substr(1,this.length);
+};
+
+// Allow to deselect just one row when we use CheckBoxSelectionModel, for example, in CommitPrompt
+// Found here : http://www.extjs.com/forum/showthread.php?69172-Rows-are-deselected-in-grid-CheckboxSelectionModel&p=348647#post348647
+Ext.override( Ext.grid.CheckboxSelectionModel, {
+    handleMouseDown : function(g, rowIndex, e){
+        if(e.button !== 0 || this.isLocked()){
+            return;
+        };
+        var view = this.grid.getView();
+        if(e.shiftKey && this.last !== false){
+            var last = this.last;
+            this.selectRange(last, rowIndex, e.ctrlKey);
+            this.last = last;
+            view.focusRow(rowIndex);
+        }else{
+            var isSelected = this.isSelected(rowIndex);
+            if(isSelected){
+                this.deselectRow(rowIndex);
+            }else if(!isSelected){
+                this.selectRow(rowIndex, ! this.singleSelect);
+                view.focusRow(rowIndex);
+            }
+        }
+    }
+});
+
+// javascript debug-logging wrapper
+function log()
+{
+    if(console) {
+        console.log.apply(this, arguments);
+    }
+}
+
+// i18n function
+function _(key)
+{
+    try {
+        var str = i18n[key];
+
+        if (str === undefined) {
+            str = key;
+            log("FIX ME : i18n not found for the string: " + key);
+        }
+
+        return str;
+    } catch(e) {
+        return key;
+    }
+}
+
+// XHR wrapper
+// config - Ext.ajax.request config
+function XHR(config)
+{
+    var success_cb  = config.success,
+        failure_cb  = config.failure,
+        original_cb = config.callback;
+
+    config.url = './do/' + config.params.task;
+    delete config.params.task;
+    config.failure  = config.success = Ext.emptyFn;
+    config.callback = function(options, success, response)
+    {
+        var o = null;
+        try {
+            o = Ext.decode(response.responseText);
+        } catch(e) {
+            log("Invalid XHR JSON Response:" + response.responseText);
+        }
+
+        if (success && o && o.success) {
+            if (success_cb !== undefined) {
+                Ext.callback(success_cb, config.scope, [response, options]);
+            }
+        } else {
+            if (failure_cb !== undefined) {
+                Ext.callback(failure_cb, config.scope, [response, options]);
+            }
+        }
+
+        if (original_cb !== undefined) {
+            Ext.callback(original_cb, config.scope, [options, success, response]);
+        }
+    };
+
+    Ext.Ajax.request(config);
+}/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
+    layout : 'anchor',
+    //autoEl : 'div',//already defined by Ext.Component
+    defaultType : 'portlet',
+    cls : 'x-portal-column'
+});
+
+Ext.reg('portalcolumn', Ext.ux.PortalColumn);/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ux.Portal = Ext.extend(Ext.Panel, {
+    layout : 'column',
+    autoScroll : true,
+    cls : 'x-portal',
+    defaultType : 'portalcolumn',
+
+    initComponent : function(){
+        Ext.ux.Portal.superclass.initComponent.call(this);
+        this.addEvents({
+            validatedrop:true,
+            beforedragover:true,
+            dragover:true,
+            beforedrop:true,
+            drop:true
+        });
+    },
+
+    initEvents : function(){
+        Ext.ux.Portal.superclass.initEvents.call(this);
+        this.dd = new Ext.ux.Portal.DropZone(this, this.dropConfig);
+    },
+
+    beforeDestroy : function() {
+        if(this.dd){
+            this.dd.unreg();
+        }
+        Ext.ux.Portal.superclass.beforeDestroy.call(this);
+    }
+});
+
+Ext.reg('portal', Ext.ux.Portal);
+
+
+Ext.ux.Portal.DropZone = function(portal, cfg){
+    this.portal = portal;
+    Ext.dd.ScrollManager.register(portal.body);
+    Ext.ux.Portal.DropZone.superclass.constructor.call(this, portal.bwrap.dom, cfg);
+    portal.body.ddScrollConfig = this.ddScrollConfig;
+};
+
+Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
+    ddScrollConfig : {
+        vthresh: 50,
+        hthresh: -1,
+        animate: true,
+        increment: 200
+    },
+
+    createEvent : function(dd, e, data, col, c, pos){
+        return {
+            portal: this.portal,
+            panel: data.panel,
+            columnIndex: col,
+            column: c,
+            position: pos,
+            data: data,
+            source: dd,
+            rawEvent: e,
+            status: this.dropAllowed
+        };
+    },
+
+    notifyOver : function(dd, e, data){
+        var xy = e.getXY(), portal = this.portal, px = dd.proxy;
+
+        // case column widths
+        if(!this.grid){
+            this.grid = this.getGrid();
+        }
+
+        // handle case scroll where scrollbars appear during drag
+        var cw = portal.body.dom.clientWidth;
+        if(!this.lastCW){
+            this.lastCW = cw;
+        }else if(this.lastCW != cw){
+            this.lastCW = cw;
+            portal.doLayout();
+            this.grid = this.getGrid();
+        }
+
+        // determine column
+        var col = 0, xs = this.grid.columnX, cmatch = false;
+        for(var len = xs.length; col < len; col++){
+            if(xy[0] < (xs[col].x + xs[col].w)){
+                cmatch = true;
+                break;
+            }
+        }
+        // no match, fix last index
+        if(!cmatch){
+            col--;
+        }
+
+        // find insert position
+        var p, match = false, pos = 0,
+            c = portal.items.itemAt(col),
+            items = c.items.items, overSelf = false;
+
+        for(var len = items.length; pos < len; pos++){
+            p = items[pos];
+            var h = p.el.getHeight();
+            if(h === 0){
+                overSelf = true;
+            }
+            else if((p.el.getY()+(h/2)) > xy[1]){
+                match = true;
+                break;
+            }
+        }
+
+        pos = (match && p ? pos : c.items.getCount()) + (overSelf ? -1 : 0);
+        var overEvent = this.createEvent(dd, e, data, col, c, pos);
+
+        if(portal.fireEvent('validatedrop', overEvent) !== false &&
+           portal.fireEvent('beforedragover', overEvent) !== false){
+
+            // make sure proxy width is fluid
+            px.getProxy().setWidth('auto');
+
+            if(p){
+                px.moveProxy(p.el.dom.parentNode, match ? p.el.dom : null);
+            }else{
+                px.moveProxy(c.el.dom, null);
+            }
+
+            this.lastPos = {c: c, col: col, p: overSelf || (match && p) ? pos : false};
+            this.scrollPos = portal.body.getScroll();
+
+            portal.fireEvent('dragover', overEvent);
+
+            return overEvent.status;
+        }else{
+            return overEvent.status;
+        }
+
+    },
+
+    notifyOut : function(){
+        delete this.grid;
+    },
+
+    notifyDrop : function(dd, e, data){
+        delete this.grid;
+        if(!this.lastPos){
+            return;
+        }
+        var c = this.lastPos.c, col = this.lastPos.col, pos = this.lastPos.p;
+
+        var dropEvent = this.createEvent(dd, e, data, col, c,
+            pos !== false ? pos : c.items.getCount());
+
+        if(this.portal.fireEvent('validatedrop', dropEvent) !== false &&
+           this.portal.fireEvent('beforedrop', dropEvent) !== false){
+
+            dd.proxy.getProxy().remove();
+            dd.panel.el.dom.parentNode.removeChild(dd.panel.el.dom);
+
+            if(pos !== false){
+                if(c == dd.panel.ownerCt && (c.items.items.indexOf(dd.panel) <= pos)){
+                    pos++;
+                }
+                c.insert(pos, dd.panel);
+            }else{
+                c.add(dd.panel);
+            }
+
+            c.doLayout();
+
+            this.portal.fireEvent('drop', dropEvent);
+
+            // scroll position is lost on drop, fix it
+            var st = this.scrollPos.top;
+            if(st){
+                var d = this.portal.body.dom;
+                setTimeout(function(){
+                    d.scrollTop = st;
+                }, 10);
+            }
+
+        }
+        delete this.lastPos;
+    },
+
+    // internal cache of body and column coords
+    getGrid : function(){
+        var box = this.portal.bwrap.getBox();
+        box.columnX = [];
+        this.portal.items.each(function(c){
+             box.columnX.push({x: c.el.getX(), w: c.el.getWidth()});
+        });
+        return box;
+    },
+
+    // unregister the dropzone from ScrollManager
+    unreg: function() {
+        //Ext.dd.ScrollManager.unregister(this.portal.body);
+        Ext.ux.Portal.DropZone.superclass.unreg.call(this);
+    }
+});
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ux.Portlet = Ext.extend(Ext.Panel, {
+    anchor : '100%',
+    frame : true,
+    collapsible : true,
+    draggable : true,
+    cls : 'x-portlet'
+});
+
+Ext.reg('portlet', Ext.ux.Portlet);/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ *
+ * Modified according to :
+ * http://www.extjs.com/forum/showthread.php?80362-3.0.1-Little-fixes-for-a-rowEditor-bugs.&p=403130#post403130
+ * & according to me ;)
+ * 
+ */
+Ext.ns('Ext.ux.grid');
+
+/**
+ * @class Ext.ux.grid.RowEditor
+ * @extends Ext.Panel
+ * Plugin (ptype = 'roweditor') that adds the ability to rapidly edit full rows in a grid.
+ * A validation mode may be enabled which uses AnchorTips to notify the user of all
+ * validation errors at once.
+ *
+ * @ptype roweditor
+ */
+Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
+    floating: true,
+    shadow: false,
+    layout: 'hbox',
+    cls: 'x-small-editor',
+    buttonAlign: 'center',
+    baseCls: 'x-row-editor',
+    elements: 'header,footer,body',
+    frameWidth: 5,
+    buttonPad: 3,
+    clicksToEdit: 'auto',
+    monitorValid: true,
+    focusDelay: 250,
+    errorSummary: true,
+
+    saveText: 'Save',
+    cancelText: 'Cancel',
+    commitChangesText: 'You need to commit or cancel your changes',
+    errorText: 'Errors',
+
+    defaults: {
+        normalWidth: true
+    },
+
+    initComponent: function(){
+        Ext.ux.grid.RowEditor.superclass.initComponent.call(this);
+        this.addEvents(
+            /**
+             * @event beforeedit
+             * Fired before the row editor is activated.
+             * If the listener returns <tt>false</tt> the editor will not be activated.
+             * @param {Ext.ux.grid.RowEditor} roweditor This object
+             * @param {Number} rowIndex The rowIndex of the row just edited
+             */
+            'beforeedit',
+            /**
+             * @event canceledit
+             * Fired when the editor is cancelled.
+             * @param {Ext.ux.grid.RowEditor} roweditor This object
+             * @param {Boolean} forced True if the cancel button is pressed, false is the editor was invalid.
+             */
+            'canceledit',
+            /**
+             * @event validateedit
+             * Fired after a row is edited and passes validation.
+             * If the listener returns <tt>false</tt> changes to the record will not be set.
+             * @param {Ext.ux.grid.RowEditor} roweditor This object
+             * @param {Object} changes Object with changes made to the record.
+             * @param {Ext.data.Record} r The Record that was edited.
+             * @param {Number} rowIndex The rowIndex of the row just edited
+             */
+            'validateedit',
+            /**
+             * @event afteredit
+             * Fired after a row is edited and passes validation.  This event is fired
+             * after the store's update event is fired with this edit.
+             * @param {Ext.ux.grid.RowEditor} roweditor This object
+             * @param {Object} changes Object with changes made to the record.
+             * @param {Ext.data.Record} r The Record that was edited.
+             * @param {Number} rowIndex The rowIndex of the row just edited
+             */
+            'afteredit'
+        );
+    },
+
+    init: function(grid){
+        this.grid = grid;
+        this.ownerCt = grid;
+        if(this.clicksToEdit === 2){
+            grid.on('rowdblclick', this.onRowDblClick, this);
+        }else{
+            grid.on('rowclick', this.onRowClick, this);
+            if(Ext.isIE){
+                grid.on('rowdblclick', this.onRowDblClick, this);
+            }
+        }
+
+        // stopEditing without saving when a record is removed from Store.
+        grid.getStore().on('remove', function() {
+            this.stopEditing(false);
+        },this);
+
+        grid.on({
+            scope: this,
+            keydown: this.onGridKey,
+            columnresize: this.verifyLayout,
+            columnmove: this.refreshFields,
+            reconfigure: this.refreshFields,
+            beforedestroy : this.beforedestroy,
+            destroy : this.destroy,
+            bodyscroll: {
+                buffer: 250,
+                fn: this.positionButtons
+            }
+        });
+        grid.getColumnModel().on('hiddenchange', this.verifyLayout, this, {delay:1});
+        grid.getView().on('refresh', this.stopEditing.createDelegate(this, []));
+    },
+
+    beforedestroy: function() {
+        this.stopMonitoring();
+        this.grid.getStore().un('remove', this.onStoreRemove, this);
+        this.stopEditing(false);
+        Ext.destroy(this.btns, this.tooltip);
+    },
+
+    refreshFields: function(){
+        this.initFields();
+        this.verifyLayout();
+    },
+
+    isDirty: function(){
+        var dirty;
+        this.items.each(function(f){
+            if(String(this.values[f.id]) !== String(f.getValue())){
+                dirty = true;
+                return false;
+            }
+        }, this);
+        return dirty;
+    },
+
+    startEditing: function(rowIndex, doFocus){
+        if(this.editing && this.isDirty()){
+            this.showTooltip(this.commitChangesText);
+            return;
+        }
+        if(Ext.isObject(rowIndex)){
+            rowIndex = this.grid.getStore().indexOf(rowIndex);
+        }
+        if(this.fireEvent('beforeedit', this, rowIndex) !== false){
+            this.editing = true;
+            var g = this.grid, view = g.getView(),
+                row = view.getRow(rowIndex),
+                record = g.store.getAt(rowIndex);
+
+            this.record = record;
+            this.rowIndex = rowIndex;
+            this.values = {};
+            if(!this.rendered){
+                this.render(view.getEditorParent());
+            }
+            var w = Ext.fly(row).getWidth();
+            this.setSize(w);
+            if(!this.initialized){
+                this.initFields();
+            }
+            var cm = g.getColumnModel(), fields = this.items.items, f, val;
+
+            for(var i = 0, len = cm.getColumnCount(); i < len; i++){
+
+                if( cm.config[i].editor.hideField ) {
+                    continue;
+                }
+
+                //console.log(fields);
+                val = this.preEditValue(record, cm.getDataIndex(i));
+
+                if(!cm.isCellEditable(i, this.rowIndex)) {
+                    val = cm.getRenderer(i)(val);
+                }
+
+                f = fields[i];
+                f.setValue(val);
+                this.values[f.id] = Ext.isEmpty(val) ? '' : val;
+            }
+            this.verifyLayout(true);
+            if(!this.isVisible()){
+                this.setPagePosition(Ext.fly(row).getXY());
+            } else{
+                this.el.setXY(Ext.fly(row).getXY(), {duration:0.15});
+            }
+            if(!this.isVisible()){
+                this.show().doLayout();
+            }
+            if(doFocus !== false){
+                this.doFocus.defer(this.focusDelay, this);
+            }
+        }
+    },
+
+    stopEditing : function(saveChanges){
+        this.editing = false;
+        if(!this.isVisible()){
+            return;
+        }
+        if(saveChanges === false || !this.isValid()){
+            this.hide();
+            this.fireEvent('canceledit', this, saveChanges === false);
+            return;
+        }
+        var changes = {},
+            r = this.record,
+            hasChange = false,
+            cm = this.grid.colModel,
+            fields = this.items.items;
+        for(var i = 0, len = cm.getColumnCount(); i < len; i++){
+
+            if( cm.config[i].editor.hideField ) {
+                continue;
+            }
+
+            if(!cm.isHidden(i) && cm.isCellEditable(i, this.rowIndex) ){
+                var dindex = cm.getDataIndex(i);
+                if(!Ext.isEmpty(dindex)){
+                    var oldValue = r.data[dindex];
+                    if(fields[i].column.editable || fields[i].column.editor) {
+                        var value = this.postEditValue(fields[i].getValue(), oldValue, r, dindex);
+                        if(String(oldValue) !== String(value)){
+                            changes[dindex] = value;
+                            hasChange = true;
+                        }
+                    }
+                }
+            }
+        }
+        if(hasChange && this.fireEvent('validateedit', this, changes, r, this.rowIndex) !== false){
+            r.beginEdit();
+            Ext.iterate(changes, function(name, value){
+                r.set(name, value);
+            });
+            r.endEdit();
+            this.fireEvent('afteredit', this, changes, r, this.rowIndex);
+        }
+        this.hide();
+    },
+
+    verifyLayout: function(force){
+        if(this.el && (this.isVisible() || force === true)){
+            var row = this.grid.getView().getRow(this.rowIndex);
+            this.setSize(Ext.fly(row).getWidth(), Ext.isIE ? Ext.fly(row).getHeight() + 9 : undefined);
+            var cm = this.grid.colModel, fields = this.items.items;
+            for(var i = 0, len = cm.getColumnCount(); i < len; i++){
+
+                if( cm.config[i].editor.hideField ) {
+                    continue;
+                }
+
+                if(!cm.isHidden(i)){
+                    var adjust = 0;
+                    if(i === (len - 1)){
+                        adjust += 3; // outer padding
+                    } else{
+                        adjust += 1;
+                    }
+                    fields[i].show();
+                    fields[i].setWidth(cm.getColumnWidth(i) - adjust);
+                } else{
+                    fields[i].hide();
+                }
+            }
+            this.doLayout();
+            this.positionButtons();
+        }
+    },
+
+    slideHide : function(){
+        this.hide();
+    },
+
+    initFields: function(){
+        var cm = this.grid.getColumnModel(), pm = Ext.layout.ContainerLayout.prototype.parseMargins;
+        this.removeAll(false);
+        for(var i = 0, len = cm.getColumnCount(); i < len; i++){
+            var c = cm.getColumnAt(i),
+                ed = c.getEditor();
+            // If hidden, we skip this field
+            if( ed.hideField ) {
+                continue;
+            }
+
+            if(!ed){
+                ed = c.displayEditor || new Ext.form.DisplayField();
+            }
+            if(i == 0){
+                ed.margins = pm('0 1 2 1');
+            } else if(i == len - 1){
+                ed.margins = pm('0 0 2 1');
+            } else{
+                ed.margins = pm('0 1 2');
+            }
+            ed.setWidth(cm.getColumnWidth(i));
+            ed.column = c;
+            if(ed.ownerCt !== this){
+                ed.on('focus', this.ensureVisible, this);
+                ed.on('specialkey', this.onKey, this);
+            }
+            this.insert(i, ed);
+        }
+        this.initialized = true;
+    },
+
+    onKey: function(f, e){
+        if(e.getKey() === e.ENTER){
+            this.stopEditing(true);
+            e.stopPropagation();
+        }
+    },
+
+    onGridKey: function(e){
+        if(e.getKey() === e.ENTER && !this.isVisible()){
+            var r = this.grid.getSelectionModel().getSelected();
+            if(r){
+                var index = this.grid.store.indexOf(r);
+                this.startEditing(index);
+                e.stopPropagation();
+            }
+        }
+    },
+
+    ensureVisible: function(editor){
+        if(this.isVisible()){
+             this.grid.getView().ensureVisible(this.rowIndex, this.grid.colModel.getIndexById(editor.column.id), true);
+        }
+    },
+
+    onRowClick: function(g, rowIndex, e){
+        if(this.clicksToEdit == 'auto'){
+            var li = this.lastClickIndex;
+            this.lastClickIndex = rowIndex;
+            if(li != rowIndex && !this.isVisible()){
+                return;
+            }
+        }
+        this.startEditing(rowIndex, false);
+        this.doFocus.defer(this.focusDelay, this, [e.getPoint()]);
+    },
+
+    onRowDblClick: function(g, rowIndex, e){
+        this.startEditing(rowIndex, false);
+        this.doFocus.defer(this.focusDelay, this, [e.getPoint()]);
+    },
+
+    onRender: function(){
+        Ext.ux.grid.RowEditor.superclass.onRender.apply(this, arguments);
+        this.el.swallowEvent(['keydown', 'keyup', 'keypress']);
+        this.btns = new Ext.Panel({
+            baseCls: 'x-plain',
+            cls: 'x-btns',
+            elements:'body',
+            layout: 'table',
+            width: (this.minButtonWidth * 2) + (this.frameWidth * 2) + (this.buttonPad * 4), // width must be specified for IE
+            items: [{
+                ref: 'saveBtn',
+                itemId: 'saveBtn',
+                xtype: 'button',
+                text: this.saveText,
+                width: this.minButtonWidth,
+                handler: this.stopEditing.createDelegate(this, [true])
+            }, {
+                xtype: 'button',
+                text: this.cancelText,
+                width: this.minButtonWidth,
+                handler: this.stopEditing.createDelegate(this, [false])
+            }]
+        });
+        this.btns.render(this.bwrap);
+    },
+
+    afterRender: function(){
+        Ext.ux.grid.RowEditor.superclass.afterRender.apply(this, arguments);
+        this.positionButtons();
+        if(this.monitorValid){
+            this.startMonitoring();
+        }
+    },
+
+    onShow: function(){
+        if(this.monitorValid){
+            this.startMonitoring();
+        }
+        Ext.ux.grid.RowEditor.superclass.onShow.apply(this, arguments);
+    },
+
+    onHide: function(){
+        Ext.ux.grid.RowEditor.superclass.onHide.apply(this, arguments);
+        this.stopMonitoring();
+        this.grid.getView().focusRow(this.rowIndex);
+    },
+
+    positionButtons: function(){
+        if(this.btns){
+            var g = this.grid,
+                h = this.el.dom.clientHeight,
+                view = g.getView(),
+                scroll = view.scroller.dom.scrollLeft,
+                bw = this.btns.getWidth(),
+                width = Math.min(g.getWidth(), g.getColumnModel().getTotalWidth());
+
+            this.btns.el.shift({left: (width/2)-(bw/2)+scroll, top: h - 2, stopFx: true, duration:0.2});
+        }
+    },
+
+    // private
+    preEditValue : function(r, field){
+        var value = r.data[field];
+        if(typeof value === 'object' && typeof value.getDate !== 'undefined') {
+            var items = r.fields.items ;
+            for(var i = 0; i < items.length; i++) {
+                if(items[i].name == field) {
+                    if(typeof items[i].dateFormat !== 'undefined') {
+                        return Ext.util.Format.dateRenderer(items[i].dateFormat)(value);
+                    }
+                    break ;
+                }
+            }
+        }
+
+        return this.autoEncode && typeof value === 'string' ? Ext.util.Format.htmlDecode(value) : value;
+    },
+
+    // private
+    postEditValue : function(value, originalValue, r, field){
+        return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlEncode(value) : value;
+    },
+
+    doFocus: function(pt){
+        if(this.isVisible()){
+            var index = 0,
+                cm = this.grid.getColumnModel(),
+                c;
+            if(pt){
+                index = this.getTargetColumnIndex(pt);
+            }
+            for(var i = index||0, len = cm.getColumnCount(); i < len; i++){
+                c = cm.getColumnAt(i);
+                if(!c.hidden && c.getEditor()){
+                    c.getEditor().focus();
+                    break;
+                }
+            }
+        }
+    },
+
+    getTargetColumnIndex: function(pt){
+        var grid = this.grid,
+            v = grid.view,
+            x = pt.left,
+            cms = grid.colModel.config,
+            i = 0,
+            match = false;
+        for(var len = cms.length, c; c = cms[i]; i++){
+            if(!c.hidden){
+                if(Ext.fly(v.getHeaderCell(i)).getRegion().right >= x){
+                    match = i;
+                    break;
+                }
+            }
+        }
+        return match;
+    },
+
+    startMonitoring : function(){
+        if(!this.bound && this.monitorValid){
+            this.bound = true;
+            Ext.TaskMgr.start({
+                run : this.bindHandler,
+                interval : this.monitorPoll || 200,
+                scope: this
+            });
+        }
+    },
+
+    stopMonitoring : function(){
+        this.bound = false;
+        if(this.tooltip){
+            this.tooltip.hide();
+        }
+    },
+
+    isValid: function(){
+        var valid = true;
+        this.items.each(function(f){
+            if(!f.isValid(true)){
+                valid = false;
+                return false;
+            }
+        });
+        return valid;
+    },
+
+    // private
+    bindHandler : function(){
+        if(!this.bound){
+            return false; // stops binding
+        }
+        var valid = this.isValid();
+        if(!valid && this.errorSummary){
+            this.showTooltip(this.getErrorText().join(''));
+        }
+        this.btns.saveBtn.setDisabled(!valid);
+        this.fireEvent('validation', this, valid);
+    },
+
+    showTooltip: function(msg){
+        var t = this.tooltip;
+        if(!t){
+            t = this.tooltip = new Ext.ToolTip({
+                maxWidth: 600,
+                cls: 'errorTip',
+                width: 300,
+                title: this.errorText,
+                autoHide: false,
+                anchor: 'left',
+                anchorToTarget: true,
+                mouseOffset: [40,0]
+            });
+        }
+        var v = this.grid.getView(),
+            top = parseInt(this.el.dom.style.top, 10),
+            scroll = v.scroller.dom.scrollTop,
+            h = this.el.getHeight();
+
+        if(top + h >= scroll){
+            t.initTarget(this.items.last().getEl());
+            if(!t.rendered){
+                t.show();
+                t.hide();
+            }
+            t.body.update(msg);
+            t.doAutoWidth(20);
+            t.show();
+        }else if(t.rendered){
+            t.hide();
+        }
+    },
+
+    getErrorText: function(){
+        var data = ['<ul>'];
+        this.items.each(function(f){
+            if(!f.isValid(true)){
+                data.push('<li>', f.getActiveError(), '</li>');
+            }
+        });
+        data.push('</ul>');
+        return data;
+    }
+});
+Ext.preg('roweditor', Ext.ux.grid.RowEditor);/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ns('Ext.ux.form');
+
+/**
+ * @class Ext.ux.form.SpinnerField
+ * @extends Ext.form.NumberField
+ * Creates a field utilizing Ext.ux.Spinner
+ * @xtype spinnerfield
+ */
+Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
+    actionMode: 'wrap',
+    deferHeight: true,
+    autoSize: Ext.emptyFn,
+    onBlur: Ext.emptyFn,
+    adjustSize: Ext.BoxComponent.prototype.adjustSize,
+
+	constructor: function(config) {
+		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
+
+		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
+
+		var plugins = config.plugins
+			? (Ext.isArray(config.plugins)
+				? config.plugins.push(spl)
+				: [config.plugins, spl])
+			: spl;
+
+		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
+	},
+
+    // private
+    getResizeEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    getPositionEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    alignErrorIcon: function(){
+        if (this.wrap) {
+            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        }
+    },
+
+    validateBlur: function(){
+        return true;
+    }
+});
+
+Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
+
+//backwards compat
+Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
+
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.Spinner
+ * @extends Ext.util.Observable
+ * Creates a Spinner control utilized by Ext.ux.form.SpinnerField
+ */
+Ext.ux.Spinner = Ext.extend(Ext.util.Observable, {
+    incrementValue: 1,
+    alternateIncrementValue: 5,
+    triggerClass: 'x-form-spinner-trigger',
+    splitterClass: 'x-form-spinner-splitter',
+    alternateKey: Ext.EventObject.shiftKey,
+    defaultValue: 0,
+    accelerate: false,
+
+    constructor: function(config){
+        Ext.ux.Spinner.superclass.constructor.call(this, config);
+        Ext.apply(this, config);
+        this.mimicing = false;
+    },
+
+    init: function(field){
+        this.field = field;
+
+        field.afterMethod('onRender', this.doRender, this);
+        field.afterMethod('onEnable', this.doEnable, this);
+        field.afterMethod('onDisable', this.doDisable, this);
+        field.afterMethod('afterRender', this.doAfterRender, this);
+        field.afterMethod('onResize', this.doResize, this);
+        field.afterMethod('onFocus', this.doFocus, this);
+        field.beforeMethod('onDestroy', this.doDestroy, this);
+    },
+
+    doRender: function(ct, position){
+        var el = this.el = this.field.getEl();
+        var f = this.field;
+
+        if (!f.wrap) {
+            f.wrap = this.wrap = el.wrap({
+                cls: "x-form-field-wrap"
+            });
+        }
+        else {
+            this.wrap = f.wrap.addClass('x-form-field-wrap');
+        }
+
+        this.trigger = this.wrap.createChild({
+            tag: "img",
+            src: Ext.BLANK_IMAGE_URL,
+            cls: "x-form-trigger " + this.triggerClass
+        });
+
+        if (!f.width) {
+            this.wrap.setWidth(el.getWidth() + this.trigger.getWidth());
+        }
+
+        this.splitter = this.wrap.createChild({
+            tag: 'div',
+            cls: this.splitterClass,
+            style: 'width:13px; height:2px;'
+        });
+        this.splitter.setRight((Ext.isIE) ? 1 : 2).setTop(10).show();
+
+        this.proxy = this.trigger.createProxy('', this.splitter, true);
+        this.proxy.addClass("x-form-spinner-proxy");
+        this.proxy.setStyle('left', '0px');
+        this.proxy.setSize(14, 1);
+        this.proxy.hide();
+        this.dd = new Ext.dd.DDProxy(this.splitter.dom.id, "SpinnerDrag", {
+            dragElId: this.proxy.id
+        });
+
+        this.initTrigger();
+        this.initSpinner();
+    },
+
+    doAfterRender: function(){
+        var y;
+        if (Ext.isIE && this.el.getY() != (y = this.trigger.getY())) {
+            this.el.position();
+            this.el.setY(y);
+        }
+    },
+
+    doEnable: function(){
+        if (this.wrap) {
+            this.wrap.removeClass(this.field.disabledClass);
+        }
+    },
+
+    doDisable: function(){
+        if (this.wrap) {
+            this.wrap.addClass(this.field.disabledClass);
+            this.el.removeClass(this.field.disabledClass);
+        }
+    },
+
+    doResize: function(w, h){
+        if (typeof w == 'number') {
+            this.el.setWidth(w - this.trigger.getWidth());
+        }
+        this.wrap.setWidth(this.el.getWidth() + this.trigger.getWidth());
+    },
+
+    doFocus: function(){
+        if (!this.mimicing) {
+            this.wrap.addClass('x-trigger-wrap-focus');
+            this.mimicing = true;
+            Ext.get(Ext.isIE ? document.body : document).on("mousedown", this.mimicBlur, this, {
+                delay: 10
+            });
+            this.el.on('keydown', this.checkTab, this);
+        }
+    },
+
+    // private
+    checkTab: function(e){
+        if (e.getKey() == e.TAB) {
+            this.triggerBlur();
+        }
+    },
+
+    // private
+    mimicBlur: function(e){
+        if (!this.wrap.contains(e.target) && this.field.validateBlur(e)) {
+            this.triggerBlur();
+        }
+    },
+
+    // private
+    triggerBlur: function(){
+        this.mimicing = false;
+        Ext.get(Ext.isIE ? document.body : document).un("mousedown", this.mimicBlur, this);
+        this.el.un("keydown", this.checkTab, this);
+        this.field.beforeBlur();
+        this.wrap.removeClass('x-trigger-wrap-focus');
+        this.field.onBlur.call(this.field);
+    },
+
+    initTrigger: function(){
+        this.trigger.addClassOnOver('x-form-trigger-over');
+        this.trigger.addClassOnClick('x-form-trigger-click');
+    },
+
+    initSpinner: function(){
+        this.field.addEvents({
+            'spin': true,
+            'spinup': true,
+            'spindown': true
+        });
+
+        this.keyNav = new Ext.KeyNav(this.el, {
+            "up": function(e){
+                e.preventDefault();
+                this.onSpinUp();
+            },
+
+            "down": function(e){
+                e.preventDefault();
+                this.onSpinDown();
+            },
+
+            "pageUp": function(e){
+                e.preventDefault();
+                this.onSpinUpAlternate();
+            },
+
+            "pageDown": function(e){
+                e.preventDefault();
+                this.onSpinDownAlternate();
+            },
+
+            scope: this
+        });
+
+        this.repeater = new Ext.util.ClickRepeater(this.trigger, {
+            accelerate: this.accelerate
+        });
+        this.field.mon(this.repeater, "click", this.onTriggerClick, this, {
+            preventDefault: true
+        });
+
+        this.field.mon(this.trigger, {
+            mouseover: this.onMouseOver,
+            mouseout: this.onMouseOut,
+            mousemove: this.onMouseMove,
+            mousedown: this.onMouseDown,
+            mouseup: this.onMouseUp,
+            scope: this,
+            preventDefault: true
+        });
+
+        this.field.mon(this.wrap, "mousewheel", this.handleMouseWheel, this);
+
+        this.dd.setXConstraint(0, 0, 10)
+        this.dd.setYConstraint(1500, 1500, 10);
+        this.dd.endDrag = this.endDrag.createDelegate(this);
+        this.dd.startDrag = this.startDrag.createDelegate(this);
+        this.dd.onDrag = this.onDrag.createDelegate(this);
+    },
+
+    onMouseOver: function(){
+        if (this.disabled) {
+            return;
+        }
+        var middle = this.getMiddle();
+        this.tmpHoverClass = (Ext.EventObject.getPageY() < middle) ? 'x-form-spinner-overup' : 'x-form-spinner-overdown';
+        this.trigger.addClass(this.tmpHoverClass);
+    },
+
+    //private
+    onMouseOut: function(){
+        this.trigger.removeClass(this.tmpHoverClass);
+    },
+
+    //private
+    onMouseMove: function(){
+        if (this.disabled) {
+            return;
+        }
+        var middle = this.getMiddle();
+        if (((Ext.EventObject.getPageY() > middle) && this.tmpHoverClass == "x-form-spinner-overup") ||
+        ((Ext.EventObject.getPageY() < middle) && this.tmpHoverClass == "x-form-spinner-overdown")) {
+        }
+    },
+
+    //private
+    onMouseDown: function(){
+        if (this.disabled) {
+            return;
+        }
+        var middle = this.getMiddle();
+        this.tmpClickClass = (Ext.EventObject.getPageY() < middle) ? 'x-form-spinner-clickup' : 'x-form-spinner-clickdown';
+        this.trigger.addClass(this.tmpClickClass);
+    },
+
+    //private
+    onMouseUp: function(){
+        this.trigger.removeClass(this.tmpClickClass);
+    },
+
+    //private
+    onTriggerClick: function(){
+        if (this.disabled || this.el.dom.readOnly) {
+            return;
+        }
+        var middle = this.getMiddle();
+        var ud = (Ext.EventObject.getPageY() < middle) ? 'Up' : 'Down';
+        this['onSpin' + ud]();
+    },
+
+    //private
+    getMiddle: function(){
+        var t = this.trigger.getTop();
+        var h = this.trigger.getHeight();
+        var middle = t + (h / 2);
+        return middle;
+    },
+
+    //private
+    //checks if control is allowed to spin
+    isSpinnable: function(){
+        if (this.disabled || this.el.dom.readOnly) {
+            Ext.EventObject.preventDefault(); //prevent scrolling when disabled/readonly
+            return false;
+        }
+        return true;
+    },
+
+    handleMouseWheel: function(e){
+        //disable scrolling when not focused
+        if (this.wrap.hasClass('x-trigger-wrap-focus') == false) {
+            return;
+        }
+
+        var delta = e.getWheelDelta();
+        if (delta > 0) {
+            this.onSpinUp();
+            e.stopEvent();
+        }
+        else
+            if (delta < 0) {
+                this.onSpinDown();
+                e.stopEvent();
+            }
+    },
+
+    //private
+    startDrag: function(){
+        this.proxy.show();
+        this._previousY = Ext.fly(this.dd.getDragEl()).getTop();
+    },
+
+    //private
+    endDrag: function(){
+        this.proxy.hide();
+    },
+
+    //private
+    onDrag: function(){
+        if (this.disabled) {
+            return;
+        }
+        var y = Ext.fly(this.dd.getDragEl()).getTop();
+        var ud = '';
+
+        if (this._previousY > y) {
+            ud = 'Up';
+        } //up
+        if (this._previousY < y) {
+            ud = 'Down';
+        } //down
+        if (ud != '') {
+            this['onSpin' + ud]();
+        }
+
+        this._previousY = y;
+    },
+
+    //private
+    onSpinUp: function(){
+        if (this.isSpinnable() == false) {
+            return;
+        }
+        if (Ext.EventObject.shiftKey == true) {
+            this.onSpinUpAlternate();
+            return;
+        }
+        else {
+            this.spin(false, false);
+        }
+        this.field.fireEvent("spin", this);
+        this.field.fireEvent("spinup", this);
+    },
+
+    //private
+    onSpinDown: function(){
+        if (this.isSpinnable() == false) {
+            return;
+        }
+        if (Ext.EventObject.shiftKey == true) {
+            this.onSpinDownAlternate();
+            return;
+        }
+        else {
+            this.spin(true, false);
+        }
+        this.field.fireEvent("spin", this);
+        this.field.fireEvent("spindown", this);
+    },
+
+    //private
+    onSpinUpAlternate: function(){
+        if (this.isSpinnable() == false) {
+            return;
+        }
+        this.spin(false, true);
+        this.field.fireEvent("spin", this);
+        this.field.fireEvent("spinup", this);
+    },
+
+    //private
+    onSpinDownAlternate: function(){
+        if (this.isSpinnable() == false) {
+            return;
+        }
+        this.spin(true, true);
+        this.field.fireEvent("spin", this);
+        this.field.fireEvent("spindown", this);
+    },
+
+    spin: function(down, alternate){
+        var v = parseFloat(this.field.getValue());
+        var incr = (alternate == true) ? this.alternateIncrementValue : this.incrementValue;
+        (down == true) ? v -= incr : v += incr;
+
+        v = (isNaN(v)) ? this.defaultValue : v;
+        v = this.fixBoundries(v);
+        this.field.setRawValue(v);
+    },
+
+    fixBoundries: function(value){
+        var v = value;
+
+        if (this.field.minValue != undefined && v < this.field.minValue) {
+            v = this.field.minValue;
+        }
+        if (this.field.maxValue != undefined && v > this.field.maxValue) {
+            v = this.field.maxValue;
+        }
+
+        return this.fixPrecision(v);
+    },
+
+    // private
+    fixPrecision: function(value){
+        var nan = isNaN(value);
+        if (!this.field.allowDecimals || this.field.decimalPrecision == -1 || nan || !value) {
+            return nan ? '' : value;
+        }
+        return parseFloat(parseFloat(value).toFixed(this.field.decimalPrecision));
+    },
+
+    doDestroy: function(){
+        if (this.trigger) {
+            this.trigger.remove();
+        }
+        if (this.wrap) {
+            this.wrap.remove();
+            delete this.field.wrap;
+        }
+
+        if (this.splitter) {
+            this.splitter.remove();
+        }
+
+        if (this.dd) {
+            this.dd.unreg();
+            this.dd = null;
+        }
+
+        if (this.proxy) {
+            this.proxy.remove();
+        }
+
+        if (this.repeater) {
+            this.repeater.purgeListeners();
+        }
+    }
+});
+
+//backwards compat
+Ext.form.Spinner = Ext.ux.Spinner;/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.StatusBar
+ * <p>Basic status bar component that can be used as the bottom toolbar of any {@link Ext.Panel}.  In addition to
+ * supporting the standard {@link Ext.Toolbar} interface for adding buttons, menus and other items, the StatusBar
+ * provides a greedy status element that can be aligned to either side and has convenient methods for setting the
+ * status text and icon.  You can also indicate that something is processing using the {@link #showBusy} method.</p>
+ * <pre><code>
+new Ext.Panel({
+    title: 'StatusBar',
+    // etc.
+    bbar: new Ext.ux.StatusBar({
+        id: 'my-status',
+
+        // defaults to use when the status is cleared:
+        defaultText: 'Default status text',
+        defaultIconCls: 'default-icon',
+
+        // values to set initially:
+        text: 'Ready',
+        iconCls: 'ready-icon',
+
+        // any standard Toolbar items:
+        items: [{
+            text: 'A Button'
+        }, '-', 'Plain Text']
+    })
+});
+
+// Update the status bar later in code:
+var sb = Ext.getCmp('my-status');
+sb.setStatus({
+    text: 'OK',
+    iconCls: 'ok-icon',
+    clear: true // auto-clear after a set interval
+});
+
+// Set the status bar to show that something is processing:
+sb.showBusy();
+
+// processing....
+
+sb.clearStatus(); // once completeed
+</code></pre>
+ * @extends Ext.Toolbar
+ * @constructor
+ * Creates a new StatusBar
+ * @param {Object/Array} config A config object
+ */
+Ext.ux.StatusBar = Ext.extend(Ext.Toolbar, {
+    /**
+     * @cfg {String} statusAlign
+     * The alignment of the status element within the overall StatusBar layout.  When the StatusBar is rendered,
+     * it creates an internal div containing the status text and icon.  Any additional Toolbar items added in the
+     * StatusBar's {@link #items} config, or added via {@link #add} or any of the supported add* methods, will be
+     * rendered, in added order, to the opposite side.  The status element is greedy, so it will automatically
+     * expand to take up all sapce left over by any other items.  Example usage:
+     * <pre><code>
+// Create a left-aligned status bar containing a button,
+// separator and text item that will be right-aligned (default):
+new Ext.Panel({
+    title: 'StatusBar',
+    // etc.
+    bbar: new Ext.ux.StatusBar({
+        defaultText: 'Default status text',
+        id: 'status-id',
+        items: [{
+            text: 'A Button'
+        }, '-', 'Plain Text']
+    })
+});
+
+// By adding the statusAlign config, this will create the
+// exact same toolbar, except the status and toolbar item
+// layout will be reversed from the previous example:
+new Ext.Panel({
+    title: 'StatusBar',
+    // etc.
+    bbar: new Ext.ux.StatusBar({
+        defaultText: 'Default status text',
+        id: 'status-id',
+        statusAlign: 'right',
+        items: [{
+            text: 'A Button'
+        }, '-', 'Plain Text']
+    })
+});
+</code></pre>
+     */
+    /**
+     * @cfg {String} defaultText
+     * The default {@link #text} value.  This will be used anytime the status bar is cleared with the
+     * <tt>useDefaults:true</tt> option (defaults to '').
+     */
+    /**
+     * @cfg {String} defaultIconCls
+     * The default {@link #iconCls} value (see the iconCls docs for additional details about customizing the icon).
+     * This will be used anytime the status bar is cleared with the <tt>useDefaults:true</tt> option (defaults to '').
+     */
+    /**
+     * @cfg {String} text
+     * A string that will be <b>initially</b> set as the status message.  This string
+     * will be set as innerHTML (html tags are accepted) for the toolbar item.
+     * If not specified, the value set for <code>{@link #defaultText}</code>
+     * will be used.
+     */
+    /**
+     * @cfg {String} iconCls
+     * A CSS class that will be <b>initially</b> set as the status bar icon and is
+     * expected to provide a background image (defaults to '').
+     * Example usage:<pre><code>
+// Example CSS rule:
+.x-statusbar .x-status-custom {
+    padding-left: 25px;
+    background: transparent url(images/custom-icon.gif) no-repeat 3px 2px;
+}
+
+// Setting a default icon:
+var sb = new Ext.ux.StatusBar({
+    defaultIconCls: 'x-status-custom'
+});
+
+// Changing the icon:
+sb.setStatus({
+    text: 'New status',
+    iconCls: 'x-status-custom'
+});
+</code></pre>
+     */
+
+    /**
+     * @cfg {String} cls
+     * The base class applied to the containing element for this component on render (defaults to 'x-statusbar')
+     */
+    cls : 'x-statusbar',
+    /**
+     * @cfg {String} busyIconCls
+     * The default <code>{@link #iconCls}</code> applied when calling
+     * <code>{@link #showBusy}</code> (defaults to <tt>'x-status-busy'</tt>).
+     * It can be overridden at any time by passing the <code>iconCls</code>
+     * argument into <code>{@link #showBusy}</code>.
+     */
+    busyIconCls : 'x-status-busy',
+    /**
+     * @cfg {String} busyText
+     * The default <code>{@link #text}</code> applied when calling
+     * <code>{@link #showBusy}</code> (defaults to <tt>'Loading...'</tt>).
+     * It can be overridden at any time by passing the <code>text</code>
+     * argument into <code>{@link #showBusy}</code>.
+     */
+    busyText : 'Loading...',
+    /**
+     * @cfg {Number} autoClear
+     * The number of milliseconds to wait after setting the status via
+     * <code>{@link #setStatus}</code> before automatically clearing the status
+     * text and icon (defaults to <tt>5000</tt>).  Note that this only applies
+     * when passing the <tt>clear</tt> argument to <code>{@link #setStatus}</code>
+     * since that is the only way to defer clearing the status.  This can
+     * be overridden by specifying a different <tt>wait</tt> value in
+     * <code>{@link #setStatus}</code>. Calls to <code>{@link #clearStatus}</code>
+     * always clear the status bar immediately and ignore this value.
+     */
+    autoClear : 5000,
+
+    /**
+     * @cfg {String} emptyText
+     * The text string to use if no text has been set.  Defaults to
+     * <tt>'&nbsp;'</tt>).  If there are no other items in the toolbar using
+     * an empty string (<tt>''</tt>) for this value would end up in the toolbar
+     * height collapsing since the empty string will not maintain the toolbar
+     * height.  Use <tt>''</tt> if the toolbar should collapse in height
+     * vertically when no text is specified and there are no other items in
+     * the toolbar.
+     */
+    emptyText : '&nbsp;',
+
+    // private
+    activeThreadId : 0,
+
+    // private
+    initComponent : function(){
+        if(this.statusAlign=='right'){
+            this.cls += ' x-status-right';
+        }
+        Ext.ux.StatusBar.superclass.initComponent.call(this);
+    },
+
+    // private
+    afterRender : function(){
+        Ext.ux.StatusBar.superclass.afterRender.call(this);
+
+        var right = this.statusAlign == 'right';
+        this.currIconCls = this.iconCls || this.defaultIconCls;
+        this.statusEl = new Ext.Toolbar.TextItem({
+            cls: 'x-status-text ' + (this.currIconCls || ''),
+            text: this.text || this.defaultText || ''
+        });
+
+        if(right){
+            this.add('->');
+            this.add(this.statusEl);
+        }else{
+            this.insert(0, this.statusEl);
+            this.insert(1, '->');
+        }
+        this.doLayout();
+    },
+
+    /**
+     * Sets the status {@link #text} and/or {@link #iconCls}. Also supports automatically clearing the
+     * status that was set after a specified interval.
+     * @param {Object/String} config A config object specifying what status to set, or a string assumed
+     * to be the status text (and all other options are defaulted as explained below). A config
+     * object containing any or all of the following properties can be passed:<ul>
+     * <li><tt>text</tt> {String} : (optional) The status text to display.  If not specified, any current
+     * status text will remain unchanged.</li>
+     * <li><tt>iconCls</tt> {String} : (optional) The CSS class used to customize the status icon (see
+     * {@link #iconCls} for details). If not specified, any current iconCls will remain unchanged.</li>
+     * <li><tt>clear</tt> {Boolean/Number/Object} : (optional) Allows you to set an internal callback that will
+     * automatically clear the status text and iconCls after a specified amount of time has passed. If clear is not
+     * specified, the new status will not be auto-cleared and will stay until updated again or cleared using
+     * {@link #clearStatus}. If <tt>true</tt> is passed, the status will be cleared using {@link #autoClear},
+     * {@link #defaultText} and {@link #defaultIconCls} via a fade out animation. If a numeric value is passed,
+     * it will be used as the callback interval (in milliseconds), overriding the {@link #autoClear} value.
+     * All other options will be defaulted as with the boolean option.  To customize any other options,
+     * you can pass an object in the format:<ul>
+     *    <li><tt>wait</tt> {Number} : (optional) The number of milliseconds to wait before clearing
+     *    (defaults to {@link #autoClear}).</li>
+     *    <li><tt>anim</tt> {Number} : (optional) False to clear the status immediately once the callback
+     *    executes (defaults to true which fades the status out).</li>
+     *    <li><tt>useDefaults</tt> {Number} : (optional) False to completely clear the status text and iconCls
+     *    (defaults to true which uses {@link #defaultText} and {@link #defaultIconCls}).</li>
+     * </ul></li></ul>
+     * Example usage:<pre><code>
+// Simple call to update the text
+statusBar.setStatus('New status');
+
+// Set the status and icon, auto-clearing with default options:
+statusBar.setStatus({
+    text: 'New status',
+    iconCls: 'x-status-custom',
+    clear: true
+});
+
+// Auto-clear with custom options:
+statusBar.setStatus({
+    text: 'New status',
+    iconCls: 'x-status-custom',
+    clear: {
+        wait: 8000,
+        anim: false,
+        useDefaults: false
+    }
+});
+</code></pre>
+     * @return {Ext.ux.StatusBar} this
+     */
+    setStatus : function(o){
+        o = o || {};
+
+        if(typeof o == 'string'){
+            o = {text:o};
+        }
+        if(o.text !== undefined){
+            this.setText(o.text);
+        }
+        if(o.iconCls !== undefined){
+            this.setIcon(o.iconCls);
+        }
+
+        if(o.clear){
+            var c = o.clear,
+                wait = this.autoClear,
+                defaults = {useDefaults: true, anim: true};
+
+            if(typeof c == 'object'){
+                c = Ext.applyIf(c, defaults);
+                if(c.wait){
+                    wait = c.wait;
+                }
+            }else if(typeof c == 'number'){
+                wait = c;
+                c = defaults;
+            }else if(typeof c == 'boolean'){
+                c = defaults;
+            }
+
+            c.threadId = this.activeThreadId;
+            this.clearStatus.defer(wait, this, [c]);
+        }
+        return this;
+    },
+
+    /**
+     * Clears the status {@link #text} and {@link #iconCls}. Also supports clearing via an optional fade out animation.
+     * @param {Object} config (optional) A config object containing any or all of the following properties.  If this
+     * object is not specified the status will be cleared using the defaults below:<ul>
+     * <li><tt>anim</tt> {Boolean} : (optional) True to clear the status by fading out the status element (defaults
+     * to false which clears immediately).</li>
+     * <li><tt>useDefaults</tt> {Boolean} : (optional) True to reset the text and icon using {@link #defaultText} and
+     * {@link #defaultIconCls} (defaults to false which sets the text to '' and removes any existing icon class).</li>
+     * </ul>
+     * @return {Ext.ux.StatusBar} this
+     */
+    clearStatus : function(o){
+        o = o || {};
+
+        if(o.threadId && o.threadId !== this.activeThreadId){
+            // this means the current call was made internally, but a newer
+            // thread has set a message since this call was deferred.  Since
+            // we don't want to overwrite a newer message just ignore.
+            return this;
+        }
+
+        var text = o.useDefaults ? this.defaultText : this.emptyText,
+            iconCls = o.useDefaults ? (this.defaultIconCls ? this.defaultIconCls : '') : '';
+
+        if(o.anim){
+            // animate the statusEl Ext.Element
+            this.statusEl.el.fadeOut({
+                remove: false,
+                useDisplay: true,
+                scope: this,
+                callback: function(){
+                    this.setStatus({
+	                    text: text,
+	                    iconCls: iconCls
+	                });
+
+                    this.statusEl.el.show();
+                }
+            });
+        }else{
+            // hide/show the el to avoid jumpy text or icon
+            this.statusEl.hide();
+	        this.setStatus({
+	            text: text,
+	            iconCls: iconCls
+	        });
+            this.statusEl.show();
+        }
+        return this;
+    },
+
+    /**
+     * Convenience method for setting the status text directly.  For more flexible options see {@link #setStatus}.
+     * @param {String} text (optional) The text to set (defaults to '')
+     * @return {Ext.ux.StatusBar} this
+     */
+    setText : function(text){
+        this.activeThreadId++;
+        this.text = text || '';
+        if(this.rendered){
+            this.statusEl.setText(this.text);
+        }
+        return this;
+    },
+
+    /**
+     * Returns the current status text.
+     * @return {String} The status text
+     */
+    getText : function(){
+        return this.text;
+    },
+
+    /**
+     * Convenience method for setting the status icon directly.  For more flexible options see {@link #setStatus}.
+     * See {@link #iconCls} for complete details about customizing the icon.
+     * @param {String} iconCls (optional) The icon class to set (defaults to '', and any current icon class is removed)
+     * @return {Ext.ux.StatusBar} this
+     */
+    setIcon : function(cls){
+        this.activeThreadId++;
+        cls = cls || '';
+
+        if(this.rendered){
+	        if(this.currIconCls){
+	            this.statusEl.removeClass(this.currIconCls);
+	            this.currIconCls = null;
+	        }
+	        if(cls.length > 0){
+	            this.statusEl.addClass(cls);
+	            this.currIconCls = cls;
+	        }
+        }else{
+            this.currIconCls = cls;
+        }
+        return this;
+    },
+
+    /**
+     * Convenience method for setting the status text and icon to special values that are pre-configured to indicate
+     * a "busy" state, usually for loading or processing activities.
+     * @param {Object/String} config (optional) A config object in the same format supported by {@link #setStatus}, or a
+     * string to use as the status text (in which case all other options for setStatus will be defaulted).  Use the
+     * <tt>text</tt> and/or <tt>iconCls</tt> properties on the config to override the default {@link #busyText}
+     * and {@link #busyIconCls} settings. If the config argument is not specified, {@link #busyText} and
+     * {@link #busyIconCls} will be used in conjunction with all of the default options for {@link #setStatus}.
+     * @return {Ext.ux.StatusBar} this
+     */
+    showBusy : function(o){
+        if(typeof o == 'string'){
+            o = {text:o};
+        }
+        o = Ext.applyIf(o || {}, {
+            text: this.busyText,
+            iconCls: this.busyIconCls
+        });
+        return this.setStatus(o);
+    }
+});
+Ext.reg('statusbar', Ext.ux.StatusBar);
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.TabCloseMenu
+ * @extends Object
+ * Plugin (ptype = 'tabclosemenu') for adding a close context menu to tabs. Note that the menu respects
+ * the closable configuration on the tab. As such, commands like remove others and remove all will not
+ * remove items that are not closable.
+ *
+ * @constructor
+ * @param {Object} config The configuration options
+ * @ptype tabclosemenu
+ */
+Ext.ux.TabCloseMenu = Ext.extend(Object, {
+    /**
+     * @cfg {String} closeTabText
+     * The text for closing the current tab. Defaults to <tt>'Close Tab'</tt>.
+     */
+    closeTabText: _('Close Tab'),
+
+    /**
+     * @cfg {String} closeOtherTabsText
+     * The text for closing all tabs except the current one. Defaults to <tt>'Close Other Tabs'</tt>.
+     */
+    closeOtherTabsText: _('Close Other Tabs'),
+
+    /**
+     * @cfg {Boolean} showCloseAll
+     * Indicates whether to show the 'Close All' option. Defaults to <tt>true</tt>.
+     */
+    showCloseAll: true,
+
+    /**
+     * @cfg {String} closeAllTabsText
+     * <p>The text for closing all tabs. Defaults to <tt>'Close All Tabs'</tt>.
+     */
+    closeAllTabsText: _('Close All Tabs'),
+
+    constructor : function(config){
+        Ext.apply(this, config || {});
+    },
+
+    //public
+    init : function(tabs){
+        this.tabs = tabs;
+        tabs.on({
+            scope: this,
+            contextmenu: this.onContextMenu,
+            destroy: this.destroy
+        });
+    },
+
+    destroy : function(){
+        Ext.destroy(this.menu);
+        delete this.menu;
+        delete this.tabs;
+        delete this.active;
+    },
+
+    // private
+    onContextMenu : function(tabs, item, e){
+        this.active = item;
+        var m = this.createMenu(),
+            disableAll = true,
+            disableOthers = true,
+            closeAll = m.getComponent('closeall');
+
+        m.getComponent('close').setDisabled(!item.closable);
+        tabs.items.each(function(){
+            if(this.closable){
+                disableAll = false;
+                if(this != item){
+                    disableOthers = false;
+                    return false;
+                }
+            }
+        });
+        m.getComponent('closeothers').setDisabled(disableOthers);
+        if(closeAll){
+            closeAll.setDisabled(disableAll);
+        }
+
+        e.stopEvent();
+        m.showAt(e.getPoint());
+    },
+
+    createMenu : function(){
+        if(!this.menu){
+            var items = [{
+                itemId: 'close',
+                text: this.closeTabText,
+                scope: this,
+                handler: this.onClose
+            }];
+            if(this.showCloseAll){
+                items.push('-');
+            }
+            items.push({
+                itemId: 'closeothers',
+                iconCls: 'iconCloseOthersTabs',
+                text: this.closeOtherTabsText,
+                scope: this,
+                handler: this.onCloseOthers
+            });
+            if(this.showCloseAll){
+                items.push({
+                    itemId: 'closeall',
+                    text: this.closeAllTabsText,
+                    scope: this,
+                    handler: this.onCloseAll
+                });
+            }
+            this.menu = new Ext.menu.Menu({
+                items: items
+            });
+        }
+        return this.menu;
+    },
+
+    onClose : function(){
+        this.tabs.remove(this.active);
+    },
+
+    onCloseOthers : function(){
+        this.doClose(true);
+    },
+
+    onCloseAll : function(){
+        this.doClose(false);
+    },
+
+    doClose : function(excludeActive){
+        var items = [];
+        this.tabs.items.each(function(item){
+            if(item.closable){
+                if(!excludeActive || item != this.active){
+                    items.push(item);
+                }
+            }
+        }, this);
+        Ext.each(items, function(item){
+            this.tabs.remove(item);
+        }, this);
+    }
+});
+
+Ext.preg('tabclosemenu', Ext.ux.TabCloseMenu);
+// Copyright (c) 2010 David Davis - http://xant.us/
+// License: MIT
+Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
+
+    init: function( panel ) {
+        this.panel = panel;
+        panel.initEvents = panel.initEvents.createSequence( this.initEvents, this );
+    },
+
+    initEvents: function() {
+        this.panel.mon(this.panel.strip, {
+            dblclick: this.onDblClick.createDelegate( this, [ this.panel ], 0 )
+        });
+        // cleanup
+        delete this.panel;
+    },
+
+    onDblClick: function(panel,e) {
+        if( panel.getActiveTab().closable ) {
+            panel.remove( panel.getActiveTab() );
+        }
+    }
+
+});
+
+Ext.preg( 'dblclickclosetabs', Ext.ux.DblClickCloseTabs );
+
+
+Ext.util.md5 = function(s, r, hexcase, chrsz)
+{
+    r       = (typeof r       === "undefined" ? false:r);
+    hexcase = (typeof hexcase === "undefined" ? false:hexcase);
+    chrsz   = (typeof chrsz   === "undefined" ? 8:chrsz);
+
+    function safe_add(x, y)
+    {
+        var lsw = ((x & 0xFFFF) + (y & 0xFFFF)),
+            msw = ((x >> 16) + (y >> 16) + (lsw >> 16));
+        return (msw << 16) | (lsw & 0xFFFF);
+    }
+
+    function bit_rol(num, cnt)
+    {
+        return (num << cnt) | (num >>> (32 - cnt));
+    }
+
+    function md5_cmn(q, a, b, x, s, t)
+    {
+        return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s),b);
+    }
+
+    function md5_ff(a, b, c, d, x, s, t)
+    {
+        return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+    }
+
+    function md5_gg(a, b, c, d, x, s, t)
+    {
+        return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+    }
+
+    function md5_hh(a, b, c, d, x, s, t)
+    {
+        return md5_cmn(b ^ c ^ d, a, b, x, s, t);
+    }
+
+    function md5_ii(a, b, c, d, x, s, t)
+    {
+        return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+    }
+
+    function core_md5(x, len)
+    {
+        var a =  1732584193,
+            b = -271733879,
+            c = -1732584194,
+            d =  271733878,
+            i, olda, oldb, oldc, oldd;
+
+        x[len >> 5] |= 0x80 << ((len) % 32);
+        x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+        for( i = 0; i < x.length; i += 16 ){
+
+            olda = a;
+            oldb = b;
+            oldc = c;
+            oldd = d;
+
+            a = md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+            d = md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+            c = md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+            b = md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+            a = md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+            d = md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+            c = md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+            b = md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+            a = md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+            d = md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+            c = md5_ff(c, d, a, b, x[i+10], 17, -42063);
+            b = md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+            a = md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+            d = md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+            c = md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+            b = md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+            a = md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+            d = md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+            c = md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+            b = md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+            a = md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+            d = md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+            c = md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+            b = md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+            a = md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+            d = md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+            c = md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+            b = md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+            a = md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+            d = md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+            c = md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+            b = md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+            a = md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+            d = md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+            c = md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+            b = md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+            a = md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+            d = md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+            c = md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+            b = md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+            a = md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+            d = md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+            c = md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+            b = md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+            a = md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+            d = md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+            c = md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+            b = md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+            a = md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+            d = md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+            c = md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+            b = md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+            a = md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+            d = md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+            c = md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+            b = md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+            a = md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+            d = md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+            c = md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+            b = md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+            a = md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+            d = md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+            c = md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+            b = md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+            a = safe_add(a, olda);
+            b = safe_add(b, oldb);
+            c = safe_add(c, oldc);
+            d = safe_add(d, oldd);
+        }
+        return [a, b, c, d];
+    }
+
+    function str2binl(str)
+    {
+        var bin  = [],
+            mask = ((1 << chrsz) - 1),
+            i;
+
+        for( i = 0; i < str.length * chrsz; i += chrsz )
+        {
+            bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (i%32);
+        }
+        return bin;
+    }
+
+    function binl2str(bin)
+    {
+        var str = "",
+            mask = ((1 << chrsz) - 1),
+            i;
+
+        for( i = 0; i < bin.length * 32; i += chrsz )
+        {
+            str += String.fromCharCode((bin[i>>5] >>> (i % 32)) & mask);
+        }
+        return str;
+    }
+
+    function binl2hex(binarray)
+    {
+        var hex_tab = ((hexcase) ? "0123456789ABCDEF" : "0123456789abcdef"),
+            str     = "",
+            i;
+
+        for( i = 0; i < binarray.length * 4; i++ )
+        {
+            str += hex_tab.charAt((binarray[i>>2] >> ((i%4)*8+4)) & 0xF) + hex_tab.charAt((binarray[i>>2] >> ((i%4)*8  )) & 0xF);
+        }
+        return str;
+    }
+
+    return (r ? binl2str(core_md5(str2binl(s), s.length * chrsz)) : binl2hex(core_md5(str2binl(s), s.length * chrsz)));
+};Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
+
+    readOnly         : (this.readOnly) ? this.readOnly : false,
+    width            : 'auto',
+    height           : 'auto',
+    autoResize       : true,
+    initialised      : false,
+    documentDurty    : false,
+    spellCheck       : ( this.spellCheck ) ? this.spellCheck : false,
+    parser           : (this.parser) ? this.parser : "xml",
+    parserFile       : "parsexml.js",
+    parserStylesheet : "js/ux/codemirror/css/xmlcolors.css",
+
+    initComponent : function()
+    {
+        Ext.ux.CodeMirror.superclass.initComponent.apply(this);
+
+        this.addEvents({
+            initialize   : true,
+            codemodified : true,
+            coderestored : true,
+            cursormove   : true,
+            scroll       : true
+        });
+
+        //For the parser
+        if( this.parser === 'xml' ) {
+            this.parserFile = "parsexml.js";
+            this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
+        }
+
+        if( this.parser === 'html' ) {
+            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
+            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
+        }
+
+        if( this.parser === 'php' ) {
+            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
+                             "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
+                             "../contrib/php/js/parsephphtmlmixed.js"];
+            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
+        }
+    },
+    onRender : function(ct, position)
+    {
+        Ext.ux.CodeMirror.superclass.onRender.apply(this, [ct, position]);
+    },
+
+    resize: function()
+    {
+        this.mirror.frame.style.height = this.ownerCt.lastSize.height - 89 +"px";
+        this.mirror.frame.style.width  = this.ownerCt.lastSize.width  - 35 +"px";
+    },
+
+    onInit: function(t, cmId)
+    {
+        var cmp    = Ext.getCmp(cmId),
+            mirror = cmp.mirror;
+
+        cmp.ownerCt.fireEvent('resize');
+
+        // Fire the initialize event
+        cmp.fireEvent('initialize');
+        cmp.initialised = true;
+
+        // Value used to monitor the state of this document (changed or not)
+        cmp.documentDurty = false;
+
+        // Attach some others events
+        mirror.editor.keyUp = function(e) {
+
+            // On envoie cursormove
+            var r        = mirror.cursorPosition(),
+                line     = mirror.lineNumber(r.line),
+                caracter = r.character;
+            cmp.fireEvent('cursormove', line, caracter);
+
+            if( Ext.getCmp(cmId).documentDurty === true && e.keyCode !== 8 && e.keyCode !== 46 ) {
+
+                // Don't need to check if the code has changed
+
+            } else {
+
+                // We check if the code has changed or not
+                cmp.manageCodeChange(cmId);
+            }
+        };
+
+        Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);
+    },
+
+    onCursorActivity: function(cmId)
+    {
+        var cmp      = Ext.getCmp(cmId),
+            mirror   = cmp.mirror,
+            r        = mirror.cursorPosition(),
+            line     = mirror.lineNumber(r.line),
+            caracter = r.character;
+            cmp.fireEvent('cursormove', line, caracter);
+    },
+
+    manageCodeChange: function(cmId, force)
+    {
+        var cmp             = Ext.getCmp(cmId),
+            mirror          = cmp.mirror,
+            originalContent = mirror.originalContent,
+            currentContent  = mirror.getCode(),
+            btnUndo         = Ext.getCmp(cmId + '-btn-undo');
+
+        // If originalContent is false, the editor is not ready
+        if( originalContent ) {
+            if( originalContent === currentContent ) {
+                if( cmp.documentDurty === true ) {
+                    cmp.fireEvent('coderestored');
+                    cmp.documentDurty = false;
+                }
+                
+            } else {
+
+                // Enable the Undo Btn if it exist (don't exist when we open a fil in readOnly mode
+                if( btnUndo ) {
+                    btnUndo.enable(); // undo
+                }
+
+                if( cmp.documentDurty === false ) {
+                    cmp.fireEvent('codemodified');
+                    cmp.documentDurty = true;
+                }
+            }
+        }
+    },
+
+    saveFunction: function(cmId)
+    {
+        var saveBtn = Ext.getCmp(cmId + '-btn-save');
+
+        if( ! saveBtn.disabled ) {
+            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
+        }
+    },
+
+    monitorScroll: function(e, cmp)
+    {
+        cmp.fireEvent('scroll',e.target.body.scrollTop, this);
+    },
+
+    afterRender: function()
+    {
+        this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
+            textWrapping       : false,
+            saveFunction       : this.saveFunction,
+            width              : '100%',
+            height             : this.ownerCt.lastSize.height,
+            readOnly           : this.readOnly,
+            content            : this.value,
+            originalContent    : false,
+            parserfile         : this.parserFile,
+            parserConfig       : {alignCDATA: true, useHTMLKludges: false},
+            indentUnit         : 1,
+            cmId               : this.id,
+            lineNumbers        : true,
+            continuousScanning : (this.readOnly) ? false : 500,
+            stylesheet         : this.parserStylesheet,
+            path               : "js/ux/codemirror/js/",
+            initCallback       : this.onInit,
+            autoMatchParens    : true,
+            disableSpellcheck  : !this.spellCheck,
+            onChange           : this.manageCodeChange,
+            cursorActivity     : this.onCursorActivity
+        });
+
+        this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
+           this.resize();
+        }, this);
+    },
+
+    getCode : function()
+    {
+        return this.mirror.getCode();
+    },
+
+    setCode : function(code)
+    {
+        if( !this.initialised ) {
+            var wait = new Ext.util.DelayedTask(function() { this.setCode(code); }, this );
+            wait.delay(500);
+        } else {
+            this.mirror.setCode(code);
+            this.mirror.originalContent = code;
+        }
+    },
+
+    reIndentAll : function()
+    {
+        this.mirror.reindent();
+    },
+
+    undo : function(id_prefix, fid)
+    {
+        this.mirror.undo();
+
+        // Enable the Redo btn
+        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').enable();
+
+        // Is there more undo history ? If not, we disable this btn
+        if( ! this.mirror.editor.history.history.length ) {
+            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').disable();
+        }
+    },
+
+    redo : function(id_prefix, fid)
+    {
+        this.mirror.redo();
+
+        // Enable the undo btn
+        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').enable();
+
+        // Is there more redo history ? If not, we disable this btn
+        if( ! this.mirror.editor.history.redoHistory.length ) {
+            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').disable();
+        }
+    },
+
+    setLineContent : function(line, content)
+    {
+        var lineObj = this.mirror.nthLine(line);
+        this.mirror.setLineContent(lineObj, content);
+    },
+
+    insertIntoLine : function(line, position, text)
+    {
+        var lineObj = this.mirror.nthLine(line);
+        this.mirror.insertIntoLine(lineObj, position, text);
+    },
+
+    scrollTo : function(scrollY)
+    {
+        this.mirror.frame.contentWindow.document.body.scrollTop = scrollY;
+    },
+
+    focus : function()
+    {
+        this.mirror.focus();
+    },
+
+    setOriginalCode : function()
+    {
+        this.mirror.originalContent = this.getCode();
+        this.documentDurty = false;
+    },
+
+    getCursorPosition : function()
+    {
+        var r        = this.mirror.cursorPosition(),
+            line     = this.mirror.lineNumber(r.line),
+            caracter = r.character;
+
+        return '{line:'+line+', caracter:'+caracter+'}';
+    },
+
+    nthLine : function(number)
+    {
+        return this.mirror.nthLine(number);
+    },
+
+    setSpellcheck : function(choice)
+    {
+        return this.mirror.setSpellcheck(choice);
+    }
+
+});
+Ext.reg('codemirror', Ext.ux.CodeMirror);Ext.ns('Ext.ux.grid');
+
+Ext.ux.grid.GridSummary = function(config) {
+        Ext.apply(this, config);
+};
+
+Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
+    init : function(grid) {
+        this.grid = grid;
+        this.cm = grid.getColumnModel();
+        this.view = grid.getView();
+
+        var v = this.view;
+
+        // override GridView's onLayout() method
+        v.onLayout = this.onLayout;
+
+        v.afterMethod('render', this.refreshSummary, this);
+        v.afterMethod('refresh', this.refreshSummary, this);
+        v.afterMethod('syncScroll', this.syncSummaryScroll, this);
+        v.afterMethod('onColumnWidthUpdated', this.doWidth, this);
+        v.afterMethod('onAllColumnWidthsUpdated', this.doAllWidths, this);
+        v.afterMethod('onColumnHiddenUpdated', this.doHidden, this);
+
+        // update summary row on store's add/remove/clear/update events
+        grid.store.on({
+            add: this.refreshSummary,
+            remove: this.refreshSummary,
+            clear: this.refreshSummary,
+            update: this.refreshSummary,
+            scope: this
+        });
+
+        if (!this.rowTpl) {
+            this.rowTpl = new Ext.Template(
+                '<div class="x-grid3-summary-row x-grid3-gridsummary-row-offset">',
+                    '<table class="x-grid3-summary-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
+                        '<tbody><tr>{cells}</tr></tbody>',
+                    '</table>',
+                '</div>'
+            );
+            this.rowTpl.disableFormats = true;
+        }
+        this.rowTpl.compile();
+
+        if (!this.cellTpl) {
+            this.cellTpl = new Ext.Template(
+                '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
+                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
+                "</td>"
+            );
+            this.cellTpl.disableFormats = true;
+        }
+        this.cellTpl.compile();
+    },
+
+    calculate : function(rs, cm) {
+        var data = {},
+            cfg  = cm.config,
+            i, cf, cname, j, r, len, jlen;
+
+        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
+            cf = cfg[i]; // get column's configuration
+            cname = cf.dataIndex; // get column dataIndex
+
+            // initialise grid summary row data for
+            // the current column being worked on
+            data[cname] = 0;
+
+            if (cf.summaryType) {
+                for (j = 0, jlen = rs.length; j < jlen; j++) {
+                    r = rs[j]; // get a single Record
+                    data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
+                }
+            }
+        }
+
+        return data;
+    },
+
+    onLayout : function(vw, vh) {
+        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
+            return;
+        }
+        // note: this method is scoped to the GridView
+        if (!this.grid.getGridEl().hasClass('x-grid-hide-gridsummary')) {
+            // readjust gridview's height only if grid summary row is visible
+            this.scroller.setHeight(vh - this.summary.getHeight());
+        }
+    },
+
+    syncSummaryScroll : function() {
+        var mb = this.view.scroller.dom;
+
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft;
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
+    },
+
+    doWidth : function(col, w, tw) {
+        var s = this.view.summary.dom;
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.width = w;
+    },
+
+    doAllWidths : function(ws, tw) {
+        var s    = this.view.summary.dom,
+            wlen = ws.length,
+            cells, j;
+
+        s.firstChild.style.width = tw;
+        cells = s.firstChild.rows[0].childNodes;
+
+        for (j = 0; j < wlen; j++) {
+            cells[j].style.width = ws[j];
+        }
+    },
+
+    doHidden : function(col, hidden, tw) {
+        var s = this.view.summary.dom,
+            display = hidden ? 'none' : '';
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.display = display;
+    },
+
+    renderSummary : function(o, cs, cm) {
+        cs = cs || this.view.getColumnData();
+        var cfg = cm.config,
+            buf = [],
+            last = cs.length - 1,
+            c, cf, p, i, len;
+
+        for (i = 0, len = cs.length; i < len; i++) {
+            c = cs[i];
+            cf = cfg[i];
+            p = {};
+
+            p.id = c.id;
+            p.style = c.style;
+            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
+
+            if (cf.summaryType || cf.summaryRenderer) {
+                p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
+            } else {
+                p.value = '';
+            }
+            if (p.value === undefined || p.value === "") {
+                p.value = "&#160;";
+            }
+            buf[buf.length] = this.cellTpl.apply(p);
+        }
+
+        return this.rowTpl.apply({
+            tstyle: 'width:' + this.view.getTotalWidth() + ';',
+            cells: buf.join('')
+        });
+    },
+
+    refreshSummary : function() {
+        var g = this.grid, ds = g.store,
+            cs = this.view.getColumnData(),
+            cm = this.cm,
+            rs = ds.getRange(),
+            data = this.calculate(rs, cm),
+            buf = this.renderSummary({data: data}, cs, cm);
+
+        if (!this.view.summaryWrap) {
+            this.view.summaryWrap = Ext.DomHelper.insertAfter(this.view.scroller, {
+                tag: 'div',
+                cls: 'x-grid3-gridsummary-row-inner'
+            }, true);
+        }
+        this.view.summary = this.view.summaryWrap.update(buf).first();
+    },
+
+    toggleSummary : function(visible) { // true to display summary row
+        var el = this.grid.getGridEl();
+
+        if (el) {
+            if (visible === undefined) {
+                visible = el.hasClass('x-grid-hide-gridsummary');
+            }
+            el[visible ? 'removeClass' : 'addClass']('x-grid-hide-gridsummary');
+
+            this.view.layout(); // readjust gridview height
+        }
+    },
+
+    getSummaryNode : function() {
+        return this.view.summary;
+    }
+});
+Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
+
+/*
+ * all Calculation methods are called on each Record in the Store
+ * with the following 5 parameters:
+ *
+ * v - cell value
+ * record - reference to the current Record
+ * colName - column name (i.e. the ColumnModel's dataIndex)
+ * data - the cumulative data for the current column + summaryType up to the current Record
+ * rowIdx - current row index
+ */
+Ext.ux.grid.GridSummary.Calculations = {
+    sum : function(v, record, colName, data, rowIdx) {
+        return data[colName] + Ext.num(v, 0);
+    },
+
+    count : function(v, record, colName, data, rowIdx) {
+        return rowIdx + 1;
+    },
+
+    max : function(v, record, colName, data, rowIdx) {
+        return Math.max(Ext.num(v, 0), data[colName]);
+    },
+
+    min : function(v, record, colName, data, rowIdx) {
+        return Math.min(Ext.num(v, 0), data[colName]);
+    },
+
+    average : function(v, record, colName, data, rowIdx) {
+        var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
+        return rowIdx === count - 1 ? (t / count) : t;
+    }
+};Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+    onRender : function(ct, position){
+
+        ct.mask(
+            '<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" /> '+
+            _('Loading...')
+        );
+
+        var frame    = document.createElement('iframe'),
+            callback = function(e) {
+                ct.unmask();
+            };
+
+        frame.id = this.id;
+        frame.name = this.id;
+        frame.src = this.url;
+        frame.frameBorder = 0;
+
+        this.el = ct.appendChild(frame);
+
+        if(Ext.isIE) {
+            document.frames[this.url].name = this.id;
+        }
+
+        frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(frame);
+
+    }
+});/*
+ * MultiSelectTreePanel v 1.1
+ *
+ * This work is derivative of Ext-JS 2.2. Much of the code is modified versions of default code.
+ * Refer to Ext-JS 2.2 licencing for more information. http://extjs.com/license
+ *
+ * Any and all original code is made available as is for whatever purpose you see fit.
+ *
+ * Should be a largely drop in replacement for ordinary TreePanel when you require multiselect
+ * with drag and drop. Overrides most of the methods and events to pass a nodelist rather than
+ * a single node.
+ *
+ * Note that the code is provided as-is and should be considered experimental and likely to contain
+ * bugs, especially when combined with other extensions or modifications to the default library.
+ *
+ * It has been tested against Ext-JS 2.2 and 2.2.1 with:
+ *
+ * Firefox 3, Opera 9.5+, Safari 3.1, MSIE 6,7,8rc1 (+5.5 seems to work too)
+ *
+ * Usage:
+ *
+ * Add the following CSS to make the floating "drag" version of the tree indent prettily..
+
+.x-dd-drag-ghost .x-tree-node-indent,.x-dd-drag-ghost .x-tree-ec-icon {display: inline !important;}
+
+ *
+ * If you are using Ext-JS 2.2.1 or earlier you need to add this override! (reported as a bug)
+ 
+Ext.override(Ext.tree.TreeDropZone, {
+	completeDrop : function(de){
+		var ns = de.dropNode, p = de.point, t = de.target;
+		if(!Ext.isArray(ns)){
+			ns = [ns];
+		}
+		var n, node, ins = false;
+		if (p != 'append'){
+			ins = true;
+			node = (p == 'above') ? t : t.nextSibling;
+		}
+		for(var i = 0, len = ns.length; i < len; i++){
+			n = ns[i];
+			if (ins){
+				t.parentNode.insertBefore(n, node);
+			}else{
+				t.appendChild(n);
+			}
+			if(Ext.enableFx && this.tree.hlDrop){
+	   		n.ui.highlight();
+			}
+		}
+		ns[0].ui.focus();
+		t.ui.endDrop();
+		this.tree.fireEvent("nodedrop", de);
+	}
+	
+}); 
+ 
+ *
+ * Instantiate like a normal tree (except DD stuff is enabled by default)
+ 
+	var tree = new Ext.ux.MultiSelectTreePanel({
+		autoScroll:true,
+		width:400,
+		height:500,
+		animate:true,
+		containerScroll: true,
+		enableDD: true,
+		root: new Ext.tree.AsyncTreeNode({
+			text: 'A Book',
+			draggable:false,
+			id:'node0'
+		}),
+		loader: new Ext.tree.TreeLoader({
+			dataUrl:'bookdata.json'
+		})
+	});
+ 	tree.render("target");
+
+ *
+ * When listening for DND events look for dragdata.nodes instead of dragdata.node
+ *
+ * Use ctrl-click to select multiple nodes.
+ * Use shift-click to select a range of nodes.
+ *
+ * Changelog
+ *
+ *  v1.0 Initial Release
+ *
+ *	v1.1
+ *		- reinstated enableDD, enableDrag, enableDrop config params. *NEED TO INCLUDE THIS NOW*
+ *		- consolidated compareDocumentPosition code into compareNodeOrder (only works with rendered nodes)
+ *		- cleaned up select function by above and creating selectNode function.
+ *		- cleaned up DDGhost generation code to be less hacky (still not ideal)
+ *		- included onContainerOver and onContainerDrop code (awaiting ExtJS fix)
+ *		- fixed several lingering postdrag selection bugs
+ *		- fixed key events to respect shift/ctrl keys
+ *		
+ * Enjoy
+ */
+ 
+Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
+
+	normalClick: false,
+
+	// overwrite to change click to mousedown...
+	init : function(tree){
+		this.tree = tree;
+		tree.getTreeEl().on("keydown", this.onKeyDown, this);
+		tree.on("dblclick", this.onDoubleClick, this);
+		tree.on("click", this.onNodeClick, this);
+	},
+
+	onDrag: function() {
+		// console.trace("onDrag");
+		this.normalClick = false;
+	},
+
+	onNodeClick : function(node, e){
+		if (e.shiftKey) e.preventDefault();
+		// disable select unless not using a dragZone, or a multiselectdragzone
+		if (!this.tree.dragZone || !this.tree.dragZone.isMultiSelect) {
+			this.onMouseDown(node, e);
+			this.onMouseUp(node, e);
+		}
+	},
+
+	onMouseDown: function(node, e) {
+/* 		console.debug("SelModel onMouseDown "+node.id+" "+node.isSelected()+" "+e.ctrlKey+" "+e.shiftKey); */
+		// if node is selected delay unselect
+		if (node.isSelected()) {
+			if (e.ctrlKey) {
+				this.unselect(node);
+				this.normalClick = false;
+				return;
+			}
+			this.normalClick = !e.shiftKey;
+			
+		} else {
+			this.select(node, e, e.ctrlKey);
+			this.normalClick = false;
+		}
+	},
+	
+	onMouseUp: function(node, e) {
+/* 		console.debug("SelModel onMouseUp this.normalClick "+node.id); */
+		if (this.normalClick) {
+			// perform delayed single select to override multiselect (if normal click)
+//			(function() {
+//				if (this.normalClick) {
+					this.select(node, e, e.ctrlKey);
+					this.normalClick = false;
+//				}
+//			}).defer(500, this)
+		}
+	},
+	
+	onDoubleClick: function() {
+/* 		console.debug("onDoubleClick"); */
+		this.normalClick = false;
+	},	
+
+	// private
+	// for comparing node order... (taken from quirksmode.org and googlecode)
+	compareNodeOrder: document.compareDocumentPosition ?
+		function(node1, node2) {
+			// W3C DOM lvl 3 method (Gecko)
+			return 3 - (node1.ui.elNode.compareDocumentPosition(node2.ui.elNode) & 6);
+		} : 
+		(typeof document.documentElement.sourceIndex !== "undefined" ? 
+			function(node1, node2) {
+				// IE source index method
+				return node1.ui.elNode.sourceIndex - node2.ui.elNode.sourceIndex;	
+			} :
+			function(node1, node2) {
+				if (node1 == node2) return 0;
+				// Safari doesn't support compareDocumentPosition or sourceIndex
+				// from http://code.google.com/p/doctype/wiki/ArticleNodeCompareDocumentOrder
+				var range1 = document.createRange();
+				range1.selectNode(a.ui.elNode);
+				range1.collapse(true);
+
+				var range2 = document.createRange();
+				range2.selectNode(b.ui.elNode);
+				range2.collapse(true);
+
+				return range1.compareBoundaryPoints(Range.START_TO_END, range2);
+			}		
+		),
+
+	// private
+	sortSelNodes: function() {
+		if (this.selNodes.length > 1) {
+			if (!this.selNodes[0].ui.elNode) return;
+			this.selNodes.sort(this.compareNodeOrder);
+		}
+	},
+
+	// private single point for selectNode
+	selectNode: function(node, push) {
+		if (!this.isSelected(node)) {
+			this.selNodes.push(node);
+			this.selMap[node.id] = node;
+			node.ui.onSelectedChange(true);
+		}
+	},
+
+	// overwritten from MultiSelectionModel to fix unselecting...
+	select : function(node, e, keepExisting){
+		// Add in setting an array as selected... (for multi-selecting D&D nodes)
+		if(node instanceof Array){
+			for (var c=0;c<node.length;c++) {
+				this.selectNode(node[c]);
+			}
+			this.sortSelNodes();
+			this.fireEvent("selectionchange", this, this.selNodes, this.lastSelNode);
+			return node;
+		}
+		// Shift Select to select a range
+		// NOTE: Doesn't change lastSelNode
+		// EEK has to be a prettier way to do this
+		if (e && e.shiftKey && this.selNodes.length > 0) {
+			this.lastSelNode = this.lastSelNode || this.selNodes[0];
+			var before = this.compareNodeOrder(this.lastSelNode, node) > 0;
+			// if (this.lastSelNode == node) {
+			// check dom node ordering (from ppk of quirksmode.org)
+			this.clearSelections(true);
+			var cont = true;
+			var inside = false;
+			var parent = this.lastSelNode;
+			// ummm... yeah don't read this bit...
+			do {
+				for (var next=parent;next!=null;next=(before?next.previousSibling:next.nextSibling)) {
+					// hack to make cascade work the way I want it to
+					inside = inside || (before && (next == node || next.contains(node)));
+					if (next.isExpanded()) {
+						next.cascade(function(n) {
+							if (cont != inside) {
+								this.selectNode(n);
+							}
+							cont = (cont && n != node);
+							return true;
+						}, this);
+					} else {
+						this.selectNode(next);
+						cont = (next != node);
+					}
+					if (!cont) break;
+				}
+				if (!cont) break;
+				while ((parent = parent.parentNode) != null) {
+					if (before) {
+						this.selectNode(parent);
+					}
+					cont = (cont && parent != node);
+					if (before && parent.previousSibling) {
+						parent = parent.previousSibling;
+						break;
+					}
+					if (!before && parent.nextSibling) {
+						parent = parent.nextSibling;
+						break;
+					}
+				}
+				if (!cont) break;
+			} while (parent != null);
+			this.selectNode(node);
+			// sort the list
+			this.sortSelNodes();
+			this.fireEvent("selectionchange", this, this.selNodes, node);
+			e.preventDefault();
+			return node;
+		} else if(keepExisting !== true) {
+			this.clearSelections(true);
+		}
+		if(this.isSelected(node)) {
+			// handle deselect of node...
+			if (keepExisting === true) {
+				this.unselect(node);
+				if (this.lastSelNode === node) {
+					this.lastSelNode = this.selNodes[0];
+				}
+				return node;
+			}
+			this.lastSelNode = node;
+			return node;
+		}
+		// save a resort later on...
+		this.selectNode(node);
+		this.sortSelNodes();
+		this.lastSelNode = node;
+		this.fireEvent("selectionchange", this, this.selNodes, this.lastSelNode);
+		return node;
+	},
+	// returns selected nodes precluding children of other selected nodes...
+	// used for multi drag and drop...
+	getUniqueSelectedNodes: function() {
+		var ret = [];
+		for (var c=0;c<this.selNodes.length;c++) {
+			var parent = this.selNodes[c];
+			ret.push(parent);
+			// nodes are sorted(?) so skip over subsequent nodes inside this one..
+			while ((c+1)<this.selNodes.length && parent.contains(this.selNodes[c+1])) c++;
+		}
+		return ret;
+	},
+	
+	// check for descendents when nodes are removed...
+	unselect: function(node, subnodes) {
+		if (subnodes) {
+			for (var c=this.selNodes.length-1;c>=0;c--) {
+				if (this.selNodes[c].isAncestor(node)) {
+					Ext.ux.FixedMultiSelectionModel.superclass.unselect.call(this, this.selNodes[c]);
+				}
+			}		
+		}
+		return Ext.ux.FixedMultiSelectionModel.superclass.unselect.call(this, node);
+	},
+	
+    /**
+     * Selects the node above the selected node in the tree, intelligently walking the nodes
+     * @return TreeNode The new selection
+     */
+    selectPrevious : function(keepExisting){
+        var s = this.selNodes[0];
+        if(!s){
+            return null;
+        }
+        var ps = s.previousSibling;
+        if(ps){
+            if(!ps.isExpanded() || ps.childNodes.length < 1){
+                return this.select(ps, null, keepExisting);
+            } else{
+                var lc = ps.lastChild;
+                while(lc && lc.isExpanded() && lc.childNodes.length > 0){
+                    lc = lc.lastChild;
+                }
+                return this.select(lc, null, keepExisting);
+            }
+        } else if(s.parentNode && (this.tree.rootVisible || !s.parentNode.isRoot)){
+            return this.select(s.parentNode, null, keepExisting);
+        }
+        return null;
+    },
+
+    /**
+     * Selects the node above the selected node in the tree, intelligently walking the nodes
+     * @return TreeNode The new selection
+     */
+    selectNext : function(keepExisting){
+        var s = this.selNodes[this.selNodes.length-1];
+        if(!s){
+            return null;
+        }
+        if(s.firstChild && s.isExpanded()){
+             return this.select(s.firstChild, null, keepExisting);
+         }else if(s.nextSibling){
+             return this.select(s.nextSibling, null, keepExisting);
+         }else if(s.parentNode){
+            var newS = null;
+            s.parentNode.bubble(function(){
+                if(this.nextSibling){
+                    newS = this.getOwnerTree().selModel.select(this.nextSibling, null, keepExisting);
+                    return false;
+                }
+            });
+            return newS;
+         }
+        return null;
+    },
+
+    onKeyDown : function(e){
+        var s = this.selNode || this.lastSelNode;
+        // undesirable, but required
+        var sm = this;
+        if(!s){
+            return;
+        }
+        var k = e.getKey();
+        switch(k){
+             case e.DOWN:
+                 e.stopEvent();
+                 this.selectNext(e.shiftKey || e.ctrlKey);
+             break;
+             case e.UP:
+                 e.stopEvent();
+                 this.selectPrevious(e.shiftKey || e.ctrlKey);
+             break;
+             case e.RIGHT:
+                 e.preventDefault();
+                 if(s.hasChildNodes()){
+                     if(!s.isExpanded()){
+                         s.expand();
+                     }else if(s.firstChild){
+                         this.select(s.firstChild, e, e.shiftKey || e.ctrlKey);
+                     }
+                 }
+             break;
+             case e.LEFT:
+                 e.preventDefault();
+                 if(s.hasChildNodes() && s.isExpanded()){
+                     s.collapse();
+                 }else if(s.parentNode && (this.tree.rootVisible || s.parentNode != this.tree.getRootNode())){
+                     this.select(s.parentNode, e, e.shiftKey || e.ctrlKey);
+                 }
+             break;
+        };
+    }
+    	
+});
+/*
+	Enhanced to support dragging multiple nodes...
+	
+	for extension refer to data.nodes instead of data.node
+	
+*/
+Ext.ux.MultiSelectTreeDragZone = Ext.extend(Ext.tree.TreeDragZone, {
+
+	isMultiSelect: true,
+
+	onBeforeDrag : function(data, e){
+		if (data.nodes && data.nodes.length > 0) {
+			for (var c=0;c<data.nodes.length;c++) {
+				n = data.nodes[c];
+				if (n.draggable === false || n.disabled) return false
+			}
+			return true;
+		} else if (data.node) {
+			if (data.node.draggable === false || data.node.disabled) return false			
+		}
+		return false;
+		
+	},
+	
+	alignElWithMouse: function(el, iPageX, iPageY) {
+		Ext.ux.MultiSelectTreeDragZone.superclass.alignElWithMouse.apply(this, arguments);
+		// test if the proxy object is visible (indicating a drag)
+		if (Ext.fly(el).isVisible()) {
+			var selModel = this.tree.getSelectionModel();
+			if (selModel && selModel.onDrag) {
+				selModel.onDrag.call(selModel);
+			}
+		}
+	},
+	
+	onMouseUp: function(e) {
+		// if multiselection model, call mouseup code to reevaluate selection..
+		var selModel = this.tree.getSelectionModel();
+/* 		console.debug("onMouseUp "+!!selModel.onMouseUp); */
+		if (selModel && selModel.onMouseUp) {
+			var target = Ext.dd.Registry.getHandleFromEvent(e);
+			if (target != null) {
+				selModel.onMouseUp.call(selModel,target.node,e);
+			}
+		}
+		Ext.ux.MultiSelectTreeDragZone.superclass.onMouseUp.apply(this, arguments);
+	},
+	
+	// v1.0
+	// fixed to handle multiSelectionModel
+	// Data now calls SelectionModel.select instead of waiting for the click event
+	// Creates Ghost inline rather than calling TreeNodeUI.
+	//
+	// v1.1
+	// cleanup to have ghost generation slightly less hacky... still hacky though...
+	// fixes problems with using extra tag nesting in a custom TreeNodeUI.
+	getDragData : function(e) {
+/* 		console.debug("getdragdata"); */
+		// get event target
+		var target = Ext.dd.Registry.getHandleFromEvent(e);
+		// if no target (die)
+		if (target == null) return;
+		var selNodes = [];
+		// use tree selection model..
+		var selModel = this.tree.getSelectionModel();
+		if (selModel.onMouseDown) {
+			// call selmodel code to handle multiselection..
+			selModel.onMouseDown.call(selModel, target.node, e);
+			// get selected nodes - nested nodes...
+			selNodes = selModel.getUniqueSelectedNodes();
+		} else {
+			// if not multiSelectionModel.. just use the target..
+			// let it handle selection with it's own listeners..
+			selNodes = [target.node];
+		}
+		// if no nodes selected stop now...
+		if (!selNodes || selNodes.length < 1) return;
+		var dragData = { nodes: selNodes };
+		// create a container for the proxy...
+		var div = document.createElement('ul'); // create the multi element drag "ghost"
+		// add classes to keep is pretty...
+		div.className = 'x-tree-node-ct x-tree-lines';
+		// add actual dom nodes to div (instead of tree nodes)
+		var height = 0;
+		for(var i = 0, len = selNodes.length; i < len; i++) {
+			// add entire node to proxy
+			// normally this is done by TreeNodeUI.appendDDGhost(), but overriding that class requires
+			// also overriding TreeLoader etc. Ext.extend() is an option though...
+			var clonenode = selNodes[i].ui.wrap.cloneNode(true);
+			// fix extra indenting by removing extra spacers
+			// should really modify UI rendering code to render a duplicate subtree but this is simpler...
+			// count current indent nodes from ui indentNode... (add 1 for elbow)
+			var subtract = selNodes[i].ui.indentNode.childNodes.length + 1;
+			// avoid indent alterations if possible..
+			if (subtract > 0) {
+				// relies on node ui using the same tag for all elems...
+				var subNodes = Ext.query(selNodes[i].ui.indentNode.nodeName+".x-tree-node-indent", clonenode);
+				for (var c=0,clen=subNodes.length;c<clen;c++) {
+					var inode = subNodes[c];
+					var current = inode.childNodes.length;
+					if (current <= subtract) {
+						inode.innerHTML = "";
+						// remove elbow icon as well..
+						if (current < subtract) inode.parentNode.removeChild(subNodes[c].nextSibling);
+					} else {
+						for (var r=0;r<subtract;r++) {
+							subNodes[c].removeChild(subNodes[c].firstChild);
+						}
+					}
+				}
+			}
+			div.appendChild(clonenode);
+			Ext.fly(clonenode).removeClass(['x-tree-selected','x-tree-node-over']);
+		}
+		dragData.ddel = div;
+		return dragData;
+	},
+	// fix from TreeDragZone (references dragData.node instead of dragData.nodes)
+	onInitDrag : function(e){
+		var data = this.dragData;
+		this.tree.eventModel.disable();
+		this.proxy.update("");
+		this.proxy.ghost.dom.appendChild(data.ddel);
+		this.tree.fireEvent("startdrag", this.tree, data.nodes, e);
+	},
+	// Called from TreeDropZone (looks like hack for handling multiple tree nodes)
+	getTreeNode: function() {
+		return this.dragData.nodes;
+	},
+	// fix from TreeDragZone (refers to data.node instead of data.nodes)
+	// Don't know what this does, so leaving as first node.
+	getRepairXY : function(e, data){
+		return data.nodes[0].ui.getDDRepairXY();
+	},
+
+	// fix from TreeDragZone (refers to data.node instead of data.nodes)
+	onEndDrag : function(data, e){
+		this.tree.eventModel.enable.defer(100, this.tree.eventModel);
+		this.tree.fireEvent("enddrag", this.tree, data.nodes || [data.node], e);
+	},
+
+	// fix from TreeDragZone (refers to dragData.node instead of dragData.nodes)
+	onValidDrop : function(dd, e, id){
+		this.tree.fireEvent("dragdrop", this.tree, this.dragData.nodes, dd, e);
+		this.hideProxy();
+	},
+
+	// fix for invalid Drop
+	beforeInvalidDrop : function(e, id){
+		// this scrolls the original position back into view
+		var sm = this.tree.getSelectionModel();
+		// sm.clearSelections();
+		// sm.select(this.dragData.nodes, e, true);
+	}
+
+});
+
+/*
+
+MultiSelectTreeDropZone
+
+Contains following fixups
+
+- modified functions to handle multiple nodes in dd operation
+	isValidDropPoint
+	afterRepair
+- modified getDropPoint such that isValidDropPoint can simulate leaf style below inserting.
+	Overriding isValidDropPoint affects getDropPoint affects onNodeOver and onNodeDrop
+
+Refer to data.nodes instead of data.node for events..
+
+*/
+Ext.ux.MultiSelectTreeDropZone = Ext.extend(Ext.tree.TreeDropZone, {
+
+	// fix from TreeDropZone (referred to data.node instead of data.nodes)
+	isValidDropPoint : function(n, pt, dd, e, data){
+		if(!n || !data) { return false; }
+		var targetNode = n.node;
+		var dropNodes = data.nodes?data.nodes:[data.node];
+		// default drop rules
+		if(!(targetNode && targetNode.isTarget && pt)){
+			return false;
+		}
+		if(pt == "append" && targetNode.allowChildren === false){
+			return false;
+		}
+		if((pt == "above" || pt == "below") && (targetNode.parentNode && targetNode.parentNode.allowChildren === false)){
+			return false;
+		}
+		// don't allow dropping a treenode inside itself...
+		for (var c=0;c<dropNodes.length;c++) {
+			if(dropNodes[c] && (targetNode == dropNodes[c] || dropNodes[c].contains(targetNode))){
+				return false;
+			}
+		}
+		// reuse the object
+		var overEvent = this.dragOverData;
+		overEvent.tree = this.tree;
+		overEvent.target = targetNode;
+		overEvent.data = data;
+		overEvent.point = pt;
+		overEvent.source = dd;
+		overEvent.rawEvent = e;
+		overEvent.dropNode = dropNodes;
+		overEvent.cancel = false;
+		var result = this.tree.fireEvent("nodedragover", overEvent);
+		return overEvent.cancel === false && result !== false;
+	},
+
+	// override to allow insert "below" when leaf != true...
+	getDropPoint : function(e, n, dd, data){
+		var tn = n.node;
+		if(tn.isRoot){
+			return this.isValidDropPoint(n, "append", dd, e, data)? "append" : false;
+		}
+		var dragEl = n.ddel;
+		var t = Ext.lib.Dom.getY(dragEl), b = t + dragEl.offsetHeight;
+		var y = Ext.lib.Event.getPageY(e);
+		var noAppend = tn.allowChildren === false || tn.isLeaf() || !this.isValidDropPoint(n, "append", dd, e, data);
+		if(!this.appendOnly && tn.parentNode.allowChildren !== false){
+			var noBelow = false;
+			if(!this.allowParentInsert){
+				noBelow = tn.hasChildNodes() && tn.isExpanded();
+			}
+			var q = (b - t) / (noAppend ? 2 : 3);
+			if(y >= t && y < (t + q) && this.isValidDropPoint(n, "above", dd, e, data)){
+				return "above";
+			}else if(!noBelow && (noAppend || y >= b-q && y <= b) && this.isValidDropPoint(n, "below", dd, e, data)){
+				return "below";
+			}
+		}
+		return noAppend? false: "append";
+	},
+
+	// Override because it calls getDropPoint and isValidDropPoint
+	onNodeOver : function(n, dd, e, data){
+		var pt = this.getDropPoint(e, n, dd, data);
+		var node = n.node;
+
+		if(!this.expandProcId && pt == "append" && node.hasChildNodes() && !n.node.isExpanded()){
+			this.queueExpand(node);
+		}else if(pt != "append"){
+			this.cancelExpand();
+		}
+
+		var returnCls = this.dropNotAllowed;
+		if(pt){
+			var el = n.ddel;
+			var cls;
+			if(pt == "above"){
+				returnCls = n.node.isFirst() ? "x-tree-drop-ok-above" : "x-tree-drop-ok-between";
+				cls = "x-tree-drag-insert-above";
+			}else if(pt == "below"){
+				returnCls = n.node.isLast() ? "x-tree-drop-ok-below" : "x-tree-drop-ok-between";
+				cls = "x-tree-drag-insert-below";
+			}else{
+				returnCls = "x-tree-drop-ok-append";
+				cls = "x-tree-drag-append";
+			}
+			if(this.lastInsertClass != cls){
+				Ext.fly(el).replaceClass(this.lastInsertClass, cls);
+				this.lastInsertClass = cls;
+			}
+		}
+		return returnCls;
+	},
+
+	// Override because it calls getDropPoint and isValidDropPoint
+	onNodeDrop : function(n, dd, e, data){
+		var point = this.getDropPoint(e, n, dd, data);
+		var targetNode = n.node;
+		targetNode.ui.startDrop();
+		if(point === false) {
+			targetNode.ui.endDrop();
+			return false;
+		}
+
+		var dropNode = data.node || (dd.getTreeNode ? dd.getTreeNode(data, targetNode, point, e) : null);
+		var dropEvent = {
+			tree : this.tree,
+			target: targetNode,
+			data: data,
+			point: point,
+			source: dd,
+			rawEvent: e,
+			dropNode: dropNode,
+			cancel: !dropNode,
+			dropStatus: false
+		};
+		var retval = this.tree.fireEvent("beforenodedrop", dropEvent);
+		if(retval === false || dropEvent.cancel === true || !dropEvent.dropNode){
+			targetNode.ui.endDrop();
+			return dropEvent.dropStatus;
+		}
+
+		targetNode = dropEvent.target;
+		if(point == "append" && !targetNode.isExpanded()){
+			targetNode.expand(false, null, function(){
+				this.completeDrop(dropEvent);
+			}.createDelegate(this));
+		}else{
+			this.completeDrop(dropEvent);
+		}
+		return true;
+	},
+
+	// fix from TreeDropZone (referred to data.node instead of data.nodes)
+	afterRepair : function(data){
+		if(data && Ext.enableFx){
+			var nl = data.nodes?data.nodes:[data.node];
+			for (var c=0,len=nl.length;c<len;c++) {
+				nl[c].ui.highlight();
+			}
+		}
+		this.hideProxy();
+	},
+
+	// handle allowContainerDrop (appends nodes to the root node)
+	onContainerDrop : function(dd, e, data) {
+		if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {
+			var targetNode = this.tree.getRootNode();		
+			targetNode.ui.startDrop();
+			var dropNode = data.node || (dd.getTreeNode ? dd.getTreeNode(data, targetNode, "append", e) : null);
+			var dropEvent = {
+				tree : this.tree,
+				target: targetNode,
+				data: data,
+				point: "append",
+				source: dd,
+				rawEvent: e,
+				dropNode: dropNode,
+				cancel: !dropNode,
+				dropStatus: false
+			};
+			var retval = this.tree.fireEvent("beforenodedrop", dropEvent);
+			if(retval === false || dropEvent.cancel === true || !dropEvent.dropNode){
+				targetNode.ui.endDrop();
+				return dropEvent.dropStatus;
+			}
+	
+			targetNode = dropEvent.target;
+			if(!targetNode.isExpanded()){
+				targetNode.expand(false, null, function(){
+					this.completeDrop(dropEvent);
+				}.createDelegate(this));
+			}else{
+				this.completeDrop(dropEvent);
+			}
+			return true;
+		}
+		return false;
+	},
+	
+	// handle allowContaineDrop (treat as a drop to the root node)
+	onContainerOver : function(dd, e, data) {
+		if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {
+			return this.dropAllowed;
+		}
+		return this.dropNotAllowed;
+	}
+
+});
+
+/*
+
+	MultiSelectTreePanel
+
+	sets up using FixedMultiSelectionModel
+	and initing with extended DragZone and DropZone by default
+
+*/
+
+Ext.ux.MultiSelectTreePanel = Ext.extend(Ext.tree.TreePanel, {
+
+	getSelectionModel : function(){
+		if(!this.selModel){
+			this.selModel = new Ext.ux.FixedMultiSelectionModel();
+		}
+		return this.selModel;
+	},
+
+	initEvents: function() {
+		if((this.enableDD || this.enableDrop) && !this.dropZone){
+			this.dropZone = new Ext.ux.MultiSelectTreeDropZone(this, this.dropConfig || {
+								ddGroup: this.ddGroup || "TreeDD",
+								appendOnly: this.ddAppendOnly === true
+							});
+		}
+		if((this.enableDD || this.enableDrag) && !this.dragZone){
+			this.dragZone = new Ext.ux.MultiSelectTreeDragZone(this, {
+								ddGroup: this.ddGroup || "TreeDD",
+								scroll: this.ddScroll
+							});
+		}
+		Ext.ux.MultiSelectTreePanel.superclass.initEvents.apply(this, arguments);
+
+		// This is temporary. Should really Ext.extend on TreeNode.removeChild()
+		// and call getOwnerTree().removeNode(node) or similar...
+
+		this.on("remove", function(tree, parent, node) {
+			tree.getSelectionModel().unselect(node, true);
+		});
+	}
+});
+
+Ext.reg('multiselecttreepanel', Ext.ux.MultiSelectTreePanel);
+/**
+ * Ext.ux.ToastWindow
+ *
+ * @author  Edouard Fattal
+ * @date    March 14, 2008
+ *
+ * @class Ext.ux.ToastWindow
+ * @extends Ext.Window
+ */
+
+Ext.namespace("Ext.ux");
+
+
+Ext.ux.NotificationMgr = {
+    positions: []
+};
+
+Ext.ux.Notification = Ext.extend(Ext.Window, {
+    initComponent: function(){
+        Ext.apply(this, {
+            iconCls: this.iconCls || 'x-icon-information',
+            cls: 'x-notification',
+            width: 250,
+            autoHeight: true,
+            //plain: false,
+            draggable: false,
+            bodyStyle: 'text-align:center; padding: 10px;'
+        });
+        if(this.autoDestroy) {
+            this.task = new Ext.util.DelayedTask(this.hide, this);
+        } else {
+            this.closable = true;
+        }
+        Ext.ux.Notification.superclass.initComponent.call(this);
+    },
+    setMessage: function(msg){
+        this.body.update(msg);
+    },
+    setTitle: function(title, iconCls){
+        Ext.ux.Notification.superclass.setTitle.call(this, title, iconCls||this.iconCls);
+    },
+    onRender:function(ct, position) {
+        Ext.ux.Notification.superclass.onRender.call(this, ct, position);
+    },
+    onDestroy: function(){
+        Ext.ux.NotificationMgr.positions.remove(this.pos);
+        Ext.ux.Notification.superclass.onDestroy.call(this);
+    },
+    cancelHiding: function(){
+        this.addClass('fixed');
+        if(this.autoDestroy) {
+            this.task.cancel();
+        }
+    },
+    afterShow: function(){
+        Ext.ux.Notification.superclass.afterShow.call(this);
+        Ext.fly(this.body.dom).on('click', this.cancelHiding, this);
+        if(this.autoDestroy) {
+            this.task.delay(this.hideDelay || 5000);
+       }
+    },
+    animShow: function(){
+        this.pos = 0;
+        while(Ext.ux.NotificationMgr.positions.indexOf(this.pos)>-1) {
+            this.pos++;
+        }
+        Ext.ux.NotificationMgr.positions.push(this.pos);
+        this.setSize(200,100);
+        this.el.alignTo(document, "br-br", [ -20, -20-((this.getSize().height+10)*this.pos) ]);
+        this.el.slideIn('b', {
+            duration: 1,
+            callback: this.afterShow,
+            scope: this
+        });
+    },
+    animHide: function(){
+        Ext.ux.NotificationMgr.positions.remove(this.pos);
+        this.el.shadow.hide();
+        this.el.ghost("b", {
+            duration: 1,
+            remove: false,
+            callback : function () {
+                Ext.ux.NotificationMgr.positions.remove(this.pos);
+                this.destroy();
+            }.createDelegate(this)
+
+        });
+    },
+
+    focus: Ext.emptyFn 
+
+}); 
+/**
+ * Plugin for the Ext.Panel class to support a collapsed header title
+ * Also implements vertical rotation for east and west border panels
+ *
+ * @author  Joeri Sebrechts <joeri at sebrechts.net>
+ * @version 1.1
+ * @date    January 11th, 2010
+ * @license http://www.gnu.org/licenses/lgpl-3.0.txt
+ */
+Ext.ns('Ext.ux');
+Ext.ux.PanelCollapsedTitle = (function() {
+  var rotatedCls = 'x-panel-header-rotated';
+  var supportsSVG = 
+    !!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+  var patchCollapsedElem = function() {
+    var verticalText = ((this.region == 'east') || (this.region == 'west'));    
+    var containerStyle = 'overflow: visible; padding: 0; border: none; background: none;';
+    // For vertical text, and for browsers that support SVG
+    // (Firefox, Chrome, Safari 3+, Opera 8+)
+    if (verticalText && supportsSVG) {
+      this.collapsedHeader = this.ownerCt.layout[this.region].getCollapsedEl().createChild({
+        tag: 'div',
+        style: 'height: 100%; overflow: hidden;'
+      });
+      // embed svg code inside this container div
+      var SVGNS = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(SVGNS, 'svg');
+      this.collapsedHeader.dom.appendChild(svg);
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      var textContainer = document.createElementNS(SVGNS, 'text');
+      textContainer.setAttribute('x', 6);
+      textContainer.setAttribute('y', 1);
+      textContainer.setAttribute('transform', 'rotate(90 6 1)');
+      textContainer.setAttribute('class', 'x-panel-header ' + rotatedCls);
+      svg.appendChild(textContainer);
+      this.collapsedHeaderText = document.createTextNode(this.title);
+      textContainer.appendChild(this.collapsedHeaderText);
+      // set the style to override the unwanted aspects of the x-panel-header class
+      // also copy the x-panel-header "color" to "fill", to color the SVG text node
+      var color = Ext.fly(textContainer).getStyle('color');
+      textContainer.setAttribute('style', containerStyle + ';fill: ' + color + ';');            
+    // For horizontal text or IE
+    } else {
+      var titleElemStyle = 'position: relative;';
+      if (verticalText) {
+        // use writing-mode for vertical text
+        titleElemStyle += 
+          'white-space: nowrap; writing-mode: tb-rl; top: 1px; left: 3px;';
+      } else {
+        titleElemStyle += 'top: 2px;';
+        // margin-right to ensure no overlap with uncollapse button
+        containerStyle += 'padding-left: 4px; margin-right: 18px;';
+      };
+      this.collapsedHeader = this.ownerCt.layout[this.region].getCollapsedEl().createChild({
+        tag: 'div',
+        // overrides x-panel-header to remove unwanted aspects
+        style: containerStyle,
+        cls: 'x-panel-header ' + rotatedCls,
+        html: '<span style="'+ titleElemStyle + '">'+this.title+'</span>'
+      });
+      this.collapsedHeaderText = this.collapsedHeader.first();
+    };
+    if (this.collapsedIconCls) this.setCollapsedIconClass(this.collapsedIconCls);
+  };
+  this.init = function(p) {
+    if (p.collapsible) {
+      var verticalText = ((p.region == 'east') || (p.region == 'west'));
+      // update the collapsed header title also
+      p.setTitle = Ext.Panel.prototype.setTitle.createSequence(function(t) {
+        if (this.rendered && this.collapsedHeaderText) {
+          // if the collapsed title element is regular html dom
+          if (this.collapsedHeaderText.dom) {
+            this.collapsedHeaderText.dom.innerHTML = t;
+          // or if this is an SVG text node
+          } else if (this.collapsedHeaderText.replaceData) {
+            this.collapsedHeaderText.nodeValue = t;
+          };
+        };
+      });
+      // update the collapsed icon class also
+      p.setCollapsedIconClass = function(cls) {
+        var old = this.collapsedIconCls;
+        this.collapsedIconCls = cls;
+        if(this.rendered && this.collapsedHeader){
+          var hd = this.collapsedHeader,
+          img = hd.child('img.x-panel-inline-icon');
+          // if an icon image is already shown, modify it or remove it
+          if(img) {
+            if (this.collapsedIconCls) {
+              Ext.fly(img).replaceClass(old, this.collapsedIconCls);
+            } else {
+              // remove img node if the icon class is removed
+              Ext.fly(img).remove();
+            };
+          // otherwise create the img for the icon
+          } else if (this.collapsedIconCls) {
+            Ext.DomHelper.insertBefore(hd.dom.firstChild, {
+              tag:'img', src: Ext.BLANK_IMAGE_URL, 
+              cls:'x-panel-inline-icon '+this.collapsedIconCls,
+              style: verticalText 
+                ? 'display: block; margin: 1px 2px;' 
+                : 'margin-top: 2px; margin-right: 4px'
+            });
+          };
+        };
+      };
+      p.on('render', function() {
+        if (this.ownerCt.rendered && this.ownerCt.layout.hasLayout) {
+          patchCollapsedElem.call(p);
+        } else {
+          // the panel's container first needs to render/layout its collapsed title bars
+          this.ownerCt.on('afterlayout', patchCollapsedElem, p, {single:true});
+        };
+      }, p);
+    }
+  };
+  return this;
+})();/*
+ * By Jake Knerr - Copyright 2010 - supersonicecho@gmail.com
+ * 
+ * Version 1.0
+ * 
+ * LICENSE
+ * GPL v3
+ * 
+ */
+ 
+Ext.ux.SlidingTabPanel = Ext.extend(Ext.TabPanel, {
+	
+	initTab: function(item, index){
+		Ext.ux.SlidingTabPanel.superclass.initTab.call(this, item, index);
+
+                this.addEvents({
+                    startDrag : true,
+                    endDrag   : true
+                });
+
+		var p = this.getTemplateArgs(item);
+		if(!this.slidingTabsID) this.slidingTabsID = Ext.id(); // Create a unique ID for this tabpanel
+		new Ext.ux.DDSlidingTab(p, this.slidingTabsID, {
+			tabpanel:this // Pass a reference to the tabpanel for each dragObject
+		});
+	}
+	
+});
+
+Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
+	
+	// Constructor
+	constructor: function() {
+		Ext.ux.DDSlidingTab.superclass.constructor.apply(this, arguments);
+		this.setYConstraint(0,0,0); // Lock the proxy to its initial Y coordinate
+		
+		// Create a convenient reference to the tab's tabpanel
+		this.tabpanel = this.config.tabpanel;
+		
+		// Set the slide duration
+		this.slideDuration = this.tabpanel.slideDuration;
+		if(!this.slideDuration) this.slideDuration = .1;
+	}
+	
+	// Pseudo Private Methods
+	,handleMouseDown: function(e, oDD){
+		if(this.primaryButtonOnly && e.button != 0) return;
+		if(this.isLocked()) return;
+		this.DDM.refreshCache(this.groups);
+		var pt = new Ext.lib.Point(Ext.lib.Event.getPageX(e), Ext.lib.Event.getPageY(e));
+		if (!this.hasOuterHandles && !this.DDM.isOverTarget(pt, this) )  {
+		} else {
+			if (this.clickValidator(e)) {
+				this.setStartPosition(); // Set the initial element position
+				this.b4MouseDown(e);
+				this.onMouseDown(e);
+				this.DDM.handleMouseDown(e, this);
+				// this.DDM.stopEvent(e); // Must remove this event swallower for the tabpanel to work
+			}
+		}
+	}
+	,startDrag: function(x, y) {
+
+                // Fire the startDrag event
+                this.tabpanel.fireEvent('startDrag', this.tabpanel, this.tabpanel.getActiveTab());
+
+		Ext.dd.DDM.useCache = false; // Disable caching of element location
+		Ext.dd.DDM.mode = 1; // Point mode
+		
+		this.proxyWrapper = Ext.get(this.getDragEl()); // Grab a reference to the proxy element we are creating
+		this.proxyWrapper.update(); // Clear out the proxy's nodes
+		this.proxyWrapper.applyStyles('z-index:1001;border:0 none;');
+		this.proxyWrapper.addClass('tab-proxy');
+			
+			// Use 2 nested divs to mimic the default tab styling
+			// You may need to customize the proxy to get it to look like your custom tabpanel if you use a bunch of custom css classes and styles
+		this.stripWrap = this.proxyWrapper.insertHtml('afterBegin', '<div class="x-tab-strip x-tab-strip-top"></div>', true);
+		this.dragEl = this.stripWrap.insertHtml('afterBegin','<div></div>', true);
+		
+		this.tab = Ext.get(this.getEl()); // Grab a reference to the tab being dragged
+		this.tab.applyStyles('visibility:hidden;'); // Hide the tab being dragged
+		
+		// Insert the html and css classes for the dragged tab into the proxy
+		this.dragEl.insertHtml('afterBegin', this.tab.dom.innerHTML, false);
+		this.dragEl.dom.className = this.tab.dom.className; 
+		
+		// Constrain the proxy drag in the X coordinate to the tabpanel
+		var panelWidth = this.tabpanel.el.getWidth();
+		var panelX = this.tabpanel.el.getX();
+		var tabX = this.tab.getX();
+		var tabWidth = this.tab.getWidth();
+		var left = tabX - panelX;
+		var right = panelX + panelWidth - tabX - tabWidth;
+		this.resetConstraints();
+		this.setXConstraint(left, right);
+	}
+	,onDragOver: function(e, targetArr) {
+		e.stopEvent();
+		
+		// Grab the tab you have dragged the proxy over
+		var target = Ext.get(targetArr[0].id);
+		var targetWidth = target.getWidth();
+		var targetX = target.getX();
+		var targetMiddle = targetX + (targetWidth / 2);
+		var elX = this.tab.getX();
+		var dragX = this.proxyWrapper.getX();
+		var dragW = this.proxyWrapper.getWidth();
+		if(dragX < targetX && ((dragX + dragW) > targetMiddle) ) {
+			if(target.next() != this.tab) {
+				target.applyStyles('visibility:hidden;');
+				this.tab.insertAfter(target);
+				this.targetProxy = this.createSliderProxy(targetX, target);
+				if(!this.targetProxy.hasActiveFx()) this.animateSliderProxy(target, this.targetProxy, elX);
+			}
+		}
+		if(dragX > targetX && (dragX < targetMiddle)  ) {
+			if(this.tab.next() != target) {
+				target.applyStyles('visibility:hidden;');
+				this.tab.insertBefore(target);
+				this.targetProxy = this.createSliderProxy(targetX, target);
+				if(!this.targetProxy.hasActiveFx()) this.animateSliderProxy(target, this.targetProxy, elX);
+			}
+		}
+	}
+	,animateSliderProxy: function(target, targetProxy, elX){
+		targetProxy.shift({
+			x: elX
+			,easing: 'easeOut'
+			,duration: this.slideDuration
+			,callback: function() {
+				targetProxy.remove();
+				target.applyStyles('visibility:visible;');
+			}
+			,scope:this
+		}); 
+	}
+	,createSliderProxy: function(targetX, target) {
+		var sliderWrapperEl = Ext.getBody().insertHtml('afterBegin', '<div class="tab-proxy" style="position:absolute;visibility:visible;z-index:999;left:' + targetX + 'px;"></div>', true);
+		sliderWrapperEl.stripWrapper = sliderWrapperEl.insertHtml('afterBegin', '<div class="x-tab-strip x-tab-strip-top"></div>', true);
+		sliderWrapperEl.dragEl = sliderWrapperEl.stripWrapper.insertHtml('afterBegin', '<div></div>', true);
+		sliderWrapperEl.dragEl.update(target.dom.innerHTML);
+		sliderWrapperEl.dragEl.dom.className = target.dom.className;
+		var h = parseInt(target.getTop(false));
+		sliderWrapperEl.setTop(h)
+		return sliderWrapperEl;
+	}
+	,onDragDrop: function(e, targetId) {
+		e.stopEvent();
+	}
+	,endDrag: function(e){
+		var elX 		= this.tab.getX();
+		this.proxyWrapper.applyStyles('visibility:visible;');
+		
+		// Animate the dragProxy to the proper position
+		this.proxyWrapper.shift({
+			x: elX
+			,easing: 'easeOut'
+			,duration: this.slideDuration
+			,callback: function() {
+				this.proxyWrapper.applyStyles('visibility:hidden;');
+				this.tab.applyStyles('visibility:visible;');
+				
+				// Cleanup
+				this.stripWrap.remove();
+				this.dragEl.remove();
+				if(!this.targetProxy) return;
+				this.targetProxy.stripWrapper.remove();
+				this.targetProxy.dragEl.remove();
+			}
+			,scope:this
+		});
+		
+		Ext.dd.DDM.useCache = true;
+
+                this.reorderTab();
+
+                // Fire the startDrag event
+                this.tabpanel.fireEvent('endDrag', this.tabpanel, this.tabpanel.getActiveTab());
+
+	},
+        reorderTab: function() {
+
+            var tabsEl = this.tabpanel.header.child('ul').dom.children,
+                tabsId = [],
+                tabsOrigin = [];
+
+            for ( var i=0; i < tabsEl.length; i++ ) {
+                if( tabsEl[i].id.substr(0, this.tabpanel.id.length) == this.tabpanel.id ) {
+                    tabsId.push( tabsEl[i].id.substr((this.tabpanel.id.length+2), tabsEl[i].id.length ) );
+                }
+            }
+
+            // Now, tabsId is the real list ordered of the tab's id
+            // We put this order into parent element
+
+            // We get the original reference of this tabs
+            for( var i=0; i < this.tabpanel.items.items.length; i++ ) {
+                tabsOrigin[this.tabpanel.items.items[i].id] = this.tabpanel.items.items[i];
+            }
+
+            for( var i=0; i < tabsId.length; i++ ) {
+                // the keys
+                this.tabpanel.items.keys[i] = tabsId[i];
+                // the elements
+                this.tabpanel.items.items[i] = tabsOrigin[tabsId[i]];
+            }
+
+        }
+});Ext.ux.UserNotes = Ext.extend(Ext.Button, {
+
+    originalTitle : _('Notes (<b>{0}</b>)'),
+    text  : String.format(_('Notes (<b>{0}</b>)'), '-'),
+
+    //var n = Ext.data.Record.create([{name:'name'},{name:'date'}, {name:'content'}]);
+    //this.store.insert(0, new n({name:'Machin', date:'10/02/10, 19h00', content: 'Contenu inséré'}));
+
+    initComponent: function() {
+
+        Ext.ux.UserNotes.superclass.initComponent.apply(this);
+        Ext.apply(this, {
+            iconCls : 'iconUserNotes',
+            id : this.fid + '-userNotes',
+            menu : new Ext.menu.Menu({
+
+                showSeparator: false,
+                allowOtherMenus: true,
+                plain: true,
+                autoHeight: true,
+                forceLayout: true,
+                enableScrolling: false,
+                items: [{
+                    xtype: 'grid',
+                    loadMask: true,
+                    width: 500,
+                    height: 200,
+                    contextMenuFrom: false,
+                    contextMenuRowIndex: false,
+                    sm: new Ext.grid.RowSelectionModel({
+                        singleSelect:true
+                    }),
+                    winNotes : new Ext.Window({
+                        scope       : this,
+                        title       : _('Add a new note'),
+                        iconCls     : 'iconUserNotes',
+                        closeAction : 'hide',
+                        width       : 600,
+                        height      : 300,
+                        layout      :'form',
+                        hideLabel   : true,
+                        modal       : true,
+                        items       : [{
+                            xtype      : 'htmleditor',
+                            hideLabel  : true,
+                            enableLinks: false,
+                            anchor     : '100%'
+                        }],
+                        listeners: {
+                            show: function(win) {
+                                win.items.items[0].setValue('');
+                            }
+
+                        },
+                        buttons: [{
+                            text: _('Add'),
+                            handler: function()
+                            {
+                                var mainBtn = this.ownerCt.ownerCt.scope,
+                                win = this.ownerCt.ownerCt;
+                        
+                                // Stay the mainMenu open event a clic
+                                mainBtn.menu.show(mainBtn.el);
+
+                                var fieldValue = this.ownerCt.ownerCt.items.items[0].getValue();
+                                var file = mainBtn.file;
+
+                                XHR({
+                                    scope  : this,
+                                    params : {
+                                        task : 'addUserNote',
+                                        file : file,
+                                        note : fieldValue
+
+                                    },
+                                    success : function()
+                                    {
+                                        // We close the window
+                                        win.hide();
+
+                                        // We must refresh the store
+                                        mainBtn.menu.items.items[0].store.reload();
+
+                                        // Notify
+                                        PhDOE.notify('info', _('Note added'), _('The note was added successfully !'));
+
+                                    },
+                                    failure : function()
+                                    {
+                                        PhDOE.winForbidden();
+                                    }
+                                });
+
+
+                            }
+                        },{
+                            text   : _('Cancel'),
+                            handler: function()
+                            {
+                                var mainBtn = this.ownerCt.ownerCt.scope;
+
+                                // Stay the mainMenu open event a clic
+                                mainBtn.menu.show(mainBtn.el);
+                        
+                                this.ownerCt.ownerCt.hide();
+                            }
+                        }]
+
+
+                    }),
+                    contextMenu : new Ext.menu.Menu({
+                        scope    : this,
+                        listeners: {
+                            show: function(m) {
+                                // We hide item according for the right click origin
+                                if( this.scope.menu.items.items[0].contextMenuFrom === 'containercontextmenu') {
+                                    this.items.items[2].disable();
+                                } else {
+
+                                    // We must check if this note is owned by the current use.
+                                    // If so, he can delete it. If not, he can't.
+                                    var grid = this.scope.menu.items.items[0];
+
+                                    var noteOwner = grid.store.getAt(grid.contextMenuRowIndex).data.user
+                                    if( PhDOE.userLogin == noteOwner ) {
+                                        this.items.items[2].enable();
+                                    } else {
+                                        this.items.items[2].disable();
+                                    }
+                                }
+
+                                // Not depending of above condition, we disable items for anonymous
+                                if( PhDOE.userLogin == "anonymous" ) {
+                                    this.items.items[0].disable();
+                                    this.items.items[2].disable();
+                                }
+                            }
+                        },
+                        items : [{
+                            text    : _('Add a new note'),
+                            iconCls : 'iconUserNotes',
+                            handler : function()
+                            {
+                                var grid = this.ownerCt.scope.menu.items.items[0];
+
+                                grid.winNotes.show();
+                            }
+                        }, '-', {
+                            text    : _('Delete this note'),
+                            iconCls : 'iconDelete',
+                            handler : function()
+                            {
+                                var grid = this.ownerCt.scope.menu.items.items[0],
+                                noteID = grid.store.getAt(grid.contextMenuRowIndex).data.id;
+
+                                XHR({
+                                    scope  : this,
+                                    params : {
+                                        task   : 'delUserNote',
+                                        noteID : noteID
+
+                                    },
+                                    success : function(r)
+                                    {
+                                        var o = Ext.util.JSON.decode(r.responseText);
+
+                                        // We must refresh the store
+                                        grid.store.reload();
+
+                                        // o.result can be false if we try to delete a note not owned by userLogin
+
+                                        if( o.result ) {
+                                            // Notify
+                                            PhDOE.notify('info', _('Note deleted'), _('The note was deleted successfully !'));
+                                        }
+
+                                    },
+                                    failure : function()
+                                    {
+                                        PhDOE.winForbidden();
+                                    }
+                                });
+
+
+                            }
+                        },'-', {
+                            text    : _('Reload data'),
+                            iconCls : 'iconRefresh',
+                            handler : function()
+                            {
+                                var grid = this.ownerCt.scope.menu.items.items[0];
+
+                                grid.store.reload();
+                            }
+                        }]
+                    }),
+                    store: new Ext.data.Store({
+                        autoLoad: true,
+                        proxy : new Ext.data.HttpProxy({
+                            url : './do/getUserNotes'
+                        }),
+                        baseParams: {
+                            file: this.file
+                        },
+                        reader : new Ext.data.JsonReader({
+                            root          : 'Items',
+                            totalProperty : 'nbItems',
+                            idProperty    : 'id',
+                            fields        : [
+                            {
+                                name : 'id'
+                            },
+
+                            {
+                                name : 'user'
+                            },
+
+                            {
+                                name : 'note'
+                            },
+
+                            {
+                                name : 'date',
+                                type : 'date',
+                                dateFormat : 'Y-m-d H:i:s'
+                            }
+                            ]
+                        }),
+                        sortInfo : {
+                            field     : 'date',
+                            direction : 'DESC'
+                        },
+                        listeners: {
+                            scope: this,
+                            datachanged: function(ds) {
+                                var total = ds.getCount();
+                                this.setText(String.format(this.originalTitle, total));
+
+                            }
+                        }
+                    }),
+                    listeners: {
+                        scope: this,
+                        rowclick: function(grid) {
+                            // If the contextMenu is show, we hide it
+                            if( !grid.contextMenu.hidden ) {
+                                grid.contextMenu.hide();
+                            }
+                        },
+                        containercontextmenu: function(grid, e) {
+                            e.stopEvent();
+
+                            // We deselect all previous rows
+                            grid.getSelectionModel().clearSelections();
+
+                            grid.contextMenuFrom = 'containercontextmenu';
+
+                            grid.contextMenu.showAt(e.getXY());
+
+                            // When we display the contextMenu, the initial menu disappears.
+                            // We must re-show him and set a zindex for contextmenu higher than the initial menu to be visible.
+                            this.menu.show(this.el);
+                            var zindex = this.menu.el.zindex + 2000;
+                            grid.contextMenu.el.setStyle('z-index', zindex);
+                        },
+                        rowcontextmenu: function(grid, rowIndex, e) {
+                            e.stopEvent();
+
+                            // We select this row
+                            grid.getSelectionModel().selectRow(rowIndex);
+
+                            grid.contextMenuFrom = 'rowcontextmenu';
+                            grid.contextMenuRowIndex = rowIndex;
+
+                            grid.contextMenu.showAt(e.getXY());
+
+                            // When we display the contextMenu, the initial menu disappears.
+                            // We must re-show him and set a zindex for contextmenu higher than the initial menu to be visible.
+                            this.menu.show(this.el);
+                            var zindex = this.menu.el.zindex + 2000;
+                            grid.contextMenu.el.setStyle('z-index', zindex);
+                        }
+
+                    },
+                    colModel: new Ext.grid.ColumnModel({
+                        defaults: {
+                            sortable: true
+                        },
+                        columns: [{
+                            id: 'user',
+                            header: _('By'),
+                            sortable: true,
+                            dataIndex: 'user'
+                        }, {
+                            header: _('Date'),
+                            dataIndex: 'date',
+                            renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+                        }]
+                    }),
+                    autoExpandColumn: 'user',
+                    viewConfig: {
+                        forceFit: true,
+                        deferEmptyText: false,
+                        emptyText    : '<div style="text-align: center;">' + _('No user notes') + '<br><br>' + _('Right click to add a new note') + '</div>',
+                        enableRowBody : true,
+                        getRowClass   : function(record, rowIndex, p)
+                        {
+                            p.body = '<p class="x-usernotes-content">' + record.data.note + '</p>';
+                            return 'x-grid3-row-expanded';
+                        }
+                    }
+
+                }]
+            })
+        });
+    }
+
+});
+
+Ext.reg('usernotes', Ext.ux.UserNotes);
+Ext.namespace('ui','ui.task');
+
+// config - { fid, fuid, fpath, fname, storeRecord }
+ui.task.AcceptPatchTask = function(config)
+{
+    Ext.apply(this, config);
+
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
+        return;
+    }
+
+    Ext.MessageBox.confirm(
+        _('Confirm'),
+        _('This action will accept this patch, send an email to his author, save the file and close this tab.'),
+        function(btn)
+        {
+            if (btn === 'yes') {
+                Ext.getCmp('PP-PATCH-FILE-'      + this.fid).isModified = false;
+                Ext.getCmp('PP-PATCH-PANEL-'     + this.fid).setTitle(
+                    Ext.getCmp('PP-PATCH-PANEL-' + this.fid).originTitle
+                );
+                Ext.getCmp('PP-' + this.fid).setTitle(
+                    Ext.getCmp('PP-' + this.fid).originTitle
+                );
+
+                var msg = Ext.MessageBox.wait(_('Saving data...'));
+
+                // We save LANG File
+                XHR({
+                    scope  : this,
+                    params : {
+                        task        : 'saveFile',
+                        filePath    : this.fpath,
+                        fileName    : this.fname,
+                        fileLang    : 'all',
+                        fileContent : Ext.getCmp('PP-PATCH-FILE-' + this.fid).getCode()
+                    },
+                    success : function(r)
+                    {
+                        var o    = Ext.util.JSON.decode(r.responseText),
+                            grid = ui.component.PendingPatchGrid.getInstance();
+
+                        // Add this files into storePendingCommit
+                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                            o.id, this.fpath, this.fname, 'update'
+                        );
+
+                        // Remove this patch from the PendingPatchStore
+                        grid.store.remove(this.storeRecord);
+
+                        // We fire event datachanged to update the file count
+                        grid.store.fireEvent('datachanged', grid.store);
+
+                        // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
+                        XHR({
+                            scope  : this,
+                            params : {
+                                task        : 'afterPatchAccept',
+                                PatchUniqID : this.fuid
+                            }
+                        });
+
+                        // Remove this tab
+                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
+
+                        // Remove wait msg
+                        msg.hide();
+
+                        // Notify
+                        PhDOE.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
+                    },
+                    failure : function() {
+                        // Remove wait msg
+                        msg.hide();
+                    }
+                });
+            } // btn = yes
+        }, this // scope
+    );
+};Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
+
+ui.task._CheckBuildTask.display = function()
+{
+    XHR({
+        params  : {
+            task : 'getLogFile',
+            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.userLang
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            Ext.getBody().unmask();
+
+            // Re-enable TaskPing
+            ui.task.PingTask.getInstance().delay(30000);
+
+            // Display
+            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.userLang) ) {
+                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.userLang);
+            }
+
+            Ext.getCmp('main-panel').add({
+                xtype      : 'panel',
+                id         : 'check_build_panel_' + PhDOE.userLang,
+                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
+                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                closable   : true,
+                autoScroll : true,
+                iconCls    : 'iconCheckBuild',
+                html       : '<div class="check-build-content">' + o.mess + '</div>'
+            });
+            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.userLang);
+        }
+    });
+};
+
+ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+        },
+        success : function()
+        {
+            ui.task._CheckBuildTask.poll.delay(5000);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            if (o && o.success === false) {
+                new ui.task._CheckBuildTask.display();
+            } else {
+                ui.task._CheckBuildTask.poll.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task.CheckBuildTask = function(config)
+{
+    Ext.getBody().mask(
+        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+        _('Please, wait until the build is checked...')
+    );
+
+    // We need to stop ping test during this process
+    ui.task.PingTask.getInstance().cancel();
+
+    XHR({
+        params  : {
+            task       : 'checkBuild',
+            xmlDetails : Ext.getCmp('option-xml-details').checked
+        },
+        success : function()
+        {
+            new ui.task._CheckBuildTask.display();
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                // Re-enable TaskPing
+                ui.task.PingTask.getInstance().delay(30000);
+                Ext.getBody().unmask();
+                PhDOE.winForbidden();
+            } else {
+                // take over 30sec (max Keep-Alive time)
+                // poll every XX secondes if the check build is finish
+                ui.task._CheckBuildTask.poll.delay(5000);
+            }
+        }
+    });
+};
+Ext.namespace('ui','ui.task','ui.task._CheckEntitiesTask');
+
+ui.task._CheckEntitiesTask.display = function()
+{
+    BtnViewResult = Ext.getCmp('btn-check-entities-view-last-result');
+
+    Ext.getBody().unmask();
+
+    // Re-enable TaskPing
+    ui.task.PingTask.getInstance().delay(30000);
+
+    // If the tab "view result of check entities" is open, we close it
+    if ( Ext.getCmp('main-panel').findById('tab-check-entities' ) ) {
+        Ext.getCmp('main-panel').remove('tab-check-entities');
+    }
+    // We simulate a click onto the Btn to display the result of the check
+    BtnViewResult.handler.call(BtnViewResult.scope || BtnViewResult, BtnViewResult);
+
+};
+
+ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
+        },
+        success : function()
+        {
+            ui.task._CheckEntitiesTask.poll.delay(5000);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            if (o && o.success === false) {
+                new ui.task._CheckEntitiesTask.display();
+            } else {
+                ui.task._CheckEntitiesTask.poll.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task.CheckEntitiesTask = function(config)
+{
+    Ext.getBody().mask(
+        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+        _('Please, wait until entities are checked...')
+    );
+
+    // We need to stop ping test during this process
+    ui.task.PingTask.getInstance().cancel();
+
+    XHR({
+        params  : {
+            task       : 'checkEntities'
+        },
+        success : function(response)
+        {
+            new ui.task._CheckEntitiesTask.display();
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                // Re-enable TaskPing
+                ui.task.PingTask.getInstance().delay(30000);
+                Ext.getBody().unmask();
+                PhDOE.winForbidden();
+            } else {
+                // take over 30sec (max Keep-Alive time)
+                // poll every XX secondes if the check build is finish
+                ui.task._CheckEntitiesTask.poll.delay(5000);
+            }
+        }
+    });
+};Ext.namespace('ui', 'ui.task');
+
+// config - {prefix, ftype, fid, fpath, fname, lang, storeIdx}
+ui.task.CheckFileTask = function(config)
+{
+    Ext.apply(this,config);
+
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
+        return;
+    }
+
+    Ext.getBody().mask(
+        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+        _('Checking for error. Please, wait...')
+    );
+
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'checkFileError',
+            FilePath    : this.fpath,
+            FileName    : this.fname,
+            FileLang    : this.lang,
+            FileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
+                                        '-FILE-' + this.fid).getCode()
+        },
+        success : function(r)
+        {
+            Ext.getBody().unmask();
+
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // If there is some errors, we display this
+            if (o.error && o.error_first !== '-No error-') {
+
+                Ext.getCmp('main-panel').add({
+                    id         : 'FE-help-' + this.fid,
+                    title      : 'Error in ' + this.fname,
+                    iconCls    : 'iconFilesError',
+                    closable   : true,
+                    autoScroll : true,
+                    autoLoad   : './error?dir='  + this.fpath +
+                                        '&file=' + this.fname
+                });
+
+                Ext.getCmp('main-panel').setActiveTab('FE-help-' + this.fid);
+
+            } else {
+                // If there is no error, we display an information message
+                Ext.MessageBox.show({
+                    title   : _('Check for errors'),
+                    msg     : _('There is no error.'),
+                    buttons : Ext.MessageBox.OK,
+                    icon    : Ext.MessageBox.INFO
+                });
+            }
+
+            // Now, We save  File
+            new ui.task.SaveFileTask({
+                prefix      : this.prefix,
+                ftype       : this.ftype,
+                fid         : this.fid,
+                fpath       : this.fpath,
+                fname       : this.fname,
+                lang        : this.lang,
+                storeRecord : this.storeRecord
+            });
+
+            if (this.prefix === 'FE') {
+                // We must reload the iframe of error description
+                Ext.getCmp('FE-error-desc-' + this.fid).body.updateManager.refresh();
+            }
+
+            ui.component.ErrorFileGrid.getInstance().store.reload();
+        }
+    });
+};
+Ext.namespace('ui','ui.task');
+
+// config - { ftype, fpath, fname, storeRecord }
+ui.task.ClearLocalChangeTask = function(config)
+{
+    Ext.apply(this, config);
+
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
+        return;
+    }
+
+    Ext.MessageBox.confirm(
+        _('Confirm'),
+        _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'),
+        function(btn)
+        {
+            if (btn === 'yes') {
+                Ext.getBody().mask(
+                    '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                    _('Please, wait...')
+                );
+
+                // Before clear local change, we close the file if there is open
+
+                var panel = ["FNT", "FNU", "FE", "FNR", "FNIEN", "AF"];
+
+                for( var i=0; i < panel.length; i++) {
+                    if (Ext.getCmp('main-panel').findById(panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname))) {
+                        Ext.getCmp('main-panel').remove(  panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname));
+                    }
+                }
+
+                XHR({
+                    scope   : this,
+                    params  : {
+                        task     : 'clearLocalChange',
+                        FileType : this.ftype,
+                        FilePath : this.fpath,
+                        FileName : this.fname
+                    },
+                    success : function(r)
+                    {
+                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance(),
+                            o                   = Ext.util.JSON.decode(r.responseText),
+                            node;
+
+                        // We delete this record from the pending commit store
+                        pending_commit_grid.store.remove(this.storeRecord);
+
+                        // We fire event datachanged to update the file count
+                        pending_commit_grid.store.fireEvent('datachanged', pending_commit_grid.store);
+
+                        // Action for EN file
+                        if( o.lang === 'en' && this.ftype === 'update' ) {
+
+                            // trow StaleFile store
+                            ui.component.StaleFileGrid.getInstance().store.each(
+                                function(record)
+                                {
+                                    if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
+                                        record.set('needCommitEN', false);
+                                        record.set('en_revision', o.revision);
+                                        record.commit();
+                                    }
+                                }, this);
+
+                            // Browse FileError
+                            ui.component.ErrorFileGrid.getInstance().store.each(
+                                function(record)
+                                {
+                                    if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                        record.set('needcommit', false);
+                                    }
+                                }, this);
+
+                            // find open node in All Files modules
+                            node = false;
+                            node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                            if (node) {
+                              node.getUI().removeClass('modified');
+                            }
+
+                            Ext.getBody().unmask();
+                            return;
+                        }
+
+                        // All after this is only available for LANG file
+
+                        // We try to search in others stores if this file is marked as needCommit
+
+                        // Browse PendingTranslate store
+                        ui.component.PendingTranslateGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needcommit', false);
+                                }
+                            }, this);
+
+                        // Browse StaleFile store
+                        ui.component.StaleFileGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needCommitLang', false);
+                                    record.set('revision', o.revision);
+                                    record.set('maintainer', o.maintainer);
+                                    record.commit();
+                                }
+                            }, this);
+
+                        // Browse storeFilesNeedReviewed
+                        ui.component.PendingReviewGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needcommit', false);
+                                }
+                            }, this);
+
+                        // Browse storeNotInEn
+                        ui.component.NotInENGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('needcommit', false);
+                                }
+                            }, this);
+
+                        // find open node in All Files modules
+                        node = false;
+                        node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                        if (node) {
+                          node.getUI().removeClass('modified');
+                        }
+
+                        Ext.getBody().unmask();
+                    },
+
+                    failure : function()
+                    {
+                        // clear local change failure
+                        Ext.getBody().unmask();
+                        PhDOE.winForbidden();
+                    }
+                });
+            }
+        }, this
+    );
+};Ext.namespace('ui','ui.task');
+
+// config - { xmlID }
+ui.task.GetFileInfoByXmlID = function(config)
+{
+    Ext.apply(this, config);
+
+    // We load the File
+    XHR({
+        scope   : this,
+        params  : {
+            task  : 'getFileInfoByXmlID',
+            xmlID : this.xmlID
+        },
+        success : function(r)
+        {
+            var o    = Ext.util.JSON.decode(r.responseText);
+
+            ui.component.RepositoryTree.getInstance().openFile(
+                o.lang + o.path,
+                o.name
+            );
+        }
+    });
+};
+Ext.namespace('ui','ui.task');
+
+// config - { prefix, ftype, fid, fpath, fname }
+ui.task.GetFileTask = function(config)
+{
+    Ext.apply(this, config);
+
+    var id_prefix    = this.prefix + '-' + this.ftype,
+        readOriginal = ( this.ftype === 'NotInEN')    ? true : false,
+        ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false,
+        skeleton     = ( this.ftype === 'NEW' ) ? this.skeleton : false;
+
+    // Mask the panel
+    Ext.get(id_prefix + '-PANEL-' + this.fid).mask(
+        '<img src="themes/img/loading.gif" ' +
+            'style="vertical-align: middle;" /> '+
+        _('Loading...')
+    );
+
+    // We load the File
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'getFile',
+            FilePath    : this.fpath,
+            FileName    : this.fname,
+            readOriginal: readOriginal,
+            ggTranslate : ggTranslate,
+            skeleton    : skeleton
+        },
+        success : function(r)
+        {
+            var o    = Ext.util.JSON.decode(r.responseText),
+                path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
+                       + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + PhDOE.project,
+                perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
+                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+
+            // We set the permLink (exclude for file patch)
+            if( this.prefix === 'PP' ||
+                this.ftype  === 'TRANS' ||
+                this.prefix === 'FNIEN'
+              )
+            {
+                p.permlink = '';
+            } else if( this.ftype  === 'GGTRANS' )
+            {
+                p.setTitle('<img src="themes/img/google.png" alt="permlink" style="vertical-align: middle;"> ' + p.originTitle);
+            } else {
+                p.permlink = (o.xmlid != 'NULL') ? perm : '';
+                p.setTitle(p.permlink + p.originTitle);
+            }
+
+            // We define the content into the editor
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
+
+            // If this is and automatic translation from Google API, we reint the file now.
+            if( this.ftype  === 'GGTRANS' ) {
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+            }
+
+            // Remove the mask from the editor
+            Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
+
+            if( o.warn_tab ) {
+
+                // Display a warn message if this file containes some tab caracter.
+                Ext.MessageBox.show({
+                    title: _('Warning'),
+                    msg: String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+
+                // Mark as dirty this editor now
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
+
+            }
+
+            if( o.warn_encoding ) {
+
+                // Display a warn message if this file containes some tab caracter.
+                Ext.MessageBox.show({
+                    title: _('Warning'),
+                    msg: String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
+
+
+                // Mark as dirty this editor now
+                Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
+
+            }
+
+        },
+        callback : function()
+        {
+
+            // Mark FNT panel as loaded
+            if( this.prefix == 'FNT' ) {
+                if( this.ftype == 'TRANS' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panTRANSLoaded = true;
+                }
+                if( this.ftype == 'GGTRANS' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panGGTRANSLoaded = true;
+                }
+            }
+
+            // Mark FNU panel as loaded
+            if( this.prefix == 'FNU' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FE panel as loaded
+            if( this.prefix == 'FE' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FNR panel as loaded
+            if( this.prefix == 'FNR' ) {
+                if( this.ftype == 'LANG' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                }
+                if( this.ftype == 'EN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                }
+            }
+
+            // Mark FNIEN panel as loaded
+            if( this.prefix == 'FNIEN' ) {
+                Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+            }
+
+            // Mark AF panel as loaded
+            if( this.prefix == 'AF' ) {
+                Ext.getCmp(this.prefix + '-' + this.fid).panLoaded = true;
+            }
+
+            // Mark PP panel as loaded
+            if( this.prefix == 'PP' ) {
+                if( this.ftype == 'PATCH' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panPatchLoaded = true;
+                }
+                if( this.ftype == 'ORIGIN' ) {
+                    Ext.getCmp(this.prefix + '-' + this.fid).panOriginLoaded = true;
+                }
+            }
+
+            Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
+
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+// config - { str }
+ui.task.GetGGTranslation = function(config)
+{
+    Ext.apply(this, config);
+
+    // CleanUp the current result area
+    Ext.get('GGTranslate-result').dom.innerHTML = '';
+
+    // Disable the button & add a wait message into it
+    Ext.getCmp('GGTranslate-btn').disable();
+    Ext.getCmp('GGTranslate-btn').setText(_('Please, wait...'));
+
+    // We load the File
+    XHR({
+        scope  : this,
+        params : {
+            task : 'getGGTranslation',
+            str  : this.str
+        },
+        success : function(response)
+        {
+            var o    = Ext.util.JSON.decode(response.responseText);
+
+            Ext.get('GGTranslate-result').dom.innerHTML = o.translation;
+            Ext.getCmp('GGTranslate-btn').setText(_('Translate !'));
+            Ext.getCmp('GGTranslate-btn').enable();
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+ui.task.LoadConfigTask = function(config)
+{
+    Ext.apply(this, config);
+
+    XHR({
+        params  : { task : 'getConf' },
+        success : function(response)
+        {
+            var o = Ext.decode(response.responseText);
+
+            PhDOE.userLogin = o.mess.userLogin;
+            PhDOE.userLang  = o.mess.userLang;
+
+            PhDOE.userConf  = o.mess.userConf;
+            PhDOE.project   = o.mess.project;
+
+            PhDOE.appConf   = o.mess.appConf;
+
+            //For the theme, we apply this.
+            Ext.get('appTheme').dom.href = PhDOE.userConf.theme;
+
+            // Draw the interface
+            PhDOE.drawInterface();
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+// config - { fpath, fname, storeRecord }
+ui.task.MarkDeleteTask = function(config)
+{
+    Ext.apply(this, config);
+
+    Ext.MessageBox.confirm(
+        _('Confirm'),
+        _('This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action.'),
+        function(btn)
+        {
+            if (btn === 'yes') {
+                Ext.getBody().mask(
+                    '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                    _('Please, wait...')
+                );
+
+                XHR({
+                    scope   : this,
+                    params  : {
+                        task     : 'markAsNeedDelete',
+                        FilePath : PhDOE.userLang + this.fpath,
+                        FileName : this.fname
+                    },
+                    success : function(r)
+                    {
+                        var o = Ext.util.JSON.decode(r.responseText);
+
+                        Ext.getBody().unmask();
+                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                            o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
+                        );
+                        this.storeRecord.set('needcommit', true);
+                    }
+                });
+            }
+        }, this);
+};Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
+
+ui.task.PingTask = function()
+{
+    this.task = new Ext.util.DelayedTask(function()
+    {
+        XHR({
+            params  : {
+                task : 'ping'
+            },
+            success : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText);
+
+                if (o.ping !== 'pong') {
+                    window.location.href = './';
+                } else {
+
+                    // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
+                    if( PhDOE.userLang !== 'en' ) {
+
+                        var needReloadSummary = false;
+
+                        // We look for modules specifics for translation
+                        if( ui.component.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                            ui.component.PendingTranslateGrid.getInstance().store.reload();
+                            needReloadSummary = true;
+                        }
+
+                        if( ui.component.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                            ui.component.StaleFileGrid.getInstance().store.reload();
+                            needReloadSummary = true;
+                        }
+
+                        if( ui.component.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                            ui.component.ErrorFileGrid.getInstance().store.reload();
+                            needReloadSummary = true;
+                        }
+
+                        if( ui.component.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                            ui.component.PendingReviewGrid.getInstance().store.reload();
+                            needReloadSummary = true;
+                        }
+
+                        if( ui.component.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                            ui.component.NotInENGrid.getInstance().store.reload();
+                            needReloadSummary = true;
+                        }
+
+                        if( needReloadSummary ) {
+                            ui.component.PortletSummary.getInstance().store.reload();
+                        }
+
+                    }
+
+                    // This 3 modules is commun with EN and LANG
+                    if( ui.component.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
+                        ui.component.PendingCommitGrid.getInstance().store.reload();
+                    }
+
+                    if( ui.component.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
+                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                    }
+
+                    if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
+                        ui.component.PortletInfo.getInstance().store.reload();
+                    }
+
+                }
+            },
+            failure: function()
+            {
+                window.location.href = './';
+            }
+        });
+        this.task.delay(30000);
+    }, this);
+};
+
+// delegates
+ui.task.PingTask.prototype.delay = function(delay, newFn, newScope, newArgs)
+{
+    this.task.delay(delay, newFn, newScope, newArgs);
+};
+ui.task.PingTask.prototype.cancel = function()
+{
+    this.task.cancel();
+};
+
+// singleton
+ui.task._PingTask.instance = null;
+ui.task.PingTask.getInstance = function()
+{
+    if (!ui.task._PingTask.instance) {
+        ui.task._PingTask.instance = new ui.task.PingTask();
+    }
+    return ui.task._PingTask.instance;
+};Ext.namespace('ui','ui.task');
+
+// config - { fid, fuid, storeRecord }
+ui.task.RejectPatchTask = function(config)
+{
+    Ext.apply(this,config);
+
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
+        return;
+    }
+
+    Ext.MessageBox.confirm(
+        _('Confirm'),
+        _('This action will <b>reject</b> this patch, send an email to his author and close this tab.'),
+        function (btn)
+        {
+            if (btn === 'yes') {
+                var msg = Ext.MessageBox.wait(_('Please, wait...'));
+
+                XHR({
+                    scope  : this,
+                    params : {
+                        task        : 'afterPatchReject',
+                        PatchUniqID : this.fuid
+                    },
+
+                    success : function()
+                    {
+                        var grid = ui.component.PendingPatchGrid.getInstance();
+                        // Remove this patch from the PendingPatchStore
+                        grid.store.remove(this.storeRecord);
+
+                        // We fire event datachanged to update the file count
+                        grid.store.fireEvent('datachanged', grid.store);
+
+                        // Remove this tab
+                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
+
+                        // Remove wait msg
+                        msg.hide();
+
+                        // Notify
+                        PhDOE.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
+                    },
+
+                    failure : function()
+                    {
+                        // Remove wait msg
+                        msg.hide();
+                        PhDOE.winForbidden();
+                    }
+                });
+            } // btn = yes
+        }, this // scope
+    );
+};
+Ext.namespace('ui', 'ui.task');
+
+// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
+ui.task.SaveFileTask = function(config)
+{
+    Ext.apply(this, config);
+
+    var id_prefix = this.prefix + '-' + this.ftype,
+        msg       = Ext.MessageBox.wait(_('Saving data...'));
+
+    if (PhDOE.userLogin === 'anonymous') {
+        msg.hide();
+        PhDOE.winForbidden();
+        return;
+    }
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'saveFile',
+            filePath    : this.fpath,
+            fileName    : this.fname,
+            fileLang    : this.lang,
+            fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
+                                        '-FILE-' + this.fid).getCode()
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (this.prefix === 'FNU') {
+                // Update our store
+                if( this.lang === 'en' ) {
+                    this.storeRecord.set('en_revision', o.revision);
+                    this.storeRecord.set('needCommitEN', true);
+                } else {
+                    this.storeRecord.set('revision', o.en_revision);
+                    this.storeRecord.set('needCommitLang', true);
+                    this.storeRecord.set('maintainer', o.maintainer);
+                }
+                this.storeRecord.commit();
+            }
+
+            if (this.prefix === 'FE') {
+                // Update our store
+                if( this.lang !== 'en' ) {
+                    this.storeRecord.set('maintainer', o.maintainer);
+                }
+                this.storeRecord.set('needcommit', true);
+                this.storeRecord.commit();
+            }
+            
+            if (this.prefix === 'FNR') {
+                // Update our store
+                if( this.lang !== 'en' ) {
+                    this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('reviewed', o.reviewed);
+                }
+                this.storeRecord.set('needcommit', true);
+                this.storeRecord.commit();
+            }
+
+            if (this.prefix === 'AF') {
+                this.storeRecord.getUI().addClass('modified'); // tree node
+            }
+
+            // Add this files into storePendingCommit
+            ui.component.PendingCommitGrid.getInstance().addRecord(
+                o.id, this.lang + this.fpath, this.fname, 'update'
+            );
+
+            // reset file
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
+            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+            );
+
+            var cmp;
+            if( this.lang === 'en' ) {
+                cmp = Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid);
+            } else {
+                cmp = Ext.getCmp(this.prefix + '-EN-FILE-' + this.fid);
+            }
+
+            if (this.ftype === 'ALL' || !cmp.isModified) {
+                // reset tab-panel
+                Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                    Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                );
+            }
+
+            // Remove wait msg
+            msg.hide();
+
+            // Notify
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+            if( o.type ) {
+                PhDOE.winForbidden(o.type);
+            } else {
+                PhDOE.winForbidden();
+            }
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+// config - { prefix, ftype, fpath, fname, fid, lang, email }
+ui.task.SavePatchTask = function(config)
+{
+    Ext.apply(this, config);
+
+    var id_prefix = this.prefix + '-' + this.ftype,
+        msg       = Ext.MessageBox.wait(_('Saving data as a patch...'));
+
+    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
+    Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
+    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
+        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+    );
+
+    if ( ( this.prefix === 'AF')  ||
+         ( this.prefix === 'FNT') ||
+         ( this.lang === 'en' && !Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified ) ||
+         ( this.lang !== 'en' && !Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified )
+       ) {
+        Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+            Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+        );
+    }
+
+    // We save this patch
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'saveFile',
+            filePath    : this.fpath,
+            fileName    : this.fname,
+            fileLang    : this.lang,
+            fileContent : Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCode(),
+            type        : 'patch',
+            emailAlert  : this.email
+        },
+
+        success : function(r)
+        {
+            var o    = Ext.util.JSON.decode(r.responseText),
+                grid = ui.component.PendingPatchGrid.getInstance();
+
+            // Add this files into storePendingPatch
+            grid.store.insert(0,
+                new grid.store.recordType({
+                    id     : Ext.id('', ''),
+                    path   : this.lang + this.fpath,
+                    name   : this.fname,
+                    by     : PhDOE.userLogin,
+                    uniqID : o.uniqId,
+                    date   : new Date()
+                })
+            );
+
+            // Remove wait msg
+            msg.hide();
+
+            // Notify
+            PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
+
+        },
+
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+            if( o.type ) {
+                PhDOE.winForbidden(o.type);
+            } else {
+                PhDOE.winForbidden();
+            }
+        }
+    });
+};Ext.namespace('ui', 'ui.task');
+
+// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
+ui.task.SaveTransFileTask = function(config)
+{
+    Ext.apply(this, config);
+
+    if (PhDOE.userLogin === 'anonymous') {
+        PhDOE.winForbidden();
+        return;
+    }
+
+    var id_prefix = this.prefix + '-' + this.ftype,
+        msg       = Ext.MessageBox.wait(_('Saving data...'));
+
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'saveFile',
+            type        : 'trans',
+            filePath    : this.fpath,
+            fileName    : this.fname,
+            fileLang    : this.lang,
+            fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
+                                        '-FILE-' + this.fid).getCode()
+        },
+
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if( this.ftype != 'NEW' ) {
+                this.storeRecord.set('needcommit', true);
+                this.storeRecord.commit();
+            } else {
+                this.storeRecord.data.node.reload();
+            }
+
+            // Add this files into storePendingCommit
+            ui.component.PendingCommitGrid.getInstance().addRecord(
+                o.id, this.lang + this.fpath, this.fname, 'new'
+            );
+
+            // reset file
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+
+            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+            );
+            // reset tab-panel
+            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+            );
+
+            // Remove wait msg
+            msg.hide();
+
+            // Notify
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
+        },
+
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+            if( o.type ) {
+                PhDOE.winForbidden(o.type);
+            } else {
+                PhDOE.winForbidden();
+            }
+        }
+    });
+};Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
+
+ui.task._SystemUpdateTask.refresh_ui = function()
+{
+    Ext.get('wizard-step-3').replaceClass('wizard-step-before', 'wizard-step-working');
+
+    PhDOE.reloadAllStore();
+
+    Ext.get('wizard-step-3').replaceClass('wizard-step-working', 'wizard-step-done');
+
+    // Re-enable Finish button
+    Ext.getCmp('btn-start-refresh').setIconClass('iconFinishRefresh');
+    Ext.getCmp('btn-start-refresh').setText(_('Finish !'));
+    Ext.getCmp('btn-start-refresh').setHandler(function()
+    {
+        Ext.getCmp('sys-update-win').close();
+    });
+    Ext.getCmp('btn-start-refresh').enable();
+
+    // Re-enable TaskPing
+    ui.task.PingTask.getInstance().delay(30000);
+
+    // Re-enable win's close button
+    Ext.getCmp('sys-update-win').tools.close.setVisible(true);
+};
+
+ui.task._SystemUpdateTask.poll_apply_tool = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_lock_apply_tools'
+        },
+        success : function()
+        {
+            ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            if (o && o.success === false) {
+                Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
+                new ui.task._SystemUpdateTask.refresh_ui();
+            } else {
+                ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task._SystemUpdateTask.apply_tool = function()
+{
+    Ext.get('wizard-step-2').replaceClass('wizard-step-before', 'wizard-step-working');
+    XHR({
+        params  : {
+            task: 'applyTools'
+        },
+        success : function()
+        {
+            Ext.get('wizard-step-2').replaceClass('wizard-step-working', 'wizard-step-done');
+            new ui.task._SystemUpdateTask.refresh_ui();
+        },
+        failure : function()
+        {
+            ui.task._SystemUpdateTask.poll_apply_tool.delay(5000);
+        }
+    });
+};
+
+ui.task._SystemUpdateTask.vcs_poll = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_lock_update_repository'
+        },
+        success : function()
+        {
+            ui.task._SystemUpdateTask.vcs_poll.delay(5000);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
+                Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
+
+                new ui.task._SystemUpdateTask.apply_tool();
+            } else {
+                ui.task._SystemUpdateTask.vcs_poll.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task.SystemUpdateTask = function()
+{
+    ui.task.PingTask.getInstance().cancel();
+
+    Ext.get('wizard-step-1').replaceClass('wizard-step-before', 'wizard-step-working');
+    Ext.get('wizard-step-1.1').replaceClass('wizard-wait', 'wizard-show');
+
+    XHR({
+        params  : { task: 'updateRepository' },
+        success : function()
+        {
+            Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
+            Ext.get('wizard-step-1.1').replaceClass('wizard-show', 'wizard-wait');
+
+            new ui.task._SystemUpdateTask.apply_tool();
+        },
+        failure: function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                Ext.getCmp('sys-update-win').close();
+                PhDOE.winForbidden();
+            } else {
+                ui.task._SystemUpdateTask.vcs_poll.delay(5000);
+            }
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+// config - { item, value, [notify=true] }
+ui.task.UpdateConfTask = function(config)
+{
+    Ext.apply(this, config);
+
+    // Apply modification in DB
+    XHR({
+        scope   : this,
+        params  : {
+            task  : 'confUpdate',
+            item  : this.item,
+            value : this.value
+        },
+        success : function()
+        {
+            // Update userConf object
+            PhDOE.userConf[this.item] = this.value;
+
+            // If we touch this config option, we need to reload this store too
+            if( this.item == "errorSkipNbLiteralTag" ) {
+                ui.component.ErrorFileGrid.getInstance().store.reload();
+            }
+            if( this.item == "needUpdateNbDisplay" ) {
+                ui.component.StaleFileGrid.getInstance().store.reload();
+            }
+            if( this.item == "reviewedNbDisplay" ) {
+                ui.component.PendingReviewGrid.getInstance().store.reload();
+            }
+            if( this.item == "newFileNbDisplay" ) {
+                ui.component.PendingTranslateGrid.getInstance().store.reload();
+            }
+            
+            // Notify
+            if( this.notify !== false ) {
+                PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));
+            }
+        }
+    });
+};Ext.namespace('ui','ui.task','ui.task._UpdateSingleFolderTask');
+
+ui.task._UpdateSingleFolderTask.getUpdateFolderResponse = function(node)
+{
+    XHR({
+        params  : {
+            task: 'getUpdateFolderResponse'
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            ui.task._UpdateSingleFolderTask.afterUpdate(o, node);
+        }
+    });
+}
+
+ui.task._UpdateSingleFolderTask.poll = new Ext.util.DelayedTask(function()
+{
+    var node = arguments[0],
+        u    = node.attributes.id.split('/'),
+        FirstFolder, t = new Array();
+
+        u.shift();
+        FirstFolder = u[0];
+
+        t.push(node);
+
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_' + FirstFolder + '_lock_update_folder'
+        },
+        success : function()
+        {
+            ui.task._UpdateSingleFolderTask.poll.delay(5000, null, this, t);
+        },
+        failure : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText);
+            
+            if (o && o.success === false) {
+                new ui.task._UpdateSingleFolderTask.getUpdateFolderResponse(node);
+
+            } else {
+                ui.task._UpdateSingleFolderTask.poll.delay(5000, null, this, t);
+            }
+        }
+    });
+});
+
+ui.task._UpdateSingleFolderTask.afterUpdate = function(o, node)
+{
+    Ext.getBody().unmask();
+
+    // Re-enable TaskPing
+    ui.task.PingTask.getInstance().delay(30000);
+
+    // TODO: we must handle the response here
+    var r = Ext.util.JSON.decode(o.result);
+
+    // We reload and highlight the modified node
+    node.reload(function(){
+
+        Ext.iterate(r.newFiles, function(prop, val){
+            node.findChild('text', prop).getUI().addClass('treeFileUpdated');
+        });
+
+
+    }, this);
+
+    // Reload all store
+    PhDOE.reloadAllStore();
+
+};
+
+ui.task._UpdateSingleFolderTask.update = function(node)
+{
+    //
+    var t = new Array();
+    t.push(node);
+
+    Ext.getBody().mask(
+        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+        _('Please, wait until update this folder...')
+    );
+
+    // We need to stop ping test during this process
+    ui.task.PingTask.getInstance().cancel();
+
+    XHR({
+        params  : {
+            task : 'updateFolder',
+            path : node.id
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);            
+            ui.task._UpdateSingleFolderTask.afterUpdate(o, node);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                // Re-enable TaskPing
+                ui.task.PingTask.getInstance().delay(30000);
+                Ext.getBody().unmask();
+                PhDOE.winForbidden();
+            } else {
+                // take over 30sec (max Keep-Alive time)
+                // poll every XX secondes if the update is finish
+                ui.task._UpdateSingleFolderTask.poll.delay(5000, null, this, t);
+            }
+        }
+    });
+};
+
+ui.task.UpdateSingleFolderTask = function(node)
+{
+    // If the user is anonymous, we don't update anything
+    if (PhDOE.userLogin === 'anonymous') {
+        Ext.getCmp('winVCSCommit').close();
+        PhDOE.winForbidden();
+        return;
+    }
+
+    ui.task._UpdateSingleFolderTask.update(node);
+};Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
+
+ui.task._VCSCommitTask.getCommitResponse = function()
+{
+    XHR({
+        params  : {
+            task: 'getCommitResponse'
+        },
+        success : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText);
+            
+            ui.task._VCSCommitTask.afterCommit(o.mess);
+        }
+    });
+}
+
+ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
+{
+    XHR({
+        params  : {
+            task     : 'checkLockFile',
+            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.userLogin +'_commit'
+        },
+        success : function()
+        {
+            ui.task._VCSCommitTask.poll.delay(5000);
+        },
+        failure : function(response)
+        {
+            var o = Ext.util.JSON.decode(response.responseText);
+            
+            if (o && o.success === false) {
+                new ui.task._VCSCommitTask.getCommitResponse();
+
+            } else {
+                ui.task._VCSCommitTask.poll.delay(5000);
+            }
+        }
+    });
+});
+
+ui.task._VCSCommitTask.afterCommit = function(mess)
+{
+    Ext.getBody().unmask();
+
+    // Re-enable TaskPing
+    ui.task.PingTask.getInstance().delay(30000);
+
+    // Display commit output message
+    new Ext.Window({
+        title      : _('Status'),
+        width      : 450,
+        height     : 350,
+        resizable  : false,
+        modal      : true,
+        autoScroll : true,
+        bodyStyle  : 'background-color: white; padding: 5px;',
+        html       : mess.join("<br/>"),
+        buttons    : [{
+            text    : _('Close'),
+            handler : function()
+            {
+                this.ownerCt.ownerCt.close();
+            }
+        }]
+    }).show();
+
+    // Reload all store
+    PhDOE.reloadAllStore();
+
+};
+
+ui.task._VCSCommitTask.commit = function(files)
+{
+    Ext.getBody().mask(
+        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+        _('Please, wait until commit...')
+    );
+
+    var nodes = [], node, LogMessage, i;
+
+    // Go for VCS commit
+    for (i = 0; i < files.length; i = i + 1)
+    {
+        node = Ext.getCmp('commit-grid-panel').store.getById(files[i].id);
+        nodes.push(node.data.FileDBID);
+    }
+
+    // We must choose at least one file
+    if( nodes.length == 0 ) {
+        Ext.getBody().unmask();
+
+        Ext.MessageBox.show({
+           title   : _('Error'),
+           msg     : _('You must choose at least one file.'),
+           buttons : Ext.MessageBox.OK,
+           icon    : Ext.MessageBox.ERROR
+        });
+
+        return;
+    }
+
+    // Get log message
+    LogMessage = Ext.getCmp('form-commit-message-log').getValue();
+
+    // The LogMessage is required
+    LogMessage = Ext.util.Format.trim(LogMessage);
+
+    if( Ext.isEmpty(LogMessage) ) {
+
+        Ext.getBody().unmask();
+
+        Ext.getCmp('form-commit-message-log').markInvalid(_('The log message is required.'));
+
+        Ext.MessageBox.show({
+           title   : _('Error'),
+           msg     : _('The log message is required.'),
+           buttons : Ext.MessageBox.OK,
+           icon    : Ext.MessageBox.ERROR
+        });
+
+        return;
+    }
+
+    // Close this window
+    Ext.getCmp('winVCSCommit').close();
+
+    // We need to stop ping test during this process
+    ui.task.PingTask.getInstance().cancel();
+
+    XHR({
+        params  : {
+            task       : 'vcsCommit',
+            nodes      : Ext.util.JSON.encode(nodes),
+            logMessage : LogMessage
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            
+            ui.task._VCSCommitTask.afterCommit(o.mess);
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            if (o && o.success === false) {
+                // Re-enable TaskPing
+                ui.task.PingTask.getInstance().delay(30000);
+                Ext.getBody().unmask();
+                PhDOE.winForbidden();
+            } else {
+                // take over 30sec (max Keep-Alive time)
+                // poll every XX secondes if the check build is finish
+                ui.task._VCSCommitTask.poll.delay(5000);
+            }
+        }
+    });
+};
+
+ui.task.VCSCommitTask = function()
+{
+    // If the user is anonymous, we don't commit anything
+    if (PhDOE.userLogin === 'anonymous') {
+        Ext.getCmp('winVCSCommit').close();
+        PhDOE.winForbidden();
+
+        return;
+    }
+
+    var files         = Ext.getCmp('commit-grid-panel').selModel.getSelections(),
+        NeedToBeClose = [],
+        checkNode, paneID_AF, paneID_FE, paneID_FNU, paneID_FNIEN, paneID_FNR, paneID_FNT, paneID, labelNeedToBeClose = '', i, j;
+
+    for (i = 0; i < files.length; ++i) {
+        checkNode = files[i].data;
+
+        paneID_AF    = 'AF-'    + Ext.util.md5('AF-'    + checkNode.path + checkNode.name);
+        paneID_FE    = 'FE-'    + Ext.util.md5('FE-'    + checkNode.path + checkNode.name);
+        paneID_FNU   = 'FNU-'   + Ext.util.md5('FNU-'   + checkNode.path + checkNode.name);
+        paneID_FNIEN = 'FNIEN-' + Ext.util.md5('FNIEN-' + checkNode.path + checkNode.name);
+        paneID_FNR   = 'FNR-'   + Ext.util.md5('FNR-'   + checkNode.path + checkNode.name);
+        paneID_FNT   = 'FNT-'   + Ext.util.md5('FNT-'   + checkNode.path + checkNode.name);
+
+        if ( Ext.getCmp('main-panel').findById(paneID_AF)    ||
+             Ext.getCmp('main-panel').findById(paneID_FE)    ||
+             Ext.getCmp('main-panel').findById(paneID_FNIEN) ||
+             Ext.getCmp('main-panel').findById(paneID_FNU)   ||
+             Ext.getCmp('main-panel').findById(paneID_FNR)   ||
+             Ext.getCmp('main-panel').findById(paneID_FNT) )
+        {
+
+            if (Ext.getCmp('main-panel').findById(paneID_AF)) {
+                paneID = paneID_AF;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FE)) {
+                paneID = paneID_FE;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNU)) {
+                paneID = paneID_FNU;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNIEN)) {
+                paneID = paneID_FNIEN;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNR)) {
+                paneID = paneID_FNR;
+            }
+            if (Ext.getCmp('main-panel').findById(paneID_FNT)) {
+                paneID = paneID_FNT;
+            }
+
+            NeedToBeClose.push([paneID, checkNode.name]);
+        }
+    }
+
+    if (NeedToBeClose.length > 0) {
+        for ( j = 0; j < NeedToBeClose.length; ++j ) {
+            labelNeedToBeClose += NeedToBeClose[j][1] + '<br/>';
+        }
+
+        Ext.MessageBox.show({
+            title   : 'Warning',
+            icon    : Ext.MessageBox.INFO,
+            buttons : Ext.MessageBox.YESNOCANCEL,
+            msg     : (NeedToBeClose.length > 1) ? String.format(
+                        _('There are {0} files to close before commit.<br><br>' +
+                          '{1}<br/><br/>Would you like me to close them for you ?'),
+                        NeedToBeClose.length, labelNeedToBeClose)
+                    : String.format(
+                        _('There is {0} file to close before commit.<br><br>' +
+                          '{1}<br/><br/>Would you like me to close it for you ?'),
+                          NeedToBeClose.length, labelNeedToBeClose),
+            fn : function(btn)
+            {
+                if (btn === 'yes') {
+                    for (var j = 0; j < NeedToBeClose.length; ++j) {
+                        Ext.getCmp('main-panel').remove(NeedToBeClose[j][0]);
+                    }
+
+                    ui.task._VCSCommitTask.commit(files);
+                }
+            }
+        });
+    } else {
+        ui.task._VCSCommitTask.commit(files);
+    }
+};Ext.namespace('ui','ui.component');
+
+ui.component.About = Ext.extend(Ext.Window,
+{
+    id        : 'win-about',
+    iconCls   : 'iconHelp',
+    layout    : 'fit',
+    width     : 515,
+    height    : 320,
+    modal     : true,
+    plain     : true,
+    bodyStyle : 'color:#000',
+
+    buttons   : [{
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('win-about').close();
+        }
+    }],
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            title : String.format(_('About {0}'), PhDOE.appName),
+            items : {
+                xtype     : 'tabpanel',
+                activeTab : 0,
+                autoTabs  : true,
+                border    : false,
+                defaults  : { autoScroll: true },
+                items     : [{
+                    title : _('About'),
+                    html  : '<div id="phd-oe-about">' +
+                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.appName +
+                            '</div>' +
+                            '<div id="phd-oe-about-info">' + PhDOE.appName + ' ver ' + PhDOE.appVer + '<br/>' +
+                                'UI: ' + PhDOE.uiRevision + '<br/>' +
+                                ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
+                                _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
+                                _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
+                            '</div>'
+                }, {
+                    title     : _('Credits'),
+                    bodyStyle : 'padding:15px',
+                    html      : '<div id="phd-oe-credit"><ul>' +
+                                    '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">' + _('Javascript FrameWork') + '</div></li>' +
+                                    '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">' + _('Code editor') + '</div></li>' +
+                                    '<li><a href="http://www.oxygen-icons.org/" target="_blank">Oxygen project from KDE</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
+                                '</ul></div>'
+                }, {
+                    title    : _('License'),
+                    autoLoad : { url : './LICENSE' }
+                }]
+            }
+        });
+        ui.component.About.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._BuildStatus');
+
+//------------------------------------------------------------------------------
+// BuildStatus Internals
+ui.component._BuildStatus.display = function(config)
+{
+
+    Ext.apply(this, config);
+
+    // Display
+    if ( Ext.getCmp('main-panel').findById('last_failed_build_' + this.lang) ) {
+        Ext.getCmp('main-panel').remove('last_failed_build_' + this.lang);
+    }
+
+    Ext.getCmp('main-panel').add({
+        xtype      : 'panel',
+        id         : 'last_failed_build_' + this.lang,
+        title      : String.format(_('Last failed build for {0}'),Ext.util.Format.uppercase(this.lang)),
+        tabTip     : String.format(_('Last failed build for the documentation {0}'), Ext.util.Format.uppercase(this.lang)),
+        closable   : true,
+        autoScroll : true,
+        iconCls    : 'iconCheckBuild',
+        html       : '<div class="check-build-content" id="check-build-content"></div>'
+    });
+    Ext.getCmp('main-panel').setActiveTab('last_failed_build_' + this.lang);
+
+    Ext.getCmp('main-panel').el.mask(_('Please, wait...'));
+
+    XHR({
+        scope   : this,
+        params  : {
+            task          : 'getFailedBuildData',
+            idFailedBuild : this.idFailedBuild
+        },
+        success : function(r)
+        {
+            var o    = Ext.decode(r.responseText),
+                mess = o.mess.join("<br/>");
+
+            // If the result is too large, the controller have limitated it. So, we add a button to allow the download of the full content
+            if( o.state === 'truncate' ) {
+
+                Ext.get('check-build-content').dom.innerHTML = mess + '<div style="text-align: center; margin: 20px 0 20px 0" class="x-toolbar">' + _('This log is too large and have been truncated. Use the following button to download the full content of it.') + '<div id="check-build-content-download-btn"></div></div>';
+
+                new Ext.Button({
+                    scope: this,
+                    text: _('Download the full content of this log'),
+                    renderTo: 'check-build-content-download-btn',
+                    style: {margin: 'auto'},
+                    handler : function()
+                    {
+                        window.location.href = './do/downloadFailedBuildLog' +
+                                               '?idFailedBuild=' + this.idFailedBuild;
+                    }
+
+                });
+
+            } else {
+                Ext.get('check-build-content').dom.innerHTML = mess;
+            }
+
+            Ext.getCmp('main-panel').el.unmask();
+
+        }
+    });
+};
+
+// BuildStatus Grid datastore
+ui.component._BuildStatus.ds = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFailedBuild'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'lang',
+                mapping : 'lang'
+            }, {
+                name       : 'date',
+                mapping    : 'date',
+                type       : 'date',
+                dateFormat : 'Y-m-d H:i:s'
+            }
+        ])
+    )
+});
+ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
+
+// BuildStatus Grid language cell renderer
+ui.component._BuildStatus.rendererLanguage = function(value)
+{
+    return '<div><div class="flags flag-' + value + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
+};
+
+// BuildStatus Grid columns definition
+ui.component._BuildStatus.columns = [
+    {
+        id        : 'date',
+        header    : _("Date"),
+        sortable  : true,
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+    }, {
+        header    : _('Language'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'lang',
+        renderer  : ui.component._BuildStatus.rendererLanguage
+    }
+];
+
+// BuildStatus context menu
+ui.component._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
+{
+    setRowIndex : function(rowIndex) {
+        this.rowIndex = rowIndex;
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this, {
+            items : [{
+                scope   : this,
+                text    : '<b>' + _('View in a new Tab') + '</b>',
+                iconCls : 'iconOpenInTab',
+                handler : function()
+                {
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIndex, this.event
+                    );
+                }
+            }]
+        });
+        ui.component._BuildStatus.menu.superclass.initComponent.call(this);
+    }
+});
+
+//------------------------------------------------------------------------------
+// BuildStatus Grid
+ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    bodyBorder       : false,
+    autoExpandColumn : 'date',
+    store            : ui.component._BuildStatus.ds,
+    columns          : ui.component._BuildStatus.columns,
+
+    view             : new Ext.grid.GridView({
+                           forceFit: true
+    }),
+    listeners : {
+        render : function()
+        {
+            this.store.load.defer(20, this.store);
+        }
+    },
+
+    onRowdblclick: function(grid, rowIndex, e)
+    {
+        var storeRecord = this.store.getAt(rowIndex);
+
+        new ui.component._BuildStatus.display({
+            idFailedBuild : storeRecord.id,
+            lang          : storeRecord.data.lang
+        });
+    },
+
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+            if( ! this.menu ) {
+                this.menu = new ui.component._BuildStatus.menu({
+                    grid   : grid,
+                    rowIdx : '',
+                    event  : e
+                });
+            }
+
+            e.stopEvent();
+            this.getSelectionModel().selectRow(rowIndex);
+            this.menu.setRowIndex(rowIndex);
+            this.menu.showAt(e.getXY());
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.BuildStatus.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowdblclick',    this.onRowdblclick,  this);
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+    }
+});
+Ext.namespace('ui','ui.component');
+
+ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
+{
+    title      : _('Check build'),
+    iconCls    : 'iconCheckBuild',
+    layout     : 'form',
+    width      : 350,
+    height     : 200,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelAlign : 'top',
+    buttons : [{
+        id      : 'win-check-build-btn-submit',
+        text    : _('Go !'),
+        handler : function()
+        {
+            new ui.task.CheckBuildTask();
+            this.ownerCt.ownerCt.close();
+        }
+    }],
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                xtype     : 'panel',
+                modal     : false,
+                baseCls   : 'x-plain',
+                bodyStyle : 'padding:5px 5px 0',
+                html      : _('You\'re about to check the build via this command:') +
+                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + PhDOE.userLang + '<span id="option-xml-details-span" style="color: red; visibility: hidden;"> --enable-xml-details</span><br/><div id="option-xml-details-div" style="text-align: center; color: red; visibility: hidden;">'+_('<b>WARNING !</b><br/> This option use a lot of server ressource. If you don\'t know what are the consequence, please, don\'t use it.')+'</div>'
+            }, {
+                xtype     : 'checkbox',
+                id        : 'option-xml-details',
+                name      : 'option-xml-details',
+                checked   : false,
+                hideLabel : true,
+                boxLabel  : _('Enable detailed XML error messages'),
+                listeners : {
+                    check: function(c, state) {
+                        Ext.get('option-xml-details-span').dom.style.visibility = (state) ? 'visible' : 'hidden';
+                        Ext.get('option-xml-details-div').dom.style.visibility  = (state) ? 'visible' : 'hidden';
+                    }
+                }
+            }]
+        });
+        ui.component.CheckBuildPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._CheckDoc');
+
+//------------------------------------------------------------------------------
+// CheckDoc Internals
+
+// CheckDoc Grid datastore
+ui.component._CheckDoc.ds = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getCheckDocData'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'path',
+                mapping : 'path'
+            }, {
+                name    : 'extension',
+                mapping : 'extension'
+            }, {
+                name    : 'check_oldstyle',
+                mapping : 'check_oldstyle',
+                type    : 'int'
+            }, {
+                name    : 'check_undoc',
+                mapping : 'check_undoc',
+                type    : 'int'
+            }, {
+                name    : 'check_roleerror',
+                mapping : 'check_roleerror',
+                type    : 'int'
+            }, {
+                name    : 'check_badorder',
+                mapping : 'check_badorder',
+                type    : 'int'
+            }, {
+                name    : 'check_noseealso',
+                mapping : 'check_noseealso',
+                type    : 'int'
+            }, {
+                name    : 'check_noreturnvalues',
+                mapping : 'check_noreturnvalues',
+                type    : 'int'
+            }, {
+                name    : 'check_noparameters',
+                mapping : 'check_noparameters',
+                type    : 'int'
+            }, {
+                name    : 'check_noexamples',
+                mapping : 'check_noexamples',
+                type    : 'int'
+            }, {
+                name    : 'check_noerrors',
+                mapping : 'check_noerrors',
+                type    : 'int'
+            }
+        ])
+    )
+});
+ui.component._CheckDoc.ds.setDefaultSort('extension', 'asc');
+
+// CheckDoc Grid non-extension cell renderer
+ui.component._CheckDoc.renderer = function(value, metadata)
+{
+    if (value > 0) {
+        metadata.css = 'check_doc_cell';
+        metadata.attr = 'ext:qtip="<img src=\'themes/img/help.png\' style=\'vertical-align: middle;\' /> ' + _('Double-click the cell to open the file selection') + '"';
+        return value;
+    } else {
+        return;
+    }
+};
+
+// CheckDoc Grid columns definition
+ui.component._CheckDoc.columns = [
+    new Ext.grid.RowNumberer(), {
+        id        : 'extension',
+        header    : _('Extension'),
+        sortable  : true,
+        dataIndex : 'extension'
+    }, {
+        header    : _('Not documented'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_undoc',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('Old style'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_oldstyle',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('Bad refsect1 order'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_badorder',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('No parameters'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_noparameters',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('No return values'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_noreturnvalues',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('No examples'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_noexamples',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('No errors section'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_noerrors',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('No see also'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_noseealso',
+        renderer  : ui.component._CheckDoc.renderer
+    }, {
+        header    : _('Refsect1 role error'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'check_roleerror',
+        renderer  : ui.component._CheckDoc.renderer
+    }
+];
+
+// CheckDoc File-Win Grid datastore
+ui.component._CheckDoc.fs = new Ext.data.SimpleStore({
+    fields: [{
+        name: 'id'
+    }, {
+        name: 'file'
+    }]
+});
+
+// CheckDoc Internal File-Win Grid
+//  config - {fpath}
+ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    id               : 'check-doc-file-grid',
+    store            : ui.component._CheckDoc.fs,
+    loadMask         : true,
+    bodyBorder       : false,
+    autoExpandColumn : 'file',
+    sm               : new Ext.grid.RowSelectionModel({}),
+    columns          : [ new Ext.grid.RowNumberer(), {
+                           id        : 'file',
+                           header    : _('Files'),
+                           sortable  : true,
+                           dataIndex : 'file'
+                       } ],
+
+    onRowClick: function()
+    {
+        Ext.getCmp('check-doc-btn-open-selected-files').enable();
+    },
+
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+        grid.getSelectionModel().selectRow(rowIndex);
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        ui.component.RepositoryTree.getInstance().openFile(
+            'byPath',
+            'en' + grid.fpath,
+            grid.store.getAt(rowIndex).data.file
+        );
+        Ext.getCmp('check-doc-file-win').close();
+    },
+
+    initComponent: function(config)
+    {
+        ui.component._CheckDoc.FileGrid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu',    this.onRowContextMenu, this);
+        this.on('rowdblclick',       this.onRowDblClick,    this);
+        this.on('rowclick',          this.onRowClick,      this);
+    }
+});
+
+// CheckDoc Internal File-Win
+//  config - {fpath}
+ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
+{
+    id         : 'check-doc-file-win',
+    title      : _('Files'),
+    width      : 450,
+    height     : 350,
+    labelWidth : 50,
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+    layout     : 'fit',
+    iconCls    : 'iconFiles',
+    buttons    : [{
+        text    : _('Open all files'),
+        handler : function()
+        {
+            var win   = Ext.getCmp('check-doc-file-win'),
+                store = ui.component._CheckDoc.fs,
+                i;
+
+            PhDOE.AFfilePendingOpen = [];
+
+            for (i = 0; i < store.getCount(); ++i) {
+                PhDOE.AFfilePendingOpen[i] = {
+                    fpath : 'en' + win.fpath,
+                    fname : store.getAt(i).data.file
+                };
+            }
+
+            ui.component.RepositoryTree.getInstance().openFile(
+                'byPath',
+                PhDOE.AFfilePendingOpen[0].fpath,
+                PhDOE.AFfilePendingOpen[0].fname
+            );
+
+            PhDOE.AFfilePendingOpen.shift();
+
+            win.close();
+        }
+    }, {
+        text     : _('Open selected files'),
+        id       : 'check-doc-btn-open-selected-files',
+        disabled : true,
+        handler  : function()
+        {
+            var win = Ext.getCmp('check-doc-file-win'),
+                r   = Ext.getCmp('check-doc-file-grid')
+                      .getSelectionModel()
+                      .getSelections(),
+                i;
+
+            PhDOE.AFfilePendingOpen = [];
+
+            for (i = 0; i < r.length; ++i) {
+                PhDOE.AFfilePendingOpen[i] = {
+                    fpath : 'en' + win.fpath,
+                    fname : r[i].data.file
+                };
+            }
+
+            ui.component.RepositoryTree.getInstance().openFile(
+                'byPath',
+                PhDOE.AFfilePendingOpen[0].fpath,
+                PhDOE.AFfilePendingOpen[0].fname
+            );
+
+            PhDOE.AFfilePendingOpen.shift();
+            
+            win.close();
+        }
+    }]
+});
+
+//------------------------------------------------------------------------------
+// CheckDoc Grid
+ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    bodyBorder       : false,
+    store            : ui.component._CheckDoc.ds,
+    columns          : ui.component._CheckDoc.columns,
+    autoExpandColumn : 'extension',
+    sm               : new Ext.grid.CellSelectionModel({ singleSelect : true }),
+    view             : new Ext.grid.GridView({ forceFit : true }),
+
+    listeners : {
+        render : function(grid)
+        {
+            // on render, load data
+            this.store.load.defer(20, grid.store);
+        }
+    },
+
+    onCellContextMenu : function (grid, rowIndex, cellIndex, e)
+    {
+        e.stopEvent();
+        this.sm.select(rowIndex, cellIndex);
+    },
+
+    onCellDblClick : function(grid, rowIndex, columnIndex, e)
+    {
+        var record    = this.store.getAt(rowIndex),
+            errorType = this.getColumnModel().getDataIndex(columnIndex),
+            data      = record.get(errorType),
+            fpath     = record.data.path;
+
+        if (Ext.num(data, false) && data !== 0) {
+
+            this.el.mask(_('Please, wait...'));
+            
+            XHR({
+                params   : {
+                    task      : 'getCheckDocFiles',
+                    path      : fpath,
+                    errorType : errorType
+                },
+                success : function(response)
+                {
+                    // Must choose the file
+                    var o = Ext.decode(response.responseText),
+                        i;
+
+                    // file store
+                    ui.component._CheckDoc.fs.removeAll();
+                    for (i = 0; i < o.files.length; ++i) {
+
+                        ui.component._CheckDoc.fs.insert(
+                            0, new ui.component._CheckDoc.fs.recordType({
+                                id   : i,
+                                file : o.files[i].name
+                            })
+                        );
+                    }
+                    ui.component._CheckDoc.fs.sort('file', 'asc');
+
+                    grid.el.unmask();
+
+                    new ui.component._CheckDoc.FileWin({
+                        fpath : fpath,
+                        items : [
+                            new ui.component._CheckDoc.FileGrid({
+                                fpath : fpath
+                            })
+                        ]
+                    }).show();
+                }
+            });
+        } // data is not empty
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.CheckDoc.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('celldblclick',    this.onCellDblClick,    this);
+        this.on('cellcontextmenu', this.onCellContextMenu, this);
+    }
+});
+Ext.namespace('ui','ui.component','ui.component._CheckEntities');
+
+//------------------------------------------------------------------------------
+// CheckDoc Internals
+
+// CheckDoc Grid datastore
+ui.component._CheckEntities.ds = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getCheckEntitiesData'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'entities',
+                mapping : 'entities'
+            }, {
+                name    : 'url',
+                mapping : 'url'
+            }, {
+                name    : 'result',
+                mapping : 'result'
+            }, {
+                name    : 'date',
+                mapping : 'date',
+                type       : 'date',
+                dateFormat : 'Y-m-d H:i:s'
+            }
+        ])
+    )
+});
+ui.component._CheckEntities.ds.setDefaultSort('entities', 'asc');
+
+ui.component._CheckEntities.rendererEntities = function(value, metadata)
+{
+    return '&' + value + ';';
+};
+
+// CheckDoc Grid columns definition
+ui.component._CheckEntities.columns = [
+    new Ext.grid.RowNumberer(), 
+    {
+        id        : 'entities',
+        header    : _('Entities'),
+        sortable  : true,
+        dataIndex : 'entities',
+        width     : 30,
+        renderer  : ui.component._CheckEntities.rendererEntities
+    }, {
+        header    : _('Url'),
+        sortable  : true,
+        dataIndex : 'url'
+    }, {
+        header    : _('Result'),
+        width     : 30,
+        sortable  : true,
+        dataIndex : 'result'
+    }, {
+        header    : _('Date'),
+        width     : 30,
+        sortable  : true,
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+    }
+];
+
+//------------------------------------------------------------------------------
+// CheckDoc Grid
+ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
+{
+    id               : 'check-entities-grid',
+    loadMask         : true,
+    bodyBorder       : false,
+    store            : ui.component._CheckEntities.ds,
+    columns          : ui.component._CheckEntities.columns,
+    autoExpandColumn : 'url',
+    sm               : new Ext.grid.RowSelectionModel({ singleSelect : true }),
+    view             : new Ext.grid.GridView({ forceFit : true }),
+
+    onRender: function(ct, position)
+    {
+        ui.component.CheckEntities.superclass.onRender.call(this, ct, position);
+        this.store.load.defer(20, this.store);
+    },
+
+    openTab: function(rowIndex)
+    {
+        var storeRecord = this.store.getAt(rowIndex),
+            url         = storeRecord.data.url,
+            urlMd5      = Ext.util.md5(url),
+            tabId       = 'tab-check-entities-'+urlMd5,
+            tab         = Ext.getCmp(tabId);
+
+        if( ! tab )
+        {
+            Ext.getCmp('main-panel').add({
+                id         : tabId,
+                xtype      : 'panel',
+                title      : Ext.util.Format.ellipsis(url,20),
+                tabTip     : url,
+                iconCls    : 'iconCheckEntities',
+                closable   : true,
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-'+tabId, url: url }) ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab(tabId);
+    },
+
+    onRowdblclick: function(grid, rowIndex, e)
+    {
+        this.openTab(rowIndex);
+    },
+
+    onContextClick: function(grid, rowIndex, e)
+    {
+
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-checkentities',
+                items : [{
+                    scope   : this,
+                    text    : '<b>'+_('Open in a new Tab')+'</b>',
+                    iconCls : 'iconOpenInTab',
+                    handler : function()
+                    {
+                        this.openTab(this.ctxRowIndex);
+                        this.menu.hide();
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if( this.ctxRowIndex ) {
+            this.ctxRowIndex  = null;
+        }
+        this.ctxRowIndex  = rowIndex;
+
+        this.menu.showAt(e.getXY());
+
+    },
+
+    initComponent: function(config)
+    {
+        this.tbar = [{
+            xtype : 'label',
+            text  : _('Status: ')
+        }, {
+            xtype         : 'combo',
+            typeAhead     : true,
+            triggerAction : 'all',
+            lazyRender    :true,
+            mode          : 'local',
+            store         : new Ext.data.ArrayStore({
+                id     : 0,
+                fields : [
+                    'myId',
+                    'displayText'
+                ],
+                data: [
+                       ['all',                 _('All status')],
+                       ['FTP_CONNECT',         'FTP_CONNECT'],
+                       ['FTP_LOGIN',           'FTP_LOGIN'],
+                       ['FTP_NO_FILE',         'FTP_NO_FILE'],
+                       ['HTTP_CONNECT',        'HTTP_CONNECT'],
+                       ['HTTP_INTERNAL_ERROR', 'HTTP_INTERNAL_ERROR'],
+                       ['HTTP_NOT_FOUND',      'HTTP_NOT_FOUND'],
+                       ['HTTP_MOVED',          'HTTP_MOVED'],
+                       ['HTTP_WRONG_HEADER',   'HTTP_WRONG_HEADER'],
+                       ['SUCCESS',             'SUCCESS'],
+                       ['UNKNOWN_HOST',        'UNKNOWN_HOST']
+                      ]
+            }),
+            value         : 'all',
+            valueField    : 'myId',
+            displayField  : 'displayText',
+            editable      : false,
+            listeners: {
+                select: function(c, record, index) {
+                    var val = record.id;
+
+                    if( val === 'all' ) {
+                        Ext.getCmp('check-entities-grid').store.clearFilter();
+                    } else {
+                        Ext.getCmp('check-entities-grid').store.filter('result', record.id);
+                    }
+                }
+            }
+        }];
+
+        ui.component.CheckEntities.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowdblclick,  this);
+    }
+});
+Ext.namespace('ui','ui.component');
+
+ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
+{
+    title      : _('Check entities'),
+    iconCls    : 'iconRun',
+    id         : 'win-check-entities',
+    layout     : 'fit',
+    width      : 250,
+    height     : 140,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0; text-align: center;',
+    labelAlign : 'top',
+    closeAction: 'hide',
+    buttons : [{
+        id      : 'win-check-entities-btn',
+        text    : _('Go !'),
+        handler : function()
+        {
+            new ui.task.CheckEntitiesTask();
+            Ext.getCmp('win-check-entities').hide();
+        }
+    }],
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                xtype     : 'panel',
+                modal     : false,
+                baseCls   : 'x-plain',
+                bodyStyle : 'padding:5px 5px 0',
+                html      : _('You\'re about to check all entities.<br><br>This action takes time.')
+            }]
+        });
+        ui.component.CheckEntitiesPrompt.superclass.initComponent.call(this);
+    }
+});
+Ext.namespace('ui','ui.component','ui.component._CommitLogManager');
+
+ui.component._CommitLogManager.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getCommitLogMessage'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'text',
+                mapping : 'text'
+            }
+        ])
+    )
+});
+
+ui.component._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
+    saveText: _('Update'),
+    cancelText: _('Cancel'),
+    listeners: {
+        afteredit: function(editor, changes, record, rowIdx)
+        {
+            XHR({
+                params : {
+                    task   : 'saveLogMessage',
+                    messID : record.data.id,
+                    mess   : record.data.text
+                },
+                success : function(response)
+                {
+                   record.commit();
+                   // Notify
+                   PhDOE.notify('info', _('Message updated'), _('Log Message was updated successfully !'));
+                },
+                failure : function(response)
+                {
+                    PhDOE.winForbidden();
+                }
+            });
+        }
+    }
+});
+
+ui.component._CommitLogManager.cm = new Ext.grid.ColumnModel([
+    new Ext.grid.RowNumberer(),
+    {
+        id        : 'log_msg',
+        header    : _('Log message'),
+        dataIndex : 'text',
+        editor    : {
+            xtype : 'textarea'
+        },
+        renderer  : function(value)
+        {
+            return value.split("\n").join("<br/>");
+        }
+    }
+]);
+
+ui.component._CommitLogManager.sm = new Ext.grid.RowSelectionModel({
+    singleSelect: true
+});
+
+// config - { rowIdx }
+ui.component._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
+{
+    setRowIdx: function(rowIdx) {
+        this.rowIdx = rowIdx;
+    },
+
+    initComponent : function(config)
+    {
+        Ext.apply(this,{
+
+            items  : [{
+                scope   : this,
+                text    : _('Delete this Log Message'),
+                iconCls : 'iconDelete',
+                handler : function()
+                {
+                    XHR({
+                        scope  : this,
+                        params : {
+                            task   : 'deleteLogMessage',
+                            messID : ui.component._CommitLogManager.store.getAt(this.rowIdx).data.id
+                        },
+                        success : function(response)
+                        {
+                            ui.component._CommitLogManager.store.remove(ui.component._CommitLogManager.store.getAt(this.rowIdx));
+
+                            // Notify
+                            PhDOE.notify('info', _('Message deleted'), _('Log Message was deleted successfully !'));
+
+                        },
+                        failure : function(response)
+                        {
+                            PhDOE.winForbidden();
+                        }
+                    });
+                }
+            }]
+        });
+        ui.component._CommitLogManager.menu.superclass.initComponent.call(this);
+    }
+});
+
+ui.component._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoExpandColumn : 'log_msg',
+    cm      : ui.component._CommitLogManager.cm,
+    sm      : ui.component._CommitLogManager.sm,
+    store   : ui.component._CommitLogManager.store,
+    plugins : [ui.component._CommitLogManager.editor],
+    listeners : {
+        render : function(grid)
+        {
+            grid.store.load();
+        }
+    },
+
+    onRowContextMenu: function(grid, rowIndex, e) {
+
+        e.stopEvent();
+        this.getSelectionModel().selectRow(rowIndex);
+
+        if( ! this.menu ) {
+            this.menu = new ui.component._CommitLogManager.menu();
+        }
+        this.menu.setRowIdx(rowIndex);
+        this.menu.showAt(e.getXY());
+
+    },
+
+    initComponent: function(config)
+    {
+        ui.component._CommitLogManager.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+    }
+});
+
+ui.component.CommitLogManager = Ext.extend(Ext.Window,
+{
+    id         : 'commit-log-win',
+    title      : _('Manage Log Message'),
+    iconCls    : 'iconWinManageLog',
+    width      : 650,
+    height     : 350,
+    layout     : 'fit',
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+    closeAction: 'hide',
+    store      : ui.component._CommitLogManager.store,
+    buttons : [{
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('commit-log-win').hide();
+        }
+    }],
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [new ui.component._CommitLogManager.grid()]
+        });
+        ui.component.CommitLogManager.superclass.initComponent.call(this);
+
+    }
+});Ext.namespace('ui','ui.component', 'ui.component._CommitPrompt');
+
+ui.component._CommitPrompt.store = new Ext.data.GroupingStore(
+{
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'},
+            {name : 'type'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path'
+});
+
+// PendingCommitGrid columns definition
+ui.component._CommitPrompt.columns = [
+    new Ext.grid.CheckboxSelectionModel(),
+{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Modified by'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'by'
+}, {
+    header    : _('Date'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'date',
+    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// PendingCommitGrid view
+ui.component._CommitPrompt.view = new Ext.grid.GroupingView({
+    forceFit       : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})'
+});
+
+ui.component._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    id               : 'commit-grid-panel',
+    loadMask         : true,
+    autoExpandColumn : 'name',
+    height           : 180,
+    columns          : ui.component._CommitPrompt.columns,
+    view             : ui.component._CommitPrompt.view,
+    enableDragDrop   : true,
+    sm               : new Ext.grid.CheckboxSelectionModel(),
+    listeners: {
+        viewready: function(c)
+        {
+            this.selModel.selectAll();
+        }
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._CommitPrompt.store
+        });
+        ui.component._CommitPrompt.grid.superclass.initComponent.call(this);
+    }
+});
+
+// config - { files: {fid, fpath, fname, fdbid} }
+ui.component.CommitPrompt = Ext.extend(Ext.Window,
+{
+    id         : 'winVCSCommit',
+    layout     : 'form',
+    title      : _('VCS commit'),
+    iconCls    : 'iconPendingCommit',
+    closable   : false,
+    width      : 600,
+    height     : 480,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelAlign : 'top',
+    tools      : [{
+        id      : 'gear',
+        qtip    : _('Configure this tools'),
+        handler : function()
+        {
+            if( ! Ext.getCmp('commit-log-win') )
+            {
+                new ui.component.CommitLogManager();
+            }
+            Ext.getCmp('commit-log-win').show(this.id);
+        }
+    }],
+    buttons : [{
+        id      : 'win-commit-btn-submit',
+        text    : _('Submit'),
+        handler : function()
+        {
+            new ui.task.VCSCommitTask();
+        }
+    }, {
+        id      : 'win-commit-btn-close',
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('winVCSCommit').close();
+        }
+    }],
+    initComponent : function()
+    {
+        var i;
+
+        // We remove all data who are in the store
+        ui.component._CommitPrompt.store.removeAll();
+        
+        for (i = 0; i < this.files.length; ++i) {
+
+            ui.component._CommitPrompt.store.insert(0,
+                new ui.component._CommitPrompt.store.recordType({
+                    id       : 'need-commit-' + this.files[i].fid,
+                    path     : this.files[i].fpath,
+                    name     : this.files[i].fname,
+                    by       : this.files[i].fby,
+                    date     : this.files[i].fdate,
+                    type     : this.files[i].ftype,
+                    FileDBID : this.files[i].fdbid
+                })
+            );
+        }
+        ui.component._CommitPrompt.store.groupBy('path', true); // regroup
+
+        Ext.apply(this,
+        {
+            items : [new ui.component._CommitPrompt.grid(), {
+                xtype         : 'combo',
+                name          : 'first2',
+                fieldLabel    : _('Older messages'),
+                editable      : false,
+                anchor        : '100%',
+                store         : ui.component._CommitLogManager.store,
+                triggerAction : 'all',
+                tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
+                valueField    : 'id',
+                displayField  : 'text',
+                listeners : {
+                    select : function(combo, record, numIndex)
+                    {
+                        Ext.getCmp('form-commit-message-log').setValue(record.data.text);
+                    }
+                }
+            }, {
+                xtype      : 'textarea',
+                id         : 'form-commit-message-log',
+                name       : 'first3',
+                fieldLabel : _('Log message'),
+                anchor     : '100%',
+                height     : 150,
+                value      : ''
+            }]
+        });
+        ui.component.CommitPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._DictionaryGrid');
+
+//------------------------------------------------------------------------------
+// DictionaryGrid internals
+ui.component._DictionaryGrid.store = Ext.extend(Ext.data.Store,
+{    
+    proxy    : new Ext.data.HttpProxy({
+        url : "./do/getDictionaryWords"
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+        {
+            name : 'id'
+        },
+
+        {
+            name : 'valueEn'
+        },
+
+        {
+            name : 'valueLang'
+        },
+
+        {
+            name : 'lastUser',
+            hideField : true
+        },
+
+        {
+            name : 'lastDate',
+            type : 'date',
+            dateFormat : 'Y-m-d H:i:s',
+            hideField : true
+        }
+        ]
+    }),
+    sortInfo : {
+        field     : 'valueEn',
+        direction : 'ASC'
+    },
+    listeners: {
+        load: function() {
+            if( PhDOE.userLogin != "anonymous" ) {
+                // Enable the "add new word" button"
+                Ext.getCmp(this.fid + '-btn-new-word').enable();
+            }
+        }
+    },
+    initComponent : function(config)
+    {
+       Ext.apply(this, config);
+       ui.component._DictionaryGrid.store.superclass.initComponent.call(this);
+    }
+
+});
+
+ui.component._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
+{
+    saveText   : _('Update'),
+    cancelText : _('Cancel'),
+    listeners  : {
+        afteredit: function(editor, changes, record, rowIdx)
+        {
+            XHR({
+                params : {
+                    task      : 'manageDictionaryWord',
+                    wordId    : record.data.id,
+                    valueEn   : record.data.valueEn,
+                    valueLang : record.data.valueLang
+                },
+                success : function(r)
+                {
+                    var o = Ext.util.JSON.decode(r.responseText);
+
+                    record.set('lastUser', PhDOE.userLogin);
+                    record.set('lastDate', Date.parseDate(o.dateUpdate, 'Y-m-d H:i:s'));
+
+                    record.commit();
+                    
+                    // Notify
+                    PhDOE.notify('info', _('Word in dictionary added/updated'), _('The word have been added/updated successfully !'));
+                },
+                failure : function()
+                {
+                    PhDOE.winForbidden();
+                }
+            });
+        },
+        canceledit: function(editor) {            
+            // If we cancel Edit on a new word
+            if( editor.record.data.id == "new" ) {
+                editor.record.store.remove(editor.record);
+            }
+        }
+    }
+});
+
+ui.component._DictionaryGrid.sm = Ext.extend(Ext.grid.RowSelectionModel,
+{
+    singleSelect: true
+}
+);
+
+ui.component._DictionaryGrid.viewConfig = {
+    forceFit      : true,
+    emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
+    deferEmptyText: false
+};
+
+ui.component._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
+{
+    setRowIdx: function(rowIdx) {
+        this.rowIdx = rowIdx;
+    },
+
+    initComponent : function(config)
+    {
+        Ext.apply(this,{
+
+            items  : [{
+                scope   : this,
+                text    : _('Delete this word'),
+                iconCls : 'iconDelete',
+                disabled: (PhDOE.userLogin == "anonymous"),
+                handler : function()
+                {
+                    XHR({
+                        scope  : this,
+                        params : {
+                            task   : 'delDictionaryWord',
+                            wordId : this.grid.store.getAt(this.rowIdx).data.id
+                        },
+                        success : function()
+                        {                            
+                            this.grid.store.remove(this.grid.store.getAt(this.rowIdx));
+
+                            // Notify
+                            PhDOE.notify('info', _('Word deleted'), _('The word was deleted successfully !'));
+
+                        },
+                        failure : function()
+                        {
+                            PhDOE.winForbidden();
+                        }
+                    });
+
+                }
+            }]
+        });
+        ui.component._DictionaryGrid.menu.superclass.initComponent.call(this);
+    }
+});
+
+ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+        this.getSelectionModel().selectRow(rowIndex);
+
+        if( ! this.menu ) {
+            this.menu = new ui.component._DictionaryGrid.menu({grid: grid});
+        }
+        this.menu.setRowIdx(rowIndex);
+        this.menu.showAt(e.getXY());
+    },
+
+    initComponent : function()
+    {
+       Ext.apply(this, {
+           region           : 'center',
+           split            : true,
+           loadMask         : true,
+           autoScroll       : true,
+           bodyBorder       : false,
+           border           : false,
+           autoExpandColumn : this.dataType,
+           columns          : [
+               {
+                   id: 'id',
+                   header: _('En word'),
+                   sortable: true,
+                   dataIndex: 'valueEn',
+                   editor    : {
+                       xtype : 'textfield'
+                   }
+               },
+               {
+                   header: String.format(_('{0} word'), PhDOE.userLang.ucFirst() ),
+                   sortable: true,
+                   dataIndex: 'valueLang',
+                   editor    : {
+                       xtype : 'textfield'
+                   }
+               },
+               {
+                   header: _('Last User Update'),
+                   sortable: true,
+                   dataIndex: 'lastUser',
+                   editor    : {
+                       xtype     : 'displayfield',
+                       hideField : true
+                   }
+               },
+               {
+                   header: _('Last Date Update'),
+                   sortable: true,
+                   dataIndex: 'lastDate',
+                   editor    : {
+                       xtype : 'displayfield',
+                       hideField : true
+                   },
+                   renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+               }
+           ],
+           viewConfig       : ui.component._DictionaryGrid.viewConfig,
+           sm               : new ui.component._DictionaryGrid.sm(),
+           store            : new ui.component._DictionaryGrid.store({ fid : this.fid}),
+           plugins          : [new ui.component._DictionaryGrid.editor()],
+           tbar: [
+           {
+                scope   : this,
+                tooltip : _('<b>Load/Refresh</b>'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+           }, '->', {
+                scope   : this,
+                id      : this.fid + '-btn-new-word',
+                disabled: true,
+                text    : _('Add a new word'),
+                iconCls : 'iconNewWord',
+                handler : function()
+                {
+                    var record = Ext.data.Record.create([{
+                        name: 'id'
+                    }, {
+                        name: 'valueEn'
+                    }, {
+                        name: 'valueLang'
+                    },{
+                        name: 'lastUser'
+                    },{
+                        name: 'lastDate'
+                    }]);
+
+                    var newDate = new Date();
+
+                    var e = new record({
+                        id: 'new',
+                        valueEn: '',
+                        valueLang: '',
+                        lastUser: PhDOE.userLogin,
+                        lastDate: newDate
+                    });
+
+                    this.plugins[0].stopEditing();
+                    this.store.insert(0, e);
+                    this.getView().refresh();
+                    this.getSelectionModel().selectRow(0);
+                    this.plugins[0].startEditing(0);
+                }
+           }
+           ]
+       });
+       ui.component._DictionaryGrid.grid.superclass.initComponent.call(this);
+
+       this.on('rowcontextmenu', this.onRowContextMenu, this);
+    }
+});
+
+
+//------------------------------------------------------------------------------
+// DictionaryGrid
+// config - {prefix, fid, ftype, loadStore}
+ui.component.DictionaryGrid = Ext.extend(Ext.Panel,
+{
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            layout: 'border',
+            border: false,
+            items : [
+                new ui.component._DictionaryGrid.grid({
+                    dataType          : this.dataType,
+                    prefix            : this.prefix,
+                    fid               : this.fid,
+                    ftype             : this.ftype,
+                    loadStore         : this.loadStore
+                })
+            ]
+        });
+        ui.component.DictionaryGrid.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._EditorConf');
+
+//------------------------------------------------------------------------------
+// EditorConf Win internals
+
+// EditorConf Win-Menu template
+ui.component._EditorConf.tplMenu = new Ext.XTemplate(
+    '<tpl for=".">',
+        '<div class="menu-wrap" id="tplMenu-{id}">',
+            '<div class="menu {card}"></div>',
+            '<span>{label}</span>',
+        '</div>',
+    '</tpl>'
+);
+ui.component._EditorConf.tplMenu.compile();
+
+// EditorConf Win-Menu items definition for EN
+ui.component._EditorConf.menuDefEn = [
+    ['1', 'card1', _('Main')],
+    ['4', 'card4', _('Module "Files with error"')],
+    ['6', 'card6', _('Module "All files"')],
+    ['7', 'card7', _('Module "Pending patches"')]
+];
+
+// EditorConf Win-Menu items definition for Non-EN
+ui.component._EditorConf.menuDefNonEn = [
+    ['1', 'card1', _('Main')],
+    ['2', 'card2', _('Module "Files need translate"')],
+    ['3', 'card3', _('Module "Files need update"')],
+    ['4', 'card4', _('Module "Files with error"')],
+    ['5', 'card5', _('Module "Files need reviewed"')],
+    ['6', 'card6', _('Module "All files"')],
+    ['7', 'card7', _('Module "Pending patches"')]
+];
+
+// EditorConf Win-Menu items store
+ui.component._EditorConf.menuStore = new Ext.data.SimpleStore({
+    id     : 0,
+    fields : [
+        { name : 'id'    },
+        { name : 'card'   },
+        { name : 'label' }
+    ]
+});
+
+// EditorConf Win-Menu view
+ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
+{
+    id           : 'conf-menu-view',
+    tpl          : ui.component._EditorConf.tplMenu,
+    singleSelect : true,
+    overClass    : 'x-view-over',
+    itemSelector : 'div.menu-wrap',
+    store        : ui.component._EditorConf.menuStore,
+    listeners : {
+        selectionchange : function(view)
+        {
+            var r = view.getSelectedRecords();
+            Ext.getCmp('confCard').layout.setActiveItem('conf-card-' + r[0].data.id);
+        }
+    }
+});
+
+// doc-editor Theme datastore
+ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
+    fields : ['themeFile', {
+        name : 'themeName',
+        type : 'string'
+    }],
+    data : [
+        ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
+        ['themes/empty.css',                                                  _('Default')],
+        ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
+        ['http://extjs.cachefly.net/ext-3.2.0/resources/css/xtheme-gray.css', _('Gray')],
+        ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
+        ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
+        ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],
+        ['themes/ExtJsThemes/olive/css/xtheme-olive.css',                     _('Olive')],
+        ['themes/ExtJsThemes/purple/css/xtheme-purple.css',                   _('Purple')],
+        ['themes/ExtJsThemes/silverCherry/css/xtheme-silverCherry.css',       _('SilverCherry')],
+        ['themes/ExtJsThemes/ubuntu_human/css/xtheme-human.css',              _('Ubuntu Human')]
+    ]
+});
+
+ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
+{
+    new ui.task.UpdateConfTask({
+        item  : this.name,
+        value : this.getValue()
+    });
+});
+
+// EditorConf card1 - mainApp
+ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-1',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype   : 'fieldset',
+                    title   : _('Main Menu'),
+                    iconCls : 'iconMenu',
+                    items   : [{
+                        xtype      : 'spinnerfield',
+                        width      : 60,
+                        name       : 'mainAppMainMenuWidth',
+                        value      : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                        fieldLabel : _('Main Menu width'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function()
+                            {
+                                    var cmp = Ext.getCmp('main-menu-panel'),
+                                        val = this.getValue();
+                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    cmp.setWidth(val);
+                                    cmp.ownerCt.doLayout();
+
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function()
+                            {
+                                    var cmp = Ext.getCmp('main-menu-panel'),
+                                        val = this.getValue();
+                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    cmp.setWidth(val);
+                                    cmp.ownerCt.doLayout();
+
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
+                        }
+                    }]
+                }, {
+                    xtype   : 'fieldset',
+                    iconCls : 'iconThemes',
+                    title   : _('Appearance'),
+                    items   : [{
+                        xtype          : 'combo',
+                        fieldLabel     : _('Choose a theme'),
+                        id             : 'conf-combo-theme',
+                        valueField     : 'themeFile',
+                        displayField   : 'themeName',
+                        triggerAction  : 'all',
+                        mode           : 'local',
+                        forceSelection : true,
+                        editable       : false,
+                        value          : PhDOE.userConf.theme,
+                        store          : ui.component._EditorConf.themeStore,
+                        listeners      : {
+                            render : function()
+                            {
+                                Ext.getCmp('conf-combo-theme').store.sort('themeName');
+                            },
+                            select : function(c)
+                            {
+                                var hrefTheme = c.getValue();
+
+                                Ext.get('appTheme').dom.href = hrefTheme;
+
+                                new ui.task.UpdateConfTask({
+                                    item  : 'theme',
+                                    value : hrefTheme
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype      : 'fieldset',
+                    title      : _('On save file'),
+                    iconCls    : 'iconSaveFile',
+                    autoHeight : true,
+                    defaults   : { hideLabel: true },
+                    defaultType: 'radio',
+                    items      : [{
+                        autoHeight : true,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "ask-me") ? true : false,
+                        boxLabel   : _('Ask me if I want to check for error before saving the file'),
+                        inputValue : 'ask-me',
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'onSaveFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        autoHeight : true,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "always") ? true : false,
+                        boxLabel   : _('Always check for error before saving the file'),
+                        inputValue : 'always',
+                        listeners  : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'onSaveFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        autoHeight : true,
+                        name       : 'onSaveFile',
+                        checked    : (PhDOE.userConf.onSaveFile === "never") ? true : false,
+                        boxLabel   : _('Never check for error before saving the file'),
+                        inputValue : 'never',
+                        listeners  : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'onSaveFile',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }]
+                 }]
+             }, {
+                title   : _('External Data'),
+                iconCls : 'iconExternalData',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('About mails'),
+                    iconCls     : 'iconMailing',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'mainAppLoadMailsAtStartUp',
+                        checked     : PhDOE.userConf.mainAppLoadMailsAtStartUp,
+                        boxLabel    : _('Load mail at startUp'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'mainAppLoadMailsAtStartUp',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('About bugs'),
+                    iconCls     : 'iconBugs',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'mainAppLoadBugsAtStartUp',
+                        checked     : PhDOE.userConf.mainAppLoadBugsAtStartUp,
+                        boxLabel    : _('Load bugs at startUp'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'mainAppLoadBugsAtStartUp',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+             }]
+        });
+        ui.component._EditorConf.card1.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card2 - Module "Files Need Translate" Config
+ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-2',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    items       : [{
+                        xtype      : 'spinnerfield',
+                        width      : 60,
+                        name       : 'newFileNbDisplay',
+                        value      : PhDOE.userConf.newFileNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
+                        }
+                    }, {
+                        xtype : 'displayfield',
+                        value : _('0 means no limit'),
+                        style : { fontStyle: 'italic'}
+                    }]
+                }]
+            }, {
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'newFileScrollbars',
+                        checked     : PhDOE.userConf.newFileScrollbars,
+                        boxLabel    : _('Synchronize scroll bars'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'newFileScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        autoHeight  : true,
+                        name        : 'newFileSpellCheck',
+                        checked     : PhDOE.userConf.newFileSpellCheck,
+                        boxLabel    : _('Enable spell checking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'newFileSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card2.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card3 - Module "Files Need Update" Config
+ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-3',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'spinnerfield',
+                    items       : [{
+                        width      : 60,
+                        name       : 'needUpdateNbDisplay',
+                        value      : PhDOE.userConf.needUpdateNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
+                        }
+
+                    }, {
+                        xtype: 'displayfield',
+                        value: _('0 means no limit'),
+                        style: { fontStyle: 'italic'}
+                    }]
+                }]
+            }, {
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'needUpdateScrollbars',
+                        checked     : PhDOE.userConf.needUpdateScrollbars,
+                        boxLabel    : _('Synchronize scroll bars'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'needUpdateDisplaylog',
+                        checked     : PhDOE.userConf.needUpdateDisplaylog,
+                        boxLabel    : _('Automatically load the log when displaying the file'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'needUpdateDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Diff view'),
+                    iconCls     : 'iconDiffView',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'radio',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.needUpdateDiffPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateDiffPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'needUpdateDiffPanelHeight',
+                            value      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }, {
+                        name       : 'needUpdateDiff',
+                        checked    : (PhDOE.userConf.needUpdateDiff === "using-viewvc") ? true : false,
+                        boxLabel   : _('Using ViewVc from php web site'),
+                        inputValue : 'using-viewvc',
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiff',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        name       : 'needUpdateDiff',
+                        checked    : (PhDOE.userConf.needUpdateDiff === "using-exec") ? true : false,
+                        boxLabel   : _('Using diff -u command line'),
+                        inputValue : 'using-exec',
+                        listeners : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiff',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    }]
+                }]
+            }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name      : 'needUpdateSpellCheckEn',
+                        checked   : PhDOE.userConf.needUpdateSpellCheckEn,
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    },{
+                        name      : 'needUpdateSpellCheckLang',
+                        checked   : PhDOE.userConf.needUpdateSpellCheckLang,
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'needUpdateSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card3.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card4 - Module "Files with Error" Config
+ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-4',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle : 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
+                    hidden      : ( PhDOE.userLang === 'en' ),
+                    xtype       : 'fieldset',
+                    title       : _('Error type'),
+                    iconCls     : 'iconFilesError',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorSkipNbLiteralTag',
+                        checked    : PhDOE.userConf.errorSkipNbLiteralTag,
+                        boxLabel   : _('Skip nbLiteralTag error'),
+                        listeners  : {
+                            check  : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorSkipNbLiteralTag',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }, {
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorScrollbars',
+                        checked    : PhDOE.userConf.errorScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'errorLogLoadData',
+                        checked    : PhDOE.userConf.errorLogLoadData,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorLogLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'errorEntitiesLoadData',
+                        checked    : PhDOE.userConf.errorEntitiesLoadData,
+                        boxLabel   : _('Automatically load entities data when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorEntitiesLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'errorAcronymsLoadData',
+                        checked    : PhDOE.userConf.errorAcronymsLoadData,
+                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorAcronymsLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.errorDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'errorDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Error description'),
+                    iconCls     : 'iconFilesError',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'radio',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.errorDescPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorDescPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'errorDescPanelHeight',
+                            value      : PhDOE.userConf.errorDescPanelHeight || 150,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        hidden      : ( PhDOE.userLang === 'en' ),
+                        name        : 'errorSpellCheckEn',
+                        checked     : PhDOE.userConf.errorSpellCheckEn,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name        : 'errorSpellCheckLang',
+                        checked     : PhDOE.userConf.errorSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'errorSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card4.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card5 - Module "Files need Reviewed" Config
+ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-5',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('Menu'),
+                iconCls : 'iconMenu',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'spinnerfield',
+                    items       : [{
+                        width      : 60,
+                        name       : 'reviewedNbDisplay',
+                        value      : PhDOE.userConf.reviewedNbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function()
+                            {
+                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                            }
+                        }
+
+                    }, {
+                        xtype: 'displayfield',
+                        value: _('0 means no limit'),
+                        style: { fontStyle: 'italic'}
+                    }]
+                }]
+            }, {
+                title   : 'User Interface',
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'reviewedScrollbars',
+                        checked    : PhDOE.userConf.reviewedScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'reviewedDisplaylog',
+                        checked    : PhDOE.userConf.reviewedDisplaylog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.reviewedDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'reviewedDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                title   : 'Editor',
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'reviewedSpellCheckEn',
+                        checked     : PhDOE.userConf.reviewedSpellCheckEn,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedSpellCheckEn',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name        : 'reviewedSpellCheckLang',
+                        checked     : PhDOE.userConf.reviewedSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedSpellCheckLang',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card5.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card6 - Module "All files" Config
+ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
+{
+    id         : 'conf-card-6',
+    autoScroll : true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'allFilesDisplayLog',
+                        checked    : PhDOE.userConf.allFilesDisplayLog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplayLog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        name       : 'allFilesEntitiesLoadData',
+                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
+                        boxLabel   : _('Automatically load entities data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesEntitiesLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    },{
+                        name       : 'allFilesAcronymsLoadData',
+                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
+                        boxLabel   : _('Automatically load acronyms data when displaying the file'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesAcronymsLoadData',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'allFilesDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'allFilesSpellCheck',
+                        checked     : PhDOE.userConf.allFilesSpellCheck,
+                        boxLabel    : _('Enable spell checking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'allFilesSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card6.superclass.initComponent.call(this);
+    }
+});
+
+// EditorConf card7 - Module "Pending Patch" Config
+ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
+{
+    id        : 'conf-card-7',
+    autoScroll: true,
+    activeTab  : 0,
+    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                title   : _('User Interface'),
+                iconCls : 'iconUI',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('ScrollBars'),
+                    iconCls     : 'iconScrollBar',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'patchScrollbars',
+                        checked    : PhDOE.userConf.patchScrollbars,
+                        boxLabel   : _('Synchronize scroll bars'),
+                        listeners  : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('VCS Log'),
+                    iconCls     : 'iconVCSLog',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name       : 'patchDisplaylog',
+                        checked    : PhDOE.userConf.patchDisplaylog,
+                        boxLabel   : _('Automatically load the log when displaying the file'),
+                        listeners : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylog',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }, {
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.patchDisplaylogPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplaylogPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items: [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'patchDisplaylogPanelWidth',
+                            value      : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
+                    title       : _('Patch content'),
+                    iconCls     : 'iconPendingPatch',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.userConf.patchDisplayContentPanel,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchDisplayContentPanel',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'patchDisplayContentPanelHeight',
+                            value      : PhDOE.userConf.patchDisplayContentPanelHeight || 375,
+                            fieldLabel : _('Panel height'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('SpellChecking'),
+                    iconCls     : 'iconSpellCheck',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'patchSpellCheck',
+                        checked     : PhDOE.userConf.patchSpellCheck,
+                        boxLabel    : _('Enable spell checking'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'patchSpellCheck',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                }]
+            }]
+        });
+        ui.component._EditorConf.card7.superclass.initComponent.call(this);
+    }
+});
+
+//------------------------------------------------------------------------------
+// EditorConf Win
+ui.component.EditorConf = Ext.extend(Ext.Window,
+{
+    id          : 'win-conf',
+    layout      : 'border',
+    width       : 700,
+    height      : 470,
+    iconCls     : 'iconConf',
+    title       : _('Configuration'),
+    modal       : true,
+    plain       : true,
+    bodyBorder  : false,
+    closeAction : 'hide',
+    buttons     : [{
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('win-conf').hide();
+        }
+    }],
+
+    listeners : {
+        show : function()
+        {
+            var view = Ext.getCmp('conf-menu-view');
+            view.select(view.getNode(0));
+        }
+    },
+
+    initComponent : function()
+    {
+        if (PhDOE.userLang === 'en') {
+            ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefEn);
+        } else {
+            ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefNonEn);
+        }
+
+        Ext.apply(this,
+        {
+            items : [{
+                id         : 'confMenu',
+                region     : 'west',
+                border     : false,
+                width      : 190,
+                autoScroll : true,
+                items      : [new ui.component._EditorConf.viewMenu()]
+            }, {
+                id         : 'confCard',
+                region     : 'center',
+                border     : false,
+                layout     : 'card',
+                width      : 375,
+                frame      : true,
+                activeItem : 0,
+
+                bbar : new Ext.ux.StatusBar({
+                    defaultText    : _('All changes take effect immediately'),
+                    defaultIconCls : 'confStatusBar'
+                }),
+
+                items : [
+                    new ui.component._EditorConf.card1(),
+                    new ui.component._EditorConf.card2(),
+                    new ui.component._EditorConf.card3(),
+                    new ui.component._EditorConf.card4(),
+                    new ui.component._EditorConf.card5(),
+                    new ui.component._EditorConf.card6(),
+                    new ui.component._EditorConf.card7()
+                ]
+            }]
+        });
+        ui.component.EditorConf.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._EmailPrompt');
+
+// config - { name, email }
+ui.component.EmailPrompt = Ext.extend(Ext.Window,
+{
+    title       : _('Send an email'),
+    width       : 500,
+    height      : 300,
+    minWidth    : 300,
+    minHeight   : 200,
+    layout      : 'fit',
+    plain       : true,
+    bodyStyle   : 'padding:5px;',
+    buttonAlign : 'center',
+    iconCls     : 'iconSendEmail',
+    closeAction : 'hide',
+    buttons     : [{
+        text   : _('Send'),
+        handler: function()
+        {
+            var win    = this.ownerCt.ownerCt,
+                values = win.findByType('form').shift().getForm().getValues();
+
+            XHR({
+                params  : {
+                    task    : 'sendEmail',
+                    to      : values.to,
+                    subject : values.subject,
+                    msg     : values.msg
+                },
+                success : function(response)
+                {
+                    win.hide();
+
+                    Ext.Msg.alert(
+                        _('Status'),
+                        String.format(_('Email sent to {0} with success!'), win.name),
+                        Ext.emptyFn
+                    );
+                }
+            });
+
+        }
+    }, {
+        text    : _('Cancel'),
+        handler : function()
+        {
+            this.ownerCt.ownerCt.hide();
+        }
+    }],
+
+    setData : function (name, email)
+    {
+        this.name  = name;
+        this.email = email;
+
+        this.items.items[0].items.items[0].setValue('"' + this.name + '" <' + this.email + '>');
+        this.items.items[0].items.items[1].setValue('');
+        this.items.items[0].items.items[2].setValue('');
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this, {
+            items : new Ext.form.FormPanel({
+                baseCls     : 'x-plain',
+                labelWidth  : 55,
+                defaultType : 'textfield',
+                items : [{
+                    name       : 'to',
+                    fieldLabel : _('Send To'),
+                    readOnly   : true,
+                    anchor     : '100%',
+                    value      : ''
+                }, {
+                    name       : 'subject',
+                    fieldLabel : _('Subject'),
+                    anchor     : '100%'
+                }, {
+                    name      : 'msg',
+                    xtype     : 'textarea',
+                    hideLabel : true,
+                    anchor    : '100% -53'
+                }]
+            })
+        });
+        ui.component.EmailPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._EntitiesAcronymsPanel');
+
+//------------------------------------------------------------------------------
+// EntitiesAcronymsGrid internals
+
+ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    onRowClick: function(grid, rowIdx, e)
+    {
+        var data = grid.getSelectionModel().getSelected().data;
+
+        Ext.getCmp(this.dataType + '-details-' + this.fid).update(data.value);
+
+    },
+    onRowDblClick: function(grid, rowIdx, e)
+    {        
+        var data           = grid.getSelectionModel().getSelected().data,
+            cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
+            cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition()),
+            dataInserted   = (this.dataType == 'entities') ? '&' + data.items + ';' : '<acronym>' + data.items + '</acronym>';
+
+        //Insert the entities at the cursor position
+        cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, dataInserted);
+    },
+    initComponent : function()
+    {
+       var url;
+
+       if( this.dataType == 'entities' ) {
+           url = "./do/getEntities";
+       } else if( this.dataType == 'acronyms' ) {
+           url = "./do/getAcronyms";
+       }
+
+       Ext.apply(this, {
+           region           : 'center',
+           split            : true,
+           loadMask         : true,
+           autoScroll       : true,
+           bodyBorder       : false,
+           border           : false,
+           autoExpandColumn : this.dataType,
+           columns          : [
+               {id: 'items', header: _('Items'), sortable: true, dataIndex: 'items'},
+               {header: _('From'), sortable: true, dataIndex: 'from', width: 50}
+           ],
+           viewConfig : {
+               forceFit      : true,
+               emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
+               deferEmptyText: false
+           },
+           sm         : new Ext.grid.RowSelectionModel({singleSelect: true}),
+           store      : new Ext.data.Store({
+               autoLoad : this.loadStore,
+               proxy    : new Ext.data.HttpProxy({
+                   url : url
+               }),
+               listeners: {
+                   scope: this,
+                   load: function() {
+
+                       if( this.dataType == 'entities' ) {
+                           Ext.getCmp(this.prefix + '-' + this.fid).panEntities = true;
+                       } else if( this.dataType == 'acronyms' ) {
+                           Ext.getCmp(this.prefix + '-' + this.fid).panAcronyms = true;
+                       }
+                       Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
+                   }
+
+               },
+               reader : new Ext.data.JsonReader(
+               {
+                   root          : 'Items',
+                   totalProperty : 'nbItems',
+                   id            : 'id'
+               }, Ext.data.Record.create([
+                   {
+                       name    : 'id',
+                       mapping : 'id'
+                   }, {
+                       name    : 'from',
+                       mapping : 'from'
+                   }, {
+                       name    : 'items',
+                       mapping : 'items'
+                   }, {
+                       name    : 'value',
+                       mapping : 'value'
+                   }
+                   ])
+               )
+           }),
+           tbar: [
+           {
+                scope   : this,
+                tooltip : _('<b>Load/Refresh</b>'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+            },
+               _('Filter: '), ' ',
+               new Ext.form.TwinTriggerField({
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    listeners : {
+                        specialkey : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click: function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        this.ownerCt.ownerCt.store.clearFilter();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var v = this.getValue(), regexp;
+
+                        if (v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'from', 'items', 'value'
+                        this.ownerCt.ownerCt.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.from)  ||
+                                regexp.test(record.data.items) ||
+                                regexp.test(record.data.value)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
+                    }
+                })
+           ]
+       });
+       ui.component._EntitiesAcronymsPanel.grid.superclass.initComponent.call(this);
+
+       this.on('rowclick',    this.onRowClick,    this);
+       this.on('rowdblclick', this.onRowDblClick, this);
+
+    }
+});
+
+
+//------------------------------------------------------------------------------
+// EntitiesAcronymsGrid
+// config - {prefix, fid, ftype, loadStore}
+ui.component.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
+{
+    initComponent : function()
+    {
+        var panelDesc;
+
+        if( this.dataType == 'entities' ) {
+            panelDesc = _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.');
+        } else if( this.dataType == 'acronyms' ) {
+            panelDesc = _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.');
+        }
+
+        Ext.apply(this,
+        {
+            layout: 'border',
+            border: false,
+            items : [
+                new ui.component._EntitiesAcronymsPanel.grid({
+                    dataType          : this.dataType,
+                    prefix            : this.prefix,
+                    fid               : this.fid,
+                    ftype             : this.ftype,
+                    loadStore         : this.loadStore
+                }),
+                {
+                    xtype        : 'panel',
+                    id           : this.dataType + '-details-'+this.fid,
+                    region       : 'south',
+                    split        : true,
+                    height       : 100,
+                    autoScroll   : true,
+                    bodyBorder: false,
+                    bodyCssClass : this.dataType + '-details',
+                    html         : panelDesc
+                }
+            ]
+        });
+
+        ui.component.EntitiesAcronymsPanel.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._ErrorFileGrid');
+
+//------------------------------------------------------------------------------
+// ErrorFileGrid internals
+
+// ErrorFileGrid store
+ui.component._ErrorFileGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesError'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'maintainer'},
+            {name : 'type'},
+            {name : 'value_en'},
+            {name : 'value_lang'},
+            {name : 'needcommit'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'path',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners : {
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// ErrorFileGrid columns definition
+ui.component._ErrorFileGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Type'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'type'
+}, {
+    header    : _('Maintainer'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'maintainer'
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// ErrorFileGrid view
+ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
+    emptyText      : '<div style="text-align: center;">'+_('No Files')+'</div>',
+    deferEmptyText : false,
+    forceFit       : true,
+    startCollapsed : true,
+    groupTextTpl   : '{[values.rs[0].data.path]} ' +
+                   '({[values.rs.length]} ' +
+                   '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
+    getRowClass : function(record)
+    {
+        if (record.data.needcommit) {
+            return 'file-need-commit';
+        }
+        return false;
+    }
+});
+
+// ErrorFileGrid context menu
+// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
+ui.component._ErrorFileGrid.menu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._ErrorFileGrid.menu.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconFilesError',
+                handler : function()
+                {
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIdx, this.event
+                    );
+                }
+            }, {
+                scope   : this,
+                hidden  : this.hideCommit,
+                text    : ('View diff'),
+                iconCls : 'iconViewDiff',
+                handler : function()
+                {
+                    // Add tab for the diff
+                    Ext.getCmp('main-panel').add({
+                        xtype      : 'panel',
+                        id         : 'diff_panel_' + this.rowIdx,
+                        title      : _('Diff'),
+                        tabTip     : _('Diff'),
+                        closable   : true,
+                        autoScroll : true,
+                        iconCls    : 'iconTabLink',
+                        html       : '<div id="diff_content_' + this.rowIdx +
+                                     '" class="diff-content"></div>'
+                    });
+                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
+
+                    Ext.get('diff_panel_' + this.rowIdx).mask(
+                        '<img src="themes/img/loading.gif" ' +
+                        'style="vertical-align: middle;" />' +
+                        _('Please, wait...')
+                    );
+
+                    // Load diff data
+                    XHR({
+                        scope   : this,
+                        params  : {
+                            task     : 'getDiff',
+                            DiffType : 'file',
+                            FilePath : this.lang + this.fpath,
+                            FileName : this.fname
+                        },
+                        success : function(r)
+                        {
+                            var o = Ext.util.JSON.decode(r.responseText);
+                            // We display in diff div
+                            Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
+                            Ext.get('diff_panel_' + this.rowIdx).unmask();
+                        }
+                    });
+                }
+            }, '-', {
+                text    : _('About error type'),
+                iconCls : 'iconHelp',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('FE-help')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'FE-help',
+                            title      : _('About error type'),
+                            iconCls    : 'iconHelp',
+                            closable   : true,
+                            autoScroll : true,
+                            autoLoad   : './error'
+                        });
+
+                    }
+                    Ext.getCmp('main-panel').setActiveTab('FE-help');
+                }
+            }]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// ErrorFileGrid
+ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    border           : false,
+    autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+    view             : ui.component._ErrorFileGrid.view,
+    columns          : ui.component._ErrorFileGrid.columns,
+    listeners        : {
+        render : function(grid)
+        {
+            grid.view.refresh();
+        }
+    },
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+
+        var FilePath = grid.store.getAt(rowIndex).data.path,
+            FileName = grid.store.getAt(rowIndex).data.name;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._ErrorFileGrid.menu({
+            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
+            grid       : grid,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : PhDOE.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick : function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
+
+    openFile : function(rowId) 
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FE-' + PhDOE.userLang + FilePath + FileName),
+            error       = [],
+            vcsPanel, filePanel;
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
+
+            // Find all error for this file to pass to error_type.php page
+            error = [];
+
+            this.store.each(function(record)
+            {
+                if ( record.data.path === FilePath && record.data.name === FileName && !error[record.data.type] ) {
+                    error.push(record.data.type);
+                }
+            });
+
+            vcsPanel = ( PhDOE.userLang === 'en' ) ? [
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                    prefix    : 'FE-LANG',
+                    fid       : FileID,
+                    fpath     : PhDOE.userLang + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                })
+            ] : [
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                    prefix    : 'FE-LANG',
+                    fid       : FileID,
+                    fpath     : PhDOE.userLang + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                }),
+                new ui.component.VCSLogGrid({
+                    layout    : 'fit',
+                    title     : String.format(_('{0} Log'), 'En'),
+                    prefix    : 'FE-EN',
+                    fid       : FileID,
+                    fpath     : 'en' + FilePath,
+                    fname     : FileName,
+                    loadStore : PhDOE.userConf.errorLogLoadData
+                })
+            ];
+
+            filePanel = ( PhDOE.userLang === 'en' ) ? [
+                new ui.component.FilePanel(
+                {
+                    id             : 'FE-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
+                    spellCheckConf : 'errorSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : false,
+                    syncScroll     : false
+                })
+            ] : [
+                new ui.component.FilePanel(
+                {
+                    id             : 'FE-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
+                    spellCheckConf : 'errorSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : true,
+                    syncScroll     : true,
+                    syncScrollConf : 'errorScrollbars'
+                }), new ui.component.FilePanel(
+                {
+                    id             : 'FE-EN-PANEL-' + FileID,
+                    region         : 'east',
+                    title          : _('en File: ') + FilePath + FileName,
+                    prefix         : 'FE',
+                    ftype          : 'EN',
+                    spellCheck     : PhDOE.userConf.errorSpellCheckEn,
+                    spellCheckConf : 'errorSpellCheckEn',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : 'en',
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScroll     : true,
+                    syncScrollConf : 'errorScrollbars'
+                })
+            ];
+
+            Ext.getCmp('main-panel').add({
+                id             : 'FE-' + FileID,
+                title          : FileName,
+                layout         : 'border',
+                iconCls        : 'iconTabError',
+                closable       : true,
+                tabLoaded      : false,
+                panVCSLang     : !PhDOE.userConf.errorDisplayLog,
+                panVCSEn       : ( PhDOE.userLang === 'en' ) ? true : !PhDOE.userConf.errorDisplayLog,
+                panLANGLoaded  : false,
+                panENLoaded    : ( PhDOE.userLang === 'en' ) ? true : false,
+                originTitle    : FileName,
+                defaults       : {split : true},
+                tabTip         : String.format(
+                    _('File with error : in {0}'), FilePath
+                ),
+                listeners: {
+                    resize: function(panel) {
+                        ( PhDOE.userLang !== 'en' ) ? Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2) : '';
+                    }
+                },
+                items : [
+                    {
+                        xtype       : 'panel',
+                        id          : 'FE-error-desc-' + FileID,
+                        region      : 'north',
+                        layout      : 'fit',
+                        title       : _('Error description'),
+                        iconCls     : 'iconFilesError',
+                        collapsedIconCls : 'iconFilesError',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        height      : PhDOE.userConf.errorDescPanelHeight || 150,
+                        collapsible : true,
+                        collapsed   : !PhDOE.userConf.errorDescPanel,
+                        autoScroll  : true,
+                        autoLoad    : './error?dir=' + FilePath +
+                                            '&file=' + FileName,
+                        listeners   : {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanel',
+                                        value : false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanel',
+                                        value : true
+                                    });
+                                }
+                            },
+                            resize: function(a,b,newHeight) {
+
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorDescPanelHeight',
+                                        value : newHeight
+                                    });
+                                }
+                            }
+                        }
+                    }, {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        collapsible : true,
+                        collapsed   : !PhDOE.userConf.errorLogPanel,
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        width       : PhDOE.userConf.errorLogPanelWidth || 375,
+                        listeners: {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorLogPanel',
+                                        value : false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorLogPanel',
+                                        value : true
+                                    });
+                                }
+                            },
+                            resize: function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.errorLogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'errorLogPanelWidth',
+                                        value : newWidth
+                                    });
+                                }
+                            }
+                        },
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            enableTabScroll:true,
+                            defaults    : {autoScroll : true},
+                            items       : [
+                                vcsPanel,
+                                new ui.component.DictionaryGrid({
+                                    layout    : 'fit',
+                                    title     : _('Dictionary'),
+                                    prefix    : 'FE',
+                                    fid       : FileID
+                                }),
+                            {
+                                title  : _('Entities'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'entities',
+                                    prefix    : 'FE',
+                                    ftype     : 'LANG',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.errorEntitiesLoadData
+                                })]
+                            }, {
+                                title  : _('Acronyms'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'acronyms',
+                                    prefix    : 'FE',
+                                    ftype     : 'LANG',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.errorAcronymsLoadData
+                                })]
+                            }]
+                        }
+                    }, filePanel
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._ErrorFileGrid.store,
+            tbar : [
+                _('Filter: '), ' ',
+                new Ext.form.TwinTriggerField({
+                    id              : 'FE-filter',
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+
+                    validateOnBlur  :  false,
+                    validationEvent : false,
+
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+
+                    listeners : {
+                        keypress : function(field, e)
+                        {
+                            if (e.getKey() === e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click : function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        ui.component._ErrorFileGrid.instance.store.clearFilter();
+                    },
+                    onTrigger2Click : function()
+                    {
+                        var v = this.getValue(), regexp;
+
+                        if (v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path', 'name', 'maintainer' and 'type'
+                        ui.component._ErrorFileGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path)       ||
+                                regexp.test(record.data.name)       ||
+                                regexp.test(record.data.maintainer) ||
+                                regexp.test(record.data.type)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
+                    }
+                })
+            ]
+        });
+        ui.component.ErrorFileGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+
+        // For EN, we hide the column 'maintainer'
+        if( PhDOE.userLang === 'en' ) {
+            this.getColumnModel().setHidden(2, true);
+        }
+
+    }
+});
+
+// singleton
+ui.component._ErrorFileGrid.instance = null;
+ui.component.ErrorFileGrid.getInstance = function(config)
+{
+    if (!ui.component._ErrorFileGrid.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._ErrorFileGrid.instance = new ui.component.ErrorFileGrid(config);
+    }
+    return ui.component._ErrorFileGrid.instance;
+};Ext.namespace('ui','ui.component');
+
+// ExecDiff
+// config - {prefix, fid, fpath, fname, rev1, rev2}
+ui.component.ExecDiff = Ext.extend(Ext.Panel,
+{
+    layout     : 'fit',
+    title      : _('Diff From VCS'),
+    iconCls    : 'iconDiffView',
+    collapsedIconCls : 'iconDiffView',
+    autoScroll : true,
+    plugins    : [Ext.ux.PanelCollapsedTitle],
+    onRender : function(ct, position)
+    {
+        ui.component.ExecDiff.superclass.onRender.call(this, ct, position);
+        this.el.mask(
+            '<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" /> '+
+            _('Loading...')
+        );
+
+        // Load diff data
+        XHR({
+            scope   : this,
+            params  : {
+                task     : 'getDiff',
+                DiffType : 'vcs',
+                FilePath : 'en' + this.fpath,
+                FileName : this.fname,
+                Rev1     : this.rev1,
+                Rev2     : this.rev2
+            },
+            success : function(response)
+            {
+                var o = Ext.util.JSON.decode(response.responseText);
+                // We display in diff div
+                Ext.get(this.prefix + '-diff-' + this.fid).dom.innerHTML = o.content;
+
+                this.el.unmask();
+
+            },
+            callback: function() {
+                Ext.getCmp(this.prefix + '-' + this.fid).panDiffLoaded = true;
+                Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
+            }
+        });
+    },
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            html : '<div id="' + this.prefix + '-diff-' + this.fid +
+                    '" class="diff-content"></div>'
+        });
+        ui.component.ExecDiff.superclass.initComponent.call(this);
+    }
+});
+Ext.namespace('ui','ui.component','ui.component._FilePanel');
+
+//------------------------------------------------------------------------------
+// FilePanel internals
+Ext.namespace('ui.component._FilePanel.tbar.menu');
+Ext.namespace('ui.component._FilePanel.tbar.items');
+
+// FilePanel editor indo/redo items
+ui.component._FilePanel.tbar.items.undoRedo = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.undoRedo.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
+                scope   : this,
+                tooltip : _('<b>Undo</b>'),
+                disabled: true,
+                iconCls : 'iconUndo',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo(this.id_prefix, this.fid);
+                }
+            },{
+                id      : this.id_prefix + '-FILE-' + this.fid + '-btn-redo',
+                scope   : this,
+                tooltip : _('<b>Redo</b>'),
+                disabled: true,
+                iconCls : 'iconRedo',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo(this.id_prefix, this.fid);
+                }
+            }]
+        });
+    }
+});
+
+
+// FilePanel editor user notes item
+ui.component._FilePanel.tbar.items.usernotes = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.usernotes.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.items.usernotes, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                    xtype: 'usernotes',
+                    file : this.file,
+                    fid  : Ext.id()
+            }]
+        });
+    }
+});
+
+
+// FilePanel editor commun items
+ui.component._FilePanel.tbar.items.common = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.common.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                tooltip : _('Close Tab'),
+                iconCls : 'iconClose',
+                handler : function()
+                {
+                    Ext.getCmp('main-panel').remove(this.prefix + '-' + this.fid);
+                }
+            },{
+                id      : this.prefix + '-' + this.fid + '-btn-tabLeft-' + this.ftype,
+                scope   : this,
+                tooltip : _('Go to previous tab'),
+                iconCls : 'iconArrowLeft',
+                handler : this.goToPreviousTab
+            },{
+                id      : this.prefix + '-' + this.fid + '-btn-tabRight-' + this.ftype,
+                scope   : this,
+                tooltip : _('Go to next tab'),
+                disabled: true,
+                iconCls : 'iconArrowRight',
+                handler : this.goToNextTab
+            }]
+        });
+    }
+});
+
+// FilePanel editor menu for LangFile
+ui.component._FilePanel.tbar.menu.lang = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.menu.lang.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
+{
+    text    : _('MarkUp'),
+    iconCls : 'iconInsertCode',
+    init    : function()
+    {
+        Ext.apply(this,
+        {
+            menu : new Ext.menu.Menu({
+                items : [{
+                    scope   : this,
+                    text    : _('Reviewed tag'),
+                    handler : function()
+                    {
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            2, 'end', "\n<!-- Reviewed: no -->"
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Revcheck tag'),
+                    handler : function()
+                    {
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            2, "end",
+                            "\n<!-- EN-Revision: XX Maintainer: " +
+                            PhDOE.userLogin + " Status: ready -->"
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }]
+            })
+        });
+    }
+});
+
+// FilePanel editor menu for ENFile
+ui.component._FilePanel.tbar.menu.en = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.menu.en.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
+{
+    text    : _('MarkUp'),
+    iconCls : 'iconInsertCode',
+    init    : function()
+    {
+        Ext.apply(this,
+        {
+            menu : new Ext.menu.Menu({
+                items : [{
+                    scope   : this,
+                    text    : _('Description section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            " <refsect1 role=\"description\"><!-- {{{ -->\r\n  ",
+                            "&reftitle.description;\r\n  ",
+                            "<methodsynopsis>\r\n   ",
+                            "<!-- Example: All functions have this -->\r\n   ",
+                            "<type>thereturned type</type><methodname>func_name</methodname>\r\n   ",
+                            "<!-- Example: Required parameter -->\r\n   ",
+                            "<methodparam><type>param1type</type><parameter>firstparameter</parameter></methodparam>\r\n   ",
+                            "<!-- Example: Optional parameter, also by reference -->\r\n   ",
+                            "<methodparam choice=\"opt\"><type>int</type><parameter role=\"reference\">secondparameter</parameter></methodparam>\r\n   ",
+                            "<!-- Example: If no methodparams exist (void), use this -->\r\n   ",
+                            "<void />\r\n  ",
+                            "</methodsynopsis>\r\n  ",
+                            "<para>\r\n   ",
+                            "The function description goes here.\r\n  ",
+                            "</para>\r\n ",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Parameters section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n",
+                            "&reftitle.parameters;\r\n",
+                            "<para>\r\n",
+                            "<variablelist>\r\n",
+                            "<varlistentry>\r\n",
+                            "<term><parameter>firstparameter</parameter></term>\r\n",
+                            "<listitem>\r\n",
+                            "<para>\r\n",
+                            "Its description\r\n",
+                            "</para>\r\n",
+                            "</listitem>\r\n",
+                            "</varlistentry>\r\n",
+                            "<varlistentry>\r\n",
+                            "<term>\r\n",
+                            "<parameter>secondparameter</parameter>\r\n",
+                            "</term>\r\n",
+                            "<listitem>\r\n",
+                            "<para>\r\n",
+                            "Its description\r\n",
+                            "</para>\r\n",
+                            "</listitem>\r\n",
+                            "</varlistentry>\r\n",
+                            "</variablelist>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Return section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n",
+                            "&reftitle.returnvalues;\r\n",
+                            "<para>\r\n",
+                            "What this function returns, first on success, then failure.\r\n",
+                            "If simply true on success and false on failure, just use &return.success; here.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Error section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n",
+                            "&reftitle.errors;\r\n",
+                            "<para>\r\n",
+                            "When does this function issue E_* level errors, and/or throw exceptions.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->\r\n"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Unicode section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n",
+                            "&reftitle.unicode;\r\n",
+                            "<para>\r\n",
+                            "Information specific to unicode, from the PHP 6 changes.\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Changelog section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n",
+                            "&reftitle.changelog;\r\n",
+                            "<para>\r\n",
+                            "<informaltable>\r\n",
+                            "<tgroup cols=\"2\">\r\n",
+                            "<thead>\r\n",
+                            "<row>\r\n",
+                            "<entry>&Version;</entry>\r\n",
+                            "<entry>&Description;</entry>\r\n",
+                            "</row>\r\n",
+                            "</thead>\r\n",
+                            "<tbody>\r\n",
+                            "<row>\r\n",
+                            "<entry>Enter the version of change here</entry>\r\n",
+                            "<entry>\r\n",
+                            "Describe the change\r\n",
+                            "</entry>\r\n",
+                            "</row>\r\n",
+                            "</tbody>\r\n",
+                            "</tgroup>\r\n",
+                            "</informaltable>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Examples section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n",
+                            "&reftitle.examples;\r\n",
+                            "<para>\r\n",
+                            "<example xml:id=\"function-name.example.basic\"><!-- {{{ -->\r\n",
+                            "<title><function>function-name</function> example</title>\r\n",
+                            "<para>\r\n",
+                            "Any text that describes the purpose of the example, or what\r\n",
+                            "goes on in the example should be here. (Inside the <example> tag, not out).\r\n",
+                            "</para>\r\n",
+                            "<programlisting role=\"php\">\r\n",
+                            "<![CDATA[\r\n",
+                            "<?php\r\n",
+                            "if ($anexample === true) {\r\n",
+                            "echo 'Use the PEAR Coding standards';\r\n",
+                            "}\r\n",
+                            "if ($thereisoutput === 'and it is multiple lines') {\r\n",
+                            "echo 'Use a screen like we did below';\r\n",
+                            "}\r\n",
+                            "?>\r\n",
+                            "]]>\r\n",
+                            "</programlisting>\r\n",
+                            "&example.outputs.similar;\r\n",
+                            "<screen>\r\n",
+                            "<![CDATA[\r\n",
+                            "Use the PEAR Coding standards\r\n",
+                            "Use a screen like we did below\r\n",
+                            "]]>\r\n",
+                            "</screen>\r\n",
+                            "</example><!-- }}} -->\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Notes section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n",
+                            "&reftitle.notes;\r\n",
+                            "<caution>\r\n",
+                            "<para>\r\n",
+                            "Any notes that don't fit anywhere else should go here.\r\n",
+                            "90% of the time, notes, warnings or cautions are better placed in the\r\n",
+                            "parameters section. Consider that before using this section!\r\n",
+                            "</para>\r\n",
+                            "</caution>\r\n",
+                            "&note.language-construct;\r\n",
+                            "&note.not-bin-safe;\r\n",
+                            "&note.registerglobals;\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('SeeAlso section'),
+                    handler : function()
+                    {
+                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+
+                        Ext.getCmp(this.comp_id).insertIntoLine(
+                            position.line, 0,
+                            [
+                            "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n",
+                            "&reftitle.seealso;\r\n",
+                            "<para>\r\n",
+                            "<simplelist>\r\n",
+                            "<member><function>somefunc</function></member>\r\n",
+                            "<member><function>another_func</function></member>\r\n",
+                            "<member>The <link linkend=\"something\">something appendix</link></member>\r\n",
+                            "</simplelist>\r\n",
+                            "</para>\r\n",
+                            "</refsect1><!-- }}} -->"
+                            ].join('')
+                            );
+                        Ext.getCmp(this.comp_id).focus();
+                    }
+                }]
+            })
+        });
+    }
+});
+
+// FilePanel editor reindent item & tags menu
+ui.component._FilePanel.tbar.items.reindentTags = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.reindentTags.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                tooltip : _('<b>Enable / Disable</b> spellChecking'),
+                enableToggle : true,
+                iconCls : 'iconSpellCheck',
+                pressed : PhDOE.userConf[this.spellCheckConf],
+                handler : function(btn)
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
+                    new ui.task.UpdateConfTask({
+                        item  : this.spellCheckConf,
+                        value : btn.pressed,
+                        notify: false
+                    });
+                }
+            },{
+                scope   : this,
+                tooltip : _('<b>Re-indent</b> all this file'),
+                iconCls : 'iconIndent',
+                handler : function()
+                {
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
+                }
+            },(this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({
+                comp_id : this.id_prefix + '-FILE-' + this.fid
+            }) :
+            new ui.component._FilePanel.tbar.menu.lang({
+                comp_id : this.id_prefix + '-FILE-' + this.fid
+            })
+            ]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// FilePanel
+// config - {
+//    id, title, prefix, ftype {'EN' | 'LANG'},
+//    fid, fpath, fname, lang,
+//    readOnly,                    indicate this file is readonly
+//    isTrans                      pendingTranslate file config
+//    isPatch, fuid,               pending patch file config
+//    parser, storeRecord,
+//    syncScrollCB {true | false}, display sync-scroll checkbox
+//    syncScroll {true | false},   indicate whether sync the scroll with corresponding file
+//    syncScrollConf               syncScrollConf attribute name in userConf
+//    spellCheck {true | false},   indicate whether spellCheck is enable or not
+//    spellCheckConf               spellCheckConf attribute name in userConf
+// }
+ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
+{
+    activeScroll : false,  // scroll lock
+
+    goToPreviousTab : function()
+    {
+        var currentTabId = this.prefix+'-'+this.fid,
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            previousTabId, currentTabIndex, i;
+
+        for( i=0; i < tabs.length; i++ ) {
+            if( tabs[i].id === currentTabId ) {
+                currentTabIndex = i;
+            }
+        }
+
+        // What's the ID of the previous tab ? There is always the first tab, with id's MainInfoTabPanel
+        // If currentTabIndex is 1, the previous is always MainInfoTabPanel, so we don't compute it
+        if( currentTabIndex === 1 ) {
+            previousTabId = 'MainInfoTabPanel';
+        } else {
+            previousTabId = tabs[currentTabIndex - 1].id;
+        }
+
+        // We go to the previous
+        Ext.getCmp('main-panel').setActiveTab(previousTabId);
+    },
+
+    goToNextTab : function()
+    {
+        var currentTabId = this.prefix+'-'+this.fid,
+            tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+            nextTabId    = false, currentTabIndex, i;
+
+        for( i=0; i < tabs.length; i++ ) {
+            if( tabs[i].id === currentTabId ) {
+                currentTabIndex = i;
+            }
+        }
+
+        // What's the ID of the next tab ?
+        if( tabs[currentTabIndex + 1] ) {
+            // We go to the previous
+            nextTabId = tabs[currentTabIndex + 1].id;
+            Ext.getCmp('main-panel').setActiveTab(nextTabId);
+        }
+    },
+
+    initComponent : function()
+    {
+        var id_prefix = this.prefix + '-' + this.ftype;
+
+        this.bbar = (this.syncScrollCB) ? [{
+            height    : 22,
+            xtype     : 'checkbox',
+            name      : 'needUpdateScrollbars',
+            hideLabel : true,
+            checked   : PhDOE.userConf[this.syncScrollConf],
+            boxLabel  : _('Synchronize scroll bars'),
+            listeners : {
+                scope : this,
+                check : function(c)
+                {
+                    new ui.task.UpdateConfTask({
+                        item  : this.syncScrollConf,
+                        value : c.getValue(),
+                        notify: false
+                    });
+                },
+                render : function(c)
+                {
+                    Ext.DomHelper.insertHtml(
+                        'beforeBegin', c.el.dom,
+                        [
+                        '<div style="display: inline;" class="x-statusbar">',
+                        '<span class="x-status-text-panel">', _('Line: '),
+                        '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+                        '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+                        '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+                        '</div>&nbsp;&nbsp;'
+                        ].join('')
+                        );
+                }
+            }
+        }] : [{
+            xtype     : 'panel',
+            height    : 22,
+            baseCls   : '',
+            bodyStyle : 'padding-top:5px;',
+            html      : [
+            '<div style="display: inline;" class="x-statusbar">',
+            '<span class="x-status-text-panel">', _('Line: '),
+            '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+            '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+            '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+            '</div>&nbsp;&nbsp;'
+            ].join('')
+        }];
+
+        if (!this.readOnly) {
+            this.tbar = (this.isPatch) ? [
+            // patch file pane tbar
+            new ui.component._FilePanel.tbar.items.common({
+                prefix: this.prefix,
+                fid: this.fid,
+                ftype: this.ftype,
+                goToPreviousTab: this.goToPreviousTab,
+                goToNextTab: this.goToNextTab
+            }),
+            {
+                xtype :'buttongroup',
+                items : [{
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                    scope    : this,
+                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
+                    iconCls  : 'iconSaveFile',
+                    handler  : function()
+                    {
+                        new ui.task.AcceptPatchTask({
+                            fid         : this.fid,
+                            fpath       : this.fpath,
+                            fname       : this.fname,
+                            fuid        : this.fuid,
+                            storeRecord : this.storeRecord
+                        });
+                    }
+                }, {
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
+                    scope    : this,
+                    tooltip  : _('<b>Reject</b> this patch'),
+                    iconCls  : 'iconPageDelete',
+                    handler  : function()
+                    {
+                        new ui.task.RejectPatchTask({
+                            fid         : this.fid,
+                            fuid        : this.fuid,
+                            storeRecord : this.storeRecord
+                        });
+                    }
+                }]
+            }, new ui.component._FilePanel.tbar.items.undoRedo({
+                id_prefix : id_prefix,
+                fid       : this.fid
+            }),
+            new ui.component._FilePanel.tbar.items.reindentTags({
+                id_prefix      : id_prefix,
+                fid            : this.fid,
+                lang           : this.lang,
+                spellCheck     : this.spellCheck,
+                spellCheckConf : this.spellCheckConf
+            }), '->', 
+            new ui.component._FilePanel.tbar.items.usernotes({
+                fid : this.fid,
+                file: this.lang + this.fpath + this.fname
+            })
+            ] : [
+            // en/lang file pane tbar
+            new ui.component._FilePanel.tbar.items.common({
+                prefix          : this.prefix,
+                fid             : this.fid,
+                ftype           : this.ftype,
+                goToPreviousTab : this.goToPreviousTab,
+                goToNextTab     : this.goToNextTab
+            }), {
+                xtype : 'buttongroup',
+                items : [{
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
+                    scope    : this,
+                    tooltip  : _('<b>Save</b> this file (CTRL+s)'),
+                    iconCls  : 'iconSaveFile',
+                    disabled : true,
+                    handler  : function()
+                    {
+                        // From "All files" or "Need translate file", we only save the file
+                        if (this.prefix === 'AF') {
+                            new ui.task.SaveFileTask({
+                                prefix      : this.prefix,
+                                ftype       : this.ftype,
+                                fid         : this.fid,
+                                fpath       : this.fpath,
+                                fname       : this.fname,
+                                lang        : this.lang,
+                                storeRecord : this.storeRecord
+                            });
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                            return;
+                        }
+                        if (this.prefix === 'FNT' ) {
+                            new ui.task.SaveTransFileTask({
+                                prefix      : this.prefix,
+                                ftype       : this.ftype,
+                                fid         : this.fid,
+                                fpath       : this.fpath,
+                                fname       : this.fname,
+                                lang        : this.lang,
+                                storeRecord : this.storeRecord
+                            });
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                            return;
+                        }
+
+                        // We check the conf option : onSaveFile. Can be : ask-me, always or never
+                        if( !PhDOE.userConf.onSaveFile ) {
+                            PhDOE.userConf.onSaveFile = 'ask-me';
+                        }
+
+                        switch (PhDOE.userConf.onSaveFile) {
+
+                            case 'always':
+                                new ui.task.CheckFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                }); // include SaveFileTask when no err
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                break;
+
+                            case 'never':
+                                new ui.task.SaveFileTask({
+                                    prefix      : this.prefix,
+                                    ftype       : this.ftype,
+                                    fid         : this.fid,
+                                    fpath       : this.fpath,
+                                    fname       : this.fname,
+                                    lang        : this.lang,
+                                    storeRecord : this.storeRecord
+                                });
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                break;
+
+                            case 'ask-me':
+                                Ext.MessageBox.show({
+                                    title   : _('Confirm'),
+                                    msg     : _('Do you want to check for errors before saving?'),
+                                    icon    : Ext.MessageBox.INFO,
+                                    buttons : Ext.MessageBox.YESNOCANCEL,
+                                    scope   : this,
+                                    fn      : function (btn)
+                                    {
+                                        if (btn === 'no') {
+
+                                            new ui.task.SaveFileTask({
+                                                prefix      : this.prefix,
+                                                ftype       : this.ftype,
+                                                fid         : this.fid,
+                                                fpath       : this.fpath,
+                                                fname       : this.fname,
+                                                lang        : this.lang,
+                                                storeRecord : this.storeRecord
+                                            });
+                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+
+                                        } else if (btn === 'yes') {
+
+                                            new ui.task.CheckFileTask({
+                                                prefix      : this.prefix,
+                                                ftype       : this.ftype,
+                                                fid         : this.fid,
+                                                fpath       : this.fpath,
+                                                fname       : this.fname,
+                                                lang        : this.lang,
+                                                storeRecord : this.storeRecord
+                                            }); // include SaveFileTask when no err
+                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
+                                        }
+                                    }
+                                });
+                                break;
+                        }
+                    }
+                }, {
+                    id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
+                    scope    : this,
+                    tooltip  : _('<b>Save as</b> a patch'),
+                    iconCls  : 'iconSaveAsFile',
+                    disabled : true,
+                    handler  : function()
+                    {
+                        new ui.component.PatchPrompt({
+                            prefix       : this.prefix,
+                            ftype        : this.ftype,
+                            fid          : this.fid,
+                            fpath        : this.fpath,
+                            fname        : this.fname,
+                            lang         : this.lang,
+                            defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
+                        }).show();
+                    }
+                }]
+            }, new ui.component._FilePanel.tbar.items.undoRedo({
+                id_prefix : id_prefix,
+                fid       : this.fid
+            }),
+            new ui.component._FilePanel.tbar.items.reindentTags({
+                id_prefix      : id_prefix,
+                fid            : this.fid,
+                lang           : this.lang,
+                spellCheck     : this.spellCheck,
+                spellCheckConf : this.spellCheckConf
+            }), '->',
+            new ui.component._FilePanel.tbar.items.usernotes({
+                fid : this.fid,
+                file: this.lang + this.fpath + this.fname
+            })
+            ];
+        } else {
+            this.tbar = [
+                new ui.component._FilePanel.tbar.items.common({
+                    prefix          : this.prefix,
+                    fid             : this.fid,
+                    ftype           : this.ftype,
+                    goToPreviousTab : this.goToPreviousTab,
+                    goToNextTab     : this.goToNextTab
+                }), '->', (( this.ftype !== 'GGTRANS' &&  this.ftype !== 'ORIGIN' ) ?
+                            new ui.component._FilePanel.tbar.items.usernotes({
+                                fid : this.fid,
+                                file: this.lang + this.fpath + this.fname
+                            })
+                            : '' )
+            ];
+        }
+
+        Ext.apply(this,
+        {
+            title       : this.title,
+            cls         : 'code-mirror-panel',
+            originTitle : this.title,
+            items       : [{
+                xtype      : 'codemirror',
+                id         : id_prefix + '-FILE-' + this.fid,
+                readOnly   : this.readOnly,
+                parser     : this.parser,
+                spellCheck : this.spellCheck,
+                isModified : false,
+                listeners  : {
+                    scope      : this,
+                    initialize : function()
+                    {
+                        var herePath, hereName;
+
+                        if( this.isPatch )
+                        {
+                            herePath = this.fpath;
+                            hereName = this.fname + '.' + this.fuid + '.patch';
+                        } else if ( this.isTrans )
+                        {
+                            if( this.storeRecord.data.needcommit )
+                            {
+                                herePath = this.lang + this.fpath;
+                                hereName = this.fname+'.new';
+                            } else {
+                                herePath = 'en' + this.fpath;
+                                hereName = this.fname;
+                            }
+                        } else {
+                            herePath = this.lang + this.fpath;
+                            hereName = this.fname;
+                        }
+
+                        new ui.task.GetFileTask({
+                            prefix   : this.prefix,
+                            ftype    : this.ftype,
+                            fid      : this.fid,
+                            fpath    : herePath,
+                            fname    : hereName,
+                            skeleton : this.skeleton
+                        });
+                    },
+
+                    coderestored : function()
+                    {
+                        // This should never occurs on readOnly file
+                        if( this.readOnly ) {
+                            return;
+                        }
+
+                        if ( Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified ) {
+                            // Remove [modified] in title
+                            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
+                                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
+                                );
+
+                            // Do we need to remove the red mark into the Tab title ?
+                            if(
+                                ( this.ftype === 'LANG' && PhDOE.userLang !== 'en' )
+                                ||
+                                this.ftype === 'EN'
+                            ) {
+
+                                if( (this.ftype === 'EN'   && !Ext.getCmp(this.prefix + '-LANG-FILE-' + this.fid).isModified ) ||
+                                    (this.ftype === 'LANG' && !Ext.getCmp(this.prefix + '-EN-FILE-'   + this.fid).isModified ) ) {
+
+                                    Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                        Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                                    );
+                                }
+                            } else {
+                                Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                    Ext.getCmp(this.prefix + '-' + this.fid).originTitle
+                                );
+                            }
+
+                            // Desactivate save button
+                            if ( !this.isPatch ) {
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
+                            }
+
+                            // Mark as modified
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+                        }
+                    },
+
+                    codemodified : function()
+                    {
+                        // This should never occurs on readOnly file
+                        if( this.readOnly ) {
+                            return;
+                        }
+
+                        var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
+                            cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+
+                        if ( !cmpFile.isModified )
+                        {
+                            // Add an [modified] in title
+                            cmpPanel.setTitle(
+                                cmpPanel.permlink    +
+                                cmpPanel.originTitle +
+                                ' <span style="color:#ff0000; font-weight: bold;">[' + _('modified') + ']</span>'
+                            );
+
+                            // Add in tabpanel
+                            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
+                                Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
+                                ' <t style="color:#ff0000; font-weight: bold;">*</t>'
+                            );
+
+                            // Activate save button
+                            if ( !this.isPatch )
+                            {
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
+                            }
+
+                            // Enable the undo btn
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-undo').enable();
+
+                            // Mark as modified
+                            cmpFile.isModified = true;
+                        }
+                    },
+
+                    cursormove : function(line, caracter)
+                    {
+                        Ext.get(id_prefix + '-status-line-' + this.fid).dom.innerHTML = line;
+                        Ext.get(id_prefix + '-status-col-'  + this.fid).dom.innerHTML = caracter;
+                    },
+
+                    scroll : function(scrollY)
+                    {
+                        var opp_prefix, opp_panel, opp_file;
+
+                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] )
+                        {
+                            switch (this.ftype) {
+                                case 'EN':
+                                    opp_prefix = this.prefix + '-LANG';
+                                    break;
+                                case 'LANG':
+                                    opp_prefix = this.prefix + '-EN';
+                                    break;
+                                case 'PATCH':
+                                    opp_prefix = this.prefix + '-ORIGIN';
+                                    break;
+                                case 'ORIGIN':
+                                    opp_prefix = this.prefix + '-PATCH';
+                                    break;
+                                case 'TRANS':
+                                    opp_prefix = this.prefix + '-GGTRANS';
+                                    break;
+                                case 'GGTRANS':
+                                    opp_prefix = this.prefix + '-TRANS';
+                                    break;
+                            }
+
+                            opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid);
+                            opp_file  = Ext.getCmp(opp_prefix + '-FILE-'  + this.fid);
+
+                            // scroll lock logic:
+                            // 1. panel-A gains lock if panel-B is not scrolling
+                            // 2. panel-B cannot gain lock to scoll as panel-A gained
+                            // 3. panel-B force panel-A to release the lock
+                            // 4. So.. scrolling won't be propagated
+                            // 5. if panel-A/panel-B scroll again, lock can be gained
+                            if (opp_panel.activeScroll === false) {
+                                this.activeScroll = true;   // gain scroll lock
+                                opp_file.scrollTo(scrollY);
+                            } else {
+                                opp_panel.activeScroll = false; // force release opponent's scroll lock
+                            }
+                        }
+                    }
+                }
+            }]
+        });
+        ui.component.FilePanel.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component','ui.component._GoogleTranslationPanel');
+
+//------------------------------------------------------------------------------
+// GoogleTranslationPanel internals
+
+
+
+//------------------------------------------------------------------------------
+// GoogleTranslationPanel
+ui.component.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
+{
+    border : false,
+    labelAlign: 'top',
+    bodyStyle:'padding:5px',
+    autoScroll : true,
+    getTranslation: function(str) {
+
+        new ui.task.GetGGTranslation({
+            str : str
+        });
+
+    },
+    initComponent : function()
+    {
+        Ext.apply(this, {
+            items:[
+                {
+                    xtype: 'textarea',
+                    anchor: '90%',
+                    fieldLabel: String.format(_('String to translate (en => {0})'), PhDOE.userLang),
+                    name: 'GGTranslate-string',
+                    id: 'GGTranslate-string',
+                    allowBlank:false
+                },{
+                    scope: this,
+                    xtype: 'button',
+                    text: _('Translate !'),
+                    id: 'GGTranslate-btn',
+                    handler: function() {
+                        this.getTranslation(Ext.getCmp('GGTranslate-string').getValue());
+                    }
+                },{
+                    xtype: 'panel',
+                    anchor: '100%',
+                    border : false,
+                    bodyStyle:'padding:5px',
+                    html: '<div id="GGTranslate-result" style="width: 90%; font: 12px tahoma,arial,sans-serif"></div>'
+                }
+            ]
+        });
+        ui.component.GoogleTranslationPanel.superclass.initComponent.call(this);
+    }
+});
+
+// singleton
+ui.component._GoogleTranslationPanel.instance = null;
+ui.component.GoogleTranslationPanel.getInstance = function(config)
+{
+    if (!ui.component._GoogleTranslationPanel.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._GoogleTranslationPanel.instance = new ui.component.GoogleTranslationPanel(config);
+    }
+    return ui.component._GoogleTranslationPanel.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._MainMenu');
+
+ui.component.MainMenu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component.MainMenu.superclass.constructor.call(this);
+};
+
+
+// Load all available language
+ui.component._MainMenu.store = new Ext.data.Store({
+    proxy    : new Ext.data.HttpProxy({
+        url : './do/getAvailableLanguage'
+    }),
+    reader   : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'code'
+        }, Ext.data.Record.create([
+            {
+                name    : 'code',
+                mapping : 'code'
+            }, {
+                name    : 'iconCls',
+                mapping : 'iconCls'
+            }, {
+                name    : 'name',
+                mapping : 'name'
+            }
+        ])
+    )
+});
+
+ui.component._MainMenu.store.on('load', function(store)
+{
+    // We put the lang libel into Info-Language
+    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
+
+    store.each(function(record) {
+
+        var tmp = new Ext.menu.Item({
+            text    : record.data.name,
+            iconCls : 'mainMenuLang flags ' + record.data.iconCls,
+            disabled: (record.data.code === PhDOE.userLang),
+            handler : function() {
+                
+                XHR({
+                    params  : { task : 'switchLang', lang: record.data.code },
+                    success : function()
+                    {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+
+        Ext.getCmp('MenuLang-ct').add(tmp);
+    });
+
+}, this);
+
+Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
+{
+    id : 'mainMenu',
+    init : function()
+    {
+        var MenuLang = new Ext.menu.Menu({id: 'MenuLang-ct'});
+
+        Ext.apply(this,
+        {
+            items: [{
+                text     : _('Refresh all data'),
+                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
+                iconCls  : 'iconRefresh',
+                handler  : function()
+                {
+                    // We test if there is an update in progress or not
+                    Ext.getBody().mask(
+                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                        _('Verify if there is an update in progress. Please, wait...')
+                    );
+
+                    XHR({
+                        params  : {
+                            task      : 'checkLockFile',
+                            lockFiles : 'project_' + PhDOE.project + '_lock_update_repository|project_' + PhDOE.project + '_lock_apply_tools'
+                        },
+                        success : function()
+                        {
+                            // Remove wait msg
+                            Ext.getBody().unmask();
+                            Ext.MessageBox.show({
+                                title   : _('Status'),
+                                msg     : _('There is currently an update in progress.<br/>You can\'t perform an update now.'),
+                                buttons : Ext.MessageBox.OK,
+                                icon    : Ext.MessageBox.INFO
+                            });
+                        },
+                        failure: function() {
+                            Ext.getBody().unmask();
+                            new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
+                        }
+                    });
+                }
+            }, {
+                text    : _('Build tools'),
+                handler : function() { return false; },
+                menu : new Ext.menu.Menu({
+                    items : [{
+                        text     : _('Check build'),
+                        disabled : (PhDOE.userLogin === 'anonymous'),
+                        iconCls  : 'iconCheckBuild',
+                        handler  : function()
+                        {
+                            // We test if there is a check in progress for this language
+                            Ext.getBody().mask(
+                                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                _('Verify if there is a check in progress. Please, wait...')
+                            );
+
+                            XHR({
+                                params  :
+                                {
+                                    task     : 'checkLockFile',
+                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+                                },
+                                success : function()
+                                {
+                                    // Remove wait msg
+                                    Ext.getBody().unmask();
+
+                                    Ext.MessageBox.show({
+                                        title   : _('Status'),
+                                        msg     : _('There is currently a check in progress for this language.<br/>You can\'t perform a new check now.'),
+                                        buttons : Ext.MessageBox.OK,
+                                        icon    : Ext.MessageBox.INFO
+                                    });
+                                },
+                                failure : function()
+                                {
+                                    // Remove wait msg
+                                    Ext.getBody().unmask();
+
+                                    new ui.component.CheckBuildPrompt().show(
+                                        Ext.get('acc-need-update')
+                                    );
+                                }
+                            });
+                        }
+                    }, {
+                        text    : _('Show last failed build'),
+                        iconCls : 'iconBuildStatus',
+                        handler : function()
+                        {
+                            var tab = Ext.getCmp('tab-build-status');
+
+                            if (! tab ) {
+                                // if tab not exist, create new tab
+                                Ext.getCmp('main-panel').add({
+                                    id       : 'tab-build-status',
+                                    title    : _('Last failed build'),
+                                    iconCls  : 'iconBuildStatus',
+                                    layout   : 'fit',
+                                    closable : true,
+                                    items    : [ new ui.component.BuildStatus() ]
+                                });
+                            }
+
+                            Ext.getCmp('main-panel').setActiveTab('tab-build-status');
+                        }
+                    }]
+                })
+            }, {
+                text    : _('EN tools'),
+                handler : function() { return false; },
+                menu : new Ext.menu.Menu({
+                    items : [{
+                        text    : _('Script check entities'),
+                        iconCls : 'iconCheckEntities',
+                        handler : function() { return false; },
+                        menu    : new Ext.menu.Menu({
+                            items   : [{
+                                text    : _('View the last result'),
+                                id      : 'btn-check-entities-view-last-result',
+                                iconCls : 'iconTabView',
+                                handler : function()
+                                {
+                                    var tab = Ext.getCmp('tab-check-entities');
+
+                                    if ( ! tab ) {
+                                        // if tab not exist, create new tab
+                                        Ext.getCmp('main-panel').add({
+                                            id       : 'tab-check-entities',
+                                            title    : _('Check entities'),
+                                            iconCls  : 'iconCheckEntities',
+                                            layout   : 'fit',
+                                            closable : true,
+                                            items    : [new ui.component.CheckEntities()]
+                                        });
+                                    }
+                                    Ext.getCmp('main-panel').setActiveTab('tab-check-entities');
+                                }
+                            }, {
+                                text    : _('Run this script'),
+                                iconCls : 'iconRun',
+                                disabled: (PhDOE.userLogin === 'anonymous'),
+                                handler : function()
+                                {
+                                    // We test if there is a check in progress for this language
+                                    Ext.getBody().mask(
+                                        '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                        _('Verify if there is an entities check in progress. Please, wait...')
+                                    );
+
+                                    XHR({
+                                        params  :
+                                        {
+                                            task     : 'checkLockFile',
+                                            lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
+                                        },
+                                        success : function()
+                                        {
+                                            // Remove wait msg
+                                            Ext.getBody().unmask();
+
+                                            Ext.MessageBox.show({
+                                                title   : _('Status'),
+                                                msg     : _('There is currently a check in progress for the entities.<br/>You can\'t perform a new check now.'),
+                                                buttons : Ext.MessageBox.OK,
+                                                icon    : Ext.MessageBox.INFO
+                                            });
+                                        },
+                                        failure : function()
+                                        {
+                                            // Remove wait msg
+                                            Ext.getBody().unmask();
+
+                                            if( ! Ext.getCmp('win-check-entities') ) {
+                                                new ui.component.CheckEntitiesPrompt();
+                                            }
+                                            Ext.getCmp('win-check-entities').show(Ext.get('mainMenu'));
+
+                                        }
+                                    });
+                                }
+                            }]
+                        })
+                    }, {
+                        text    : _('Script check document'),
+                        iconCls : 'iconCheckDoc',
+                        handler : function()
+                        {
+                            var tab = Ext.getCmp('tab-check-doc');
+
+                            if ( ! tab ) {
+                                // if tab not exist, create new tab
+                                Ext.getCmp('main-panel').add({
+                                    id       : 'tab-check-doc',
+                                    title    : 'Check Doc',
+                                    iconCls  : 'iconCheckDoc',
+                                    layout   : 'fit',
+                                    closable : true,
+                                    items    : [ new ui.component.CheckDoc() ]
+                                });
+                            }
+                            Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
+                        }
+                    }]
+                })
+            }, '-', {
+                text    : _('Configure'),
+                iconCls : 'iconConf',
+                tooltip : '<b>Configure</b> this tool',
+                id      : 'winconf-btn',
+                handler : function()
+                {
+                    if( ! Ext.getCmp('win-conf') ) {
+                        new ui.component.EditorConf();
+                    }
+                    Ext.getCmp('win-conf').show(Ext.get('mainMenu'));
+
+                }
+            }, '-', {
+                id      : 'menuLang',
+                iconCls : 'iconSwitchLang',
+                text    : _('Switch to language...'),
+                handler : function() { return false; },
+                menu    : MenuLang
+            }, {
+                text     : _('Erase my personal data'),
+                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
+                iconCls  : 'iconErasePersonalData',
+                handler  : function()
+                {
+                    Ext.MessageBox.confirm(_('Confirm'),
+                        _('This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that ?'),
+                        function(btn)
+                        {
+                            if (btn === 'yes') {
+                                Ext.getBody().mask(
+                                    '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                    _('Please, wait...')
+                                );
+
+                                XHR({
+                                    params  : { task : 'erasePersonalData' },
+                                    success : function(response)
+                                    {
+                                        Ext.getBody().unmask();
+
+                                        Ext.MessageBox.show({
+                                            title   : _('Thanks !'),
+                                            msg     : _('Thank you for using this application !'),
+                                            icon    : Ext.MessageBox.INFO,
+                                            buttons : Ext.MessageBox.OK,
+                                            fn      : function()
+                                            {
+                                                window.location.href = './do/logout';
+                                            }
+                                        });
+                                    },
+                                    failure : function(response)
+                                    {
+                                        PhDOE.winForbidden();
+                                    }
+                                });
+                            } // btn yes
+                        }
+                    );
+                }
+            }, {
+                text    : _('Log out'),
+                iconCls : 'iconLogOut',
+                handler : function()
+                {
+                    Ext.MessageBox.confirm(_('Confirm'),
+                        _('Are you sure you want to logout?'),
+                        function(btn)
+                        {
+                            if (btn === 'yes') {
+                                window.location.href = './do/logout';
+                            }
+                        }
+                    );
+                }
+            }, '-', {
+                id      : 'tab-report-bug-btn',
+                text    : _('Report bugs'),
+                iconCls : 'iconBugs',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('tab-report-bug')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'tab-report-bug',
+                            xtype      : 'panel',
+                            title      : _('Report bugs'),
+                            iconCls    : 'iconBugs',
+                            closable   : true,
+                            layout     : 'fit',
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-report-bug', url: 'http://bugs.php.net/' }) ]
+                        });
+
+                        Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
+
+                    } else {
+                        Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
+                    }
+                }
+            }, {
+                id      : 'tab-documentation-btn',
+                text    : _('Documentation'),
+                iconCls : 'iconBook',
+                handler : function()
+                {
+                    if (!Ext.getCmp('main-panel').findById('tab-documentation')) {
+
+                        Ext.getCmp('main-panel').add({
+                            id         : 'tab-documentation',
+                            xtype      : 'panel',
+                            title      : _('Documentation'),
+                            iconCls    : 'iconBook',
+                            closable   : true,
+                            layout     : 'fit',
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'http://wiki.php.net/doc/editor/' }) ]
+                        });
+
+                        Ext.getCmp('main-panel').setActiveTab('tab-documentation');
+
+                    } else {
+                        Ext.getCmp('main-panel').setActiveTab('tab-documentation');
+                    }
+                }
+            }, '-', {
+                id      : 'winabout-btn',
+                text    : _('About'),
+                iconCls : 'iconHelp',
+                handler : function()
+                {
+                    new ui.component.About().show(Ext.get('winabout-btn'));
+                }
+            }]
+        });
+    }
+});
+Ext.namespace('ui','ui.component','ui.component.MainPanel');
+
+ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
+    activeTab         : 0,
+    enableTabScroll   : true,
+    plugins           : ['tabclosemenu', 'dblclickclosetabs'], //new Ext.ux.TabCloseMenu(),
+
+    initComponent: function(config)
+    {
+        Ext.apply(this, config);
+        ui.component.MainPanel.superclass.initComponent.call(this);
+
+        this.addEvents({
+            tabLoaded : true
+        });
+
+        this.on('beforeremove', this.onBeforeRemove, this);
+        this.on('tabchange',    this.onTabChange,    this);
+        this.on('endDrag',      this.onTabChange,    this);
+        this.on('tabLoaded',    this.onTabLoaded,    this);
+
+    },
+
+    onTabLoaded: function(prefix, fid)
+    {
+        var cmp = Ext.getCmp(prefix + '-' + fid);
+
+        // FNT panel
+        if( prefix == 'FNT' ) {
+            if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
+
+                cmp.tabLoaded = true;
+
+                cmp.panTRANSLoaded = cmp.panGGTRANSLoaded = false;
+
+                if (PhDOE.FNTfilePendingOpen[0]) {
+                    ui.component.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
+                    PhDOE.FNTfilePendingOpen.shift();
+                }
+
+            }
+        }
+        // FNU panel
+        if( prefix == 'FNU' ) {
+            if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panDiffLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+
+                cmp.panLANGLoaded = cmp.panENLoaded = cmp.panDiffLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+
+                if (PhDOE.FNUfilePendingOpen[0]) {
+                    ui.component.StaleFileGrid.getInstance().openFile(PhDOE.FNUfilePendingOpen[0].id);
+                    PhDOE.FNUfilePendingOpen.shift();
+                }
+            }
+        }
+        // FE panel
+        if( prefix == 'FE' ) {
+            if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+                
+                cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+
+                if (PhDOE.FEfilePendingOpen[0]) {
+                    ui.component.ErrorFileGrid.getInstance().openFile(PhDOE.FEfilePendingOpen[0].id);
+                    PhDOE.FEfilePendingOpen.shift();
+                }
+            }
+        }
+        // FNR panel
+        if( prefix == 'FNR' ) {
+            if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
+
+                cmp.tabLoaded = true;
+                
+                cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
+
+                if (PhDOE.FNRfilePendingOpen[0]) {
+                    ui.component.PendingReviewGrid.getInstance().openFile(PhDOE.FNRfilePendingOpen[0].id);
+                    PhDOE.FNRfilePendingOpen.shift();
+                }
+            }
+        }
+
+        // FNIEN panel
+        if( prefix == 'FNIEN' ) {
+            if( cmp.panLANGLoaded ) {
+
+                cmp.tabLoaded = true;
+                
+                cmp.panLANGLoaded = false;
+                if (PhDOE.FNIENfilePendingOpen[0]) {
+                    ui.component.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
+                    PhDOE.FNIENfilePendingOpen.shift();
+                }
+            }
+        }
+
+        // AF panel
+        if( prefix == 'AF' ) {
+            if( cmp.panLoaded && cmp.panVCS && cmp.panEntities && cmp.panAcronyms ) {
+
+                cmp.tabLoaded = true;
+                
+                cmp.panLoaded = cmp.panVCS = false;
+                if (PhDOE.AFfilePendingOpen[0]) {
+                    ui.component.RepositoryTree.getInstance().openFile(
+                    ( PhDOE.AFfilePendingOpen[0].nodeID ) ? 'byId' : 'byPath',
+                    ( PhDOE.AFfilePendingOpen[0].nodeID ) ? PhDOE.AFfilePendingOpen[0].nodeID : PhDOE.AFfilePendingOpen[0].fpath,
+                    ( PhDOE.AFfilePendingOpen[0].nodeID ) ? false                             : PhDOE.AFfilePendingOpen[0].fname
+                );
+                    PhDOE.AFfilePendingOpen.shift();
+                }
+            }
+        }
+
+        // PP panel
+        if( prefix == 'PP' ) {
+            if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
+
+                cmp.tabLoaded = true;
+                
+                cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;
+                if (PhDOE.PPfilePendingOpen[0]) {
+                    ui.component.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);
+                    PhDOE.PPfilePendingOpen.shift();
+                }
+            }
+        }
+
+    },
+
+    onTabChange : function(panel, tab)
+    {
+        // We do somethings only if this panel contiens a tab's navigation button
+        if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG')    ||
+             Ext.getCmp(tab.id + '-btn-tabRight-EN')      ||
+             Ext.getCmp(tab.id + '-btn-tabRight-ALL')     ||
+             Ext.getCmp(tab.id + '-btn-tabRight-NotInEN') ||
+             Ext.getCmp(tab.id + '-btn-tabRight-PATCH')   ||
+             Ext.getCmp(tab.id + '-btn-tabRight-TRANS')   ||
+             Ext.getCmp(tab.id + '-btn-tabRight-NEW')  ) {
+
+            var currentTabId = tab.id,
+                tabs         = Ext.getCmp('main-panel').layout.container.items.items,
+                currentTabIndex,
+                i;
+
+            for( i=0; i < tabs.length; i++ ) {
+                if( tabs[i].id === currentTabId ) {
+                    currentTabIndex = i;
+                }
+            }
+
+            // Do we need to activate some button ?
+            if( tabs[currentTabIndex + 1] ) {
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG'    ) ) { Ext.getCmp(tab.id + '-btn-tabRight-LANG'    ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-EN'      ) ) { Ext.getCmp(tab.id + '-btn-tabRight-EN'      ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ) ) { Ext.getCmp(tab.id + '-btn-tabRight-ALL'     ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NotInEN' ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-PATCH'   ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ) ) { Ext.getCmp(tab.id + '-btn-tabRight-TRANS'   ).enable(); }
+                if ( Ext.getCmp(tab.id + '-btn-tabRight-NEW'     ) ) { Ext.getCmp(tab.id + '-btn-tabRight-NEW'     ).enable(); }
+            }
+
+        }
+    },
+
+    // Need confirm if we want to close a tab and the content have been modified.
+    onBeforeRemove : function(tabpanel, tab)
+    {
+        var stateLang, stateEn, state, PanType = tab.id.split('-');
+
+        if ((PanType[0] === 'FE' || PanType[0] === 'FNU' || PanType[0] === 'FNR' || PanType[0] === 'PP' || PanType[0] === 'AF' || PanType[0] === 'FNT') && PanType[1] !== 'help') {
+
+            if (PanType[0] === 'FE') {
+                stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = ( PhDOE.userLang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
+            }
+
+            if (PanType[0] === 'FNU') {
+                stateLang = Ext.getCmp('FNU-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = Ext.getCmp('FNU-EN-FILE-' + PanType[1]).isModified;
+            }
+
+            if (PanType[0] === 'FNR') {
+                stateLang = Ext.getCmp('FNR-LANG-FILE-' + PanType[1]).isModified;
+                stateEn   = Ext.getCmp('FNR-EN-FILE-' + PanType[1]).isModified;
+            }
+
+            if (PanType[0] === 'PP') {
+                state = Ext.getCmp('PP-PATCH-FILE-' + PanType[1]).isModified;
+            }
+
+            if (PanType[0] === 'AF') {
+                state = Ext.getCmp('AF-ALL-FILE-' + PanType[1]).isModified;
+            }
+
+            if (PanType[0] === 'FNT') {
+                state = (Ext.getCmp('FNT-TRANS-FILE-' + PanType[1])) ? Ext.getCmp('FNT-TRANS-FILE-' + PanType[1]).isModified : Ext.getCmp('FNT-NEW-FILE-' + PanType[1]).isModified ;
+            }
+
+            if (stateEn || stateLang || state) {
+                Ext.Msg.show({
+                    scope   : this,
+                    title   : _('Confirm'),
+                    msg     : _('This file has been modified without being saved.<br/>Do you really want to close?'),
+                    buttons : Ext.Msg.YESNO,
+                    icon    : Ext.Msg.QUESTION,
+                    fn : function(btn, text)
+                    {
+                        if (btn === 'yes') {
+                            tabpanel.un('beforeremove', this.onBeforeRemove, this);
+                            tabpanel.remove(tab);
+                            tabpanel.addListener('beforeremove', this.onBeforeRemove, this);
+                        }
+                    }
+                });
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+
+    }
+});
+Ext.reg('mainpanel', ui.component.MainPanel);Ext.namespace('ui','ui.component','ui.component._NotInENGrid');
+
+//------------------------------------------------------------------------------
+// NotInENGrid internals
+
+// NotInENGrid store
+ui.component._NotInENGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNotInEn'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'needcommit'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'path',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners : {
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// NotInENGrid columns definition
+ui.component._NotInENGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// NotInENGrid view
+ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
+    forceFit     : true,
+    startCollapsed: true,
+    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
+                   '({[values.rs.length]} ' +
+                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText: false,
+    emptyText    : '<div style="text-align: center;">' + _('No Files') + '</div>',
+    getRowClass  : function(record, numIndex, rowParams, store)
+    {
+        if (record.data.needcommit) {
+            return 'file-need-commit';
+        }
+        return false;
+    }
+});
+
+// NotInENGrid context menu
+// config - { grid, rowIdx, event }
+ui.component._NotInENGrid.menu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._NotInENGrid.menu.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                text    : '<b>'+_('View in a new Tab')+'</b>',
+                iconCls : 'iconView',
+                handler : function()
+                {
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIdx, this.event
+                    );
+                }
+            }, {
+                scope   : this,
+                text    : _('Remove this file'),
+                iconCls : 'iconDelete',
+                handler : function()
+                {
+                   var storeRecord = this.grid.store.getAt(this.rowIdx),
+                       FilePath    = storeRecord.data.path,
+                       FileName    = storeRecord.data.name;
+
+                   new ui.task.MarkDeleteTask({
+                       fpath       : FilePath,
+                       fname       : FileName,
+                       storeRecord : storeRecord
+                   });
+                }
+            }]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// NotInENGrid
+ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    border           : false,
+    autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+    view             : ui.component._NotInENGrid.view,
+    columns          : ui.component._NotInENGrid.columns,
+
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        if (!grid.store.getAt(rowIndex).data.needcommit)
+        {
+            new ui.component._NotInENGrid.menu({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNIEN-' + PhDOE.userLang + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID))
+        {
+            Ext.getCmp('main-panel').add(
+            {
+                id             : 'FNIEN-' + FileID,
+                layout         : 'border',
+                title          : FileName,
+                originTitle    : FileName,
+                iconCls        : 'iconTabView',
+                closable       : true,
+                tabLoaded      : false,
+                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Not In EN: in {0}'), FilePath
+                ),
+                items : [
+                   new ui.component.FilePanel(
+                    {
+                        id             : 'FNIEN-NotInEN-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('File: ') + FilePath + FileName,
+                        prefix         : 'FNIEN',
+                        ftype          : 'NotInEN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        readOnly       : true,
+                        lang           : PhDOE.userLang,
+                        parser         : 'xml',
+                        storeRecord    : '',
+                        syncScroll     : false
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNIEN-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._NotInENGrid.store
+        });
+        ui.component.NotInENGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+// singleton
+ui.component._NotInENGrid.instance = null;
+ui.component.NotInENGrid.getInstance = function(config)
+{
+    if (!ui.component._NotInENGrid.instance) {
+        if (!config) {
+           config = {};
+        }
+        ui.component._NotInENGrid.instance = new ui.component.NotInENGrid(config);
+    }
+    return ui.component._NotInENGrid.instance;
+};
+Ext.namespace('ui','ui.component');
+
+// config - {defaultEmail, prefix, ftype, fid, fpath, fname, lang}
+ui.component.PatchPrompt = Ext.extend(Ext.Window,
+{
+    title      : _('Do you want to be alerted ?'),
+    iconCls    : 'iconPatchAlert',
+    layout     : 'form',
+    bodyStyle  : 'padding: 5px;',
+    labelWidth : 50,
+    width      : 350,
+    height     : 150,
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                xtype     : 'panel',
+                baseCls   : 'x-plain',
+                bodyStyle : 'padding-bottom: 10px;',
+                html      : _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
+            }, {
+                id         : 'patch-email-alert',
+                xtype      : 'textfield',
+                name       : 'patch-email-alert',
+                fieldLabel : _('Email'),
+                anchor     : '100%',
+                value      : this.defaultEmail
+            }],
+            buttons : [{
+                scope   : this,
+                text    : _('Save'),
+                handler : function()
+                {
+                    new ui.task.SavePatchTask({
+                        prefix : this.prefix,
+                        fid    : this.fid,
+                        ftype  : this.ftype,
+                        lang   : this.lang,
+                        fpath  : this.fpath,
+                        fname  : this.fname,
+                        email  : Ext.getCmp('patch-email-alert').getValue()
+                    });
+
+                    this.close();
+                }
+            }, {
+                scope   : this,
+                text    : _('Cancel'),
+                handler : function()
+                {
+                    this.close();
+                }
+            }]
+        });
+        ui.component.PatchPrompt.superclass.initComponent.call(this);
+    }
+});
+Ext.namespace('ui','ui.component','ui.component._PendingCommitGrid');
+
+//------------------------------------------------------------------------------
+// PendingCommitGrid internals
+
+// PendingCommitGrid store
+ui.component._PendingCommitGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesPendingCommit'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'},
+            {name : 'type'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners  : {
+        add : function(ds)
+        {
+            Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
+        },
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// PendingCommitGrid columns definition
+ui.component._PendingCommitGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Modified by'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'by'
+}, {
+    header    : _('Date'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'date',
+    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// PendingCommitGrid view
+ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
+    forceFit       : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    emptyText      : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
+    deferEmptyText : false,
+    getRowClass    : function(record, numIndex, rowParams, store)
+    {
+        if ( record.data.type === 'update' ) {
+            return 'file-needcommit-update';
+        }
+        if ( record.data.type === 'delete' ) {
+            return 'file-needcommit-delete';
+        }
+        if ( record.data.type === 'new' ) {
+            return 'file-needcommit-new';
+        }
+        return false;
+    }
+});
+
+Ext.namespace('ui.component._PendingCommitGrid.menu');
+// PendingCommitGrid common sub-menu
+// config - { rowIdx }
+ui.component._PendingCommitGrid.menu.common = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingCommitGrid.menu.common.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            text     : _('Commit...'),
+            iconCls  : 'iconCommitFileVcs',
+            disabled : (PhDOE.userLogin === 'anonymous'),
+            handler  : function() { return false; },
+            menu     : new Ext.menu.Menu({
+                items : [{
+                    scope   : this,
+                    text    : _('...this file'),
+                    iconCls : 'iconCommitFileVcs',
+                    handler : function()
+                    {
+                        var record = ui.component.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
+                            fdbid  = record.data.id,
+                            fpath  = record.data.path,
+                            fname  = record.data.name,
+                            fid    = Ext.util.md5(fpath + fname),
+                            ftype  = record.data.type,
+                            fdate  = record.data.date,
+                            fby    = record.data.by;
+
+                        new ui.component.CommitPrompt({
+                            files : [{
+                                fid : fid,
+                                fpath : fpath,
+                                fname : fname,
+                                fdbid : fdbid,
+                                ftype : ftype,
+                                fdate : fdate,
+                                fby   : fby
+                            }]
+                        }).show();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('...all files modified by me'),
+                    iconCls : 'iconCommitFileVcs',
+                    handler : function()
+                    {
+                        var files = [],
+                            grid  = ui.component.PendingCommitGrid.getInstance();
+
+                        grid.store.each(function(record)
+                        {
+                            if (record.data.by === PhDOE.userLogin) {
+                                var fdbid  = record.data.id,
+                                    fpath  = record.data.path,
+                                    fname  = record.data.name,
+                                    fid    = Ext.util.md5(fpath + fname),
+                                    ftype  = record.data.type,
+                                    fdate  = record.data.date,
+                                    fby    = record.data.by;
+
+                                files.push({
+                                    fid   : fid,
+                                    fpath : fpath,
+                                    fname : fname,
+                                    fdbid : fdbid,
+                                    ftype : ftype,
+                                    fdate : fdate,
+                                    fby   : fby
+                                });
+                            }
+                        });
+
+                        new ui.component.CommitPrompt({
+                            files : files
+                        }).show();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('...all files modified'),
+                    iconCls : 'iconCommitFileVcs',
+                    handler : function()
+                    {
+                        var files = [],
+                            grid  = ui.component.PendingCommitGrid.getInstance();
+
+                        grid.store.each(function(record)
+                        {
+                            var fdbid  = record.data.id,
+                                fpath  = record.data.path,
+                                fname  = record.data.name,
+                                fid    = Ext.util.md5(fpath + fname),
+                                ftype  = record.data.type,
+                                fdate  = record.data.date,
+                                fby    = record.data.by;
+
+                            files.push({
+                                fid   : fid,
+                                fpath : fpath,
+                                fname : fname,
+                                fdbid : fdbid,
+                                ftype : ftype,
+                                fdate : fdate,
+                                fby   : fby
+                            });
+                        });
+
+                        new ui.component.CommitPrompt({
+                            files : files
+                        }).show();
+                    }
+                }]
+            })
+        });
+    }
+});
+
+// PendingCommitGrid menu for pending update file
+// config - { fpath, fname, rowIdx, grid, event }
+ui.component._PendingCommitGrid.menu.update = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingCommitGrid.menu.update.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items: [
+                {
+                    scope   : this,
+                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                    iconCls : 'iconPendingCommit',
+                    handler : function()
+                    {
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : _('View diff'),
+                    iconCls : 'iconViewDiff',
+                    handler : function()
+                    {
+
+                        // Render only if this tab don't exist yet
+                        if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + this.rowIdx)) {
+
+                            // Add tab for the diff
+                            Ext.getCmp('main-panel').add({
+                                xtype      : 'panel',
+                                id         : 'diff_panel_pending_' + this.rowIdx,
+                                iconCls    : 'iconTabLink',
+                                title      : _('Diff'),
+                                tabTip     : String.format(_('Diff for file: {0}'), this.fpath+this.fname),
+                                closable   : true,
+                                autoScroll : true,
+                                html       : '<div id="diff_content_pending_' + this.rowIdx + '" class="diff-content"></div>'
+                            });
+
+                            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
+
+                            Ext.get('diff_panel_pending_' + this.rowIdx).mask(
+                                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                                _('Please, wait...')
+                            );
+
+                            // Load diff data
+                            XHR({
+                                scope   : this,
+                                params  : {
+                                    task     : 'getDiff',
+                                    DiffType : 'file',
+                                    FilePath : this.fpath,
+                                    FileName : this.fname
+                                },
+                                success : function(response)
+                                {
+                                    var o = Ext.util.JSON.decode(response.responseText);
+
+                                    // We display in diff div
+                                    Ext.get('diff_content_pending_' + this.rowIdx).dom.innerHTML = o.content;
+                                    Ext.get('diff_panel_pending_' + this.rowIdx).unmask();
+                                }
+                            });
+                        } else {
+                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
+                        }
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Download the diff as a patch'),
+                    iconCls : 'iconDownloadDiff',
+                    handler : function()
+                    {
+                        window.location.href = './do/downloadPatch' +
+                                               '?FilePath=' + this.fpath +
+                                               '&FileName=' + this.fname;
+                    }
+                }, '-', {
+                    scope    : this,
+                    text     : _('Clear this change'),
+                    iconCls  : 'iconPageDelete',
+                    disabled : (PhDOE.userLogin === 'anonymous'),
+                    handler  : function()
+                    {
+                        new ui.task.ClearLocalChangeTask({
+                            storeRecord : this.grid.store.getAt(this.rowIdx),
+                            ftype       : 'update',
+                            fpath       : this.fpath,
+                            fname       : this.fname
+                        });
+                    }
+                }, '-', new ui.component._PendingCommitGrid.menu.common({
+                    rowIdx : this.rowIdx
+                })
+            ]
+        });
+    }
+});
+
+// PendingCommitGrid menu for pending delete file
+// config - { rowIdx, grid, event }
+ui.component._PendingCommitGrid.menu.del = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingCommitGrid.menu.del.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items: [
+                {
+                    scope   : this,
+                    text    : '<b>'+_('View in a new Tab')+'</b>',
+                    iconCls : 'iconPendingCommit',
+                    handler : function()
+                    {
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                    }
+                }, {
+                    scope    : this,
+                    text     : _('Cancel this deletion'),
+                    iconCls  : 'iconPageDelete',
+                    disabled : (PhDOE.userLogin === 'anonymous'),
+                    handler : function()
+                    {
+
+                       var storeRecord = this.grid.store.getAt(this.rowIdx),
+                           FilePath    = storeRecord.data.path,
+                           FileName    = storeRecord.data.name;
+
+                       new ui.task.ClearLocalChangeTask({
+                           storeRecord : storeRecord,
+                           ftype       : 'delete',
+                           fpath       : FilePath,
+                           fname       : FileName
+                       });
+
+                    }
+                }, '-', new ui.component._PendingCommitGrid.menu.common({
+                    rowIdx : this.rowIdx
+                })
+            ]
+        });
+    }
+});
+
+
+// PendingCommitGrid menu for pending new file
+// config - { rowIdx, grid, event }
+ui.component._PendingCommitGrid.menu.newFile = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingCommitGrid.menu.newFile.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items: [
+                {
+                    scope   : this,
+                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                    iconCls : 'iconPendingCommit',
+                    handler : function()
+                    {
+                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                    }
+                }, '-',{
+                    scope    : this,
+                    text     : _('Clear this change'),
+                    iconCls  : 'iconPageDelete',
+                    disabled : (PhDOE.userLogin === 'anonymous'),
+                    handler  : function()
+                    {
+                       var storeRecord = this.grid.store.getAt(this.rowIdx),
+                           FilePath    = storeRecord.data.path,
+                           FileName    = storeRecord.data.name;
+
+                       new ui.task.ClearLocalChangeTask({
+                            storeRecord : storeRecord,
+                            ftype       : 'new',
+                            fpath       : FilePath,
+                            fname       : FileName
+                        });
+                    }
+                }, '-',new ui.component._PendingCommitGrid.menu.common({
+                    rowIdx : this.rowIdx
+                })]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// PendingCommitGrid
+ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    border           : false,
+    autoExpandColumn : 'name',
+    columns          : ui.component._PendingCommitGrid.columns,
+    view             : ui.component._PendingCommitGrid.view,
+    enableDragDrop   : true,
+    sm               : new Ext.grid.RowSelectionModel({ singleSelect: true}),
+    ddGroup          : 'mainPanelDDGroup',
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        var storeRecord = grid.store.getAt(rowIndex),
+            FileType    = storeRecord.data.type,
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        if (FileType === 'new') {
+            new ui.component._PendingCommitGrid.menu.newFile({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+
+        if (FileType === 'delete') {
+            new ui.component._PendingCommitGrid.menu.del({
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+
+        if (FileType === 'update') {
+            new ui.component._PendingCommitGrid.menu.update({
+                fpath  : FilePath,
+                fname  : FileName,
+                grid   : grid,
+                rowIdx : rowIndex,
+                event  : e
+            }).showAt(e.getXY());
+        }
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+        var storeRecord = false;
+
+        this.store.each(function(r)
+        {
+            if (r.data.id === rowId) {
+                storeRecord = r;
+            }
+        });
+
+        var FileType    = storeRecord.data.type,
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileLang, tmp, found;
+
+        if (FileType === 'new') {
+
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
+
+            FilePath = "/" + tmp.join('/');
+
+            // Find the id of this row into PendingTranslateGrid.store and open it !
+            ui.component.PendingTranslateGrid.getInstance().store.each(function(row)
+            {
+                if( ( row.data.path ) === FilePath && row.data.name === FileName ) {
+                    ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                    return;
+                }
+            });
+        }
+
+        if (FileType === 'update') {
+
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
+
+            FilePath = "/" + tmp.join('/');
+
+            // For EN file, we open this new file into the "All files" module
+            if( FileLang === 'en' ) {
+                ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
+            } else {
+
+                found = false;
+
+                // Find the id of this row into StaleFileGrid.store and open it !
+                ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+
+                    if( (row.data.path) === FilePath && row.data.name === FileName ) {
+                        ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                        found = true;
+                        return;
+                    }
+                });
+
+                // If we haven't found this file in StaleFileGrid, we try into File in error grid.
+                if( !found ) {
+
+                    // Find the id of this row into ErrorFileGrid.store and open it !
+                    ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
+
+                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
+                            ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
+                            found = true;
+                            return;
+                        }
+                    });
+                }
+
+                // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
+                if( !found ) {
+
+                    // Find the id of this row into PendingReviewGrid.store and open it !
+                    ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
+
+                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
+                            ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
+                            found = true;
+                            return;
+                        }
+                    });
+                }
+
+                // FallBack : We open it into "All files" modules
+                if( !found ) {
+                    ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
+                }
+
+            }
+        }
+
+        if (FileType === 'delete') {
+            
+            tmp = FilePath.split('/');
+            FileLang = tmp[0];
+            tmp.shift();
+
+            FilePath = "/" + tmp.join('/');
+
+            // Find the id of this row into NotInENGrid.store and open it !
+            ui.component.NotInENGrid.getInstance().store.each(function(row) {
+
+                if( (row.data.path) === FilePath && row.data.name === FileName ) {
+                    ui.component.NotInENGrid.getInstance().openFile(row.data.id);
+                    return;
+                }
+            });
+
+        }
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._PendingCommitGrid.store
+        });
+        ui.component.PendingCommitGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    },
+
+    addRecord : function(fid, fpath, fname, type)
+    {
+        var exist = false;
+
+        this.store.each(function(r)
+        {
+            if (r.data.path === fpath && r.data.name === fname) {
+                exist = true;
+            }
+        });
+
+        if (!exist) {
+            // if not exist, add to store
+            this.store.insert(0,
+                new this.store.recordType({
+                    id   : fid,
+                    path : fpath,
+                    name : fname,
+                    by   : PhDOE.userLogin,
+                    date : new Date(),
+                    type : type
+                })
+            );
+            this.store.groupBy('path', true); // regroup
+        }
+    }
+});
+
+// singleton
+ui.component._PendingCommitGrid.instance = null;
+ui.component.PendingCommitGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingCommitGrid.instance) {
+        if (!config) {
+           config = {};
+        }
+        ui.component._PendingCommitGrid.instance = new ui.component.PendingCommitGrid(config);
+    }
+    return ui.component._PendingCommitGrid.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PendingPatchGrid');
+
+//------------------------------------------------------------------------------
+// PendingPatchGrid internals
+
+// PendingPatchGrid store
+ui.component._PendingPatchGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesPendingPatch'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'by'},
+            {name : 'uniqID'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners : {
+        add : function(ds)
+        {
+            Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
+        },
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// PendingPatchGrid columns definition
+ui.component._PendingPatchGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Posted by'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'by'
+}, {
+    header    : _('Date'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'date',
+    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    'hidden'  : true
+}];
+
+// PendingPatchGrid view
+ui.component._PendingPatchGrid.view = new Ext.grid.GroupingView({
+    forceFit     : true,
+    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
+                   '({[values.rs.length]} ' +
+                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    emptyText    : '<div style="text-align: center;">' + _('No pending patches') + '</div>',
+    deferEmptyText: false
+});
+
+// PendingPatchGrid context menu
+// config - { grid, rowIdx, event, fid, fpath, fname, fuid }
+ui.component._PendingPatchGrid.menu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingPatchGrid.menu.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                scope   : this,
+                text    : '<b>' + _('Edit in a new Tab') + '</b>',
+                iconCls : 'iconPendingPatch',
+                handler : function()
+                {
+                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                }
+            }, '-', {
+                scope   : this,
+                text    : _('Reject this patch'),
+                disabled: (PhDOE.userLogin === 'anonymous'),
+                iconCls : 'iconTrash',
+                handler : function()
+                {
+                    new ui.task.RejectPatchTask({
+                        fid         : this.fid,
+                        fuid        : this.fuid,
+                        storeRecord : this.grid.store.getAt(this.rowIdx)
+                    });
+                }
+            }]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// PendingPatchGrid
+ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    columns          : ui.component._PendingPatchGrid.columns,
+    view             : ui.component._PendingPatchGrid.view,
+    loadMask         : true,
+    border           : false,
+    autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+        var storeRecord = false;
+
+        this.store.each(function(r)
+        {
+            if (r.data.id === rowId) {
+                storeRecord = r;
+            }
+        });
+
+        var FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileUniqID  = storeRecord.data.uniqID,
+            FileID      = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
+
+            Ext.getCmp('main-panel').add({
+                id             : 'PP-' + FileID,
+                layout         : 'border',
+                iconCls        : 'iconPendingPatch',
+                title          : FileName,
+                originTitle    : FileName,
+                tabTip         : String.format(_('Patch for {0}'), FilePath + FileName),
+                closable       : true,
+                tabLoaded      : false,
+                panPatchContent: false,
+                panVCS         : !PhDOE.userConf.patchDisplayLog,
+                panPatchLoaded : false,
+                panOriginLoaded: false,
+                defaults       : { split : true },
+                items          : [{
+                        xtype            : 'panel',
+                        id               : 'PP-patch-desc-' + FileID,
+                        title            : _('Patch content'),
+                        iconCls          : 'iconPendingPatch',
+                        collapsedIconCls : 'iconPendingPatch',
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        region           : 'north',
+                        border           : false,
+                        height           : PhDOE.userConf.patchDisplayContentPanelHeight || 150,
+                        autoScroll       : true,
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.patchDisplayContentPanel,
+                        html             : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
+                        listeners        : {
+                            collapse: function()
+                            {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanel',
+                                        value : false,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            expand: function()
+                            {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanel',
+                                        value : true,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            resize: function(a,b,newHeight)
+                            {
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplayContentPanelHeight',
+                                        value : newHeight,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            render : function()
+                            {
+                                // Load diff data
+                                XHR({
+                                    params  : {
+                                        task     : 'getDiff',
+                                        FilePath : FilePath,
+                                        FileName : FileName,
+                                        DiffType : 'patch',
+                                        uniqID   : FileUniqID
+                                    },
+                                    success : function(response)
+                                    {
+                                        var o = Ext.util.JSON.decode(response.responseText);
+                                        // We display in diff div
+                                        Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
+                                    },
+                                    callback: function() {
+                                        Ext.getCmp('PP-' + FileID).panPatchContent = true;
+                                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', FileID);
+                                    }
+                                });
+                            }
+                        }
+                    }, {
+                        region           : 'west',
+                        xtype            : 'panel',
+                        title            : _('VCS Log'),
+                        iconCls          : 'iconVCSLog',
+                        collapsedIconCls : 'iconVCSLog',
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        bodyBorder       : false,
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.patchDisplaylogPanel,
+                        width            : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                        listeners        : {
+                            collapse : function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanel',
+                                        value : false,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            expand : function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanel',
+                                        value : true,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            resize : function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'patchDisplaylogPanelWidth',
+                                        value : newWidth,
+                                        notify: false
+                                    });
+                                }
+                            }
+                        },
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            defaults    : { autoScroll : true },
+                            items       : new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : _('Log'),
+                                prefix    : 'PP',
+                                fid       : FileID,
+                                fpath     : FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf.patchDisplayLog
+                            })
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'PP-PATCH-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
+                        prefix         : 'PP',
+                        ftype          : 'PATCH',
+                        spellCheck     : PhDOE.userConf.patchSpellCheck,
+                        spellCheckConf : 'patchSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        isPatch        : true,
+                        fuid           : FileUniqID,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'patchScrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'PP-ORIGIN-PANEL-' + FileID,
+                        region         : 'east',
+                        width          : 575,
+                        title          : _('Original File: ') + FilePath + FileName,
+                        prefix         : 'PP',
+                        ftype          : 'ORIGIN',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : '',
+                        readOnly       : true,
+                        parser         : 'xml',
+                        syncScroll     : true,
+                        syncScrollConf : 'patchScrollbars'
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
+    },
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+
+        var FilePath   = grid.store.getAt(rowIndex).data.path,
+            FileName   = grid.store.getAt(rowIndex).data.name,
+            FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
+            FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._PendingPatchGrid.menu({
+            grid   : grid,
+            rowIdx : rowIndex,
+            event  : e,
+            fid    : FileID,
+            fpath  : FilePath,
+            fname  : FileName,
+            fuid   : FileUniqID
+        }).showAt(e.getXY());
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._PendingPatchGrid.store
+        });
+        ui.component.PendingPatchGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,    this);
+    }
+});
+
+// singleton
+ui.component._PendingPatchGrid.instance = null;
+ui.component.PendingPatchGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingPatchGrid.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PendingPatchGrid.instance = new ui.component.PendingPatchGrid(config);
+    }
+    return ui.component._PendingPatchGrid.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PendingReviewGrid');
+
+//------------------------------------------------------------------------------
+// PendingReviewGrid internals
+
+// PendingReviewGrid store
+ui.component._PendingReviewGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNeedReviewed'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'reviewed'},
+            {name : 'maintainer'},
+            {name : 'needcommit'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners : {
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-need-reviewed-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// PendingReviewGrid columns definition
+ui.component._PendingReviewGrid.columns = [{
+    id        : 'name',
+    header    : _('Files'),
+    sortable  : true,
+    dataIndex : 'name'
+}, {
+    header    : _('Reviewed'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'reviewed'
+}, {
+    header    : _('Maintainer'),
+    width     : 45,
+    sortable  : true,
+    dataIndex : 'maintainer'
+}, {
+    header    : _('Path'),
+    dataIndex : 'path',
+    hidden    : true
+}];
+
+// PendingReviewGrid view
+ui.component._PendingReviewGrid.view = new Ext.grid.GroupingView({
+    forceFit     : true,
+    startCollapsed: true,
+    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
+                   '({[values.rs.length]} ' +
+                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    getRowClass  : function(record)
+    {
+        if (record.data.needcommit) {
+            return 'file-need-commit';
+        }
+        return false;
+    },
+    deferEmptyText: false,
+    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+});
+
+Ext.namespace('ui.component._PendingReviewGrid.menu');
+// PendingReviewGrid diff menu
+// config - { rowIdx, fpath, fname }
+ui.component._PendingReviewGrid.menu.diff = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingReviewGrid.menu.diff.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
+{
+    text    : _('View diff'),
+    iconCls : 'iconViewDiff',
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            handler : function()
+            {
+                // Add tab for the diff
+                Ext.getCmp('main-panel').add({
+                    xtype      : 'panel',
+                    id         : 'diff_panel_' + this.rowIdx,
+                    title      : _('Diff'),
+                    tabTip     : _('Diff'),
+                    closable   : true,
+                    autoScroll : true,
+                    iconCls    : 'iconTabLink',
+                    html       : '<div id="diff_content_' + this.rowIdx + '" class="diff-content"></div>'
+                });
+                Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
+
+                Ext.get('diff_panel_' + this.rowIdx).mask(
+                    '<img src="themes/img/loading.gif" ' +
+                        'style="vertical-align: middle;" /> ' +
+                    _('Please, wait...')
+                );
+
+                // Load diff data
+                XHR({
+                    scope   : this,
+                    params  : {
+                        task     : 'getDiff',
+                        FilePath : PhDOE.userLang + this.fpath,
+                        FileName : this.fname
+                    },
+                    success : function(response)
+                    {
+                        var o = Ext.util.JSON.decode(response.responseText);
+
+                        // We display in diff div
+                        Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
+                        Ext.get('diff_panel_' + this.rowIdx).unmask();
+                    }
+                });
+            }
+        });
+    }
+});
+
+// PendingReviewGrid refence group menu
+// config - { gname }
+ui.component._PendingReviewGrid.menu.group = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingReviewGrid.menu.group.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
+{
+    iconCls : 'iconViewDiff',
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            text    : String.format(
+                _('Open all files about {0} extension'), this.gname
+            ),
+            handler : function()
+            {
+                Ext.getBody().mask(
+                    '<img src="themes/img/loading.gif" ' +
+                        'style="vertical-align: middle;" /> ' +
+                    String.format(_('Open all files about {0} extension'), this.gname) + '. ' +
+                    _('Please, wait...')
+                );
+
+                XHR({
+                    params  : {
+                        task    : 'getAllFilesAboutExtension',
+                        ExtName : this.gname
+                    },
+                    success : function(response)
+                    {
+                        var o = Ext.util.JSON.decode(response.responseText);
+
+                        PhDOE.AFfilePendingOpen = [];
+
+                        for (var i = 0; i < o.files.length; i = i + 1) {
+                            PhDOE.AFfilePendingOpen[i] = {
+                                fpath : PhDOE.userLang + o.files[i].path,
+                                fname : o.files[i].name
+                            };
+                        }
+
+                        // Start the first
+                        ui.component.RepositoryTree.getInstance().openFile(
+                            'byPath',
+                            PhDOE.AFfilePendingOpen[0].fpath,
+                            PhDOE.AFfilePendingOpen[0].fname
+                        );
+
+                        PhDOE.AFfilePendingOpen.shift();
+
+                        Ext.getBody().unmask();
+                    }
+                });
+            }
+        });
+    }
+});
+
+// PendingReviewGrid menu
+// config - { hideDiff, hideGroup, gname, grid, rowIdx, event, fpath, fname }
+ui.component._PendingReviewGrid.menu.main = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._PendingReviewGrid.menu.main.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [
+                {
+                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                    iconCls : 'iconFilesNeedReviewed',
+                    scope   : this,
+                    handler : function()
+                    {
+                        this.grid.fireEvent('rowdblclick',
+                            this.grid, this.rowIdx, this.event
+                        );
+                    }
+                }, new ui.component._PendingReviewGrid.menu.diff({
+                    fpath  : this.fpath,
+                    fname  : this.fname,
+                    rowIdx : this.rowIdx,
+                    hidden : this.hideDiff
+                }), new Ext.menu.Separator({ // Only display a separator when we display the group menu
+                    hidden : this.hideGroup
+                }), new ui.component._PendingReviewGrid.menu.group({
+                    gname  : this.gname,
+                    hidden : this.hideGroup
+                })
+            ]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// PendingReviewGrid
+ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    border           : false,
+    autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+    columns          : ui.component._PendingReviewGrid.columns,
+    view             : ui.component._PendingReviewGrid.view,
+
+    onRowContextMenu: function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+
+        var storeRecord = grid.store.getAt(rowIndex),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            fpath_split = FilePath.split('/');
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._PendingReviewGrid.menu.main({
+            grid      : grid,
+            rowIdx    : rowIndex,
+            event     : e,
+            fpath     : FilePath,
+            fname     : FileName,
+            hideDiff  : (!storeRecord.data.needcommit),
+            hideGroup : (fpath_split[1] !== 'reference'),
+            gname     : fpath_split[2]
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNR-' + PhDOE.userLang + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
+
+            Ext.getCmp('main-panel').add({
+                id             : 'FNR-' + FileID,
+                title          : FileName,
+                layout         : 'border',
+                iconCls        : 'iconTabNeedReviewed',
+                closable       : true,
+                tabLoaded      : false,
+                panVCSLang     : !PhDOE.userConf.reviewedDisplaylog,
+                panVCSEn       : !PhDOE.userConf.reviewedDisplaylog,
+                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
+                panENLoaded    : false, // Use to monitor if the EN panel is loaded
+                originTitle    : FileName,
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Need Reviewed in: {0}'), FilePath
+                ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
+                items : [{
+                    region           : 'west',
+                    xtype            : 'panel',
+                    title            : _('Tools'),
+                    iconCls          : 'iconConf',
+                    collapsedIconCls : 'iconConf',
+                    plugins          : [Ext.ux.PanelCollapsedTitle],
+                    collapsible      : true,
+                    collapsed        : !PhDOE.userConf.reviewedDisplaylogPanel,
+                    layout           : 'fit',
+                    bodyBorder       : false,
+                    width            : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                    listeners        : {
+                        collapse: function() {
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false,
+                                    notify: false
+                                });
+                            }
+                        },
+                        expand: function() {
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true,
+                                    notify: false
+                                });
+                            }
+                        },
+                        resize: function(a,newWidth) {
+                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanelWidth',
+                                    value : newWidth,
+                                    notify: false
+                                });
+                            }
+                        }
+                    },
+                    items : {
+                        xtype       : 'tabpanel',
+                        activeTab   : 0,
+                        tabPosition : 'bottom',
+                        enableTabScroll:true,
+                        defaults    : { autoScroll : true },
+                        items       : [
+                            new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                                prefix    : 'FNR-LANG',
+                                fid       : FileID,
+                                fpath     : PhDOE.userLang + FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf.reviewedDisplaylog
+                            }),
+                            new ui.component.VCSLogGrid({
+                                layout    : 'fit',
+                                title     : String.format(_('{0} Log'), 'En'),
+                                prefix    : 'FNR-EN',
+                                fid       : FileID,
+                                fpath     : 'en' + FilePath,
+                                fname     : FileName,
+                                loadStore : PhDOE.userConf.reviewedDisplaylog
+                            }),
+                            new ui.component.DictionaryGrid({
+                                layout    : 'fit',
+                                title     : _('Dictionary'),
+                                prefix    : 'FNR',
+                                fid       : FileID
+                            })
+                        ]
+                    }
+                }, new ui.component.FilePanel({
+                    id             : 'FNR-LANG-PANEL-' + FileID,
+                    region         : 'center',
+                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                    prefix         : 'FNR',
+                    ftype          : 'LANG',
+                    spellCheck     : PhDOE.userConf.reviewedSpellCheckLang,
+                    spellCheckConf : 'reviewedSpellCheckLang',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : PhDOE.userLang,
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScrollCB   : true,
+                    syncScroll     : true,
+                    syncScrollConf : 'reviewedScrollbars'
+                }), new ui.component.FilePanel({
+                    id             : 'FNR-EN-PANEL-' + FileID,
+                    region         : 'east',
+                    title          : _('en File: ') + FilePath + FileName,
+                    prefix         : 'FNR',
+                    ftype          : 'EN',
+                    spellCheck     : PhDOE.userConf.reviewedSpellCheckEn,
+                    spellCheckConf : 'reviewedSpellCheckEn',
+                    fid            : FileID,
+                    fpath          : FilePath,
+                    fname          : FileName,
+                    lang           : 'en',
+                    parser         : 'xml',
+                    storeRecord    : storeRecord,
+                    syncScroll     : true,
+                    syncScrollConf : 'reviewedScrollbars'
+                })]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            store : ui.component._PendingReviewGrid.store,
+            tbar : [
+                _('Filter: '), ' ',
+                new Ext.form.TwinTriggerField({
+                    id              : 'FNR-filter',
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class : 'x-form-clear-trigger',
+                    trigger2Class : 'x-form-search-trigger',
+                    listeners : {
+                        keypress : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click : function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        ui.component._PendingReviewGrid.instance.store.clearFilter();
+                    },
+                    onTrigger2Click : function()
+                    {
+                        var v = this.getValue(), regexp;
+
+                        if( v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path', 'name', 'reviewed', 'maintainer'
+                        ui.component._PendingReviewGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path)       ||
+                                regexp.test(record.data.name)       ||
+                                regexp.test(record.data.reviewed)   ||
+                                regexp.test(record.data.maintainer)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
+                    }
+                })
+            ]
+        });
+        ui.component.PendingReviewGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+// singleton
+ui.component._PendingReviewGrid.instance = null;
+ui.component.PendingReviewGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingReviewGrid.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PendingReviewGrid.instance = new ui.component.PendingReviewGrid(config);
+    }
+    return ui.component._PendingReviewGrid.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PendingTranslateGrid');
+
+//------------------------------------------------------------------------------
+// PendingTranslateGrid data store
+ui.component._PendingTranslateGrid.store = new Ext.data.GroupingStore(
+{
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNeedTranslate'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'needcommit'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners  : {
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-need-translate-nb').innerHTML = ds.getCount();
+        }
+    }
+});
+
+// PendingTranslateGrid view
+ui.component._PendingTranslateGrid.view = new Ext.grid.GroupingView({
+    forceFit       : true,
+    startCollapsed : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText: false,
+    getRowClass : function(record)
+    {
+        if (record.data.needcommit) {
+            return 'file-need-commit';
+        }
+        return false;
+    },
+    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+});
+
+// PendingTranslateGrid columns definition
+ui.component._PendingTranslateGrid.columns = [
+    {
+        id        : 'name',
+        header    : _('Files'),
+        sortable  : true,
+        dataIndex : 'name'
+    }, {
+        header    : _('Path'),
+        dataIndex : 'path',
+        'hidden'  : true
+    }
+];
+
+// PendingTranslateGrid context menu
+// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
+ui.component._PendingTranslateGrid.menu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._PendingTranslateGrid.menu, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                scope   : this,
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconTabNeedTranslate',
+                handler : function()
+                {
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIdx, this.event
+                    );
+                }
+            }]
+        });
+    }
+});
+
+
+//------------------------------------------------------------------------------
+// PendingTranslateGrid
+ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    view             : ui.component._PendingTranslateGrid.view,
+    loadMask         : true,
+    autoExpandColumn : 'name',
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+    border           : false,
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+
+        var FilePath = grid.store.getAt(rowIndex).data.path,
+            FileName = grid.store.getAt(rowIndex).data.name;
+
+        grid.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._PendingTranslateGrid.menu({
+            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
+            grid       : grid,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : PhDOE.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick : function(grid, rowIndex, e)
+    {
+        this.openFile(grid.store.getAt(rowIndex).data.id);
+    },
+
+    openFile : function(rowId)
+    {
+        var storeRecord = this.store.getById(rowId),
+            FilePath    = storeRecord.data.path,
+            FileName    = storeRecord.data.name,
+            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+
+            Ext.getCmp('main-panel').add(
+            {
+                id               : 'FNT-' + FileID,
+                layout           : 'border',
+                title            : FileName,
+                originTitle      : FileName,
+                iconCls          : 'iconTabNeedTranslate',
+                closable         : true,
+                tabLoaded        : false,
+                panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
+                panGGTRANSLoaded : false, // Use to monitor if the google translation panel is loaded
+                defaults         : { split : true },
+                tabTip           : String.format(
+                    _('Need Translate: in {0}'), FilePath
+                ),
+                listeners : {
+                    resize: function(panel) {
+                        Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
+                items : [{
+                    region           : 'west',
+                    xtype            : 'panel',
+                    title            : _('Tools'),
+                    iconCls          : 'iconConf',
+                    collapsedIconCls : 'iconConf',
+                    plugins          : [Ext.ux.PanelCollapsedTitle],
+                    collapsible      : true,
+                    collapsed        : true, //!PhDOE.userConf.reviewedDisplaylogPanel,
+                    layout           : 'fit',
+                    bodyBorder       : false,
+                    width            : 375, //PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                    listeners        : {
+                        collapse: function() {
+                            /*
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : false,
+                                    notify: false
+                                });
+                            }
+                            */
+                        },
+                        expand: function() {
+                            /*
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanel',
+                                    value : true,
+                                    notify: false
+                                });
+                            }
+                            */
+                        },
+                        resize: function(a,newWidth) {
+                            /*
+                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item  : 'reviewedDisplaylogPanelWidth',
+                                    value : newWidth,
+                                    notify: false
+                                });
+                            }
+                            */
+                        }
+                    },
+                    items : {
+                        xtype       : 'tabpanel',
+                        activeTab   : 0,
+                        tabPosition : 'bottom',
+                        defaults    : { autoScroll : true },
+                        items       : [
+                            new ui.component.DictionaryGrid({
+                                layout    : 'fit',
+                                title     : _('Dictionary'),
+                                prefix    : 'FNT',
+                                fid       : FileID
+                            })
+                        ]
+                    }
+                }, new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-TRANS-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('New File: ') + PhDOE.userLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'TRANS',
+                        spellCheck     : PhDOE.userConf.newFileSpellCheck,
+                        spellCheckConf : 'newFileSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : PhDOE.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'newFileScrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-GGTRANS-PANEL-' + FileID,
+                        region         : 'east',
+                        title          : _('Automatic translation: ') + PhDOE.userLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'GGTRANS',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        readOnly       : true,
+                        lang           : PhDOE.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : true,
+                        syncScrollConf : 'newFileScrollbars'
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            columns : ui.component._PendingTranslateGrid.columns,
+            store   : ui.component._PendingTranslateGrid.store,
+            tbar:[
+                _('Filter: '), ' ',
+                new Ext.form.TwinTriggerField({
+                    id              : 'FNT-filter',
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    listeners : {
+                        keypress : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click: function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        ui.component._PendingTranslateGrid.instance.store.clearFilter();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var v = this.getValue(), regexp;
+
+                        if (v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path' and 'name'
+                        ui.component._PendingTranslateGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path) || regexp.test(record.data.name) ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
+                    }
+                })
+            ]
+        });
+        ui.component.PendingTranslateGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+// singleton
+ui.component._PendingTranslateGrid.instance = null;
+ui.component.PendingTranslateGrid.getInstance = function(config)
+{
+    if (!ui.component._PendingTranslateGrid.instance) {
+        if (!config) {
+           config = {};
+        }
+        ui.component._PendingTranslateGrid.instance = new ui.component.PendingTranslateGrid(config);
+    }
+    return ui.component._PendingTranslateGrid.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PortletBugs');
+
+//------------------------------------------------------------------------------
+// PortletBugs internals
+
+// Store : All open bugs for documentation
+ui.component._PortletBugs.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getOpenBugs'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'title',
+                mapping : 'title'
+            }, {
+                name    : 'link',
+                mapping : 'link'
+            }, {
+                name    : 'description',
+                mapping : 'description'
+            }, {
+                name    : 'xmlID',
+                mapping : 'xmlID'
+            }
+        ])
+    )
+});
+
+ui.component._PortletBugs.gridFormatTitle = function(value) {
+    return String.format('<div class="topic"><b>{0}</b></div>', value);
+};
+
+// BugsGrid columns definition
+ui.component._PortletBugs.gridColumns = [{
+    id        : 'GridBugTitle',
+    header    : _("Title"),
+    sortable  : true,
+    dataIndex : 'title',
+    renderer  : ui.component._PortletBugs.gridFormatTitle
+}];
+
+
+ui.component._PortletBugs.gridView = new Ext.grid.GridView({
+    forceFit      : true,
+    emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
+    deferEmptyText: false,
+    enableRowBody : true,
+    showPreview   : false,
+    getRowClass   : function(record, rowIndex, p)
+    {
+        if (this.showPreview) {
+            p.body = '<p>' + record.data.description + '</p>';
+            return 'x-grid3-row-expanded';
+        }
+        return 'x-grid3-row-collapsed';
+    }
+});
+
+//------------------------------------------------------------------------------
+// BugsGrid
+ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoScroll       : true,
+    height           : 250,
+    autoExpandColumn : 'GridBugTitle',
+    id               : 'PortletBugs-grid-id',
+    store            : ui.component._PortletBugs.store,
+    columns          : ui.component._PortletBugs.gridColumns,
+    view             : ui.component._PortletBugs.gridView,
+    sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        var BugsId    = grid.store.getAt(rowIndex).data.id,
+            BugsUrl   = grid.store.getAt(rowIndex).data.link,
+            BugsTitle = grid.store.getAt(rowIndex).data.title;
+
+        if (!Ext.getCmp('main-panel').findById('bugs-' + BugsId)) {
+
+            Ext.getCmp('main-panel').add({
+                id         : 'bugs-' + BugsId,
+                xtype      : 'panel',
+                title      : Ext.util.Format.substr(BugsTitle, 0, 20) + '...',
+                tabTip     : BugsTitle,
+                iconCls    : 'iconBugs',
+                closable   : true,
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-bugs-' + BugsId, url: BugsUrl }) ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
+    },
+
+    openRelatedFile: function(xmlID)
+    {
+        new ui.task.GetFileInfoByXmlID({xmlID: xmlID});
+    },
+
+    onContextClick : function(grid, rowIndex, e)
+    {
+
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-bugs',
+                items : [{
+                    scope   : this,
+                    text    : '<b>'+_('Open in a new Tab')+'</b>',
+                    iconCls : 'iconOpenInTab',
+                    handler : function()
+                    {
+                        this.fireEvent('rowdblclick', grid, this.ctxIndex, e);
+                        this.menu.hide();
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : _('Refresh this grid'),
+                    iconCls : 'iconRefresh',
+                    handler : function()
+                    {
+                        this.ctxIndex = null;
+                        ui.component._PortletBugs.reloadData();
+                    }
+                }, {
+                    scope   : this,
+                    text    : _('Open the related file'),
+                    iconCls : 'iconAllFiles',
+                    id      : 'bugs-open-related-file',
+                    handler : function()
+                    {
+                        this.openRelatedFile(this.ctxXmlID);
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if(this.ctxIndex){
+            this.ctxIndex = null;
+        }
+        if(this.ctxXmlID){
+            this.ctxXmlID = null;
+        }
+
+        this.ctxIndex = rowIndex;
+        this.ctxXmlID = grid.store.getAt(this.ctxIndex).data.xmlID;
+        this.menu.showAt(e.getXY());
+
+        if( !this.ctxXmlID ) {
+          Ext.getCmp('bugs-open-related-file').disable();
+        } else {
+          Ext.getCmp('bugs-open-related-file').enable();
+        }
+
+    },
+
+    togglePreview : function(show) 
+    {
+        this.view.showPreview = show;
+        this.view.refresh();
+    }, 
+
+    initComponent : function(config)
+    {
+
+        this.tbar = [{
+            text          : _('Summary'),
+            pressed       : false,
+            enableToggle  : true, 
+            iconCls       : 'iconSummary',
+            scope         : this,
+            toggleHandler : function(btn, pressed){
+                this.togglePreview(pressed);
+            }
+        }];
+
+        ui.component._PortletBugs.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+
+    }
+});
+
+ui.component._PortletBugs.reloadData = function() {
+    ui.component._PortletBugs.store.reload({
+        callback: function(r,o,success) {
+          if( !success ) {
+              Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading open bugs from Php.net !') + '</div>');
+              Ext.get('PortletBugs-grid-defaultMess-id').highlight();
+
+          } else {
+              if (ui.component._PortletBugs.store.getTotalCount() === 0 ) {
+                  Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open bugs')+'</div>');
+                  Ext.get('PortletBugs-grid-defaultMess-id').highlight();
+              }
+          }
+        }
+    });
+};
+
+//------------------------------------------------------------------------------
+// PortletSummary
+ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
+{
+    title   : '',
+    iconCls : 'iconBugs',
+    id      : 'portletBugs',
+    layout  : 'fit',
+    store   : ui.component._PortletBugs.store,
+    reloadData : ui.component._PortletBugs.reloadData,
+    tools   : [{
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
+            ui.component._PortletBugs.reloadData();
+        }
+    }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletBugsCollapsed',
+                    value : false,
+                    notify: false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletBugsCollapsed',
+                    value : true,
+                    notify: false
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletBugsCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
+    initComponent: function(config) {
+
+        ui.component.PortletBugs.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
+        this.add(new ui.component._PortletBugs.grid());
+
+    }
+});
+
+// singleton
+ui.component._PortletBugs.instance = null;
+ui.component.PortletBugs.getInstance = function(config)
+{
+    if (!ui.component._PortletBugs.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletBugs.instance = new ui.component.PortletBugs(config);
+    }
+    return ui.component._PortletBugs.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PortletInfo');
+
+//------------------------------------------------------------------------------
+// PortletInfo Internals
+
+// Store : storeInfo
+ui.component._PortletInfo.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getInfos'
+    }),
+    baseParams : {
+        start:0,
+        limit:10
+    },
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'field',
+                mapping : 'field'
+            }, {
+                name    : 'value',
+                mapping : 'value'
+            }, {
+                name       : 'date',
+                mapping    : 'date',
+                type       : 'date',
+                dateFormat : 'Y-m-d H:i:s'
+            }
+        ])
+    ),
+    listeners: {
+        load: function(s)
+        {
+            var d = s.data.items[0].data.date;
+            PhDOE.lastInfoDate = d.format("Y-m-d H:i:s");
+        }
+    }
+});
+ui.component._PortletInfo.store.setDefaultSort('date', 'desc');
+
+// PortletInfo cell renderer for type column
+ui.component._PortletInfo.typeRenderer = function(value, md, record)
+{
+    var user, lang, nbFolders, nbFilesCreate, nbFilesDelete, nbFilesUpdate, nbFiles;
+
+    switch (value) {
+
+        // Update datas
+        case 'updateData' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} updated app\'s data'),
+                    user.ucFirst());
+
+        break;
+        case 'checkEntities' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} check all entitites'),
+                    user.ucFirst());
+
+        break;
+
+        // Login / logout
+        case 'logout' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} logged out'),
+                    user.ucFirst());
+
+        break;
+        case 'login' :
+            user = record.data.value.user;
+            lang = record.data.value.lang;
+
+            return String.format(
+                    _('{0} is logged in using the {1} language'),
+                    user.ucFirst(),
+                    lang.ucFirst());
+
+        break;
+        
+        // Commit
+        case 'commitFolders' :
+            user      = record.data.value.user;
+            lang      = record.data.value.lang;
+            nbFolders = record.data.value.nbFolders;
+
+            return String.format(
+                    _('{0} committed {1} new folder(s) in the {2} language'),
+                    user.ucFirst(),
+                    nbFolders,
+                    lang.ucFirst());
+
+        break;
+        case 'commitFiles' :
+            user          = record.data.value.user;
+            lang          = record.data.value.lang;
+            nbFilesCreate = record.data.value.nbFilesCreate;
+            nbFilesDelete = record.data.value.nbFilesDelete;
+            nbFilesUpdate = record.data.value.nbFilesUpdate;
+            nbFiles       = nbFilesCreate + nbFilesDelete + nbFilesUpdate;
+
+            return String.format(
+                    _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}'),
+                    user.ucFirst(),
+                    nbFiles,
+                    nbFilesCreate,
+                    nbFilesUpdate,
+                    nbFilesDelete,
+                    lang.ucFirst()
+                   );
+
+        break;
+
+    }
+};
+
+// PortletInfo grid's columns definition
+ui.component._PortletInfo.gridColumns = [
+    new Ext.grid.RowNumberer(), {
+        id        : 'Type',
+        header    : _('Type'),
+        width     : 180,
+        sortable  : true,
+        dataIndex : 'field',
+        renderer  : ui.component._PortletInfo.typeRenderer
+    }, {
+        header    : _('Date'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+    }
+];
+
+//------------------------------------------------------------------------------
+// PortletInfo grid
+ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    autoExpandColumn : 'Type',
+    loadMask   : true,
+    autoScroll : true,
+    autoHeight : true,
+    store      : ui.component._PortletInfo.store,
+    columns    : ui.component._PortletInfo.gridColumns,
+    view       : ui.component._PortletInfo.gridView,
+
+    initComponent: function(config)
+    {
+        
+        Ext.apply(this, {
+            bbar: new Ext.PagingToolbar({
+                pageSize: 10,
+                store: this.store,
+                displayInfo: true
+            })
+        });
+        
+        ui.component._PortletInfo.grid.superclass.initComponent.call(this);
+        
+        this.on('rowdblclick', this.onRowdblclick, this);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletInfo
+ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Information'),
+    id      : 'portletInfo',
+    iconCls : 'iconInfo',
+    layout  : 'fit',
+    store   : ui.component._PortletInfo.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletInfo.store.reload();
+        }
+    }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletInfoCollapsed',
+                    value : false,
+                    notify: false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletInfoCollapsed',
+                    value : true,
+                    notify: false
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletInfoCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.PortletInfo.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.add(new ui.component._PortletInfo.grid());
+
+    }
+});
+
+// singleton
+ui.component._PortletInfo.instance = null;
+ui.component.PortletInfo.getInstance = function(config)
+{
+    if (!ui.component._PortletInfo.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletInfo.instance = new ui.component.PortletInfo(config);
+    }
+    return ui.component._PortletInfo.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PortletLocalMail');
+
+//------------------------------------------------------------------------------
+// PortletLocalMail internals
+
+// Store : Mailing with Informations about phpdoc-LANG mailing
+ui.component._PortletLocalMail.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getLastNews'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'title',
+                mapping : 'title'
+            }, {
+                name    : 'link',
+                mapping : 'link'
+            }, {
+                name    : 'description',
+                mapping : 'description'
+            }, {
+                name       : 'pubDate',
+                mapping    : 'pubDate',
+                type       : 'date',
+                dateFormat : 'Y/m/d H:i:s'
+            }
+        ])
+    )
+});
+ui.component._PortletLocalMail.store.setDefaultSort('pubDate', 'desc');
+
+// PortletLocalMail columns definition
+ui.component._PortletLocalMail.columns = [
+    new Ext.grid.RowNumberer(), {
+        id        : 'GridMailingTitle',
+        header    : _('Title'),
+        sortable  : true,
+        dataIndex : 'title'
+    }, {
+        header    : _('By'),
+        width     : 100,
+        sortable  : true,
+        dataIndex : 'description'
+    }, {
+        header    : _('Date'),
+        width     : 100,
+        sortable  : true,
+        dataIndex : 'pubDate',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+    }
+];
+
+//------------------------------------------------------------------------------
+// _PortletLocalMail
+ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoScroll       : true,
+    height           : 250,
+    autoExpandColumn : 'GridMailingTitle',
+    id               : 'PortletLocalMail-grid-id',
+    store            : ui.component._PortletLocalMail.store,
+    columns          : ui.component._PortletLocalMail.columns,
+    sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
+
+    view             : new Ext.grid.GridView({
+                           forceFit:true,
+                           enableRowBody:true,
+                           ignoreAdd: true,
+                           emptyText: '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
+                           deferEmptyText: false
+                       }),
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        var MailId    = grid.store.getAt(rowIndex).data.pubDate,
+            MailUrl   = grid.store.getAt(rowIndex).data.link,
+            MailTitle = grid.store.getAt(rowIndex).data.title;
+
+        if (!Ext.getCmp('main-panel').findById('mail-' + MailId)) {
+
+            Ext.getCmp('main-panel').add({
+                xtype      : 'panel',
+                id         : 'mail-' + MailId,
+                title      : Ext.util.Format.substr(MailTitle, 0, 20) + '...',
+                tabTip     : MailTitle,
+                iconCls    : 'iconMailing',
+                closable   : true,
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({ id: 'frame-mail-' + MailId, url: MailUrl }) ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('mail-' + MailId);
+    },
+
+    onContextClick: function(grid, rowIndex, e)
+    {
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-mail',
+                items : [{
+                    scope   : this,
+                    text    : '<b>'+_('Open in a new Tab')+'</b>',
+                    iconCls : 'iconOpenInTab',
+                    handler : function()
+                    {
+                        this.fireEvent('rowdblclick', grid, this.ctxIndex, e);
+                        this.menu.hide();
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : _('Refresh this grid'),
+                    iconCls : 'iconRefresh',
+                    handler : function()
+                    {
+                        this.ctxIndex = null;
+                        ui.component._PortletLocalMail.reloadData();
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if(this.ctxIndex){
+            this.ctxIndex = null;
+        }
+
+        this.ctxIndex = rowIndex;
+        this.menu.showAt(e.getXY());
+
+    },
+
+    initComponent : function(config)
+    {
+        ui.component._PortletLocalMail.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+ui.component._PortletLocalMail.reloadData = function() {
+    ui.component._PortletLocalMail.store.reload({
+        callback: function(r,o,success) {
+          if( !success ) {
+              Ext.getCmp('PortletLocalMail-grid-id').getView().mainBody.update('<div id="PortletLocalMail-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading mails from this mailing list !') + '</div>');
+              Ext.get('PortletLocalMail-grid-defaultMess-id').highlight();
+
+          }
+        }
+    });
+};
+
+//------------------------------------------------------------------------------
+// PortletLocalMail
+ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
+{
+    title   : '',
+    iconCls : 'iconMailing',
+    id      : 'portletLocalMail',
+    layout  : 'fit',
+    store   : ui.component._PortletLocalMail.store,
+    reloadData : ui.component._PortletLocalMail.reloadData,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletLocalMail.reloadData();
+        }
+    }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletLocalMailCollapsed',
+                    value : false,
+                    notify: false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletLocalMailCollapsed',
+                    value : true,
+                    notify: false
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletLocalMailCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.PortletLocalMail.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.title = String.format(_('Mail from {0}'), 'doc-' + this.lang);
+        this.add(new ui.component._PortletLocalMail.grid());
+    }
+});
+
+// singleton
+ui.component._PortletLocalMail.instance = null;
+ui.component.PortletLocalMail.getInstance = function(config)
+{
+    if (!ui.component._PortletLocalMail.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletLocalMail.instance = new ui.component.PortletLocalMail(config);
+    }
+    return ui.component._PortletLocalMail.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PortletSummary');
+
+//------------------------------------------------------------------------------
+// PortletSummary Internals
+
+// Store : storeSummary with Informations like Revcheck second table
+ui.component._PortletSummary.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getSummaryInfo'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'libel',
+                mapping : 'libel'
+            }, {
+                name    : 'nbFiles',
+                mapping : 'nbFiles'
+            }, {
+                name    : 'percentFiles',
+                mapping : 'percentFiles'
+            }, {
+                name    : 'sizeFiles',
+                mapping : 'sizeFiles'
+            }, {
+                name    : 'percentSize',
+                mapping : 'percentSize'
+            }
+        ])
+    ),
+    listeners : {
+        load : function()
+        {
+            this.each(function(record)
+            {
+                switch (record.id) {
+                    case 1: record.set('libel', _('Up to date files'));                break;
+                    case 2: record.set('libel', _('Stale files'));                     break;
+                    case 3: record.set('libel', _('Files available for translation')); break;
+                    case 4: record.set('libel', _('Total'));                           break;
+                    default: record.set('libel', '');                                  break;
+                }
+                record.commit();
+            });
+        }
+    }
+});
+
+// PortletSummary grid's columns definition
+ui.component._PortletSummary.gridColumns = [
+    new Ext.grid.RowNumberer(), {
+        id        : 'StatusType',
+        header    : _('File status type'),
+        width     : 180,
+        sortable  : true,
+        dataIndex : 'libel'
+    }, {
+        header    : _('Number of files'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'nbFiles'
+    }, {
+        header    : _('Percent of files'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'percentFiles'
+    }, {
+        header    : _('Size of files (kB)'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'sizeFiles'
+    }, {
+        header    : _('Percent of size'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'percentSize'
+    }
+];
+
+// PortletSummary gridview
+ui.component._PortletSummary.gridView = new Ext.grid.GridView({
+    getRowClass : function(record)
+    {
+        switch (record.data.id) {
+            case 1: return 'summary_1';
+            case 2: return 'summary_2';
+            case 3: return 'summary_3';
+            case 4: return 'summary_4';
+            default: return '';
+        }
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletSummary grid
+ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask   : true,
+    autoScroll : true,
+    autoHeight : true,
+    store      : ui.component._PortletSummary.store,
+    columns    : ui.component._PortletSummary.gridColumns,
+    view       : ui.component._PortletSummary.gridView,
+
+    onRowdblclick : function ( grid, rowIndex )
+    {
+        var id = grid.store.getAt(rowIndex).data.id;
+
+        // Stales files
+        if( id === 2 ) {
+            Ext.getCmp('acc-need-update').expand();
+        }
+        
+        // Available for translation
+        if( id === 3 ) {
+            Ext.getCmp('acc-need-translate').expand();
+        }
+    },
+    initComponent: function(config)
+    {
+        ui.component._PortletSummary.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.on('rowdblclick', this.onRowdblclick, this);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletSummary
+ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Summary'),
+    iconCls : '',
+    id      : 'portletSummary',
+    layout  : 'fit',
+    store   : ui.component._PortletSummary.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletSummary.store.reload();
+        }
+    }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletSummaryCollapsed',
+                    value : false,
+                    notify: false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletSummaryCollapsed',
+                    value : true,
+                    notify: false
+                });
+            }
+        }
+    },
+
+    initComponent: function(config)
+    {
+        ui.component.PortletSummary.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.add(new ui.component._PortletSummary.grid());
+
+    },
+
+    afterRender: function()
+    {
+        ui.component.PortletSummary.superclass.afterRender.call(this);
+
+        this.header.insertFirst({
+            tag   : 'div',
+            id    : Ext.id(),
+            style : 'float: left; margin-right: 2px;',
+            cls   : 'flags flag-'+this.lang
+        }, 'first');
+
+        if( PhDOE.userConf.portletSummaryCollapsed ) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
+    }
+});
+
+// singleton
+ui.component._PortletSummary.instance = null;
+ui.component.PortletSummary.getInstance = function(config)
+{
+    if (!ui.component._PortletSummary.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletSummary.instance = new ui.component.PortletSummary(config);
+    }
+    return ui.component._PortletSummary.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._PortletTranslationGraph');
+
+function renderLibel(v) {
+ return _(v);
+}
+
+ui.component._PortletTranslationGraph.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getGraphLang'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'libel',
+                mapping : 'libel',
+                convert : renderLibel
+            }, {
+                name    : 'total',
+                mapping : 'total'
+            }
+        ])
+    )
+});
+
+ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
+{
+
+    height: 400,
+    url : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    dataField: 'total',
+    categoryField: 'libel',
+    store: ui.component._PortletTranslationGraph.store,
+    series:[{
+        style: {
+            colors: ["#68D888", "#FF6347", "#EEE8AA"]
+        }
+    }],
+    extraStyle:
+    {
+        legend:
+        {
+            display: 'bottom',
+            padding: 5,
+            font:
+            {
+                family: 'Tahoma',
+                size: 13
+            }
+         }
+    },
+
+    initComponent : function(config)
+    {
+        ui.component._PortletTranslationGraph.chart.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+
+});
+
+//------------------------------------------------------------------------------
+// PortletTranslationGraph
+ui.component.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Graphics'),
+    id      : 'portletTranslationGraph',
+    iconCls : 'iconGraphic',
+    layout  : 'fit',
+    store   : ui.component._PortletTranslationGraph.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this graph'),
+        handler: function() {
+            ui.component._PortletTranslationGraph.store.reload();
+        }
+    }],
+    initComponent : function(config)
+    {
+        ui.component.PortletTranslationGraph.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.add(new ui.component._PortletTranslationGraph.chart());
+    }
+
+});
+
+// singleton
+ui.component._PortletTranslationGraph.instance = null;
+ui.component.PortletTranslationGraph.getInstance = function(config)
+{
+    if (!ui.component._PortletTranslationGraph.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletTranslationGraph.instance = new ui.component.PortletTranslationGraph(config);
+    }
+    return ui.component._PortletTranslationGraph.instance;
+};Ext.namespace('ui','ui.component','ui.component._PortletTranslationsGraph');
+
+ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getGraphLangs'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'libel',
+                mapping : 'libel',
+                type    : 'string'
+            }, {
+                name    : 'fullLibel',
+                mapping : 'fullLibel',
+                type    : 'string'
+            }, {
+                name    : 'total',
+                mapping : 'total',
+                type    : 'int'
+            }, {
+                name    : 'percent',
+                mapping : 'percent',
+                type    : 'float'
+            }
+        ])
+    )
+});
+
+ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
+{
+    height : 400,
+    url    : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    xField : 'libel',
+    tipRenderer : function(chart, record, index, series){
+        return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
+    },
+
+    series : [{
+        type        : 'column',
+        displayName : 'Total',
+        yField      : 'total',
+        style : {
+            image :'themes/img/bar.gif',
+            mode  : 'stretch',
+            color : 0x99BBE8
+        }
+    }],
+    store : ui.component._PortletTranslationsGraph.store,
+
+    initComponent : function(config)
+    {
+        ui.component._PortletTranslationsGraph.chart.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+
+});
+
+//------------------------------------------------------------------------------
+// PortletTranslationGraph
+ui.component.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Graphics for all languages'),
+    id      : 'portletTranslationsGraph',
+    iconCls : 'iconGraphic',
+    layout  : 'fit',
+    store   : ui.component._PortletTranslationsGraph.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this graph'),
+        handler: function() {
+            ui.component._PortletTranslationsGraph.store.reload();
+        }
+    }],
+    initComponent : function(config)
+    {
+        ui.component.PortletTranslationsGraph.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.add(new ui.component._PortletTranslationsGraph.chart());
+    }
+
+});
+
+// singleton
+ui.component._PortletTranslationsGraph.instance = null;
+ui.component.PortletTranslationsGraph.getInstance = function(config)
+{
+    if (!ui.component._PortletTranslationsGraph.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletTranslationsGraph.instance = new ui.component.PortletTranslationsGraph(config);
+    }
+    return ui.component._PortletTranslationsGraph.instance;
+};Ext.namespace('ui','ui.component','ui.component._PortletTranslator');
+
+//------------------------------------------------------------------------------
+// PortletTranslator internals
+
+// Store : Translator with Informations like Revcheck first table
+ui.component._PortletTranslator.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url: './do/getTranslatorInfo'
+    }),
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'name',
+                mapping : 'name'
+            }, {
+                name    : 'email',
+                mapping : 'mail'
+            }, {
+                name    : 'nick',
+                mapping : 'nick'
+            }, {
+                name    : 'vcs',
+                mapping : 'vcs'
+            }, {
+                name    : 'uptodate',
+                mapping : 'uptodate',
+                type    : 'int'
+            }, {
+                name    : 'stale',
+                mapping : 'stale',
+                type    : 'int'
+            }, {
+                name    : 'sum',
+                mapping : 'sum',
+                type    : 'int'
+            }
+        ])
+    )
+});
+ui.component._PortletTranslator.store.setDefaultSort('nick', 'asc');
+
+// PortletTranslator cell renderer for translator count
+ui.component._PortletTranslator.translatorSumRenderer = function(value)
+{
+    if (value) {
+        var v = (value === 0 || value > 1) ? value : 1;
+        return String.format('('+_('{0} Translators')+')', v);
+    } else {
+        return false;
+    }
+};
+
+// PortletTranslator cell renderer for up-to-date column
+ui.component._PortletTranslator.uptodateRenderer = function(value)
+{
+    if (value === '0') {
+        return false;
+    } else {
+        return '<span style="color:green; font-weight: bold;">' + value + '</span>';
+    }
+};
+
+// PortletTranslator cell renderer for stale column
+ui.component._PortletTranslator.staleRenderer = function(value)
+{
+    if (value === '0') {
+        return false;
+    } else {
+        return '<span style="color:red; font-weight: bold;">' + value + '</span>';
+    }
+};
+
+// PortletTranslator cell renderer for sum column
+ui.component._PortletTranslator.sumRenderer = function(value)
+{
+    return (value === '0') ? '' : value;
+};
+
+// PortletTranslator columns definition
+ui.component._PortletTranslator.gridColumns = [
+    new Ext.grid.RowNumberer(), {
+        id              : 'GridTransName',
+        header          : _('Name'),
+        sortable        : true,
+        dataIndex       : 'name',
+        summaryType     : 'count',
+        summaryRenderer : ui.component._PortletTranslator.translatorSumRenderer
+    }, {
+        header    : _('Email'),
+        width     : 110,
+        sortable  : true,
+        dataIndex : 'email'
+    }, {
+        header    : _('Nick'),
+        width     : 70,
+        sortable  : true,
+        dataIndex : 'nick'
+    }, {
+        header    : _('VCS'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'vcs'
+    }, {
+        header      : _('UptoDate'),
+        width       : 60,
+        sortable    : true,
+        renderer    : ui.component._PortletTranslator.uptodateRenderer,
+        dataIndex   : 'uptodate',
+        summaryType : 'sum'
+    }, {
+        header      : _('Stale'),
+        width       : 90,
+        sortable    : true,
+        renderer    : ui.component._PortletTranslator.staleRenderer,
+        dataIndex   : 'stale',
+        summaryType : 'sum'
+    }, {
+        header      : _('Sum'),
+        width       : 50,
+        sortable    : true,
+        renderer    : ui.component._PortletTranslator.sumRenderer,
+        dataIndex   : 'sum',
+        summaryType : 'sum'
+    }
+];
+
+//------------------------------------------------------------------------------
+// PortletTranslator
+ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoScroll       : true,
+    autoHeight       : true,
+    plugins          : [new Ext.ux.grid.GridSummary()],
+    store            : ui.component._PortletTranslator.store,
+    columns          : ui.component._PortletTranslator.gridColumns,
+    autoExpandColumn : 'GridTransName',
+    sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
+    lang             : this.lang,
+    EmailPrompt      : new ui.component.EmailPrompt(),
+
+    onRowDblClick : function(grid, rowIndex)
+    {
+
+        this.getSelectionModel().selectRow(rowIndex);
+
+        if( this.ctxTranslatorName ) {
+            this.ctxTranslatorEmail = null;
+            this.ctxTranslatorName  = null;
+        }
+
+        this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
+        this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
+        var nick  = this.store.getAt(rowIndex).data.nick;
+
+        // Don't open the email Prompt if the user is "nobody"
+        if( nick == 'nobody' ) {
+            return;
+        }
+
+        this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
+        this.EmailPrompt.show('lastUpdateTime');
+    },
+
+    onContextClick : function(grid, rowIndex, e)
+    {
+        if(!this.menu) {
+            this.menu = new Ext.menu.Menu({
+                id    : 'submenu-translators',
+                items : [{
+                    scope   : this,
+                    text    : '',
+                    iconCls : 'iconSendEmail',
+                    handler : function()
+                    {
+                        this.EmailPrompt.setData(this.ctxTranslatorName, this.ctxTranslatorEmail);
+                        this.EmailPrompt.show('lastUpdateTime');
+                    }
+                }, '-', {
+                    scope   : this,
+                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.appConf.projectMailList, this.lang)),
+                    iconCls : 'iconSendEmail',
+                    handler : function()
+                    {
+                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.appConf.projectMailList, this.lang));
+                        this.EmailPrompt.show('lastUpdateTime');
+                    }
+                }]
+            });
+        }
+
+        this.getSelectionModel().selectRow(rowIndex);
+        e.stopEvent();
+
+        if( this.ctxTranslatorName ) {
+            this.ctxTranslatorName  = null;
+            this.ctxTranslatorEmail = null;
+        }
+        this.ctxTranslatorName  = this.store.getAt(rowIndex).data.name;
+        this.ctxTranslatorEmail = this.store.getAt(rowIndex).data.email;
+
+        var nick  = this.store.getAt(rowIndex).data.nick;
+
+        // Don't open the contextMenu if the user is "nobody"
+        if( nick == 'nobody' ) {
+            return;
+        }
+
+        // Set the title for items[0]
+        this.menu.items.items[0].setText('<b>' + String.format(_('Send an email to {0}'), this.ctxTranslatorName) + '</b>');
+
+        this.menu.showAt(e.getXY());
+
+    },
+
+    initComponent: function(config)
+    {
+        ui.component._PortletTranslator.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+        this.on('rowcontextmenu', this.onContextClick, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+//------------------------------------------------------------------------------
+// PortletTranslator
+ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
+{
+    title   : _('Translators'),
+    iconCls : 'iconTranslator',
+    id      : 'portletTranslator',
+    layout  : 'fit',
+    store   : ui.component._PortletTranslator.store,
+    tools   : [{
+        id : 'refresh',
+        qtip: _('Refresh this grid'),
+        handler: function() {
+            ui.component._PortletTranslator.store.reload();
+        }
+    }],
+    listeners: {
+        expand: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletTranslatorCollapsed',
+                    value : false,
+                    notify: false
+                });
+            }
+        },
+        collapse: function(p) {
+            if( PhDOE.appLoaded ) {
+                new ui.task.UpdateConfTask({
+                    item  : 'portletTranslatorCollapsed',
+                    value : true,
+                    notify: false
+                });
+            }
+        },
+        afterrender: function(cmp) {
+            if( PhDOE.userConf.portletTranslatorCollapsed ) {
+                cmp.collapse();
+            } else {
+                cmp.expand();
+            }
+        }
+    },
+
+    initComponent: function(config) {
+
+        ui.component.PortletTranslator.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+
+        this.add(new ui.component._PortletTranslator.grid({lang: this.lang}));
+
+    }
+});
+
+// singleton
+ui.component._PortletTranslator.instance = null;
+ui.component.PortletTranslator.getInstance = function(config)
+{
+    if (!ui.component._PortletTranslator.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._PortletTranslator.instance = new ui.component.PortletTranslator(config);
+    }
+    return ui.component._PortletTranslator.instance;
+};
+Ext.namespace('ui','ui.component','ui.component._RepositoryTree');
+
+//------------------------------------------------------------------------------
+// RepositoryTree internals
+
+// RepositoryTree root node
+ui.component._RepositoryTree.root = {
+    nodeType  : 'async',
+    id        : '/',
+    text      : _('Repository'),
+    draggable : false
+};
+
+// RepositoryTree default tree loader
+ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
+    dataUrl : './do/getAllFiles'
+});
+
+// RepositoryTree : window to add a new file
+ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
+{
+    title      : _('Add a new file'),
+    iconCls    : 'iconFilesNeedTranslate',
+    id         : 'win-add-new-file',
+    layout     : 'form',
+    width      : 350,
+    height     : 170,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelWidth : 150,
+    buttons : [{
+        id   : 'win-add-new-file-btn',
+        text : _('Open the editor'),
+        disabled: true,
+        handler : function()
+        {
+            var cmp          = Ext.getCmp('win-add-new-file'),
+                parentFolder = cmp.node.id,
+                newFileName  = cmp.items.items[1].getValue(),
+                skeleton     = cmp.items.items[2].getValue();
+
+            if(cmp.node.findChild("id", parentFolder + "/" + newFileName)) {
+                // This file already exist.
+                PhDOE.winForbidden('file_already_exist');
+                return true;
+            }
+
+            cmp.openFile(parentFolder + "/", newFileName, skeleton);
+            cmp.close();
+            return true;
+            
+        }
+    }],
+
+    openFile: function(FilePath, FileName, skeleton)
+    {
+        var FileID      = Ext.util.md5('FNT-' + FilePath + FileName),
+            storeRecord = {
+                data: {
+                    needcommit: false,
+                    node: this.node
+                }
+
+            }, // simulate a needCommit option to fit with the classic comportement of FNT panel
+            t = FilePath.split('/'), FileLang;
+
+        t.shift();
+
+        FileLang = t[0];
+
+        t.shift();
+        t.pop();
+
+        FilePath = '/' + t.join('/') + '/';
+        if( FilePath === "//" ) {
+            FilePath = "/";
+        }
+
+        FileID   = Ext.util.md5('FNT-' + FilePath + FileName);
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+
+            Ext.getCmp('main-panel').add(
+            {
+                id               : 'FNT-' + FileID,
+                layout           : 'border',
+                title            : FileName,
+                originTitle      : FileName,
+                iconCls          : 'iconTabNeedTranslate',
+                closable         : true,
+                tabLoaded        : false,
+                panTRANSLoaded   : false,
+                panGGTRANSLoaded : true, // Simulate true for google translate panel
+                defaults         : { split : true },
+                tabTip           : String.format(
+                    _('New file: in {0}'), FileLang+FilePath
+                ),
+                items : [new ui.component.FilePanel(
+                    {
+                        id             : 'FNT-NEW-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('New File: ') + FileLang + FilePath + FileName,
+                        isTrans        : true,
+                        prefix         : 'FNT',
+                        ftype          : 'NEW',
+                        spellCheck     : PhDOE.userConf.newFileSpellCheck,
+                        spellCheckConf : 'newFileSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : FileLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : false,
+                        syncScroll     : false,
+                        skeleton       : skeleton
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                xtype      : 'displayfield',
+                fieldLabel : _('Parent Folder'),
+                value      : this.node.id
+            }, {
+                xtype      : 'textfield',
+                fieldLabel : _('Name for the new file'),
+                name       : 'newFolderName',
+                listeners: {
+                    valid: function()
+                    {
+                        Ext.getCmp('win-add-new-file-btn').enable();
+                    },
+                    invalid: function()
+                    {
+                        Ext.getCmp('win-add-new-file-btn').disable();
+                    }
+                }
+            }, {
+                xtype: 'combo',
+                triggerAction: 'all',
+                width: 160,
+                editable: false,
+                store: new Ext.data.Store({
+                    proxy : new Ext.data.HttpProxy({
+                        url : './do/getSkeletonsNames'
+                    }),
+                    reader : new Ext.data.JsonReader(
+                        {
+                            root      : 'Items',
+                            idProperty: 'name'
+                        }, Ext.data.Record.create([
+                            {
+                                name    : 'name'
+                            },
+                            {
+                                name    : 'path'
+                            }
+                        ])
+                    )
+                }),
+                listeners: {
+                    select: function(c, r, n)
+                    {
+                        // If we haven't set any name for this file, we put the name of the skeleton
+                        if( c.ownerCt.items.items[1].getValue() === "" ) {
+                            c.ownerCt.items.items[1].setValue(r.data.name);
+                        }
+
+                    }
+                },
+                valueField   : 'path',
+                displayField : 'name',
+                fieldLabel   : _('Chose a skeleton')
+            }]
+        });
+        ui.component._RepositoryTree.winAddNewFile.superclass.initComponent.call(this);
+    }
+});
+
+// RepositoryTree : window to add a new folder
+ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
+{
+    title      : _('Add a new folder'),
+    iconCls    : 'iconFolderNew',
+    id         : 'win-add-new-folder',
+    layout     : 'form',
+    width      : 350,
+    height     : 200,
+    resizable  : false,
+    modal      : true,
+    bodyStyle  : 'padding:5px 5px 0',
+    labelWidth : 150,
+    buttons : [{
+        id   : 'win-add-new-folder-btn',
+        text : 'Add',
+        disabled: true,
+        handler : function()
+        {
+            var cmp = Ext.getCmp('win-add-new-folder');
+            var parentFolder = cmp.node.id;
+            var newFolderName = cmp.items.items[1].getValue();
+
+            XHR({
+                params  : {
+                    task          : 'addNewFolder',
+                    parentFolder  : parentFolder,
+                    newFolderName : newFolderName
+                },
+                success : function()
+                {
+                    Ext.getCmp('win-add-new-folder').close();
+
+                    cmp.node.reload();
+
+                    // Notify
+                    PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !'), newFolderName, parentFolder));
+
+
+                },
+                failure : function(r)
+                {
+                    //Ext.getCmp('win-add-new-folder').close();
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    
+                    if( o.type ) {
+                        PhDOE.winForbidden(o.type);
+                    } else {
+                        PhDOE.winForbidden();
+                    }
+                }
+            });
+        }
+    }],
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                xtype      : 'displayfield',
+                fieldLabel : _('Parent Folder'),
+                value      : this.node.id
+            }, {
+                xtype      : 'textfield',
+                fieldLabel : _('Name for the new folder'),
+                name       : 'newFolderName',
+                vtype      : 'alphanum',
+                listeners: {
+                    valid: function()
+                    {
+                        Ext.getCmp('win-add-new-folder-btn').enable();
+                    },
+                    invalid: function()
+                    {
+                        Ext.getCmp('win-add-new-folder-btn').disable();
+                    }
+                }
+            },{
+                xtype : 'box',
+                html  : _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
+            }]
+        });
+        ui.component._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
+    }
+});
+
+Ext.namespace('ui.component._RepositoryTree.menu');
+// RepositoryTree folder context menu
+// config - { node }
+ui.component._RepositoryTree.menu.folder = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._RepositoryTree.menu.folder.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
+                iconCls : 'iconFolderClose',
+                scope   : this,
+                handler : function()
+                {
+                    if (this.node.isExpanded()) {
+                        this.node.collapse();
+                    }
+                    else {
+                        this.node.expand();
+                    }
+                }
+            },'-', {
+                text    : _('Update this folder'),
+                iconCls : 'iconFilesNeedUpdate',
+                scope   : this,
+                handler : function()
+                {
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    //... and fire the update processus
+                    new ui.task.UpdateSingleFolderTask(this.node);
+                }
+            }, {
+                text    : _('Add a new folder'),
+                iconCls : 'iconFolderNew',
+                hidden  : (  this.node.id === '/' ||
+                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
+                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                scope   : this,
+                handler : function()
+                {
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    // We display the Add New Folder window
+                    var win = new ui.component._RepositoryTree.winAddNewFolder({node : this.node});
+                    win.show(this.node.ui.getEl());
+                }
+            }, {
+                text    : _('Add a new file'),
+                iconCls : 'iconFilesNeedTranslate',
+                hidden  : (  this.node.id === '/' ||
+                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
+                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                scope   : this,
+                handler : function()
+                {
+                    // We start by expand this node.
+                    this.node.expand();
+
+                    // We display the Add New Folder window
+                    var win = new ui.component._RepositoryTree.winAddNewFile({node : this.node});
+                    win.show(this.node.ui.getEl());
+                }
+            }]
+        });
+    }
+});
+
+// RepositoryTree file context menu
+// config - { node }
+ui.component._RepositoryTree.menu.file = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._RepositoryTree.menu.file.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
+{
+    init : function()
+    {
+        var FileName = this.node.attributes.text,
+            t        = this.node.attributes.id.split('/'),
+            FileLang, FilePath;
+
+            t.shift();
+            FileLang = t[0];
+            t.shift();
+            t.pop();
+
+            FilePath = t.join('/') + '/';
+ 
+        Ext.apply(this,
+        {
+            items : [{
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconTabNeedReviewed',
+                scope   : this,
+                handler : function()
+                {
+                    ui.component._RepositoryTree.instance.fireEvent('dblclick', this.node);
+                }
+            }, {
+                hidden  : (this.node.attributes.from === 'search' || PhDOE.userLang == 'en' ),
+                text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
+                iconCls : 'iconTabNeedReviewed',
+                scope   : this,
+                handler : function()
+                {
+                    if (FileLang === 'en') {
+                        ui.component._RepositoryTree.instance.openFile(
+                            'byPath',
+                            PhDOE.userLang + '/' + FilePath,
+                            FileName
+                        );
+                    } else {
+                        ui.component._RepositoryTree.instance.openFile(
+                            'byPath',
+                            'en/' + FilePath,
+                            FileName
+                        );
+                    }
+                }
+            }]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// RepositoryTree
+ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
+{
+    animate         : true,
+    enableDD        : true,
+    ddGroup         : 'mainPanelDDGroup',
+    useArrows       : true,
+    autoScroll      : true,
+    border          : false,
+    containerScroll : true,
+    root            : ui.component._RepositoryTree.root,
+    loader          : ui.component._RepositoryTree.loader,
+
+    onContextMenu : function(node, e)
+    {
+        e.stopEvent();
+        node.select();
+
+        if (node.attributes.type === 'folder' || node.isRoot) {
+            new ui.component._RepositoryTree.menu.folder({
+                node : node
+            }).showAt(e.getXY());
+        } else if (node.attributes.type === 'file') {
+            new ui.component._RepositoryTree.menu.file({
+                node : node
+            }).showAt(e.getXY());
+        }
+    },
+
+    onDblClick : function(node, e)
+    {
+        if (node.attributes.type === 'file') // files only
+        {
+            this.openFile(
+                'byId',
+                node.attributes.id,
+                false
+            );
+        }
+    },
+
+    openFile: function(ftype, first, second)
+    {
+        // Here, first argument is fpath and second, fname
+        if( ftype === 'byPath' )
+        {
+            Ext.getCmp('acc-all-files').expand();
+
+            var fpath = first, fname = second,
+            t = fpath.split('/'), cb = function(node)
+            {
+                node.ensureVisible();
+                if (t[0] && t[0] !== '') {
+                    // walk into childs
+                    for (var j = 0; j < node.childNodes.length; ++j) {
+                        if (node.childNodes[j].text === t[0]) {
+                            t.shift();
+                            node.childNodes[j].expand(false, true, cb.createDelegate(this));
+                        }
+                    }
+                } else {
+                    // leaf node
+                    for (var i = 0; i < node.childNodes.length; ++i) {
+                        if (node.childNodes[i].text === fname) {
+                            node.childNodes[i].ensureVisible();
+                            node.childNodes[i].ui.highlight();
+                            this.openFile('byId', node.childNodes[i].id, false);
+                            //this.fireEvent('dblclick', node.childNodes[i]);
+                        }
+                    }
+                }
+            };
+            this.root.expand(false, true, cb.createDelegate(this));
+        }
+
+        // Here, first argument is a nodeID. Second arguments don't exist
+        if( ftype === 'byId' )
+        {
+            var node      = this.getNodeById(first),
+                FilePath  = node.attributes.id,
+                extension = node.attributes.extension,
+                t, FileID, FileLang, FileName, parser,
+                panelWest, panelCenter;
+
+            // CleanUp the path
+            t = FilePath.split('/');
+            t.shift();
+
+            FileName = t.pop();
+
+            FileLang = t.shift();
+            FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
+
+            FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
+
+            // Render only if this tab don't exist yet
+            if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
+
+                if ( extension !== 'html' ) {
+                    parser = extension;
+                } else {
+                    parser = 'xml';
+                }
+
+                if (extension === 'gif' || extension === 'png')
+                {
+                    panelWest = {};
+
+                    panelCenter = {
+                        id        : 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
+                        xtype     : 'panel',
+                        region    : 'center',
+                        layout    : 'fit',
+                        bodyStyle : 'padding:5px 5px 0',
+                        html      : '<img src="./do/getImageContent?' +
+                                'FileLang=' + FileLang + '&' +
+                                'FilePath=' + FilePath + '&' +
+                                'FileName=' + FileName +
+                                '" />'
+                    };
+
+                } else {
+
+                    panelWest = {
+                        xtype       : 'panel',
+                        region      : 'west',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        split       : true,
+                        collapsible : true,
+                        collapsed   : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        width       : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                        listeners   : {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanel',
+                                        value : false,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanel',
+                                        value : true,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            resize: function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'allFilesDisplaylogPanelWidth',
+                                        value : newWidth,
+                                        notify: false
+                                    });
+                                }
+                            }
+                        },
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            defaults    : {autoScroll: true},
+                            items       : [{
+                                title  : _('Log'),
+                                layout : 'fit',
+                                items  : [new ui.component.VCSLogGrid({
+                                    prefix    : 'AF',
+                                    fid       : FileID,
+                                    fpath     : FileLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : PhDOE.userConf.allFilesDisplayLog
+                                })]
+                            }, {
+                                title  : _('Entities'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'entities',
+                                    prefix    : 'AF',
+                                    ftype     : 'ALL',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.allFilesEntitiesLoadData
+                                })]
+                            }, {
+                                title  : _('Acronyms'),
+                                layout : 'fit',
+                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                    dataType  : 'acronyms',
+                                    prefix    : 'AF',
+                                    ftype     : 'ALL',
+                                    fid       : FileID,
+                                    loadStore : PhDOE.userConf.allFilesAcronymsLoadData
+                                })]
+                            }]
+                        }
+                    };
+
+                    panelCenter = new ui.component.FilePanel({
+                        id             : 'AF' + '-ALL-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : _('File: ') + FileLang + FilePath + FileName,
+                        prefix         : 'AF',
+                        ftype          : 'ALL',
+                        spellCheck     : PhDOE.userConf.allFilesSpellCheck,
+                        spellCheckConf : 'allFilesSpellCheck',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : FileLang,
+                        parser         : parser,
+                        storeRecord    : node,
+                        syncScrollCB   : false,
+                        syncScroll     : false
+                    });
+                }
+
+                Ext.getCmp('main-panel').add({
+                    id          : 'AF-' + FileID,
+                    layout      : 'border',
+                    title       : FileName,
+                    originTitle : FileName,
+                    closable    : true,
+                    tabLoaded   : false,
+                    panEntities : !PhDOE.userConf.allFilesEntitiesLoadData,
+                    panAcronyms : !PhDOE.userConf.allFilesAcronymsLoadData,
+                    panVCS      : !PhDOE.userConf.allFilesDisplayLog,
+                    panLoaded   : false,
+                    tabTip      : String.format(_('in {0}'), FilePath),
+                    iconCls     : 'iconAllFiles',
+                    items       : [panelCenter, panelWest]
+                });
+            }
+            Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
+        }
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            tbar:[
+                _('Search: '), ' ',
+                new Ext.form.TwinTriggerField({
+                    id              : 'AF-search',
+                    validationEvent : false,
+                    validateOnBlur  : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    hideTrigger1    : true,
+                    width           : 180,
+                    enableKeyEvents : true,
+                    listeners : {
+                        keypress : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click : function()
+                    {
+                        var instance = ui.component._RepositoryTree.instance;
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        instance.root.setText(_('Repository'));
+
+                        // clear search
+                        delete instance.loader.baseParams.search;
+                        instance.root.reload();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var instance = ui.component._RepositoryTree.instance,
+                            v        = this.getValue();
+
+                        if( v === '' || v.length < 3) {
+                            this.markInvalid(_('Your search must contain at least 3 characters'));
+                            return;
+                        }
+                        this.clearInvalid();
+
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        // carry search
+                        instance.loader.baseParams.search = v;
+                        instance.root.reload(function()
+                        {
+                            instance.root.setText(
+                                String.format(
+                                    _('Search result: {0}'),
+                                    instance.root.childNodes.length
+                                )
+                            );
+                        });
+
+                    }
+                })
+            ]
+        });
+        ui.component.RepositoryTree.superclass.initComponent.call(this);
+
+        this.on('contextmenu', this.onContextMenu, this);
+        this.on('dblclick',    this.onDblClick,  this);
+
+        new Ext.tree.TreeSorter(this, {
+            folderSort : true
+        });
+    }
+});
+
+// singleton
+ui.component._RepositoryTree.instance = null;
+ui.component.RepositoryTree.getInstance = function(config)
+{
+    if (!ui.component._RepositoryTree.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.component._RepositoryTree.instance = new ui.component.RepositoryTree(config);
+    }
+    return ui.component._RepositoryTree.instance;
+};Ext.namespace('ui','ui.component','ui.component._StaleFileGrid');
+
+//------------------------------------------------------------------------------
+// StaleFileGrid data store
+
+ui.component._StaleFileGrid.store = new Ext.data.GroupingStore(
+{
+            proxy : new Ext.data.HttpProxy({
+                url : './do/getFilesNeedUpdate'
+            }),
+            reader : new Ext.data.JsonReader({
+                root          : 'Items',
+                totalProperty : 'nbItems',
+                idProperty    : 'id',
+                fields        : [
+                    {name : 'id'},
+                    {name : 'path'},
+                    {name : 'name'},
+                    {name : 'revision'},
+                    {name : 'original_revision'},
+                    {name : 'en_revision'},
+                    {name : 'maintainer'},
+                    {name : 'needCommitEN'},
+                    {name : 'needCommitLang'}
+                ]
+            }),
+            sortInfo : {
+                field     : 'name',
+                direction : 'ASC'
+            },
+            groupField : 'path',
+            listeners  : {
+                datachanged : function(ds)
+                {
+                    Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
+                }
+            }
+});
+
+// StaleFileGrid view
+ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
+    forceFit       : true,
+    startCollapsed : true,
+    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
+                     '({[values.rs.length]} ' +
+                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    deferEmptyText : false,
+    getRowClass    : function(record)
+    {
+        if (record.data.needCommitEN || record.data.needCommitLang) {
+            return 'file-need-commit';
+        }
+        return false;
+    },
+    emptyText      : '<div style="text-align: center;">' + _('No Files') + '</div>'
+});
+
+// StaleFileGrid columns definition
+ui.component._StaleFileGrid.columns = [
+    {
+        id        : 'name',
+        header    : _('Files'),
+        sortable  : true,
+        dataIndex : 'name'
+    }, {
+        header    : _('EN revision'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'en_revision'
+    }, {
+        header    : '', // bounded in StaleFileGrid.initComponent
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'revision'
+    }, {
+        header    : _('Maintainer'),
+        width     : 45,
+        sortable  : true,
+        dataIndex : 'maintainer'
+    }, {
+        header    : _('Path'),
+        dataIndex : 'path',
+        'hidden'  : true
+    }
+];
+
+// StaleFileGrid context menu
+// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
+ui.component._StaleFileGrid.menu = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
+};
+Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                scope   : this,
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconTabNeedUpdate',
+                handler : function()
+                {
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIdx, this.event
+                    );
+                }
+            }, {
+                scope   : this,
+                hidden  : this.hideCommit,
+                text    : _('View diff...'),
+                iconCls : 'iconViewDiff',
+                menu    : new Ext.menu.Menu({
+                    items : [{
+                        scope  : this,
+                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitEN === false),
+                        text   : String.format(_('... of the {0} file'), 'EN'),
+                        handler: function() {
+                            this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
+                        }
+                    }, {
+                        scope  : this,
+                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
+                        text   : String.format(_('... of the {0} file'), PhDOE.userLang),
+                        handler: function() {
+                            this.openTab(this.rowIdx, PhDOE.userLang, this.fpath, this.fname);
+                        }
+                    }]
+                })
+            }]
+        });
+    },
+
+    openTab: function(rowIdx, lang, fpath, fname)
+    {
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
+
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype      : 'panel',
+                id         : 'diff_panel_' + lang + '_' + rowIdx,
+                title      : _('Diff'),
+                tabTip     : String.format(_('Diff for file: {0}'), lang+fpath+fname),
+                closable   : true,
+                autoScroll : true,
+                iconCls    : 'iconTabLink',
+                html       : '<div id="diff_content_' + lang + '_' + rowIdx +
+                             '" class="diff-content"></div>'
+            });
+
+            // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+
+            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
+                '<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" />' +
+                _('Please, wait...')
+            );
+
+            // Load diff data
+            XHR({
+                params  : {
+                    task     : 'getDiff',
+                    DiffType : 'file',
+                    FilePath : lang + fpath,
+                    FileName : fname
+                },
+                success : function(response)
+                {
+                    var o = Ext.util.JSON.decode(response.responseText);
+                    // We display in diff div
+                    Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
+
+                    Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
+                }
+            });
+        } else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+        }
+    }
+
+});
+
+
+//------------------------------------------------------------------------------
+// StaleFileGrid
+ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    view             : ui.component._StaleFileGrid.view,
+    loadMask         : true,
+    autoExpandColumn : 'name',
+    border           : false,
+    enableDragDrop   : true,
+    ddGroup          : 'mainPanelDDGroup',
+
+    onRowContextMenu : function(grid, rowIndex, e)
+    {
+        e.stopEvent();
+    
+        var FilePath = this.store.getAt(rowIndex).data.path,
+            FileName = this.store.getAt(rowIndex).data.name;
+
+        this.getSelectionModel().selectRow(rowIndex);
+
+        new ui.component._StaleFileGrid.menu({
+            hideCommit : (this.store.getAt(rowIndex).data.needCommitEN === false && this.store.getAt(rowIndex).data.needCommitLang === false),
+            grid       : this,
+            event      : e,
+            rowIdx     : rowIndex,
+            lang       : PhDOE.userLang,
+            fpath      : FilePath,
+            fname      : FileName
+        }).showAt(e.getXY());
+    },
+
+    onRowDblClick: function(grid, rowIndex, e)
+    {
+        this.openFile(this.store.getAt(rowIndex).data.id);
+    },
+
+    openFile: function(rowId)
+    {
+        var storeRecord      = this.store.getById(rowId),
+            FilePath         = storeRecord.data.path,
+            FileName         = storeRecord.data.name,
+            en_revision      = storeRecord.data.en_revision,
+            revision         = storeRecord.data.revision,
+            originalRevision = storeRecord.data.original_revision,
+            FileID           = Ext.util.md5('FNU-' + PhDOE.userLang + FilePath + FileName),
+            diff             = '';
+
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
+
+            if (PhDOE.userConf.needUpdateDiff === "using-viewvc") {
+                diff = ui.component.ViewVCDiff;
+            } else if (PhDOE.userConf.needUpdateDiff === "using-exec") {
+                diff = ui.component.ExecDiff;
+            }
+
+            Ext.getCmp('main-panel').add(
+            {
+                id             : 'FNU-' + FileID,
+                layout         : 'border',
+                title          : FileName,
+                originTitle    : FileName,
+                iconCls        : 'iconTabNeedUpdate',
+                closable       : true,
+                tabLoaded      : false,
+                panVCSLang     : !PhDOE.userConf.needUpdateDisplaylog,
+                panVCSEn       : !PhDOE.userConf.needUpdateDisplaylog,
+                panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"), // Use to monitor if the Diff panel is loaded
+                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
+                panENLoaded    : false, // Use to monitor if the EN panel is loaded
+                defaults       : { split : true },
+                tabTip         : String.format(
+                    _('Need Update: in {0}'), FilePath
+                ),
+                listeners: {
+                    resize: function(panel) {
+                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    }
+                },
+                items : [
+                    new diff({
+                        region      : 'north',
+                        collapsible : true,
+                        height      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
+                        prefix      : 'FNU',
+                        collapsed   : !PhDOE.userConf.needUpdateDiffPanel,
+                        fid         : FileID,
+                        fpath       : FilePath,
+                        fname       : FileName,
+                        rev1        : (originalRevision) ? originalRevision : revision,
+                        rev2        : en_revision,
+                        listeners   : {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanel',
+                                        value : false,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanel',
+                                        value : true,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            resize: function(a,b,newHeight) {
+
+                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDiffPanelHeight',
+                                        value : newHeight,
+                                        notify: false
+                                    });
+                                }
+                            }
+                        }
+                    }), {
+                        region      : 'west',
+                        xtype       : 'panel',
+                        title       : _('Tools'),
+                        iconCls     : 'iconConf',
+                        collapsedIconCls : 'iconConf',
+                        collapsible : true,
+                        collapsed   : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        layout      : 'fit',
+                        bodyBorder  : false,
+                        plugins     : [Ext.ux.PanelCollapsedTitle],
+                        width       : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                        listeners: {
+                            collapse: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanel',
+                                        value : false,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            expand: function() {
+                                if ( this.ownerCt.tabLoaded ) {
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanel',
+                                        value : true,
+                                        notify: false
+                                    });
+                                }
+                            },
+                            resize: function(a,newWidth) {
+                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                                    new ui.task.UpdateConfTask({
+                                        item  : 'needUpdateDisplaylogPanelWidth',
+                                        value : newWidth,
+                                        notify: false
+                                    });
+                                }
+                            }
+                        },
+                        items       : {
+                            xtype       : 'tabpanel',
+                            activeTab   : 0,
+                            tabPosition : 'bottom',
+                            enableTabScroll:true,
+                            defaults    : { autoScroll: true },
+                            items       : [
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
+                                    prefix    : 'FNU-LANG',
+                                    fid       : FileID,
+                                    fpath     : PhDOE.userLang + FilePath,
+                                    fname     : FileName,
+                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
+                                }),
+                                new ui.component.VCSLogGrid({
+                                    layout    : 'fit',
+                                    title     : String.format(_('{0} Log'), 'En'),
+                                    prefix    : 'FNU-EN',
+                                    fid       : FileID,
+                                    fpath     : 'en' + FilePath,
+                                    fname     : FileName,
+                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
+                                }),
+                                new ui.component.DictionaryGrid({
+                                    layout    : 'fit',
+                                    title     : _('Dictionary'),
+                                    prefix    : 'FNU',
+                                    fid       : FileID
+                                })
+                            ]
+                        }
+                    }, new ui.component.FilePanel(
+                    {
+                        id             : 'FNU-LANG-PANEL-' + FileID,
+                        region         : 'center',
+                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
+                        prefix         : 'FNU',
+                        ftype          : 'LANG',
+                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckLang,
+                        spellCheckConf : 'needUpdateSpellCheckLang',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : PhDOE.userLang,
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScrollCB   : true,
+                        syncScroll     : true,
+                        syncScrollConf : 'needUpdateScrollbars'
+                    }), new ui.component.FilePanel(
+                    {
+                        id             : 'FNU-EN-PANEL-' + FileID,
+                        region         : 'east',
+                        title          : _('en File: ') + FilePath + FileName,
+                        prefix         : 'FNU',
+                        ftype          : 'EN',
+                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckEn,
+                        spellCheckConf : 'needUpdateSpellCheckEn',
+                        fid            : FileID,
+                        fpath          : FilePath,
+                        fname          : FileName,
+                        lang           : 'en',
+                        parser         : 'xml',
+                        storeRecord    : storeRecord,
+                        syncScroll     : true,
+                        syncScrollConf : 'needUpdateScrollbars'
+                    })
+                ]
+            });
+        }
+        Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
+    },
+
+    initComponent : function()
+    {
+        ui.component._StaleFileGrid.columns[2].header = String.format(
+            _('{0} revision'), Ext.util.Format.uppercase(PhDOE.userLang)
+        );
+
+        Ext.apply(this,
+        {
+            columns : ui.component._StaleFileGrid.columns,
+            store   : ui.component._StaleFileGrid.store,
+            tbar:[
+                _('Filter: '), ' ',
+                new Ext.form.TwinTriggerField({
+                    id              : 'FNU-filter',
+                    width           : 180,
+                    hideTrigger1    : true,
+                    enableKeyEvents : true,
+                    validateOnBlur  : false,
+                    validationEvent : false,
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
+                    listeners : {
+                        specialkey : function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER) {
+                                this.onTrigger2Click();
+                            }
+                        }
+                    },
+                    onTrigger1Click: function()
+                    {
+                        this.setValue('');
+                        this.triggers[0].hide();
+                        this.setSize(180,10);
+                        ui.component._StaleFileGrid.instance.store.clearFilter();
+                    },
+                    onTrigger2Click: function()
+                    {
+                        var v = this.getValue(), regexp;
+
+                        if (v === '' || v.length < 3) {
+                            this.markInvalid(
+                                _('Your filter must contain at least 3 characters')
+                            );
+                            return;
+                        }
+                        this.clearInvalid();
+                        this.triggers[0].show();
+                        this.setSize(180,10);
+
+                        regexp = new RegExp(v, 'i');
+
+                        // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
+                        ui.component._StaleFileGrid.instance.store.filterBy(function(record) {
+
+                            if( regexp.test(record.data.path)        ||
+                                regexp.test(record.data.name)        ||
+                                regexp.test(record.data.revision)    ||
+                                regexp.test(record.data.en_revision) ||
+                                regexp.test(record.data.maintainer)
+                            ) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }, this);
+                    }
+                })
+            ]
+        });
+        ui.component.StaleFileGrid.superclass.initComponent.call(this);
+
+        this.on('rowcontextmenu', this.onRowContextMenu, this);
+        this.on('rowdblclick',    this.onRowDblClick,  this);
+    }
+});
+
+// singleton
+ui.component._StaleFileGrid.instance = null;
+ui.component.StaleFileGrid.getInstance = function(config)
+{
+    if (!ui.component._StaleFileGrid.instance) {
+        if (!config) {
+           config = {};
+        }
+        ui.component._StaleFileGrid.instance = new ui.component.StaleFileGrid(config);
+    }
+    return ui.component._StaleFileGrid.instance;
+};Ext.namespace('ui','ui.component');
+
+ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
+{
+    id        : 'sys-update-win',
+    title     : _('Refresh all data'),
+    layout    : 'form',
+    width     : 300,
+    height    : 200,
+    resizable : false,
+    modal     : true,
+    bodyStyle : 'padding:15px 15px 0',
+    iconCls   : 'iconRefresh',
+    html      : [
+        '<div id="wizard-step-1" class="wizard-step-before">',
+            _('Update all files from VCS'),
+        '</div>',
+        '<div id="wizard-step-1.1" class="wizard-wait">',
+            _('This may take time. Thank you for your patience...'),
+        '</div>',
+        '<div id="wizard-step-2" class="wizard-step-before">',
+            _('Apply all tools'),
+        '</div>',
+        '<div id="wizard-step-3" class="wizard-step-before">',
+            _('Reload data'),
+        '</div>'
+    ].join(''),
+    buttons : [{
+        id      : 'btn-start-refresh',
+        text    : _('Start'),
+        iconCls : 'iconStartRefresh',
+        handler : function()
+        {
+            // Disable start button
+            Ext.getCmp('btn-start-refresh').disable();
+
+            // Disable the close button for this win
+             this.ownerCt.ownerCt.tools.close.setVisible(false);
+
+            new ui.task.SystemUpdateTask();
+        }
+    }]
+});
+Ext.namespace('ui','ui.component','ui.component._VCSLogGrid');
+
+//------------------------------------------------------------------------------
+// VCSLogGrid internals
+
+// VCSLogGrid log information store
+ui.component._VCSLogGrid.store = Ext.extend(Ext.data.Store,
+{
+    reader : new Ext.data.JsonReader(
+        {
+            root          : 'Items',
+            totalProperty : 'nbItems',
+            id            : 'id'
+        }, Ext.data.Record.create([
+            {
+                name    : 'id',
+                mapping : 'id'
+            }, {
+                name    : 'revision',
+                mapping : 'revision'
+            }, {
+                name       : 'date',
+                mapping    : 'date',
+                type       : 'date',
+                dateFormat : 'Y/m/d H:i:s'
+            }, {
+                name    : 'author',
+                mapping : 'author'
+            }, {
+                name    : 'content',
+                mapping : 'content'
+            }
+        ])
+    )
+});
+
+// VCSLogGrid selection model
+// config - {fid}
+ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
+{
+    singleSelect : false,
+    header       : '',
+    width        : 22,
+
+    listeners : {
+        beforerowselect : function(sm)
+        {
+            var nbRowsSelected = sm.getCount();
+            if (nbRowsSelected === 2) {
+                return false;
+            }
+            return true;
+        },
+        rowselect : function(sm)
+        {
+            var nbRowsSelected = sm.getCount();
+            if (nbRowsSelected === 2) {
+                Ext.getCmp(sm.prefix + '-PANEL-btn-log-' + sm.fid).enable();
+                Ext.get(sm.prefix + '-PANEL-btn-log-' + sm.fid).frame("3F8538");
+            } else {
+                Ext.getCmp(sm.prefix + '-PANEL-btn-log-' + sm.fid).disable();
+            }
+        },
+        rowdeselect : function(sm)
+        {
+            var nbRowsSelected = sm.getCount();
+            if (nbRowsSelected === 2) {
+                Ext.getCmp(sm.prefix + '-PANEL-btn-log-' + sm.fid).enable();
+                Ext.get(sm.prefix + '-PANEL-btn-log-' + sm.fid).frame("3F8538");
+            } else {
+                Ext.getCmp(sm.prefix + '-PANEL-btn-log-' + sm.fid).disable();
+            }
+        }
+    }
+});
+
+// VCSLogGrid columns definition
+ui.component._VCSLogGrid.columns = [
+    {
+        id        : 'id',
+        header    : _('Rev.'),
+        width     : 40,
+        sortable  : false,
+        dataIndex : 'revision'
+    }, {
+        header    : _('Content'),
+        width     : 130,
+        sortable  : true,
+        dataIndex : 'content'
+    }, {
+        header    : _('By'),
+        width     : 50,
+        sortable  : true,
+        dataIndex : 'author'
+    }, {
+        header    : _('Date'),
+        width     : 85,
+        sortable  : true,
+        dataIndex : 'date',
+        renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
+    }
+];
+
+//------------------------------------------------------------------------------
+// VCSLogGrid
+// config - {prefix, fid, fpath, fname, loadStore}
+ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoScroll       : true,
+    bodyBorder       : false,
+    border           : false,
+    autoExpandColumn : 'content',
+
+    initComponent : function()
+    {
+        var sm = new ui.component._VCSLogGrid.sm({
+            fid    : this.fid,
+            prefix : this.prefix
+        }),
+        store = new ui.component._VCSLogGrid.store({
+            autoLoad : this.loadStore,
+            proxy : new Ext.data.HttpProxy({
+                url : './do/getLog'
+            }),
+            baseParams : {
+                Path : this.fpath,
+                File : this.fname
+            },
+            listeners: {
+                scope: this,
+                load: function(store, records) {
+
+                    // FNU Panel
+                    if( this.prefix === 'FNU-EN' ) {
+                        Ext.getCmp('FNU-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNU', this.fid);
+                    }
+                    if( this.prefix === 'FNU-LANG' ) {
+                        Ext.getCmp('FNU-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNU', this.fid);
+                    }
+
+                    // FE panel
+                    if( this.prefix === 'FE-EN' ) {
+                        Ext.getCmp('FE-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FE', this.fid);
+                    }
+                    if( this.prefix === 'FE-LANG' ) {
+                        Ext.getCmp('FE-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FE', this.fid);
+                    }
+
+                    // FE panel
+                    if( this.prefix === 'FNR-EN' ) {
+                        Ext.getCmp('FNR-' + this.fid).panVCSEn = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNR', this.fid);
+                    }
+                    if( this.prefix === 'FNR-LANG' ) {
+                        Ext.getCmp('FNR-' + this.fid).panVCSLang = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'FNR', this.fid);
+                    }
+
+                    // AF panel
+                    if( this.prefix === 'AF' ) {
+                        Ext.getCmp('AF-' + this.fid).panVCS = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'AF', this.fid);
+                    }
+
+                    // PP panel
+                    if( this.prefix === 'PP' ) {
+                        Ext.getCmp('PP-' + this.fid).panVCS = true;
+                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', this.fid);
+                    }
+                }
+            }
+        }),
+        columns = [];
+
+        columns.push(sm);
+        for (var i = 0; i < ui.component._VCSLogGrid.columns.length; ++i) {
+            columns.push(ui.component._VCSLogGrid.columns[i]);
+        }
+
+        store.setDefaultSort('date', 'desc');
+
+        Ext.apply(this,
+        {
+            sm      : sm,
+            store   : store,
+            columns : columns,
+            view    : new Ext.grid.GridView({
+                forceFit      : true, 
+                emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
+                deferEmptyText: false
+            }),
+            tbar  : [{
+                scope   : this,
+                id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
+                tooltip : _('<b>Load/Refresh</b> revisions'),
+                iconCls : 'iconRefresh',
+                handler : function()
+                {
+                    this.store.reload();
+                }
+            }, {
+                scope    : this,
+                id       : this.prefix + '-PANEL-btn-log-' + this.fid,
+                tooltip  : _('<b>View</b> the diff'),
+                iconCls  : 'iconViewDiff',
+                disabled : true,
+                handler : function()
+                {
+                    var s    = this.getSelectionModel().getSelections(),
+                        rev1 = s[0].data.revision,
+                        rev2 = s[1].data.revision;
+
+                    Ext.getBody().mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> '+_('Finding the diff. Please, wait...'));
+
+                    // Load diff data
+                    XHR({
+                        params : {
+                            task     : 'getDiff',
+                            DiffType : 'vcs',
+                            FilePath : this.fpath,
+                            FileName : this.fname,
+                            Rev1     : rev1,
+                            Rev2     : rev2
+                        },
+                        success : function(r)
+                        {
+                            var o = Ext.util.JSON.decode(r.responseText);
+
+                            Ext.getBody().unmask();
+
+                            // We display in diff window
+                            var winStatus = new Ext.Window({
+                                title      : String.format(_('Diff between {0} & {1}'), rev1, rev2),
+                                width      : 650,
+                                height     : 350,
+                                resizable  : false,
+                                modal      : true,
+                                autoScroll : true,
+                                bodyStyle  : 'background-color: white; padding: 5px;',
+                                html       : '<div class="diff-content">' + o.content + '</div>',
+                                buttons : [{
+                                    text    : _('Close'),
+                                    handler : function()
+                                    {
+                                        winStatus.close();
+                                    }
+                                }]
+                            });
+                            winStatus.show();
+                        }
+                    });
+                }
+            }]
+        });
+        ui.component.VCSLogGrid.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.component');
+
+// ViewVCDiff
+// config - {prefix, fid, fpath, fname, rev1, rev2}
+ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
+{
+    layout    : 'fit',
+    title     : _('Diff From VCS'),
+    iconCls   : 'iconDiffView',
+    collapsedIconCls : 'iconDiffView',
+    plugins    : [Ext.ux.PanelCollapsedTitle],
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : {
+                id         : this.prefix + '-diff-' + this.fid,
+                xtype      : 'panel',
+                layout     : 'fit',
+                items: [ new Ext.ux.IFrameComponent({
+                             id  : 'frame-' + this.prefix + '-diff-' + this.fid,
+                             url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
+                         })
+                ]
+            }
+        });
+        ui.component.ViewVCDiff.superclass.initComponent.call(this);
+    }
+});
+var PhDOE = function()
+{
+    Ext.QuickTips.init();
+
+    return {
+        // Variable
+        userLogin  : null,
+        userLang   : null,
+        appName    : 'Php Docbook Online Editor',
+        appVer     : 'X.XX',
+        appLoaded  : false,
+        uiRevision : '$Revision: 298099 $',
+
+        lastInfoDate : null,
+        userConf   : '',
+
+        project    : '',
+
+        FNTfilePendingOpen   : [],
+        FNUfilePendingOpen   : [],
+        FEfilePendingOpen    : [],
+        FNRfilePendingOpen   : [],
+        FNIENfilePendingOpen : [],
+        AFfilePendingOpen    : [],
+        PPfilePendingOpen    : [],
+
+        init : function()
+        {
+            // We load the configuration for this user
+            new ui.task.LoadConfigTask();
+        },
+
+        notify : function (type, title, message) {
+
+            var _notify, iconCls;
+
+            if( type == 'info' ) {
+                iconCls = 'iconInfo';
+            }
+
+            if( type == 'error' ) {
+                iconCls = 'iconError';
+            }
+
+            _notify = new Ext.ux.Notification({
+                iconCls     : iconCls,
+                title       : title,
+                html        : message,
+                autoDestroy : true,
+                hideDelay   :  5000
+            });
+
+            _notify.show(document); 
+
+        },
+
+        winForbidden : function(type)
+        {
+            var title = _('Forbidden'),
+                mess  = _('You can\'t do this action as anonymous user.');
+
+            switch (type) {
+                case 'fs_error' :
+                    title = _('Error');
+                    mess  = _('File system error. Check read/write permission under data folder.');
+                    break;
+                case 'encoding_error' :
+                    title = _('Error');
+                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
+                    break;
+                case 'tabs_found' :
+                    title = _('Error');
+                    mess  = _('It seems that you have inserted some tabs caracters into this files. Please, replace each one by one space.<br>Tip: You can use the "Re-indent all this file" button to replace all tabs by spaces.');
+                    break;
+                case 'folder_already_exist' :
+                    title = _('Error');
+                    mess  = _('This folder already exist in the current folder.');
+                    break;
+                case 'file_already_exist' :
+                    title = _('Error');
+                    mess  = _('This file already exist in the current folder.');
+                    break;
+            }
+
+            Ext.MessageBox.alert(
+                title,
+                mess
+            );
+        },
+
+        runDirectAccess: function()
+        {
+            if (directAccess) {
+                ui.component.RepositoryTree.getInstance().openFile(
+                    directAccess.lang + directAccess.path,
+                    directAccess.name
+                );
+            }
+        },
+
+        // All we want to do after all dataStore are loaded
+        afterLoadAllStore: function()
+        {
+            this.appLoaded = true;
+
+            // Run DirectAccess if present
+            this.runDirectAccess();
+
+            //Load external data
+            // Mails ?
+            if( this.userConf.mainAppLoadMailsAtStartUp ) {
+                ui.component.PortletLocalMail.getInstance().reloadData();
+            }
+            // Bugs ?
+            if( this.userConf.mainAppLoadBugsAtStartUp ) {
+                ui.component.PortletBugs.getInstance().reloadData();
+            }
+        },
+
+        loadAllStore: function()
+        {
+            var progressBar = new Ext.ProgressBar({
+                    width:300,
+                    renderTo:'loading-progressBar'
+                });
+            progressBar.show();
+
+            // Store to load for LANG project
+            if (PhDOE.userLang !== 'en') {
+
+                // We load all stores, one after the others
+                document.getElementById("loading-msg").innerHTML = "Loading data...";
+                progressBar.updateProgress(1/13, '1 of 13...');
+                ui.component._MainMenu.store.load({
+                    callback: function() {
+                        progressBar.updateProgress(2/13, '2 of 13...');
+                        ui.component.StaleFileGrid.getInstance().store.load({
+                            callback: function() {
+                                progressBar.updateProgress(3/13, '3 of 13...');
+                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                    callback: function() {
+                                        progressBar.updateProgress(4/13, '4 of 13...');
+                                        ui.component.PendingReviewGrid.getInstance().store.load({
+                                            callback: function() {
+                                                progressBar.updateProgress(5/13, '5 of 13...');
+                                                ui.component.NotInENGrid.getInstance().store.load({
+                                                    callback: function() {
+                                                        progressBar.updateProgress(6/13, '6 of 13...');
+                                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                                            callback: function() {
+                                                                progressBar.updateProgress(7/13, '7 of 13...');
+                                                                ui.component.PendingPatchGrid.getInstance().store.load({
+                                                                    callback: function() {
+                                                                        progressBar.updateProgress(8/13, '8 of 13...');
+                                                                        ui.component.PortletSummary.getInstance().store.load({
+                                                                            callback: function() {
+                                                                                progressBar.updateProgress(9/13, '9 of 13...');
+                                                                                ui.component.PortletTranslationGraph.getInstance().store.load({
+                                                                                    callback: function() {
+                                                                                        progressBar.updateProgress(10/13, '10 of 13...');
+                                                                                        ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                                                                            callback: function() {
+                                                                                                progressBar.updateProgress(11/13, '11 of 13...');
+                                                                                                ui.component.PortletTranslator.getInstance().store.load({
+                                                                                                    callback: function() {
+                                                                                                        progressBar.updateProgress(12/13, '12 of 13...');
+                                                                                                        ui.component.PendingTranslateGrid.getInstance().store.load({
+                                                                                                            callback: function() {
+                                                                                                                progressBar.updateProgress(13/13, '13 of 13...');
+                                                                                                                ui.component.PortletInfo.getInstance().store.load({
+                                                                                                                    callback: function() {
+                                                                                                                        // Now, we can to remove the global mask
+                                                                                                                        Ext.get('loading').remove();
+                                                                                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                                                                        progressBar.destroy();
+                                                                                                                        PhDOE.afterLoadAllStore();
+                                                                                                                    }
+                                                                                                                });
+                                                                                                            }
+                                                                                                        });
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Store to load only for EN project
+                document.getElementById("loading-msg").innerHTML = "Loading data...";
+                progressBar.updateProgress(1/6, '1 of 6...');
+                ui.component._MainMenu.store.load({
+                    callback: function() {
+                        progressBar.updateProgress(2/6, '2 of 6...');
+                        ui.component.PendingPatchGrid.getInstance().store.load({
+                            callback: function() {
+                                progressBar.updateProgress(3/6, '3 of 6...');
+                                ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                    callback: function() {
+                                        progressBar.updateProgress(4/6, '4 of 6...');
+                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                            callback: function() {
+                                                progressBar.updateProgress(5/6, '5 of 6...');
+                                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                                    callback: function() {
+                                                        progressBar.updateProgress(6/6, '5 of 6...');
+                                                        ui.component.PortletInfo.getInstance().store.load({
+                                                            callback: function() {
+                                                                // Now, we can to remove the global mask
+                                                                Ext.get('loading').remove();
+                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
+                                                                progressBar.destroy();
+                                                                PhDOE.afterLoadAllStore();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        },
+
+        reloadAllStore: function() {
+
+            // Store to reload for LANG project
+            if (PhDOE.userLang !== 'en') {
+                // We reload all stores, one after the others
+                ui.component.PendingTranslateGrid.getInstance().store.reload({
+                    callback: function() {
+                        ui.component.StaleFileGrid.getInstance().store.reload({
+                            callback: function() {
+                                ui.component.ErrorFileGrid.getInstance().store.reload({
+                                    callback: function() {
+                                        ui.component.PendingReviewGrid.getInstance().store.reload({
+                                            callback: function() {
+                                                ui.component.NotInENGrid.getInstance().store.reload({
+                                                    callback: function() {
+                                                        ui.component.PendingCommitGrid.getInstance().store.reload({
+                                                            callback: function() {
+                                                                ui.component.PendingPatchGrid.getInstance().store.reload({
+                                                                    callback: function() {
+                                                                        ui.component.PortletSummary.getInstance().store.reload({
+                                                                            callback: function() {
+                                                                                ui.component.PortletTranslator.getInstance().store.reload({
+                                                                                    callback: function() {
+                                                                                        ui.component.PortletTranslationGraph.getInstance().store.reload({
+                                                                                            callback: function() {
+                                                                                                ui.component.PortletTranslationsGraph.getInstance().store.reload();
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Store to reload only for EN project
+                ui.component.PendingCommitGrid.getInstance().store.reload({
+                    callback: function() {
+                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                    }
+                });
+            }
+        },
+
+        drawInterface: function()
+        {
+            var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
+            
+            // Default value for portalEN & portalLANG sort
+            
+            portalEN = {
+                'col1' : ["portletLocalMail","portletBugs"],
+                'col2' : ["portletInfo","portletTranslationsGraph"]
+            };
+            
+            portalLANG = {
+                'col1' : ["portletSummary","portletTranslator","portletLocalMail","portletBugs"],
+                'col2' : ["portletInfo","portletTranslationGraph","portletTranslationsGraph"]
+            };
+            
+            // Get user conf
+            if ( this.userLang === 'en' ) {
+                (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
+
+                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+            }
+            else
+            {
+                (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
+                
+                allPortlet["portletSummary"] = ui.component.PortletSummary.getInstance({lang: this.userLang});
+                allPortlet["portletTranslator"] = ui.component.PortletTranslator.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+
+                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
+                allPortlet["portletTranslationGraph"] = ui.component.PortletTranslationGraph.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+            }
+
+
+            for( var i=0; i < portal.col1.length; i++ ) {
+                mainContentLeft.push(allPortlet[portal.col1[i]]);
+            }
+            for( var i=0; i < portal.col2.length; i++ ) {
+                mainContentRight.push(allPortlet[portal.col2[i]]);
+            }
+            
+            // We keel alive our session by sending a ping every minute
+            ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
+
+            new Ext.Viewport({
+                layout : 'border',
+                    id           : 'main-app',
+                items : [{
+                    // logo
+                    region     : 'north',
+                    html       : '<h1 class="x-panel-header">' +
+                                    '<img src="themes/img/mini_php.png" ' +
+                                        'style="vertical-align: middle;" />&nbsp;&nbsp;' +
+                                    this.appName +
+                                 '</h1>',
+                    autoHeight : true,
+                    border     : false,
+                    margins    : '0 0 5 0'
+                }, {
+                    // accordion
+                    region       : 'west',
+                    id           : 'main-menu-panel',
+                    layout       : 'accordion',
+                    collapsible  : true,
+                    collapseMode : 'mini',
+                    animate      : true,
+                    split        : true,
+                    width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                    header       : false,
+                    listeners: {
+                        resize: function(a,newWidth) {
+
+                            if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                                var tmp = new ui.task.UpdateConfTask({
+                                    item  : 'mainAppMainMenuWidth',
+                                    value : newWidth,
+                                    notify: false
+                                });
+                            }
+                        }
+                    },
+                    tbar : [{
+                        text    : _('Main menu'),
+                        iconCls : 'MainMenu',
+                        menu    : new ui.component.MainMenu()
+                    }],
+                    items : [{
+                        id        : 'acc-need-translate',
+                        title     : _('Files need translate') + ' (<em id="acc-need-translate-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconFilesNeedTranslate',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.PendingTranslateGrid.getInstance() ],
+                        collapsed : true
+                    },{
+                        id        : 'acc-need-update',
+                        title     : _('Files need update') + ' (<em id="acc-need-update-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconFilesNeedUpdate',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.StaleFileGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-error',
+                        title     : (this.userLang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconFilesError',
+                        items     : [ ui.component.ErrorFileGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-reviewed',
+                        title     : _('Files need reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconFilesNeedReviewed',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.PendingReviewGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-notInEn',
+                        title     : _('Not in EN tree') + ' (<em id="acc-notInEn-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconNotInEn',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.NotInENGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-all-files',
+                        title     : _('All files'),
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconAllFiles',
+                        items     : [ ui.component.RepositoryTree.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-pendingCommit',
+                        tools     : [{
+                            id      : 'gear',
+                            hidden  : (this.userLogin == 'anonymous' ),
+                            qtip    : _('Open the Log Message Manager'),
+                            handler : function() {
+                                if( ! Ext.getCmp('commit-log-win') )
+                                {
+                                    var win = new ui.component.CommitLogManager();
+                                }
+                                Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
+                            }
+                        }],
+                        title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconPendingCommit',
+                        items     : [ ui.component.PendingCommitGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-need-pendingPatch',
+                        title     : _('Pending patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconPendingPatch',
+                        items     : [ ui.component.PendingPatchGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-google-translate',
+                        title     : _('Google translation'),
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconGoogle',
+                        hidden    : (this.userLang === 'en'),
+                        items     : [ ui.component.GoogleTranslationPanel.getInstance() ],
+                        collapsed : true
+                    }]
+                }, {
+                    // main panel
+                    xtype             : 'mainpanel',
+                    id                : 'main-panel',
+                    region            : 'center',
+                    items : [{
+                        xtype      : 'panel',
+                        id         : 'MainInfoTabPanel',
+                        title      : _('Home'),
+                        baseCls    : 'MainInfoTabPanel',
+                        autoScroll : true,
+                        plain      : true,
+                        items : [{
+                            xtype  : 'panel',
+                            border : false,
+                            html   : '<div class="res-block">' +
+                                        '<div class="res-block-inner">' +
+                                            '<h3>' +
+                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin.ucFirst()) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
+                                                ', ' + _('Project: ') + '<em id="Info-Project">' + this.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
+                                            '</h3>' +
+                                        '</div>' +
+                                     '</div>'
+
+                        }, {
+                            xtype  : 'portal',
+                            border : false,
+                            items  : [{
+                                columnWidth : 0.5,
+                                style       : 'padding:10px 5px 10px 5px',
+                                items       : mainContentLeft
+                            },{
+                                columnWidth : 0.5,
+                                style       : 'padding:10px 5px 10px 5px',
+                                items       : mainContentRight
+                            }],
+                            listeners: {
+                                drop: function(a) {
+                                    var portal, col1Sort = [], col2Sort = [], id;
+
+                                    // Column 1
+                                    for( var i=0; i < a.portal.items.items[0].items.items.length; i++ ) {
+                                        id = a.portal.items.items[0].items.items[i].id;
+                                        //console.log(id);
+                                        col1Sort.push(id);
+                                    }
+                                    // Column 2
+                                    for( var i=0; i < a.portal.items.items[1].items.items.length; i++ ) {
+                                        id = a.portal.items.items[1].items.items[i].id;
+                                        //console.log(id);
+                                        col2Sort.push(id);
+                                    }
+
+                                    portal = {
+                                        'col1' : col1Sort,
+                                        'col2' : col2Sort
+                                    };
+
+                                    // We store this config var into portalSortEN for EN users, and portalSortLANG for LANG users
+
+                                    new ui.task.UpdateConfTask({
+                                        item  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
+                                        value : Ext.util.JSON.encode(portal),
+                                        notify: false
+                                    });
+                                    
+                                }
+                            }
+                        }]
+                    }]
+                }]
+            });
+
+            new Ext.dd.DropTarget(Ext.get('main-panel'), {
+                ddGroup    : 'mainPanelDDGroup',
+                notifyDrop : function(ddSource, e, data) {
+
+                    var i, idToOpen;
+
+                    // Special case for the repositoryTree
+                    if( data.nodes ) {
+                        for( i=0; i < data.nodes.length; i++ ) {
+                            PhDOE.AFfilePendingOpen[i] = {
+                                nodeID: data.nodes[i].attributes.id
+                            };
+                        }
+                        
+                        // Start the first
+                        ui.component.RepositoryTree.getInstance().openFile(
+                            'byId',
+                            PhDOE.AFfilePendingOpen[0].nodeID,
+                            false
+                        );
+
+                        PhDOE.AFfilePendingOpen.shift();
+                        return true;
+                    }
+
+                    // Special case for PendingCommit grid. As this grid can open a file in all modules, we can't use this mechanism. As it, we have disable the possibility to open multi-files. Just one can be open at once.
+                    if( data.grid.ownerCt.id === 'acc-need-pendingCommit' ) {
+                        data.grid.openFile(data.selections[0].data.id);
+                        return true;
+                    }
+
+                    // We store the data
+                    for( i=0; i < data.selections.length; i++ ) {
+                        if( data.grid.ownerCt.id === 'acc-need-translate' ) {
+                            PhDOE.FNTfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-update' ) {
+                            PhDOE.FNUfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-error' ) {
+                            PhDOE.FEfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-reviewed' ) {
+                            PhDOE.FNRfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-notInEn' ) {
+                            PhDOE.FNIENfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                            PhDOE.PPfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                        if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                            PhDOE.PPfilePendingOpen[i] = { id: data.selections[i].data.id };
+                        }
+                    }
+
+                    // We open the first file
+
+                    if( data.grid.ownerCt.id === 'acc-need-translate' ) {
+                        idToOpen = PhDOE.FNTfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.FNTfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-update' ) {
+                        idToOpen = PhDOE.FNUfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.FNUfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-error' ) {
+                        idToOpen = PhDOE.FEfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.FEfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-reviewed' ) {
+                        idToOpen = PhDOE.FNRfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.FNRfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-notInEn' ) {
+                        idToOpen = PhDOE.FNIENfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.FNIENfilePendingOpen.shift();
+                    }
+                    if( data.grid.ownerCt.id === 'acc-need-pendingPatch' ) {
+                        idToOpen = PhDOE.PPfilePendingOpen[0];
+                        // We delete this from pending
+                        PhDOE.PPfilePendingOpen.shift();
+                    }
+
+                    data.grid.openFile(idToOpen.id);
+
+                    return true;
+                }
+            });
+
+            // Load all store & remove the mask after all store are loaded
+            this.loadAllStore();
+
+        } // drawInterface
+    }; // Return
+}();
+Ext.EventManager.onDocumentReady(PhDOE.init, PhDOE, true);
