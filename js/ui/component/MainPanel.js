@@ -31,7 +31,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
                 cmp.tabLoaded = true;
 
-                cmp.panTRANSLoaded = panGGTRANSLoaded = false;
+                cmp.panTRANSLoaded = cmp.panGGTRANSLoaded = false;
 
                 if (PhDOE.FNTfilePendingOpen[0]) {
                     ui.component.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
