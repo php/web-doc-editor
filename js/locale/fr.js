@@ -546,3 +546,16 @@ var i18n = new Array();
 // In file: ../../ux/extjsPowered/TabCloseMenu.js
   i18n["Close Other Tabs"] = "Fermer tous les autres onglets";
   i18n["Close All Tabs"] = "Fermer tous les onglets";
+
+
+// In file: ../../ux/others/main_specific/Ext.ux.UserNotes.js
+  i18n["Notes (<b>{0}</b>)"] = "Notes (<b>{0}</b>)";
+  i18n["Add a new note"] = "Ajouter une nouvelle note";
+  i18n["Add"] = "Ajouter";
+  i18n["Delete this note"] = "Effacer cette note";
+  i18n["No user notes"] = "Aucune note utilisateur";
+  i18n["Right click to add a new note"] = "Faîtes un clic droit pour en ajouter une";
+  i18n["Note added"] = "Note ajoutée";
+  i18n["The note was added successfully !"] = "La note a été ajoutée avec succès !";
+  i18n["Note deleted"] = "Note effacée";
+  i18n["The note was deleted successfully !"] = "La note a été effacée avec succès !";

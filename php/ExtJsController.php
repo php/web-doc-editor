@@ -20,6 +20,7 @@ require_once dirname(__FILE__) . '/RepositoryFetcher.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/TranslatorStatistic.php';
+require_once dirname(__FILE__) . '/UserNotes.php';
 require_once dirname(__FILE__) . '/VCSFactory.php';
 
 /**
@@ -1865,4 +1866,65 @@ class ExtJsController
 
     }
 
+    /**
+     * userNotes : Get all notes about a file
+     */
+    public function getUserNotes()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $file = $this->getRequestVariable('file');
+
+        $r = UserNotes::getInstance()->getNotes($file);
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+
+    }
+
+    /**
+     * userNotes : Add a new user note for a file
+     */
+    public function addUserNote()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+            return JsonResponseBuilder::failure();
+        }
+
+        $file = $this->getRequestVariable('file');
+        $note = $this->getRequestVariable('note');
+
+        UserNotes::getInstance()->addNote($file, $note);
+
+        return JsonResponseBuilder::success();
+    }
+
+    /**
+     * userNotes : Delete a user note
+     */
+    public function delUserNote()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+            return JsonResponseBuilder::failure();
+        }
+
+        $noteID = $this->getRequestVariable('noteID');
+
+        $r = UserNotes::getInstance()->delNote($noteID);
+
+        return JsonResponseBuilder::success(
+            array(
+                'result' => $r
+            )
+        );
+
+    }
 }

@@ -151,6 +151,7 @@
 .iconUI                { background-image: url(./img/view-choose.png)           !important;}
 .iconUndo              { background-image: url(./img/edit-undo.png)             !important;}
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
+.iconUserNotes         { background-image: url(./img/knotes.png)                !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}
 .iconViewDiff          { background-image: url(./img/code-class.png)            !important;}
 .iconVCSLog            { background-image: url(./img/text-x-log.png)            !important;}
@@ -408,3 +409,10 @@
 }
 
 .x-row-editor .x-form-display-field { font-family:arial,tahoma,helvetica,sans-serif; font-size:11px; text-align: center; }
+
+.x-usernotes-content {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    padding: 10px;
+    background-color: #EFEFEF;
+}

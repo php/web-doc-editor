@@ -206,3 +206,19 @@ CREATE TABLE IF NOT EXISTS `dictionary` (
   `lastDate` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `userNotes`
+--
+
+CREATE TABLE IF NOT EXISTS `userNotes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
+  `file` varchar(255) NOT NULL,
+  `note` text NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

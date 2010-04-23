@@ -44,6 +44,31 @@ Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
     }
 });
 
+
+// FilePanel editor user notes item
+ui.component._FilePanel.tbar.items.usernotes = function(config)
+{
+    Ext.apply(this, config);
+    this.init();
+    ui.component._FilePanel.tbar.items.usernotes.superclass.constructor.call(this);
+};
+
+Ext.extend(ui.component._FilePanel.tbar.items.usernotes, Ext.ButtonGroup,
+{
+    init : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                    xtype: 'usernotes',
+                    file : this.file,
+                    fid  : Ext.id()
+            }]
+        });
+    }
+});
+
+
 // FilePanel editor commun items
 ui.component._FilePanel.tbar.items.common = function(config)
 {
@@ -587,7 +612,6 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 goToPreviousTab: this.goToPreviousTab,
                 goToNextTab: this.goToNextTab
             }),
-
             {
                 xtype :'buttongroup',
                 items : [{
@@ -629,6 +653,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 lang           : this.lang,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
+            }), '->', 
+            new ui.component._FilePanel.tbar.items.usernotes({
+                fid : this.fid,
+                file: this.lang + this.fpath + this.fname
             })
             ] : [
             // en/lang file pane tbar
@@ -778,6 +806,10 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 lang           : this.lang,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
+            }), '->',
+            new ui.component._FilePanel.tbar.items.usernotes({
+                fid : this.fid,
+                file: this.lang + this.fpath + this.fname
             })
             ];
         } else {
@@ -788,7 +820,12 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     ftype           : this.ftype,
                     goToPreviousTab : this.goToPreviousTab,
                     goToNextTab     : this.goToNextTab
-                })
+                }), '->', (( this.ftype !== 'GGTRANS' &&  this.ftype !== 'ORIGIN' ) ?
+                            new ui.component._FilePanel.tbar.items.usernotes({
+                                fid : this.fid,
+                                file: this.lang + this.fpath + this.fname
+                            })
+                            : '' )
             ];
         }
 
@@ -805,8 +842,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 spellCheck : this.spellCheck,
                 isModified : false,
                 listeners  : {
-                    scope  : this,
-
+                    scope      : this,
                     initialize : function()
                     {
                         var herePath, hereName;
