@@ -69,7 +69,7 @@ var i18n = new Array();
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} logged out"] = "{0} se ha desconectado";
-  i18n["{0} is logged in using the {1} language !"] = "¡{0} Está conectado usando el idioma {1}!";
+  i18n["{0} is logged in using the {1} language"] = "{0} Está conectado usando el idioma {1}";
   i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
   i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a enviado {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
 
