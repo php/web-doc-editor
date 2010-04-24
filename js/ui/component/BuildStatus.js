@@ -70,26 +70,16 @@ ui.component._BuildStatus.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getFailedBuild'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'lang',
-                mapping : 'lang'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'lang'},
+            {name : 'date', type : 'date',dateFormat : 'Y-m-d H:i:s' }
+        ]
+    })
 });
 ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
 
