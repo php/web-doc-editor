@@ -45,7 +45,8 @@ ui.task.GetFileTask = function(config)
                 p.permlink = '';
             } else if( this.ftype  === 'GGTRANS' )
             {
-                p.setTitle('<img src="themes/img/google.png" alt="permlink" style="vertical-align: middle;"> ' + p.originTitle);
+                p.setTitle(p.originTitle);
+                p.setIconClass('iconGoogle');
             } else {
                 p.permlink = (o.xmlid != 'NULL') ? perm : '';
                 p.setTitle(p.permlink + p.originTitle);
