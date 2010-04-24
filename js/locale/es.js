@@ -1,5 +1,6 @@
 /*
 * This file must be encoded in UTF-8
+* Rev. transalted: 298438
 */
 
 var i18n = new Array();
@@ -70,8 +71,8 @@ var i18n = new Array();
   i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} logged out"] = "{0} se ha desconectado";
   i18n["{0} is logged in using the {1} language"] = "{0} Está conectado usando el idioma {1}";
-  i18n["{0} commit {1} new folder(s) in {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
-  i18n["{0} commit {1} file(s) ({2} new, {3} update, {4} delete) in {5} language"] = "{0} a enviado {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
+  i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
+  i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} cometidos {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -156,7 +157,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
-  i18n["Check Entities"] = "Verificación de entidades";
+  i18n["Check entities"] = "Verificación de entidades";
   i18n["Go !"] = "Empezar !";
   i18n["You're about to check all entities.<br><br>This action takes time."] = "Está apunto de comprobar todas las entidades.<br><br>Esta acción llevará algún tiempo en completarse.";
 
@@ -200,7 +201,7 @@ var i18n = new Array();
   i18n["Open the related file"] = "Abrir el fichero asociado";
   i18n["Summary"] = "Sumario";
   i18n["Error when loading open bugs from Php.net !"] = "Error al intentar cargar los bugs desde Php.net !";
-  i18n["No open Bugs"] = "Noy hay bugs pendientes";
+  i18n["No open bugs"] = "Noy hay bugs pendientes";
   i18n["Open bugs for {0}"] = "Bugs pendientes para {0}";
 
 
@@ -235,7 +236,7 @@ var i18n = new Array();
   i18n["<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)"] = "<b>Aceptar</b> este parche y <b>Guardar</b> el fichero (CTRL+s)";
   i18n["<b>Reject</b> this patch"] = "<b>Rechazar</b> este parche";
   i18n["<b>Save</b> this file (CTRL+s)"] = "<b>Guardar</b> este fichero (CTRL+s)";
-  i18n["Do you want to check for error before saving?"] = "¿Quiere comprobar errores antes de guardar el fichero?";
+  i18n["Do you want to check for errors before saving?"] = "¿Quiere comprobar errores antes de guardar el fichero?";
   i18n["<b>Save as</b> a patch"] = "<b>Guardar como</b> parche";
   i18n["modified"] = "modificado";
 
@@ -243,11 +244,11 @@ var i18n = new Array();
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
   i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";
-  i18n["Module \"Pending Patch\""] = "Módulo \"Parches pendientes\"";
-  i18n["Module \"Files Need Translate\""] = "Módulo \"Ficheros a traducir\"";
-  i18n["Module \"Files Need Update\""] = "Module \"Ficheros a actualizar\"";
-  i18n["Module \"Files with Error\""] = "Module \"Ficheros con errores\"";
-  i18n["Module \"Files need Reviewed\""] = "Module \"Ficheros a revisar\"";
+  i18n["Module \"Pending patches\""] = "Módulo \"Parches pendientes\"";
+  i18n["Module \"Files need translate\""] = "Módulo \"Ficheros a traducir\"";
+  i18n["Module \"Files need update\""] = "Module \"Ficheros a actualizar\"";
+  i18n["Module \"Files with error\""] = "Module \"Ficheros con errores\"";
+  i18n["Module \"Files need reviewed\""] = "Module \"Ficheros a revisar\"";
   i18n["Black"] = "Negro";
   i18n["Default"] = "Por defecto";
   i18n["DarkGray"] = "Carbón";
@@ -271,7 +272,7 @@ var i18n = new Array();
   i18n["About mails"] = "Acerca de los E-Mails";
   i18n["Load mail at startUp"] = "Cargar E-Mails de la lista de correo al iniciar";
   i18n["About bugs"] = "Acerca de los bugs";
-  i18n["Load Bugs at startUp"] = "Cargar bugs pendientes al iniciar";
+  i18n["Load bugs at startUp"] = "Cargar bugs pendientes al iniciar";
   i18n["Menu"] = "Menú";
   i18n["Nb files to display"] = "Número de ficheros a mostrar";
   i18n["files to display"] = "Ficheros a mostrar";
@@ -279,7 +280,7 @@ var i18n = new Array();
   i18n["ScrollBars"] = "Barras de desplazamiento";
   i18n["Editor"] = "Editor";
   i18n["SpellChecking"] = "Corrector ortográfico";
-  i18n["Enable spellChecking"] = "Activar corrector ortográfico";
+  i18n["Enable spell checking"] = "Activar corrector ortográfico";
   i18n["Automatically load the log when displaying the file"] = "Carcar automáticamente el log cuando se muestra un fichero";
   i18n["Start with the panel open"] = "Empezar con el panel abierto";
   i18n["Panel width"] = "Ancho del panel";
@@ -295,7 +296,8 @@ var i18n = new Array();
   i18n["All changes take effect immediately"] = "Todos los cambios tienen efecto inmediatamente";
   i18n["Automatically load acronyms data when displaying the file"] = "Cargar automáticamente los acrónimos cuando se edita un fichero";
   i18n["Automatically load entities data when displaying the file"] = "Cargar automáticamente las entidades cuando se carga un fichero";
-
+  i18n["Google translate Panel"] = "Panel de traducción automática de Google";
+  i18n["Display the Google Translation Panel"] = "Mostrar el panel de traducción de Google";
 
 // In file: ../../js/ui/component/CheckEntities.js
   i18n["Entities"] = "Entidades";
@@ -446,7 +448,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PendingPatchGrid.js
   i18n["Posted by"] = "Enviado por";
-  i18n["No pending Patch"] = "No hay parches disponibles";
+  i18n["No pending patches"] = "No hay parches disponibles";
   i18n["Reject this patch"] = "Rechazar parche";
   i18n["Patch for {0}"] = "Parche para {0}";
   i18n["Proposed Patch for {0}"] = "Parche propuesto para {0}";
@@ -545,3 +547,16 @@ var i18n = new Array();
 // In file: ../../ux/extjsPowered/TabCloseMenu.js
   i18n["Close Other Tabs"] = "Cerrar las otras pestañas";
   i18n["Close All Tabs"] = "Cerrar todas las pestañas";
+
+
+// In file: ../../ux/others/main_specific/Ext.ux.UserNotes.js
+  i18n["Notes (<b>{0}</b>)"] = "Notas (<b>{0}</b>)";
+  i18n["Add a new note"] = "Añadir nueva nota";
+  i18n["Add"] = "Añadir";
+  i18n["Delete this note"] = "Eliminar esta nota";
+  i18n["No user notes"] = "No hay notas de usuario";
+  i18n["Right click to add a new note"] = "Haga clic derecho para añadir una nueva nota";
+  i18n["Note added"] = "Nota añadida";
+  i18n["The note was added successfully !"] = "¡La nota fue añadida satisfactoriamente!";
+  i18n["Note deleted"] = "Nota eliminada";
+  i18n["The note was deleted successfully !"] = "¡La nota fue eliminada satisfactoriamente!";
