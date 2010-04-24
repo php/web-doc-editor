@@ -295,6 +295,8 @@ var i18n = new Array();
   i18n["All changes take effect immediately"] = "Toutes les modifications prennent effet immédiatement";
   i18n["Automatically load acronyms data when displaying the file"] = "Charger automatiquement les acronymes lors de l'édition d'un fichier";
   i18n["Automatically load entities data when displaying the file"] = "Charger automatiquement les entités lors de l'édition d'un fichier";
+  i18n["Google translate Panel"] = "Panneau de traduction automatique Google";
+  i18n["Display the Google Translation Panel"] = "Afficher le panneau de traduction Google";
 
 
 // In file: ../../js/ui/component/CheckEntities.js

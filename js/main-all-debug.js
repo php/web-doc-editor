@@ -4785,7 +4785,8 @@ ui.task.GetFileTask = function(config)
                 p.permlink = '';
             } else if( this.ftype  === 'GGTRANS' )
             {
-                p.setTitle('<img src="themes/img/google.png" alt="permlink" style="vertical-align: middle;"> ' + p.originTitle);
+                p.setTitle(p.originTitle);
+                p.setIconClass('iconGoogle');
             } else {
                 p.permlink = (o.xmlid != 'NULL') ? perm : '';
                 p.setTitle(p.permlink + p.originTitle);
@@ -6087,26 +6088,16 @@ ui.component._BuildStatus.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getFailedBuild'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'lang',
-                mapping : 'lang'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'lang'},
+            {name : 'date', type : 'date',dateFormat : 'Y-m-d H:i:s' }
+        ]
+    })
 });
 ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
 
@@ -7650,7 +7641,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                 iconCls : 'iconUI',
                 items   : [{
                     xtype   : 'fieldset',
-                    title   : _('Main Menu'),
+                    title   : _('Main menu'),
                     iconCls : 'iconMenu',
                     items   : [{
                         xtype      : 'spinnerfield',
@@ -7895,6 +7886,26 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                             {
                                 new ui.task.UpdateConfTask({
                                     item  : 'newFileScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                },{
+                    xtype       : 'fieldset',
+                    title       : _('Google translate Panel'),
+                    iconCls     : 'iconGoogle',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'newFileGGPanel',
+                        checked     : PhDOE.userConf.newFileGGPanel,
+                        boxLabel    : _('Display the Google Translation Panel'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'newFileGGPanel',
                                     value : field.getValue()
                                 });
                             }
@@ -13567,10 +13578,13 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName);
+            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName),
+            mainPanel;
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
+
+            mainPanel = [];
 
             Ext.getCmp('main-panel').add(
             {
@@ -13582,14 +13596,16 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 closable         : true,
                 tabLoaded        : false,
                 panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
-                panGGTRANSLoaded : false, // Use to monitor if the google translation panel is loaded
+                panGGTRANSLoaded : !PhDOE.userConf.newFileGGPanel, // Use to monitor if the google translation panel is loaded
                 defaults         : { split : true },
                 tabTip           : String.format(
                     _('Need Translate: in {0}'), FilePath
                 ),
                 listeners : {
                     resize: function(panel) {
-                        Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                        if( PhDOE.userConf.newFileGGPanel ) {
+                            Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                        }
                     }
                 },
                 items : [{
@@ -13669,10 +13685,12 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
+                        syncScrollCB   : PhDOE.userConf.newFileGGPanel,
+                        syncScroll     : PhDOE.userConf.newFileGGPanel,
                         syncScrollConf : 'newFileScrollbars'
-                    }), new ui.component.FilePanel(
+                    }),
+                    (( PhDOE.userConf.newFileGGPanel ) ?
+                    new ui.component.FilePanel(
                     {
                         id             : 'FNT-GGTRANS-PANEL-' + FileID,
                         region         : 'east',
@@ -13689,7 +13707,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         storeRecord    : storeRecord,
                         syncScroll     : true,
                         syncScrollConf : 'newFileScrollbars'
-                    })
+                    }) : false )
+
                 ]
             });
         }

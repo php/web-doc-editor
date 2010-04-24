@@ -107,7 +107,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                 iconCls : 'iconUI',
                 items   : [{
                     xtype   : 'fieldset',
-                    title   : _('Main Menu'),
+                    title   : _('Main menu'),
                     iconCls : 'iconMenu',
                     items   : [{
                         xtype      : 'spinnerfield',
@@ -352,6 +352,26 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                             {
                                 new ui.task.UpdateConfTask({
                                     item  : 'newFileScrollbars',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
+                    }]
+                },{
+                    xtype       : 'fieldset',
+                    title       : _('Google translate Panel'),
+                    iconCls     : 'iconGoogle',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        name        : 'newFileGGPanel',
+                        checked     : PhDOE.userConf.newFileGGPanel,
+                        boxLabel    : _('Display the Google Translation Panel'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    item  : 'newFileGGPanel',
                                     value : field.getValue()
                                 });
                             }

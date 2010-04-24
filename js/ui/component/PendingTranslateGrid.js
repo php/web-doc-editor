@@ -148,15 +148,17 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 iconCls          : 'iconTabNeedTranslate',
                 closable         : true,
                 tabLoaded        : false,
-                panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
-                panGGTRANSLoaded : false, // Use to monitor if the google translation panel is loaded
+                panTRANSLoaded   : false,
+                panGGTRANSLoaded : !PhDOE.userConf.newFileGGPanel,
                 defaults         : { split : true },
                 tabTip           : String.format(
                     _('Need Translate: in {0}'), FilePath
                 ),
                 listeners : {
                     resize: function(panel) {
-                        Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                        if( PhDOE.userConf.newFileGGPanel ) {
+                            Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                        }
                     }
                 },
                 items : [{
@@ -236,10 +238,12 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         lang           : PhDOE.userLang,
                         parser         : 'xml',
                         storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
+                        syncScrollCB   : PhDOE.userConf.newFileGGPanel,
+                        syncScroll     : PhDOE.userConf.newFileGGPanel,
                         syncScrollConf : 'newFileScrollbars'
-                    }), new ui.component.FilePanel(
+                    }),
+                    (( PhDOE.userConf.newFileGGPanel ) ?
+                    new ui.component.FilePanel(
                     {
                         id             : 'FNT-GGTRANS-PANEL-' + FileID,
                         region         : 'east',
@@ -256,7 +260,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         storeRecord    : storeRecord,
                         syncScroll     : true,
                         syncScrollConf : 'newFileScrollbars'
-                    })
+                    }) : false )
+
                 ]
             });
         }

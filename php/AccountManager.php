@@ -38,6 +38,7 @@ class AccountManager
             "newFileNbDisplay"      => 0, // 0 means no limit
             "newFileSpellCheck"     => false,
             "newFileScrollbars"     => false,
+            "newFileGGPanel"        => true,
 
             "needUpdateNbDisplay"            => 0, // 0 means no limit
             "needUpdateDiff"                 => 'using-exec',
