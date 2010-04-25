@@ -4,7 +4,7 @@ ui.task._VCSCommitTask.getCommitResponse = function()
 {
     XHR({
         params  : {
-            task: 'getCommitResponse'
+            task : 'getCommitResponse'
         },
         success : function(response)
         {

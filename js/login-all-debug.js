@@ -479,29 +479,21 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                 proxy    : new Ext.data.HttpProxy({
                     url : './do/getAvailableLanguage'
                 }),
-                reader   : new Ext.data.JsonReader(
-                    {
-                        root          : 'Items',
-                        totalProperty : 'nbItems',
-                        id            : 'code'
-                    }, Ext.data.Record.create([
-                        {
-                            name    : 'code',
-                            mapping : 'code'
-                        }, {
-                            name    : 'iconCls',
-                            mapping : 'iconCls'
-                        }, {
-                            name    : 'name',
-                            mapping : 'name'
-                        }
-                    ])
-                )
+                reader   : new Ext.data.JsonReader({
+                    root          : 'Items',
+                    totalProperty : 'nbItems',
+                    idProperty    : 'code',
+                    fields        : [
+                        {name : 'code'},
+                        {name : 'iconCls'},
+                        {name : 'name'}
+                    ]
+                })
             });
 
             this.storeLang.load({
-                scope: this,
-                callback: function() {
+                scope    : this,
+                callback : function() {
                     this.storeProject.load();
                 }
             });
@@ -511,27 +503,19 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                 proxy    : new Ext.data.HttpProxy({
                     url : './do/getAvailableProject'
                 }),
-                reader   : new Ext.data.JsonReader(
-                    {
-                        root          : 'Items',
-                        totalProperty : 'nbItems',
-                        id            : 'code'
-                    }, Ext.data.Record.create([
-                        {
-                            name    : 'code',
-                            mapping : 'code'
-                        }, {
-                            name    : 'iconCls',
-                            mapping : 'iconCls'
-                        }, {
-                            name    : 'name',
-                            mapping : 'name'
-                        }, {
-                            name    : 'request_account_uri',
-                            mapping : 'request_account_uri'
-                        }
-                    ])
-                )
+                reader : new Ext.data.JsonReader({
+                    root          : 'Items',
+                    totalProperty : 'nbItems',
+                    idProperty    : 'code',
+                    fields        : [
+                        {name : 'code'},
+                        {name : 'iconCls'},
+                        {name : 'name'},
+                        {name : 'request_account_uri'}
+                    ]
+
+
+                })
             });
 
             this.storeProject.on('load', function() {
@@ -595,10 +579,10 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         defaults    : { width : 217 },
                         defaultType : 'textfield',
                         items : [{
-                            xtype      : 'iconcombo',
-                            width      : 235,
-                            fieldLabel : 'Project',
-                            store      : this.storeProject,
+                            xtype         : 'iconcombo',
+                            width         : 235,
+                            fieldLabel    : 'Project',
+                            store         : this.storeProject,
                             triggerAction : 'all',
                             allowBlank    : false,
                             valueField    : 'code',
@@ -611,8 +595,8 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             editable      : true,
                             id            : 'login-form-project',
                             name          : 'projectDisplay',
-                            listeners: {
-                                afterrender: function(c) {
+                            listeners     : {
+                                afterrender : function(c) {
                                     if( directAccess )
                                     {
                                         c.focus();
@@ -628,18 +612,18 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                     }                                   
 
                                 },
-                                select: function(c, record, numberIndex) {
+                                select : function(c, record) {
                                     var url = record.data.request_account_uri;
                                     Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                                 }
                             }
                         }, {
-                            fieldLabel : 'VCS login',
-                            name       : 'vcsLogin',
-                            value      : ( Ext.util.Cookies.get("loginApp") ) ? Ext.util.Cookies.get("loginApp") : 'anonymous',
-                            id         : 'login-form-vcsLogin',
+                            fieldLabel      : 'VCS login',
+                            name            : 'vcsLogin',
+                            value           : ( Ext.util.Cookies.get("loginApp") ) ? Ext.util.Cookies.get("loginApp") : 'anonymous',
+                            id              : 'login-form-vcsLogin',
                             enableKeyEvents : true,
-                            listeners : {
+                            listeners       : {
                                 keypress : function(field, e)
                                 {
                                     if (e.getKey() == e.ENTER) {
@@ -648,12 +632,12 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 }
                             }
                         }, {
-                            fieldLabel : 'VCS password',
-                            name       : 'vcsPassword',
-                            id         : 'login-form-vcsPasswd',
-                            inputType  : 'password',
-                            enableKeyEvents: true,
-                            listeners : {
+                            fieldLabel      : 'VCS password',
+                            name            : 'vcsPassword',
+                            id              : 'login-form-vcsPasswd',
+                            inputType       : 'password',
+                            enableKeyEvents : true,
+                            listeners       : {
                                 keypress : function(field, e)
                                 {
                                     if (e.getKey() == e.ENTER) {
@@ -662,32 +646,32 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 }
                             }
                         }, {
-                            xtype      : 'iconcombo',
-                            width      : 235,
-                            fieldLabel : 'Language module',
-                            store      : this.storeLang,
-                            triggerAction : 'all',
-                            allowBlank    : false,
-                            valueField    : 'code',
-                            displayField  : 'name',
-                            iconClsField  : 'iconCls',
-                            iconClsBase   : 'flags',
-                            mode          : 'local',
-                            value         : 'en',
-                            listWidth     : 235,
-                            maxHeight     : 150,
-                            editable      : true,
-                            id            : 'login-form-lang',
-                            name          : 'langDisplay',
-                            enableKeyEvents: true,
-                            listeners : {
+                            xtype           : 'iconcombo',
+                            width           : 235,
+                            fieldLabel      : 'Language module',
+                            store           : this.storeLang,
+                            triggerAction   : 'all',
+                            allowBlank      : false,
+                            valueField      : 'code',
+                            displayField    : 'name',
+                            iconClsField    : 'iconCls',
+                            iconClsBase     : 'flags',
+                            mode            : 'local',
+                            value           : 'en',
+                            listWidth       : 235,
+                            maxHeight       : 150,
+                            editable        : true,
+                            id              : 'login-form-lang',
+                            name            : 'langDisplay',
+                            enableKeyEvents : true,
+                            listeners       : {
                                 keypress : function(field, e)
                                 {
                                     if (e.getKey() == e.ENTER) {
                                         Ext.getCmp('login-btn').fireEvent('click');
                                     }
                                 },
-                                afterrender: function(c) {
+                                afterrender : function(c) {
                                     if( directAccess )
                                     {
                                         c.focus();
@@ -700,12 +684,12 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             }
                         }]
                     }],
-                    buttonAlign: 'left',
-                    buttons : [{
-                        text    : 'Request an account',
-                        iconCls : 'iconHelp',
+                    buttonAlign : 'left',
+                    buttons     : [{
+                        text     : 'Request an account',
+                        iconCls  : 'iconHelp',
                         tabIndex : -1,
-                        handler : function() {
+                        handler  : function() {
                             if( win.drawers.s.hidden ) {
                                 win.drawers.s.show();
                             } else {
@@ -729,7 +713,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                         },
                                         waitTitle : 'Connecting',
                                         waitMsg   : 'Sending data...',
-                                        success   : function(form, action)
+                                        success   : function()
                                         {
                                             window.location.reload();
                                         },

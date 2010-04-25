@@ -67,39 +67,34 @@ ui.task.GetFileTask = function(config)
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
-                    title: _('Warning'),
-                    msg: String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
+                    title   : _('Warning'),
+                    msg     : String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
+                    buttons : Ext.MessageBox.OK,
+                    icon    : Ext.MessageBox.WARNING
                 });
 
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
-
             }
 
             if( o.warn_encoding ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
-                    title: _('Warning'),
-                    msg: String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
+                    title   : _('Warning'),
+                    msg     : String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
+                    buttons : Ext.MessageBox.OK,
+                    icon    : Ext.MessageBox.WARNING
                 });
 
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
 
-
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
-
             }
-
         },
         callback : function()
         {
-
             // Mark FNT panel as loaded
             if( this.prefix == 'FNT' ) {
                 if( this.ftype == 'TRANS' ) {
@@ -161,7 +156,6 @@ ui.task.GetFileTask = function(config)
             }
 
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
-
         }
     });
 };

@@ -16,7 +16,7 @@ ui.task.GetFileInfoByXmlID = function(config)
         {
             var o    = Ext.util.JSON.decode(r.responseText);
 
-            ui.component.RepositoryTree.getInstance().openFile(
+            ui.cmp.RepositoryTree.getInstance().openFile(
                 o.lang + o.path,
                 o.name
             );

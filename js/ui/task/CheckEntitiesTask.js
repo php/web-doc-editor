@@ -41,7 +41,7 @@ ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
     });
 });
 
-ui.task.CheckEntitiesTask = function(config)
+ui.task.CheckEntitiesTask = function()
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -52,10 +52,10 @@ ui.task.CheckEntitiesTask = function(config)
     ui.task.PingTask.getInstance().cancel();
 
     XHR({
-        params  : {
-            task       : 'checkEntities'
+        params : {
+            task : 'checkEntities'
         },
-        success : function(response)
+        success : function()
         {
             new ui.task._CheckEntitiesTask.display();
         },

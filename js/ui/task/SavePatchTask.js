@@ -42,7 +42,7 @@ ui.task.SavePatchTask = function(config)
         success : function(r)
         {
             var o    = Ext.util.JSON.decode(r.responseText),
-                grid = ui.component.PendingPatchGrid.getInstance();
+                grid = ui.cmp.PendingPatchGrid.getInstance();
 
             // Add this files into storePendingPatch
             grid.store.insert(0,
@@ -61,7 +61,6 @@ ui.task.SavePatchTask = function(config)
 
             // Notify
             PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
-
         },
 
         failure : function(r)

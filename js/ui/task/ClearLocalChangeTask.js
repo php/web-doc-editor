@@ -32,8 +32,8 @@ ui.task.ClearLocalChangeTask = function(config)
                 }
 
                 XHR({
-                    scope   : this,
-                    params  : {
+                    scope  : this,
+                    params : {
                         task     : 'clearLocalChange',
                         FileType : this.ftype,
                         FilePath : this.fpath,
@@ -41,7 +41,7 @@ ui.task.ClearLocalChangeTask = function(config)
                     },
                     success : function(r)
                     {
-                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance(),
+                        var pending_commit_grid = ui.cmp.PendingCommitGrid.getInstance(),
                             o                   = Ext.util.JSON.decode(r.responseText),
                             node;
 
@@ -55,7 +55,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         if( o.lang === 'en' && this.ftype === 'update' ) {
 
                             // trow StaleFile store
-                            ui.component.StaleFileGrid.getInstance().store.each(
+                            ui.cmp.StaleFileGrid.getInstance().store.each(
                                 function(record)
                                 {
                                     if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
@@ -66,7 +66,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 }, this);
 
                             // Browse FileError
-                            ui.component.ErrorFileGrid.getInstance().store.each(
+                            ui.cmp.ErrorFileGrid.getInstance().store.each(
                                 function(record)
                                 {
                                     if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -76,7 +76,7 @@ ui.task.ClearLocalChangeTask = function(config)
 
                             // find open node in All Files modules
                             node = false;
-                            node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                            node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                             if (node) {
                               node.getUI().removeClass('modified');
                             }
@@ -90,7 +90,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         // We try to search in others stores if this file is marked as needCommit
 
                         // Browse PendingTranslate store
-                        ui.component.PendingTranslateGrid.getInstance().store.each(
+                        ui.cmp.PendingTranslateGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -99,7 +99,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse StaleFile store
-                        ui.component.StaleFileGrid.getInstance().store.each(
+                        ui.cmp.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -111,7 +111,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse storeFilesNeedReviewed
-                        ui.component.PendingReviewGrid.getInstance().store.each(
+                        ui.cmp.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -120,7 +120,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse storeNotInEn
-                        ui.component.NotInENGrid.getInstance().store.each(
+                        ui.cmp.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -130,7 +130,7 @@ ui.task.ClearLocalChangeTask = function(config)
 
                         // find open node in All Files modules
                         node = false;
-                        node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                        node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
                           node.getUI().removeClass('modified');
                         }

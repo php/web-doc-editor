@@ -91,7 +91,7 @@ var PhDOE = function()
         runDirectAccess: function()
         {
             if (directAccess) {
-                ui.component.RepositoryTree.getInstance().openFile(
+                ui.cmp.RepositoryTree.getInstance().openFile(
                     directAccess.lang + directAccess.path,
                     directAccess.name
                 );
@@ -99,7 +99,7 @@ var PhDOE = function()
         },
 
         // All we want to do after all dataStore are loaded
-        afterLoadAllStore: function()
+        afterLoadAllStore : function()
         {
             this.appLoaded = true;
 
@@ -109,15 +109,15 @@ var PhDOE = function()
             //Load external data
             // Mails ?
             if( this.userConf.mainAppLoadMailsAtStartUp ) {
-                ui.component.PortletLocalMail.getInstance().reloadData();
+                ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
             if( this.userConf.mainAppLoadBugsAtStartUp ) {
-                ui.component.PortletBugs.getInstance().reloadData();
+                ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
 
-        loadAllStore: function()
+        loadAllStore : function()
         {
             var progressBar = new Ext.ProgressBar({
                     width:300,
@@ -131,43 +131,43 @@ var PhDOE = function()
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
                 progressBar.updateProgress(1/13, '1 of 13...');
-                ui.component._MainMenu.store.load({
+                ui.cmp._MainMenu.store.load({
                     callback: function() {
                         progressBar.updateProgress(2/13, '2 of 13...');
-                        ui.component.StaleFileGrid.getInstance().store.load({
+                        ui.cmp.StaleFileGrid.getInstance().store.load({
                             callback: function() {
                                 progressBar.updateProgress(3/13, '3 of 13...');
-                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                ui.cmp.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
                                         progressBar.updateProgress(4/13, '4 of 13...');
-                                        ui.component.PendingReviewGrid.getInstance().store.load({
+                                        ui.cmp.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
                                                 progressBar.updateProgress(5/13, '5 of 13...');
-                                                ui.component.NotInENGrid.getInstance().store.load({
+                                                ui.cmp.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
                                                         progressBar.updateProgress(6/13, '6 of 13...');
-                                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
                                                             callback: function() {
                                                                 progressBar.updateProgress(7/13, '7 of 13...');
-                                                                ui.component.PendingPatchGrid.getInstance().store.load({
+                                                                ui.cmp.PendingPatchGrid.getInstance().store.load({
                                                                     callback: function() {
                                                                         progressBar.updateProgress(8/13, '8 of 13...');
-                                                                        ui.component.PortletSummary.getInstance().store.load({
+                                                                        ui.cmp.PortletSummary.getInstance().store.load({
                                                                             callback: function() {
                                                                                 progressBar.updateProgress(9/13, '9 of 13...');
-                                                                                ui.component.PortletTranslationGraph.getInstance().store.load({
+                                                                                ui.cmp.PortletTranslationGraph.getInstance().store.load({
                                                                                     callback: function() {
                                                                                         progressBar.updateProgress(10/13, '10 of 13...');
-                                                                                        ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                                                                        ui.cmp.PortletTranslationsGraph.getInstance().store.load({
                                                                                             callback: function() {
                                                                                                 progressBar.updateProgress(11/13, '11 of 13...');
-                                                                                                ui.component.PortletTranslator.getInstance().store.load({
+                                                                                                ui.cmp.PortletTranslator.getInstance().store.load({
                                                                                                     callback: function() {
                                                                                                         progressBar.updateProgress(12/13, '12 of 13...');
-                                                                                                        ui.component.PendingTranslateGrid.getInstance().store.load({
+                                                                                                        ui.cmp.PendingTranslateGrid.getInstance().store.load({
                                                                                                             callback: function() {
                                                                                                                 progressBar.updateProgress(13/13, '13 of 13...');
-                                                                                                                ui.component.PortletInfo.getInstance().store.load({
+                                                                                                                ui.cmp.PortletInfo.getInstance().store.load({
                                                                                                                     callback: function() {
                                                                                                                         // Now, we can to remove the global mask
                                                                                                                         Ext.get('loading').remove();
@@ -204,22 +204,22 @@ var PhDOE = function()
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
                 progressBar.updateProgress(1/6, '1 of 6...');
-                ui.component._MainMenu.store.load({
+                ui.cmp._MainMenu.store.load({
                     callback: function() {
                         progressBar.updateProgress(2/6, '2 of 6...');
-                        ui.component.PendingPatchGrid.getInstance().store.load({
+                        ui.cmp.PendingPatchGrid.getInstance().store.load({
                             callback: function() {
                                 progressBar.updateProgress(3/6, '3 of 6...');
-                                ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                ui.cmp.PortletTranslationsGraph.getInstance().store.load({
                                     callback: function() {
                                         progressBar.updateProgress(4/6, '4 of 6...');
-                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
                                             callback: function() {
                                                 progressBar.updateProgress(5/6, '5 of 6...');
-                                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                                ui.cmp.ErrorFileGrid.getInstance().store.load({
                                                     callback: function() {
                                                         progressBar.updateProgress(6/6, '5 of 6...');
-                                                        ui.component.PortletInfo.getInstance().store.load({
+                                                        ui.cmp.PortletInfo.getInstance().store.load({
                                                             callback: function() {
                                                                 // Now, we can to remove the global mask
                                                                 Ext.get('loading').remove();
@@ -246,27 +246,27 @@ var PhDOE = function()
             // Store to reload for LANG project
             if (PhDOE.userLang !== 'en') {
                 // We reload all stores, one after the others
-                ui.component.PendingTranslateGrid.getInstance().store.reload({
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload({
                     callback: function() {
-                        ui.component.StaleFileGrid.getInstance().store.reload({
+                        ui.cmp.StaleFileGrid.getInstance().store.reload({
                             callback: function() {
-                                ui.component.ErrorFileGrid.getInstance().store.reload({
+                                ui.cmp.ErrorFileGrid.getInstance().store.reload({
                                     callback: function() {
-                                        ui.component.PendingReviewGrid.getInstance().store.reload({
+                                        ui.cmp.PendingReviewGrid.getInstance().store.reload({
                                             callback: function() {
-                                                ui.component.NotInENGrid.getInstance().store.reload({
+                                                ui.cmp.NotInENGrid.getInstance().store.reload({
                                                     callback: function() {
-                                                        ui.component.PendingCommitGrid.getInstance().store.reload({
+                                                        ui.cmp.PendingCommitGrid.getInstance().store.reload({
                                                             callback: function() {
-                                                                ui.component.PendingPatchGrid.getInstance().store.reload({
+                                                                ui.cmp.PendingPatchGrid.getInstance().store.reload({
                                                                     callback: function() {
-                                                                        ui.component.PortletSummary.getInstance().store.reload({
+                                                                        ui.cmp.PortletSummary.getInstance().store.reload({
                                                                             callback: function() {
-                                                                                ui.component.PortletTranslator.getInstance().store.reload({
+                                                                                ui.cmp.PortletTranslator.getInstance().store.reload({
                                                                                     callback: function() {
-                                                                                        ui.component.PortletTranslationGraph.getInstance().store.reload({
+                                                                                        ui.cmp.PortletTranslationGraph.getInstance().store.reload({
                                                                                             callback: function() {
-                                                                                                ui.component.PortletTranslationsGraph.getInstance().store.reload();
+                                                                                                ui.cmp.PortletTranslationsGraph.getInstance().store.reload();
                                                                                             }
                                                                                         });
                                                                                     }
@@ -289,9 +289,9 @@ var PhDOE = function()
                 });
             } else {
                 // Store to reload only for EN project
-                ui.component.PendingCommitGrid.getInstance().store.reload({
+                ui.cmp.PendingCommitGrid.getInstance().store.reload({
                     callback: function() {
-                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
                 });
             }
@@ -317,31 +317,31 @@ var PhDOE = function()
             if ( this.userLang === 'en' ) {
                 (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
 
-                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
-                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
-                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
             else
             {
                 (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
                 
-                allPortlet["portletSummary"] = ui.component.PortletSummary.getInstance({lang: this.userLang});
-                allPortlet["portletTranslator"] = ui.component.PortletTranslator.getInstance({lang: this.userLang});
-                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: this.userLang});
+                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
 
-                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
-                allPortlet["portletTranslationGraph"] = ui.component.PortletTranslationGraph.getInstance();
-                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+                allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
+                allPortlet["portletTranslationGraph"] = ui.cmp.PortletTranslationGraph.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
 
 
             for( var i=0; i < portal.col1.length; i++ ) {
                 mainContentLeft.push(allPortlet[portal.col1[i]]);
             }
-            for( var i=0; i < portal.col2.length; i++ ) {
-                mainContentRight.push(allPortlet[portal.col2[i]]);
+            for( var j=0; j < portal.col2.length; j++ ) {
+                mainContentRight.push(allPortlet[portal.col2[j]]);
             }
             
             // We keel alive our session by sending a ping every minute
@@ -349,8 +349,8 @@ var PhDOE = function()
 
             new Ext.Viewport({
                 layout : 'border',
-                    id           : 'main-app',
-                items : [{
+                id     : 'main-app',
+                items  : [{
                     // logo
                     region     : 'north',
                     html       : '<h1 class="x-panel-header">' +
@@ -372,8 +372,8 @@ var PhDOE = function()
                     split        : true,
                     width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
                     header       : false,
-                    listeners: {
-                        resize: function(a,newWidth) {
+                    listeners    : {
+                        resize : function(a, newWidth) {
 
                             if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
@@ -387,7 +387,7 @@ var PhDOE = function()
                     tbar : [{
                         text    : _('Main menu'),
                         iconCls : 'MainMenu',
-                        menu    : new ui.component.MainMenu()
+                        menu    : new ui.cmp.MainMenu()
                     }],
                     items : [{
                         id        : 'acc-need-translate',
@@ -396,7 +396,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedTranslate',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.PendingTranslateGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingTranslateGrid.getInstance() ],
                         collapsed : true
                     },{
                         id        : 'acc-need-update',
@@ -405,7 +405,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedUpdate',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.StaleFileGrid.getInstance() ],
+                        items     : [ ui.cmp.StaleFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-error',
@@ -413,7 +413,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
-                        items     : [ ui.component.ErrorFileGrid.getInstance() ],
+                        items     : [ ui.cmp.ErrorFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-reviewed',
@@ -422,7 +422,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedReviewed',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.PendingReviewGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingReviewGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-notInEn',
@@ -431,7 +431,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconNotInEn',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.NotInENGrid.getInstance() ],
+                        items     : [ ui.cmp.NotInENGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-all-files',
@@ -439,7 +439,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconAllFiles',
-                        items     : [ ui.component.RepositoryTree.getInstance() ],
+                        items     : [ ui.cmp.RepositoryTree.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingCommit',
@@ -450,7 +450,7 @@ var PhDOE = function()
                             handler : function() {
                                 if( ! Ext.getCmp('commit-log-win') )
                                 {
-                                    var win = new ui.component.CommitLogManager();
+                                    var win = new ui.cmp.CommitLogManager();
                                 }
                                 Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
                             }
@@ -459,7 +459,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingCommit',
-                        items     : [ ui.component.PendingCommitGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingCommitGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingPatch',
@@ -467,7 +467,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingPatch',
-                        items     : [ ui.component.PendingPatchGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingPatchGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-google-translate',
@@ -476,22 +476,22 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconGoogle',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.GoogleTranslationPanel.getInstance() ],
+                        items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
                     }]
                 }, {
                     // main panel
-                    xtype             : 'mainpanel',
-                    id                : 'main-panel',
-                    region            : 'center',
-                    items : [{
+                    xtype  : 'mainpanel',
+                    id     : 'main-panel',
+                    region : 'center',
+                    items  : [{
                         xtype      : 'panel',
                         id         : 'MainInfoTabPanel',
                         title      : _('Home'),
                         baseCls    : 'MainInfoTabPanel',
                         autoScroll : true,
                         plain      : true,
-                        items : [{
+                        items      : [{
                             xtype  : 'panel',
                             border : false,
                             html   : '<div class="res-block">' +
@@ -515,20 +515,18 @@ var PhDOE = function()
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentRight
                             }],
-                            listeners: {
-                                drop: function(a) {
+                            listeners : {
+                                drop : function(a) {
                                     var portal, col1Sort = [], col2Sort = [], id;
 
                                     // Column 1
                                     for( var i=0; i < a.portal.items.items[0].items.items.length; i++ ) {
                                         id = a.portal.items.items[0].items.items[i].id;
-                                        //console.log(id);
                                         col1Sort.push(id);
                                     }
                                     // Column 2
-                                    for( var i=0; i < a.portal.items.items[1].items.items.length; i++ ) {
-                                        id = a.portal.items.items[1].items.items[i].id;
-                                        //console.log(id);
+                                    for( var j=0; i < a.portal.items.items[1].items.items.length; j++ ) {
+                                        id = a.portal.items.items[1].items.items[j].id;
                                         col2Sort.push(id);
                                     }
 
@@ -567,7 +565,7 @@ var PhDOE = function()
                         }
                         
                         // Start the first
-                        ui.component.RepositoryTree.getInstance().openFile(
+                        ui.cmp.RepositoryTree.getInstance().openFile(
                             'byId',
                             PhDOE.AFfilePendingOpen[0].nodeID,
                             false
@@ -653,4 +651,5 @@ var PhDOE = function()
         } // drawInterface
     }; // Return
 }();
+
 Ext.EventManager.onDocumentReady(PhDOE.init, PhDOE, true);

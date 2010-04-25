@@ -28,12 +28,13 @@ ui.task.MarkDeleteTask = function(config)
                         var o = Ext.util.JSON.decode(r.responseText);
 
                         Ext.getBody().unmask();
-                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
                             o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
                         );
                         this.storeRecord.set('needcommit', true);
                     }
                 });
             }
-        }, this);
+        }, this
+    );
 };

@@ -59,7 +59,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     });
 });
 
-ui.task.CheckBuildTask = function(config)
+ui.task.CheckBuildTask = function()
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +

@@ -102,7 +102,7 @@ ui.task.SystemUpdateTask = function()
     Ext.get('wizard-step-1.1').replaceClass('wizard-wait', 'wizard-show');
 
     XHR({
-        params  : { task: 'updateRepository' },
+        params  : { task : 'updateRepository' },
         success : function()
         {
             Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');

@@ -59,12 +59,11 @@ ui.task._UpdateSingleFolderTask.afterUpdate = function(o, node)
     var r = Ext.util.JSON.decode(o.result);
 
     // We reload and highlight the modified node
-    node.reload(function(){
+    node.reload(function() {
 
         Ext.iterate(r.newFiles, function(prop, val){
             node.findChild('text', prop).getUI().addClass('treeFileUpdated');
         });
-
 
     }, this);
 
@@ -75,7 +74,6 @@ ui.task._UpdateSingleFolderTask.afterUpdate = function(o, node)
 
 ui.task._UpdateSingleFolderTask.update = function(node)
 {
-    //
     var t = new Array();
     t.push(node);
 
@@ -123,6 +121,5 @@ ui.task.UpdateSingleFolderTask = function(node)
         PhDOE.winForbidden();
         return;
     }
-
     ui.task._UpdateSingleFolderTask.update(node);
 };

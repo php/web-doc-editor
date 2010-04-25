@@ -4272,10 +4272,10 @@ ui.task.AcceptPatchTask = function(config)
                     success : function(r)
                     {
                         var o    = Ext.util.JSON.decode(r.responseText),
-                            grid = ui.component.PendingPatchGrid.getInstance();
+                            grid = ui.cmp.PendingPatchGrid.getInstance();
 
                         // Add this files into storePendingCommit
-                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
                             o.id, this.fpath, this.fname, 'update'
                         );
 
@@ -4372,7 +4372,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     });
 });
 
-ui.task.CheckBuildTask = function(config)
+ui.task.CheckBuildTask = function()
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -4451,7 +4451,7 @@ ui.task._CheckEntitiesTask.poll = new Ext.util.DelayedTask(function()
     });
 });
 
-ui.task.CheckEntitiesTask = function(config)
+ui.task.CheckEntitiesTask = function()
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -4462,10 +4462,10 @@ ui.task.CheckEntitiesTask = function(config)
     ui.task.PingTask.getInstance().cancel();
 
     XHR({
-        params  : {
-            task       : 'checkEntities'
+        params : {
+            task : 'checkEntities'
         },
-        success : function(response)
+        success : function()
         {
             new ui.task._CheckEntitiesTask.display();
         },
@@ -4559,11 +4559,10 @@ ui.task.CheckFileTask = function(config)
                 Ext.getCmp('FE-error-desc-' + this.fid).body.updateManager.refresh();
             }
 
-            ui.component.ErrorFileGrid.getInstance().store.reload();
+            ui.cmp.ErrorFileGrid.getInstance().store.reload();
         }
     });
-};
-Ext.namespace('ui','ui.task');
+};Ext.namespace('ui','ui.task');
 
 // config - { ftype, fpath, fname, storeRecord }
 ui.task.ClearLocalChangeTask = function(config)
@@ -4597,8 +4596,8 @@ ui.task.ClearLocalChangeTask = function(config)
                 }
 
                 XHR({
-                    scope   : this,
-                    params  : {
+                    scope  : this,
+                    params : {
                         task     : 'clearLocalChange',
                         FileType : this.ftype,
                         FilePath : this.fpath,
@@ -4606,7 +4605,7 @@ ui.task.ClearLocalChangeTask = function(config)
                     },
                     success : function(r)
                     {
-                        var pending_commit_grid = ui.component.PendingCommitGrid.getInstance(),
+                        var pending_commit_grid = ui.cmp.PendingCommitGrid.getInstance(),
                             o                   = Ext.util.JSON.decode(r.responseText),
                             node;
 
@@ -4620,7 +4619,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         if( o.lang === 'en' && this.ftype === 'update' ) {
 
                             // trow StaleFile store
-                            ui.component.StaleFileGrid.getInstance().store.each(
+                            ui.cmp.StaleFileGrid.getInstance().store.each(
                                 function(record)
                                 {
                                     if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
@@ -4631,7 +4630,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 }, this);
 
                             // Browse FileError
-                            ui.component.ErrorFileGrid.getInstance().store.each(
+                            ui.cmp.ErrorFileGrid.getInstance().store.each(
                                 function(record)
                                 {
                                     if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -4641,7 +4640,7 @@ ui.task.ClearLocalChangeTask = function(config)
 
                             // find open node in All Files modules
                             node = false;
-                            node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                            node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                             if (node) {
                               node.getUI().removeClass('modified');
                             }
@@ -4655,7 +4654,7 @@ ui.task.ClearLocalChangeTask = function(config)
                         // We try to search in others stores if this file is marked as needCommit
 
                         // Browse PendingTranslate store
-                        ui.component.PendingTranslateGrid.getInstance().store.each(
+                        ui.cmp.PendingTranslateGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -4664,7 +4663,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse StaleFile store
-                        ui.component.StaleFileGrid.getInstance().store.each(
+                        ui.cmp.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -4676,7 +4675,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse storeFilesNeedReviewed
-                        ui.component.PendingReviewGrid.getInstance().store.each(
+                        ui.cmp.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -4685,7 +4684,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             }, this);
 
                         // Browse storeNotInEn
-                        ui.component.NotInENGrid.getInstance().store.each(
+                        ui.cmp.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
                                 if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
@@ -4695,7 +4694,7 @@ ui.task.ClearLocalChangeTask = function(config)
 
                         // find open node in All Files modules
                         node = false;
-                        node = ui.component.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
+                        node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
                           node.getUI().removeClass('modified');
                         }
@@ -4731,14 +4730,13 @@ ui.task.GetFileInfoByXmlID = function(config)
         {
             var o    = Ext.util.JSON.decode(r.responseText);
 
-            ui.component.RepositoryTree.getInstance().openFile(
+            ui.cmp.RepositoryTree.getInstance().openFile(
                 o.lang + o.path,
                 o.name
             );
         }
     });
-};
-Ext.namespace('ui','ui.task');
+};Ext.namespace('ui','ui.task');
 
 // config - { prefix, ftype, fid, fpath, fname }
 ui.task.GetFileTask = function(config)
@@ -4807,39 +4805,34 @@ ui.task.GetFileTask = function(config)
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
-                    title: _('Warning'),
-                    msg: String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
+                    title   : _('Warning'),
+                    msg     : String.format(_('The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.'), this.fpath+this.fname),
+                    buttons : Ext.MessageBox.OK,
+                    icon    : Ext.MessageBox.WARNING
                 });
 
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
-
             }
 
             if( o.warn_encoding ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
-                    title: _('Warning'),
-                    msg: String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
+                    title   : _('Warning'),
+                    msg     : String.format(_('The editor have modified automatically the file {0} into UTF-8 encoding.'), this.fpath+this.fname),
+                    buttons : Ext.MessageBox.OK,
+                    icon    : Ext.MessageBox.WARNING
                 });
 
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
 
-
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
-
             }
-
         },
         callback : function()
         {
-
             // Mark FNT panel as loaded
             if( this.prefix == 'FNT' ) {
                 if( this.ftype == 'TRANS' ) {
@@ -4901,7 +4894,6 @@ ui.task.GetFileTask = function(config)
             }
 
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
-
         }
     });
 };Ext.namespace('ui','ui.task');
@@ -4991,14 +4983,15 @@ ui.task.MarkDeleteTask = function(config)
                         var o = Ext.util.JSON.decode(r.responseText);
 
                         Ext.getBody().unmask();
-                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
                             o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
                         );
                         this.storeRecord.set('needcommit', true);
                     }
                 });
             }
-        }, this);
+        }, this
+    );
 };Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
 
 ui.task.PingTask = function()
@@ -5023,48 +5016,48 @@ ui.task.PingTask = function()
                         var needReloadSummary = false;
 
                         // We look for modules specifics for translation
-                        if( ui.component.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
-                            ui.component.PendingTranslateGrid.getInstance().store.reload();
+                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                            ui.cmp.PendingTranslateGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
-                            ui.component.StaleFileGrid.getInstance().store.reload();
+                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                            ui.cmp.StaleFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
-                            ui.component.ErrorFileGrid.getInstance().store.reload();
+                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                            ui.cmp.ErrorFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
-                            ui.component.PendingReviewGrid.getInstance().store.reload();
+                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                            ui.cmp.PendingReviewGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
-                            ui.component.NotInENGrid.getInstance().store.reload();
+                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                            ui.cmp.NotInENGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
                         if( needReloadSummary ) {
-                            ui.component.PortletSummary.getInstance().store.reload();
+                            ui.cmp.PortletSummary.getInstance().store.reload();
                         }
 
                     }
 
                     // This 3 modules is commun with EN and LANG
-                    if( ui.component.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
-                        ui.component.PendingCommitGrid.getInstance().store.reload();
+                    if( ui.cmp.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
+                        ui.cmp.PendingCommitGrid.getInstance().store.reload();
                     }
 
-                    if( ui.component.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
-                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                    if( ui.cmp.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
+                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
 
                     if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
-                        ui.component.PortletInfo.getInstance().store.reload();
+                        ui.cmp.PortletInfo.getInstance().store.reload();
                     }
 
                 }
@@ -5125,7 +5118,7 @@ ui.task.RejectPatchTask = function(config)
 
                     success : function()
                     {
-                        var grid = ui.component.PendingPatchGrid.getInstance();
+                        var grid = ui.cmp.PendingPatchGrid.getInstance();
                         // Remove this patch from the PendingPatchStore
                         grid.store.remove(this.storeRecord);
 
@@ -5152,8 +5145,7 @@ ui.task.RejectPatchTask = function(config)
             } // btn = yes
         }, this // scope
     );
-};
-Ext.namespace('ui', 'ui.task');
+};Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.SaveFileTask = function(config)
@@ -5219,7 +5211,7 @@ ui.task.SaveFileTask = function(config)
             }
 
             // Add this files into storePendingCommit
-            ui.component.PendingCommitGrid.getInstance().addRecord(
+            ui.cmp.PendingCommitGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );
 
@@ -5309,7 +5301,7 @@ ui.task.SavePatchTask = function(config)
         success : function(r)
         {
             var o    = Ext.util.JSON.decode(r.responseText),
-                grid = ui.component.PendingPatchGrid.getInstance();
+                grid = ui.cmp.PendingPatchGrid.getInstance();
 
             // Add this files into storePendingPatch
             grid.store.insert(0,
@@ -5328,7 +5320,6 @@ ui.task.SavePatchTask = function(config)
 
             // Notify
             PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
-
         },
 
         failure : function(r)
@@ -5383,7 +5374,7 @@ ui.task.SaveTransFileTask = function(config)
             }
 
             // Add this files into storePendingCommit
-            ui.component.PendingCommitGrid.getInstance().addRecord(
+            ui.cmp.PendingCommitGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'new'
             );
 
@@ -5523,7 +5514,7 @@ ui.task.SystemUpdateTask = function()
     Ext.get('wizard-step-1.1').replaceClass('wizard-wait', 'wizard-show');
 
     XHR({
-        params  : { task: 'updateRepository' },
+        params  : { task : 'updateRepository' },
         success : function()
         {
             Ext.get('wizard-step-1').replaceClass('wizard-step-working', 'wizard-step-done');
@@ -5565,16 +5556,16 @@ ui.task.UpdateConfTask = function(config)
 
             // If we touch this config option, we need to reload this store too
             if( this.item == "errorSkipNbLiteralTag" ) {
-                ui.component.ErrorFileGrid.getInstance().store.reload();
+                ui.cmp.ErrorFileGrid.getInstance().store.reload();
             }
             if( this.item == "needUpdateNbDisplay" ) {
-                ui.component.StaleFileGrid.getInstance().store.reload();
+                ui.cmp.StaleFileGrid.getInstance().store.reload();
             }
             if( this.item == "reviewedNbDisplay" ) {
-                ui.component.PendingReviewGrid.getInstance().store.reload();
+                ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             if( this.item == "newFileNbDisplay" ) {
-                ui.component.PendingTranslateGrid.getInstance().store.reload();
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
             }
             
             // Notify
@@ -5644,12 +5635,11 @@ ui.task._UpdateSingleFolderTask.afterUpdate = function(o, node)
     var r = Ext.util.JSON.decode(o.result);
 
     // We reload and highlight the modified node
-    node.reload(function(){
+    node.reload(function() {
 
         Ext.iterate(r.newFiles, function(prop, val){
             node.findChild('text', prop).getUI().addClass('treeFileUpdated');
         });
-
 
     }, this);
 
@@ -5660,7 +5650,6 @@ ui.task._UpdateSingleFolderTask.afterUpdate = function(o, node)
 
 ui.task._UpdateSingleFolderTask.update = function(node)
 {
-    //
     var t = new Array();
     t.push(node);
 
@@ -5708,7 +5697,6 @@ ui.task.UpdateSingleFolderTask = function(node)
         PhDOE.winForbidden();
         return;
     }
-
     ui.task._UpdateSingleFolderTask.update(node);
 };Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
 
@@ -5716,7 +5704,7 @@ ui.task._VCSCommitTask.getCommitResponse = function()
 {
     XHR({
         params  : {
-            task: 'getCommitResponse'
+            task : 'getCommitResponse'
         },
         success : function(response)
         {
@@ -5957,9 +5945,9 @@ ui.task.VCSCommitTask = function()
     } else {
         ui.task._VCSCommitTask.commit(files);
     }
-};Ext.namespace('ui','ui.component');
+};Ext.namespace('ui','ui.cmp');
 
-ui.component.About = Ext.extend(Ext.Window,
+ui.cmp.About = Ext.extend(Ext.Window,
 {
     id        : 'win-about',
     iconCls   : 'iconHelp',
@@ -6014,13 +6002,13 @@ ui.component.About = Ext.extend(Ext.Window,
                 }]
             }
         });
-        ui.component.About.superclass.initComponent.call(this);
+        ui.cmp.About.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._BuildStatus');
+});Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
 
 //------------------------------------------------------------------------------
 // BuildStatus Internals
-ui.component._BuildStatus.display = function(config)
+ui.cmp._BuildStatus.display = function(config)
 {
 
     Ext.apply(this, config);
@@ -6084,7 +6072,7 @@ ui.component._BuildStatus.display = function(config)
 };
 
 // BuildStatus Grid datastore
-ui.component._BuildStatus.ds = new Ext.data.Store({
+ui.cmp._BuildStatus.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getFailedBuild'
     }),
@@ -6099,16 +6087,16 @@ ui.component._BuildStatus.ds = new Ext.data.Store({
         ]
     })
 });
-ui.component._BuildStatus.ds.setDefaultSort('date', 'desc');
+ui.cmp._BuildStatus.ds.setDefaultSort('date', 'desc');
 
 // BuildStatus Grid language cell renderer
-ui.component._BuildStatus.rendererLanguage = function(value)
+ui.cmp._BuildStatus.rendererLanguage = function(value)
 {
     return '<div><div class="flags flag-' + value + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
 };
 
 // BuildStatus Grid columns definition
-ui.component._BuildStatus.columns = [
+ui.cmp._BuildStatus.columns = [
     {
         id        : 'date',
         header    : _("Date"),
@@ -6120,12 +6108,12 @@ ui.component._BuildStatus.columns = [
         width     : 45,
         sortable  : true,
         dataIndex : 'lang',
-        renderer  : ui.component._BuildStatus.rendererLanguage
+        renderer  : ui.cmp._BuildStatus.rendererLanguage
     }
 ];
 
 // BuildStatus context menu
-ui.component._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
+ui.cmp._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
 {
     setRowIndex : function(rowIndex) {
         this.rowIndex = rowIndex;
@@ -6146,19 +6134,19 @@ ui.component._BuildStatus.menu = Ext.extend(Ext.menu.Menu,
                 }
             }]
         });
-        ui.component._BuildStatus.menu.superclass.initComponent.call(this);
+        ui.cmp._BuildStatus.menu.superclass.initComponent.call(this);
     }
 });
 
 //------------------------------------------------------------------------------
 // BuildStatus Grid
-ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.BuildStatus = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     bodyBorder       : false,
     autoExpandColumn : 'date',
-    store            : ui.component._BuildStatus.ds,
-    columns          : ui.component._BuildStatus.columns,
+    store            : ui.cmp._BuildStatus.ds,
+    columns          : ui.cmp._BuildStatus.columns,
 
     view             : new Ext.grid.GridView({
                            forceFit: true
@@ -6174,7 +6162,7 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
     {
         var storeRecord = this.store.getAt(rowIndex);
 
-        new ui.component._BuildStatus.display({
+        new ui.cmp._BuildStatus.display({
             idFailedBuild : storeRecord.id,
             lang          : storeRecord.data.lang
         });
@@ -6183,7 +6171,7 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
     onRowContextMenu: function(grid, rowIndex, e)
     {
             if( ! this.menu ) {
-                this.menu = new ui.component._BuildStatus.menu({
+                this.menu = new ui.cmp._BuildStatus.menu({
                     grid   : grid,
                     rowIdx : '',
                     event  : e
@@ -6198,16 +6186,16 @@ ui.component.BuildStatus = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
-        ui.component.BuildStatus.superclass.initComponent.call(this);
+        ui.cmp.BuildStatus.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowdblclick',    this.onRowdblclick,  this);
         this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
 });
-Ext.namespace('ui','ui.component');
+Ext.namespace('ui','ui.cmp');
 
-ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
+ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Check build'),
     iconCls    : 'iconCheckBuild',
@@ -6253,77 +6241,42 @@ ui.component.CheckBuildPrompt = Ext.extend(Ext.Window,
                 }
             }]
         });
-        ui.component.CheckBuildPrompt.superclass.initComponent.call(this);
+        ui.cmp.CheckBuildPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._CheckDoc');
+});Ext.namespace('ui','ui.cmp','ui.cmp._CheckDoc');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
 
 // CheckDoc Grid datastore
-ui.component._CheckDoc.ds = new Ext.data.Store({
+ui.cmp._CheckDoc.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getCheckDocData'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'path',
-                mapping : 'path'
-            }, {
-                name    : 'extension',
-                mapping : 'extension'
-            }, {
-                name    : 'check_oldstyle',
-                mapping : 'check_oldstyle',
-                type    : 'int'
-            }, {
-                name    : 'check_undoc',
-                mapping : 'check_undoc',
-                type    : 'int'
-            }, {
-                name    : 'check_roleerror',
-                mapping : 'check_roleerror',
-                type    : 'int'
-            }, {
-                name    : 'check_badorder',
-                mapping : 'check_badorder',
-                type    : 'int'
-            }, {
-                name    : 'check_noseealso',
-                mapping : 'check_noseealso',
-                type    : 'int'
-            }, {
-                name    : 'check_noreturnvalues',
-                mapping : 'check_noreturnvalues',
-                type    : 'int'
-            }, {
-                name    : 'check_noparameters',
-                mapping : 'check_noparameters',
-                type    : 'int'
-            }, {
-                name    : 'check_noexamples',
-                mapping : 'check_noexamples',
-                type    : 'int'
-            }, {
-                name    : 'check_noerrors',
-                mapping : 'check_noerrors',
-                type    : 'int'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'extension'},
+            {name : 'check_oldstyle',       type : 'int'},
+            {name : 'check_undoc',          type : 'int'},
+            {name : 'check_roleerror',      type : 'int'},
+            {name : 'check_badorder',       type : 'int'},
+            {name : 'check_noseealso',      type : 'int'},
+            {name : 'check_noreturnvalues', type : 'int'},
+            {name : 'check_noparameters',   type : 'int'},
+            {name : 'check_noexamples',     type : 'int'},
+            {name : 'check_noerrors',       type : 'int'}
+        ]
+    })
 });
-ui.component._CheckDoc.ds.setDefaultSort('extension', 'asc');
+ui.cmp._CheckDoc.ds.setDefaultSort('extension', 'asc');
 
 // CheckDoc Grid non-extension cell renderer
-ui.component._CheckDoc.renderer = function(value, metadata)
+ui.cmp._CheckDoc.renderer = function(value, metadata)
 {
     if (value > 0) {
         metadata.css = 'check_doc_cell';
@@ -6335,7 +6288,7 @@ ui.component._CheckDoc.renderer = function(value, metadata)
 };
 
 // CheckDoc Grid columns definition
-ui.component._CheckDoc.columns = [
+ui.cmp._CheckDoc.columns = [
     new Ext.grid.RowNumberer(), {
         id        : 'extension',
         header    : _('Extension'),
@@ -6346,73 +6299,72 @@ ui.component._CheckDoc.columns = [
         width     : 45,
         sortable  : true,
         dataIndex : 'check_undoc',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('Old style'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_oldstyle',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('Bad refsect1 order'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_badorder',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('No parameters'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noparameters',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('No return values'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noreturnvalues',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('No examples'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noexamples',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('No errors section'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noerrors',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('No see also'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_noseealso',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }, {
         header    : _('Refsect1 role error'),
         width     : 45,
         sortable  : true,
         dataIndex : 'check_roleerror',
-        renderer  : ui.component._CheckDoc.renderer
+        renderer  : ui.cmp._CheckDoc.renderer
     }
 ];
 
 // CheckDoc File-Win Grid datastore
-ui.component._CheckDoc.fs = new Ext.data.SimpleStore({
-    fields: [{
-        name: 'id'
-    }, {
-        name: 'file'
-    }]
+ui.cmp._CheckDoc.fs = new Ext.data.SimpleStore({
+    fields : [
+        {name: 'id'},
+        {name: 'file'}
+    ]
 });
 
 // CheckDoc Internal File-Win Grid
 //  config - {fpath}
-ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
 {
     id               : 'check-doc-file-grid',
-    store            : ui.component._CheckDoc.fs,
+    store            : ui.cmp._CheckDoc.fs,
     loadMask         : true,
     bodyBorder       : false,
     autoExpandColumn : 'file',
@@ -6435,9 +6387,9 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
         grid.getSelectionModel().selectRow(rowIndex);
     },
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick: function(grid, rowIndex)
     {
-        ui.component.RepositoryTree.getInstance().openFile(
+        ui.cmp.RepositoryTree.getInstance().openFile(
             'byPath',
             'en' + grid.fpath,
             grid.store.getAt(rowIndex).data.file
@@ -6447,7 +6399,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
-        ui.component._CheckDoc.FileGrid.superclass.initComponent.call(this);
+        ui.cmp._CheckDoc.FileGrid.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowcontextmenu',    this.onRowContextMenu, this);
@@ -6458,7 +6410,7 @@ ui.component._CheckDoc.FileGrid = Ext.extend(Ext.grid.GridPanel,
 
 // CheckDoc Internal File-Win
 //  config - {fpath}
-ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
+ui.cmp._CheckDoc.FileWin = Ext.extend(Ext.Window,
 {
     id         : 'check-doc-file-win',
     title      : _('Files'),
@@ -6475,7 +6427,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
         handler : function()
         {
             var win   = Ext.getCmp('check-doc-file-win'),
-                store = ui.component._CheckDoc.fs,
+                store = ui.cmp._CheckDoc.fs,
                 i;
 
             PhDOE.AFfilePendingOpen = [];
@@ -6487,7 +6439,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 };
             }
 
-            ui.component.RepositoryTree.getInstance().openFile(
+            ui.cmp.RepositoryTree.getInstance().openFile(
                 'byPath',
                 PhDOE.AFfilePendingOpen[0].fpath,
                 PhDOE.AFfilePendingOpen[0].fname
@@ -6518,7 +6470,7 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
                 };
             }
 
-            ui.component.RepositoryTree.getInstance().openFile(
+            ui.cmp.RepositoryTree.getInstance().openFile(
                 'byPath',
                 PhDOE.AFfilePendingOpen[0].fpath,
                 PhDOE.AFfilePendingOpen[0].fname
@@ -6533,17 +6485,17 @@ ui.component._CheckDoc.FileWin = Ext.extend(Ext.Window,
 
 //------------------------------------------------------------------------------
 // CheckDoc Grid
-ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.CheckDoc = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     bodyBorder       : false,
-    store            : ui.component._CheckDoc.ds,
-    columns          : ui.component._CheckDoc.columns,
+    store            : ui.cmp._CheckDoc.ds,
+    columns          : ui.cmp._CheckDoc.columns,
     autoExpandColumn : 'extension',
     sm               : new Ext.grid.CellSelectionModel({ singleSelect : true }),
     view             : new Ext.grid.GridView({ forceFit : true }),
-
-    listeners : {
+    listeners        :
+    {
         render : function(grid)
         {
             // on render, load data
@@ -6581,24 +6533,24 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
                         i;
 
                     // file store
-                    ui.component._CheckDoc.fs.removeAll();
+                    ui.cmp._CheckDoc.fs.removeAll();
                     for (i = 0; i < o.files.length; ++i) {
 
-                        ui.component._CheckDoc.fs.insert(
-                            0, new ui.component._CheckDoc.fs.recordType({
+                        ui.cmp._CheckDoc.fs.insert(
+                            0, new ui.cmp._CheckDoc.fs.recordType({
                                 id   : i,
                                 file : o.files[i].name
                             })
                         );
                     }
-                    ui.component._CheckDoc.fs.sort('file', 'asc');
+                    ui.cmp._CheckDoc.fs.sort('file', 'asc');
 
                     grid.el.unmask();
 
-                    new ui.component._CheckDoc.FileWin({
+                    new ui.cmp._CheckDoc.FileWin({
                         fpath : fpath,
                         items : [
-                            new ui.component._CheckDoc.FileGrid({
+                            new ui.cmp._CheckDoc.FileGrid({
                                 fpath : fpath
                             })
                         ]
@@ -6610,59 +6562,44 @@ ui.component.CheckDoc = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
-        ui.component.CheckDoc.superclass.initComponent.call(this);
+        ui.cmp.CheckDoc.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('celldblclick',    this.onCellDblClick,    this);
         this.on('cellcontextmenu', this.onCellContextMenu, this);
     }
-});
-Ext.namespace('ui','ui.component','ui.component._CheckEntities');
+});Ext.namespace('ui','ui.cmp','ui.cmp._CheckEntities');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
 
 // CheckDoc Grid datastore
-ui.component._CheckEntities.ds = new Ext.data.Store({
+ui.cmp._CheckEntities.ds = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getCheckEntitiesData'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'entities',
-                mapping : 'entities'
-            }, {
-                name    : 'url',
-                mapping : 'url'
-            }, {
-                name    : 'result',
-                mapping : 'result'
-            }, {
-                name    : 'date',
-                mapping : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'entities'},
+            {name : 'url'},
+            {name : 'result'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'}
+        ]
+    })
 });
-ui.component._CheckEntities.ds.setDefaultSort('entities', 'asc');
+ui.cmp._CheckEntities.ds.setDefaultSort('entities', 'asc');
 
-ui.component._CheckEntities.rendererEntities = function(value, metadata)
+ui.cmp._CheckEntities.rendererEntities = function(value, metadata)
 {
     return '&' + value + ';';
 };
 
 // CheckDoc Grid columns definition
-ui.component._CheckEntities.columns = [
+ui.cmp._CheckEntities.columns = [
     new Ext.grid.RowNumberer(), 
     {
         id        : 'entities',
@@ -6670,7 +6607,7 @@ ui.component._CheckEntities.columns = [
         sortable  : true,
         dataIndex : 'entities',
         width     : 30,
-        renderer  : ui.component._CheckEntities.rendererEntities
+        renderer  : ui.cmp._CheckEntities.rendererEntities
     }, {
         header    : _('Url'),
         sortable  : true,
@@ -6691,20 +6628,20 @@ ui.component._CheckEntities.columns = [
 
 //------------------------------------------------------------------------------
 // CheckDoc Grid
-ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.CheckEntities = Ext.extend(Ext.grid.GridPanel,
 {
     id               : 'check-entities-grid',
     loadMask         : true,
     bodyBorder       : false,
-    store            : ui.component._CheckEntities.ds,
-    columns          : ui.component._CheckEntities.columns,
+    store            : ui.cmp._CheckEntities.ds,
+    columns          : ui.cmp._CheckEntities.columns,
     autoExpandColumn : 'url',
     sm               : new Ext.grid.RowSelectionModel({ singleSelect : true }),
     view             : new Ext.grid.GridView({ forceFit : true }),
 
     onRender: function(ct, position)
     {
-        ui.component.CheckEntities.superclass.onRender.call(this, ct, position);
+        ui.cmp.CheckEntities.superclass.onRender.call(this, ct, position);
         this.store.load.defer(20, this.store);
     },
 
@@ -6732,7 +6669,7 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
         Ext.getCmp('main-panel').setActiveTab(tabId);
     },
 
-    onRowdblclick: function(grid, rowIndex, e)
+    onRowdblclick: function(grid, rowIndex)
     {
         this.openTab(rowIndex);
     },
@@ -6804,7 +6741,7 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
             displayField  : 'displayText',
             editable      : false,
             listeners: {
-                select: function(c, record, index) {
+                select: function(c, record) {
                     var val = record.id;
 
                     if( val === 'all' ) {
@@ -6816,16 +6753,15 @@ ui.component.CheckEntities = Ext.extend(Ext.grid.GridPanel,
             }
         }];
 
-        ui.component.CheckEntities.superclass.initComponent.call(this);
+        ui.cmp.CheckEntities.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onContextClick, this);
         this.on('rowdblclick',    this.onRowdblclick,  this);
     }
-});
-Ext.namespace('ui','ui.component');
+});Ext.namespace('ui','ui.cmp');
 
-ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
+ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Check entities'),
     iconCls    : 'iconRun',
@@ -6838,7 +6774,7 @@ ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
     bodyStyle  : 'padding:5px 5px 0; text-align: center;',
     labelAlign : 'top',
     closeAction: 'hide',
-    buttons : [{
+    buttons    : [{
         id      : 'win-check-entities-btn',
         text    : _('Go !'),
         handler : function()
@@ -6859,37 +6795,30 @@ ui.component.CheckEntitiesPrompt = Ext.extend(Ext.Window,
                 html      : _('You\'re about to check all entities.<br><br>This action takes time.')
             }]
         });
-        ui.component.CheckEntitiesPrompt.superclass.initComponent.call(this);
+        ui.cmp.CheckEntitiesPrompt.superclass.initComponent.call(this);
     }
-});
-Ext.namespace('ui','ui.component','ui.component._CommitLogManager');
+});Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
 
-ui.component._CommitLogManager.store = new Ext.data.Store({
+ui.cmp._CommitLogManager.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getCommitLogMessage'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'text',
-                mapping : 'text'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'text'}
+        ]
+    })
 });
 
-ui.component._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
-    saveText: _('Update'),
-    cancelText: _('Cancel'),
-    listeners: {
-        afteredit: function(editor, changes, record, rowIdx)
+ui.cmp._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
+    saveText   : _('Update'),
+    cancelText : _('Cancel'),
+    listeners  : {
+        afteredit: function(editor, changes, record)
         {
             XHR({
                 params : {
@@ -6897,13 +6826,13 @@ ui.component._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
                     messID : record.data.id,
                     mess   : record.data.text
                 },
-                success : function(response)
+                success : function()
                 {
                    record.commit();
                    // Notify
                    PhDOE.notify('info', _('Message updated'), _('Log Message was updated successfully !'));
                 },
-                failure : function(response)
+                failure : function()
                 {
                     PhDOE.winForbidden();
                 }
@@ -6912,7 +6841,7 @@ ui.component._CommitLogManager.editor = new Ext.ux.grid.RowEditor({
     }
 });
 
-ui.component._CommitLogManager.cm = new Ext.grid.ColumnModel([
+ui.cmp._CommitLogManager.cm = new Ext.grid.ColumnModel([
     new Ext.grid.RowNumberer(),
     {
         id        : 'log_msg',
@@ -6928,18 +6857,18 @@ ui.component._CommitLogManager.cm = new Ext.grid.ColumnModel([
     }
 ]);
 
-ui.component._CommitLogManager.sm = new Ext.grid.RowSelectionModel({
+ui.cmp._CommitLogManager.sm = new Ext.grid.RowSelectionModel({
     singleSelect: true
 });
 
 // config - { rowIdx }
-ui.component._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
+ui.cmp._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
 {
     setRowIdx: function(rowIdx) {
         this.rowIdx = rowIdx;
     },
 
-    initComponent : function(config)
+    initComponent : function()
     {
         Ext.apply(this,{
 
@@ -6953,17 +6882,17 @@ ui.component._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
                         scope  : this,
                         params : {
                             task   : 'deleteLogMessage',
-                            messID : ui.component._CommitLogManager.store.getAt(this.rowIdx).data.id
+                            messID : ui.cmp._CommitLogManager.store.getAt(this.rowIdx).data.id
                         },
-                        success : function(response)
+                        success : function()
                         {
-                            ui.component._CommitLogManager.store.remove(ui.component._CommitLogManager.store.getAt(this.rowIdx));
+                            ui.cmp._CommitLogManager.store.remove(ui.cmp._CommitLogManager.store.getAt(this.rowIdx));
 
                             // Notify
                             PhDOE.notify('info', _('Message deleted'), _('Log Message was deleted successfully !'));
 
                         },
-                        failure : function(response)
+                        failure : function()
                         {
                             PhDOE.winForbidden();
                         }
@@ -6971,19 +6900,19 @@ ui.component._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
                 }
             }]
         });
-        ui.component._CommitLogManager.menu.superclass.initComponent.call(this);
+        ui.cmp._CommitLogManager.menu.superclass.initComponent.call(this);
     }
 });
 
-ui.component._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoExpandColumn : 'log_msg',
-    cm      : ui.component._CommitLogManager.cm,
-    sm      : ui.component._CommitLogManager.sm,
-    store   : ui.component._CommitLogManager.store,
-    plugins : [ui.component._CommitLogManager.editor],
-    listeners : {
+    cm               : ui.cmp._CommitLogManager.cm,
+    sm               : ui.cmp._CommitLogManager.sm,
+    store            : ui.cmp._CommitLogManager.store,
+    plugins          : [ui.cmp._CommitLogManager.editor],
+    listeners        : {
         render : function(grid)
         {
             grid.store.load();
@@ -6996,7 +6925,7 @@ ui.component._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
         this.getSelectionModel().selectRow(rowIndex);
 
         if( ! this.menu ) {
-            this.menu = new ui.component._CommitLogManager.menu();
+            this.menu = new ui.cmp._CommitLogManager.menu();
         }
         this.menu.setRowIdx(rowIndex);
         this.menu.showAt(e.getXY());
@@ -7005,14 +6934,14 @@ ui.component._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
-        ui.component._CommitLogManager.grid.superclass.initComponent.call(this);
+        ui.cmp._CommitLogManager.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
 });
 
-ui.component.CommitLogManager = Ext.extend(Ext.Window,
+ui.cmp.CommitLogManager = Ext.extend(Ext.Window,
 {
     id         : 'commit-log-win',
     title      : _('Manage Log Message'),
@@ -7024,8 +6953,8 @@ ui.component.CommitLogManager = Ext.extend(Ext.Window,
     modal      : true,
     autoScroll : true,
     closeAction: 'hide',
-    store      : ui.component._CommitLogManager.store,
-    buttons : [{
+    store      : ui.cmp._CommitLogManager.store,
+    buttons    : [{
         text    : _('Close'),
         handler : function()
         {
@@ -7037,14 +6966,13 @@ ui.component.CommitLogManager = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            items : [new ui.component._CommitLogManager.grid()]
+            items : [new ui.cmp._CommitLogManager.grid()]
         });
-        ui.component.CommitLogManager.superclass.initComponent.call(this);
-
+        ui.cmp.CommitLogManager.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component', 'ui.component._CommitPrompt');
+});Ext.namespace('ui','ui.cmp', 'ui.cmp._CommitPrompt');
 
-ui.component._CommitPrompt.store = new Ext.data.GroupingStore(
+ui.cmp._CommitPrompt.store = new Ext.data.GroupingStore(
 {
     reader : new Ext.data.JsonReader({
         root          : 'Items',
@@ -7067,7 +6995,7 @@ ui.component._CommitPrompt.store = new Ext.data.GroupingStore(
 });
 
 // PendingCommitGrid columns definition
-ui.component._CommitPrompt.columns = [
+ui.cmp._CommitPrompt.columns = [
     new Ext.grid.CheckboxSelectionModel(),
 {
     id        : 'name',
@@ -7092,25 +7020,25 @@ ui.component._CommitPrompt.columns = [
 }];
 
 // PendingCommitGrid view
-ui.component._CommitPrompt.view = new Ext.grid.GroupingView({
+ui.cmp._CommitPrompt.view = new Ext.grid.GroupingView({
     forceFit       : true,
     groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
                      '({[values.rs.length]} ' +
                      '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})'
 });
 
-ui.component._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
 {
     id               : 'commit-grid-panel',
     loadMask         : true,
     autoExpandColumn : 'name',
     height           : 180,
-    columns          : ui.component._CommitPrompt.columns,
-    view             : ui.component._CommitPrompt.view,
+    columns          : ui.cmp._CommitPrompt.columns,
+    view             : ui.cmp._CommitPrompt.view,
     enableDragDrop   : true,
     sm               : new Ext.grid.CheckboxSelectionModel(),
-    listeners: {
-        viewready: function(c)
+    listeners        : {
+        viewready: function()
         {
             this.selModel.selectAll();
         }
@@ -7120,14 +7048,14 @@ ui.component._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._CommitPrompt.store
+            store : ui.cmp._CommitPrompt.store
         });
-        ui.component._CommitPrompt.grid.superclass.initComponent.call(this);
+        ui.cmp._CommitPrompt.grid.superclass.initComponent.call(this);
     }
 });
 
 // config - { files: {fid, fpath, fname, fdbid} }
-ui.component.CommitPrompt = Ext.extend(Ext.Window,
+ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
 {
     id         : 'winVCSCommit',
     layout     : 'form',
@@ -7147,7 +7075,7 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         {
             if( ! Ext.getCmp('commit-log-win') )
             {
-                new ui.component.CommitLogManager();
+                new ui.cmp.CommitLogManager();
             }
             Ext.getCmp('commit-log-win').show(this.id);
         }
@@ -7168,27 +7096,27 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
         }
     }],
     listeners: {
-        show: function() {
-
+        show: function()
+        {
             var t = new Ext.util.DelayedTask(function() {
                 Ext.getCmp('form-commit-message-log').focus();
             });
 
             t.delay(200);
-
         }
     },
+
     initComponent : function()
     {
         var i;
 
         // We remove all data who are in the store
-        ui.component._CommitPrompt.store.removeAll();
+        ui.cmp._CommitPrompt.store.removeAll();
         
         for (i = 0; i < this.files.length; ++i) {
 
-            ui.component._CommitPrompt.store.insert(0,
-                new ui.component._CommitPrompt.store.recordType({
+            ui.cmp._CommitPrompt.store.insert(0,
+                new ui.cmp._CommitPrompt.store.recordType({
                     id       : 'need-commit-' + this.files[i].fid,
                     path     : this.files[i].fpath,
                     name     : this.files[i].fname,
@@ -7199,23 +7127,23 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
                 })
             );
         }
-        ui.component._CommitPrompt.store.groupBy('path', true); // regroup
+        ui.cmp._CommitPrompt.store.groupBy('path', true); // regroup
 
         Ext.apply(this,
         {
-            items : [new ui.component._CommitPrompt.grid(), {
+            items : [new ui.cmp._CommitPrompt.grid(), {
                 xtype         : 'combo',
                 name          : 'first2',
                 fieldLabel    : _('Older messages'),
                 editable      : false,
                 anchor        : '100%',
-                store         : ui.component._CommitLogManager.store,
+                store         : ui.cmp._CommitLogManager.store,
                 triggerAction : 'all',
                 tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
                 valueField    : 'id',
                 displayField  : 'text',
-                listeners : {
-                    select : function(combo, record, numIndex)
+                listeners     : {
+                    select : function(combo, record)
                     {
                         Ext.getCmp('form-commit-message-log').setValue(record.data.text);
                     }
@@ -7230,13 +7158,13 @@ ui.component.CommitPrompt = Ext.extend(Ext.Window,
                 value      : ''
             }]
         });
-        ui.component.CommitPrompt.superclass.initComponent.call(this);
+        ui.cmp.CommitPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._DictionaryGrid');
+});Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
 
 //------------------------------------------------------------------------------
 // DictionaryGrid internals
-ui.component._DictionaryGrid.store = Ext.extend(Ext.data.Store,
+ui.cmp._DictionaryGrid.store = Ext.extend(Ext.data.Store,
 {    
     proxy    : new Ext.data.HttpProxy({
         url : "./do/getDictionaryWords"
@@ -7246,29 +7174,11 @@ ui.component._DictionaryGrid.store = Ext.extend(Ext.data.Store,
         totalProperty : 'nbItems',
         idProperty    : 'id',
         fields        : [
-        {
-            name : 'id'
-        },
-
-        {
-            name : 'valueEn'
-        },
-
-        {
-            name : 'valueLang'
-        },
-
-        {
-            name : 'lastUser',
-            hideField : true
-        },
-
-        {
-            name : 'lastDate',
-            type : 'date',
-            dateFormat : 'Y-m-d H:i:s',
-            hideField : true
-        }
+            {name : 'id'},
+            {name : 'valueEn'},
+            {name : 'valueLang'},
+            {name : 'lastUser', hideField : true},
+            {name : 'lastDate', type : 'date', dateFormat : 'Y-m-d H:i:s', hideField : true}
         ]
     }),
     sortInfo : {
@@ -7283,15 +7193,16 @@ ui.component._DictionaryGrid.store = Ext.extend(Ext.data.Store,
             }
         }
     },
+
     initComponent : function(config)
     {
        Ext.apply(this, config);
-       ui.component._DictionaryGrid.store.superclass.initComponent.call(this);
+       ui.cmp._DictionaryGrid.store.superclass.initComponent.call(this);
     }
 
 });
 
-ui.component._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
+ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
 {
     saveText   : _('Update'),
     cancelText : _('Cancel'),
@@ -7332,25 +7243,25 @@ ui.component._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
     }
 });
 
-ui.component._DictionaryGrid.sm = Ext.extend(Ext.grid.RowSelectionModel,
+ui.cmp._DictionaryGrid.sm = Ext.extend(Ext.grid.RowSelectionModel,
 {
     singleSelect: true
 }
 );
 
-ui.component._DictionaryGrid.viewConfig = {
+ui.cmp._DictionaryGrid.viewConfig = {
     forceFit      : true,
     emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
     deferEmptyText: false
 };
 
-ui.component._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
+ui.cmp._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
 {
     setRowIdx: function(rowIdx) {
         this.rowIdx = rowIdx;
     },
 
-    initComponent : function(config)
+    initComponent : function()
     {
         Ext.apply(this,{
 
@@ -7384,11 +7295,11 @@ ui.component._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
                 }
             }]
         });
-        ui.component._DictionaryGrid.menu.superclass.initComponent.call(this);
+        ui.cmp._DictionaryGrid.menu.superclass.initComponent.call(this);
     }
 });
 
-ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
 {
     onRowContextMenu: function(grid, rowIndex, e)
     {
@@ -7396,7 +7307,7 @@ ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
         this.getSelectionModel().selectRow(rowIndex);
 
         if( ! this.menu ) {
-            this.menu = new ui.component._DictionaryGrid.menu({grid: grid});
+            this.menu = new ui.cmp._DictionaryGrid.menu({grid: grid});
         }
         this.menu.setRowIdx(rowIndex);
         this.menu.showAt(e.getXY());
@@ -7450,10 +7361,10 @@ ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
                }
            ],
-           viewConfig       : ui.component._DictionaryGrid.viewConfig,
-           sm               : new ui.component._DictionaryGrid.sm(),
-           store            : new ui.component._DictionaryGrid.store({ fid : this.fid}),
-           plugins          : [new ui.component._DictionaryGrid.editor()],
+           viewConfig       : ui.cmp._DictionaryGrid.viewConfig,
+           sm               : new ui.cmp._DictionaryGrid.sm(),
+           store            : new ui.cmp._DictionaryGrid.store({ fid : this.fid}),
+           plugins          : [new ui.cmp._DictionaryGrid.editor()],
            tbar: [
            {
                 scope   : this,
@@ -7502,7 +7413,7 @@ ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
            }
            ]
        });
-       ui.component._DictionaryGrid.grid.superclass.initComponent.call(this);
+       ui.cmp._DictionaryGrid.grid.superclass.initComponent.call(this);
 
        this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
@@ -7512,7 +7423,7 @@ ui.component._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
 //------------------------------------------------------------------------------
 // DictionaryGrid
 // config - {prefix, fid, ftype, loadStore}
-ui.component.DictionaryGrid = Ext.extend(Ext.Panel,
+ui.cmp.DictionaryGrid = Ext.extend(Ext.Panel,
 {
     initComponent : function()
     {
@@ -7521,24 +7432,24 @@ ui.component.DictionaryGrid = Ext.extend(Ext.Panel,
             layout: 'border',
             border: false,
             items : [
-                new ui.component._DictionaryGrid.grid({
-                    dataType          : this.dataType,
-                    prefix            : this.prefix,
-                    fid               : this.fid,
-                    ftype             : this.ftype,
-                    loadStore         : this.loadStore
+                new ui.cmp._DictionaryGrid.grid({
+                    dataType : this.dataType,
+                    prefix   : this.prefix,
+                    fid      : this.fid,
+                    ftype    : this.ftype,
+                    loadStore: this.loadStore
                 })
             ]
         });
-        ui.component.DictionaryGrid.superclass.initComponent.call(this);
+        ui.cmp.DictionaryGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._EditorConf');
+});Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf');
 
 //------------------------------------------------------------------------------
 // EditorConf Win internals
 
 // EditorConf Win-Menu template
-ui.component._EditorConf.tplMenu = new Ext.XTemplate(
+ui.cmp._EditorConf.tplMenu = new Ext.XTemplate(
     '<tpl for=".">',
         '<div class="menu-wrap" id="tplMenu-{id}">',
             '<div class="menu {card}"></div>',
@@ -7546,10 +7457,10 @@ ui.component._EditorConf.tplMenu = new Ext.XTemplate(
         '</div>',
     '</tpl>'
 );
-ui.component._EditorConf.tplMenu.compile();
+ui.cmp._EditorConf.tplMenu.compile();
 
 // EditorConf Win-Menu items definition for EN
-ui.component._EditorConf.menuDefEn = [
+ui.cmp._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
     ['4', 'card4', _('Module "Files with error"')],
     ['6', 'card6', _('Module "All files"')],
@@ -7557,7 +7468,7 @@ ui.component._EditorConf.menuDefEn = [
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
-ui.component._EditorConf.menuDefNonEn = [
+ui.cmp._EditorConf.menuDefNonEn = [
     ['1', 'card1', _('Main')],
     ['2', 'card2', _('Module "Files need translate"')],
     ['3', 'card3', _('Module "Files need update"')],
@@ -7568,24 +7479,24 @@ ui.component._EditorConf.menuDefNonEn = [
 ];
 
 // EditorConf Win-Menu items store
-ui.component._EditorConf.menuStore = new Ext.data.SimpleStore({
+ui.cmp._EditorConf.menuStore = new Ext.data.SimpleStore({
     id     : 0,
     fields : [
-        { name : 'id'    },
-        { name : 'card'   },
-        { name : 'label' }
+        { name : 'id'},
+        { name : 'card'},
+        { name : 'label'}
     ]
 });
 
 // EditorConf Win-Menu view
-ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
+ui.cmp._EditorConf.viewMenu = Ext.extend(Ext.DataView,
 {
     id           : 'conf-menu-view',
-    tpl          : ui.component._EditorConf.tplMenu,
+    tpl          : ui.cmp._EditorConf.tplMenu,
     singleSelect : true,
     overClass    : 'x-view-over',
     itemSelector : 'div.menu-wrap',
-    store        : ui.component._EditorConf.menuStore,
+    store        : ui.cmp._EditorConf.menuStore,
     listeners : {
         selectionchange : function(view)
         {
@@ -7596,7 +7507,7 @@ ui.component._EditorConf.viewMenu = Ext.extend(Ext.DataView,
 });
 
 // doc-editor Theme datastore
-ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
+ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
     fields : ['themeFile', {
         name : 'themeName',
         type : 'string'
@@ -7616,7 +7527,7 @@ ui.component._EditorConf.themeStore = new Ext.data.SimpleStore({
     ]
 });
 
-ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
+ui.cmp._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
 {
     new ui.task.UpdateConfTask({
         item  : this.name,
@@ -7625,7 +7536,7 @@ ui.component._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
 });
 
 // EditorConf card1 - mainApp
-ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-1',
     autoScroll : true,
@@ -7662,7 +7573,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function()
                             {
@@ -7672,7 +7583,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
                     }]
@@ -7691,7 +7602,7 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         forceSelection : true,
                         editable       : false,
                         value          : PhDOE.userConf.theme,
-                        store          : ui.component._EditorConf.themeStore,
+                        store          : ui.cmp._EditorConf.themeStore,
                         listeners      : {
                             render : function()
                             {
@@ -7818,17 +7729,21 @@ ui.component._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                 }]
              }]
         });
-        ui.component._EditorConf.card1.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card1.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card2 - Module "Files Need Translate" Config
-ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-2',
     autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
 
     initComponent : function()
     {
@@ -7855,11 +7770,11 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
                     }, {
@@ -7939,17 +7854,22 @@ ui.component._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card2.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card2.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card3 - Module "Files Need Update" Config
-ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-3',
     autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
+
     initComponent : function()
     {
         Ext.apply(this,
@@ -7975,18 +7895,18 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
 
                     }, {
-                        xtype: 'displayfield',
-                        value: _('0 means no limit'),
-                        style: { fontStyle: 'italic'}
+                        xtype : 'displayfield',
+                        value : _('0 means no limit'),
+                        style : { fontStyle: 'italic'}
                     }]
                 }]
             }, {
@@ -8065,11 +7985,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8114,11 +8034,11 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8195,17 +8115,21 @@ ui.component._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card3.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card3.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card4 - Module "Files with Error" Config
-ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-4',
     autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle : 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
 
     initComponent : function()
     {
@@ -8338,11 +8262,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8387,11 +8311,11 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8437,17 +8361,21 @@ ui.component._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card4.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card4.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card5 - Module "Files need Reviewed" Config
-ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-5',
     autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
 
     initComponent : function()
     {
@@ -8474,11 +8402,11 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         listeners  : {
                             keyup : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             },
                             spin : function()
                             {
-                                ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                             }
                         }
 
@@ -8564,11 +8492,11 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8613,17 +8541,21 @@ ui.component._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card5.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card5.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card6 - Module "All files" Config
-ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
 {
     id         : 'conf-card-6',
     autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
 
     initComponent : function()
     {
@@ -8711,11 +8643,11 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8747,17 +8679,21 @@ ui.component._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card6.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card6.superclass.initComponent.call(this);
     }
 });
 
 // EditorConf card7 - Module "Pending Patch" Config
-ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
+ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
 {
-    id        : 'conf-card-7',
-    autoScroll: true,
+    id         : 'conf-card-7',
+    autoScroll : true,
     activeTab  : 0,
-    defaults   : { bodyStyle: 'padding: 5px;', autoHeight : true, autoScroll : true },
+    defaults   : {
+        bodyStyle  : 'padding: 5px;',
+        autoHeight : true,
+        autoScroll : true
+    },
 
     initComponent : function()
     {
@@ -8839,11 +8775,11 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8888,11 +8824,11 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             listeners  : {
                                 keyup : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 },
                                 spin : function()
                                 {
-                                    ui.component._EditorConf.CommitChange.delay(1000, null, this);
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
                                 }
                             }
                         }]
@@ -8924,13 +8860,13 @@ ui.component._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                 }]
             }]
         });
-        ui.component._EditorConf.card7.superclass.initComponent.call(this);
+        ui.cmp._EditorConf.card7.superclass.initComponent.call(this);
     }
 });
 
 //------------------------------------------------------------------------------
 // EditorConf Win
-ui.component.EditorConf = Ext.extend(Ext.Window,
+ui.cmp.EditorConf = Ext.extend(Ext.Window,
 {
     id          : 'win-conf',
     layout      : 'border',
@@ -8943,8 +8879,8 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
     bodyBorder  : false,
     closeAction : 'hide',
     buttons     : [{
-        text    : _('Close'),
-        handler : function()
+        text   : _('Close'),
+        handler: function()
         {
             Ext.getCmp('win-conf').hide();
         }
@@ -8961,9 +8897,9 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
     initComponent : function()
     {
         if (PhDOE.userLang === 'en') {
-            ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefEn);
+            ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefEn);
         } else {
-            ui.component._EditorConf.menuStore.loadData(ui.component._EditorConf.menuDefNonEn);
+            ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefNonEn);
         }
 
         Ext.apply(this,
@@ -8974,7 +8910,7 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
                 border     : false,
                 width      : 190,
                 autoScroll : true,
-                items      : [new ui.component._EditorConf.viewMenu()]
+                items      : [new ui.cmp._EditorConf.viewMenu()]
             }, {
                 id         : 'confCard',
                 region     : 'center',
@@ -8990,22 +8926,22 @@ ui.component.EditorConf = Ext.extend(Ext.Window,
                 }),
 
                 items : [
-                    new ui.component._EditorConf.card1(),
-                    new ui.component._EditorConf.card2(),
-                    new ui.component._EditorConf.card3(),
-                    new ui.component._EditorConf.card4(),
-                    new ui.component._EditorConf.card5(),
-                    new ui.component._EditorConf.card6(),
-                    new ui.component._EditorConf.card7()
+                    new ui.cmp._EditorConf.card1(),
+                    new ui.cmp._EditorConf.card2(),
+                    new ui.cmp._EditorConf.card3(),
+                    new ui.cmp._EditorConf.card4(),
+                    new ui.cmp._EditorConf.card5(),
+                    new ui.cmp._EditorConf.card6(),
+                    new ui.cmp._EditorConf.card7()
                 ]
             }]
         });
-        ui.component.EditorConf.superclass.initComponent.call(this);
+        ui.cmp.EditorConf.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._EmailPrompt');
+});Ext.namespace('ui','ui.cmp','ui.cmp._EmailPrompt');
 
 // config - { name, email }
-ui.component.EmailPrompt = Ext.extend(Ext.Window,
+ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
 {
     title       : _('Send an email'),
     width       : 500,
@@ -9032,7 +8968,7 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
                     subject : values.subject,
                     msg     : values.msg
                 },
-                success : function(response)
+                success : function()
                 {
                     win.hide();
 
@@ -9088,23 +9024,24 @@ ui.component.EmailPrompt = Ext.extend(Ext.Window,
                 }]
             })
         });
-        ui.component.EmailPrompt.superclass.initComponent.call(this);
+        ui.cmp.EmailPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._EntitiesAcronymsPanel');
+});Ext.namespace('ui','ui.cmp','ui.cmp._EntitiesAcronymsPanel');
 
 //------------------------------------------------------------------------------
 // EntitiesAcronymsGrid internals
 
-ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
 {
-    onRowClick: function(grid, rowIdx, e)
+    onRowClick: function(grid)
     {
         var data = grid.getSelectionModel().getSelected().data;
 
         Ext.getCmp(this.dataType + '-details-' + this.fid).update(data.value);
 
     },
-    onRowDblClick: function(grid, rowIdx, e)
+
+    onRowDblClick: function(grid)
     {        
         var data           = grid.getSelectionModel().getSelected().data,
             cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
@@ -9114,6 +9051,7 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
         //Insert the entities at the cursor position
         cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, dataInserted);
     },
+
     initComponent : function()
     {
        var url;
@@ -9148,9 +9086,9 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                    url : url
                }),
                listeners: {
-                   scope: this,
-                   load: function() {
-
+                   scope : this,
+                   load  : function()
+                   {
                        if( this.dataType == 'entities' ) {
                            Ext.getCmp(this.prefix + '-' + this.fid).panEntities = true;
                        } else if( this.dataType == 'acronyms' ) {
@@ -9164,23 +9102,14 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                {
                    root          : 'Items',
                    totalProperty : 'nbItems',
-                   id            : 'id'
-               }, Ext.data.Record.create([
-                   {
-                       name    : 'id',
-                       mapping : 'id'
-                   }, {
-                       name    : 'from',
-                       mapping : 'from'
-                   }, {
-                       name    : 'items',
-                       mapping : 'items'
-                   }, {
-                       name    : 'value',
-                       mapping : 'value'
-                   }
-                   ])
-               )
+                   idProperty    : 'id',
+                   fields        : [
+                       {name : 'id'},
+                       {name : 'from'},
+                       {name : 'items'},
+                       {name : 'value'}
+                   ]
+               })
            }),
            tbar: [
            {
@@ -9202,7 +9131,7 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                     trigger1Class   : 'x-form-clear-trigger',
                     trigger2Class   : 'x-form-search-trigger',
                     listeners : {
-                        specialkey : function(field, e)
+                        specialkey : function(f, e)
                         {
                             if (e.getKey() == e.ENTER) {
                                 this.onTrigger2Click();
@@ -9248,7 +9177,7 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                 })
            ]
        });
-       ui.component._EntitiesAcronymsPanel.grid.superclass.initComponent.call(this);
+       ui.cmp._EntitiesAcronymsPanel.grid.superclass.initComponent.call(this);
 
        this.on('rowclick',    this.onRowClick,    this);
        this.on('rowdblclick', this.onRowDblClick, this);
@@ -9260,7 +9189,7 @@ ui.component._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
 //------------------------------------------------------------------------------
 // EntitiesAcronymsGrid
 // config - {prefix, fid, ftype, loadStore}
-ui.component.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
+ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
 {
     initComponent : function()
     {
@@ -9277,12 +9206,12 @@ ui.component.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
             layout: 'border',
             border: false,
             items : [
-                new ui.component._EntitiesAcronymsPanel.grid({
-                    dataType          : this.dataType,
-                    prefix            : this.prefix,
-                    fid               : this.fid,
-                    ftype             : this.ftype,
-                    loadStore         : this.loadStore
+                new ui.cmp._EntitiesAcronymsPanel.grid({
+                    dataType : this.dataType,
+                    prefix   : this.prefix,
+                    fid      : this.fid,
+                    ftype    : this.ftype,
+                    loadStore: this.loadStore
                 }),
                 {
                     xtype        : 'panel',
@@ -9291,22 +9220,22 @@ ui.component.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
                     split        : true,
                     height       : 100,
                     autoScroll   : true,
-                    bodyBorder: false,
+                    bodyBorder   : false,
                     bodyCssClass : this.dataType + '-details',
                     html         : panelDesc
                 }
             ]
         });
 
-        ui.component.EntitiesAcronymsPanel.superclass.initComponent.call(this);
+        ui.cmp.EntitiesAcronymsPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._ErrorFileGrid');
+});Ext.namespace('ui','ui.cmp','ui.cmp._ErrorFileGrid');
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid internals
 
 // ErrorFileGrid store
-ui.component._ErrorFileGrid.store = new Ext.data.GroupingStore(
+ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesError'
@@ -9331,7 +9260,7 @@ ui.component._ErrorFileGrid.store = new Ext.data.GroupingStore(
         direction : 'ASC'
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         datachanged : function(ds)
         {
             Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
@@ -9340,7 +9269,7 @@ ui.component._ErrorFileGrid.store = new Ext.data.GroupingStore(
 });
 
 // ErrorFileGrid columns definition
-ui.component._ErrorFileGrid.columns = [{
+ui.cmp._ErrorFileGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
@@ -9362,7 +9291,7 @@ ui.component._ErrorFileGrid.columns = [{
 }];
 
 // ErrorFileGrid view
-ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
+ui.cmp._ErrorFileGrid.view = new Ext.grid.GroupingView({
     emptyText      : '<div style="text-align: center;">'+_('No Files')+'</div>',
     deferEmptyText : false,
     forceFit       : true,
@@ -9381,13 +9310,13 @@ ui.component._ErrorFileGrid.view = new Ext.grid.GroupingView({
 
 // ErrorFileGrid context menu
 // config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.component._ErrorFileGrid.menu = function(config)
+ui.cmp._ErrorFileGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._ErrorFileGrid.menu.superclass.constructor.call(this);
+    ui.cmp._ErrorFileGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
+Ext.extend(ui.cmp._ErrorFileGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
@@ -9474,15 +9403,15 @@ Ext.extend(ui.component._ErrorFileGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid
-ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
-    view             : ui.component._ErrorFileGrid.view,
-    columns          : ui.component._ErrorFileGrid.columns,
+    view             : ui.cmp._ErrorFileGrid.view,
+    columns          : ui.cmp._ErrorFileGrid.columns,
     listeners        : {
         render : function(grid)
         {
@@ -9499,7 +9428,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        new ui.component._ErrorFileGrid.menu({
+        new ui.cmp._ErrorFileGrid.menu({
             hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
             grid       : grid,
             event      : e,
@@ -9538,7 +9467,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             });
 
             vcsPanel = ( PhDOE.userLang === 'en' ) ? [
-                new ui.component.VCSLogGrid({
+                new ui.cmp.VCSLogGrid({
                     layout    : 'fit',
                     title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                     prefix    : 'FE-LANG',
@@ -9548,7 +9477,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     loadStore : PhDOE.userConf.errorLogLoadData
                 })
             ] : [
-                new ui.component.VCSLogGrid({
+                new ui.cmp.VCSLogGrid({
                     layout    : 'fit',
                     title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                     prefix    : 'FE-LANG',
@@ -9557,7 +9486,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     fname     : FileName,
                     loadStore : PhDOE.userConf.errorLogLoadData
                 }),
-                new ui.component.VCSLogGrid({
+                new ui.cmp.VCSLogGrid({
                     layout    : 'fit',
                     title     : String.format(_('{0} Log'), 'En'),
                     prefix    : 'FE-EN',
@@ -9569,7 +9498,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
             ];
 
             filePanel = ( PhDOE.userLang === 'en' ) ? [
-                new ui.component.FilePanel(
+                new ui.cmp.FilePanel(
                 {
                     id             : 'FE-LANG-PANEL-' + FileID,
                     region         : 'center',
@@ -9588,7 +9517,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     syncScroll     : false
                 })
             ] : [
-                new ui.component.FilePanel(
+                new ui.cmp.FilePanel(
                 {
                     id             : 'FE-LANG-PANEL-' + FileID,
                     region         : 'center',
@@ -9606,7 +9535,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     syncScrollCB   : true,
                     syncScroll     : true,
                     syncScrollConf : 'errorScrollbars'
-                }), new ui.component.FilePanel(
+                }), new ui.cmp.FilePanel(
                 {
                     id             : 'FE-EN-PANEL-' + FileID,
                     region         : 'east',
@@ -9702,7 +9631,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         layout      : 'fit',
                         bodyBorder  : false,
                         width       : PhDOE.userConf.errorLogPanelWidth || 375,
-                        listeners: {
+                        listeners   : {
                             collapse: function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
@@ -9728,15 +9657,15 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 }
                             }
                         },
-                        items       : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            tabPosition : 'bottom',
-                            enableTabScroll:true,
-                            defaults    : {autoScroll : true},
-                            items       : [
+                        items : {
+                            xtype           : 'tabpanel',
+                            activeTab       : 0,
+                            tabPosition     : 'bottom',
+                            enableTabScroll : true,
+                            defaults        : {autoScroll : true},
+                            items           : [
                                 vcsPanel,
-                                new ui.component.DictionaryGrid({
+                                new ui.cmp.DictionaryGrid({
                                     layout    : 'fit',
                                     title     : _('Dictionary'),
                                     prefix    : 'FE',
@@ -9745,7 +9674,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             {
                                 title  : _('Entities'),
                                 layout : 'fit',
-                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                items  : [new ui.cmp.EntitiesAcronymsPanel({
                                     dataType  : 'entities',
                                     prefix    : 'FE',
                                     ftype     : 'LANG',
@@ -9755,7 +9684,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                             }, {
                                 title  : _('Acronyms'),
                                 layout : 'fit',
-                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                items  : [new ui.cmp.EntitiesAcronymsPanel({
                                     dataType  : 'acronyms',
                                     prefix    : 'FE',
                                     ftype     : 'LANG',
@@ -9775,8 +9704,8 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._ErrorFileGrid.store,
-            tbar : [
+            store : ui.cmp._ErrorFileGrid.store,
+            tbar  : [
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({
                     id              : 'FE-filter',
@@ -9791,7 +9720,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                     trigger2Class   : 'x-form-search-trigger',
 
                     listeners : {
-                        keypress : function(field, e)
+                        keypress : function(f, e)
                         {
                             if (e.getKey() === e.ENTER) {
                                 this.onTrigger2Click();
@@ -9803,7 +9732,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         this.setValue('');
                         this.triggers[0].hide();
                         this.setSize(180,10);
-                        ui.component._ErrorFileGrid.instance.store.clearFilter();
+                        ui.cmp._ErrorFileGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
                     {
@@ -9822,7 +9751,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                         regexp = new RegExp(v, 'i');
 
                         // We filter on 'path', 'name', 'maintainer' and 'type'
-                        ui.component._ErrorFileGrid.instance.store.filterBy(function(record) {
+                        ui.cmp._ErrorFileGrid.instance.store.filterBy(function(record) {
 
                             if( regexp.test(record.data.path)       ||
                                 regexp.test(record.data.name)       ||
@@ -9838,7 +9767,7 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
                 })
             ]
         });
-        ui.component.ErrorFileGrid.superclass.initComponent.call(this);
+        ui.cmp.ErrorFileGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -9852,31 +9781,31 @@ ui.component.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._ErrorFileGrid.instance = null;
-ui.component.ErrorFileGrid.getInstance = function(config)
+ui.cmp._ErrorFileGrid.instance = null;
+ui.cmp.ErrorFileGrid.getInstance = function(config)
 {
-    if (!ui.component._ErrorFileGrid.instance) {
+    if (!ui.cmp._ErrorFileGrid.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._ErrorFileGrid.instance = new ui.component.ErrorFileGrid(config);
+        ui.cmp._ErrorFileGrid.instance = new ui.cmp.ErrorFileGrid(config);
     }
-    return ui.component._ErrorFileGrid.instance;
-};Ext.namespace('ui','ui.component');
+    return ui.cmp._ErrorFileGrid.instance;
+};Ext.namespace('ui','ui.cmp');
 
 // ExecDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
-ui.component.ExecDiff = Ext.extend(Ext.Panel,
+ui.cmp.ExecDiff = Ext.extend(Ext.Panel,
 {
-    layout     : 'fit',
-    title      : _('Diff From VCS'),
-    iconCls    : 'iconDiffView',
+    layout           : 'fit',
+    title            : _('Diff From VCS'),
+    iconCls          : 'iconDiffView',
     collapsedIconCls : 'iconDiffView',
-    autoScroll : true,
-    plugins    : [Ext.ux.PanelCollapsedTitle],
-    onRender : function(ct, position)
+    autoScroll       : true,
+    plugins          : [Ext.ux.PanelCollapsedTitle],
+    onRender         : function(ct, position)
     {
-        ui.component.ExecDiff.superclass.onRender.call(this, ct, position);
+        ui.cmp.ExecDiff.superclass.onRender.call(this, ct, position);
         this.el.mask(
             '<img src="themes/img/loading.gif" ' +
                 'style="vertical-align: middle;" /> '+
@@ -9916,25 +9845,25 @@ ui.component.ExecDiff = Ext.extend(Ext.Panel,
             html : '<div id="' + this.prefix + '-diff-' + this.fid +
                     '" class="diff-content"></div>'
         });
-        ui.component.ExecDiff.superclass.initComponent.call(this);
+        ui.cmp.ExecDiff.superclass.initComponent.call(this);
     }
 });
-Ext.namespace('ui','ui.component','ui.component._FilePanel');
+Ext.namespace('ui','ui.cmp','ui.cmp._FilePanel');
 
 //------------------------------------------------------------------------------
 // FilePanel internals
-Ext.namespace('ui.component._FilePanel.tbar.menu');
-Ext.namespace('ui.component._FilePanel.tbar.items');
+Ext.namespace('ui.cmp._FilePanel.tbar.menu');
+Ext.namespace('ui.cmp._FilePanel.tbar.items');
 
 // FilePanel editor indo/redo items
-ui.component._FilePanel.tbar.items.undoRedo = function(config)
+ui.cmp._FilePanel.tbar.items.undoRedo = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.items.undoRedo.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.items.undoRedo.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
+Ext.extend(ui.cmp._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
 {
     init : function()
     {
@@ -9967,23 +9896,23 @@ Ext.extend(ui.component._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
 
 
 // FilePanel editor user notes item
-ui.component._FilePanel.tbar.items.usernotes = function(config)
+ui.cmp._FilePanel.tbar.items.usernotes = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.items.usernotes.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.items.usernotes.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.items.usernotes, Ext.ButtonGroup,
+Ext.extend(ui.cmp._FilePanel.tbar.items.usernotes, Ext.ButtonGroup,
 {
     init : function()
     {
         Ext.apply(this,
         {
             items : [{
-                    xtype: 'usernotes',
-                    file : this.file,
-                    fid  : Ext.id()
+                xtype: 'usernotes',
+                file : this.file,
+                fid  : Ext.id()
             }]
         });
     }
@@ -9991,14 +9920,14 @@ Ext.extend(ui.component._FilePanel.tbar.items.usernotes, Ext.ButtonGroup,
 
 
 // FilePanel editor commun items
-ui.component._FilePanel.tbar.items.common = function(config)
+ui.cmp._FilePanel.tbar.items.common = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.items.common.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.items.common.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
+Ext.extend(ui.cmp._FilePanel.tbar.items.common, Ext.ButtonGroup,
 {
     init : function()
     {
@@ -10031,14 +9960,14 @@ Ext.extend(ui.component._FilePanel.tbar.items.common, Ext.ButtonGroup,
 });
 
 // FilePanel editor menu for LangFile
-ui.component._FilePanel.tbar.menu.lang = function(config)
+ui.cmp._FilePanel.tbar.menu.lang = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.menu.lang.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.menu.lang.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
+Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
     iconCls : 'iconInsertCode',
@@ -10076,14 +10005,14 @@ Ext.extend(ui.component._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
 });
 
 // FilePanel editor menu for ENFile
-ui.component._FilePanel.tbar.menu.en = function(config)
+ui.cmp._FilePanel.tbar.menu.en = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.menu.en.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.menu.en.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
+Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 {
     text    : _('MarkUp'),
     iconCls : 'iconInsertCode',
@@ -10362,28 +10291,29 @@ Ext.extend(ui.component._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
 });
 
 // FilePanel editor reindent item & tags menu
-ui.component._FilePanel.tbar.items.reindentTags = function(config)
+ui.cmp._FilePanel.tbar.items.reindentTags = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._FilePanel.tbar.items.reindentTags.superclass.constructor.call(this);
+    ui.cmp._FilePanel.tbar.items.reindentTags.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
+Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 {
     init : function()
     {
         Ext.apply(this,
         {
             items : [{
-                scope   : this,
-                tooltip : _('<b>Enable / Disable</b> spellChecking'),
+                scope        : this,
+                tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
-                iconCls : 'iconSpellCheck',
-                pressed : PhDOE.userConf[this.spellCheckConf],
-                handler : function(btn)
+                iconCls      : 'iconSpellCheck',
+                pressed      : PhDOE.userConf[this.spellCheckConf],
+                handler      : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
+
                     new ui.task.UpdateConfTask({
                         item  : this.spellCheckConf,
                         value : btn.pressed,
@@ -10398,10 +10328,10 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
                 }
-            },(this.lang === 'en') ? new ui.component._FilePanel.tbar.menu.en({
+            },(this.lang === 'en') ? new ui.cmp._FilePanel.tbar.menu.en({
                 comp_id : this.id_prefix + '-FILE-' + this.fid
             }) :
-            new ui.component._FilePanel.tbar.menu.lang({
+            new ui.cmp._FilePanel.tbar.menu.lang({
                 comp_id : this.id_prefix + '-FILE-' + this.fid
             })
             ]
@@ -10424,7 +10354,7 @@ Ext.extend(ui.component._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //    spellCheck {true | false},   indicate whether spellCheck is enable or not
 //    spellCheckConf               spellCheckConf attribute name in userConf
 // }
-ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
+ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
     activeScroll : false,  // scroll lock
 
@@ -10514,24 +10444,24 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
             baseCls   : '',
             bodyStyle : 'padding-top:5px;',
             html      : [
-            '<div style="display: inline;" class="x-statusbar">',
-            '<span class="x-status-text-panel">', _('Line: '),
-            '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
-            '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
-            '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
-            '</div>&nbsp;&nbsp;'
+                '<div style="display: inline;" class="x-statusbar">',
+                '<span class="x-status-text-panel">', _('Line: '),
+                '<span id="', id_prefix, '-status-line-', this.fid, '">-</span></span>',
+                '&nbsp;&nbsp;<span class="x-status-text-panel">', _('Col: '),
+                '<span id="', id_prefix, '-status-col-', this.fid, '">-</span></span>',
+                '</div>&nbsp;&nbsp;'
             ].join('')
         }];
 
         if (!this.readOnly) {
             this.tbar = (this.isPatch) ? [
             // patch file pane tbar
-            new ui.component._FilePanel.tbar.items.common({
-                prefix: this.prefix,
-                fid: this.fid,
-                ftype: this.ftype,
-                goToPreviousTab: this.goToPreviousTab,
-                goToNextTab: this.goToNextTab
+            new ui.cmp._FilePanel.tbar.items.common({
+                prefix          : this.prefix,
+                fid             : this.fid,
+                ftype           : this.ftype,
+                goToPreviousTab : this.goToPreviousTab,
+                goToNextTab     : this.goToNextTab
             }),
             {
                 xtype :'buttongroup',
@@ -10564,24 +10494,24 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         });
                     }
                 }]
-            }, new ui.component._FilePanel.tbar.items.undoRedo({
+            }, new ui.cmp._FilePanel.tbar.items.undoRedo({
                 id_prefix : id_prefix,
                 fid       : this.fid
             }),
-            new ui.component._FilePanel.tbar.items.reindentTags({
+            new ui.cmp._FilePanel.tbar.items.reindentTags({
                 id_prefix      : id_prefix,
                 fid            : this.fid,
                 lang           : this.lang,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
             }), '->', 
-            new ui.component._FilePanel.tbar.items.usernotes({
+            new ui.cmp._FilePanel.tbar.items.usernotes({
                 fid : this.fid,
                 file: this.lang + this.fpath + this.fname
             })
             ] : [
             // en/lang file pane tbar
-            new ui.component._FilePanel.tbar.items.common({
+            new ui.cmp._FilePanel.tbar.items.common({
                 prefix          : this.prefix,
                 fid             : this.fid,
                 ftype           : this.ftype,
@@ -10706,7 +10636,7 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                     disabled : true,
                     handler  : function()
                     {
-                        new ui.component.PatchPrompt({
+                        new ui.cmp.PatchPrompt({
                             prefix       : this.prefix,
                             ftype        : this.ftype,
                             fid          : this.fid,
@@ -10717,32 +10647,32 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }).show();
                     }
                 }]
-            }, new ui.component._FilePanel.tbar.items.undoRedo({
+            }, new ui.cmp._FilePanel.tbar.items.undoRedo({
                 id_prefix : id_prefix,
                 fid       : this.fid
             }),
-            new ui.component._FilePanel.tbar.items.reindentTags({
+            new ui.cmp._FilePanel.tbar.items.reindentTags({
                 id_prefix      : id_prefix,
                 fid            : this.fid,
                 lang           : this.lang,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
             }), '->',
-            new ui.component._FilePanel.tbar.items.usernotes({
+            new ui.cmp._FilePanel.tbar.items.usernotes({
                 fid : this.fid,
                 file: this.lang + this.fpath + this.fname
             })
             ];
         } else {
             this.tbar = [
-                new ui.component._FilePanel.tbar.items.common({
+                new ui.cmp._FilePanel.tbar.items.common({
                     prefix          : this.prefix,
                     fid             : this.fid,
                     ftype           : this.ftype,
                     goToPreviousTab : this.goToPreviousTab,
                     goToNextTab     : this.goToNextTab
                 }), '->', (( this.ftype !== 'GGTRANS' &&  this.ftype !== 'ORIGIN' ) ?
-                            new ui.component._FilePanel.tbar.items.usernotes({
+                            new ui.cmp._FilePanel.tbar.items.usernotes({
                                 fid : this.fid,
                                 file: this.lang + this.fpath + this.fname
                             })
@@ -10935,110 +10865,84 @@ ui.component.FilePanel = Ext.extend(Ext.form.FormPanel,
                 }
             }]
         });
-        ui.component.FilePanel.superclass.initComponent.call(this);
+        ui.cmp.FilePanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component','ui.component._GoogleTranslationPanel');
-
-//------------------------------------------------------------------------------
-// GoogleTranslationPanel internals
-
-
+});Ext.namespace('ui','ui.cmp');
 
 //------------------------------------------------------------------------------
 // GoogleTranslationPanel
-ui.component.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
+ui.cmp.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
 {
-    border : false,
-    labelAlign: 'top',
-    bodyStyle:'padding:5px',
+    border     : false,
+    labelAlign : 'top',
+    bodyStyle  : 'padding:5px',
     autoScroll : true,
-    getTranslation: function(str) {
 
+    getTranslation : function(str)
+    {
         new ui.task.GetGGTranslation({
             str : str
         });
 
     },
+
     initComponent : function()
     {
         Ext.apply(this, {
-            items:[
-                {
-                    xtype: 'textarea',
-                    anchor: '90%',
-                    fieldLabel: String.format(_('String to translate (en => {0})'), PhDOE.userLang),
-                    name: 'GGTranslate-string',
-                    id: 'GGTranslate-string',
-                    allowBlank:false
-                },{
-                    scope: this,
-                    xtype: 'button',
-                    text: _('Translate !'),
-                    id: 'GGTranslate-btn',
-                    handler: function() {
-                        this.getTranslation(Ext.getCmp('GGTranslate-string').getValue());
-                    }
-                },{
-                    xtype: 'panel',
-                    anchor: '100%',
-                    border : false,
-                    bodyStyle:'padding:5px',
-                    html: '<div id="GGTranslate-result" style="width: 90%; font: 12px tahoma,arial,sans-serif"></div>'
+            items:[{
+                xtype      : 'textarea',
+                anchor     : '90%',
+                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.userLang),
+                name       : 'GGTranslate-string',
+                id         : 'GGTranslate-string',
+                allowBlank : false
+            },{
+                scope   : this,
+                xtype   : 'button',
+                text    : _('Translate !'),
+                id      : 'GGTranslate-btn',
+                handler : function() {
+                    this.getTranslation(Ext.getCmp('GGTranslate-string').getValue());
                 }
-            ]
+            },{
+                xtype     : 'panel',
+                anchor    : '100%',
+                border    : false,
+                bodyStyle :'padding:5px',
+                html      : '<div id="GGTranslate-result" style="width: 90%; font: 12px tahoma,arial,sans-serif"></div>'
+            }]
         });
-        ui.component.GoogleTranslationPanel.superclass.initComponent.call(this);
+        ui.cmp.GoogleTranslationPanel.superclass.initComponent.call(this);
     }
-});
+});Ext.namespace('ui','ui.cmp','ui.cmp._MainMenu');
 
-// singleton
-ui.component._GoogleTranslationPanel.instance = null;
-ui.component.GoogleTranslationPanel.getInstance = function(config)
-{
-    if (!ui.component._GoogleTranslationPanel.instance) {
-        if (!config) {
-            config = {};
-        }
-        ui.component._GoogleTranslationPanel.instance = new ui.component.GoogleTranslationPanel(config);
-    }
-    return ui.component._GoogleTranslationPanel.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._MainMenu');
-
-ui.component.MainMenu = function(config)
+ui.cmp.MainMenu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component.MainMenu.superclass.constructor.call(this);
+    ui.cmp.MainMenu.superclass.constructor.call(this);
 };
 
 
 // Load all available language
-ui.component._MainMenu.store = new Ext.data.Store({
+ui.cmp._MainMenu.store = new Ext.data.Store({
     proxy    : new Ext.data.HttpProxy({
         url : './do/getAvailableLanguage'
     }),
-    reader   : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'code'
-        }, Ext.data.Record.create([
-            {
-                name    : 'code',
-                mapping : 'code'
-            }, {
-                name    : 'iconCls',
-                mapping : 'iconCls'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }
-        ])
-    )
+    reader   : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'code',
+        fields        : [
+            {name : 'code'},
+            {name : 'iconCls'},
+            {name : 'name'}
+
+        ]
+    })
 });
 
-ui.component._MainMenu.store.on('load', function(store)
+ui.cmp._MainMenu.store.on('load', function(store)
 {
     // We put the lang libel into Info-Language
     Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
@@ -11066,7 +10970,7 @@ ui.component._MainMenu.store.on('load', function(store)
 
 }, this);
 
-Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
+Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
 {
     id : 'mainMenu',
     init : function()
@@ -11105,14 +11009,14 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                         },
                         failure: function() {
                             Ext.getBody().unmask();
-                            new ui.component.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
+                            new ui.cmp.SystemUpdatePrompt().show(Ext.get('acc-need-update'));
                         }
                     });
                 }
             }, {
                 text    : _('Build tools'),
                 handler : function() { return false; },
-                menu : new Ext.menu.Menu({
+                menu    : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check build'),
                         disabled : (PhDOE.userLogin === 'anonymous'),
@@ -11148,7 +11052,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     // Remove wait msg
                                     Ext.getBody().unmask();
 
-                                    new ui.component.CheckBuildPrompt().show(
+                                    new ui.cmp.CheckBuildPrompt().show(
                                         Ext.get('acc-need-update')
                                     );
                                 }
@@ -11169,7 +11073,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     iconCls  : 'iconBuildStatus',
                                     layout   : 'fit',
                                     closable : true,
-                                    items    : [ new ui.component.BuildStatus() ]
+                                    items    : [ new ui.cmp.BuildStatus() ]
                                 });
                             }
 
@@ -11180,7 +11084,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
             }, {
                 text    : _('EN tools'),
                 handler : function() { return false; },
-                menu : new Ext.menu.Menu({
+                menu    : new Ext.menu.Menu({
                     items : [{
                         text    : _('Script check entities'),
                         iconCls : 'iconCheckEntities',
@@ -11202,7 +11106,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                             iconCls  : 'iconCheckEntities',
                                             layout   : 'fit',
                                             closable : true,
-                                            items    : [new ui.component.CheckEntities()]
+                                            items    : [new ui.cmp.CheckEntities()]
                                         });
                                     }
                                     Ext.getCmp('main-panel').setActiveTab('tab-check-entities');
@@ -11220,7 +11124,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     );
 
                                     XHR({
-                                        params  :
+                                        params :
                                         {
                                             task     : 'checkLockFile',
                                             lockFile : 'project_' + PhDOE.project + '_lock_check_entities'
@@ -11243,7 +11147,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                             Ext.getBody().unmask();
 
                                             if( ! Ext.getCmp('win-check-entities') ) {
-                                                new ui.component.CheckEntitiesPrompt();
+                                                new ui.cmp.CheckEntitiesPrompt();
                                             }
                                             Ext.getCmp('win-check-entities').show(Ext.get('mainMenu'));
 
@@ -11267,7 +11171,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                     iconCls  : 'iconCheckDoc',
                                     layout   : 'fit',
                                     closable : true,
-                                    items    : [ new ui.component.CheckDoc() ]
+                                    items    : [ new ui.cmp.CheckDoc() ]
                                 });
                             }
                             Ext.getCmp('main-panel').setActiveTab('tab-check-doc');
@@ -11282,7 +11186,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 handler : function()
                 {
                     if( ! Ext.getCmp('win-conf') ) {
-                        new ui.component.EditorConf();
+                        new ui.cmp.EditorConf();
                     }
                     Ext.getCmp('win-conf').show(Ext.get('mainMenu'));
 
@@ -11311,7 +11215,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
 
                                 XHR({
                                     params  : { task : 'erasePersonalData' },
-                                    success : function(response)
+                                    success : function()
                                     {
                                         Ext.getBody().unmask();
 
@@ -11326,7 +11230,7 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                                             }
                                         });
                                     },
-                                    failure : function(response)
+                                    failure : function()
                                     {
                                         PhDOE.winForbidden();
                                     }
@@ -11404,23 +11308,22 @@ Ext.extend(ui.component.MainMenu, Ext.menu.Menu,
                 iconCls : 'iconHelp',
                 handler : function()
                 {
-                    new ui.component.About().show(Ext.get('winabout-btn'));
+                    new ui.cmp.About().show(Ext.get('winabout-btn'));
                 }
             }]
         });
     }
-});
-Ext.namespace('ui','ui.component','ui.component.MainPanel');
+});Ext.namespace('ui','ui.cmp','ui.cmp.MainPanel');
 
-ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
-    activeTab         : 0,
-    enableTabScroll   : true,
-    plugins           : ['tabclosemenu', 'dblclickclosetabs'], //new Ext.ux.TabCloseMenu(),
+ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
+    activeTab       : 0,
+    enableTabScroll : true,
+    plugins         : ['tabclosemenu', 'dblclickclosetabs'],
 
     initComponent: function(config)
     {
         Ext.apply(this, config);
-        ui.component.MainPanel.superclass.initComponent.call(this);
+        ui.cmp.MainPanel.superclass.initComponent.call(this);
 
         this.addEvents({
             tabLoaded : true
@@ -11446,7 +11349,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 cmp.panTRANSLoaded = cmp.panGGTRANSLoaded = false;
 
                 if (PhDOE.FNTfilePendingOpen[0]) {
-                    ui.component.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
+                    ui.cmp.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
                     PhDOE.FNTfilePendingOpen.shift();
                 }
 
@@ -11461,7 +11364,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panDiffLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FNUfilePendingOpen[0]) {
-                    ui.component.StaleFileGrid.getInstance().openFile(PhDOE.FNUfilePendingOpen[0].id);
+                    ui.cmp.StaleFileGrid.getInstance().openFile(PhDOE.FNUfilePendingOpen[0].id);
                     PhDOE.FNUfilePendingOpen.shift();
                 }
             }
@@ -11475,7 +11378,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FEfilePendingOpen[0]) {
-                    ui.component.ErrorFileGrid.getInstance().openFile(PhDOE.FEfilePendingOpen[0].id);
+                    ui.cmp.ErrorFileGrid.getInstance().openFile(PhDOE.FEfilePendingOpen[0].id);
                     PhDOE.FEfilePendingOpen.shift();
                 }
             }
@@ -11489,7 +11392,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FNRfilePendingOpen[0]) {
-                    ui.component.PendingReviewGrid.getInstance().openFile(PhDOE.FNRfilePendingOpen[0].id);
+                    ui.cmp.PendingReviewGrid.getInstance().openFile(PhDOE.FNRfilePendingOpen[0].id);
                     PhDOE.FNRfilePendingOpen.shift();
                 }
             }
@@ -11503,7 +11406,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 
                 cmp.panLANGLoaded = false;
                 if (PhDOE.FNIENfilePendingOpen[0]) {
-                    ui.component.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
+                    ui.cmp.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
                     PhDOE.FNIENfilePendingOpen.shift();
                 }
             }
@@ -11517,7 +11420,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 
                 cmp.panLoaded = cmp.panVCS = false;
                 if (PhDOE.AFfilePendingOpen[0]) {
-                    ui.component.RepositoryTree.getInstance().openFile(
+                    ui.cmp.RepositoryTree.getInstance().openFile(
                     ( PhDOE.AFfilePendingOpen[0].nodeID ) ? 'byId' : 'byPath',
                     ( PhDOE.AFfilePendingOpen[0].nodeID ) ? PhDOE.AFfilePendingOpen[0].nodeID : PhDOE.AFfilePendingOpen[0].fpath,
                     ( PhDOE.AFfilePendingOpen[0].nodeID ) ? false                             : PhDOE.AFfilePendingOpen[0].fname
@@ -11535,7 +11438,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 
                 cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;
                 if (PhDOE.PPfilePendingOpen[0]) {
-                    ui.component.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);
+                    ui.cmp.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);
                     PhDOE.PPfilePendingOpen.shift();
                 }
             }
@@ -11545,7 +11448,7 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
     onTabChange : function(panel, tab)
     {
-        // We do somethings only if this panel contiens a tab's navigation button
+        // We do somethings only if this panel contains a tab's navigation button
         if ( Ext.getCmp(tab.id + '-btn-tabRight-LANG')    ||
              Ext.getCmp(tab.id + '-btn-tabRight-EN')      ||
              Ext.getCmp(tab.id + '-btn-tabRight-ALL')     ||
@@ -11639,13 +11542,13 @@ ui.component.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
     }
 });
-Ext.reg('mainpanel', ui.component.MainPanel);Ext.namespace('ui','ui.component','ui.component._NotInENGrid');
+Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
 
 //------------------------------------------------------------------------------
 // NotInENGrid internals
 
 // NotInENGrid store
-ui.component._NotInENGrid.store = new Ext.data.GroupingStore(
+ui.cmp._NotInENGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesNotInEn'
@@ -11666,7 +11569,7 @@ ui.component._NotInENGrid.store = new Ext.data.GroupingStore(
         direction : 'ASC'
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         datachanged : function(ds)
         {
             Ext.getDom('acc-notInEn-nb').innerHTML = ds.getCount();
@@ -11675,7 +11578,7 @@ ui.component._NotInENGrid.store = new Ext.data.GroupingStore(
 });
 
 // NotInENGrid columns definition
-ui.component._NotInENGrid.columns = [{
+ui.cmp._NotInENGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
@@ -11687,15 +11590,15 @@ ui.component._NotInENGrid.columns = [{
 }];
 
 // NotInENGrid view
-ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
+ui.cmp._NotInENGrid.view = new Ext.grid.GroupingView({
+    forceFit      : true,
     startCollapsed: true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
+    groupTextTpl  : '{[values.rs[0].data["path"]]} ' +
                    '({[values.rs.length]} ' +
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText: false,
-    emptyText    : '<div style="text-align: center;">' + _('No Files') + '</div>',
-    getRowClass  : function(record, numIndex, rowParams, store)
+    emptyText     : '<div style="text-align: center;">' + _('No Files') + '</div>',
+    getRowClass   : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
@@ -11706,13 +11609,13 @@ ui.component._NotInENGrid.view = new Ext.grid.GroupingView({
 
 // NotInENGrid context menu
 // config - { grid, rowIdx, event }
-ui.component._NotInENGrid.menu = function(config)
+ui.cmp._NotInENGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._NotInENGrid.menu.superclass.constructor.call(this);
+    ui.cmp._NotInENGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
+Ext.extend(ui.cmp._NotInENGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
@@ -11751,17 +11654,17 @@ Ext.extend(ui.component._NotInENGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // NotInENGrid
-ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
-    view             : ui.component._NotInENGrid.view,
-    columns          : ui.component._NotInENGrid.columns,
+    view             : ui.cmp._NotInENGrid.view,
+    columns          : ui.cmp._NotInENGrid.columns,
 
-    onRowContextMenu: function(grid, rowIndex, e)
+    onRowContextMenu : function(grid, rowIndex, e)
     {
         e.stopEvent();
     
@@ -11769,7 +11672,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 
         if (!grid.store.getAt(rowIndex).data.needcommit)
         {
-            new ui.component._NotInENGrid.menu({
+            new ui.cmp._NotInENGrid.menu({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
@@ -11807,7 +11710,7 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                     _('Not In EN: in {0}'), FilePath
                 ),
                 items : [
-                   new ui.component.FilePanel(
+                   new ui.cmp.FilePanel(
                     {
                         id             : 'FNIEN-NotInEN-PANEL-' + FileID,
                         region         : 'center',
@@ -11833,9 +11736,9 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._NotInENGrid.store
+            store : ui.cmp._NotInENGrid.store
         });
-        ui.component.NotInENGrid.superclass.initComponent.call(this);
+        ui.cmp.NotInENGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -11843,21 +11746,20 @@ ui.component.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._NotInENGrid.instance = null;
-ui.component.NotInENGrid.getInstance = function(config)
+ui.cmp._NotInENGrid.instance = null;
+ui.cmp.NotInENGrid.getInstance = function(config)
 {
-    if (!ui.component._NotInENGrid.instance) {
+    if (!ui.cmp._NotInENGrid.instance) {
         if (!config) {
            config = {};
         }
-        ui.component._NotInENGrid.instance = new ui.component.NotInENGrid(config);
+        ui.cmp._NotInENGrid.instance = new ui.cmp.NotInENGrid(config);
     }
-    return ui.component._NotInENGrid.instance;
-};
-Ext.namespace('ui','ui.component');
+    return ui.cmp._NotInENGrid.instance;
+};Ext.namespace('ui','ui.cmp');
 
 // config - {defaultEmail, prefix, ftype, fid, fpath, fname, lang}
-ui.component.PatchPrompt = Ext.extend(Ext.Window,
+ui.cmp.PatchPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Do you want to be alerted ?'),
     iconCls    : 'iconPatchAlert',
@@ -11913,16 +11815,15 @@ ui.component.PatchPrompt = Ext.extend(Ext.Window,
                 }
             }]
         });
-        ui.component.PatchPrompt.superclass.initComponent.call(this);
+        ui.cmp.PatchPrompt.superclass.initComponent.call(this);
     }
-});
-Ext.namespace('ui','ui.component','ui.component._PendingCommitGrid');
+});Ext.namespace('ui','ui.cmp','ui.cmp._PendingCommitGrid');
 
 //------------------------------------------------------------------------------
 // PendingCommitGrid internals
 
 // PendingCommitGrid store
-ui.component._PendingCommitGrid.store = new Ext.data.GroupingStore(
+ui.cmp._PendingCommitGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesPendingCommit'
@@ -11958,7 +11859,7 @@ ui.component._PendingCommitGrid.store = new Ext.data.GroupingStore(
 });
 
 // PendingCommitGrid columns definition
-ui.component._PendingCommitGrid.columns = [{
+ui.cmp._PendingCommitGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
@@ -11981,14 +11882,14 @@ ui.component._PendingCommitGrid.columns = [{
 }];
 
 // PendingCommitGrid view
-ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
+ui.cmp._PendingCommitGrid.view = new Ext.grid.GroupingView({
     forceFit       : true,
     groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
                      '({[values.rs.length]} ' +
                      '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     emptyText      : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
     deferEmptyText : false,
-    getRowClass    : function(record, numIndex, rowParams, store)
+    getRowClass    : function(record)
     {
         if ( record.data.type === 'update' ) {
             return 'file-needcommit-update';
@@ -12003,16 +11904,16 @@ ui.component._PendingCommitGrid.view = new Ext.grid.GroupingView({
     }
 });
 
-Ext.namespace('ui.component._PendingCommitGrid.menu');
+Ext.namespace('ui.cmp._PendingCommitGrid.menu');
 // PendingCommitGrid common sub-menu
 // config - { rowIdx }
-ui.component._PendingCommitGrid.menu.common = function(config)
+ui.cmp._PendingCommitGrid.menu.common = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingCommitGrid.menu.common.superclass.constructor.call(this);
+    ui.cmp._PendingCommitGrid.menu.common.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
+Ext.extend(ui.cmp._PendingCommitGrid.menu.common, Ext.menu.Item,
 {
     init : function()
     {
@@ -12029,7 +11930,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     iconCls : 'iconCommitFileVcs',
                     handler : function()
                     {
-                        var record = ui.component.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
+                        var record = ui.cmp.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
                             fdbid  = record.data.id,
                             fpath  = record.data.path,
                             fname  = record.data.name,
@@ -12038,9 +11939,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             fdate  = record.data.date,
                             fby    = record.data.by;
 
-                        new ui.component.CommitPrompt({
+                        new ui.cmp.CommitPrompt({
                             files : [{
-                                fid : fid,
+                                fid   : fid,
                                 fpath : fpath,
                                 fname : fname,
                                 fdbid : fdbid,
@@ -12057,7 +11958,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     handler : function()
                     {
                         var files = [],
-                            grid  = ui.component.PendingCommitGrid.getInstance();
+                            grid  = ui.cmp.PendingCommitGrid.getInstance();
 
                         grid.store.each(function(record)
                         {
@@ -12082,7 +11983,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             }
                         });
 
-                        new ui.component.CommitPrompt({
+                        new ui.cmp.CommitPrompt({
                             files : files
                         }).show();
                     }
@@ -12093,7 +11994,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                     handler : function()
                     {
                         var files = [],
-                            grid  = ui.component.PendingCommitGrid.getInstance();
+                            grid  = ui.cmp.PendingCommitGrid.getInstance();
 
                         grid.store.each(function(record)
                         {
@@ -12116,7 +12017,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
                             });
                         });
 
-                        new ui.component.CommitPrompt({
+                        new ui.cmp.CommitPrompt({
                             files : files
                         }).show();
                     }
@@ -12128,13 +12029,13 @@ Ext.extend(ui.component._PendingCommitGrid.menu.common, Ext.menu.Item,
 
 // PendingCommitGrid menu for pending update file
 // config - { fpath, fname, rowIdx, grid, event }
-ui.component._PendingCommitGrid.menu.update = function(config)
+ui.cmp._PendingCommitGrid.menu.update = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingCommitGrid.menu.update.superclass.constructor.call(this);
+    ui.cmp._PendingCommitGrid.menu.update.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingCommitGrid.menu.update, Ext.menu.Menu,
 {
     init : function()
     {
@@ -12188,9 +12089,9 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                                     FilePath : this.fpath,
                                     FileName : this.fname
                                 },
-                                success : function(response)
+                                success : function(r)
                                 {
-                                    var o = Ext.util.JSON.decode(response.responseText);
+                                    var o = Ext.util.JSON.decode(r.responseText);
 
                                     // We display in diff div
                                     Ext.get('diff_content_pending_' + this.rowIdx).dom.innerHTML = o.content;
@@ -12225,7 +12126,7 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
                             fname       : this.fname
                         });
                     }
-                }, '-', new ui.component._PendingCommitGrid.menu.common({
+                }, '-', new ui.cmp._PendingCommitGrid.menu.common({
                     rowIdx : this.rowIdx
                 })
             ]
@@ -12235,51 +12136,48 @@ Ext.extend(ui.component._PendingCommitGrid.menu.update, Ext.menu.Menu,
 
 // PendingCommitGrid menu for pending delete file
 // config - { rowIdx, grid, event }
-ui.component._PendingCommitGrid.menu.del = function(config)
+ui.cmp._PendingCommitGrid.menu.del = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingCommitGrid.menu.del.superclass.constructor.call(this);
+    ui.cmp._PendingCommitGrid.menu.del.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingCommitGrid.menu.del, Ext.menu.Menu,
 {
     init : function()
     {
         Ext.apply(this,
         {
-            items: [
+            items: [{
+                scope   : this,
+                text    : '<b>'+_('View in a new Tab')+'</b>',
+                iconCls : 'iconPendingCommit',
+                handler : function()
                 {
-                    scope   : this,
-                    text    : '<b>'+_('View in a new Tab')+'</b>',
-                    iconCls : 'iconPendingCommit',
-                    handler : function()
-                    {
-                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                    }
-                }, {
-                    scope    : this,
-                    text     : _('Cancel this deletion'),
-                    iconCls  : 'iconPageDelete',
-                    disabled : (PhDOE.userLogin === 'anonymous'),
-                    handler : function()
-                    {
+                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                }
+            }, {
+                scope    : this,
+                text     : _('Cancel this deletion'),
+                iconCls  : 'iconPageDelete',
+                disabled : (PhDOE.userLogin === 'anonymous'),
+                handler : function()
+                {
+                   var storeRecord = this.grid.store.getAt(this.rowIdx),
+                       FilePath    = storeRecord.data.path,
+                       FileName    = storeRecord.data.name;
 
-                       var storeRecord = this.grid.store.getAt(this.rowIdx),
-                           FilePath    = storeRecord.data.path,
-                           FileName    = storeRecord.data.name;
+                   new ui.task.ClearLocalChangeTask({
+                       storeRecord : storeRecord,
+                       ftype       : 'delete',
+                       fpath       : FilePath,
+                       fname       : FileName
+                   });
 
-                       new ui.task.ClearLocalChangeTask({
-                           storeRecord : storeRecord,
-                           ftype       : 'delete',
-                           fpath       : FilePath,
-                           fname       : FileName
-                       });
-
-                    }
-                }, '-', new ui.component._PendingCommitGrid.menu.common({
-                    rowIdx : this.rowIdx
-                })
-            ]
+                }
+            }, '-', new ui.cmp._PendingCommitGrid.menu.common({
+                rowIdx : this.rowIdx
+            })]
         });
     }
 });
@@ -12287,61 +12185,60 @@ Ext.extend(ui.component._PendingCommitGrid.menu.del, Ext.menu.Menu,
 
 // PendingCommitGrid menu for pending new file
 // config - { rowIdx, grid, event }
-ui.component._PendingCommitGrid.menu.newFile = function(config)
+ui.cmp._PendingCommitGrid.menu.newFile = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingCommitGrid.menu.newFile.superclass.constructor.call(this);
+    ui.cmp._PendingCommitGrid.menu.newFile.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
 {
     init : function()
     {
         Ext.apply(this,
         {
-            items: [
+            items : [{
+                scope   : this,
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconPendingCommit',
+                handler : function()
                 {
-                    scope   : this,
-                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'iconPendingCommit',
-                    handler : function()
-                    {
-                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                    }
-                }, '-',{
-                    scope    : this,
-                    text     : _('Clear this change'),
-                    iconCls  : 'iconPageDelete',
-                    disabled : (PhDOE.userLogin === 'anonymous'),
-                    handler  : function()
-                    {
-                       var storeRecord = this.grid.store.getAt(this.rowIdx),
-                           FilePath    = storeRecord.data.path,
-                           FileName    = storeRecord.data.name;
+                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
+                }
+            }, '-',{
+                scope    : this,
+                text     : _('Clear this change'),
+                iconCls  : 'iconPageDelete',
+                disabled : (PhDOE.userLogin === 'anonymous'),
+                handler  : function()
+                {
+                   var storeRecord = this.grid.store.getAt(this.rowIdx),
+                       FilePath    = storeRecord.data.path,
+                       FileName    = storeRecord.data.name;
 
-                       new ui.task.ClearLocalChangeTask({
-                            storeRecord : storeRecord,
-                            ftype       : 'new',
-                            fpath       : FilePath,
-                            fname       : FileName
-                        });
-                    }
-                }, '-',new ui.component._PendingCommitGrid.menu.common({
-                    rowIdx : this.rowIdx
-                })]
+                   new ui.task.ClearLocalChangeTask({
+                        storeRecord : storeRecord,
+                        ftype       : 'new',
+                        fpath       : FilePath,
+                        fname       : FileName
+                    });
+                }
+            }, '-',new ui.cmp._PendingCommitGrid.menu.common({
+                rowIdx : this.rowIdx
+            })]
         });
     }
 });
 
 //------------------------------------------------------------------------------
 // PendingCommitGrid
-ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
-    columns          : ui.component._PendingCommitGrid.columns,
-    view             : ui.component._PendingCommitGrid.view,
+    columns          : ui.cmp._PendingCommitGrid.columns,
+    view             : ui.cmp._PendingCommitGrid.view,
     enableDragDrop   : true,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true}),
     ddGroup          : 'mainPanelDDGroup',
@@ -12357,24 +12254,27 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        if (FileType === 'new') {
-            new ui.component._PendingCommitGrid.menu.newFile({
+        if (FileType === 'new')
+        {
+            new ui.cmp._PendingCommitGrid.menu.newFile({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
             }).showAt(e.getXY());
         }
 
-        if (FileType === 'delete') {
-            new ui.component._PendingCommitGrid.menu.del({
+        if (FileType === 'delete')
+        {
+            new ui.cmp._PendingCommitGrid.menu.del({
                 grid   : grid,
                 rowIdx : rowIndex,
                 event  : e
             }).showAt(e.getXY());
         }
 
-        if (FileType === 'update') {
-            new ui.component._PendingCommitGrid.menu.update({
+        if (FileType === 'update')
+        {
+            new ui.cmp._PendingCommitGrid.menu.update({
                 fpath  : FilePath,
                 fname  : FileName,
                 grid   : grid,
@@ -12384,7 +12284,7 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
         }
     },
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick: function(grid, rowIndex)
     {
         this.openFile(this.store.getAt(rowIndex).data.id);
     },
@@ -12400,32 +12300,32 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
             }
         });
 
-        var FileType    = storeRecord.data.type,
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
+        var FileType = storeRecord.data.type,
+            FilePath = storeRecord.data.path,
+            FileName = storeRecord.data.name,
             FileLang, tmp, found;
 
-        if (FileType === 'new') {
-
-            tmp = FilePath.split('/');
+        if (FileType === 'new')
+        {
+            tmp      = FilePath.split('/');
             FileLang = tmp[0];
             tmp.shift();
 
             FilePath = "/" + tmp.join('/');
 
             // Find the id of this row into PendingTranslateGrid.store and open it !
-            ui.component.PendingTranslateGrid.getInstance().store.each(function(row)
+            ui.cmp.PendingTranslateGrid.getInstance().store.each(function(row)
             {
                 if( ( row.data.path ) === FilePath && row.data.name === FileName ) {
-                    ui.component.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                    ui.cmp.PendingTranslateGrid.getInstance().openFile(row.data.id);
                     return;
                 }
             });
         }
 
-        if (FileType === 'update') {
-
-            tmp = FilePath.split('/');
+        if (FileType === 'update')
+        {
+            tmp      = FilePath.split('/');
             FileLang = tmp[0];
             tmp.shift();
 
@@ -12433,16 +12333,16 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
             // For EN file, we open this new file into the "All files" module
             if( FileLang === 'en' ) {
-                ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
+                ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
             } else {
 
                 found = false;
 
                 // Find the id of this row into StaleFileGrid.store and open it !
-                ui.component.StaleFileGrid.getInstance().store.each(function(row) {
+                ui.cmp.StaleFileGrid.getInstance().store.each(function(row) {
 
                     if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                        ui.component.StaleFileGrid.getInstance().openFile(row.data.id);
+                        ui.cmp.StaleFileGrid.getInstance().openFile(row.data.id);
                         found = true;
                         return;
                     }
@@ -12452,10 +12352,10 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 if( !found ) {
 
                     // Find the id of this row into ErrorFileGrid.store and open it !
-                    ui.component.ErrorFileGrid.getInstance().store.each(function(row) {
+                    ui.cmp.ErrorFileGrid.getInstance().store.each(function(row) {
 
                         if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                            ui.component.ErrorFileGrid.getInstance().openFile(row.data.id);
+                            ui.cmp.ErrorFileGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
                         }
@@ -12466,10 +12366,10 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
                 if( !found ) {
 
                     // Find the id of this row into PendingReviewGrid.store and open it !
-                    ui.component.PendingReviewGrid.getInstance().store.each(function(row) {
+                    ui.cmp.PendingReviewGrid.getInstance().store.each(function(row) {
 
                         if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                            ui.component.PendingReviewGrid.getInstance().openFile(row.data.id);
+                            ui.cmp.PendingReviewGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
                         }
@@ -12478,29 +12378,28 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 
                 // FallBack : We open it into "All files" modules
                 if( !found ) {
-                    ui.component.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
+                    ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
                 }
 
             }
         }
 
-        if (FileType === 'delete') {
-            
-            tmp = FilePath.split('/');
+        if (FileType === 'delete')
+        {
+            tmp      = FilePath.split('/');
             FileLang = tmp[0];
             tmp.shift();
 
             FilePath = "/" + tmp.join('/');
 
             // Find the id of this row into NotInENGrid.store and open it !
-            ui.component.NotInENGrid.getInstance().store.each(function(row) {
+            ui.cmp.NotInENGrid.getInstance().store.each(function(row) {
 
                 if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                    ui.component.NotInENGrid.getInstance().openFile(row.data.id);
+                    ui.cmp.NotInENGrid.getInstance().openFile(row.data.id);
                     return;
                 }
             });
-
         }
     },
 
@@ -12508,9 +12407,9 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._PendingCommitGrid.store
+            store : ui.cmp._PendingCommitGrid.store
         });
-        ui.component.PendingCommitGrid.superclass.initComponent.call(this);
+        ui.cmp.PendingCommitGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -12545,24 +12444,23 @@ ui.component.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._PendingCommitGrid.instance = null;
-ui.component.PendingCommitGrid.getInstance = function(config)
+ui.cmp._PendingCommitGrid.instance = null;
+ui.cmp.PendingCommitGrid.getInstance = function(config)
 {
-    if (!ui.component._PendingCommitGrid.instance) {
+    if (!ui.cmp._PendingCommitGrid.instance) {
         if (!config) {
            config = {};
         }
-        ui.component._PendingCommitGrid.instance = new ui.component.PendingCommitGrid(config);
+        ui.cmp._PendingCommitGrid.instance = new ui.cmp.PendingCommitGrid(config);
     }
-    return ui.component._PendingCommitGrid.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PendingPatchGrid');
+    return ui.cmp._PendingCommitGrid.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PendingPatchGrid');
 
 //------------------------------------------------------------------------------
 // PendingPatchGrid internals
 
 // PendingPatchGrid store
-ui.component._PendingPatchGrid.store = new Ext.data.GroupingStore(
+ui.cmp._PendingPatchGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesPendingPatch'
@@ -12585,7 +12483,7 @@ ui.component._PendingPatchGrid.store = new Ext.data.GroupingStore(
         direction : 'ASC'
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         add : function(ds)
         {
             Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
@@ -12598,7 +12496,7 @@ ui.component._PendingPatchGrid.store = new Ext.data.GroupingStore(
 });
 
 // PendingPatchGrid columns definition
-ui.component._PendingPatchGrid.columns = [{
+ui.cmp._PendingPatchGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
@@ -12621,24 +12519,24 @@ ui.component._PendingPatchGrid.columns = [{
 }];
 
 // PendingPatchGrid view
-ui.component._PendingPatchGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    emptyText    : '<div style="text-align: center;">' + _('No pending patches') + '</div>',
+ui.cmp._PendingPatchGrid.view = new Ext.grid.GroupingView({
+    forceFit      : true,
+    groupTextTpl  : '{[values.rs[0].data["path"]]} ' +
+                    '({[values.rs.length]} ' +
+                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    emptyText     : '<div style="text-align: center;">' + _('No pending patches') + '</div>',
     deferEmptyText: false
 });
 
 // PendingPatchGrid context menu
 // config - { grid, rowIdx, event, fid, fpath, fname, fuid }
-ui.component._PendingPatchGrid.menu = function(config)
+ui.cmp._PendingPatchGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingPatchGrid.menu.superclass.constructor.call(this);
+    ui.cmp._PendingPatchGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingPatchGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
@@ -12672,17 +12570,17 @@ Ext.extend(ui.component._PendingPatchGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // PendingPatchGrid
-ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 {
-    columns          : ui.component._PendingPatchGrid.columns,
-    view             : ui.component._PendingPatchGrid.view,
+    columns          : ui.cmp._PendingPatchGrid.columns,
+    view             : ui.cmp._PendingPatchGrid.view,
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick: function(grid, rowIndex)
     {
         this.openFile(this.store.getAt(rowIndex).data.id);
     },
@@ -12836,7 +12734,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                             activeTab   : 0,
                             tabPosition : 'bottom',
                             defaults    : { autoScroll : true },
-                            items       : new ui.component.VCSLogGrid({
+                            items       : new ui.cmp.VCSLogGrid({
                                 layout    : 'fit',
                                 title     : _('Log'),
                                 prefix    : 'PP',
@@ -12846,7 +12744,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                                 loadStore : PhDOE.userConf.patchDisplayLog
                             })
                         }
-                    }, new ui.component.FilePanel(
+                    }, new ui.cmp.FilePanel(
                     {
                         id             : 'PP-PATCH-PANEL-' + FileID,
                         region         : 'center',
@@ -12865,7 +12763,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
                         syncScrollCB   : true,
                         syncScroll     : true,
                         syncScrollConf : 'patchScrollbars'
-                    }), new ui.component.FilePanel(
+                    }), new ui.cmp.FilePanel(
                     {
                         id             : 'PP-ORIGIN-PANEL-' + FileID,
                         region         : 'east',
@@ -12899,7 +12797,7 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        new ui.component._PendingPatchGrid.menu({
+        new ui.cmp._PendingPatchGrid.menu({
             grid   : grid,
             rowIdx : rowIndex,
             event  : e,
@@ -12914,9 +12812,9 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._PendingPatchGrid.store
+            store : ui.cmp._PendingPatchGrid.store
         });
-        ui.component.PendingPatchGrid.superclass.initComponent.call(this);
+        ui.cmp.PendingPatchGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,    this);
@@ -12924,24 +12822,23 @@ ui.component.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._PendingPatchGrid.instance = null;
-ui.component.PendingPatchGrid.getInstance = function(config)
+ui.cmp._PendingPatchGrid.instance = null;
+ui.cmp.PendingPatchGrid.getInstance = function(config)
 {
-    if (!ui.component._PendingPatchGrid.instance) {
+    if (!ui.cmp._PendingPatchGrid.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PendingPatchGrid.instance = new ui.component.PendingPatchGrid(config);
+        ui.cmp._PendingPatchGrid.instance = new ui.cmp.PendingPatchGrid(config);
     }
-    return ui.component._PendingPatchGrid.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PendingReviewGrid');
+    return ui.cmp._PendingPatchGrid.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PendingReviewGrid');
 
 //------------------------------------------------------------------------------
 // PendingReviewGrid internals
 
 // PendingReviewGrid store
-ui.component._PendingReviewGrid.store = new Ext.data.GroupingStore(
+ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesNeedReviewed'
@@ -12964,7 +12861,7 @@ ui.component._PendingReviewGrid.store = new Ext.data.GroupingStore(
         direction : 'ASC'
     },
     groupField : 'path',
-    listeners : {
+    listeners  : {
         datachanged : function(ds)
         {
             Ext.getDom('acc-need-reviewed-nb').innerHTML = ds.getCount();
@@ -12973,7 +12870,7 @@ ui.component._PendingReviewGrid.store = new Ext.data.GroupingStore(
 });
 
 // PendingReviewGrid columns definition
-ui.component._PendingReviewGrid.columns = [{
+ui.cmp._PendingReviewGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
@@ -12995,33 +12892,33 @@ ui.component._PendingReviewGrid.columns = [{
 }];
 
 // PendingReviewGrid view
-ui.component._PendingReviewGrid.view = new Ext.grid.GroupingView({
-    forceFit     : true,
+ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
+    forceFit      : true,
     startCollapsed: true,
-    groupTextTpl : '{[values.rs[0].data["path"]]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    getRowClass  : function(record)
+    groupTextTpl  : '{[values.rs[0].data["path"]]} ' +
+                    '({[values.rs.length]} ' +
+                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
+    getRowClass   : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
         }
         return false;
     },
-    deferEmptyText: false,
-    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    deferEmptyText : false,
+    emptyText      : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
-Ext.namespace('ui.component._PendingReviewGrid.menu');
+Ext.namespace('ui.cmp._PendingReviewGrid.menu');
 // PendingReviewGrid diff menu
 // config - { rowIdx, fpath, fname }
-ui.component._PendingReviewGrid.menu.diff = function(config)
+ui.cmp._PendingReviewGrid.menu.diff = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingReviewGrid.menu.diff.superclass.constructor.call(this);
+    ui.cmp._PendingReviewGrid.menu.diff.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
+Ext.extend(ui.cmp._PendingReviewGrid.menu.diff, Ext.menu.Item,
 {
     text    : _('View diff'),
     iconCls : 'iconViewDiff',
@@ -13058,9 +12955,9 @@ Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
                         FilePath : PhDOE.userLang + this.fpath,
                         FileName : this.fname
                     },
-                    success : function(response)
+                    success : function(r)
                     {
-                        var o = Ext.util.JSON.decode(response.responseText);
+                        var o = Ext.util.JSON.decode(r.responseText);
 
                         // We display in diff div
                         Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
@@ -13074,16 +12971,16 @@ Ext.extend(ui.component._PendingReviewGrid.menu.diff, Ext.menu.Item,
 
 // PendingReviewGrid refence group menu
 // config - { gname }
-ui.component._PendingReviewGrid.menu.group = function(config)
+ui.cmp._PendingReviewGrid.menu.group = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingReviewGrid.menu.group.superclass.constructor.call(this);
+    ui.cmp._PendingReviewGrid.menu.group.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
+Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item,
 {
     iconCls : 'iconViewDiff',
-    init : function()
+    init    : function()
     {
         Ext.apply(this,
         {
@@ -13104,9 +13001,9 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                         task    : 'getAllFilesAboutExtension',
                         ExtName : this.gname
                     },
-                    success : function(response)
+                    success : function(r)
                     {
-                        var o = Ext.util.JSON.decode(response.responseText);
+                        var o = Ext.util.JSON.decode(r.responseText);
 
                         PhDOE.AFfilePendingOpen = [];
 
@@ -13118,7 +13015,7 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
                         }
 
                         // Start the first
-                        ui.component.RepositoryTree.getInstance().openFile(
+                        ui.cmp.RepositoryTree.getInstance().openFile(
                             'byPath',
                             PhDOE.AFfilePendingOpen[0].fpath,
                             PhDOE.AFfilePendingOpen[0].fname
@@ -13136,56 +13033,54 @@ Ext.extend(ui.component._PendingReviewGrid.menu.group, Ext.menu.Item,
 
 // PendingReviewGrid menu
 // config - { hideDiff, hideGroup, gname, grid, rowIdx, event, fpath, fname }
-ui.component._PendingReviewGrid.menu.main = function(config)
+ui.cmp._PendingReviewGrid.menu.main = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._PendingReviewGrid.menu.main.superclass.constructor.call(this);
+    ui.cmp._PendingReviewGrid.menu.main.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingReviewGrid.menu.main, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingReviewGrid.menu.main, Ext.menu.Menu,
 {
     init : function()
     {
         Ext.apply(this,
         {
-            items : [
+            items : [{
+                text    : '<b>'+_('Edit in a new Tab')+'</b>',
+                iconCls : 'iconFilesNeedReviewed',
+                scope   : this,
+                handler : function()
                 {
-                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'iconFilesNeedReviewed',
-                    scope   : this,
-                    handler : function()
-                    {
-                        this.grid.fireEvent('rowdblclick',
-                            this.grid, this.rowIdx, this.event
-                        );
-                    }
-                }, new ui.component._PendingReviewGrid.menu.diff({
-                    fpath  : this.fpath,
-                    fname  : this.fname,
-                    rowIdx : this.rowIdx,
-                    hidden : this.hideDiff
-                }), new Ext.menu.Separator({ // Only display a separator when we display the group menu
-                    hidden : this.hideGroup
-                }), new ui.component._PendingReviewGrid.menu.group({
-                    gname  : this.gname,
-                    hidden : this.hideGroup
-                })
-            ]
+                    this.grid.fireEvent('rowdblclick',
+                        this.grid, this.rowIdx, this.event
+                    );
+                }
+            }, new ui.cmp._PendingReviewGrid.menu.diff({
+                fpath  : this.fpath,
+                fname  : this.fname,
+                rowIdx : this.rowIdx,
+                hidden : this.hideDiff
+            }), new Ext.menu.Separator({ // Only display a separator when we display the group menu
+                hidden : this.hideGroup
+            }), new ui.cmp._PendingReviewGrid.menu.group({
+                gname  : this.gname,
+                hidden : this.hideGroup
+            })]
         });
     }
 });
 
 //------------------------------------------------------------------------------
 // PendingReviewGrid
-ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     border           : false,
     autoExpandColumn : 'name',
     enableDragDrop   : true,
     ddGroup          : 'mainPanelDDGroup',
-    columns          : ui.component._PendingReviewGrid.columns,
-    view             : ui.component._PendingReviewGrid.view,
+    columns          : ui.cmp._PendingReviewGrid.columns,
+    view             : ui.cmp._PendingReviewGrid.view,
 
     onRowContextMenu: function(grid, rowIndex, e)
     {
@@ -13198,7 +13093,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        new ui.component._PendingReviewGrid.menu.main({
+        new ui.cmp._PendingReviewGrid.menu.main({
             grid      : grid,
             rowIdx    : rowIndex,
             event     : e,
@@ -13288,13 +13183,13 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         }
                     },
                     items : {
-                        xtype       : 'tabpanel',
-                        activeTab   : 0,
-                        tabPosition : 'bottom',
+                        xtype          : 'tabpanel',
+                        activeTab      : 0,
+                        tabPosition    : 'bottom',
                         enableTabScroll:true,
-                        defaults    : { autoScroll : true },
-                        items       : [
-                            new ui.component.VCSLogGrid({
+                        defaults       : { autoScroll : true },
+                        items          : [
+                            new ui.cmp.VCSLogGrid({
                                 layout    : 'fit',
                                 title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                                 prefix    : 'FNR-LANG',
@@ -13303,7 +13198,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                 fname     : FileName,
                                 loadStore : PhDOE.userConf.reviewedDisplaylog
                             }),
-                            new ui.component.VCSLogGrid({
+                            new ui.cmp.VCSLogGrid({
                                 layout    : 'fit',
                                 title     : String.format(_('{0} Log'), 'En'),
                                 prefix    : 'FNR-EN',
@@ -13312,7 +13207,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                                 fname     : FileName,
                                 loadStore : PhDOE.userConf.reviewedDisplaylog
                             }),
-                            new ui.component.DictionaryGrid({
+                            new ui.cmp.DictionaryGrid({
                                 layout    : 'fit',
                                 title     : _('Dictionary'),
                                 prefix    : 'FNR',
@@ -13320,7 +13215,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                             })
                         ]
                     }
-                }, new ui.component.FilePanel({
+                }, new ui.cmp.FilePanel({
                     id             : 'FNR-LANG-PANEL-' + FileID,
                     region         : 'center',
                     title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
@@ -13337,7 +13232,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     syncScrollCB   : true,
                     syncScroll     : true,
                     syncScrollConf : 'reviewedScrollbars'
-                }), new ui.component.FilePanel({
+                }), new ui.cmp.FilePanel({
                     id             : 'FNR-EN-PANEL-' + FileID,
                     region         : 'east',
                     title          : _('en File: ') + FilePath + FileName,
@@ -13363,8 +13258,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            store : ui.component._PendingReviewGrid.store,
-            tbar : [
+            store : ui.cmp._PendingReviewGrid.store,
+            tbar  : [
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({
                     id              : 'FNR-filter',
@@ -13373,8 +13268,8 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                     enableKeyEvents : true,
                     validateOnBlur  : false,
                     validationEvent : false,
-                    trigger1Class : 'x-form-clear-trigger',
-                    trigger2Class : 'x-form-search-trigger',
+                    trigger1Class   : 'x-form-clear-trigger',
+                    trigger2Class   : 'x-form-search-trigger',
                     listeners : {
                         keypress : function(field, e)
                         {
@@ -13388,7 +13283,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         this.setValue('');
                         this.triggers[0].hide();
                         this.setSize(180,10);
-                        ui.component._PendingReviewGrid.instance.store.clearFilter();
+                        ui.cmp._PendingReviewGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click : function()
                     {
@@ -13407,7 +13302,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                         regexp = new RegExp(v, 'i');
 
                         // We filter on 'path', 'name', 'reviewed', 'maintainer'
-                        ui.component._PendingReviewGrid.instance.store.filterBy(function(record) {
+                        ui.cmp._PendingReviewGrid.instance.store.filterBy(function(record) {
 
                             if( regexp.test(record.data.path)       ||
                                 regexp.test(record.data.name)       ||
@@ -13423,7 +13318,7 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
                 })
             ]
         });
-        ui.component.PendingReviewGrid.superclass.initComponent.call(this);
+        ui.cmp.PendingReviewGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -13431,22 +13326,21 @@ ui.component.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._PendingReviewGrid.instance = null;
-ui.component.PendingReviewGrid.getInstance = function(config)
+ui.cmp._PendingReviewGrid.instance = null;
+ui.cmp.PendingReviewGrid.getInstance = function(config)
 {
-    if (!ui.component._PendingReviewGrid.instance) {
+    if (!ui.cmp._PendingReviewGrid.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PendingReviewGrid.instance = new ui.component.PendingReviewGrid(config);
+        ui.cmp._PendingReviewGrid.instance = new ui.cmp.PendingReviewGrid(config);
     }
-    return ui.component._PendingReviewGrid.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PendingTranslateGrid');
+    return ui.cmp._PendingReviewGrid.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PendingTranslateGrid');
 
 //------------------------------------------------------------------------------
 // PendingTranslateGrid data store
-ui.component._PendingTranslateGrid.store = new Ext.data.GroupingStore(
+ui.cmp._PendingTranslateGrid.store = new Ext.data.GroupingStore(
 {
     proxy : new Ext.data.HttpProxy({
         url : './do/getFilesNeedTranslate'
@@ -13476,14 +13370,14 @@ ui.component._PendingTranslateGrid.store = new Ext.data.GroupingStore(
 });
 
 // PendingTranslateGrid view
-ui.component._PendingTranslateGrid.view = new Ext.grid.GroupingView({
+ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
     forceFit       : true,
     startCollapsed : true,
     groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
                      '({[values.rs.length]} ' +
                      '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    deferEmptyText: false,
-    getRowClass : function(record)
+    deferEmptyText : false,
+    getRowClass    : function(record)
     {
         if (record.data.needcommit) {
             return 'file-need-commit';
@@ -13494,7 +13388,7 @@ ui.component._PendingTranslateGrid.view = new Ext.grid.GroupingView({
 });
 
 // PendingTranslateGrid columns definition
-ui.component._PendingTranslateGrid.columns = [
+ui.cmp._PendingTranslateGrid.columns = [
     {
         id        : 'name',
         header    : _('Files'),
@@ -13503,19 +13397,19 @@ ui.component._PendingTranslateGrid.columns = [
     }, {
         header    : _('Path'),
         dataIndex : 'path',
-        'hidden'  : true
+        hidden    : true
     }
 ];
 
 // PendingTranslateGrid context menu
 // config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.component._PendingTranslateGrid.menu = function(config)
+ui.cmp._PendingTranslateGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
+    ui.cmp._StaleFileGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._PendingTranslateGrid.menu, Ext.menu.Menu,
+Ext.extend(ui.cmp._PendingTranslateGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
@@ -13539,9 +13433,9 @@ Ext.extend(ui.component._PendingTranslateGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // PendingTranslateGrid
-ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 {
-    view             : ui.component._PendingTranslateGrid.view,
+    view             : ui.cmp._PendingTranslateGrid.view,
     loadMask         : true,
     autoExpandColumn : 'name',
     enableDragDrop   : true,
@@ -13557,7 +13451,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 
         grid.getSelectionModel().selectRow(rowIndex);
 
-        new ui.component._PendingTranslateGrid.menu({
+        new ui.cmp._PendingTranslateGrid.menu({
             hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
             grid       : grid,
             event      : e,
@@ -13568,7 +13462,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         }).showAt(e.getXY());
     },
 
-    onRowDblClick : function(grid, rowIndex, e)
+    onRowDblClick : function(grid, rowIndex)
     {
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
@@ -13578,13 +13472,10 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName),
-            mainPanel;
+            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
-
-            mainPanel = [];
 
             Ext.getCmp('main-panel').add(
             {
@@ -13595,8 +13486,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 iconCls          : 'iconTabNeedTranslate',
                 closable         : true,
                 tabLoaded        : false,
-                panTRANSLoaded   : false, // Use to monitor if the translation panel is loaded
-                panGGTRANSLoaded : !PhDOE.userConf.newFileGGPanel, // Use to monitor if the google translation panel is loaded
+                panTRANSLoaded   : false,
+                panGGTRANSLoaded : !PhDOE.userConf.newFileGGPanel,
                 defaults         : { split : true },
                 tabTip           : String.format(
                     _('Need Translate: in {0}'), FilePath
@@ -13661,7 +13552,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         tabPosition : 'bottom',
                         defaults    : { autoScroll : true },
                         items       : [
-                            new ui.component.DictionaryGrid({
+                            new ui.cmp.DictionaryGrid({
                                 layout    : 'fit',
                                 title     : _('Dictionary'),
                                 prefix    : 'FNT',
@@ -13669,7 +13560,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                             })
                         ]
                     }
-                }, new ui.component.FilePanel(
+                }, new ui.cmp.FilePanel(
                     {
                         id             : 'FNT-TRANS-PANEL-' + FileID,
                         region         : 'center',
@@ -13690,7 +13581,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         syncScrollConf : 'newFileScrollbars'
                     }),
                     (( PhDOE.userConf.newFileGGPanel ) ?
-                    new ui.component.FilePanel(
+                    new ui.cmp.FilePanel(
                     {
                         id             : 'FNT-GGTRANS-PANEL-' + FileID,
                         region         : 'east',
@@ -13719,8 +13610,8 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
     {
         Ext.apply(this,
         {
-            columns : ui.component._PendingTranslateGrid.columns,
-            store   : ui.component._PendingTranslateGrid.store,
+            columns : ui.cmp._PendingTranslateGrid.columns,
+            store   : ui.cmp._PendingTranslateGrid.store,
             tbar:[
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({
@@ -13745,7 +13636,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         this.setValue('');
                         this.triggers[0].hide();
                         this.setSize(180,10);
-                        ui.component._PendingTranslateGrid.instance.store.clearFilter();
+                        ui.cmp._PendingTranslateGrid.instance.store.clearFilter();
                     },
                     onTrigger2Click: function()
                     {
@@ -13764,7 +13655,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                         regexp = new RegExp(v, 'i');
 
                         // We filter on 'path' and 'name'
-                        ui.component._PendingTranslateGrid.instance.store.filterBy(function(record) {
+                        ui.cmp._PendingTranslateGrid.instance.store.filterBy(function(record) {
 
                             if( regexp.test(record.data.path) || regexp.test(record.data.name) ) {
                                 return true;
@@ -13776,7 +13667,7 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
                 })
             ]
         });
-        ui.component.PendingTranslateGrid.superclass.initComponent.call(this);
+        ui.cmp.PendingTranslateGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -13784,68 +13675,55 @@ ui.component.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._PendingTranslateGrid.instance = null;
-ui.component.PendingTranslateGrid.getInstance = function(config)
+ui.cmp._PendingTranslateGrid.instance = null;
+ui.cmp.PendingTranslateGrid.getInstance = function(config)
 {
-    if (!ui.component._PendingTranslateGrid.instance) {
+    if (!ui.cmp._PendingTranslateGrid.instance) {
         if (!config) {
            config = {};
         }
-        ui.component._PendingTranslateGrid.instance = new ui.component.PendingTranslateGrid(config);
+        ui.cmp._PendingTranslateGrid.instance = new ui.cmp.PendingTranslateGrid(config);
     }
-    return ui.component._PendingTranslateGrid.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PortletBugs');
+    return ui.cmp._PendingTranslateGrid.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletBugs');
 
 //------------------------------------------------------------------------------
 // PortletBugs internals
 
 // Store : All open bugs for documentation
-ui.component._PortletBugs.store = new Ext.data.Store({
+ui.cmp._PortletBugs.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getOpenBugs'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'title',
-                mapping : 'title'
-            }, {
-                name    : 'link',
-                mapping : 'link'
-            }, {
-                name    : 'description',
-                mapping : 'description'
-            }, {
-                name    : 'xmlID',
-                mapping : 'xmlID'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'title'},
+            {name : 'link' },
+            {name : 'description' },
+            {name : 'xmlID' }
+        ]
+    })
 });
 
-ui.component._PortletBugs.gridFormatTitle = function(value) {
-    return String.format('<div class="topic"><b>{0}</b></div>', value);
+ui.cmp._PortletBugs.gridFormatTitle = function(v) {
+    return String.format('<div class="topic"><b>{0}</b></div>', v);
 };
 
 // BugsGrid columns definition
-ui.component._PortletBugs.gridColumns = [{
+ui.cmp._PortletBugs.gridColumns = [{
     id        : 'GridBugTitle',
     header    : _("Title"),
     sortable  : true,
     dataIndex : 'title',
-    renderer  : ui.component._PortletBugs.gridFormatTitle
+    renderer  : ui.cmp._PortletBugs.gridFormatTitle
 }];
 
 
-ui.component._PortletBugs.gridView = new Ext.grid.GridView({
+ui.cmp._PortletBugs.gridView = new Ext.grid.GridView({
     forceFit      : true,
     emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '</div>',
     deferEmptyText: false,
@@ -13863,19 +13741,19 @@ ui.component._PortletBugs.gridView = new Ext.grid.GridView({
 
 //------------------------------------------------------------------------------
 // BugsGrid
-ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
     height           : 250,
     autoExpandColumn : 'GridBugTitle',
     id               : 'PortletBugs-grid-id',
-    store            : ui.component._PortletBugs.store,
-    columns          : ui.component._PortletBugs.gridColumns,
-    view             : ui.component._PortletBugs.gridView,
+    store            : ui.cmp._PortletBugs.store,
+    columns          : ui.cmp._PortletBugs.gridColumns,
+    view             : ui.cmp._PortletBugs.gridView,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick : function(grid, rowIndex)
     {
         var BugsId    = grid.store.getAt(rowIndex).data.id,
             BugsUrl   = grid.store.getAt(rowIndex).data.link,
@@ -13897,7 +13775,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         Ext.getCmp('main-panel').setActiveTab('bugs-' + BugsId);
     },
 
-    openRelatedFile: function(xmlID)
+    openRelatedFile : function(xmlID)
     {
         new ui.task.GetFileInfoByXmlID({xmlID: xmlID});
     },
@@ -13924,7 +13802,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
                     handler : function()
                     {
                         this.ctxIndex = null;
-                        ui.component._PortletBugs.reloadData();
+                        ui.cmp._PortletBugs.reloadData();
                     }
                 }, {
                     scope   : this,
@@ -13981,7 +13859,7 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
             }
         }];
 
-        ui.component._PortletBugs.grid.superclass.initComponent.call(this);
+        ui.cmp._PortletBugs.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onContextClick, this);
@@ -13990,15 +13868,15 @@ ui.component._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component._PortletBugs.reloadData = function() {
-    ui.component._PortletBugs.store.reload({
-        callback: function(r,o,success) {
+ui.cmp._PortletBugs.reloadData = function() {
+    ui.cmp._PortletBugs.store.reload({
+        callback : function(r,o,success) {
           if( !success ) {
               Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading open bugs from Php.net !') + '</div>');
               Ext.get('PortletBugs-grid-defaultMess-id').highlight();
 
           } else {
-              if (ui.component._PortletBugs.store.getTotalCount() === 0 ) {
+              if (ui.cmp._PortletBugs.store.getTotalCount() === 0 ) {
                   Ext.getCmp('PortletBugs-grid-id').getView().mainBody.update('<div id="PortletBugs-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">'+_('No open bugs')+'</div>');
                   Ext.get('PortletBugs-grid-defaultMess-id').highlight();
               }
@@ -14009,23 +13887,23 @@ ui.component._PortletBugs.reloadData = function() {
 
 //------------------------------------------------------------------------------
 // PortletSummary
-ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
 {
-    title   : '',
-    iconCls : 'iconBugs',
-    id      : 'portletBugs',
-    layout  : 'fit',
-    store   : ui.component._PortletBugs.store,
-    reloadData : ui.component._PortletBugs.reloadData,
-    tools   : [{
+    title      : '',
+    iconCls    : 'iconBugs',
+    id         : 'portletBugs',
+    layout     : 'fit',
+    store      : ui.cmp._PortletBugs.store,
+    reloadData : ui.cmp._PortletBugs.reloadData,
+    tools      : [{
         id      : 'refresh',
         qtip    : _('Refresh this grid'),
         handler : function() {
-            ui.component._PortletBugs.reloadData();
+            ui.cmp._PortletBugs.reloadData();
         }
     }],
-    listeners: {
-        expand: function(p) {
+    listeners : {
+        expand : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
@@ -14034,7 +13912,7 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        collapse: function(p) {
+        collapse : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
@@ -14043,7 +13921,7 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        afterrender: function(cmp) {
+        afterrender : function(cmp) {
             if( PhDOE.userConf.portletBugsCollapsed ) {
                 cmp.collapse();
             } else {
@@ -14054,75 +13932,62 @@ ui.component.PortletBugs = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config) {
 
-        ui.component.PortletBugs.superclass.initComponent.call(this);
+        ui.cmp.PortletBugs.superclass.initComponent.call(this);
         Ext.apply(this, config);
         this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
-        this.add(new ui.component._PortletBugs.grid());
+        this.add(new ui.cmp._PortletBugs.grid());
 
     }
 });
 
 // singleton
-ui.component._PortletBugs.instance = null;
-ui.component.PortletBugs.getInstance = function(config)
+ui.cmp._PortletBugs.instance = null;
+ui.cmp.PortletBugs.getInstance = function(config)
 {
-    if (!ui.component._PortletBugs.instance) {
+    if (!ui.cmp._PortletBugs.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletBugs.instance = new ui.component.PortletBugs(config);
+        ui.cmp._PortletBugs.instance = new ui.cmp.PortletBugs(config);
     }
-    return ui.component._PortletBugs.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PortletInfo');
+    return ui.cmp._PortletBugs.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletInfo');
 
 //------------------------------------------------------------------------------
 // PortletInfo Internals
 
 // Store : storeInfo
-ui.component._PortletInfo.store = new Ext.data.Store({
+ui.cmp._PortletInfo.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getInfos'
     }),
     baseParams : {
-        start:0,
-        limit:10
+        start : 0,
+        limit : 10
     },
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'field',
-                mapping : 'field'
-            }, {
-                name    : 'value',
-                mapping : 'value'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y-m-d H:i:s'
-            }
-        ])
-    ),
-    listeners: {
-        load: function(s)
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'field'},
+            {name : 'value'},
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s' }
+        ]
+    }),
+    listeners : {
+        load : function(s)
         {
             var d = s.data.items[0].data.date;
             PhDOE.lastInfoDate = d.format("Y-m-d H:i:s");
         }
     }
 });
-ui.component._PortletInfo.store.setDefaultSort('date', 'desc');
+ui.cmp._PortletInfo.store.setDefaultSort('date', 'desc');
 
 // PortletInfo cell renderer for type column
-ui.component._PortletInfo.typeRenderer = function(value, md, record)
+ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 {
     var user, lang, nbFolders, nbFilesCreate, nbFilesDelete, nbFilesUpdate, nbFiles;
 
@@ -14203,14 +14068,14 @@ ui.component._PortletInfo.typeRenderer = function(value, md, record)
 };
 
 // PortletInfo grid's columns definition
-ui.component._PortletInfo.gridColumns = [
+ui.cmp._PortletInfo.gridColumns = [
     new Ext.grid.RowNumberer(), {
         id        : 'Type',
         header    : _('Type'),
         width     : 180,
         sortable  : true,
         dataIndex : 'field',
-        renderer  : ui.component._PortletInfo.typeRenderer
+        renderer  : ui.cmp._PortletInfo.typeRenderer
     }, {
         header    : _('Date'),
         width     : 110,
@@ -14222,17 +14087,17 @@ ui.component._PortletInfo.gridColumns = [
 
 //------------------------------------------------------------------------------
 // PortletInfo grid
-ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 {
     autoExpandColumn : 'Type',
-    loadMask   : true,
-    autoScroll : true,
-    autoHeight : true,
-    store      : ui.component._PortletInfo.store,
-    columns    : ui.component._PortletInfo.gridColumns,
-    view       : ui.component._PortletInfo.gridView,
+    loadMask         : true,
+    autoScroll       : true,
+    autoHeight       : true,
+    store            : ui.cmp._PortletInfo.store,
+    columns          : ui.cmp._PortletInfo.gridColumns,
+    view             : ui.cmp._PortletInfo.gridView,
 
-    initComponent: function(config)
+    initComponent : function()
     {
         
         Ext.apply(this, {
@@ -14243,7 +14108,7 @@ ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
             })
         });
         
-        ui.component._PortletInfo.grid.superclass.initComponent.call(this);
+        ui.cmp._PortletInfo.grid.superclass.initComponent.call(this);
         
         this.on('rowdblclick', this.onRowdblclick, this);
     }
@@ -14251,22 +14116,22 @@ ui.component._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 
 //------------------------------------------------------------------------------
 // PortletInfo
-ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Information'),
     id      : 'portletInfo',
     iconCls : 'iconInfo',
     layout  : 'fit',
-    store   : ui.component._PortletInfo.store,
+    store   : ui.cmp._PortletInfo.store,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this grid'),
-        handler: function() {
-            ui.component._PortletInfo.store.reload();
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
+            ui.cmp._PortletInfo.store.reload();
         }
     }],
-    listeners: {
-        expand: function(p) {
+    listeners : {
+        expand : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
@@ -14275,7 +14140,7 @@ ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        collapse: function(p) {
+        collapse : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
@@ -14284,7 +14149,7 @@ ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        afterrender: function(cmp) {
+        afterrender : function(cmp) {
             if( PhDOE.userConf.portletInfoCollapsed ) {
                 cmp.collapse();
             } else {
@@ -14295,67 +14160,53 @@ ui.component.PortletInfo = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.component.PortletInfo.superclass.initComponent.call(this);
+        ui.cmp.PortletInfo.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.add(new ui.component._PortletInfo.grid());
+        this.add(new ui.cmp._PortletInfo.grid());
 
     }
 });
 
 // singleton
-ui.component._PortletInfo.instance = null;
-ui.component.PortletInfo.getInstance = function(config)
+ui.cmp._PortletInfo.instance = null;
+ui.cmp.PortletInfo.getInstance = function(config)
 {
-    if (!ui.component._PortletInfo.instance) {
+    if (!ui.cmp._PortletInfo.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletInfo.instance = new ui.component.PortletInfo(config);
+        ui.cmp._PortletInfo.instance = new ui.cmp.PortletInfo(config);
     }
-    return ui.component._PortletInfo.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PortletLocalMail');
+    return ui.cmp._PortletInfo.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletLocalMail');
 
 //------------------------------------------------------------------------------
 // PortletLocalMail internals
 
 // Store : Mailing with Informations about phpdoc-LANG mailing
-ui.component._PortletLocalMail.store = new Ext.data.Store({
+ui.cmp._PortletLocalMail.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getLastNews'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'title',
-                mapping : 'title'
-            }, {
-                name    : 'link',
-                mapping : 'link'
-            }, {
-                name    : 'description',
-                mapping : 'description'
-            }, {
-                name       : 'pubDate',
-                mapping    : 'pubDate',
-                type       : 'date',
-                dateFormat : 'Y/m/d H:i:s'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'title'},
+            {name : 'link'},
+            {name : 'description'},
+            {name : 'pubDate', type : 'date',dateFormat : 'Y-m-d H:i:s' }
+        ]
+
+    })
 });
-ui.component._PortletLocalMail.store.setDefaultSort('pubDate', 'desc');
+ui.cmp._PortletLocalMail.store.setDefaultSort('pubDate', 'desc');
 
 // PortletLocalMail columns definition
-ui.component._PortletLocalMail.columns = [
+ui.cmp._PortletLocalMail.columns = [
     new Ext.grid.RowNumberer(), {
         id        : 'GridMailingTitle',
         header    : _('Title'),
@@ -14377,15 +14228,15 @@ ui.component._PortletLocalMail.columns = [
 
 //------------------------------------------------------------------------------
 // _PortletLocalMail
-ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
     height           : 250,
     autoExpandColumn : 'GridMailingTitle',
     id               : 'PortletLocalMail-grid-id',
-    store            : ui.component._PortletLocalMail.store,
-    columns          : ui.component._PortletLocalMail.columns,
+    store            : ui.cmp._PortletLocalMail.store,
+    columns          : ui.cmp._PortletLocalMail.columns,
     sm               : new Ext.grid.RowSelectionModel({ singleSelect: true }),
 
     view             : new Ext.grid.GridView({
@@ -14396,7 +14247,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                            deferEmptyText: false
                        }),
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick : function(grid, rowIndex)
     {
         var MailId    = grid.store.getAt(rowIndex).data.pubDate,
             MailUrl   = grid.store.getAt(rowIndex).data.link,
@@ -14418,7 +14269,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
         Ext.getCmp('main-panel').setActiveTab('mail-' + MailId);
     },
 
-    onContextClick: function(grid, rowIndex, e)
+    onContextClick : function(grid, rowIndex, e)
     {
         if(!this.menu) {
             this.menu = new Ext.menu.Menu({
@@ -14439,7 +14290,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
                     handler : function()
                     {
                         this.ctxIndex = null;
-                        ui.component._PortletLocalMail.reloadData();
+                        ui.cmp._PortletLocalMail.reloadData();
                     }
                 }]
             });
@@ -14459,7 +14310,7 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function(config)
     {
-        ui.component._PortletLocalMail.grid.superclass.initComponent.call(this);
+        ui.cmp._PortletLocalMail.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.on('rowcontextmenu', this.onContextClick, this);
@@ -14467,10 +14318,10 @@ ui.component._PortletLocalMail.grid = Ext.extend(Ext.grid.GridPanel,
     }
 });
 
-ui.component._PortletLocalMail.reloadData = function() {
-    ui.component._PortletLocalMail.store.reload({
-        callback: function(r,o,success) {
-          if( !success ) {
+ui.cmp._PortletLocalMail.reloadData = function() {
+    ui.cmp._PortletLocalMail.store.reload({
+        callback: function(r,o,s) {
+          if( !s ) {
               Ext.getCmp('PortletLocalMail-grid-id').getView().mainBody.update('<div id="PortletLocalMail-grid-defaultMess-id" style="text-align: center" class="x-grid-empty">' + _('Error when loading mails from this mailing list !') + '</div>');
               Ext.get('PortletLocalMail-grid-defaultMess-id').highlight();
 
@@ -14481,23 +14332,23 @@ ui.component._PortletLocalMail.reloadData = function() {
 
 //------------------------------------------------------------------------------
 // PortletLocalMail
-ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 {
-    title   : '',
-    iconCls : 'iconMailing',
-    id      : 'portletLocalMail',
-    layout  : 'fit',
-    store   : ui.component._PortletLocalMail.store,
-    reloadData : ui.component._PortletLocalMail.reloadData,
-    tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this grid'),
-        handler: function() {
-            ui.component._PortletLocalMail.reloadData();
+    title      : '',
+    iconCls    : 'iconMailing',
+    id         : 'portletLocalMail',
+    layout     : 'fit',
+    store      : ui.cmp._PortletLocalMail.store,
+    reloadData : ui.cmp._PortletLocalMail.reloadData,
+    tools      : [{
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
+            ui.cmp._PortletLocalMail.reloadData();
         }
     }],
-    listeners: {
-        expand: function(p) {
+    listeners : {
+        expand : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
@@ -14506,7 +14357,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        collapse: function(p) {
+        collapse : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
@@ -14515,7 +14366,7 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        afterrender: function(cmp) {
+        afterrender : function(cmp) {
             if( PhDOE.userConf.portletLocalMailCollapsed ) {
                 cmp.collapse();
             } else {
@@ -14526,63 +14377,48 @@ ui.component.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.component.PortletLocalMail.superclass.initComponent.call(this);
+        ui.cmp.PortletLocalMail.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
         this.title = String.format(_('Mail from {0}'), 'doc-' + this.lang);
-        this.add(new ui.component._PortletLocalMail.grid());
+        this.add(new ui.cmp._PortletLocalMail.grid());
     }
 });
 
 // singleton
-ui.component._PortletLocalMail.instance = null;
-ui.component.PortletLocalMail.getInstance = function(config)
+ui.cmp._PortletLocalMail.instance = null;
+ui.cmp.PortletLocalMail.getInstance = function(config)
 {
-    if (!ui.component._PortletLocalMail.instance) {
+    if (!ui.cmp._PortletLocalMail.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletLocalMail.instance = new ui.component.PortletLocalMail(config);
+        ui.cmp._PortletLocalMail.instance = new ui.cmp.PortletLocalMail(config);
     }
-    return ui.component._PortletLocalMail.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PortletSummary');
+    return ui.cmp._PortletLocalMail.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletSummary');
 
 //------------------------------------------------------------------------------
 // PortletSummary Internals
 
 // Store : storeSummary with Informations like Revcheck second table
-ui.component._PortletSummary.store = new Ext.data.Store({
+ui.cmp._PortletSummary.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getSummaryInfo'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'libel',
-                mapping : 'libel'
-            }, {
-                name    : 'nbFiles',
-                mapping : 'nbFiles'
-            }, {
-                name    : 'percentFiles',
-                mapping : 'percentFiles'
-            }, {
-                name    : 'sizeFiles',
-                mapping : 'sizeFiles'
-            }, {
-                name    : 'percentSize',
-                mapping : 'percentSize'
-            }
-        ])
-    ),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'libel'},
+            {name : 'nbFiles'},
+            {name : 'percentFiles'},
+            {name : 'sizeFiles'},
+            {name : 'percentSize'}
+        ]
+    }),
     listeners : {
         load : function()
         {
@@ -14602,7 +14438,7 @@ ui.component._PortletSummary.store = new Ext.data.Store({
 });
 
 // PortletSummary grid's columns definition
-ui.component._PortletSummary.gridColumns = [
+ui.cmp._PortletSummary.gridColumns = [
     new Ext.grid.RowNumberer(), {
         id        : 'StatusType',
         header    : _('File status type'),
@@ -14633,10 +14469,10 @@ ui.component._PortletSummary.gridColumns = [
 ];
 
 // PortletSummary gridview
-ui.component._PortletSummary.gridView = new Ext.grid.GridView({
-    getRowClass : function(record)
+ui.cmp._PortletSummary.gridView = new Ext.grid.GridView({
+    getRowClass : function(r)
     {
-        switch (record.data.id) {
+        switch (r.data.id) {
             case 1: return 'summary_1';
             case 2: return 'summary_2';
             case 3: return 'summary_3';
@@ -14648,14 +14484,14 @@ ui.component._PortletSummary.gridView = new Ext.grid.GridView({
 
 //------------------------------------------------------------------------------
 // PortletSummary grid
-ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask   : true,
     autoScroll : true,
     autoHeight : true,
-    store      : ui.component._PortletSummary.store,
-    columns    : ui.component._PortletSummary.gridColumns,
-    view       : ui.component._PortletSummary.gridView,
+    store      : ui.cmp._PortletSummary.store,
+    columns    : ui.cmp._PortletSummary.gridColumns,
+    view       : ui.cmp._PortletSummary.gridView,
 
     onRowdblclick : function ( grid, rowIndex )
     {
@@ -14673,7 +14509,7 @@ ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
     },
     initComponent: function(config)
     {
-        ui.component._PortletSummary.grid.superclass.initComponent.call(this);
+        ui.cmp._PortletSummary.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
         this.on('rowdblclick', this.onRowdblclick, this);
     }
@@ -14681,22 +14517,22 @@ ui.component._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
 
 //------------------------------------------------------------------------------
 // PortletSummary
-ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Summary'),
     iconCls : '',
     id      : 'portletSummary',
     layout  : 'fit',
-    store   : ui.component._PortletSummary.store,
+    store   : ui.cmp._PortletSummary.store,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this grid'),
-        handler: function() {
-            ui.component._PortletSummary.store.reload();
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
+            ui.cmp._PortletSummary.store.reload();
         }
     }],
-    listeners: {
-        expand: function(p) {
+    listeners : {
+        expand : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
@@ -14705,7 +14541,7 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        collapse: function(p) {
+        collapse : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
@@ -14716,18 +14552,18 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent: function(config)
+    initComponent : function(config)
     {
-        ui.component.PortletSummary.superclass.initComponent.call(this);
+        ui.cmp.PortletSummary.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.add(new ui.component._PortletSummary.grid());
+        this.add(new ui.cmp._PortletSummary.grid());
 
     },
 
-    afterRender: function()
+    afterRender : function()
     {
-        ui.component.PortletSummary.superclass.afterRender.call(this);
+        ui.cmp.PortletSummary.superclass.afterRender.call(this);
 
         this.header.insertFirst({
             tag   : 'div',
@@ -14745,78 +14581,68 @@ ui.component.PortletSummary = Ext.extend(Ext.ux.Portlet,
 });
 
 // singleton
-ui.component._PortletSummary.instance = null;
-ui.component.PortletSummary.getInstance = function(config)
+ui.cmp._PortletSummary.instance = null;
+ui.cmp.PortletSummary.getInstance = function(config)
 {
-    if (!ui.component._PortletSummary.instance) {
+    if (!ui.cmp._PortletSummary.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletSummary.instance = new ui.component.PortletSummary(config);
+        ui.cmp._PortletSummary.instance = new ui.cmp.PortletSummary(config);
     }
-    return ui.component._PortletSummary.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._PortletTranslationGraph');
+    return ui.cmp._PortletSummary.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationGraph');
 
 function renderLibel(v) {
  return _(v);
 }
 
-ui.component._PortletTranslationGraph.store = new Ext.data.Store({
+ui.cmp._PortletTranslationGraph.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getGraphLang'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'libel',
-                mapping : 'libel',
-                convert : renderLibel
-            }, {
-                name    : 'total',
-                mapping : 'total'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'libel', convert : renderLibel},
+            {name : 'total'}
+        ]
+
+    })
 });
 
-ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
+ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 {
-
-    height: 400,
-    url : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
-    dataField: 'total',
-    categoryField: 'libel',
-    store: ui.component._PortletTranslationGraph.store,
-    series:[{
-        style: {
-            colors: ["#68D888", "#FF6347", "#EEE8AA"]
+    height        : 400,
+    url           : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    dataField     : 'total',
+    categoryField : 'libel',
+    store         : ui.cmp._PortletTranslationGraph.store,
+    series        :[{
+        style : {
+            colors : ["#68D888", "#FF6347", "#EEE8AA"]
         }
     }],
-    extraStyle:
+    extraStyle :
     {
-        legend:
+        legend :
         {
-            display: 'bottom',
-            padding: 5,
-            font:
+            display : 'bottom',
+            padding : 5,
+            font    :
             {
-                family: 'Tahoma',
-                size: 13
+                family : 'Tahoma',
+                size   : 13
             }
          }
     },
 
     initComponent : function(config)
     {
-        ui.component._PortletTranslationGraph.chart.superclass.initComponent.call(this);
+        ui.cmp._PortletTranslationGraph.chart.superclass.initComponent.call(this);
         Ext.apply(this, config);
     }
 
@@ -14824,82 +14650,66 @@ ui.component._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 
 //------------------------------------------------------------------------------
 // PortletTranslationGraph
-ui.component.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics'),
     id      : 'portletTranslationGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
-    store   : ui.component._PortletTranslationGraph.store,
+    store   : ui.cmp._PortletTranslationGraph.store,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this graph'),
-        handler: function() {
-            ui.component._PortletTranslationGraph.store.reload();
+        id      : 'refresh',
+        qtip    : _('Refresh this graph'),
+        handler : function() {
+            ui.cmp._PortletTranslationGraph.store.reload();
         }
     }],
     initComponent : function(config)
     {
-        ui.component.PortletTranslationGraph.superclass.initComponent.call(this);
+        ui.cmp.PortletTranslationGraph.superclass.initComponent.call(this);
         Ext.apply(this, config);
-        this.add(new ui.component._PortletTranslationGraph.chart());
+        this.add(new ui.cmp._PortletTranslationGraph.chart());
     }
 
 });
 
 // singleton
-ui.component._PortletTranslationGraph.instance = null;
-ui.component.PortletTranslationGraph.getInstance = function(config)
+ui.cmp._PortletTranslationGraph.instance = null;
+ui.cmp.PortletTranslationGraph.getInstance = function(config)
 {
-    if (!ui.component._PortletTranslationGraph.instance) {
+    if (!ui.cmp._PortletTranslationGraph.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletTranslationGraph.instance = new ui.component.PortletTranslationGraph(config);
+        ui.cmp._PortletTranslationGraph.instance = new ui.cmp.PortletTranslationGraph(config);
     }
-    return ui.component._PortletTranslationGraph.instance;
-};Ext.namespace('ui','ui.component','ui.component._PortletTranslationsGraph');
+    return ui.cmp._PortletTranslationGraph.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationsGraph');
 
-ui.component._PortletTranslationsGraph.store = new Ext.data.Store({
+ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url : './do/getGraphLangs'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'libel',
-                mapping : 'libel',
-                type    : 'string'
-            }, {
-                name    : 'fullLibel',
-                mapping : 'fullLibel',
-                type    : 'string'
-            }, {
-                name    : 'total',
-                mapping : 'total',
-                type    : 'int'
-            }, {
-                name    : 'percent',
-                mapping : 'percent',
-                type    : 'float'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'libel',     type : 'string'},
+            {name : 'fullLibel', type : 'string'},
+            {name : 'total',     type : 'int'},
+            {name : 'percent',   type : 'float'}
+        ]
+    })
 });
 
-ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
+ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 {
-    height : 400,
-    url    : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
-    xField : 'libel',
-    tipRenderer : function(chart, record, index, series){
+    height      : 400,
+    url         : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    xField      : 'libel',
+    tipRenderer : function(chart, record){
         return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
     },
 
@@ -14907,17 +14717,17 @@ ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
         type        : 'column',
         displayName : 'Total',
         yField      : 'total',
-        style : {
+        style       : {
             image :'themes/img/bar.gif',
             mode  : 'stretch',
             color : 0x99BBE8
         }
     }],
-    store : ui.component._PortletTranslationsGraph.store,
+    store : ui.cmp._PortletTranslationsGraph.store,
 
     initComponent : function(config)
     {
-        ui.component._PortletTranslationsGraph.chart.superclass.initComponent.call(this);
+        ui.cmp._PortletTranslationsGraph.chart.superclass.initComponent.call(this);
         Ext.apply(this, config);
     }
 
@@ -14925,94 +14735,74 @@ ui.component._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 
 //------------------------------------------------------------------------------
 // PortletTranslationGraph
-ui.component.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics for all languages'),
     id      : 'portletTranslationsGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
-    store   : ui.component._PortletTranslationsGraph.store,
+    store   : ui.cmp._PortletTranslationsGraph.store,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this graph'),
-        handler: function() {
-            ui.component._PortletTranslationsGraph.store.reload();
+        id      : 'refresh',
+        qtip    : _('Refresh this graph'),
+        handler : function() {
+            ui.cmp._PortletTranslationsGraph.store.reload();
         }
     }],
     initComponent : function(config)
     {
-        ui.component.PortletTranslationsGraph.superclass.initComponent.call(this);
+        ui.cmp.PortletTranslationsGraph.superclass.initComponent.call(this);
         Ext.apply(this, config);
-        this.add(new ui.component._PortletTranslationsGraph.chart());
+        this.add(new ui.cmp._PortletTranslationsGraph.chart());
     }
 
 });
 
 // singleton
-ui.component._PortletTranslationsGraph.instance = null;
-ui.component.PortletTranslationsGraph.getInstance = function(config)
+ui.cmp._PortletTranslationsGraph.instance = null;
+ui.cmp.PortletTranslationsGraph.getInstance = function(config)
 {
-    if (!ui.component._PortletTranslationsGraph.instance) {
+    if (!ui.cmp._PortletTranslationsGraph.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletTranslationsGraph.instance = new ui.component.PortletTranslationsGraph(config);
+        ui.cmp._PortletTranslationsGraph.instance = new ui.cmp.PortletTranslationsGraph(config);
     }
-    return ui.component._PortletTranslationsGraph.instance;
-};Ext.namespace('ui','ui.component','ui.component._PortletTranslator');
+    return ui.cmp._PortletTranslationsGraph.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslator');
 
 //------------------------------------------------------------------------------
 // PortletTranslator internals
 
 // Store : Translator with Informations like Revcheck first table
-ui.component._PortletTranslator.store = new Ext.data.Store({
+ui.cmp._PortletTranslator.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
         url: './do/getTranslatorInfo'
     }),
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'name',
-                mapping : 'name'
-            }, {
-                name    : 'email',
-                mapping : 'mail'
-            }, {
-                name    : 'nick',
-                mapping : 'nick'
-            }, {
-                name    : 'vcs',
-                mapping : 'vcs'
-            }, {
-                name    : 'uptodate',
-                mapping : 'uptodate',
-                type    : 'int'
-            }, {
-                name    : 'stale',
-                mapping : 'stale',
-                type    : 'int'
-            }, {
-                name    : 'sum',
-                mapping : 'sum',
-                type    : 'int'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'name'},
+            {name : 'email',    mapping : 'mail'},
+            {name : 'nick'},
+            {name : 'vcs'},
+            {name : 'uptodate', type : 'int'},
+            {name : 'stale',    type : 'int'},
+            {name : 'sum',      type : 'int' }
+        ]
+
+    })
 });
-ui.component._PortletTranslator.store.setDefaultSort('nick', 'asc');
+ui.cmp._PortletTranslator.store.setDefaultSort('nick', 'asc');
 
 // PortletTranslator cell renderer for translator count
-ui.component._PortletTranslator.translatorSumRenderer = function(value)
+ui.cmp._PortletTranslator.translatorSumRenderer = function(v)
 {
-    if (value) {
-        var v = (value === 0 || value > 1) ? value : 1;
+    if (v) {
+        var v = (v === 0 || v > 1) ? v : 1;
         return String.format('('+_('{0} Translators')+')', v);
     } else {
         return false;
@@ -15020,40 +14810,40 @@ ui.component._PortletTranslator.translatorSumRenderer = function(value)
 };
 
 // PortletTranslator cell renderer for up-to-date column
-ui.component._PortletTranslator.uptodateRenderer = function(value)
+ui.cmp._PortletTranslator.uptodateRenderer = function(v)
 {
-    if (value === '0') {
+    if (v === '0') {
         return false;
     } else {
-        return '<span style="color:green; font-weight: bold;">' + value + '</span>';
+        return '<span style="color:green; font-weight: bold;">' + v + '</span>';
     }
 };
 
 // PortletTranslator cell renderer for stale column
-ui.component._PortletTranslator.staleRenderer = function(value)
+ui.cmp._PortletTranslator.staleRenderer = function(v)
 {
-    if (value === '0') {
+    if (v === '0') {
         return false;
     } else {
-        return '<span style="color:red; font-weight: bold;">' + value + '</span>';
+        return '<span style="color:red; font-weight: bold;">' + v + '</span>';
     }
 };
 
 // PortletTranslator cell renderer for sum column
-ui.component._PortletTranslator.sumRenderer = function(value)
+ui.cmp._PortletTranslator.sumRenderer = function(v)
 {
-    return (value === '0') ? '' : value;
+    return (v === '0') ? '' : v;
 };
 
 // PortletTranslator columns definition
-ui.component._PortletTranslator.gridColumns = [
+ui.cmp._PortletTranslator.gridColumns = [
     new Ext.grid.RowNumberer(), {
         id              : 'GridTransName',
         header          : _('Name'),
         sortable        : true,
         dataIndex       : 'name',
         summaryType     : 'count',
-        summaryRenderer : ui.component._PortletTranslator.translatorSumRenderer
+        summaryRenderer : ui.cmp._PortletTranslator.translatorSumRenderer
     }, {
         header    : _('Email'),
         width     : 110,
@@ -15073,21 +14863,21 @@ ui.component._PortletTranslator.gridColumns = [
         header      : _('UptoDate'),
         width       : 60,
         sortable    : true,
-        renderer    : ui.component._PortletTranslator.uptodateRenderer,
+        renderer    : ui.cmp._PortletTranslator.uptodateRenderer,
         dataIndex   : 'uptodate',
         summaryType : 'sum'
     }, {
         header      : _('Stale'),
         width       : 90,
         sortable    : true,
-        renderer    : ui.component._PortletTranslator.staleRenderer,
+        renderer    : ui.cmp._PortletTranslator.staleRenderer,
         dataIndex   : 'stale',
         summaryType : 'sum'
     }, {
         header      : _('Sum'),
         width       : 50,
         sortable    : true,
-        renderer    : ui.component._PortletTranslator.sumRenderer,
+        renderer    : ui.cmp._PortletTranslator.sumRenderer,
         dataIndex   : 'sum',
         summaryType : 'sum'
     }
@@ -15095,18 +14885,18 @@ ui.component._PortletTranslator.gridColumns = [
 
 //------------------------------------------------------------------------------
 // PortletTranslator
-ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
     autoHeight       : true,
     plugins          : [new Ext.ux.grid.GridSummary()],
-    store            : ui.component._PortletTranslator.store,
-    columns          : ui.component._PortletTranslator.gridColumns,
+    store            : ui.cmp._PortletTranslator.store,
+    columns          : ui.cmp._PortletTranslator.gridColumns,
     autoExpandColumn : 'GridTransName',
     sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     lang             : this.lang,
-    EmailPrompt      : new ui.component.EmailPrompt(),
+    EmailPrompt      : new ui.cmp.EmailPrompt(),
 
     onRowDblClick : function(grid, rowIndex)
     {
@@ -15171,7 +14961,7 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
         var nick  = this.store.getAt(rowIndex).data.nick;
 
         // Don't open the contextMenu if the user is "nobody"
-        if( nick == 'nobody' ) {
+        if( nick === 'nobody' ) {
             return;
         }
 
@@ -15184,7 +14974,7 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent: function(config)
     {
-        ui.component._PortletTranslator.grid.superclass.initComponent.call(this);
+        ui.cmp._PortletTranslator.grid.superclass.initComponent.call(this);
         Ext.apply(this, config);
         this.on('rowcontextmenu', this.onContextClick, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -15193,22 +14983,22 @@ ui.component._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
 
 //------------------------------------------------------------------------------
 // PortletTranslator
-ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
+ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Translators'),
     iconCls : 'iconTranslator',
     id      : 'portletTranslator',
     layout  : 'fit',
-    store   : ui.component._PortletTranslator.store,
+    store   : ui.cmp._PortletTranslator.store,
     tools   : [{
-        id : 'refresh',
-        qtip: _('Refresh this grid'),
-        handler: function() {
-            ui.component._PortletTranslator.store.reload();
+        id      : 'refresh',
+        qtip    : _('Refresh this grid'),
+        handler : function() {
+            ui.cmp._PortletTranslator.store.reload();
         }
     }],
-    listeners: {
-        expand: function(p) {
+    listeners : {
+        expand : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
@@ -15217,7 +15007,7 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        collapse: function(p) {
+        collapse : function() {
             if( PhDOE.appLoaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
@@ -15226,7 +15016,7 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
                 });
             }
         },
-        afterrender: function(cmp) {
+        afterrender : function(cmp) {
             if( PhDOE.userConf.portletTranslatorCollapsed ) {
                 cmp.collapse();
             } else {
@@ -15235,35 +15025,34 @@ ui.component.PortletTranslator = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent: function(config) {
+    initComponent : function(config) {
 
-        ui.component.PortletTranslator.superclass.initComponent.call(this);
+        ui.cmp.PortletTranslator.superclass.initComponent.call(this);
         Ext.apply(this, config);
 
-        this.add(new ui.component._PortletTranslator.grid({lang: this.lang}));
+        this.add(new ui.cmp._PortletTranslator.grid({lang: this.lang}));
 
     }
 });
 
 // singleton
-ui.component._PortletTranslator.instance = null;
-ui.component.PortletTranslator.getInstance = function(config)
+ui.cmp._PortletTranslator.instance = null;
+ui.cmp.PortletTranslator.getInstance = function(config)
 {
-    if (!ui.component._PortletTranslator.instance) {
+    if (!ui.cmp._PortletTranslator.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._PortletTranslator.instance = new ui.component.PortletTranslator(config);
+        ui.cmp._PortletTranslator.instance = new ui.cmp.PortletTranslator(config);
     }
-    return ui.component._PortletTranslator.instance;
-};
-Ext.namespace('ui','ui.component','ui.component._RepositoryTree');
+    return ui.cmp._PortletTranslator.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._RepositoryTree');
 
 //------------------------------------------------------------------------------
 // RepositoryTree internals
 
 // RepositoryTree root node
-ui.component._RepositoryTree.root = {
+ui.cmp._RepositoryTree.root = {
     nodeType  : 'async',
     id        : '/',
     text      : _('Repository'),
@@ -15271,12 +15060,12 @@ ui.component._RepositoryTree.root = {
 };
 
 // RepositoryTree default tree loader
-ui.component._RepositoryTree.loader = new Ext.tree.TreeLoader({
+ui.cmp._RepositoryTree.loader = new Ext.tree.TreeLoader({
     dataUrl : './do/getAllFiles'
 });
 
 // RepositoryTree : window to add a new file
-ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
+ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
 {
     title      : _('Add a new file'),
     iconCls    : 'iconFilesNeedTranslate',
@@ -15288,9 +15077,9 @@ ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelWidth : 150,
-    buttons : [{
-        id   : 'win-add-new-file-btn',
-        text : _('Open the editor'),
+    buttons    : [{
+        id      : 'win-add-new-file-btn',
+        text    : _('Open the editor'),
         disabled: true,
         handler : function()
         {
@@ -15320,7 +15109,6 @@ ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
                     needcommit: false,
                     node: this.node
                 }
-
             }, // simulate a needCommit option to fit with the classic comportement of FNT panel
             t = FilePath.split('/'), FileLang;
 
@@ -15356,7 +15144,7 @@ ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
                 tabTip           : String.format(
                     _('New file: in {0}'), FileLang+FilePath
                 ),
-                items : [new ui.component.FilePanel(
+                items : [new ui.cmp.FilePanel(
                     {
                         id             : 'FNT-NEW-PANEL-' + FileID,
                         region         : 'center',
@@ -15394,41 +15182,36 @@ ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
                 xtype      : 'textfield',
                 fieldLabel : _('Name for the new file'),
                 name       : 'newFolderName',
-                listeners: {
-                    valid: function()
+                listeners  : {
+                    valid : function()
                     {
                         Ext.getCmp('win-add-new-file-btn').enable();
                     },
-                    invalid: function()
+                    invalid : function()
                     {
                         Ext.getCmp('win-add-new-file-btn').disable();
                     }
                 }
             }, {
-                xtype: 'combo',
-                triggerAction: 'all',
-                width: 160,
-                editable: false,
-                store: new Ext.data.Store({
+                xtype         : 'combo',
+                triggerAction : 'all',
+                width         : 160,
+                editable      : false,
+                store         : new Ext.data.Store({
                     proxy : new Ext.data.HttpProxy({
                         url : './do/getSkeletonsNames'
                     }),
-                    reader : new Ext.data.JsonReader(
-                        {
-                            root      : 'Items',
-                            idProperty: 'name'
-                        }, Ext.data.Record.create([
-                            {
-                                name    : 'name'
-                            },
-                            {
-                                name    : 'path'
-                            }
-                        ])
-                    )
+                    reader : new Ext.data.JsonReader({
+                        root      : 'Items',
+                        idProperty: 'name',
+                        fields    : [
+                            {name : 'name'},
+                            {name : 'path'}
+                        ]
+                    })
                 }),
-                listeners: {
-                    select: function(c, r, n)
+                listeners : {
+                    select : function(c, r, n)
                     {
                         // If we haven't set any name for this file, we put the name of the skeleton
                         if( c.ownerCt.items.items[1].getValue() === "" ) {
@@ -15442,12 +15225,12 @@ ui.component._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
                 fieldLabel   : _('Chose a skeleton')
             }]
         });
-        ui.component._RepositoryTree.winAddNewFile.superclass.initComponent.call(this);
+        ui.cmp._RepositoryTree.winAddNewFile.superclass.initComponent.call(this);
     }
 });
 
 // RepositoryTree : window to add a new folder
-ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
+ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
 {
     title      : _('Add a new folder'),
     iconCls    : 'iconFolderNew',
@@ -15459,9 +15242,9 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelWidth : 150,
-    buttons : [{
-        id   : 'win-add-new-folder-btn',
-        text : 'Add',
+    buttons    : [{
+        id      : 'win-add-new-folder-btn',
+        text    : 'Add',
         disabled: true,
         handler : function()
         {
@@ -15483,8 +15266,6 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
 
                     // Notify
                     PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !'), newFolderName, parentFolder));
-
-
                 },
                 failure : function(r)
                 {
@@ -15504,7 +15285,7 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            items: [{
+            items : [{
                 xtype      : 'displayfield',
                 fieldLabel : _('Parent Folder'),
                 value      : this.node.id
@@ -15513,12 +15294,12 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
                 fieldLabel : _('Name for the new folder'),
                 name       : 'newFolderName',
                 vtype      : 'alphanum',
-                listeners: {
-                    valid: function()
+                listeners  : {
+                    valid : function()
                     {
                         Ext.getCmp('win-add-new-folder-btn').enable();
                     },
-                    invalid: function()
+                    invalid : function()
                     {
                         Ext.getCmp('win-add-new-folder-btn').disable();
                     }
@@ -15528,20 +15309,20 @@ ui.component._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
                 html  : _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
             }]
         });
-        ui.component._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
+        ui.cmp._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
     }
 });
 
-Ext.namespace('ui.component._RepositoryTree.menu');
+Ext.namespace('ui.cmp._RepositoryTree.menu');
 // RepositoryTree folder context menu
 // config - { node }
-ui.component._RepositoryTree.menu.folder = function(config)
+ui.cmp._RepositoryTree.menu.folder = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._RepositoryTree.menu.folder.superclass.constructor.call(this);
+    ui.cmp._RepositoryTree.menu.folder.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
+Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu,
 {
     init : function()
     {
@@ -15585,7 +15366,7 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
                     this.node.expand();
 
                     // We display the Add New Folder window
-                    var win = new ui.component._RepositoryTree.winAddNewFolder({node : this.node});
+                    var win = new ui.cmp._RepositoryTree.winAddNewFolder({node : this.node});
                     win.show(this.node.ui.getEl());
                 }
             }, {
@@ -15601,7 +15382,7 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
                     this.node.expand();
 
                     // We display the Add New Folder window
-                    var win = new ui.component._RepositoryTree.winAddNewFile({node : this.node});
+                    var win = new ui.cmp._RepositoryTree.winAddNewFile({node : this.node});
                     win.show(this.node.ui.getEl());
                 }
             }]
@@ -15611,13 +15392,13 @@ Ext.extend(ui.component._RepositoryTree.menu.folder, Ext.menu.Menu,
 
 // RepositoryTree file context menu
 // config - { node }
-ui.component._RepositoryTree.menu.file = function(config)
+ui.cmp._RepositoryTree.menu.file = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._RepositoryTree.menu.file.superclass.constructor.call(this);
+    ui.cmp._RepositoryTree.menu.file.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
+Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu,
 {
     init : function()
     {
@@ -15640,7 +15421,7 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                 scope   : this,
                 handler : function()
                 {
-                    ui.component._RepositoryTree.instance.fireEvent('dblclick', this.node);
+                    ui.cmp._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
                 hidden  : (this.node.attributes.from === 'search' || PhDOE.userLang == 'en' ),
@@ -15650,13 +15431,13 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
                 handler : function()
                 {
                     if (FileLang === 'en') {
-                        ui.component._RepositoryTree.instance.openFile(
+                        ui.cmp._RepositoryTree.instance.openFile(
                             'byPath',
                             PhDOE.userLang + '/' + FilePath,
                             FileName
                         );
                     } else {
-                        ui.component._RepositoryTree.instance.openFile(
+                        ui.cmp._RepositoryTree.instance.openFile(
                             'byPath',
                             'en/' + FilePath,
                             FileName
@@ -15670,7 +15451,7 @@ Ext.extend(ui.component._RepositoryTree.menu.file, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // RepositoryTree
-ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
+ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
 {
     animate         : true,
     enableDD        : true,
@@ -15679,26 +15460,26 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
     autoScroll      : true,
     border          : false,
     containerScroll : true,
-    root            : ui.component._RepositoryTree.root,
-    loader          : ui.component._RepositoryTree.loader,
+    root            : ui.cmp._RepositoryTree.root,
+    loader          : ui.cmp._RepositoryTree.loader,
 
-    onContextMenu : function(node, e)
+    onContextMenu   : function(node, e)
     {
         e.stopEvent();
         node.select();
 
         if (node.attributes.type === 'folder' || node.isRoot) {
-            new ui.component._RepositoryTree.menu.folder({
+            new ui.cmp._RepositoryTree.menu.folder({
                 node : node
             }).showAt(e.getXY());
         } else if (node.attributes.type === 'file') {
-            new ui.component._RepositoryTree.menu.file({
+            new ui.cmp._RepositoryTree.menu.file({
                 node : node
             }).showAt(e.getXY());
         }
     },
 
-    onDblClick : function(node, e)
+    onDblClick : function(node)
     {
         if (node.attributes.type === 'file') // files only
         {
@@ -15710,7 +15491,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
         }
     },
 
-    openFile: function(ftype, first, second)
+    openFile : function(ftype, first, second)
     {
         // Here, first argument is fpath and second, fname
         if( ftype === 'byPath' )
@@ -15793,20 +15574,20 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                 } else {
 
                     panelWest = {
-                        xtype       : 'panel',
-                        region      : 'west',
-                        title       : _('Tools'),
-                        iconCls     : 'iconConf',
+                        xtype            : 'panel',
+                        region           : 'west',
+                        title            : _('Tools'),
+                        iconCls          : 'iconConf',
                         collapsedIconCls : 'iconConf',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        split       : true,
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.allFilesDisplaylogPanel,
-                        width       : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
-                        listeners   : {
-                            collapse: function() {
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        layout           : 'fit',
+                        bodyBorder       : false,
+                        split            : true,
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        width            : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                        listeners        : {
+                            collapse : function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanel',
@@ -15815,7 +15596,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                     });
                                 }
                             },
-                            expand: function() {
+                            expand : function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanel',
@@ -15824,7 +15605,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                     });
                                 }
                             },
-                            resize: function(a,newWidth) {
+                            resize : function(a,newWidth) {
                                 if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'allFilesDisplaylogPanelWidth',
@@ -15834,14 +15615,14 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                 }
                             }
                         },
-                        items       : {
+                        items : {
                             xtype       : 'tabpanel',
                             activeTab   : 0,
                             defaults    : {autoScroll: true},
                             items       : [{
                                 title  : _('Log'),
                                 layout : 'fit',
-                                items  : [new ui.component.VCSLogGrid({
+                                items  : [new ui.cmp.VCSLogGrid({
                                     prefix    : 'AF',
                                     fid       : FileID,
                                     fpath     : FileLang + FilePath,
@@ -15851,7 +15632,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                             }, {
                                 title  : _('Entities'),
                                 layout : 'fit',
-                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                items  : [new ui.cmp.EntitiesAcronymsPanel({
                                     dataType  : 'entities',
                                     prefix    : 'AF',
                                     ftype     : 'ALL',
@@ -15861,7 +15642,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                             }, {
                                 title  : _('Acronyms'),
                                 layout : 'fit',
-                                items  : [new ui.component.EntitiesAcronymsPanel({
+                                items  : [new ui.cmp.EntitiesAcronymsPanel({
                                     dataType  : 'acronyms',
                                     prefix    : 'AF',
                                     ftype     : 'ALL',
@@ -15872,7 +15653,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                         }
                     };
 
-                    panelCenter = new ui.component.FilePanel({
+                    panelCenter = new ui.cmp.FilePanel({
                         id             : 'AF' + '-ALL-PANEL-' + FileID,
                         region         : 'center',
                         title          : _('File: ') + FileLang + FilePath + FileName,
@@ -15936,7 +15717,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     },
                     onTrigger1Click : function()
                     {
-                        var instance = ui.component._RepositoryTree.instance;
+                        var instance = ui.cmp._RepositoryTree.instance;
                         this.setValue('');
                         this.triggers[0].hide();
                         this.setSize(180,10);
@@ -15948,7 +15729,7 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                     },
                     onTrigger2Click: function()
                     {
-                        var instance = ui.component._RepositoryTree.instance,
+                        var instance = ui.cmp._RepositoryTree.instance,
                             v        = this.getValue();
 
                         if( v === '' || v.length < 3) {
@@ -15971,12 +15752,11 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                                 )
                             );
                         });
-
                     }
                 })
             ]
         });
-        ui.component.RepositoryTree.superclass.initComponent.call(this);
+        ui.cmp.RepositoryTree.superclass.initComponent.call(this);
 
         this.on('contextmenu', this.onContextMenu, this);
         this.on('dblclick',    this.onDblClick,  this);
@@ -15988,75 +15768,75 @@ ui.component.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
 });
 
 // singleton
-ui.component._RepositoryTree.instance = null;
-ui.component.RepositoryTree.getInstance = function(config)
+ui.cmp._RepositoryTree.instance = null;
+ui.cmp.RepositoryTree.getInstance = function(config)
 {
-    if (!ui.component._RepositoryTree.instance) {
+    if (!ui.cmp._RepositoryTree.instance) {
         if (!config) {
             config = {};
         }
-        ui.component._RepositoryTree.instance = new ui.component.RepositoryTree(config);
+        ui.cmp._RepositoryTree.instance = new ui.cmp.RepositoryTree(config);
     }
-    return ui.component._RepositoryTree.instance;
-};Ext.namespace('ui','ui.component','ui.component._StaleFileGrid');
+    return ui.cmp._RepositoryTree.instance;
+};Ext.namespace('ui','ui.cmp','ui.cmp._StaleFileGrid');
 
 //------------------------------------------------------------------------------
 // StaleFileGrid data store
 
-ui.component._StaleFileGrid.store = new Ext.data.GroupingStore(
+ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore(
 {
-            proxy : new Ext.data.HttpProxy({
-                url : './do/getFilesNeedUpdate'
-            }),
-            reader : new Ext.data.JsonReader({
-                root          : 'Items',
-                totalProperty : 'nbItems',
-                idProperty    : 'id',
-                fields        : [
-                    {name : 'id'},
-                    {name : 'path'},
-                    {name : 'name'},
-                    {name : 'revision'},
-                    {name : 'original_revision'},
-                    {name : 'en_revision'},
-                    {name : 'maintainer'},
-                    {name : 'needCommitEN'},
-                    {name : 'needCommitLang'}
-                ]
-            }),
-            sortInfo : {
-                field     : 'name',
-                direction : 'ASC'
-            },
-            groupField : 'path',
-            listeners  : {
-                datachanged : function(ds)
-                {
-                    Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
-                }
-            }
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getFilesNeedUpdate'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'path'},
+            {name : 'name'},
+            {name : 'revision'},
+            {name : 'original_revision'},
+            {name : 'en_revision'},
+            {name : 'maintainer'},
+            {name : 'needCommitEN'},
+            {name : 'needCommitLang'}
+        ]
+    }),
+    sortInfo : {
+        field     : 'name',
+        direction : 'ASC'
+    },
+    groupField : 'path',
+    listeners  : {
+        datachanged : function(ds)
+        {
+            Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
+        }
+    }
 });
 
 // StaleFileGrid view
-ui.component._StaleFileGrid.view = new Ext.grid.GroupingView({
+ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
     forceFit       : true,
     startCollapsed : true,
     groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
                      '({[values.rs.length]} ' +
                      '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText : false,
-    getRowClass    : function(record)
+    getRowClass    : function(r)
     {
-        if (record.data.needCommitEN || record.data.needCommitLang) {
+        if (r.data.needCommitEN || r.data.needCommitLang) {
             return 'file-need-commit';
         }
         return false;
     },
-    emptyText      : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
 // StaleFileGrid columns definition
-ui.component._StaleFileGrid.columns = [
+ui.cmp._StaleFileGrid.columns = [
     {
         id        : 'name',
         header    : _('Files'),
@@ -16086,13 +15866,14 @@ ui.component._StaleFileGrid.columns = [
 
 // StaleFileGrid context menu
 // config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.component._StaleFileGrid.menu = function(config)
+ui.cmp._StaleFileGrid.menu = function(config)
 {
     Ext.apply(this, config);
     this.init();
-    ui.component._StaleFileGrid.menu.superclass.constructor.call(this);
+    ui.cmp._StaleFileGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
+
+Ext.extend(ui.cmp._StaleFileGrid.menu, Ext.menu.Menu,
 {
     init : function()
     {
@@ -16169,9 +15950,9 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
                     FilePath : lang + fpath,
                     FileName : fname
                 },
-                success : function(response)
+                success : function(r)
                 {
-                    var o = Ext.util.JSON.decode(response.responseText);
+                    var o = Ext.util.JSON.decode(r.responseText);
                     // We display in diff div
                     Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
 
@@ -16188,9 +15969,9 @@ Ext.extend(ui.component._StaleFileGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // StaleFileGrid
-ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 {
-    view             : ui.component._StaleFileGrid.view,
+    view             : ui.cmp._StaleFileGrid.view,
     loadMask         : true,
     autoExpandColumn : 'name',
     border           : false,
@@ -16206,7 +15987,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 
         this.getSelectionModel().selectRow(rowIndex);
 
-        new ui.component._StaleFileGrid.menu({
+        new ui.cmp._StaleFileGrid.menu({
             hideCommit : (this.store.getAt(rowIndex).data.needCommitEN === false && this.store.getAt(rowIndex).data.needCommitLang === false),
             grid       : this,
             event      : e,
@@ -16217,7 +15998,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         }).showAt(e.getXY());
     },
 
-    onRowDblClick: function(grid, rowIndex, e)
+    onRowDblClick: function(grid, rowIndex)
     {
         this.openFile(this.store.getAt(rowIndex).data.id);
     },
@@ -16237,9 +16018,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
 
             if (PhDOE.userConf.needUpdateDiff === "using-viewvc") {
-                diff = ui.component.ViewVCDiff;
+                diff = ui.cmp.ViewVCDiff;
             } else if (PhDOE.userConf.needUpdateDiff === "using-exec") {
-                diff = ui.component.ExecDiff;
+                diff = ui.cmp.ExecDiff;
             }
 
             Ext.getCmp('main-panel').add(
@@ -16253,9 +16034,9 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 tabLoaded      : false,
                 panVCSLang     : !PhDOE.userConf.needUpdateDisplaylog,
                 panVCSEn       : !PhDOE.userConf.needUpdateDisplaylog,
-                panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"), // Use to monitor if the Diff panel is loaded
-                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
-                panENLoaded    : false, // Use to monitor if the EN panel is loaded
+                panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"),
+                panLANGLoaded  : false,
+                panENLoaded    : false,
                 defaults       : { split : true },
                 tabTip         : String.format(
                     _('Need Update: in {0}'), FilePath
@@ -16308,19 +16089,19 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             }
                         }
                     }), {
-                        region      : 'west',
-                        xtype       : 'panel',
-                        title       : _('Tools'),
-                        iconCls     : 'iconConf',
+                        region           : 'west',
+                        xtype            : 'panel',
+                        title            : _('Tools'),
+                        iconCls          : 'iconConf',
                         collapsedIconCls : 'iconConf',
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.needUpdateDisplaylogPanel,
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        width       : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
-                        listeners: {
-                            collapse: function() {
+                        collapsible      : true,
+                        collapsed        : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        layout           : 'fit',
+                        bodyBorder       : false,
+                        plugins          : [Ext.ux.PanelCollapsedTitle],
+                        width            : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                        listeners        : {
+                            collapse : function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanel',
@@ -16329,7 +16110,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     });
                                 }
                             },
-                            expand: function() {
+                            expand : function() {
                                 if ( this.ownerCt.tabLoaded ) {
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanel',
@@ -16338,7 +16119,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     });
                                 }
                             },
-                            resize: function(a,newWidth) {
+                            resize : function(a,newWidth) {
                                 if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
                                         item  : 'needUpdateDisplaylogPanelWidth',
@@ -16348,14 +16129,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 }
                             }
                         },
-                        items       : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            tabPosition : 'bottom',
-                            enableTabScroll:true,
-                            defaults    : { autoScroll: true },
-                            items       : [
-                                new ui.component.VCSLogGrid({
+                        items : {
+                            xtype           : 'tabpanel',
+                            activeTab       : 0,
+                            tabPosition     : 'bottom',
+                            enableTabScroll : true,
+                            defaults        : { autoScroll: true },
+                            items           : [
+                                new ui.cmp.VCSLogGrid({
                                     layout    : 'fit',
                                     title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
                                     prefix    : 'FNU-LANG',
@@ -16364,7 +16145,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.needUpdateDisplaylog
                                 }),
-                                new ui.component.VCSLogGrid({
+                                new ui.cmp.VCSLogGrid({
                                     layout    : 'fit',
                                     title     : String.format(_('{0} Log'), 'En'),
                                     prefix    : 'FNU-EN',
@@ -16373,7 +16154,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                     fname     : FileName,
                                     loadStore : PhDOE.userConf.needUpdateDisplaylog
                                 }),
-                                new ui.component.DictionaryGrid({
+                                new ui.cmp.DictionaryGrid({
                                     layout    : 'fit',
                                     title     : _('Dictionary'),
                                     prefix    : 'FNU',
@@ -16381,7 +16162,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                                 })
                             ]
                         }
-                    }, new ui.component.FilePanel(
+                    }, new ui.cmp.FilePanel(
                     {
                         id             : 'FNU-LANG-PANEL-' + FileID,
                         region         : 'center',
@@ -16399,7 +16180,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         syncScrollCB   : true,
                         syncScroll     : true,
                         syncScrollConf : 'needUpdateScrollbars'
-                    }), new ui.component.FilePanel(
+                    }), new ui.cmp.FilePanel(
                     {
                         id             : 'FNU-EN-PANEL-' + FileID,
                         region         : 'east',
@@ -16425,14 +16206,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        ui.component._StaleFileGrid.columns[2].header = String.format(
+        ui.cmp._StaleFileGrid.columns[2].header = String.format(
             _('{0} revision'), Ext.util.Format.uppercase(PhDOE.userLang)
         );
 
         Ext.apply(this,
         {
-            columns : ui.component._StaleFileGrid.columns,
-            store   : ui.component._StaleFileGrid.store,
+            columns : ui.cmp._StaleFileGrid.columns,
+            store   : ui.cmp._StaleFileGrid.store,
             tbar:[
                 _('Filter: '), ' ',
                 new Ext.form.TwinTriggerField({
@@ -16444,7 +16225,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                     validationEvent : false,
                     trigger1Class   : 'x-form-clear-trigger',
                     trigger2Class   : 'x-form-search-trigger',
-                    listeners : {
+                    listeners       : {
                         specialkey : function(field, e)
                         {
                             if (e.getKey() == e.ENTER) {
@@ -16452,14 +16233,14 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                             }
                         }
                     },
-                    onTrigger1Click: function()
+                    onTrigger1Click : function()
                     {
                         this.setValue('');
                         this.triggers[0].hide();
                         this.setSize(180,10);
-                        ui.component._StaleFileGrid.instance.store.clearFilter();
+                        ui.cmp._StaleFileGrid.instance.store.clearFilter();
                     },
-                    onTrigger2Click: function()
+                    onTrigger2Click : function()
                     {
                         var v = this.getValue(), regexp;
 
@@ -16476,7 +16257,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                         regexp = new RegExp(v, 'i');
 
                         // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
-                        ui.component._StaleFileGrid.instance.store.filterBy(function(record) {
+                        ui.cmp._StaleFileGrid.instance.store.filterBy(function(record) {
 
                             if( regexp.test(record.data.path)        ||
                                 regexp.test(record.data.name)        ||
@@ -16493,7 +16274,7 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
                 })
             ]
         });
-        ui.component.StaleFileGrid.superclass.initComponent.call(this);
+        ui.cmp.StaleFileGrid.superclass.initComponent.call(this);
 
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick',    this.onRowDblClick,  this);
@@ -16501,19 +16282,19 @@ ui.component.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
 });
 
 // singleton
-ui.component._StaleFileGrid.instance = null;
-ui.component.StaleFileGrid.getInstance = function(config)
+ui.cmp._StaleFileGrid.instance = null;
+ui.cmp.StaleFileGrid.getInstance = function(config)
 {
-    if (!ui.component._StaleFileGrid.instance) {
+    if (!ui.cmp._StaleFileGrid.instance) {
         if (!config) {
            config = {};
         }
-        ui.component._StaleFileGrid.instance = new ui.component.StaleFileGrid(config);
+        ui.cmp._StaleFileGrid.instance = new ui.cmp.StaleFileGrid(config);
     }
-    return ui.component._StaleFileGrid.instance;
-};Ext.namespace('ui','ui.component');
+    return ui.cmp._StaleFileGrid.instance;
+};Ext.namespace('ui','ui.cmp');
 
-ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
+ui.cmp.SystemUpdatePrompt = Ext.extend(Ext.Window,
 {
     id        : 'sys-update-win',
     title     : _('Refresh all data'),
@@ -16548,51 +16329,36 @@ ui.component.SystemUpdatePrompt = Ext.extend(Ext.Window,
             Ext.getCmp('btn-start-refresh').disable();
 
             // Disable the close button for this win
-             this.ownerCt.ownerCt.tools.close.setVisible(false);
+            this.ownerCt.ownerCt.tools.close.setVisible(false);
 
             new ui.task.SystemUpdateTask();
         }
     }]
-});
-Ext.namespace('ui','ui.component','ui.component._VCSLogGrid');
+});Ext.namespace('ui','ui.cmp','ui.cmp._VCSLogGrid');
 
 //------------------------------------------------------------------------------
 // VCSLogGrid internals
 
 // VCSLogGrid log information store
-ui.component._VCSLogGrid.store = Ext.extend(Ext.data.Store,
+ui.cmp._VCSLogGrid.store = Ext.extend(Ext.data.Store,
 {
-    reader : new Ext.data.JsonReader(
-        {
-            root          : 'Items',
-            totalProperty : 'nbItems',
-            id            : 'id'
-        }, Ext.data.Record.create([
-            {
-                name    : 'id',
-                mapping : 'id'
-            }, {
-                name    : 'revision',
-                mapping : 'revision'
-            }, {
-                name       : 'date',
-                mapping    : 'date',
-                type       : 'date',
-                dateFormat : 'Y/m/d H:i:s'
-            }, {
-                name    : 'author',
-                mapping : 'author'
-            }, {
-                name    : 'content',
-                mapping : 'content'
-            }
-        ])
-    )
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'revision'},
+            {name : 'date', type : 'date',dateFormat : 'Y-m-d H:i:s' },
+            {name : 'author'},
+            {name : 'content'}
+        ]
+    })
 });
 
 // VCSLogGrid selection model
 // config - {fid}
-ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
+ui.cmp._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
 {
     singleSelect : false,
     header       : '',
@@ -16631,7 +16397,7 @@ ui.component._VCSLogGrid.sm = Ext.extend(Ext.grid.CheckboxSelectionModel,
 });
 
 // VCSLogGrid columns definition
-ui.component._VCSLogGrid.columns = [
+ui.cmp._VCSLogGrid.columns = [
     {
         id        : 'id',
         header    : _('Rev.'),
@@ -16660,7 +16426,7 @@ ui.component._VCSLogGrid.columns = [
 //------------------------------------------------------------------------------
 // VCSLogGrid
 // config - {prefix, fid, fpath, fname, loadStore}
-ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
+ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
 {
     loadMask         : true,
     autoScroll       : true,
@@ -16670,11 +16436,11 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
 
     initComponent : function()
     {
-        var sm = new ui.component._VCSLogGrid.sm({
+        var sm = new ui.cmp._VCSLogGrid.sm({
             fid    : this.fid,
             prefix : this.prefix
         }),
-        store = new ui.component._VCSLogGrid.store({
+        store = new ui.cmp._VCSLogGrid.store({
             autoLoad : this.loadStore,
             proxy : new Ext.data.HttpProxy({
                 url : './do/getLog'
@@ -16734,8 +16500,8 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
         columns = [];
 
         columns.push(sm);
-        for (var i = 0; i < ui.component._VCSLogGrid.columns.length; ++i) {
-            columns.push(ui.component._VCSLogGrid.columns[i]);
+        for (var i = 0; i < ui.cmp._VCSLogGrid.columns.length; ++i) {
+            columns.push(ui.cmp._VCSLogGrid.columns[i]);
         }
 
         store.setDefaultSort('date', 'desc');
@@ -16750,7 +16516,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
                 deferEmptyText: false
             }),
-            tbar  : [{
+            tbar : [{
                 scope   : this,
                 id      : this.prefix + '-PANEL-btn-refreshlog-' + this.fid,
                 tooltip : _('<b>Load/Refresh</b> revisions'),
@@ -16765,7 +16531,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 tooltip  : _('<b>View</b> the diff'),
                 iconCls  : 'iconViewDiff',
                 disabled : true,
-                handler : function()
+                handler  : function()
                 {
                     var s    = this.getSelectionModel().getSelections(),
                         rev1 = s[0].data.revision,
@@ -16799,7 +16565,7 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                                 autoScroll : true,
                                 bodyStyle  : 'background-color: white; padding: 5px;',
                                 html       : '<div class="diff-content">' + o.content + '</div>',
-                                buttons : [{
+                                buttons    : [{
                                     text    : _('Close'),
                                     handler : function()
                                     {
@@ -16813,21 +16579,21 @@ ui.component.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 }
             }]
         });
-        ui.component.VCSLogGrid.superclass.initComponent.call(this);
+        ui.cmp.VCSLogGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.component');
+});Ext.namespace('ui','ui.cmp');
 
 // ViewVCDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
-ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
+ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
 {
-    layout    : 'fit',
-    title     : _('Diff From VCS'),
-    iconCls   : 'iconDiffView',
+    layout           : 'fit',
+    title            : _('Diff From VCS'),
+    iconCls          : 'iconDiffView',
     collapsedIconCls : 'iconDiffView',
-    plugins    : [Ext.ux.PanelCollapsedTitle],
+    plugins          : [Ext.ux.PanelCollapsedTitle],
 
-    initComponent : function()
+    initComponent    : function()
     {
         Ext.apply(this,
         {
@@ -16835,17 +16601,17 @@ ui.component.ViewVCDiff = Ext.extend(Ext.Panel,
                 id         : this.prefix + '-diff-' + this.fid,
                 xtype      : 'panel',
                 layout     : 'fit',
-                items: [ new Ext.ux.IFrameComponent({
-                             id  : 'frame-' + this.prefix + '-diff-' + this.fid,
-                             url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
-                         })
+                items      : [
+                    new Ext.ux.IFrameComponent({
+                        id  : 'frame-' + this.prefix + '-diff-' + this.fid,
+                        url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
+                    })
                 ]
             }
         });
-        ui.component.ViewVCDiff.superclass.initComponent.call(this);
+        ui.cmp.ViewVCDiff.superclass.initComponent.call(this);
     }
-});
-var PhDOE = function()
+});var PhDOE = function()
 {
     Ext.QuickTips.init();
 
@@ -16938,7 +16704,7 @@ var PhDOE = function()
         runDirectAccess: function()
         {
             if (directAccess) {
-                ui.component.RepositoryTree.getInstance().openFile(
+                ui.cmp.RepositoryTree.getInstance().openFile(
                     directAccess.lang + directAccess.path,
                     directAccess.name
                 );
@@ -16946,7 +16712,7 @@ var PhDOE = function()
         },
 
         // All we want to do after all dataStore are loaded
-        afterLoadAllStore: function()
+        afterLoadAllStore : function()
         {
             this.appLoaded = true;
 
@@ -16956,15 +16722,15 @@ var PhDOE = function()
             //Load external data
             // Mails ?
             if( this.userConf.mainAppLoadMailsAtStartUp ) {
-                ui.component.PortletLocalMail.getInstance().reloadData();
+                ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
             if( this.userConf.mainAppLoadBugsAtStartUp ) {
-                ui.component.PortletBugs.getInstance().reloadData();
+                ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
 
-        loadAllStore: function()
+        loadAllStore : function()
         {
             var progressBar = new Ext.ProgressBar({
                     width:300,
@@ -16978,43 +16744,43 @@ var PhDOE = function()
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
                 progressBar.updateProgress(1/13, '1 of 13...');
-                ui.component._MainMenu.store.load({
+                ui.cmp._MainMenu.store.load({
                     callback: function() {
                         progressBar.updateProgress(2/13, '2 of 13...');
-                        ui.component.StaleFileGrid.getInstance().store.load({
+                        ui.cmp.StaleFileGrid.getInstance().store.load({
                             callback: function() {
                                 progressBar.updateProgress(3/13, '3 of 13...');
-                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                ui.cmp.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
                                         progressBar.updateProgress(4/13, '4 of 13...');
-                                        ui.component.PendingReviewGrid.getInstance().store.load({
+                                        ui.cmp.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
                                                 progressBar.updateProgress(5/13, '5 of 13...');
-                                                ui.component.NotInENGrid.getInstance().store.load({
+                                                ui.cmp.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
                                                         progressBar.updateProgress(6/13, '6 of 13...');
-                                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
                                                             callback: function() {
                                                                 progressBar.updateProgress(7/13, '7 of 13...');
-                                                                ui.component.PendingPatchGrid.getInstance().store.load({
+                                                                ui.cmp.PendingPatchGrid.getInstance().store.load({
                                                                     callback: function() {
                                                                         progressBar.updateProgress(8/13, '8 of 13...');
-                                                                        ui.component.PortletSummary.getInstance().store.load({
+                                                                        ui.cmp.PortletSummary.getInstance().store.load({
                                                                             callback: function() {
                                                                                 progressBar.updateProgress(9/13, '9 of 13...');
-                                                                                ui.component.PortletTranslationGraph.getInstance().store.load({
+                                                                                ui.cmp.PortletTranslationGraph.getInstance().store.load({
                                                                                     callback: function() {
                                                                                         progressBar.updateProgress(10/13, '10 of 13...');
-                                                                                        ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                                                                        ui.cmp.PortletTranslationsGraph.getInstance().store.load({
                                                                                             callback: function() {
                                                                                                 progressBar.updateProgress(11/13, '11 of 13...');
-                                                                                                ui.component.PortletTranslator.getInstance().store.load({
+                                                                                                ui.cmp.PortletTranslator.getInstance().store.load({
                                                                                                     callback: function() {
                                                                                                         progressBar.updateProgress(12/13, '12 of 13...');
-                                                                                                        ui.component.PendingTranslateGrid.getInstance().store.load({
+                                                                                                        ui.cmp.PendingTranslateGrid.getInstance().store.load({
                                                                                                             callback: function() {
                                                                                                                 progressBar.updateProgress(13/13, '13 of 13...');
-                                                                                                                ui.component.PortletInfo.getInstance().store.load({
+                                                                                                                ui.cmp.PortletInfo.getInstance().store.load({
                                                                                                                     callback: function() {
                                                                                                                         // Now, we can to remove the global mask
                                                                                                                         Ext.get('loading').remove();
@@ -17051,22 +16817,22 @@ var PhDOE = function()
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
                 progressBar.updateProgress(1/6, '1 of 6...');
-                ui.component._MainMenu.store.load({
+                ui.cmp._MainMenu.store.load({
                     callback: function() {
                         progressBar.updateProgress(2/6, '2 of 6...');
-                        ui.component.PendingPatchGrid.getInstance().store.load({
+                        ui.cmp.PendingPatchGrid.getInstance().store.load({
                             callback: function() {
                                 progressBar.updateProgress(3/6, '3 of 6...');
-                                ui.component.PortletTranslationsGraph.getInstance().store.load({
+                                ui.cmp.PortletTranslationsGraph.getInstance().store.load({
                                     callback: function() {
                                         progressBar.updateProgress(4/6, '4 of 6...');
-                                        ui.component.PendingCommitGrid.getInstance().store.load({
+                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
                                             callback: function() {
                                                 progressBar.updateProgress(5/6, '5 of 6...');
-                                                ui.component.ErrorFileGrid.getInstance().store.load({
+                                                ui.cmp.ErrorFileGrid.getInstance().store.load({
                                                     callback: function() {
                                                         progressBar.updateProgress(6/6, '5 of 6...');
-                                                        ui.component.PortletInfo.getInstance().store.load({
+                                                        ui.cmp.PortletInfo.getInstance().store.load({
                                                             callback: function() {
                                                                 // Now, we can to remove the global mask
                                                                 Ext.get('loading').remove();
@@ -17093,27 +16859,27 @@ var PhDOE = function()
             // Store to reload for LANG project
             if (PhDOE.userLang !== 'en') {
                 // We reload all stores, one after the others
-                ui.component.PendingTranslateGrid.getInstance().store.reload({
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload({
                     callback: function() {
-                        ui.component.StaleFileGrid.getInstance().store.reload({
+                        ui.cmp.StaleFileGrid.getInstance().store.reload({
                             callback: function() {
-                                ui.component.ErrorFileGrid.getInstance().store.reload({
+                                ui.cmp.ErrorFileGrid.getInstance().store.reload({
                                     callback: function() {
-                                        ui.component.PendingReviewGrid.getInstance().store.reload({
+                                        ui.cmp.PendingReviewGrid.getInstance().store.reload({
                                             callback: function() {
-                                                ui.component.NotInENGrid.getInstance().store.reload({
+                                                ui.cmp.NotInENGrid.getInstance().store.reload({
                                                     callback: function() {
-                                                        ui.component.PendingCommitGrid.getInstance().store.reload({
+                                                        ui.cmp.PendingCommitGrid.getInstance().store.reload({
                                                             callback: function() {
-                                                                ui.component.PendingPatchGrid.getInstance().store.reload({
+                                                                ui.cmp.PendingPatchGrid.getInstance().store.reload({
                                                                     callback: function() {
-                                                                        ui.component.PortletSummary.getInstance().store.reload({
+                                                                        ui.cmp.PortletSummary.getInstance().store.reload({
                                                                             callback: function() {
-                                                                                ui.component.PortletTranslator.getInstance().store.reload({
+                                                                                ui.cmp.PortletTranslator.getInstance().store.reload({
                                                                                     callback: function() {
-                                                                                        ui.component.PortletTranslationGraph.getInstance().store.reload({
+                                                                                        ui.cmp.PortletTranslationGraph.getInstance().store.reload({
                                                                                             callback: function() {
-                                                                                                ui.component.PortletTranslationsGraph.getInstance().store.reload();
+                                                                                                ui.cmp.PortletTranslationsGraph.getInstance().store.reload();
                                                                                             }
                                                                                         });
                                                                                     }
@@ -17136,9 +16902,9 @@ var PhDOE = function()
                 });
             } else {
                 // Store to reload only for EN project
-                ui.component.PendingCommitGrid.getInstance().store.reload({
+                ui.cmp.PendingCommitGrid.getInstance().store.reload({
                     callback: function() {
-                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
                 });
             }
@@ -17164,31 +16930,31 @@ var PhDOE = function()
             if ( this.userLang === 'en' ) {
                 (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
 
-                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
-                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
-                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
             else
             {
                 (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
                 
-                allPortlet["portletSummary"] = ui.component.PortletSummary.getInstance({lang: this.userLang});
-                allPortlet["portletTranslator"] = ui.component.PortletTranslator.getInstance({lang: this.userLang});
-                allPortlet["portletLocalMail"] = ui.component.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.component.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: this.userLang});
+                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
 
-                allPortlet["portletInfo"] = ui.component.PortletInfo.getInstance();
-                allPortlet["portletTranslationGraph"] = ui.component.PortletTranslationGraph.getInstance();
-                allPortlet["portletTranslationsGraph"] = ui.component.PortletTranslationsGraph.getInstance();
+                allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
+                allPortlet["portletTranslationGraph"] = ui.cmp.PortletTranslationGraph.getInstance();
+                allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
 
 
             for( var i=0; i < portal.col1.length; i++ ) {
                 mainContentLeft.push(allPortlet[portal.col1[i]]);
             }
-            for( var i=0; i < portal.col2.length; i++ ) {
-                mainContentRight.push(allPortlet[portal.col2[i]]);
+            for( var j=0; j < portal.col2.length; j++ ) {
+                mainContentRight.push(allPortlet[portal.col2[j]]);
             }
             
             // We keel alive our session by sending a ping every minute
@@ -17196,8 +16962,8 @@ var PhDOE = function()
 
             new Ext.Viewport({
                 layout : 'border',
-                    id           : 'main-app',
-                items : [{
+                id     : 'main-app',
+                items  : [{
                     // logo
                     region     : 'north',
                     html       : '<h1 class="x-panel-header">' +
@@ -17219,8 +16985,8 @@ var PhDOE = function()
                     split        : true,
                     width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
                     header       : false,
-                    listeners: {
-                        resize: function(a,newWidth) {
+                    listeners    : {
+                        resize : function(a, newWidth) {
 
                             if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
@@ -17234,7 +17000,7 @@ var PhDOE = function()
                     tbar : [{
                         text    : _('Main menu'),
                         iconCls : 'MainMenu',
-                        menu    : new ui.component.MainMenu()
+                        menu    : new ui.cmp.MainMenu()
                     }],
                     items : [{
                         id        : 'acc-need-translate',
@@ -17243,7 +17009,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedTranslate',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.PendingTranslateGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingTranslateGrid.getInstance() ],
                         collapsed : true
                     },{
                         id        : 'acc-need-update',
@@ -17252,7 +17018,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedUpdate',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.StaleFileGrid.getInstance() ],
+                        items     : [ ui.cmp.StaleFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-error',
@@ -17260,7 +17026,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
-                        items     : [ ui.component.ErrorFileGrid.getInstance() ],
+                        items     : [ ui.cmp.ErrorFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-reviewed',
@@ -17269,7 +17035,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesNeedReviewed',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.PendingReviewGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingReviewGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-notInEn',
@@ -17278,7 +17044,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconNotInEn',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.NotInENGrid.getInstance() ],
+                        items     : [ ui.cmp.NotInENGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-all-files',
@@ -17286,7 +17052,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconAllFiles',
-                        items     : [ ui.component.RepositoryTree.getInstance() ],
+                        items     : [ ui.cmp.RepositoryTree.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingCommit',
@@ -17297,7 +17063,7 @@ var PhDOE = function()
                             handler : function() {
                                 if( ! Ext.getCmp('commit-log-win') )
                                 {
-                                    var win = new ui.component.CommitLogManager();
+                                    var win = new ui.cmp.CommitLogManager();
                                 }
                                 Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
                             }
@@ -17306,7 +17072,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingCommit',
-                        items     : [ ui.component.PendingCommitGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingCommitGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-need-pendingPatch',
@@ -17314,7 +17080,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPendingPatch',
-                        items     : [ ui.component.PendingPatchGrid.getInstance() ],
+                        items     : [ ui.cmp.PendingPatchGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-google-translate',
@@ -17323,22 +17089,22 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconGoogle',
                         hidden    : (this.userLang === 'en'),
-                        items     : [ ui.component.GoogleTranslationPanel.getInstance() ],
+                        items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
                     }]
                 }, {
                     // main panel
-                    xtype             : 'mainpanel',
-                    id                : 'main-panel',
-                    region            : 'center',
-                    items : [{
+                    xtype  : 'mainpanel',
+                    id     : 'main-panel',
+                    region : 'center',
+                    items  : [{
                         xtype      : 'panel',
                         id         : 'MainInfoTabPanel',
                         title      : _('Home'),
                         baseCls    : 'MainInfoTabPanel',
                         autoScroll : true,
                         plain      : true,
-                        items : [{
+                        items      : [{
                             xtype  : 'panel',
                             border : false,
                             html   : '<div class="res-block">' +
@@ -17362,20 +17128,18 @@ var PhDOE = function()
                                 style       : 'padding:10px 5px 10px 5px',
                                 items       : mainContentRight
                             }],
-                            listeners: {
-                                drop: function(a) {
+                            listeners : {
+                                drop : function(a) {
                                     var portal, col1Sort = [], col2Sort = [], id;
 
                                     // Column 1
                                     for( var i=0; i < a.portal.items.items[0].items.items.length; i++ ) {
                                         id = a.portal.items.items[0].items.items[i].id;
-                                        //console.log(id);
                                         col1Sort.push(id);
                                     }
                                     // Column 2
-                                    for( var i=0; i < a.portal.items.items[1].items.items.length; i++ ) {
-                                        id = a.portal.items.items[1].items.items[i].id;
-                                        //console.log(id);
+                                    for( var j=0; i < a.portal.items.items[1].items.items.length; j++ ) {
+                                        id = a.portal.items.items[1].items.items[j].id;
                                         col2Sort.push(id);
                                     }
 
@@ -17414,7 +17178,7 @@ var PhDOE = function()
                         }
                         
                         // Start the first
-                        ui.component.RepositoryTree.getInstance().openFile(
+                        ui.cmp.RepositoryTree.getInstance().openFile(
                             'byId',
                             PhDOE.AFfilePendingOpen[0].nodeID,
                             false
@@ -17500,4 +17264,5 @@ var PhDOE = function()
         } // drawInterface
     }; // Return
 }();
+
 Ext.EventManager.onDocumentReady(PhDOE.init, PhDOE, true);

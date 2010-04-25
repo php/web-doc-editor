@@ -72,7 +72,7 @@ ui.task.CheckFileTask = function(config)
                 Ext.getCmp('FE-error-desc-' + this.fid).body.updateManager.refresh();
             }
 
-            ui.component.ErrorFileGrid.getInstance().store.reload();
+            ui.cmp.ErrorFileGrid.getInstance().store.reload();
         }
     });
 };

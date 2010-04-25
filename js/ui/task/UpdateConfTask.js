@@ -20,16 +20,16 @@ ui.task.UpdateConfTask = function(config)
 
             // If we touch this config option, we need to reload this store too
             if( this.item == "errorSkipNbLiteralTag" ) {
-                ui.component.ErrorFileGrid.getInstance().store.reload();
+                ui.cmp.ErrorFileGrid.getInstance().store.reload();
             }
             if( this.item == "needUpdateNbDisplay" ) {
-                ui.component.StaleFileGrid.getInstance().store.reload();
+                ui.cmp.StaleFileGrid.getInstance().store.reload();
             }
             if( this.item == "reviewedNbDisplay" ) {
-                ui.component.PendingReviewGrid.getInstance().store.reload();
+                ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             if( this.item == "newFileNbDisplay" ) {
-                ui.component.PendingTranslateGrid.getInstance().store.reload();
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
             }
             
             // Notify

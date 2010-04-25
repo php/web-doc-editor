@@ -27,7 +27,7 @@ cat js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/others/main_specific/*.js \
     js/ui/task/*.js \
-    js/ui/component/*.js \
+    js/ui/cmp/*.js \
     js/main.js \
     | java -jar scripts/utils/yuicompressor.jar --type js --verbose -o js/main-all.js
 
@@ -36,7 +36,7 @@ cat js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/others/main_specific/*.js \
     js/ui/task/*.js \
-    js/ui/component/*.js \
+    js/ui/cmp/*.js \
     js/main.js \
     > js/main-all-debug.js
 

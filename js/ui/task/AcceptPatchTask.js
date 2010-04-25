@@ -39,10 +39,10 @@ ui.task.AcceptPatchTask = function(config)
                     success : function(r)
                     {
                         var o    = Ext.util.JSON.decode(r.responseText),
-                            grid = ui.component.PendingPatchGrid.getInstance();
+                            grid = ui.cmp.PendingPatchGrid.getInstance();
 
                         // Add this files into storePendingCommit
-                        ui.component.PendingCommitGrid.getInstance().addRecord(
+                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
                             o.id, this.fpath, this.fname, 'update'
                         );
 

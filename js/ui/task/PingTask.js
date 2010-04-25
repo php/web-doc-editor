@@ -22,48 +22,48 @@ ui.task.PingTask = function()
                         var needReloadSummary = false;
 
                         // We look for modules specifics for translation
-                        if( ui.component.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
-                            ui.component.PendingTranslateGrid.getInstance().store.reload();
+                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                            ui.cmp.PendingTranslateGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
-                            ui.component.StaleFileGrid.getInstance().store.reload();
+                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                            ui.cmp.StaleFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
-                            ui.component.ErrorFileGrid.getInstance().store.reload();
+                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                            ui.cmp.ErrorFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
-                            ui.component.PendingReviewGrid.getInstance().store.reload();
+                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                            ui.cmp.PendingReviewGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.component.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
-                            ui.component.NotInENGrid.getInstance().store.reload();
+                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                            ui.cmp.NotInENGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
                         if( needReloadSummary ) {
-                            ui.component.PortletSummary.getInstance().store.reload();
+                            ui.cmp.PortletSummary.getInstance().store.reload();
                         }
 
                     }
 
                     // This 3 modules is commun with EN and LANG
-                    if( ui.component.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
-                        ui.component.PendingCommitGrid.getInstance().store.reload();
+                    if( ui.cmp.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
+                        ui.cmp.PendingCommitGrid.getInstance().store.reload();
                     }
 
-                    if( ui.component.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
-                        ui.component.PendingPatchGrid.getInstance().store.reload();
+                    if( ui.cmp.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
+                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
 
                     if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
-                        ui.component.PortletInfo.getInstance().store.reload();
+                        ui.cmp.PortletInfo.getInstance().store.reload();
                     }
 
                 }
