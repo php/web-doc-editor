@@ -36,7 +36,13 @@ while( list($key, $project) = each($availableProject) ) {
     }
     flush();
     // checkout repository from VCS
-    $rm->checkoutRepository();
+    $co_response = $rm->checkoutRepository();
+    if (0 != $co_response['err']) {
+        // error found in checkout, print the output and skip processing
+        echo "\n * Repository checkout failed.\n";
+        echo implode("\n", $co_response['output']);
+        continue;
+    }
 
     if ($isCLI) {
         echo "\n * Applying tools on repository...";

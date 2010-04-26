@@ -116,6 +116,8 @@ class RepositoryManager
     /**
      * Checkout the phpdoc-all repository.
      * This method must be call ONLY by the /firstRun.php script.
+     *
+     * @return An associative array{ 'err': svn co return code, 'output': svn co output contained in an array }
      */
     public function checkoutRepository()
     {
@@ -125,10 +127,12 @@ class RepositoryManager
 
         if ($lock->lock()) {
             // exec the checkout
-            VCSFactory::getInstance()->checkout();
+            $rtn = VCSFactory::getInstance()->checkout();
         }
 
         $lock->release();
+
+        return $rtn;
     }
 
     /**
@@ -184,7 +188,7 @@ class RepositoryManager
         array_shift($t);
 
         $pathWithoutLang = '/' . implode("/", $t).'/';
-        
+
         // If we are in the root folder, we have //. We must consider this case.
         if( $pathWithoutLang == '//' ) { $pathWithoutLang = '/'; }
 
@@ -211,16 +215,16 @@ class RepositoryManager
                         $actualFiles[$actual[$i]['text']] = array( "name"=> $actual[$i]['text'], "version"=> "" );
                     }
                 }
-                
+
                 // We get versions for this files
                 while( list($k, $v) = each($actualFiles) ) {
 
                     $file = new File($firstFolder, $pathWithoutLang, $k);
                     $info = $file->getInfo();
                     $actualFiles[$k]['version'] = $info['rev'];
-                    
+
                 }
-                
+
             }
 
             // We update the repository recursively
@@ -253,7 +257,7 @@ class RepositoryManager
 
                 debug(json_encode($nowFiles));
                 debug(json_encode($actualFiles));
-                
+
                 // We search for differences
                 reset($nowFiles); reset($nowFolders);
                 while( list($k, $v) = each($nowFiles) ) {
@@ -660,7 +664,7 @@ class RepositoryManager
         if( !$folders ) {
             return false;
         }
-        
+
         $return = array();
 
         function parsePath($path, &$pathInfo) {
@@ -696,7 +700,7 @@ class RepositoryManager
         }
         return $return;
     }
-    
+
     /**
      * Commit file changes to repository.
      *
@@ -708,7 +712,7 @@ class RepositoryManager
     {
         $rf        = RepositoryFetcher::getInstance();
         $commitLog = Array();
-        
+
         // Get informations about files we need to commit
         $fileInfos = $rf->getModifiesById($ids);
 
@@ -724,7 +728,7 @@ class RepositoryManager
             $commitLog = array_merge($commitLog, $c);
             $this->delPendingCommit($foldersInfos);
         }
-        
+
         // Task for files
         // Loop over $fileInfos to find files to be create, update or delete
         $create_stack = array();
@@ -1541,7 +1545,7 @@ EOD;
      */
     public function delFiles($files)
     {
-    
+
         for ($i = 0; $i < count($files); $i++) {
             $query = sprintf('DELETE FROM files
                 WHERE

@@ -228,6 +228,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      *  cd DOC_EDITOR_DATA_PATH
      *  svn co http://DOC_EDITOR_VCS_SERVER_HOST:DOC_EDITOR_VCS_SERVER_PORT/DOC_EDITOR_VCS_SERVER_PATH DOC_EDITOR_VCS_MODULE
      *
+     * @return An associative array{ 'err': svn co return code, 'output': svn co output contained in an array }
+     *
      *  see http://wiki.php.net/doc/scratchpad/howto/checkout
      */
     public function checkout()
@@ -242,14 +244,18 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $module = $appConf[$project]['vcs.module'];
 
         $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; '
-              ."svn co http://$host:$port/$uri $module; ";
+              ."svn co http://$host:$port/$uri $module";
 
+        $err = 1;
         $trial_threshold = 3;
-        while ($trial_threshold-- > 0) {
-            $output = array();
-            exec($cmd, $output);
-            if (strlen(trim(implode('', $output))) != 0) break;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn co trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
         }
+
+        return array('err' => $err, 'output' => $output);
     }
 
     /**
@@ -412,14 +418,14 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     public function createCommitLogFile($log)
     {
         $path = tempnam(sys_get_temp_dir(), 'Doc_Editor_Commit_Log_Message');
-    
+
         $handle = fopen($path, "w");
         fwrite($handle, $log);
         fclose($handle);
 
         return $path;
     }
-    
+
     public function deleteCommitLogFile($path)
     {
         @unlink($path);
@@ -483,7 +489,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $vcsLang   = $am->vcsLang;
         $vcsLogin  = $am->vcsLogin;
         $vcsPasswd = $am->vcsPasswd;
-        
+
         // Info we must store into DB
         $info = array();
 
@@ -526,7 +532,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         // Buil the command line
 
         $cmdCreate = $cmdDelete = $cmdUpdate = '';
-        
+
         if (trim($filesCreate) != '') {
             $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesCreate ; svn propset svn:eol-style \"native\" $filesCreate ; ";
         }
