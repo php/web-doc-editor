@@ -178,11 +178,12 @@ Accept-Encoding: gzip
         do {
             if ($trial_count++ == 3) return 'svn login failed';
             fwrite($h, $ping);
-            $r = trim(fread($h, 1024));
+            $r = trim(fread($h, 2048));
 
             // connection may be closed, need retry
             $m = preg_match('/realm="(.+)", nonce="(.+)", .+ qop="(.+)"/', $r, $matches);
         } while (0 == $m);
+        fclose($h);
 
         $data = array(
             'request' => 'MKACTIVITY',
@@ -212,12 +213,12 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
 ', $uri, $host, $username, $data['realm'], $data['nonce'], $uri, $response, $data['cnonce'], $data['qop']);
 
+        $h = @fsockopen($host, $port);
         fwrite($h, $pong);
-        $r = trim(fread($h, 1024));
-
+        $r = trim(fread($h, 2048));
         fclose($h);
 
-        if (preg_match('/HTTP\/1.1 201 Created/', $r)) {
+        if (preg_match('/HTTP\/1.[01] 201 Created/', $r)) {
             return true;
         } else {
             return 'Invalid Credentail';
@@ -262,7 +263,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      *  "svn up" on a single folder
      *
      * @param $path The path.
-     * @return True if this folder exist after the update processus, false otherwise.
+     * @return True if svn up does not report any error, false otherwise.
      */
     public function updateSingleFolder($path)
     {
@@ -272,20 +273,20 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .'.$path;
 
+        $err = 1;
         $trial_threshold = 3;
-        while ($trial_threshold-- > 0) {
-            $output = array();
-            exec($cmd, $output);
-            if (strlen(trim(implode('', $output))) != 0) break;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn up trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
         }
 
-        if( is_dir($appConf[$project]['vcs.path'].$path) ) {
+        if ($err == 0) {
             return true;
         } else {
             return false;
         }
-
-
     }
 
     /**
@@ -294,7 +295,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      * @param $lang The lang of this file.
      * @param $path The path for this file.
      * @param $name The name of the file.
-     * @return True if this file exist after the update processus, false otherwise.
+     * @return True if svn up does not report any error, false otherwise.
      */
     public function updateSingleFile($lang, $path, $name)
     {
@@ -304,24 +305,25 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$lang.$path.$name;
 
+        $err = 1;
         $trial_threshold = 3;
-        while ($trial_threshold-- > 0) {
-            $output = array();
-            exec($cmd, $output);
-            if (strlen(trim(implode('', $output))) != 0) break;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn up trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
         }
 
-        if( is_file($appConf[$project]['vcs.path'].$lang.$path.$name) ) {
+        if ($err == 0) {
             return true;
         } else {
             return false;
         }
-
-
     }
 
     /**
      *  svn up . under DOC_EDITOR_VCS_PATH
+     * @return True if svn up does not report any error, false otherwise.
      */
     public function update()
     {
@@ -329,13 +331,21 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .;';
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .';
 
+        $err = 1;
         $trial_threshold = 3;
-        while ($trial_threshold-- > 0) {
-            $output = array();
-            exec($cmd, $output);
-            if (strlen(trim(implode('', $output))) != 0) break;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn up trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
+        }
+
+        if ($err == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
