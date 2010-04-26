@@ -10,7 +10,7 @@
 * Apache mod-rewrite module
 
 == Configuration ==
-* Configuration is set in php/config.inc.php
+* Configuration is set in php/conf/
 
 == File structure ==
 * A checkout of the SVN copy named doc-editor
@@ -19,10 +19,9 @@
   - Default data directory location: doc-editor/data
 
 == The Database ==
-* Create a MySQL database as per php/config.inc.php [If you're a developer and don't want to overwrite the default config, create a file local.conf.inc.php that can override the config
+* Create a MySQL database as per php/conf/conf.ini
 * Import install/doc-editor.sql into this new database
-* Setup configuration options inside php/config.inc.php
-* Setup configuration options for each project inside php/config.XXX.inc.php (php/config.php.inc.php for the php project, php/config.pear.inc.php for the pear project, etc.)
+* Setup configuration options for each project inside php/conf/project.XXX.ini (php/conf/project.php.ini for the php project, php/conf/project.pear.ini for the pear project, etc.)
 
 == Initial (first) run ==
 * Execute install/firstRun.php either in the browser or via CLI
