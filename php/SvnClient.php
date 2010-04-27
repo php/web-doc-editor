@@ -285,6 +285,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         if ($err == 0) {
             return true;
         } else {
+            errlog(json_encode($output));
             return false;
         }
     }
@@ -292,18 +293,16 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     /**
      *  "svn up" on a single File
      *
-     * @param $lang The lang of this file.
-     * @param $path The path for this file.
-     * @param $name The name of the file.
+     * @param $file The file object.
      * @return True if svn up does not report any error, false otherwise.
      */
-    public function updateSingleFile($lang, $path, $name)
+    public function updateSingleFile($file)
     {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$lang.$path.$name;
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$file->full_path;
 
         $err = 1;
         $trial_threshold = 3;
@@ -317,6 +316,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         if ($err == 0) {
             return true;
         } else {
+            errlog(json_encode($output));
             return false;
         }
     }
@@ -345,6 +345,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         if ($err == 0) {
             return true;
         } else {
+            errlog(json_encode($output));
             return false;
         }
     }
@@ -467,6 +468,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
                 if ($err == 0) array_push($output, "Success.\n");
             }
             $commitLogMessage = array_merge($commitLogMessage, $output);
+            if ($err != 0) break;
         }
 
         if ($err == 0) {
@@ -476,6 +478,8 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $value['lang'] = $vcsLang;
             $value['nbFolders'] = count($foldersPath);
             RepositoryManager::getInstance()->setStaticValue('info', 'commitFolders', json_encode($value), true);
+        } else {
+            errlog(json_encode($commitLogMessage));
         }
 
         return $commitLogMessage;
@@ -488,7 +492,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
      * @param $create Array of files to be created
      * @param $update Array of files to be updated
      * @param $delete Array of files to be deleted
-     * @return Array of stdout of svn commit
+     * @return Associative array{ 'err': svn ci return code, 'output': svn ci output contained in an array }
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
@@ -507,27 +511,25 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
-            $p = $create[$i]->lang.'/'.$create[$i]->path.'/'.$create[$i]->name;
+            $p = $create[$i]->full_path;
             $create_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
-            @unlink($appConf[$project]['vcs.path'].$p.'.new');
+            @copy($p.'.new', $p);
         }
 
         $update_stack = array();
         for ($i = 0; $update && $i < count($update); $i++) {
-            $p = $update[$i]->lang.'/'.$update[$i]->path.'/'.$update[$i]->name;
+            $p = $update[$i]->full_path;
             $update_stack[] = $p;
 
             // Pre-commit : rename .new to actual file
-            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
-            @unlink($appConf[$project]['vcs.path'].$p.'.new');
+            @copy($p.'.new', $p);
         }
 
         $delete_stack = array();
         for ($i = 0; $delete && $i < count($delete); $i++) {
-            $delete_stack[] = $delete[$i]->lang.'/'.$delete[$i]->path.'/'.$delete[$i]->name;
+            $delete_stack[] = $delete[$i]->full_path;
         }
 
         $info['nbFilesCreate'] = count($create_stack);
@@ -577,6 +579,9 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $info['user'] = $vcsLogin;
             $info['lang'] = $vcsLang;
             RepositoryManager::getInstance()->setStaticValue('info', 'commitFiles', json_encode($info), true);
+        } else {
+            $this->revert($create, $update, $delete);
+            errlog(json_encode($output));
         }
 
         // Walk throw the output to filter some text
@@ -588,7 +593,49 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             }
         }
 
-        return $cleanOutput;
+        return array('err' => $err, 'output' => $cleanOutput);
+    }
+
+    public function revert($create=false, $update=false, $delete=false)
+    {
+        $am        = AccountManager::getInstance();
+
+        $appConf   = $am->appConf;
+        $project   = $am->project;
+
+        $create_stack = array();
+        for ($i = 0; $create && $i < count($create); $i++) {
+            $create_stack[] = $create[$i]->full_path;
+        }
+
+        $update_stack = array();
+        for ($i = 0; $update && $i < count($update); $i++) {
+            $update_stack[] = $update[$i]->full_path;
+        }
+
+        $delete_stack = array();
+        for ($i = 0; $delete && $i < count($delete); $i++) {
+            $delete_stack[] = $delete[$i]->full_path;
+        }
+
+        // Linearization
+        $filesCreate = implode($create_stack, ' ');
+        $filesUpdate = implode($update_stack, ' ');
+        $filesDelete = implode($delete_stack, ' ');
+
+        $cmd = "svn revert $filesCreate $filesUpdate $filesDelete";
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
+
+        $err = 1;
+        $trial_threshold = 3;
+        $output = array();
+        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+            array_push($output, "svn revert trial #$trial\n");
+            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            if ($err == 0) array_push($output, "Success.\n");
+        }
+
+        return array('err' => $err, 'output' => $output);
     }
 }
 

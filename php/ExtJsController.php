@@ -68,7 +68,7 @@ class ExtJsController
     {
         return isset($this->requestVariables[$name]);
     }
-    
+
     /**
      * Login to the tool
      *
@@ -123,7 +123,7 @@ class ExtJsController
 
     /**
      * Add a new folder
-     * 
+     *
      */
     public function addNewFolder()
     {
@@ -134,6 +134,8 @@ class ExtJsController
 
         $parentFolder  = $this->getRequestVariable('parentFolder');
         $newFolderName = $this->getRequestVariable('newFolderName');
+
+        if( strlen($newFolderName) < 1 ) return JsonResponseBuilder::failure();
 
         // Don't allow to add a new folder into root system
         if( $parentFolder == "/" ) {
@@ -150,7 +152,7 @@ class ExtJsController
         $file = new File($fileLang, $filePath, '');
 
         // We test if this folder not already exist
-        if( is_dir($appConf[$project]['vcs.path'].$fileLang.$filePath."/".$newFolderName) )
+        if( $file->exist() )
         {
             return JsonResponseBuilder::failure(
                 array(
@@ -159,13 +161,13 @@ class ExtJsController
                 )
             );
         }
-        
-        if( $file->createFolder($filePath."/".$newFolderName) ) {
+
+        if( $file->createFolder() ) {
             return JsonResponseBuilder::success();
         } else {
             return JsonResponseBuilder::failure();
         }
-        
+
     }
 
 
@@ -967,7 +969,7 @@ class ExtJsController
             )
         );
     }
-    
+
     /**
      * Update a single folder recursively
      */
@@ -978,9 +980,9 @@ class ExtJsController
 
         $rm = RepositoryManager::getInstance();
         $path = $this->getRequestVariable('path');
-        
+
         $r = $rm->updateFolder($path);
-        
+
         return JsonResponseBuilder::success(
             array(
                 'result' => $r
@@ -1006,7 +1008,7 @@ class ExtJsController
     public function getEntities()
     {
         AccountManager::getInstance()->isLogged();
-        
+
         $path = $this->getRequestVariable('path');
 
         $r = EntitiesAcronymsFetcher::getInstance()->getEntities();
@@ -1273,69 +1275,72 @@ class ExtJsController
             $tmp = $rm->commitChanges($anode, $logMessage);
             $commitResponse = $tmp['commitResponse'];
             $anode          = $tmp['anode'];
+            $err            = $tmp['err'];
 
             // Store the response into session to display later
             $_SESSION['commitResponse'] = $commitResponse;
 
-            // Start all process after the VCS commit
+            if (0 == $err) {
 
-            $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
+                // Start all process after the VCS commit (related to db changes)
+                $nodes = RepositoryFetcher::getInstance()->getModifiesById($anode);
 
-            // We need to provide a different treatment regarding the file's type...
-            $existFiles = array(); // Can be an updated file or a new file
-            $deleteFiles = array();
-            $j = 0;
+                // We need to provide a different treatment regarding the file's type...
+                $existFiles = array(); // Can be an updated file or a new file
+                $deleteFiles = array();
+                $j = 0;
 
-            for ($i = 0; $i < count($nodes); $i++) {
+                for ($i = 0; $i < count($nodes); $i++) {
 
-                if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
-                    $existFiles[] = new File(
-                        $nodes[$i]['lang'],
-                        $nodes[$i]['path'],
-                        $nodes[$i]['name']
-                    );
+                    if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
+                        $existFiles[] = new File(
+                            $nodes[$i]['lang'],
+                            $nodes[$i]['path'],
+                            $nodes[$i]['name']
+                        );
+                    }
+
+                    if( $nodes[$i]['type'] == 'delete' ) {
+                        $deleteFiles[$j]->lang = $nodes[$i]['lang'];
+                        $deleteFiles[$j]->path = $nodes[$i]['path'];
+                        $deleteFiles[$j]->name = $nodes[$i]['name'];
+                        $j ++;
+                    }
+
                 }
 
-                if( $nodes[$i]['type'] == 'delete' ) {
-                    $deleteFiles[$j]->lang = $nodes[$i]['lang'];
-                    $deleteFiles[$j]->path = $nodes[$i]['path'];
-                    $deleteFiles[$j]->name = $nodes[$i]['name'];
-                    $j ++;
-                }
+                // ... for existing Files (new or update)
+                if( !empty($existFiles) ) {
 
+                    // Update revision & reviewed for all this files (LANG & EN)
+                    $rm->updateFileInfo($existFiles);
+
+                    // Remove all this files in needcommit
+                    $rm->delPendingCommit($existFiles);
+
+                } // End of $existFiles stuff
+
+                // ... for deleted Files
+                if( !empty($deleteFiles) ) {
+
+                    // Remove this files from db
+                    $rm->delFiles($deleteFiles);
+
+                    // Remove all this files in needcommit
+                    $rm->delPendingCommit($deleteFiles);
+
+                } // End of $deleteFiles stuff
+
+                // We re-compute summary statistics for the global documentation & by translators
+                $lang = AccountManager::getInstance()->vcsLang;
+                $rm->updateTranslatorInfo();
+                TranslationStatistic::getInstance()->computeSummary($lang);
+                TranslatorStatistic::getInstance()->computeSummary($lang);
             }
-
-            // ... for existing Files (new or update)
-            if( !empty($existFiles) ) {
-
-                // Update revision & reviewed for all this files (LANG & EN)
-                $rm->updateFileInfo($existFiles);
-
-                // Remove all this files in needcommit
-                $rm->delPendingCommit($existFiles);
-
-            } // End of $existFiles stuff
-
-            // ... for deleted Files
-            if( !empty($deleteFiles) ) {
-
-                // Remove this files from the repository
-                $rm->delFiles($deleteFiles);
-
-                // Remove all this files in needcommit
-                $rm->delPendingCommit($deleteFiles);
-
-            } // End of $deleteFiles stuff
-
-            // Manage log message (add new or ignore it if this message already exist for this user)
-            LogManager::getInstance()->addCommitLog($logMessage);
-
-            // We re-compute summary statistics for the global documentation & by translators
-            $lang = AccountManager::getInstance()->vcsLang;
-            $rm->updateTranslatorInfo();
-            TranslationStatistic::getInstance()->computeSummary($lang);
-            TranslatorStatistic::getInstance()->computeSummary($lang);
         }
+
+        // Manage log message (add new or ignore it if this message already exist for this user)
+        LogManager::getInstance()->addCommitLog($logMessage);
 
         // Remove the lock File
         $lock->release();
@@ -1672,7 +1677,7 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
         $am->isLogged();
-        
+
         $value = array();
         $value['user'] = $am->vcsLogin;
         RepositoryManager::getInstance()->setStaticValue('info', 'logout', json_encode($value), true);
@@ -1727,9 +1732,9 @@ class ExtJsController
         $return = array();
 
         $j=0;
-        
+
         $langs = RepositoryManager::getInstance()->availableLang;
-        
+
         sort($langs);
 
         foreach ($langs as $lang) {
@@ -1844,7 +1849,7 @@ class ExtJsController
                 'Items'   => $r
             )
         );
-        
+
     }
 
     /**

@@ -21,4 +21,18 @@ function debug($mess)
     fclose($fp);
 }
 
+function errlog($mess)
+{
+    $am      = AccountManager::getInstance();
+    $appConf = $am->appConf;
+    $project = $am->project;
+
+    $mess = '['.@date('d/m/Y H:i:s').'] by '
+            .$am->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
+
+    $fp = fopen($appConf[$project]['vcs.path'].'../.errlog', 'a+');
+    fwrite($fp, $mess);
+    fclose($fp);
+}
+
 ?>

@@ -32,26 +32,29 @@ class File
 
         $this->lang = $lang = trim($lang, '/');
         $this->name = $name = trim($name, '/');
+        $this->path = $path = trim($path, '/');
 
-        if (substr($path, 0, 1) != '/') $path = '/'.$path;
-        if (substr($path, -1)   != '/') $path = $path.'/';
-        $this->path = $path;
 
-        $this->full_path = $appConf[$project]['vcs.path'].$lang.$path.$name;
+        if (strlen($path) > 0) {
+            $this->full_path = $appConf[$project]['vcs.path'].'/'.$lang.'/'.$path.'/'.$name;
 
-        // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
-        $this->full_path_fallback = $appConf[$project]['vcs.path'].'en'.$path.$name;
+            // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'/en/'.$path.'/'.$name;
+        } else {
+            $this->full_path = $appConf[$project]['vcs.path'].'/'.$lang.'/'.$name;
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'/en/'.$name;
+        }
     }
 
-    public function fileExist()
+    public function exist()
     {
-        return is_file($this->full_path);
+        return ( is_file($this->full_path) || is_dir($this->full_path) );
     }
 
 
     /**
      * Translate the content of a file with Google Translate API.
-     * 
+     *
      * @return The automatic translation.
      */
     public function translate() {
@@ -85,7 +88,7 @@ class File
 
     /**
      * Read the content of a file.
-     * 
+     *
      * @param $readOriginal true to read the original content of the file, false to read the modified file (if any). By default, false.
      * @return The content of the file.
      */
@@ -135,24 +138,21 @@ class File
     /**
      * Create a new folder localy & register it to pendingCommit
      *
-     * @param $path path to create
      * @return true
      */
-    public function createFolder($path)
+    public function createFolder()
     {
        $am      = AccountManager::getInstance();
        $appConf = $am->appConf;
        $project = $am->project;
 
-       $path = str_replace("//", "/", $path);
-
        // We create this folder localy
-       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$path) ) {
+       if( ! @mkdir($this->full_path) ) {
            return false;
        }
 
        // We register this new folder to be committed
-       $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
+       $obj = (object) array('lang' => $this->lang, 'path' => $this->path, 'name' => '-');
        RepositoryManager::getInstance()->addPendingCommit($obj, '-', '-', '-', '-', 'new');
 
        return true;
@@ -249,7 +249,7 @@ class File
     public function getEncoding($content=false)
     {
         if (!$content) {
-            $content = file_get_contents($this->full_path);
+            $content = @file_get_contents($this->full_path);
         }
 
         $content = preg_replace('/\\s+/', ' ', $content);

@@ -255,8 +255,8 @@ class RepositoryManager
                     $nowFiles[$k]['version'] = $info['rev'];
                 }
 
-                debug(json_encode($nowFiles));
-                debug(json_encode($actualFiles));
+                //~ debug(json_encode($nowFiles));
+                //~ debug(json_encode($actualFiles));
 
                 // We search for differences
                 reset($nowFiles); reset($nowFolders);
@@ -502,7 +502,7 @@ class RepositoryManager
      *
      * @param $files All files to check
      * @param $type Type of this file. Can be "new", "update", or "delete"
-     * @return Return the stack of files we must commit. All files witch can't be commited have been deleted from this stack
+     * @return Return the stack of files we must commit. All files which can't be commited have been deleted from this stack.
      */
     public function beforeCommitChanges($files, $type)
     {
@@ -519,29 +519,27 @@ class RepositoryManager
                 // For new files, we must ensure that this file is steel non exist into the repository before commit it.
                 for( $i=0; $i < count($files); $i++ ) {
 
-                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
-                        $files[$i]->lang,
-                        $files[$i]->path,
-                        $files[$i]->name
-                    );
+                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
 
-                    if( $updateResponse ) {
+                    if( $files[$i]->exist() ) {
 
                         // This file exist in the repository ! We can't commit it as a new file now.
                         // We must update this file into the app, and suppress it from this commit process
 
                         // Delete this new file from the fileSystem
-                        @unlink($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
-                        // Delete from pendingCommit table
-                        $tmp = Array();
-                        $tmp[0] = $files[$i];
+//~                        @unlink($files[$i]->full_path.'.new');
 
+                        // Delete from pendingCommit table
+                        $tmp = Array($files[$i]);
+
+                        // exclude from commit
                         $this->delPendingCommit($tmp);
+
                         // We must now update information into the app for this new file
                         $this->updateFileInfo($tmp);
 
                     } else {
-                        // This file steel non exist into the current respository, we can commit it
+                        // This file still not exist in current respository, we can commit it
                         $stack[] = $files[$i];
                     }
 
@@ -555,35 +553,33 @@ class RepositoryManager
                 for( $i=0; $i < count($files); $i++ ) {
 
                     // We get the filemtime for this file to compare with the filemtime after the update.
-                    $oldTime = filemtime($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+                    $oldTime = filemtime($files[$i]->full_path);
 
-                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
-                        $files[$i]->lang,
-                        $files[$i]->path,
-                        $files[$i]->name
-                    );
+                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
 
-                    if( $updateResponse ) {
+                    if( $files[$i]->exist() ) {
 
-                        // If this file haven't been deleted since last big update, $updateResponse should return true
-                        $newTime = filemtime($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name);
+                        // If this file haven't been deleted since last update
+                        $newTime = filemtime($files[$i]->full_path);
 
 
                         if( $newTime != $oldTime ) {
 
-                            // This file have been modified since last big update.
-                            // We can't commit our change, or this file will be mark as conflict into VCS
-                            // We just update the info for this file and skip it from this commit process
+                            // This file have been modified since last update.
+                            // We can't commit our change, otherwise this file will be marked as conflict
+                            // We just update the info for this file and skip it from this commit
 
-                            $tmp = Array();
-                            $tmp[0] = $files[$i];
+                            $tmp = array($files[$i]);
+
+                            // exclude from commit
                             $this->delPendingCommit($tmp);
+
                             // We must now update information into the app for this file
                             $this->updateFileInfo($tmp);
 
                         } else {
 
-                            // This file haven't been modified since last big update.
+                            // This file haven't been modified since last update.
                             // We can continue the commit processus for it
                             $stack[] = $files[$i];
 
@@ -591,17 +587,14 @@ class RepositoryManager
 
                     } else {
 
-                        // Here, we try to update a file witch have been deleted since last bug update
+                        // Here, we try to update a file which have been deleted since last update
                         // We delete our .new, and remove all reference for it from the DB
 
                         // Delete this new file from the fileSystem
-                        @unlink($appConf[$project]['vcs.path'].$files[$i]->lang.'/'.$files[$i]->path.'/'.$files[$i]->name.'.new');
+                        @unlink($files[$i]->full_path.'.new');
 
                         // Delete from pendingCommit table
-                        $tmp = Array();
-                        $tmp[0] = $files[$i];
-
-                        $this->delPendingCommit($tmp);
+                        $this->delPendingCommit(array($files[$i]));
 
                     }
 
@@ -614,15 +607,11 @@ class RepositoryManager
                 // For deleted files, we must ensure that this file is steel exist into the repository before commit it.
                 for( $i=0; $i < count($files); $i++ ) {
 
-                    $updateResponse = VCSFactory::getInstance()->updateSingleFile(
-                        $files[$i]->lang,
-                        $files[$i]->path,
-                        $files[$i]->name
-                    );
+                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
 
-                    if( $updateResponse ) {
+                    if( $files[$i]->exist() ) {
 
-                        // This file steel exist into the current respository, we can commit it for deletion
+                        // This file still exists in current respository, we can commit it for delete
                         $stack[] = $files[$i];
 
 
@@ -632,12 +621,12 @@ class RepositoryManager
                         // We must update this file into the app, and suppress it from this commit process
 
                         // Delete from pendingCommit table
-                        $tmp = Array();
-                        $tmp[0] = $files[$i];
+                        $tmp = array($files[$i]);
 
+                        // exclude from commit
                         $this->delPendingCommit($tmp);
 
-                        // Remove this files from the repository
+                        // Remove this files from db
                         $this->delFiles($tmp);
 
                     }
@@ -701,6 +690,63 @@ class RepositoryManager
         return $return;
     }
 
+    // file level backup only
+    private function backupCommit($files, $type)
+    {
+        switch ($type) {
+            case 'new': break; // do nothing for new file
+            case 'update':
+                // backup actual file as .bak as .new will replace the actual file soon
+                for ($i=0; $i < count($files); $i++) {
+                    @copy($files[$i]->full_path, $files[$i]->full_path.'.bak');
+                }
+                break;
+            case 'delete': break; // do nothing for delete file
+        }
+    }
+
+    // file level rollback only
+    private function rollbackCommit($files, $type)
+    {
+        switch ($type) {
+            case 'new':
+                // actual file is created in commit process, remove it
+                for ($i=0; $i < count($files); $i++) {
+                    @unlink($files[$i]->full_path);
+                }
+                break;
+            case 'update':
+                // rollback actual file from .bak and remove .bak
+                for ($i=0; $i < count($files); $i++) {
+                    @copy($files[$i]->full_path.'.bak', $files[$i]->full_path);
+                    @unlink($files[$i]->full_path.'.bak');
+                }
+                break;
+            case 'delete': break; // do nothing for delete file
+        }
+    }
+
+    // file level changes only
+    private function afterCommitChanges($files, $type)
+    {
+        switch ($type) {
+            case 'new':
+                // remove .new file
+                for ($i=0; $i < count($files); $i++) {
+                    @unlink($files[$i]->full_path.'.new');
+                }
+                break;
+            case 'update':
+                // remove .new file
+                for ($i=0; $i < count($files); $i++) {
+                    @unlink($files[$i]->full_path.'.new');
+                    @unlink($files[$i]->full_path.'.bak');
+                }
+                break;
+            case 'delete': break; // do nothing for delete file
+        }
+    }
+
     /**
      * Commit file changes to repository.
      *
@@ -753,10 +799,16 @@ class RepositoryManager
         $update_stack = $this->beforeCommitChanges($update_stack, 'update');
         $delete_stack = $this->beforeCommitChanges($delete_stack, 'delete');
 
+        // keep copy for commit failure recovery
+        $this->backupCommit($create_stack, 'new');
+        $this->backupCommit($update_stack, 'update');
+        $this->backupCommit($delete_stack, 'delete');
+
         $c = VCSFactory::getInstance()->commit(
             $log, $create_stack, $update_stack, $delete_stack
         );
-        $commitLog = array_merge($commitLog, $c);
+
+        $commitLog = array_merge($commitLog, $c['output']);
 
         // html highlight commit log
         $reg = array(
@@ -777,16 +829,30 @@ class RepositoryManager
             $commitLog
         );
 
-        // We fetch again the file witch have been commited. All file witch have been skip from beforeCommitChanges haren't into DB for now.
-        $fileInfos   = $rf->getModifiesById($ids);
+        if (0 != $c['err']) {
+            // error found in commit, rollback commit operation
+            $this->rollbackCommit($create_stack, 'new');
+            $this->rollbackCommit($update_stack, 'update');
+            $this->rollbackCommit($delete_stack, 'delete');
 
-        // Get all ids witch have been really commited
-        $ids = Array();
-        for( $i=0; $i < count($fileInfos); $i ++ ) {
-            $ids[] = $fileInfos[$i]['id'];
+        } else {
+            // We fetch again the file which have been commited. All file which have been skip from beforeCommitChanges aren't in DB for now.
+            $fileInfos = $rf->getModifiesById($ids);
+
+            $ids = array();
+            // Get all ids which have been really commited
+            for( $i=0; $i < count($fileInfos); $i ++ ) {
+                $ids[] = $fileInfos[$i]['id'];
+            }
+
+            // confirmed commit success. batch delete pending commit, and remove backup
+            $this->afterCommitChanges($create_stack, 'new');
+            $this->afterCommitChanges($update_stack, 'update');
+            $this->afterCommitChanges($delete_stack, 'delete');
         }
 
-        return Array(
+        return array(
+            'err' => $c['err'],
             'commitResponse' => $commitLog,
             'anode' => $ids
         );
@@ -1050,7 +1116,7 @@ EOD;
                 // If this file don't exist in EN, we should skip all this proces
                 $en = new File('en', $file->path, $file->name);
 
-                if( $en->fileExist() ) {
+                if( $en->exist() ) {
 
                     $enInfo    = $en->getInfo();
 
@@ -1231,7 +1297,7 @@ EOD;
         $name = $file->name;
         $path = $file->path;
         if (
-            (!is_dir($file->full_path) && !in_array(substr($name, -3), array('xml','ent'))
+            (!$file->exist() && !in_array(substr($name, -3), array('xml','ent'))
                 && substr($name, -13) != 'PHPEditBackup')
             || strpos($name, 'entities.') === 0
             || $path == '/chmonly/' || $path == '/internals/' || $path == '/internals2/'
