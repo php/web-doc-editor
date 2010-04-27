@@ -1597,7 +1597,7 @@ EOD;
             }
 
             foreach ($dirs as $d) {
-                $this->applyRevCheck($d->path.$d->name.'/', $revType, $revLang);
+                $this->applyRevCheck("/".$d->path."/".$d->name."/", $revType, $revLang);
             }
         }
         @closedir($dh);
