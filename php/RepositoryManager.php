@@ -1300,9 +1300,9 @@ EOD;
             (!$file->exist() && !in_array(substr($name, -3), array('xml','ent'))
                 && substr($name, -13) != 'PHPEditBackup')
             || strpos($name, 'entities.') === 0
-            || $path == '/chmonly/' || $path == '/internals/' || $path == '/internals2/'
+            || $path == 'chmonly' || $path == 'internals' || $path == 'internals2'
             || $name == 'contributors.ent' || $name == 'contributors.xml'
-            || ($path == '/appendices/' && ($name == 'reserved.constants.xml' || $name == 'extensions.xml'))
+            || ($path == 'appendices' && ($name == 'reserved.constants.xml' || $name == 'extensions.xml'))
             || $name == 'README' || $name == 'DO_NOT_TRANSLATE' || $name == 'rsusi.txt'
             || $name == 'translation.xml' || $name == 'missing-ids.xml'
             || $name == 'license.xml' || $name == 'versions.xml'
