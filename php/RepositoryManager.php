@@ -1472,7 +1472,7 @@ EOD;
                     'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
                         VALUES ("%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     $am->project,
-                    'en', $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
+                    'en', $xmlid, "/".$f->path."/", $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
                     $ToolsCheckDocResult['check_oldstyle'],
                     $ToolsCheckDocResult['check_undoc'],
                     $ToolsCheckDocResult['check_roleerror'],
@@ -1564,7 +1564,7 @@ EOD;
                             'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
                                 VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
                             $project,
-                            $lang, $xmlid, $lang_file->path, $lang_file->name,
+                            $lang, $xmlid, "/".$lang_file->path."/", $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
                             $maintainer, $status
@@ -1587,7 +1587,7 @@ EOD;
                                 VALUES ("%s", "%s", "%s", "%s", %s)',
                             $project,
                             $lang,
-                            $lang_file->path,
+                            "/".$lang_file->path."/",
                             $lang_file->name,
                             $en_size
                         );
