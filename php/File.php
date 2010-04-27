@@ -36,13 +36,13 @@ class File
 
 
         if (strlen($path) > 0) {
-            $this->full_path = $appConf[$project]['vcs.path'].'/'.$lang.'/'.$path.'/'.$name;
+            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/'.$name;
 
             // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
-            $this->full_path_fallback = $appConf[$project]['vcs.path'].'/en/'.$path.'/'.$name;
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$path.'/'.$name;
         } else {
-            $this->full_path = $appConf[$project]['vcs.path'].'/'.$lang.'/'.$name;
-            $this->full_path_fallback = $appConf[$project]['vcs.path'].'/en/'.$name;
+            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$name;
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$name;
         }
     }
 
@@ -332,7 +332,7 @@ class File
         $project = $am->project;
 
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
+        $cmd = 'cd '.$this->full_path.'; '
               .'diff -u '.$this->name.' '.$this->name.$ext;
 
         $output = array();
@@ -357,14 +357,14 @@ class File
         if( $type == 'vcs' ) {
 
             $output = VCSFactory::getInstance()->diff(
-                $this->lang.$this->path,
+                $this->lang."/".$this->path,
                 $this->name, $options['rev1'], $options['rev2']
             );
 
         } elseif( $type == 'file' || $type == 'patch' ) {
 
             $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
-            $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
+            $cmd = 'cd '.$this->full_path.'; '
                   .'diff -u '.$this->name.' '.$this->name.$ext;
 
             $output = array();
