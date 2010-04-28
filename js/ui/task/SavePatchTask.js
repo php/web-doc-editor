@@ -1,5 +1,8 @@
 Ext.namespace('ui','ui.task');
 
+// TODO: remove this file. It's deprecated
+
+
 // config - { prefix, ftype, fpath, fname, fid, lang, email }
 ui.task.SavePatchTask = function(config)
 {
