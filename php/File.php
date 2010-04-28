@@ -32,15 +32,19 @@ class File
 
         $this->lang = $lang = trim($lang, '/');
         $this->name = $name = trim($name, '/');
-        $this->path = $path = trim($path, '/');
 
+        $path = trim($path, '/');
 
         if (strlen($path) > 0) {
+            $this->path = "/$path/";
+
             $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/'.$name;
 
             // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$path.'/'.$name;
         } else {
+            $this->path = '/';
+
             $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$name;
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$name;
         }
@@ -357,7 +361,7 @@ class File
         if( $type == 'vcs' ) {
 
             $output = VCSFactory::getInstance()->diff(
-                $this->lang."/".$this->path,
+                $this->lang.$this->path,
                 $this->name, $options['rev1'], $options['rev2']
             );
 
