@@ -1405,7 +1405,12 @@ EOD;
                     continue;
                 }
 
-                if ($name != '.' && $name != '..' && $name != '.svn' && $path != '/functions/') {
+                if ($name != '.' && $name != '..' && $name != '.svn'
+                 && !preg_match('/\.png$/', $name)
+                 && !preg_match('/\.gif$/', $name)
+                 && !preg_match('/\.jpg$/', $name)
+                 && $path != '/functions/'
+                ) {
                     if (is_dir($file->full_path)) {
                         $dirs[] = $file;
                     } elseif (is_file($file->full_path)) {
