@@ -368,7 +368,7 @@ class File
         } elseif( $type == 'file' || $type == 'patch' ) {
 
             $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
-            $cmd = 'cd '.$this->full_path.'; '
+            $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
                   .'diff -u '.$this->name.' '.$this->name.$ext;
 
             $output = array();
