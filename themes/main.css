@@ -98,7 +98,7 @@
 .iconDelete            { background-image: url(./img/delete.png)                !important;}
 .iconDiffView          { background-image: url(./img/code-class.png)            !important;}
 .iconDownloadDiff      { background-image: url(./img/download-later.png)        !important;}
-.iconEditor            { background-image: url(./img/document-edit.png)         !important;}
+.iconEditor, .iconEdit            { background-image: url(./img/document-edit.png)         !important;} /*@TODO: Remove the alias .iconEditor later */
 .iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
 .iconExternalData      { background-image: url(./img/svn-update.png)            !important;}
@@ -128,6 +128,7 @@
 .iconPatchAlert        { background-image: url(./img/bell.png)                  !important;}
 .iconPendingCommit     { background-image: url(./img/svn-commit.png)            !important;}
 .iconPendingPatch      { background-image: url(./img/text-x-patch.png)          !important;}
+.iconProgress          { background-image: url(./img/ui-progress-bar.png)       !important;}
 .iconRedo              { background-image: url(./img/edit-redo.png)             !important;}
 .iconRefresh           { background-image: url(./img/arrow_refresh.png)         !important;}
 .iconRun               { background-image: url(./img/run-build.png)             !important;}
@@ -152,6 +153,7 @@
 .iconUndo              { background-image: url(./img/edit-undo.png)             !important;}
 .iconUpdateFileVcs     { background-image: url(./img/database_refresh.png)      !important;}
 .iconUserNotes         { background-image: url(./img/knotes.png)                !important;}
+.iconUser              { background-image: url(./img/user.png)                  !important;}
 .iconView              { background-image: url(./img/eye.png)                   !important;}
 .iconViewDiff          { background-image: url(./img/code-class.png)            !important;}
 .iconVCSLog            { background-image: url(./img/text-x-log.png)            !important;}
@@ -415,4 +417,50 @@
     border-right: 1px solid;
     padding: 10px;
     background-color: #EFEFEF;
+}
+
+.x-grid3-progresscol .x-grid3-cell-inner {
+  padding: 0px 0px 0px 5px;
+}
+
+.x-grid3-progresscol .x-progress-bar {
+  height: 16px;
+}
+
+.x-grid3-progresscol .x-progress-inner {
+  height: 16px;
+}
+
+.x-grid3-progresscol .x-progress-text-front-ie6 {
+  padding: 2.5px 5px;
+}
+
+.x-grid3-progresscol .x-progress-text-front {
+  padding: 2px 5px;
+}
+
+.x-progress-bar-red,.x-progress-bar-orange,.x-progress-bar-green {
+  border-bottom: 1px solid #7fa9e4;
+  float: left;
+  height: 16px;
+}
+
+.x-progress-bar-red {
+  background: #ff0000 url(./img/progress-bg-red.gif) repeat-x scroll left
+    center;
+  border-top: 1px solid #ecb7ad;
+}
+
+.x-progress-bar-orange {
+  background: #9cbfee url(./img/progress-bg-orange.gif) repeat-x scroll
+    left center;
+  border-right: 1px solid #deab7e;
+  border-top: 1px solid #d7b290;
+}
+
+.x-progress-bar-green {
+  background: #00ff00 url(./img/progress-bg-green.gif) repeat-x scroll
+    left center;
+  border-right: 1px solid #5bd976;
+  border-top: 1px solid #79e18f;
 }
