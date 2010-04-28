@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `pendingCommit`
+-- Structure of table `pendingCommit` // @TODO : DEPRECATED. Need to be remove.
 --
 
 CREATE TABLE IF NOT EXISTS `pendingCommit` (
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `pendingCommit` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `pendingPatch`
+-- Structure of table `pendingPatch` // @TODO : DEPRECATED. Need to be remove.
 --
 
 CREATE TABLE IF NOT EXISTS `pendingPatch` (
@@ -221,4 +221,29 @@ CREATE TABLE IF NOT EXISTS `userNotes` (
   `user` varchar(50) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `progressWork`
+--
+
+CREATE TABLE IF NOT EXISTS `progressWork` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
+  `lang` varchar(10) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `revision` int(11) NOT NULL,
+  `en_revision` int(11) NOT NULL,
+  `reviewed` varchar(50) NOT NULL,
+  `maintainer` varchar(255) NOT NULL,
+  `user` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `date` datetime NOT NULL,
+  `type` enum('new','delete','update','patch') NOT NULL,
+  `in_progress` smallint(6) unsigned DEFAULT '100',
+  KEY `id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
