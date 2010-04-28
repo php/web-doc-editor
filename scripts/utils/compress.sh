@@ -25,6 +25,12 @@ cat themes/flags.css \
 # Js Files for Main page
 cat js/util.js \
     js/ux/extjsPowered/*.js \
+    js/ux/extjsPowered/treegrid/TreeGridSorter.js \
+    js/ux/extjsPowered/treegrid/TreeGridColumnResizer.js \
+    js/ux/extjsPowered/treegrid/TreeGridNodeUI.js \
+    js/ux/extjsPowered/treegrid/TreeGridLoader.js \
+    js/ux/extjsPowered/treegrid/TreeGridColumns.js \
+    js/ux/extjsPowered/treegrid/TreeGrid.js \
     js/ux/others/main_specific/*.js \
     js/ui/task/*.js \
     js/ui/cmp/*.js \
@@ -34,6 +40,12 @@ cat js/util.js \
 # Js Files for Main page - debug
 cat js/util.js \
     js/ux/extjsPowered/*.js \
+    js/ux/extjsPowered/treegrid/TreeGridSorter.js \
+    js/ux/extjsPowered/treegrid/TreeGridColumnResizer.js \
+    js/ux/extjsPowered/treegrid/TreeGridNodeUI.js \
+    js/ux/extjsPowered/treegrid/TreeGridLoader.js \
+    js/ux/extjsPowered/treegrid/TreeGridColumns.js \
+    js/ux/extjsPowered/treegrid/TreeGrid.js \
     js/ux/others/main_specific/*.js \
     js/ui/task/*.js \
     js/ui/cmp/*.js \
@@ -43,6 +55,7 @@ cat js/util.js \
 #Css Files for Main page
 cat themes/flags.css \
     js/ux/extjsPowered/*.css \
+    js/ux/extjsPowered/treegrid/*.css \
     js/ux/others/main_specific/*.css \
     themes/main.css \
     | java -jar scripts/utils/yuicompressor.jar --type css --verbose -o themes/main-all.css
