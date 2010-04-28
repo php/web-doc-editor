@@ -496,7 +496,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
-//    isPatch, fuid,               pending patch file config
+//    isPatch, fuid,               pending patch file config // TODO: obsolète. Inutile de fournir une interface spécifique pour les patchs
 //    parser, storeRecord,
 //    syncScrollCB {true | false}, display sync-scroll checkbox
 //    syncScroll {true | false},   indicate whether sync the scroll with corresponding file
@@ -604,7 +604,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         }];
 
         if (!this.readOnly) {
-            this.tbar = (this.isPatch) ? [
+                /*
+            this.tbar = 
+                (this.isPatch) ? [
             // patch file pane tbar
             new ui.cmp._FilePanel.tbar.items.common({
                 prefix          : this.prefix,
@@ -660,7 +662,12 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 file: this.lang + this.fpath + this.fname
             })
             ] : [
+            */
+
+           // Tbar definition
+
             // en/lang file pane tbar
+            this.tbar = [
             new ui.cmp._FilePanel.tbar.items.common({
                 prefix          : this.prefix,
                 fid             : this.fid,
@@ -778,7 +785,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 break;
                         }
                     }
-                }, {
+                }
+                /*
+                , {
                     id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
                     scope    : this,
                     tooltip  : _('<b>Save as</b> a patch'),
@@ -796,7 +805,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
                         }).show();
                     }
-                }]
+                }
+                */
+            ]
             }, new ui.cmp._FilePanel.tbar.items.undoRedo({
                 id_prefix : id_prefix,
                 fid       : this.fid
@@ -829,6 +840,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             : '' )
             ];
         }
+
+
+
 
         Ext.apply(this,
         {
@@ -914,7 +928,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             // Desactivate save button
                             if ( !this.isPatch ) {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
+                                //Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
                             }
 
                             // Mark as modified
@@ -951,7 +965,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             if ( !this.isPatch )
                             {
                                 Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
+                                //Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
                             }
 
                             // Enable the undo btn
