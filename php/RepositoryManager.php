@@ -359,6 +359,93 @@ class RepositoryManager
     }
 
     /**
+     * Register a file as a work in progress, into the database.
+     *
+     * @param $file        The file object to be added into the database.
+     * @param $revision    The revision of this file.
+     * @param $en_revision The EN revision of this file.
+     * @param $reviewed    The stats of the reviewed tag.
+     * @param $maintainer  The maintainer.
+     * @param $type        The type of work. Can be 'new' for new file, 'update' for an uptaded file, 'delete' for a file marked as delete.
+     * @return fileID of the file
+     */
+    public function addProgressWork($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = sprintf(
+            'SELECT
+                id
+             FROM
+                `progressWork`
+             WHERE
+                `project`="%s" AND
+                `lang`="%s" AND
+                `path`="%s" AND
+                `name`="%s"',
+            $project,
+            $file->lang,
+            $file->path,
+            $file->name
+        );
+        $r = $db->query($s);
+
+        // We insert or update the pendingCommit table
+        if ($r->num_rows == 0) {
+
+            $s = sprintf(
+                'INSERT into
+                    `progressWork`
+                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `date`, `type`)
+                 VALUES
+                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
+                $project,
+                $file->lang,
+                $file->path,
+                $file->name,
+                $revision,
+                $en_revision,
+                $reviewed,
+                $maintainer,
+                $vcsLogin,
+                $type
+            );
+            $db->query($s);
+            $fileID = $db->insert_id();
+
+        } else {
+
+            $a = $r->fetch_object();
+
+            $s = sprintf(
+                'UPDATE
+                    `progressWork`
+                 SET
+                    `revision`="%s",
+                    `en_revision`="%s",
+                    `reviewed`="%s",
+                    `maintainer`="%s"
+                 WHERE
+                    `id`="%s"',
+                $revision,
+                $en_revision,
+                $reviewed,
+                $maintainer,
+                $a->id
+            );
+            $db->query($s);
+            $fileID = $a->id;
+        }
+
+        return $fileID;
+    }
+
+    /**
+     * @TODO : DEPRECATED. Need to be removed.
+     * 
      * Register a file as need to be commited, into the database.
      *
      * @param $file        The file object to be commited.
@@ -1409,6 +1496,8 @@ EOD;
                  && !preg_match('/\.png$/', $name)
                  && !preg_match('/\.gif$/', $name)
                  && !preg_match('/\.jpg$/', $name)
+                 && !preg_match('/\.new$/', $name)
+                 && !preg_match('/\.patch$/', $name)
                  && $path != '/functions/'
                 ) {
                     if (is_dir($file->full_path)) {
