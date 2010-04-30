@@ -151,7 +151,7 @@ class File
        $project = $am->project;
 
        // We create this folder localy
-       if( ! @mkdir($this->full_path) ) {
+       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$this->path) ) {
            return false;
        }
 
