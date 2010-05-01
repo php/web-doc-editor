@@ -756,7 +756,7 @@ class RepositoryManager
         // We walk trow files to find folders to commit
         for( $i=0; $i < count($files); $i++) {
 
-            $filePath = rtrim($files[$i]['lang'].$files[$i]['path'], "/");
+            $filePath = $files[$i]['lang'].$files[$i]['path'];
 
             $pathInfo = array();
             parsePath($filePath, $pathInfo);
@@ -854,7 +854,6 @@ class RepositoryManager
 
         // We filter this folders to return only this who want to commit according of files array
         $foldersInfos = $this->getOnlyFoldersForFiles($foldersInfos, $fileInfos);
-
 
         if( $foldersInfos ) {
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
