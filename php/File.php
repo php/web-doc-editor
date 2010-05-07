@@ -358,6 +358,8 @@ class File
         $appConf = $am->appConf;
         $project = $am->project;
 
+        $output = array();
+
         if( $type == 'vcs' ) {
 
             $output = VCSFactory::getInstance()->diff(
@@ -368,19 +370,24 @@ class File
         } elseif( $type == 'file' || $type == 'patch' ) {
 
             $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
-            $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
-                  .'diff -u '.$this->name.' '.$this->name.$ext;
+            
+            // If this patch is for new file, we only display "This is a new file."
+            if( $type == 'patch' && !is_file($appConf[$project]['vcs.path'].$this->lang.$this->path.$this->name) ) {
+               return '<div style="size: 10px; text-align:center;margin-top:10px;">This is a new file.</div>'; 
+            } else {
 
-            $output = array();
-            $trial_threshold = 3;
-            while ($trial_threshold-- > 0) {
-                $output = array();
-                exec($cmd, $output);
-                if (strlen(trim(implode('', $output))) != 0) break;
+                $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
+                      .'diff -u '.$this->name.' '.$this->name.$ext;
+
+                $trial_threshold = 3;
+                while ($trial_threshold-- > 0) {
+                    $output = array();
+                    exec($cmd, $output);
+                    if (strlen(trim(implode('', $output))) != 0) break;
+                }
             }
 
         }
-
         $output = htmlentities(join("\n", $output), ENT_QUOTES, 'UTF-8');
         $match = array();
         preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $output, $match);
