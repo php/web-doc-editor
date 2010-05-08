@@ -144,19 +144,19 @@ class File
      *
      * @return true
      */
-    public function createFolder()
+    public function createFolder($createPath)
     {
        $am      = AccountManager::getInstance();
        $appConf = $am->appConf;
        $project = $am->project;
 
        // We create this folder localy
-       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$this->path) ) {
+       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$createPath) ) {
            return false;
        }
 
        // We register this new folder to be committed
-       $obj = (object) array('lang' => $this->lang, 'path' => $this->path, 'name' => '-');
+       $obj = (object) array('lang' => $this->lang, 'path' => $createPath, 'name' => '-');
        RepositoryManager::getInstance()->addPendingCommit($obj, '-', '-', '-', '-', 'new');
 
        return true;
