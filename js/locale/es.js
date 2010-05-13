@@ -104,7 +104,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
   i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Haga clic en cualquier línea para ver el contenido del entitie.<br>Doble clic para insertar en la posición del cursor.";
-  i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Haga clic en cualquier línea para ver el contenido del acrónimo.<br>Doble clci para insertar en la posición del cursor.";
+  i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Haga clic en cualquier línea para ver el contenido del acrónimo.<br>Doble clic para insertar en la posición del cursor.";
   i18n["Items"] = "Ítems";
   i18n["From"] = "De";
   i18n["<b>Load/Refresh</b>"] = "<b>Cargar/Actualizar</b>";
