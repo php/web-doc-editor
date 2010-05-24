@@ -37,7 +37,7 @@ while( list($key, $project) = each($availableProject) ) {
     }
     flush();
     // VCS update
-    //$rm->updateRepository();
+    $rm->updateRepository();
 
     if ($isCLI) {
         echo "\n * Clean up the database...";
