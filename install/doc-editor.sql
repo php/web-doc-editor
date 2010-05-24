@@ -106,47 +106,6 @@ CREATE TABLE IF NOT EXISTS `files` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `pendingCommit` // @TODO : DEPRECATED. Need to be remove.
---
-
-CREATE TABLE IF NOT EXISTS `pendingCommit` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `project` varchar(255) NOT NULL,
-  `lang` varchar(10) NOT NULL,
-  `path` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `revision` int(11) NOT NULL,
-  `en_revision` int(11) NOT NULL,
-  `reviewed` varchar(50) NOT NULL,
-  `maintainer` varchar(255) NOT NULL,
-  `modified_by` varchar(50) NOT NULL,
-  `date` datetime NOT NULL,
-  `type` enum('new','delete','update') NOT NULL,
-  KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Structure of table `pendingPatch` // @TODO : DEPRECATED. Need to be remove.
---
-
-CREATE TABLE IF NOT EXISTS `pendingPatch` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `project` varchar(255) NOT NULL,
-  `lang` varchar(10) NOT NULL,
-  `path` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `posted_by` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `uniqID` varchar(255) NOT NULL,
-  `date` datetime NOT NULL,
-  KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Structure of table `translators`
 --
 
@@ -170,7 +129,10 @@ CREATE TABLE IF NOT EXISTS `translators` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
   `vcs_login` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `anonymousIdent` varchar(255) NOT NULL,
   `conf` text NOT NULL,
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
@@ -227,10 +189,10 @@ CREATE TABLE IF NOT EXISTS `userNotes` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `progressWork`
+-- Structure of table `work`
 --
 
-CREATE TABLE IF NOT EXISTS `progressWork` (
+CREATE TABLE IF NOT EXISTS `work` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
@@ -241,9 +203,24 @@ CREATE TABLE IF NOT EXISTS `progressWork` (
   `reviewed` varchar(50) NOT NULL,
   `maintainer` varchar(255) NOT NULL,
   `user` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime NOT NULL,
   `type` enum('new','delete','update','patch') NOT NULL,
-  `in_progress` smallint(6) unsigned DEFAULT '100',
+  `progress` smallint(6) unsigned DEFAULT '100',
+  `module` enum('workInProgress','PatchesForReview') NOT NULL,
+  `patchID` int(11) DEFAULT NULL,
   KEY `id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Structure of table `patches`
+--
+
+CREATE TABLE IF NOT EXISTS `patches` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `user` varchar(255) NOT NULL,
+  `anonymousIdent` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
