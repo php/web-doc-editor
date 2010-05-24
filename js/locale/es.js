@@ -1,6 +1,5 @@
 /*
-* This file must be encoded in UTF-8
-* Rev. transalted: 298438
+* This file must be encoded in UTF-8 --- Rev. transalted: 299715
 */
 
 var i18n = new Array();
@@ -18,12 +17,13 @@ var i18n = new Array();
   i18n["Not in EN tree"] = "No presente en EN";
   i18n["All files"] = "Todos los ficheros";
   i18n["Open the Log Message Manager"] = "Abrir el gestor de comentarios del histórico";
-  i18n["Pending for commit"] = "Pendientes para commit";
-  i18n["Pending patches"] = "Parches pendientes";
+  i18n["Work in progress"] = "Trabajo en curso";
+  i18n["Patches for review"] = "Parches pendientes de revisar";
   i18n["Google translation"] = "Traducir con Google";
   i18n["Home"] = "Inicio";
   i18n["Connected as <em>{0}</em>"] = "Conectado como <em>{0}</em>";
   i18n["anonymous"] = "Usar anónimo";
+  i18n["Administrator"] = "Administrador";
   i18n["Project: "] = "Proyecto: ";
   i18n["Language: "] = "Idioma: ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
@@ -46,10 +46,71 @@ var i18n = new Array();
   i18n["Open selected files"] = "Abrir todos los ficheros seleccionados";
   i18n["Please, wait..."] = "Por favor, espere...";
 
+// In file: ../../js/ui/component/PendingCommitGrid.js
+  //i18n["No pending for Commit"] = "Aucun commit en attente";
+  //i18n["View diff"] = "Voir la différence";
+  //i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
+  //i18n["Clear this change"] = "Effacer cette modification";
+  //i18n["View in a new tab"] = "Voir dans un nouvel onglet";
+  //i18n["Cancel this deletion"] = "Annuler cette suppression";
+
+// In file: ../../js/ui/component/WorkTreeGrid.js
+  i18n["Modified by"] = "Modificado por";
+  i18n["Date"] = "Fecha";
+  i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
+  i18n["Users"] = "Usuarios";
+  i18n["Last modified"] = "Última modificación";
+  i18n["Estimated progress"] = "Progreso estimado";
+  i18n["{0}% complete"] = "{0}% completado";
+  i18n["Set the progress..."] = "Definir progreso...";
+  i18n["View diff"] = "Ver la diferencia";  
+  i18n["Download the diff as a patch"] = "Descargar la diferencia como parche";
+  i18n["Clear this change"] = "Descartar cambio";
+  i18n["Cancel this deletion"] = "Cancelar esta eliminación";
+  
+  i18n["Submit all files for review in patch:"] = "Enviar todos los ficheros para revisar como parche:";
+  i18n["Submit all files in this directory in patch:"] = "Enviar todos los ficheros de este directorio como parche:";
+  i18n["Submit as patch for review in:"] = "Placer ce fichier dans le patch :";
+  
+  i18n["Create a new patch"] = "Crear nuevo parche";
+  
+  i18n["Commit..."] = "Validar...";
+  i18n["...this file"] = "...este fichero";
+  i18n["...all files from this folder"] = "...todos los ficheros de este directorio";
+  i18n["...all files from this patch"] = "...todos los ficheros de este parche";
+  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";
+  
+  i18n["You have no patch currently. You must create one."] = "Actualmente no tiene ningún parche. Debe crear uno.";
+
+  i18n["Diff for file: {0}"] = "Diferencia para el fichero : {0}";
+  
+// In file: ../../js/ui/component/PendingPatchGrid.js
+  //i18n["Posted by"] = "Proposé par";
+  //i18n["No pending patches"] = "Aucun patch en attente";
+  //i18n["Reject this patch"] = "Rejeter ce patch";
+  //i18n["Patch for {0}"] = "Patch pour {0}";
+  //i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
+  //i18n["Original File: "] = "Fichier original : ";
+  
+// In file: ../../js/ui/component/PatchesTreeGrid.js
+  i18n["Edit the name of this patch"] = "Editar el nombre del parche";
+  i18n["Delete this patch"] = "Eliminar este parche";
+  i18n["Back all files to work in progress module"] = "Reemplazar todos los ficheros dentro del módulo \"Trabajo en curso\"";
+  i18n["Back all this patch to work in progress module"] = "Reemplazar el contenido de este parche en el módulo \"Trabajo en curso\"";
+  i18n["Back all this folder to work in progress module"] = "Reemplazar todos los ficheros de este directorio dentro del módulo \"Trabajo en curso\"";
+  i18n["Back this file to work in progress module"] = "Reemplezar este fichero en el módulo \"Trabajo en curso\"";
+
+
+// In file: ../../js/ui/component/ManagePatchPrompt.js
+  i18n["Create"] = "Crear";
+  i18n["Modify this patch name"] = "Modificar el nombre del parche";
+
+// In file: ../../js/ui/task/DeletePatchTask.js
+  i18n["Patch deleted"] = "Parche eliminado";
+  i18n["The patch have been deleted !"] = "¡El parche ha sido eliminado!";
 
 // In file: ../../js/ui/component/ViewVCDiff.js
   i18n["Diff From VCS"] = "Diferencia desde VCS";
-
 
 // In file: ../../js/ui/component/CommitPrompt.js
   i18n["VCS commit"] = "Commit VCS";
@@ -81,7 +142,7 @@ var i18n = new Array();
   i18n["Path"] = "Ruta";
   i18n["No Files"] = "No hay ficheros";
   i18n["File"] = "Fichero";
-  i18n["Edit in a new Tab"] = "Editar dentro de nueva pestaña";
+  i18n["Edit in a new tab"] = "Editar dentro de nueva pestaña";
   i18n["Diff"] = "Diferencia";
   i18n["About error type"] = "A cerca del tipo de errores";
   i18n["File with error : in {0}"] = "Fichero que contiene errores : en {0}";
@@ -99,7 +160,6 @@ var i18n = new Array();
   i18n["Lang:"] = "Idioma:";
   i18n["Total:"] = "Total:";
   i18n["files"] = "ficheros";
-
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
@@ -138,22 +198,6 @@ var i18n = new Array();
   i18n["Name for the new file"] = "Nombre para el nuevo fichero";
   i18n["Chose a skeleton"] = "Seleccionar plantilla";
   i18n["Open the editor"] = "Abrir el editor";
-
-// In file: ../../js/ui/component/PendingCommitGrid.js
-  i18n["Modified by"] = "Modificado por";
-  i18n["Date"] = "Fichero";
-  i18n["Y-m-d, H:i"] = "d/m/Y, H:i";
-  i18n["No pending for Commit"] = "No hay pendientes para commit";
-  i18n["Commit..."] = "Commit...";
-  i18n["...this file"] = "...este fichero";
-  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";
-  i18n["...all files modified"] = "...todos los ficheros";
-  i18n["View diff"] = "Ver la diferencia";
-  i18n["Diff for file: {0}"] = "Diferencia para el fichero: {0}";
-  i18n["Download the diff as a patch"] = "Descargar la diferencia como parche";
-  i18n["Clear this change"] = "Eliminar este cambio";
-  i18n["View in a new Tab"] = "Ver en una nueva pestaña";
-  i18n["Cancel this deletion"] = "Cancelar la eliminación";
 
 
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
@@ -308,10 +352,13 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PendingTranslateGrid.js
-  i18n["Need Translate: in {0}"] = "Nuevo fichero a traducir: dentro de {0}";
+  i18n["Need translate: in {0}"] = "Nuevo fichero a traducir: dentro de {0}";
+  i18n["Need file: in {0}"] = "Nuevo fichero: dentro {0}";
   i18n["New File: "] = "Nuevo fichero: ";
   i18n["Automatic translation: "] = "Traducción automática: ";
   i18n["Dictionary"] = "Diccionario";
+  i18n["File modified by me"] = "Fichero modificado por mi";
+  i18n["File modified by {0}"] = "Fichero modificado por {0}";
 
 
 // In file: ../../js/ui/component/EmailPrompt.js
@@ -433,6 +480,8 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/NotInENGrid.js
   i18n["Remove this file"] = "Eliminar este fichero";
+  i18n["File removed by me"] = "Fichero eliminado por mi";
+  i18n["File removed by {0}"] = "Fichero eliminado por {0}";
   i18n["Not In EN: in {0}"] = "No presente en EN: en {0}";
 
 
@@ -445,16 +494,6 @@ var i18n = new Array();
   i18n["Log Message was deleted successfully !"] = "¡El comentario ha sido eliminado satisfactoriamente!";
   i18n["Manage Log Message"] = "Gestor de comentarios del histórico de cambios";
 
-
-// In file: ../../js/ui/component/PendingPatchGrid.js
-  i18n["Posted by"] = "Enviado por";
-  i18n["No pending patches"] = "No hay parches disponibles";
-  i18n["Reject this patch"] = "Rechazar parche";
-  i18n["Patch for {0}"] = "Parche para {0}";
-  i18n["Proposed Patch for {0}"] = "Parche propuesto para {0}";
-  i18n["Original File: "] = "Fichero original: ";
-
-
 // In file: ../../js/ui/component/StaleFileGrid.js
   i18n["EN revision"] = "Versión EN";
   i18n["View diff..."] = "Ver la diferencia...";
@@ -462,6 +501,11 @@ var i18n = new Array();
   i18n["Need Update: in {0}"] = "Fichero que necesita actualización: en {0}";
   i18n["{0} revision"] = "Revisión {0}";
 
+  i18n["File EN modified by me"] = "Fichero EN modificado por mi";
+  i18n["File EN modified by {0}"] = "Fichero EN modificado por {0}";
+
+  i18n["File {0} modified by me"] = "Fichero {0} modificado por mi";
+  i18n["File {0} modified by {1}"] = "Fichero {0} modificado por {1}";
 
 // In file: ../../js/ui/task/PingTask.js
   i18n["check in progress..."] = "Verificación en curso...";
