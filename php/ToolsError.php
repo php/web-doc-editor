@@ -221,7 +221,7 @@ class ToolsError
                 %s
                 `project`=  "%s" AND
                 `lang`   =  "%s" AND
-                `type`   != "-No error-" LIMIT 3',
+                `type`   != "-No error-"',
             $type,
             $project,
             $this->lang
