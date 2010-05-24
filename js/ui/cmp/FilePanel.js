@@ -19,6 +19,8 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
     {
         Ext.apply(this,
         {
+
+            id    : this.id_prefix + '-FILE-' + this.fid + '-grp-undoRedo',
             items : [{
                 id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
                 scope   : this,
@@ -144,7 +146,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, "end",
                             "\n<!-- EN-Revision: XX Maintainer: " +
-                            PhDOE.userLogin + " Status: ready -->"
+                            PhDOE.user.login + " Status: ready -->"
                             );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -454,12 +456,13 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
     {
         Ext.apply(this,
         {
+            id    : this.id_prefix + '-FILE-' + this.fid + '-grp-tools',
             items : [{
                 scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
                 iconCls      : 'iconSpellCheck',
-                pressed      : PhDOE.userConf[this.spellCheckConf],
+                pressed      : PhDOE.user.conf[this.spellCheckConf],
                 handler      : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
@@ -561,7 +564,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             xtype     : 'checkbox',
             name      : 'needUpdateScrollbars',
             hideLabel : true,
-            checked   : PhDOE.userConf[this.syncScrollConf],
+            checked   : PhDOE.user.conf[this.syncScrollConf],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,
@@ -604,69 +607,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         }];
 
         if (!this.readOnly) {
-                /*
-            this.tbar = 
-                (this.isPatch) ? [
-            // patch file pane tbar
-            new ui.cmp._FilePanel.tbar.items.common({
-                prefix          : this.prefix,
-                fid             : this.fid,
-                ftype           : this.ftype,
-                goToPreviousTab : this.goToPreviousTab,
-                goToNextTab     : this.goToNextTab
-            }),
-            {
-                xtype :'buttongroup',
-                items : [{
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
-                    scope    : this,
-                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
-                    iconCls  : 'iconSaveFile',
-                    handler  : function()
-                    {
-                        new ui.task.AcceptPatchTask({
-                            fid         : this.fid,
-                            fpath       : this.fpath,
-                            fname       : this.fname,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }, {
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
-                    scope    : this,
-                    tooltip  : _('<b>Reject</b> this patch'),
-                    iconCls  : 'iconPageDelete',
-                    handler  : function()
-                    {
-                        new ui.task.RejectPatchTask({
-                            fid         : this.fid,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }]
-            }, new ui.cmp._FilePanel.tbar.items.undoRedo({
-                id_prefix : id_prefix,
-                fid       : this.fid
-            }),
-            new ui.cmp._FilePanel.tbar.items.reindentTags({
-                id_prefix      : id_prefix,
-                fid            : this.fid,
-                lang           : this.lang,
-                spellCheck     : this.spellCheck,
-                spellCheckConf : this.spellCheckConf
-            }), '->', 
-            new ui.cmp._FilePanel.tbar.items.usernotes({
-                fid : this.fid,
-                file: this.lang + this.fpath + this.fname
-            })
-            ] : [
-            */
 
-           // Tbar definition
-
-            // en/lang file pane tbar
+            // Tbar definition
+            // en/lang file panel tbar
             this.tbar = [
             new ui.cmp._FilePanel.tbar.items.common({
                 prefix          : this.prefix,
@@ -676,6 +619,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 goToNextTab     : this.goToNextTab
             }), {
                 xtype : 'buttongroup',
+                id    : id_prefix + '-FILE-' + this.fid + '-grp-save',
                 items : [{
                     id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
                     scope    : this,
@@ -713,11 +657,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         // We check the conf option : onSaveFile. Can be : ask-me, always or never
-                        if( !PhDOE.userConf.onSaveFile ) {
-                            PhDOE.userConf.onSaveFile = 'ask-me';
+                        if( !PhDOE.user.conf.onSaveFile ) {
+                            PhDOE.user.conf.onSaveFile = 'ask-me';
                         }
 
-                        switch (PhDOE.userConf.onSaveFile) {
+                        switch (PhDOE.user.conf.onSaveFile) {
 
                             case 'always':
                                 new ui.task.CheckFileTask({
@@ -785,29 +729,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 break;
                         }
                     }
-                }
-                /*
-                , {
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
-                    scope    : this,
-                    tooltip  : _('<b>Save as</b> a patch'),
-                    iconCls  : 'iconSaveAsFile',
-                    disabled : true,
-                    handler  : function()
-                    {
-                        new ui.cmp.PatchPrompt({
-                            prefix       : this.prefix,
-                            ftype        : this.ftype,
-                            fid          : this.fid,
-                            fpath        : this.fpath,
-                            fname        : this.fname,
-                            lang         : this.lang,
-                            defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
-                        }).show();
-                    }
-                }
-                */
-            ]
+                }]
             }, new ui.cmp._FilePanel.tbar.items.undoRedo({
                 id_prefix : id_prefix,
                 fid       : this.fid
@@ -841,9 +763,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             ];
         }
 
-
-
-
         Ext.apply(this,
         {
             title       : this.title,
@@ -862,16 +781,12 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var herePath, hereName;
 
-                        if( this.isPatch )
+                        if ( this.isTrans )
                         {
-                            herePath = this.fpath;
-                            hereName = this.fname + '.' + this.fuid + '.patch';
-                        } else if ( this.isTrans )
-                        {
-                            if( this.storeRecord.data.needcommit )
+                            if( this.storeRecord.data.fileModified )
                             {
                                 herePath = this.lang + this.fpath;
-                                hereName = this.fname+'.new';
+                                hereName = this.fname;
                             } else {
                                 herePath = 'en' + this.fpath;
                                 hereName = this.fname;
@@ -886,8 +801,10 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             ftype    : this.ftype,
                             fid      : this.fid,
                             fpath    : herePath,
+                            freadOnly: this.readOnly,
                             fname    : hereName,
-                            skeleton : this.skeleton
+                            skeleton : this.skeleton,
+                            storeRecord: this.storeRecord
                         });
                     },
 
@@ -907,7 +824,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                             // Do we need to remove the red mark into the Tab title ?
                             if(
-                                ( this.ftype === 'LANG' && PhDOE.userLang !== 'en' )
+                                ( this.ftype === 'LANG' && PhDOE.user.lang !== 'en' )
                                 ||
                                 this.ftype === 'EN'
                             ) {
@@ -926,10 +843,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
 
                             // Desactivate save button
-                            if ( !this.isPatch ) {
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
-                                //Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
-                            }
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
 
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
@@ -942,7 +856,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if( this.readOnly ) {
                             return;
                         }
-
+						
+						// We follow the same rules as defined in GetFileTask.js.
+						// So, if the toolsBar is disabled here, we just skeep this function and return asap.
+						if( Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disabled ) {
+							return;
+						}
+						
                         var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
                             cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
@@ -962,11 +882,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
 
                             // Activate save button
-                            if ( !this.isPatch )
-                            {
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
-                                //Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
-                            }
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
 
                             // Enable the undo btn
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-undo').enable();
@@ -986,7 +902,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var opp_prefix, opp_panel, opp_file;
 
-                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] )
+                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf] )
                         {
                             switch (this.ftype) {
                                 case 'EN':

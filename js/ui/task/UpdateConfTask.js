@@ -16,7 +16,7 @@ ui.task.UpdateConfTask = function(config)
         success : function()
         {
             // Update userConf object
-            PhDOE.userConf[this.item] = this.value;
+            PhDOE.user.conf[this.item] = this.value;
 
             // If we touch this config option, we need to reload this store too
             if( this.item == "errorSkipNbLiteralTag" ) {

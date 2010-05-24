@@ -23,7 +23,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            title : String.format(_('About {0}'), PhDOE.appName),
+            title : String.format(_('About {0}'), PhDOE.app.name),
             items : {
                 xtype     : 'tabpanel',
                 activeTab : 0,
@@ -33,10 +33,10 @@ ui.cmp.About = Ext.extend(Ext.Window,
                 items     : [{
                     title : _('About'),
                     html  : '<div id="phd-oe-about">' +
-                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.appName +
+                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.app.name +
                             '</div>' +
-                            '<div id="phd-oe-about-info">' + PhDOE.appName + ' ver ' + PhDOE.appVer + '<br/>' +
-                                'UI: ' + PhDOE.uiRevision + '<br/>' +
+                            '<div id="phd-oe-about-info">' + PhDOE.app.name + ' ver ' + PhDOE.app.ver + '<br/>' +
+                                'UI: ' + PhDOE.app.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +

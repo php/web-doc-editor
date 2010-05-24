@@ -17,7 +17,7 @@ ui.task.PingTask = function()
                 } else {
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
-                    if( PhDOE.userLang !== 'en' ) {
+                    if( PhDOE.user.lang !== 'en' ) {
 
                         var needReloadSummary = false;
 
@@ -54,6 +54,9 @@ ui.task.PingTask = function()
                     }
 
                     // This 3 modules is commun with EN and LANG
+					
+					// TODO : find a way to detect modification into WorkTreeGrid & Patches for review
+					/*
                     if( ui.cmp.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
                         ui.cmp.PendingCommitGrid.getInstance().store.reload();
                     }
@@ -61,6 +64,7 @@ ui.task.PingTask = function()
                     if( ui.cmp.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
                         ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
+                    */
 
                     if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();

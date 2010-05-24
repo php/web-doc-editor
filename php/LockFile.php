@@ -1,6 +1,6 @@
 <?php
 /**
- * A class for locking tasks
+ * A class for file's locking tasks. DONE.
  *
  */
 class lockFile
@@ -16,7 +16,7 @@ class lockFile
     /**
      * Initialise the lock file
      *
-     * @param string $id
+     * @param string $id The lock identifier
      */
     function __construct($id)
     {
@@ -30,7 +30,7 @@ class lockFile
     /**
      * Tells if the lock file exists
      * 
-     * @return bool Returns TRUE if the file exists, FALSE otherwise
+     * @return boolean Returns TRUE if the file exists, FALSE otherwise
      */
     function isLocked()
     {
@@ -40,7 +40,7 @@ class lockFile
     /**
      * Sets the lock file
      *
-     * @return bool Returns TRUE if the lock was successfully set, FALSE otherwise
+     * @return boolean Returns TRUE if the lock was successfully set, FALSE otherwise
      */
     function lock() 
     {
@@ -53,7 +53,7 @@ class lockFile
     /**
      * Release the lock
      *
-     * return bool Returns TRUE if the lock was released, FALSE otherwise
+     * @return boolean Returns TRUE if the lock was released, FALSE otherwise
      */
     function release() 
     {
@@ -64,3 +64,4 @@ class lockFile
     }
     
 }
+?>

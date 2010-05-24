@@ -17,7 +17,7 @@ ui.cmp._NotInENGrid.store = new Ext.data.GroupingStore(
             {name : 'id'},
             {name : 'path'},
             {name : 'name'},
-            {name : 'needcommit'}
+            {name : 'fileModified'}
         ]
     }),
     sortInfo : {
@@ -38,7 +38,22 @@ ui.cmp._NotInENGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
-    dataIndex : 'name'
+    dataIndex : 'name',
+    renderer  : function(v, m, r)
+    {
+        if( r.data.fileModified ) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+			
+            if(info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+                return "<span ext:qtip='" + _('File removed by me') + "'>" + v + "</span>";
+            } else {
+                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+            }
+        } else {
+            return v;
+        }
+    }
 }, {
     header    : _('Path'),
     dataIndex : 'path',
@@ -54,10 +69,13 @@ ui.cmp._NotInENGrid.view = new Ext.grid.GroupingView({
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText: false,
     emptyText     : '<div style="text-align: center;">' + _('No Files') + '</div>',
-    getRowClass   : function(record)
+    getRowClass   : function(r)
     {
-        if (record.data.needcommit) {
-            return 'file-need-commit';
+        if ( r.data.fileModified ) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+			
+            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     }
@@ -79,7 +97,7 @@ Ext.extend(ui.cmp._NotInENGrid.menu, Ext.menu.Menu,
         {
             items : [{
                 scope   : this,
-                text    : '<b>'+_('View in a new Tab')+'</b>',
+                text    : '<b>'+_('View in a new tab')+'</b>',
                 iconCls : 'iconView',
                 handler : function()
                 {
@@ -90,7 +108,8 @@ Ext.extend(ui.cmp._NotInENGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 text    : _('Remove this file'),
-                iconCls : 'iconDelete',
+                hidden  : ( this.grid.store.getAt(this.rowIdx).data.fileModified ),
+                iconCls : 'iconTrash',
                 handler : function()
                 {
                    var storeRecord = this.grid.store.getAt(this.rowIdx),
@@ -126,14 +145,11 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     
         grid.getSelectionModel().selectRow(rowIndex);
 
-        if (!grid.store.getAt(rowIndex).data.needcommit)
-        {
-            new ui.cmp._NotInENGrid.menu({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        }
+        new ui.cmp._NotInENGrid.menu({
+            grid   : grid,
+            rowIdx : rowIndex,
+            event  : e
+        }).showAt(e.getXY());
     },
 
     onRowDblClick: function(grid, rowIndex, e)
@@ -146,7 +162,7 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNIEN-' + PhDOE.userLang + FilePath + FileName);
+            FileID      = Ext.util.md5('FNIEN-' + PhDOE.user.lang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID))
@@ -177,9 +193,9 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                         fpath          : FilePath,
                         fname          : FileName,
                         readOnly       : true,
-                        lang           : PhDOE.userLang,
+                        lang           : PhDOE.user.lang,
                         parser         : 'xml',
-                        storeRecord    : '',
+                        storeRecord    : storeRecord,
                         syncScroll     : false
                     })
                 ]

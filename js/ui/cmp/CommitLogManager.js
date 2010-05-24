@@ -76,7 +76,7 @@ ui.cmp._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
             items  : [{
                 scope   : this,
                 text    : _('Delete this Log Message'),
-                iconCls : 'iconDelete',
+                iconCls : 'iconTrash',
                 handler : function()
                 {
                     XHR({

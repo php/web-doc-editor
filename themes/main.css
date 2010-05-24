@@ -83,6 +83,7 @@
 /* Icons */
 
 .iconAllFiles          { background-image: url(./img/view-list-tree.png)        !important;}
+.iconAdd               { background-image: url(./img/list-add.png)              !important;}
 .iconArrowLeft         { background-image: url(./img/arrow_left.png)            !important;}
 .iconArrowRight        { background-image: url(./img/arrow_right.png)           !important;}
 .iconBook              { background-image: url(./img/documentation.png)         !important;}
@@ -95,7 +96,6 @@
 .iconCloseOthersTabs   { background-image: url(./img/tab_delete.png)            !important;}
 .iconCommitFileVcs     { background-image: url(./img/mail-mark-notjunk.png)     !important;}
 .iconConf              { background-image: url(./img/configure.png)             !important;}
-.iconDelete            { background-image: url(./img/delete.png)                !important;}
 .iconDiffView          { background-image: url(./img/code-class.png)            !important;}
 .iconDownloadDiff      { background-image: url(./img/download-later.png)        !important;}
 .iconEditor, .iconEdit            { background-image: url(./img/document-edit.png)         !important;} /*@TODO: Remove the alias .iconEditor later */
@@ -121,13 +121,15 @@
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
 .iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
+.iconNewFiles          { background-image: url(./img/page_add.png)              !important;}
 .iconNewWord           { background-image: url(./img/abiword.png)               !important;}
 .iconNotInEn           { background-image: url(./img/delete.png)                !important;}
 .iconOpenInTab         { background-image: url(./img/tab-new-background.png)    !important;}
 .iconPageDelete        { background-image: url(./img/user-trash-full.png)       !important;}
 .iconPatchAlert        { background-image: url(./img/bell.png)                  !important;}
-.iconPendingCommit     { background-image: url(./img/svn-commit.png)            !important;}
-.iconPendingPatch      { background-image: url(./img/text-x-patch.png)          !important;}
+.iconPatch             { background-image: url(./img/text-x-patch.png)          !important;}
+.iconPendingCommit     { background-image: url(./img/svn-commit.png)            !important;} /*TODO : need delete*/
+.iconPendingPatch      { background-image: url(./img/text-x-patch.png)          !important;} /*TODO : need delete*/
 .iconProgress          { background-image: url(./img/ui-progress-bar.png)       !important;}
 .iconRedo              { background-image: url(./img/edit-redo.png)             !important;}
 .iconRefresh           { background-image: url(./img/arrow_refresh.png)         !important;}
@@ -158,6 +160,7 @@
 .iconViewDiff          { background-image: url(./img/code-class.png)            !important;}
 .iconVCSLog            { background-image: url(./img/text-x-log.png)            !important;}
 .iconWinManageLog      { background-image: url(./img/text-x-log.png)            !important;}
+.iconWorkInProgress    { background-image: url(./img/applications-development.png) !important;}
 
 
 
@@ -166,10 +169,20 @@
     background: transparent url(./img/help-browser.png) no-repeat 0 2px;
     padding-left: 20px !important;
 }
+
+/* Add this class for span element to allow use it into a tree node*/
+.fileModifiedByMe, .fileModifiedByMe span {
+    color: green !important;
+}
+.fileModifiedByAnother, .fileModifiedByAnother span {
+    color: red !important;
+}
+
 .file-need-commit {
     color: red !important;
     font-weight: bold !important;
 }
+
 .summary_1 {
     color: black !important;
     font-weight: bold !important;
@@ -328,7 +341,7 @@
     background: transparent url(./img/block-top.png) no-repeat scroll 0 0;
     margin: 10px 0 0 5px;
     padding-top: 5px;
-    width: 400px;
+    width: 550px;
     display: inline;
     float: left;
 }
@@ -370,6 +383,10 @@
 .res-block em {
     font-weight: bold;
 }
+.res-block em.userAdmin {
+    color: red;
+}
+
 .ux-grid3-row-action-cell .x-grid3-cell-inner {
     padding: 1px 0 0 0;
 }
@@ -389,7 +406,7 @@
     background-repeat: no-repeat !important;
 
 }
-.file-needcommit-delete {
+.file-needcommit-delete {  /* TODO : must be replace by the iconTrash class */
     background-image: url(./img/delete.png) !important;
     background-repeat: no-repeat !important;
 }

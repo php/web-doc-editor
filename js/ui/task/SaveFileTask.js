@@ -8,11 +8,6 @@ ui.task.SaveFileTask = function(config)
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
 
-    if (PhDOE.userLogin === 'anonymous') {
-        msg.hide();
-        PhDOE.winForbidden();
-        return;
-    }
     XHR({
         scope  : this,
         params : {
@@ -29,12 +24,12 @@ ui.task.SaveFileTask = function(config)
 
             if (this.prefix === 'FNU') {
                 // Update our store
-                if( this.lang === 'en' ) {
+                if( this.ftype === 'EN' ) {
                     this.storeRecord.set('en_revision', o.revision);
-                    this.storeRecord.set('needCommitEN', true);
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                 } else {
                     this.storeRecord.set('revision', o.en_revision);
-                    this.storeRecord.set('needCommitLang', true);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.set('maintainer', o.maintainer);
                 }
                 this.storeRecord.commit();
@@ -42,29 +37,39 @@ ui.task.SaveFileTask = function(config)
 
             if (this.prefix === 'FE') {
                 // Update our store
-                if( this.lang !== 'en' ) {
+                if( this.ftype === 'EN' ) {
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+                } else {
                     this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
                 }
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.commit();
             }
             
             if (this.prefix === 'FNR') {
                 // Update our store
-                if( this.lang !== 'en' ) {
-                    this.storeRecord.set('maintainer', o.maintainer);
+                if( this.ftype === 'EN' ) {
                     this.storeRecord.set('reviewed', o.reviewed);
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+                } else {
+                    this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+
                 }
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.commit();
             }
 
             if (this.prefix === 'AF') {
-                this.storeRecord.getUI().addClass('modified'); // tree node
+                this.storeRecord.getUI().addClass('fileModifiedByMe'); // tree node
             }
 
-            // Add this files into storePendingCommit
-            ui.cmp.PendingCommitGrid.getInstance().addRecord(
+            // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
+            ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
+			ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
+			
+            ui.cmp.WorkTreeGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );
 

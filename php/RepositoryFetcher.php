@@ -140,9 +140,9 @@ class RepositoryFetcher
 
         $s = sprintf(
             'SELECT
-                `id`, `lang`, `path`, `name`, `revision`, `en_revision`, `maintainer`, `reviewed`
+                *
              FROM
-                `pendingCommit`
+                `work`
              WHERE
                 `project` = "%s" AND
                 ( `lang`="%s" OR `lang`="en" ) ',
@@ -179,9 +179,10 @@ class RepositoryFetcher
         }
 
         $s = sprintf(
-            'SELECT *
+            'SELECT
+                *
              FROM
-                `pendingCommit`
+                `work`
              WHERE
                 `project` = "%s" AND
                (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
@@ -266,18 +267,22 @@ class RepositoryFetcher
             if (   isset($m[$vcsLang.$a->path.$a->name])
                 || isset($m['en'    .$a->path.$a->name])
             ) {
-                if (isset($m['en'.$a->path.$a->name])) {
-                    $new_en_revision   = $m['en'.$a->path.$a->name]['revision'];
+
+                $isModifiedEN   = ( isset($m['en'.$a->path.$a->name]) )     ? $m['en'.$a->path.$a->name]     : false ;
+                $isModifiedLang = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
+
+                if ( $isModifiedEN ) {
+                    $new_en_revision   = $isModifiedEN['revision'];
                     $new_revision      = $a->revision;
                     $original_revision = $a->revision;
                     $new_maintainer    = $a->maintainer;
                 }
 
-                if (isset($m[$vcsLang.$a->path.$a->name])) {
+                if ( $isModifiedLang ) {
                     $new_en_revision   = $a->en_revision;
-                    $new_revision      = $m[$vcsLang.$a->path.$a->name]['en_revision'];
+                    $new_revision      = $isModifiedLang['en_revision'];
                     $original_revision = $a->revision;
-                    $new_maintainer    = $m[$vcsLang.$a->path.$a->name]['maintainer'];
+                    $new_maintainer    = $isModifiedLang['maintainer'];
                 }
 
                 $node[] = array(
@@ -288,8 +293,8 @@ class RepositoryFetcher
                     "original_revision" => $original_revision,
                     "en_revision"       => $new_en_revision,
                     "maintainer"        => $new_maintainer,
-                    "needCommitEN"      => (isset($m['en'.$a->path.$a->name])) ? true : false,
-                    "needCommitLang"    => (isset($m[$vcsLang.$a->path.$a->name])) ? true : false
+                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                 );
             } else {
                 $node[] = array(
@@ -300,8 +305,8 @@ class RepositoryFetcher
                     "original_revision" => NULL,
                     "en_revision"       => $a->en_revision,
                     "maintainer"        => $a->maintainer,
-                    "needCommitEN"      => false,
-                    "needCommitLang"    => false
+                    "fileModifiedEN"    => false,
+                    "fileModifiedLang"  => false
                 );
             }
         }
@@ -370,32 +375,36 @@ class RepositoryFetcher
         $node = array();
         while ($a = $r->fetch_object()) {
 
+            $isModifiedEN   = ( isset($m['en'.$a->path.$a->name]) )     ? $m['en'.$a->path.$a->name]     : false ;
+            $isModifiedLang = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
+
             $temp = array(
                 "id"   => $a->id,
                 "path" => $a->path,
                 "name" => $a->name,
             );
 
-            if (   isset($m[$vcsLang.$a->path.$a->name])
-                || isset($m['en'    .$a->path.$a->name])
-            ) {
-                if (isset($m['en'.$a->path.$a->name])) {
+            if ( $isModifiedLang || $isModifiedEN )
+            {
+                if ( $isModifiedEN ) {
                     $new_reviewed   = $a->reviewed;
                     $new_maintainer = $a->maintainer;
                 }
 
-                if (isset($m[$vcsLang.$a->path.$a->name])) {
-                    $new_reviewed   = $m[$vcsLang.$a->path.$a->name]['reviewed'];
-                    $new_maintainer = $m[$vcsLang.$a->path.$a->name]['maintainer'];
+                if ($isModifiedLang) {
+                    $new_reviewed   = $isModifiedLang['reviewed'];
+                    $new_maintainer = $isModifiedLang['maintainer'];
                 }
 
-                $temp['reviewed']   = $new_reviewed;
-                $temp['maintainer'] = $new_maintainer;
-                $temp['needcommit'] = true;
+                $temp['reviewed']          = $new_reviewed;
+                $temp['maintainer']        = $new_maintainer;
+                $temp['fileModifiedEN']    = ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false;
+                $temp['fileModifiedLang']  = ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false;
             } else {
-                $temp['reviewed']   = $a->reviewed;
-                $temp['maintainer'] = $a->maintainer;
-                $temp['needcommit'] = false;
+                $temp['reviewed']          = $a->reviewed;
+                $temp['maintainer']        = $a->maintainer;
+                $temp['fileModifiedEN']    = false;
+                $temp['fileModifiedLang']  = false;
             }
             $node[] = $temp;
         }
@@ -408,8 +417,18 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $m = $this->getModifies();
-        $s = sprintf('SELECT count(*) as total FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
+        $s = sprintf('
+            SELECT
+               count(*) as total
+            FROM
+               `files`
+            WHERE
+               `project`="%s" AND
+               `lang`="%s" AND
+               `status`="NotInEN"',
+            $project,
+            $vcsLang);
+
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
@@ -427,16 +446,33 @@ class RepositoryFetcher
         $project = $am->project;
 
         $m = $this->getModifies();
-        $s = sprintf('SELECT `id`, `path`, `name` FROM `files` WHERE `project`="%s" AND `lang`="%s" AND `status`=\'NotInEN\'', $project, $vcsLang);
+
+        $s = sprintf('
+            SELECT
+               `id`,
+               `path`,
+               `name`
+            FROM
+               `files`
+            WHERE
+               `project`="%s" AND
+               `lang`="%s" AND
+               `status`="NotInEN"',
+            $project,
+            $vcsLang);
+
         $r = DBConnection::getInstance()->query($s);
 
         $node = array();
         while ($a = $r->fetch_object()) {
+
+            $isModified   = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
+
             $node[] = array(
-                "id"         => $a->id,
-                "path"       => $a->path,
-                "name"       => $a->name,
-                "needcommit" => isset($m[$vcsLang.$a->path.$a->name]) ? true : false
+                "id"           => $a->id,
+                "path"         => $a->path,
+                "name"         => $a->name,
+                "fileModified" => ( $isModified ) ? '{"user":"'.$isModified["user"].'", "anonymousIdent":"'.$isModified["anonymousIdent"].'"}' : false
             );
         }
 
@@ -503,18 +539,22 @@ class RepositoryFetcher
 
         $node = array();
         while ($a = $r->fetch_object()) {
+
+            $isModified = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
+
             $node[] = array(
-                "id"         => $a->id,
-                "path"       => $a->path,
-                "name"       => $a->name,
-                "needcommit" => isset($m[$vcsLang.$a->path.$a->name]) ? true : false
+                "id"           => $a->id,
+                "path"         => $a->path,
+                "name"         => $a->name,
+                "fileModified" => ( $isModified ) ? '{"user":"'.$isModified["user"].'", "anonymousIdent":"'.$isModified["anonymousIdent"].'"}' : false
             );
         }
 
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
-
+    
+    // TODO : Deprecated
     public function getNbPendingPatch()
     {
         $am      = AccountManager::getInstance();
@@ -522,15 +562,25 @@ class RepositoryFetcher
         $project = $am->project;
 
         $s = sprintf(
-            'SELECT count(*) as total FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
-            $project, $vcsLang
+            'SELECT
+                count(*) as total
+             FROM
+                `pendingPatch`
+             WHERE
+                `project`="%s" AND
+                (`lang`="%s" OR `lang`=\'en\')',
+            $project,
+            $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
         return $a->total;
     }
+    
     /**
+     * TODO : deprecated
+     * 
      * Get all pending patch.
      *
      * @return An associated array containing informations about pending patch.
@@ -568,7 +618,7 @@ class RepositoryFetcher
         $project = $am->project;
 
         $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
+            'SELECT * FROM `work` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
             $project, $vcsLang
         );
         $r = DBConnection::getInstance()->query($s);
@@ -588,6 +638,7 @@ class RepositoryFetcher
         return $paths;
     }
 
+    // TODO : deprecated
     public function getNbPendingCommit()
     {
         $am      = AccountManager::getInstance();
@@ -604,37 +655,243 @@ class RepositoryFetcher
 
         return $a->total;
     }
+    
     /**
-     * Get all files pending for commit.
+     * Get all files in Work module (progress work or patches for review).
      *
-     * @return An associated array containing informations about files pending for commit.
+     * @return An associated array containing informations about files in work
      */
-    public function getPendingCommit()
+    public function getWork($module)
     {
         $am      = AccountManager::getInstance();
         $vcsLang = $am->vcsLang;
         $project = $am->project;
-
-        // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-        $s = sprintf(
-            'SELECT * FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
-            $project, $vcsLang
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $vcsLogin = $am->vcsLogin;
 
         $node = array();
-        while ($a = $r->fetch_object()) {
-            $node[] = array(
-                "id"          => $a->id,
-                "path"        => $a->lang.$a->path,
-                "name"        => $a->name,
-                "by"          => $a->modified_by,
-                "date"        => $a->date,
-                "type"        => $a->type
-            );
-        }
 
-        return array('nb' => $r->num_rows, 'node' => $node);
+        if( $module == 'PatchesForReview' ) {
+
+            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+            $s = sprintf(
+                'SELECT
+                    `id`,
+                    `name` as patchName,
+                    `user`
+                 FROM
+                    `patches`
+                 WHERE
+                    `project`  = "%s"',
+                $project
+            );
+            $r = DBConnection::getInstance()->query($s);
+            
+            $patches = Array();
+
+            while ($a = $r->fetch_object()) {
+                $patches[$a->id] = Array(
+                    "user"      => $a->user,
+                    "patchName" => $a->patchName
+                );
+
+                $node[$a->user][$a->patchName]['idDB'] = $a->id;
+                $node[$a->user][$a->patchName]['folders'] = array();
+            }
+
+
+            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+            $s = sprintf(
+                'SELECT
+                    *
+                 FROM
+                    `work`
+                 WHERE
+                    `project` = "%s" AND
+                    (`lang`   = "%s" OR `lang`="en") AND
+                    `name`   != "-"  AND
+                    `module`  = "%s" AND
+                    `patchID` IN (%s)',
+                $project,
+                $vcsLang,
+                $module,
+                implode(",", array_keys($patches))
+            );
+
+            $r = DBConnection::getInstance()->query($s);
+
+            while ($a = $r->fetch_object()) {
+
+                $node[$a->user][$patches[$a->patchID]["patchName"]]['idDB'] = $a->patchID;
+                $node[$a->user][$patches[$a->patchID]["patchName"]]['folders'][$a->lang.$a->path][] = Array(
+                    "name"          => $a->name,
+                    "last_modified" => $a->date,
+                    "type"          => $a->type,
+                    "idDB"          => $a->id
+                );
+
+            }
+            
+            $result = '[';
+            // We format the result node to pass to ExtJs TreeGrid component
+            while( list($user, $patchs) = each($node)) {
+
+                if( $user == $vcsLogin ) {
+                    $expanded  = 'true';
+                } else {
+                    $expanded  = 'false';
+                }
+
+                $email = $am->getUserEmail($user);
+                $email = ($email) ? $email : 'false';
+
+                // We start by users
+                $result .= "{task:'".$user."',type:'user',isAnonymous:".(($am->anonymous($user)) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
+
+                // We now walk into patches for this users.
+                while( list($patch, $dataPatch) = each($patchs)) {
+                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,draggable: false, idDB:".$dataPatch["idDB"].", children:[";
+
+                    // We now walk into the folders for this patch
+                    while( list($folder, $dataFiles) = each($dataPatch['folders'])) {
+                        $result .= "{task:'".$folder."',type:'folder',iconCls:'iconFolderOpen',expanded:true,children:[";
+
+                                // We now walk into the files for this folder
+                                while( list($file, $data) = each($dataFiles)) {
+
+                                    // Witch iconCls do we need to use ?
+                                    switch ($data["type"]) {
+                                        case 'delete':
+                                            $iconCls = 'iconTrash';
+
+                                            break;
+                                        case 'new':
+                                            $iconCls = 'iconNewFiles';
+
+                                            break;
+                                        case 'update':
+                                            $iconCls = 'iconRefresh';
+
+                                            break;
+
+                                        default:
+                                            $iconCls = 'task';
+                                            break;
+                                    }
+
+                                    $result .= "{task:'".$data["name"]."',type:'".$data["type"]."',last_modified:'".$data["last_modified"]."',leaf:true,iconCls:'".$iconCls."', idDB:".$data["idDB"]."},";
+                                }
+
+                        $result .= ']},';
+                    }
+
+                    $result .= ']},';
+                }
+
+                $result .= ']},';
+
+            }
+            $result .= ']';
+
+            // We skip trailing comma
+            $result = str_replace("},]", "}]", $result);
+
+            return $result;
+
+        } // End if module == PatchesForReview
+
+
+        if( $module == 'workInProgress' ) {
+
+            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+            $s = sprintf(
+                'SELECT
+                    *
+                 FROM
+                    `work`
+                 WHERE
+                    `project` = "%s" AND
+                    (`lang`   = "%s" OR `lang`="en") AND
+                    `name`   != "-" AND
+                    `module`  = "%s" AND
+                    `patchID` IS NULL',
+                $project,
+                $vcsLang,
+                $module
+            );
+            $r = DBConnection::getInstance()->query($s);
+
+            while ($a = $r->fetch_object()) {
+
+                $node[$a->user][$a->lang.$a->path][] = Array(
+                    "name"          => $a->name,
+                    "last_modified" => $a->date,
+                    "progress"      => $a->progress,
+                    "type"          => $a->type,
+                    "idDB"          => $a->id
+                );
+            }
+
+            $result = '[';
+            // We format the result node to pass to ExtJs TreeGrid component
+            while( list($user, $dataFolders) = each($node)) {
+            
+                if( $user == $vcsLogin ) {
+                    $expanded  = 'true';
+                } else {
+                    $expanded  = 'false';
+                }
+                
+                $email = $am->getUserEmail($user);
+                $email = ($email) ? $email : 'false';
+
+                // We put nbFiles into user's nodes to not have to count it by the client
+                $result .= "{task:'".$user."',type:'user',isAnonymous:".(($am->anonymous($user)) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
+
+                    // We now walk into the folders for this users
+                    while( list($folder, $dataFiles) = each($dataFolders)) {
+                        $result .= "{task:'".$folder."',type:'folder',iconCls:'iconFolderOpen',expanded:true,children:[";
+
+                                // We now walk into the files for this folder
+                                while( list($file, $data) = each($dataFiles)) {
+
+                                    // Witch iconCls do we need to use ?
+                                    switch ($data["type"]) {
+                                        case 'delete':
+                                            $iconCls = 'iconTrash';
+
+                                            break;
+                                        case 'new':
+                                            $iconCls = 'iconNewFiles';
+
+                                            break;
+                                        case 'update':
+                                            $iconCls = 'iconRefresh';
+
+                                            break;
+
+                                        default:
+                                            $iconCls = 'task';
+                                            break;
+                                    }
+
+                                    $result .= "{task:'".$data["name"]."',type:'".$data["type"]."',last_modified:'".$data["last_modified"]."',leaf:true,iconCls:'".$iconCls."',progress:".$data["progress"].", idDB:".$data["idDB"]."},";
+                                }
+
+                        $result .= ']},';
+                    }
+
+
+                $result .= ']},';
+
+            }
+            $result .= ']';
+
+            // We skip trailing comma
+            $result = str_replace("},]", "}]", $result);
+
+            return $result;
+
+        } // End if module == workInProgress
     }
 
     /**
@@ -730,6 +987,8 @@ TODO: Handle project here
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
+        $vcsLogin = $am->vcsLogin;
+        $anonymousIdent = $am->anonymousIdent;
 
         // Security
         $dir = str_replace('..', '', $dir);
@@ -740,6 +999,7 @@ TODO: Handle project here
         $d = dir($appConf[$project]['vcs.path'].$dir);
 
         $files = array();
+
         while ($f = $d->read())
         {
             // We display only 'en', 'LANG' tree
@@ -754,8 +1014,7 @@ TODO: Handle project here
             if (   $f == '.'
                 || $f == '..'
                 || substr($f, 0, 1) == '.'      // skip hidden files
-                || substr($f, -4)   == '.new'   // skip pendingCommit files
-                || substr($f, -6)   == '.patch' // skip pendingPatch files
+                || substr($f, -4)   == '.new'   // skip work files
                 || $f == 'CVS'
             ) continue;
 
@@ -770,11 +1029,22 @@ TODO: Handle project here
                 );
 
             } else {
-/* TODO check modifiedfiles key
-                if (isset($m[substr($dir, 2, (strlen($node)-1)).'/'.$f])) {
-*/
-                if (isset($m[$dir.$f])) {
-                    $cls = 'file modified';
+
+                $testedPath = ltrim($dir.$f, "/");
+
+                //echo $testedPath."\n";
+
+                $isModified = ( isset($m[$testedPath]) ) ? $m[$testedPath] : false ;
+
+                if ( $isModified ) {
+                    
+                    if( $isModified['user'] == $vcsLogin && $isModified['anonymousIdent'] == $anonymousIdent ) {
+                        $cls = 'file fileModifiedByMe';
+                    } else {
+                        $cls = 'file fileModifiedByAnother';
+                    }
+                    
+                    
                 } else {
                     $cls = 'file';
                 }
@@ -786,7 +1056,7 @@ TODO: Handle project here
                     'leaf'      => true,
                     'cls'       => $cls,
                     'extension' => $ext,
-                    'type'      => 'file'
+                    'type'      => 'file'                    
                 );
             }
         }

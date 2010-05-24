@@ -13,46 +13,76 @@ class File
 
     public $full_path;
     public $full_path_fallback;
-
+    
+    public $full_path_dir;
+    
+    public $isDir;
+    public $isFile;
+    
     /**
-     * Constructor will normalize the lang, path, name as specified as parameters
+     * Constructor will normalize the lang and the path as specified as parameters.
+     * The path can be a folder or a file.
      *
      * @param $lang '/' netural
      * @param $path with leading and tailing '/'
      * @param $name '/' netural
      */
-    public function __construct($lang='', $path='', $name='')
+    public function __construct($lang='', $path='')
     {
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
-
+        
         // Security
         $path = str_replace('..', '',  $path);
         $path = str_replace('//', '/', $path);
 
         $this->lang = $lang = trim($lang, '/');
-        $this->name = $name = trim($name, '/');
-
+        $path = trim($path, '.');
         $path = trim($path, '/');
-
+        
+        // Find if the path is a folder or a file. As it, if the path contains an extension, we assume the path is a file.
+        // Else, it's a folder.
+        $path_parts = pathinfo($path);
+        
+        if( !isset($path_parts['extension']) ) {
+        	$this->isDir = true;
+            $this->isFile = false;
+            $this->name = '';
+            $path_parts['dirname'] = isset($path_parts['dirname']) ? $path_parts['dirname'] : '';
+            $path = $path_parts['dirname'].'/'.$path_parts['basename'];
+        } else {
+            $this->isDir = false;
+            $this->isFile = true;
+            $this->name = $path_parts['basename'];
+            $path = $path_parts['dirname'];
+        }
+        
+        $path = trim($path, '.');
+        $path = trim($path, '/');
+        $path = trim($path, '.');
+        
         if (strlen($path) > 0) {
             $this->path = "/$path/";
 
-            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/'.$name;
+            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/'.$this->name;
+            $this->full_path_dir = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/';
 
             // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
-            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$path.'/'.$name;
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$path.'/'.$this->name;
         } else {
             $this->path = '/';
 
-            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$name;
-            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$name;
+            $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$this->name;
+            $this->full_path_dir = $appConf[$project]['vcs.path'].$lang.'/';
+            $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$this->name;
         }
+        
     }
 
     public function exist()
     {
-        return ( is_file($this->full_path) || is_dir($this->full_path) );
+    	if( $this->isDir ) return is_dir($this->full_path_dir);
+        else return is_file($this->full_path);
     }
 
 
@@ -61,8 +91,8 @@ class File
      *
      * @return The automatic translation.
      */
-    public function translate() {
-
+    public function translate()
+    {
         $originalContent = file_get_contents($this->full_path);
 
         // We search for new line caracters and mark it ! (Google API delete new line)
@@ -98,7 +128,10 @@ class File
      */
     public function read($readOriginal=false)
     {
-        $path = ($readOriginal || !$this->isModified())
+        $isModified = $this->isModified();
+        $isModified = (bool) $isModified;
+
+        $path = ($readOriginal || !$isModified)
                 ? $this->full_path
                 : $this->full_path . '.new';
 
@@ -140,24 +173,30 @@ class File
     }
 
     /**
-     * Create a new folder localy & register it to pendingCommit
-     *
-     * @return true
+     * Create a new folder locally & register it to pendingCommit
+     * If $path is provided, it is used to create the according path. Else, we use the current folder's path.
+     * 
+     * @param string $path The path to create. By default, we use the current path.
+     * @return boolean TRUE if the path have been created successfully, FALSE otherwise.
      */
-    public function createFolder($createPath)
+    public function createFolder($path=false)
     {
        $am      = AccountManager::getInstance();
        $appConf = $am->appConf;
        $project = $am->project;
+       
+       if( !$path ) {
+           $path = $this->path;
+       }
 
        // We create this folder localy
-       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.$createPath) ) {
+       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.'/'.$path) ) {
            return false;
        }
 
        // We register this new folder to be committed
-       $obj = (object) array('lang' => $this->lang, 'path' => $createPath, 'name' => '-');
-       RepositoryManager::getInstance()->addPendingCommit($obj, '-', '-', '-', '-', 'new');
+       $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
+       RepositoryManager::getInstance()->addProgressWork($obj, '-', '-', '-', '-', 'new');
 
        return true;
 
@@ -230,18 +269,48 @@ class File
     /**
      * Test if the file is a modified file.
      *
-     * @return Boolean TRUE if the file is a modified file, FALSE otherwise.
+     * @return Mixed FALSE if the file haven't been modified, otherwise, some information about the user how have modified it.
      */
     public function isModified()
     {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        // If the current file is a .new file, we must escape the .new otherwise, we haven't any result from the database
+        if( substr($this->name, -4) == ".new" ) {
+            $hereName = substr($this->name, 0, (strlen($this->name) - 4));
+        } else {
+            $hereName = $this->name;
+        }
+
         $s = sprintf(
-            'SELECT `id`, `lang`, `path`, `name` FROM `pendingCommit` WHERE
-            `lang`="%s" AND `path`="%s" AND `name`="%s"',
-            $this->lang, $this->path, $this->name
+            'SELECT
+                `user`,
+                `anonymousIdent`
+             FROM
+                `work`
+             WHERE
+                `project` = "%s" AND
+                `lang`="%s" AND
+                `path`="%s" AND
+                `name`="%s"',
+            $project,
+            $this->lang,
+            $this->path,
+            $hereName
         );
+
+        //echo $s;
+
         $r = DBConnection::getInstance()->query($s);
 
-        return ( $r->num_rows == 0 ) ? false : true;
+        if( $r->num_rows == 0 ) {
+            return false;
+        } else {
+            $a = $r->fetch_assoc();
+            $a['isAnonymous'] = $am->anonymous($a['user']);
+            return json_encode($a);
+        }
     }
 
     /**
@@ -336,7 +405,7 @@ class File
         $project = $am->project;
 
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.$this->full_path.'; '
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
               .'diff -u '.$this->name.' '.$this->name.$ext;
 
         $output = array();

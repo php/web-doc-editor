@@ -135,7 +135,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
                     value : false,
@@ -144,7 +144,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
                     value : true,
@@ -174,7 +174,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
             cls   : 'flags flag-'+this.lang
         }, 'first');
 
-        if( PhDOE.userConf.portletSummaryCollapsed ) {
+        if( PhDOE.user.conf.portletSummaryCollapsed ) {
             this.collapse();
         } else {
             this.expand();

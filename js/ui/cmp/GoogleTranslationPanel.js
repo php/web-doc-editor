@@ -23,7 +23,7 @@ ui.cmp.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
             items:[{
                 xtype      : 'textarea',
                 anchor     : '90%',
-                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.userLang),
+                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.user.lang),
                 name       : 'GGTranslate-string',
                 id         : 'GGTranslate-string',
                 allowBlank : false

@@ -166,11 +166,11 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
                     }
                 }, '-', {
                     scope   : this,
-                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.appConf.projectMailList, this.lang)),
+                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.app.conf.projectMailList, this.lang)),
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.appConf.projectMailList, this.lang));
+                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.app.conf.projectMailList, this.lang));
                         this.EmailPrompt.show('lastUpdateTime');
                     }
                 }]
@@ -228,7 +228,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
                     value : false,
@@ -237,7 +237,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
                     value : true,
@@ -246,7 +246,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletTranslatorCollapsed ) {
+            if( PhDOE.user.conf.portletTranslatorCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();

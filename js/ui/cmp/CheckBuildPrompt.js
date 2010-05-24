@@ -30,7 +30,7 @@ ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
                 baseCls   : 'x-plain',
                 bodyStyle : 'padding:5px 5px 0',
                 html      : _('You\'re about to check the build via this command:') +
-                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + PhDOE.userLang + '<span id="option-xml-details-span" style="color: red; visibility: hidden;"> --enable-xml-details</span><br/><div id="option-xml-details-div" style="text-align: center; color: red; visibility: hidden;">'+_('<b>WARNING !</b><br/> This option use a lot of server ressource. If you don\'t know what are the consequence, please, don\'t use it.')+'</div>'
+                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + PhDOE.user.lang + '<span id="option-xml-details-span" style="color: red; visibility: hidden;"> --enable-xml-details</span><br/><div id="option-xml-details-div" style="text-align: center; color: red; visibility: hidden;">'+_('<b>WARNING !</b><br/> This option use a lot of server ressource. If you don\'t know what are the consequence, please, don\'t use it.')+'</div>'
             }, {
                 xtype     : 'checkbox',
                 id        : 'option-xml-details',

@@ -6,20 +6,21 @@ ui.task.LoadConfigTask = function(config)
 
     XHR({
         params  : { task : 'getConf' },
-        success : function(response)
+        success : function(r)
         {
-            var o = Ext.decode(response.responseText);
+            var o = Ext.decode(r.responseText);
 
-            PhDOE.userLogin = o.mess.userLogin;
-            PhDOE.userLang  = o.mess.userLang;
-
-            PhDOE.userConf  = o.mess.userConf;
+            PhDOE.user.login = o.mess.userLogin;
+            PhDOE.user.lang  = o.mess.userLang;
+			PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
+            PhDOE.user.isAdmin = o.mess.userIsAdmin;
+            PhDOE.user.conf = o.mess.userConf;
+			
             PhDOE.project   = o.mess.project;
-
-            PhDOE.appConf   = o.mess.appConf;
+            PhDOE.app.conf   = o.mess.appConf;
 
             //For the theme, we apply this.
-            Ext.get('appTheme').dom.href = PhDOE.userConf.theme;
+            Ext.get('appTheme').dom.href = PhDOE.user.conf.theme;
 
             // Draw the interface
             PhDOE.drawInterface();

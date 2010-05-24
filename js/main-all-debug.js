@@ -1951,7 +1951,871 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
 });
 
 Ext.preg('tabclosemenu', Ext.ux.TabCloseMenu);
-// Copyright (c) 2010 David Davis - http://xant.us/
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ns('Ext.ux.tree');
+
+/**
+ * @class Ext.ux.tree.TreeGridSorter
+ * @extends Ext.tree.TreeSorter
+ * Provides sorting of nodes in a {@link Ext.ux.tree.TreeGrid}.  The TreeGridSorter automatically monitors events on the
+ * associated TreeGrid that might affect the tree's sort order (beforechildrenrendered, append, insert and textchange).
+ * Example usage:<br />
+ * <pre><code>
+ new Ext.ux.tree.TreeGridSorter(myTreeGrid, {
+     folderSort: true,
+     dir: "desc",
+     sortType: function(node) {
+         // sort by a custom, typed attribute:
+         return parseInt(node.id, 10);
+     }
+ });
+ </code></pre>
+ * @constructor
+ * @param {TreeGrid} tree
+ * @param {Object} config
+ */
+Ext.ux.tree.TreeGridSorter = Ext.extend(Ext.tree.TreeSorter, {
+    /**
+     * @cfg {Array} sortClasses The CSS classes applied to a header when it is sorted. (defaults to <tt>['sort-asc', 'sort-desc']</tt>)
+     */
+    sortClasses : ['sort-asc', 'sort-desc'],
+    /**
+     * @cfg {String} sortAscText The text displayed in the 'Sort Ascending' menu item (defaults to <tt>'Sort Ascending'</tt>)
+     */
+    sortAscText : 'Sort Ascending',
+    /**
+     * @cfg {String} sortDescText The text displayed in the 'Sort Descending' menu item (defaults to <tt>'Sort Descending'</tt>)
+     */
+    sortDescText : 'Sort Descending',
+
+    constructor : function(tree, config) {
+        if(!Ext.isObject(config)) {
+            config = {
+                property: tree.columns[0].dataIndex || 'text',
+                folderSort: true
+            }
+        }
+
+        Ext.ux.tree.TreeGridSorter.superclass.constructor.apply(this, arguments);
+
+        this.tree = tree;
+        tree.on('headerclick', this.onHeaderClick, this);
+        tree.ddAppendOnly = true;
+
+        me = this;
+        this.defaultSortFn = function(n1, n2){
+
+            var dsc = me.dir && me.dir.toLowerCase() == 'desc';
+            var p = me.property || 'text';
+            var sortType = me.sortType;
+            var fs = me.folderSort;
+            var cs = me.caseSensitive === true;
+            var leafAttr = me.leafAttr || 'leaf';
+
+            if(fs){
+                if(n1.attributes[leafAttr] && !n2.attributes[leafAttr]){
+                    return 1;
+                }
+                if(!n1.attributes[leafAttr] && n2.attributes[leafAttr]){
+                    return -1;
+                }
+            }
+            var v1 = sortType ? sortType(n1) : (cs ? n1.attributes[p] : n1.attributes[p].toUpperCase());
+            var v2 = sortType ? sortType(n2) : (cs ? n2.attributes[p] : n2.attributes[p].toUpperCase());
+            if(v1 < v2){
+                return dsc ? +1 : -1;
+            }else if(v1 > v2){
+                return dsc ? -1 : +1;
+            }else{
+                return 0;
+            }
+        };
+
+        tree.on('afterrender', this.onAfterTreeRender, this, {single: true});
+        tree.on('headermenuclick', this.onHeaderMenuClick, this);
+    },
+
+    onAfterTreeRender : function() {
+        if(this.tree.hmenu){
+            this.tree.hmenu.insert(0,
+                {itemId:'asc', text: this.sortAscText, cls: 'xg-hmenu-sort-asc'},
+                {itemId:'desc', text: this.sortDescText, cls: 'xg-hmenu-sort-desc'}
+            );
+        }
+        this.updateSortIcon(0, 'asc');
+    },
+
+    onHeaderMenuClick : function(c, id, index) {
+        if(id === 'asc' || id === 'desc') {
+            this.onHeaderClick(c, null, index);
+            return false;
+        }
+    },
+
+    onHeaderClick : function(c, el, i) {
+        if(c && !this.tree.headersDisabled){
+            var me = this;
+
+            me.property = c.dataIndex;
+            me.dir = c.dir = (c.dir === 'desc' ? 'asc' : 'desc');
+            me.sortType = c.sortType;
+            me.caseSensitive === Ext.isBoolean(c.caseSensitive) ? c.caseSensitive : this.caseSensitive;
+            me.sortFn = c.sortFn || this.defaultSortFn;
+
+            this.tree.root.cascade(function(n) {
+                if(!n.isLeaf()) {
+                    me.updateSort(me.tree, n);
+                }
+            });
+
+            this.updateSortIcon(i, c.dir);
+        }
+    },
+
+    // private
+    updateSortIcon : function(col, dir){
+        var sc = this.sortClasses;
+        var hds = this.tree.innerHd.select('td').removeClass(sc);
+        hds.item(col).addClass(sc[dir == 'desc' ? 1 : 0]);
+    }
+});/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.tree.ColumnResizer
+ * @extends Ext.util.Observable
+ */
+Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
+    /**
+     * @cfg {Number} minWidth The minimum width the column can be dragged to.
+     * Defaults to <tt>14</tt>.
+     */
+    minWidth: 14,
+
+    constructor: function(config){
+        Ext.apply(this, config);
+        Ext.tree.ColumnResizer.superclass.constructor.call(this);
+    },
+
+    init : function(tree){
+        this.tree = tree;
+        tree.on('render', this.initEvents, this);
+    },
+
+    initEvents : function(tree){
+        tree.mon(tree.innerHd, 'mousemove', this.handleHdMove, this);
+        this.tracker = new Ext.dd.DragTracker({
+            onBeforeStart: this.onBeforeStart.createDelegate(this),
+            onStart: this.onStart.createDelegate(this),
+            onDrag: this.onDrag.createDelegate(this),
+            onEnd: this.onEnd.createDelegate(this),
+            tolerance: 3,
+            autoStart: 300
+        });
+        this.tracker.initEl(tree.innerHd);
+        tree.on('beforedestroy', this.tracker.destroy, this.tracker);
+    },
+
+    handleHdMove : function(e, t){
+        var hw = 5,
+            x = e.getPageX(),
+            hd = e.getTarget('.x-treegrid-hd', 3, true);
+        
+        if(hd){                                 
+            var r = hd.getRegion(),
+                ss = hd.dom.style,
+                pn = hd.dom.parentNode;
+            
+            if(x - r.left <= hw && hd.dom !== pn.firstChild) {
+                var ps = hd.dom.previousSibling;
+                while(ps && Ext.fly(ps).hasClass('x-treegrid-hd-hidden')) {
+                    ps = ps.previousSibling;
+                }
+                if(ps) {                    
+                    this.activeHd = Ext.get(ps);
+    				ss.cursor = Ext.isWebKit ? 'e-resize' : 'col-resize';
+                }
+            } else if(r.right - x <= hw) {
+                var ns = hd.dom;
+                while(ns && Ext.fly(ns).hasClass('x-treegrid-hd-hidden')) {
+                    ns = ns.previousSibling;
+                }
+                if(ns) {
+                    this.activeHd = Ext.get(ns);
+    				ss.cursor = Ext.isWebKit ? 'w-resize' : 'col-resize';                    
+                }
+            } else{
+                delete this.activeHd;
+                ss.cursor = '';
+            }
+        }
+    },
+
+    onBeforeStart : function(e){
+        this.dragHd = this.activeHd;
+        return !!this.dragHd;
+    },
+
+    onStart : function(e){
+        this.tree.headersDisabled = true;
+        this.proxy = this.tree.body.createChild({cls:'x-treegrid-resizer'});
+        this.proxy.setHeight(this.tree.body.getHeight());
+
+        var x = this.tracker.getXY()[0];
+
+        this.hdX = this.dragHd.getX();
+        this.hdIndex = this.tree.findHeaderIndex(this.dragHd);
+
+        this.proxy.setX(this.hdX);
+        this.proxy.setWidth(x-this.hdX);
+
+        this.maxWidth = this.tree.outerCt.getWidth() - this.tree.innerBody.translatePoints(this.hdX).left;
+    },
+
+    onDrag : function(e){
+        var cursorX = this.tracker.getXY()[0];
+        this.proxy.setWidth((cursorX-this.hdX).constrain(this.minWidth, this.maxWidth));
+    },
+
+    onEnd : function(e){
+        var nw = this.proxy.getWidth(),
+            tree = this.tree;
+        
+        this.proxy.remove();
+        delete this.dragHd;
+        
+        tree.columns[this.hdIndex].width = nw;
+        tree.updateColumnWidths();
+        
+        setTimeout(function(){
+            tree.headersDisabled = false;
+        }, 100);
+    }
+});/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.tree.TreeGridNodeUI
+ * @extends Ext.tree.TreeNodeUI
+ */
+Ext.ux.tree.TreeGridNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+    isTreeGridNodeUI: true,
+
+    renderElements : function(n, a, targetNode, bulkRender){
+        var t = n.getOwnerTree(),
+            cols = t.columns,
+            c = cols[0],
+            i, buf, len;
+
+        this.indentMarkup = n.parentNode ? n.parentNode.ui.getChildIndent() : '';
+
+        buf = [
+             '<tbody class="x-tree-node">',
+                '<tr ext:tree-node-id="', n.id ,'" class="x-tree-node-el x-tree-node-leaf ', a.cls, '">',
+                    '<td class="x-treegrid-col">',
+                        '<span class="x-tree-node-indent">', this.indentMarkup, "</span>",
+                        '<img src="', this.emptyIcon, '" class="x-tree-ec-icon x-tree-elbow">',
+                        '<img src="', a.icon || this.emptyIcon, '" class="x-tree-node-icon', (a.icon ? " x-tree-node-inline-icon" : ""), (a.iconCls ? " "+a.iconCls : ""), '" unselectable="on">',
+                        '<a hidefocus="on" class="x-tree-node-anchor" href="', a.href ? a.href : '#', '" tabIndex="1" ',
+                            a.hrefTarget ? ' target="'+a.hrefTarget+'"' : '', '>',
+                        '<span unselectable="on">', (c.tpl ? c.tpl.apply(a) : a[c.dataIndex] || c.text), '</span></a>',
+                    '</td>'
+        ];
+
+        for(i = 1, len = cols.length; i < len; i++){
+            c = cols[i];
+            buf.push(
+                    '<td class="x-treegrid-col ', (c.cls ? c.cls : ''), '">',
+                        '<div unselectable="on" class="x-treegrid-text"', (c.align ? ' style="text-align: ' + c.align + ';"' : ''), '>',
+                            (c.tpl ? c.tpl.apply(a) : a[c.dataIndex]),
+                        '</div>',
+                    '</td>'
+            );
+        }
+
+        buf.push(
+            '</tr><tr class="x-tree-node-ct"><td colspan="', cols.length, '">',
+            '<table class="x-treegrid-node-ct-table" cellpadding="0" cellspacing="0" style="table-layout: fixed; display: none; width: ', t.innerCt.getWidth() ,'px;"><colgroup>'
+        );
+        for(i = 0, len = cols.length; i<len; i++) {
+            buf.push('<col style="width: ', (cols[i].hidden ? 0 : cols[i].width) ,'px;" />');
+        }
+        buf.push('</colgroup></table></td></tr></tbody>');
+
+        if(bulkRender !== true && n.nextSibling && n.nextSibling.ui.getEl()){
+            this.wrap = Ext.DomHelper.insertHtml("beforeBegin", n.nextSibling.ui.getEl(), buf.join(''));
+        }else{
+            this.wrap = Ext.DomHelper.insertHtml("beforeEnd", targetNode, buf.join(''));
+        }
+
+        this.elNode = this.wrap.childNodes[0];
+        this.ctNode = this.wrap.childNodes[1].firstChild.firstChild;
+        var cs = this.elNode.firstChild.childNodes;
+        this.indentNode = cs[0];
+        this.ecNode = cs[1];
+        this.iconNode = cs[2];
+        this.anchor = cs[3];
+        this.textNode = cs[3].firstChild;
+    },
+
+    // private
+    animExpand : function(cb){
+        this.ctNode.style.display = "";
+        Ext.ux.tree.TreeGridNodeUI.superclass.animExpand.call(this, cb);
+    }
+});
+
+Ext.ux.tree.TreeGridRootNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+    isTreeGridNodeUI: true,
+
+    // private
+    render : function(){
+        if(!this.rendered){
+            this.wrap = this.ctNode = this.node.ownerTree.innerCt.dom;
+            this.node.expanded = true;
+        }
+
+        if(Ext.isWebKit) {
+            // weird table-layout: fixed issue in webkit
+            var ct = this.ctNode;
+            ct.style.tableLayout = null;
+            (function() {
+                ct.style.tableLayout = 'fixed';
+            }).defer(1);
+        }
+    },
+
+    destroy : function(){
+        if(this.elNode){
+            Ext.dd.Registry.unregister(this.elNode.id);
+        }
+        delete this.node;
+    },
+
+    collapse : Ext.emptyFn,
+    expand : Ext.emptyFn
+});/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.tree.TreeGridLoader
+ * @extends Ext.tree.TreeLoader
+ */
+Ext.ux.tree.TreeGridLoader = Ext.extend(Ext.tree.TreeLoader, {
+    createNode : function(attr) {
+        if (!attr.uiProvider) {
+            attr.uiProvider = Ext.ux.tree.TreeGridNodeUI;
+        }
+        return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+    }
+});/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+(function() {
+    Ext.override(Ext.list.Column, {
+        init : function() {    
+            var types = Ext.data.Types,
+                st = this.sortType;
+                    
+            if(this.type){
+                if(Ext.isString(this.type)){
+                    this.type = Ext.data.Types[this.type.toUpperCase()] || types.AUTO;
+                }
+            }else{
+                this.type = types.AUTO;
+            }
+
+            // named sortTypes are supported, here we look them up
+            if(Ext.isString(st)){
+                this.sortType = Ext.data.SortTypes[st];
+            }else if(Ext.isEmpty(st)){
+                this.sortType = this.type.sortType;
+            }
+        }
+    });
+
+    Ext.tree.Column = Ext.extend(Ext.list.Column, {});
+    Ext.tree.NumberColumn = Ext.extend(Ext.list.NumberColumn, {});
+    Ext.tree.DateColumn = Ext.extend(Ext.list.DateColumn, {});
+    Ext.tree.BooleanColumn = Ext.extend(Ext.list.BooleanColumn, {});
+
+    Ext.reg('tgcolumn', Ext.tree.Column);
+    Ext.reg('tgnumbercolumn', Ext.tree.NumberColumn);
+    Ext.reg('tgdatecolumn', Ext.tree.DateColumn);
+    Ext.reg('tgbooleancolumn', Ext.tree.BooleanColumn);
+})();
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/**
+ * @class Ext.ux.tree.TreeGrid
+ * @extends Ext.tree.TreePanel
+ * 
+ * @xtype treegrid
+ */
+Ext.ux.tree.TreeGrid = Ext.extend(Ext.tree.TreePanel, {
+    rootVisible : false,
+    useArrows : true,
+    lines : false,
+    borderWidth : Ext.isBorderBox ? 0 : 2, // the combined left/right border for each cell
+    cls : 'x-treegrid',
+
+    columnResize : true,
+    enableSort : true,
+    reserveScrollOffset : true,
+    enableHdMenu : true,
+    
+    columnsText : 'Columns',
+
+    initComponent : function() {
+        if(!this.root) {
+            this.root = new Ext.tree.AsyncTreeNode({text: 'Root'});
+        }
+        
+        // initialize the loader
+        var l = this.loader;
+        if(!l){
+            l = new Ext.ux.tree.TreeGridLoader({
+                dataUrl: this.dataUrl,
+                requestMethod: this.requestMethod,
+                store: this.store
+            });
+        }else if(Ext.isObject(l) && !l.load){
+            l = new Ext.ux.tree.TreeGridLoader(l);
+        }
+        else if(l) {
+            l.createNode = function(attr) {
+                if (!attr.uiProvider) {
+                    attr.uiProvider = Ext.ux.tree.TreeGridNodeUI;
+                }
+                return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+            }
+        }
+        this.loader = l;
+                            
+        Ext.ux.tree.TreeGrid.superclass.initComponent.call(this);                    
+        
+        this.initColumns();
+        
+        if(this.enableSort) {
+            this.treeGridSorter = new Ext.ux.tree.TreeGridSorter(this, this.enableSort);
+        }
+        
+        if(this.columnResize){
+            this.colResizer = new Ext.tree.ColumnResizer(this.columnResize);
+            this.colResizer.init(this);
+        }
+        
+        var c = this.columns;
+        if(!this.internalTpl){                                
+            this.internalTpl = new Ext.XTemplate(
+                '<div class="x-grid3-header">',
+                    '<div class="x-treegrid-header-inner">',
+                        '<div class="x-grid3-header-offset">',
+                            '<table cellspacing="0" cellpadding="0" border="0"><colgroup><tpl for="columns"><col /></tpl></colgroup>',
+                            '<thead><tr class="x-grid3-hd-row">',
+                            '<tpl for="columns">',
+                            '<td class="x-grid3-hd x-grid3-cell x-treegrid-hd" style="text-align: {align};" id="', this.id, '-xlhd-{#}">',
+                                '<div class="x-grid3-hd-inner x-treegrid-hd-inner" unselectable="on">',
+                                     this.enableHdMenu ? '<a class="x-grid3-hd-btn" href="#"></a>' : '',
+                                     '{header}<img class="x-grid3-sort-icon" src="', Ext.BLANK_IMAGE_URL, '" />',
+                                 '</div>',
+                            '</td></tpl>',
+                            '</tr></thead>',
+                        '</div></table>',
+                    '</div></div>',
+                '</div>',
+                '<div class="x-treegrid-root-node">',
+                    '<table class="x-treegrid-root-table" cellpadding="0" cellspacing="0" style="table-layout: fixed;"></table>',
+                '</div>'
+            );
+        }
+        
+        if(!this.colgroupTpl) {
+            this.colgroupTpl = new Ext.XTemplate(
+                '<colgroup><tpl for="columns"><col style="width: {width}px"/></tpl></colgroup>'
+            );
+        }
+    },
+
+    initColumns : function() {
+        var cs = this.columns,
+            len = cs.length, 
+            columns = [],
+            i, c;
+
+        for(i = 0; i < len; i++){
+            c = cs[i];
+            if(!c.isColumn) {
+                c.xtype = c.xtype ? (/^tg/.test(c.xtype) ? c.xtype : 'tg' + c.xtype) : 'tgcolumn';
+                c = Ext.create(c);
+            }
+            c.init(this);
+            columns.push(c);
+            
+            if(this.enableSort !== false && c.sortable !== false) {
+                c.sortable = true;
+                this.enableSort = true;
+            }
+        }
+
+        this.columns = columns;
+    },
+
+    onRender : function(){
+        Ext.tree.TreePanel.superclass.onRender.apply(this, arguments);
+
+        this.el.addClass('x-treegrid');
+        
+        this.outerCt = this.body.createChild({
+            cls:'x-tree-root-ct x-treegrid-ct ' + (this.useArrows ? 'x-tree-arrows' : this.lines ? 'x-tree-lines' : 'x-tree-no-lines')
+        });
+        
+        this.internalTpl.overwrite(this.outerCt, {columns: this.columns});
+        
+        this.mainHd = Ext.get(this.outerCt.dom.firstChild);
+        this.innerHd = Ext.get(this.mainHd.dom.firstChild);
+        this.innerBody = Ext.get(this.outerCt.dom.lastChild);
+        this.innerCt = Ext.get(this.innerBody.dom.firstChild);
+        
+        this.colgroupTpl.insertFirst(this.innerCt, {columns: this.columns});
+        
+        if(this.hideHeaders){
+            this.header.dom.style.display = 'none';
+        }
+        else if(this.enableHdMenu !== false){
+            this.hmenu = new Ext.menu.Menu({id: this.id + '-hctx'});
+            if(this.enableColumnHide !== false){
+                this.colMenu = new Ext.menu.Menu({id: this.id + '-hcols-menu'});
+                this.colMenu.on({
+                    scope: this,
+                    beforeshow: this.beforeColMenuShow,
+                    itemclick: this.handleHdMenuClick
+                });
+                this.hmenu.add({
+                    itemId:'columns',
+                    hideOnClick: false,
+                    text: this.columnsText,
+                    menu: this.colMenu,
+                    iconCls: 'x-cols-icon'
+                });
+            }
+            this.hmenu.on('itemclick', this.handleHdMenuClick, this);
+        }
+    },
+
+    setRootNode : function(node){
+        node.attributes.uiProvider = Ext.ux.tree.TreeGridRootNodeUI;        
+        node = Ext.ux.tree.TreeGrid.superclass.setRootNode.call(this, node);
+        if(this.innerCt) {
+            this.colgroupTpl.insertFirst(this.innerCt, {columns: this.columns});
+        }
+        return node;
+    },
+    
+    clearInnerCt : function(){
+        if(Ext.isIE){
+            var dom = this.innerCt.dom;
+            while(dom.firstChild){
+                dom.removeChild(dom.firstChild);
+            }
+        }else{
+            Ext.ux.tree.TreeGrid.superclass.clearInnerCt.call(this);
+        }
+    },
+    
+    initEvents : function() {
+        Ext.ux.tree.TreeGrid.superclass.initEvents.apply(this, arguments);
+
+        this.mon(this.innerBody, 'scroll', this.syncScroll, this);
+        this.mon(this.innerHd, 'click', this.handleHdDown, this);
+        this.mon(this.mainHd, {
+            scope: this,
+            mouseover: this.handleHdOver,
+            mouseout: this.handleHdOut
+        });
+    },
+    
+    onResize : function(w, h) {
+        Ext.ux.tree.TreeGrid.superclass.onResize.apply(this, arguments);
+        
+        var bd = this.innerBody.dom;
+        var hd = this.innerHd.dom;
+
+        if(!bd){
+            return;
+        }
+
+        if(Ext.isNumber(h)){
+            bd.style.height = this.body.getHeight(true) - hd.offsetHeight + 'px';
+        }
+
+        if(Ext.isNumber(w)){                        
+            var sw = Ext.num(this.scrollOffset, Ext.getScrollBarWidth());
+            if(this.reserveScrollOffset || ((bd.offsetWidth - bd.clientWidth) > 10)){
+                this.setScrollOffset(sw);
+            }else{
+                var me = this;
+                setTimeout(function(){
+                    me.setScrollOffset(bd.offsetWidth - bd.clientWidth > 10 ? sw : 0);
+                }, 10);
+            }
+        }
+    },
+
+    updateColumnWidths : function() {
+
+        var cols = this.columns,
+            colCount = cols.length,
+            groups = this.outerCt.query('colgroup'),
+            groupCount = groups.length,
+            c, g, i, j;
+
+        for(i = 0; i<colCount; i++) {
+            c = cols[i];
+            for(j = 0; j<groupCount; j++) {
+                g = groups[j];
+                g.childNodes[i].style.width = (c.hidden ? 0 : c.width) + 'px';
+            }
+        }
+        
+        for(i = 0, groups = this.innerHd.query('td'), len = groups.length; i<len; i++) {
+            c = Ext.fly(groups[i]);
+            if(cols[i] && cols[i].hidden) {
+                c.addClass('x-treegrid-hd-hidden');
+            }
+            else {
+                c.removeClass('x-treegrid-hd-hidden');
+            }
+        }
+
+        var tcw = this.getTotalColumnWidth();                        
+        Ext.fly(this.innerHd.dom.firstChild).setWidth(tcw + (this.scrollOffset || 0));
+        this.outerCt.select('table').setWidth(tcw);
+        this.syncHeaderScroll();    
+    },
+                    
+    getVisibleColumns : function() {
+        var columns = [],
+            cs = this.columns,
+            len = cs.length,
+            i;
+            
+        for(i = 0; i<len; i++) {
+            if(!cs[i].hidden) {
+                columns.push(cs[i]);
+            }
+        }        
+        return columns;
+    },
+
+    getTotalColumnWidth : function() {
+        var total = 0;
+        for(var i = 0, cs = this.getVisibleColumns(), len = cs.length; i<len; i++) {
+            total += cs[i].width;
+        }
+        return total;
+    },
+
+    setScrollOffset : function(scrollOffset) {
+        this.scrollOffset = scrollOffset;                        
+        this.updateColumnWidths();
+    },
+
+    // private
+    handleHdDown : function(e, t){
+        var hd = e.getTarget('.x-treegrid-hd');
+
+        if(hd && Ext.fly(t).hasClass('x-grid3-hd-btn')){
+            var ms = this.hmenu.items,
+                cs = this.columns,
+                index = this.findHeaderIndex(hd),
+                c = cs[index],
+                sort = c.sortable;
+                
+            e.stopEvent();
+            Ext.fly(hd).addClass('x-grid3-hd-menu-open');
+            this.hdCtxIndex = index;
+            
+            this.fireEvent('headerbuttonclick', ms, c, hd, index);
+            
+            this.hmenu.on('hide', function(){
+                Ext.fly(hd).removeClass('x-grid3-hd-menu-open');
+            }, this, {single:true});
+            
+            this.hmenu.show(t, 'tl-bl?');
+        }
+        else if(hd) {
+            var index = this.findHeaderIndex(hd);
+            this.fireEvent('headerclick', this.columns[index], hd, index);
+        }
+    },
+
+    // private
+    handleHdOver : function(e, t){                    
+        var hd = e.getTarget('.x-treegrid-hd');                        
+        if(hd && !this.headersDisabled){
+            index = this.findHeaderIndex(hd);
+            this.activeHdRef = t;
+            this.activeHdIndex = index;
+            var el = Ext.get(hd);
+            this.activeHdRegion = el.getRegion();
+            el.addClass('x-grid3-hd-over');
+            this.activeHdBtn = el.child('.x-grid3-hd-btn');
+            if(this.activeHdBtn){
+                this.activeHdBtn.dom.style.height = (hd.firstChild.offsetHeight-1)+'px';
+            }
+        }
+    },
+    
+    // private
+    handleHdOut : function(e, t){
+        var hd = e.getTarget('.x-treegrid-hd');
+        if(hd && (!Ext.isIE || !e.within(hd, true))){
+            this.activeHdRef = null;
+            Ext.fly(hd).removeClass('x-grid3-hd-over');
+            hd.style.cursor = '';
+        }
+    },
+                    
+    findHeaderIndex : function(hd){
+        hd = hd.dom || hd;
+        var cs = hd.parentNode.childNodes;
+        for(var i = 0, c; c = cs[i]; i++){
+            if(c == hd){
+                return i;
+            }
+        }
+        return -1;
+    },
+    
+    // private
+    beforeColMenuShow : function(){
+        var cols = this.columns,  
+            colCount = cols.length,
+            i, c;                        
+        this.colMenu.removeAll();                    
+        for(i = 1; i < colCount; i++){
+            c = cols[i];
+            if(c.hideable !== false){
+                this.colMenu.add(new Ext.menu.CheckItem({
+                    itemId: 'col-' + i,
+                    text: c.header,
+                    checked: !c.hidden,
+                    hideOnClick:false,
+                    disabled: c.hideable === false
+                }));
+            }
+        }
+    },
+                    
+    // private
+    handleHdMenuClick : function(item){
+        var index = this.hdCtxIndex,
+            id = item.getItemId();
+        
+        if(this.fireEvent('headermenuclick', this.columns[index], id, index) !== false) {
+            index = id.substr(4);
+            if(index > 0 && this.columns[index]) {
+                this.setColumnVisible(index, !item.checked);
+            }     
+        }
+        
+        return true;
+    },
+    
+    setColumnVisible : function(index, visible) {
+        this.columns[index].hidden = !visible;        
+        this.updateColumnWidths();
+    },
+
+    /**
+     * Scrolls the grid to the top
+     */
+    scrollToTop : function(){
+        this.innerBody.dom.scrollTop = 0;
+        this.innerBody.dom.scrollLeft = 0;
+    },
+
+    // private
+    syncScroll : function(){
+        this.syncHeaderScroll();
+        var mb = this.innerBody.dom;
+        this.fireEvent('bodyscroll', mb.scrollLeft, mb.scrollTop);
+    },
+
+    // private
+    syncHeaderScroll : function(){
+        var mb = this.innerBody.dom;
+        this.innerHd.dom.scrollLeft = mb.scrollLeft;
+        this.innerHd.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
+    },
+    
+    registerNode : function(n) {
+        Ext.ux.tree.TreeGrid.superclass.registerNode.call(this, n);
+        if(!n.uiProvider && !n.isRoot && !n.ui.isTreeGridNodeUI) {
+            n.ui = new Ext.ux.tree.TreeGridNodeUI(n);
+        }
+    }
+});
+
+Ext.reg('treegrid', Ext.ux.tree.TreeGrid);
+
+
+Ext.override(Ext.ux.tree.TreeGrid, {
+  onResize: function(w, h) {
+    Ext.ux.tree.TreeGrid.superclass.onResize.apply(this, arguments);
+
+    var bd = this.innerBody.dom;
+    var hd = this.innerHd.dom;
+
+    if (!bd) {
+      return;
+    }
+
+    if (Ext.isNumber(h)) {
+      //bd.style.height = this.body.getHeight(true) - hd.offsetHeight + 'px';
+      bd.style.height = this.body.getHeight(true) - 24 + 'px';  // Here is my fix to avoid the vertical scrollBar
+    }
+
+    if (Ext.isNumber(w)) {
+      if (Ext.isIE && !(Ext.isStrict && Ext.isIE8)) {
+        var bdWith = this.body.getWidth(true) + 'px';
+        bd.style.width = bdWith;
+        hd.style.width = bdWith;
+      }
+      var sw = Ext.num(this.scrollOffset, Ext.getScrollBarWidth());
+      if (this.reserveScrollOffset || ((bd.offsetWidth - bd.clientWidth) > 10)) {
+        this.setScrollOffset(sw);
+      } else {
+        var me = this;
+        setTimeout(function() {
+          me.setScrollOffset(bd.offsetWidth - bd.clientWidth > 10 ? sw : 0);
+        }, 10);
+      }
+    }
+  }
+});// Copyright (c) 2010 David Davis - http://xant.us/
 // License: MIT
 Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 
@@ -4231,94 +5095,14 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 });
 
 Ext.reg('usernotes', Ext.ux.UserNotes);
-Ext.namespace('ui','ui.task');
-
-// config - { fid, fuid, fpath, fname, storeRecord }
-ui.task.AcceptPatchTask = function(config)
-{
-    Ext.apply(this, config);
-
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
-
-    Ext.MessageBox.confirm(
-        _('Confirm'),
-        _('This action will accept this patch, send an email to his author, save the file and close this tab.'),
-        function(btn)
-        {
-            if (btn === 'yes') {
-                Ext.getCmp('PP-PATCH-FILE-'      + this.fid).isModified = false;
-                Ext.getCmp('PP-PATCH-PANEL-'     + this.fid).setTitle(
-                    Ext.getCmp('PP-PATCH-PANEL-' + this.fid).originTitle
-                );
-                Ext.getCmp('PP-' + this.fid).setTitle(
-                    Ext.getCmp('PP-' + this.fid).originTitle
-                );
-
-                var msg = Ext.MessageBox.wait(_('Saving data...'));
-
-                // We save LANG File
-                XHR({
-                    scope  : this,
-                    params : {
-                        task        : 'saveFile',
-                        filePath    : this.fpath,
-                        fileName    : this.fname,
-                        fileLang    : 'all',
-                        fileContent : Ext.getCmp('PP-PATCH-FILE-' + this.fid).getCode()
-                    },
-                    success : function(r)
-                    {
-                        var o    = Ext.util.JSON.decode(r.responseText),
-                            grid = ui.cmp.PendingPatchGrid.getInstance();
-
-                        // Add this files into storePendingCommit
-                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
-                            o.id, this.fpath, this.fname, 'update'
-                        );
-
-                        // Remove this patch from the PendingPatchStore
-                        grid.store.remove(this.storeRecord);
-
-                        // We fire event datachanged to update the file count
-                        grid.store.fireEvent('datachanged', grid.store);
-
-                        // We need to send an accept patch email, delete .patch file, and remove this patch from dataBase
-                        XHR({
-                            scope  : this,
-                            params : {
-                                task        : 'afterPatchAccept',
-                                PatchUniqID : this.fuid
-                            }
-                        });
-
-                        // Remove this tab
-                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
-
-                        // Remove wait msg
-                        msg.hide();
-
-                        // Notify
-                        PhDOE.notify('info', _('Patch accepted successfully'), _('The Patch was accepted successfully !'));
-                    },
-                    failure : function() {
-                        // Remove wait msg
-                        msg.hide();
-                    }
-                });
-            } // btn = yes
-        }, this // scope
-    );
-};Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
+Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
 
 ui.task._CheckBuildTask.display = function()
 {
     XHR({
         params  : {
             task : 'getLogFile',
-            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.userLang
+            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.user.lang
         },
         success : function(r)
         {
@@ -4330,21 +5114,21 @@ ui.task._CheckBuildTask.display = function()
             ui.task.PingTask.getInstance().delay(30000);
 
             // Display
-            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.userLang) ) {
-                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.userLang);
+            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.user.lang) ) {
+                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.user.lang);
             }
 
             Ext.getCmp('main-panel').add({
                 xtype      : 'panel',
-                id         : 'check_build_panel_' + PhDOE.userLang,
-                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
-                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                id         : 'check_build_panel_' + PhDOE.user.lang,
+                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.user.lang)),
+                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                 closable   : true,
                 autoScroll : true,
                 iconCls    : 'iconCheckBuild',
                 html       : '<div class="check-build-content">' + o.mess + '</div>'
             });
-            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.userLang);
+            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.user.lang);
         }
     });
 };
@@ -4354,7 +5138,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.user.lang
         },
         success : function()
         {
@@ -4492,11 +5276,6 @@ ui.task.CheckFileTask = function(config)
 {
     Ext.apply(this,config);
 
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
-
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
         _('Checking for error. Please, wait...')
@@ -4564,15 +5343,10 @@ ui.task.CheckFileTask = function(config)
     });
 };Ext.namespace('ui','ui.task');
 
-// config - { ftype, fpath, fname, storeRecord }
+// config - { ftype, fpath, fname }
 ui.task.ClearLocalChangeTask = function(config)
 {
     Ext.apply(this, config);
-
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
 
     Ext.MessageBox.confirm(
         _('Confirm'),
@@ -4605,15 +5379,13 @@ ui.task.ClearLocalChangeTask = function(config)
                     },
                     success : function(r)
                     {
-                        var pending_commit_grid = ui.cmp.PendingCommitGrid.getInstance(),
-                            o                   = Ext.util.JSON.decode(r.responseText),
+                        var o = Ext.util.JSON.decode(r.responseText),
                             node;
 
-                        // We delete this record from the pending commit store
-                        pending_commit_grid.store.remove(this.storeRecord);
-
-                        // We fire event datachanged to update the file count
-                        pending_commit_grid.store.fireEvent('datachanged', pending_commit_grid.store);
+                        // We delete this record from the work in progress module
+                        ui.cmp.WorkTreeGrid.getInstance().delRecord(o.oldIdDB);
+                        // .. and Patches module
+                        ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.oldIdDB);
 
                         // Action for EN file
                         if( o.lang === 'en' && this.ftype === 'update' ) {
@@ -4623,7 +5395,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 function(record)
                                 {
                                     if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
-                                        record.set('needCommitEN', false);
+                                        record.set('fileModifiedEN', false);
                                         record.set('en_revision', o.revision);
                                         record.commit();
                                     }
@@ -4633,8 +5405,8 @@ ui.task.ClearLocalChangeTask = function(config)
                             ui.cmp.ErrorFileGrid.getInstance().store.each(
                                 function(record)
                                 {
-                                    if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                        record.set('needcommit', false);
+                                    if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                        record.set('fileModifiedEN', false);
                                     }
                                 }, this);
 
@@ -4642,7 +5414,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             node = false;
                             node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                             if (node) {
-                              node.getUI().removeClass('modified');
+                              node.getUI().removeClass('fileModifiedByMe');
                             }
 
                             Ext.getBody().unmask();
@@ -4657,8 +5429,9 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.PendingTranslateGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModified', false);
+                                    record.commit();
                                 }
                             }, this);
 
@@ -4666,10 +5439,20 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needCommitLang', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
                                     record.set('revision', o.revision);
                                     record.set('maintainer', o.maintainer);
+                                    record.commit();
+                                }
+                            }, this);
+
+                        // Browse FileError
+                        ui.cmp.ErrorFileGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
                                     record.commit();
                                 }
                             }, this);
@@ -4678,8 +5461,9 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
+                                    record.commit();
                                 }
                             }, this);
 
@@ -4687,8 +5471,8 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModified', false);
                                 }
                             }, this);
 
@@ -4696,22 +5480,56 @@ ui.task.ClearLocalChangeTask = function(config)
                         node = false;
                         node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
-                          node.getUI().removeClass('modified');
+                          node.getUI().removeClass('fileModifiedByMe');
                         }
 
                         Ext.getBody().unmask();
                     },
 
-                    failure : function()
+                    failure : function(r)
                     {
-                        // clear local change failure
                         Ext.getBody().unmask();
-                        PhDOE.winForbidden();
+						
+			            var o = Ext.util.JSON.decode(r.responseText);
+			            
+			            if( o.err ) { 
+						    PhDOE.winForbidden(o.err);
+			            }
                     }
                 });
             }
         }, this
     );
+};Ext.namespace('ui','ui.task');
+
+// config - { patchID }
+ui.task.DeletePatchTask = function(config)
+{
+        Ext.apply(this, config);
+        
+        Ext.getBody().mask(
+            '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+            _('Please, wait...')
+            );
+
+        XHR({
+            scope   : this,
+            params  : {
+                task    : 'deletePatch',
+                patchID : this.patchID
+            },
+            success : function()
+            {
+                Ext.getBody().unmask();
+				
+				// We remove the patch from Patches for review module
+				ui.cmp.PatchesTreeGrid.getInstance().deletePatch(this.patchID);
+				
+	            // Notify
+	            PhDOE.notify('info', _('Patch deleted'), _('The patch have been deleted !'));
+
+            }
+        });
 };Ext.namespace('ui','ui.task');
 
 // config - { xmlID }
@@ -4772,7 +5590,10 @@ ui.task.GetFileTask = function(config)
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
                        + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + PhDOE.project,
                 perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
-                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
+                pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
+                f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
+				fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -4781,8 +5602,7 @@ ui.task.GetFileTask = function(config)
               )
             {
                 p.permlink = '';
-            } else if( this.ftype  === 'GGTRANS' )
-            {
+            } else if( this.ftype  === 'GGTRANS' ) {
                 p.setTitle(p.originTitle);
                 p.setIconClass('iconGoogle');
             } else {
@@ -4791,17 +5611,17 @@ ui.task.GetFileTask = function(config)
             }
 
             // We define the content into the editor
-            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
+            f.setCode(o.content);
 
             // If this is and automatic translation from Google API, we reint the file now.
             if( this.ftype  === 'GGTRANS' ) {
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+                f.reIndentAll();
             }
 
             // Remove the mask from the editor
-            Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
+            pEl.unmask();
 
-            if( o.warn_tab ) {
+            if( o.warn_tab && !this.freadOnly  ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
@@ -4812,10 +5632,10 @@ ui.task.GetFileTask = function(config)
                 });
 
                 // Mark as dirty this editor now
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
             }
 
-            if( o.warn_encoding ) {
+            if( o.warn_encoding && !this.freadOnly ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
@@ -4825,71 +5645,133 @@ ui.task.GetFileTask = function(config)
                     icon    : Ext.MessageBox.WARNING
                 });
 
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
+                f.setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
 
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
             }
+            
+            var dataModified;
+            
+            if( this.prefix === 'FNT' || this.prefix === 'FNIEN' ) { dataModified = 'fileModified'; }
+            if( this.prefix === 'FNU' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+            if( this.prefix === 'FE'  ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+            if( this.prefix === 'FNR' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+
+
+            // We ensure that this file have been marked as modified into the store
+            if( o.fileModified && this.prefix !== 'AF' ) {
+                this.storeRecord.set(dataModified, o.fileModified);
+                this.storeRecord.commit();
+            }
+
+            // Special case for AF module
+            if( this.prefix === 'AF' ) {
+
+                this.storeRecord.data = {};
+
+                this.storeRecord.data.fileModified = false;
+                if( o.fileModified ) {
+                    this.storeRecord.data.fileModified = o.fileModified;
+                }
+            }
+
+            // This file have been modified by a different user than the current one.
+            if( o.fileModified && ( fileModifiedInfo.user !== PhDOE.user.login || fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent ) ) {
+
+                // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
+				if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+					
+					Ext.MessageBox.show({
+                        title   : _('Information'),
+                        msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst()+' mais vous êtes un utilisateur authentifié, vous pouvez donc le modifier.',
+                        buttons : Ext.MessageBox.OK,
+                        icon    : Ext.MessageBox.INFO
+                    });
+					
+				} else {						
+	                if( !this.freadOnly ) {
+	                    // We disable save group, undoRdeo group, and tools group from the toolBars
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
+	                }
+	
+	                // If the current user isn't the user who have modified this file, we disable the panel
+	
+	                var mess = Ext.MessageBox.show({
+	                    title   : _('Information'),
+	                    msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst(),
+	                    buttons : Ext.MessageBox.OK,
+	                    icon    : Ext.MessageBox.INFO
+	                });
+	
+	                mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
+	                mess.getDialog().mask.alignTo(pEl.dom, "tl");
+				}
+            }
         },
         callback : function()
         {
+            var tab = Ext.getCmp(this.prefix + '-' + this.fid);
+
             // Mark FNT panel as loaded
             if( this.prefix == 'FNT' ) {
                 if( this.ftype == 'TRANS' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panTRANSLoaded = true;
+                    tab.panTRANSLoaded = true;
                 }
                 if( this.ftype == 'GGTRANS' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panGGTRANSLoaded = true;
+                    tab.panGGTRANSLoaded = true;
                 }
             }
 
             // Mark FNU panel as loaded
             if( this.prefix == 'FNU' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FE panel as loaded
             if( this.prefix == 'FE' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FNR panel as loaded
             if( this.prefix == 'FNR' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FNIEN panel as loaded
             if( this.prefix == 'FNIEN' ) {
-                Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                tab.panLANGLoaded = true;
             }
 
             // Mark AF panel as loaded
             if( this.prefix == 'AF' ) {
-                Ext.getCmp(this.prefix + '-' + this.fid).panLoaded = true;
+                tab.panLoaded = true;
             }
 
             // Mark PP panel as loaded
             if( this.prefix == 'PP' ) {
                 if( this.ftype == 'PATCH' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panPatchLoaded = true;
+                    tab.panPatchLoaded = true;
                 }
                 if( this.ftype == 'ORIGIN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panOriginLoaded = true;
+                    tab.panOriginLoaded = true;
                 }
             }
 
@@ -4934,20 +5816,21 @@ ui.task.LoadConfigTask = function(config)
 
     XHR({
         params  : { task : 'getConf' },
-        success : function(response)
+        success : function(r)
         {
-            var o = Ext.decode(response.responseText);
+            var o = Ext.decode(r.responseText);
 
-            PhDOE.userLogin = o.mess.userLogin;
-            PhDOE.userLang  = o.mess.userLang;
-
-            PhDOE.userConf  = o.mess.userConf;
+            PhDOE.user.login = o.mess.userLogin;
+            PhDOE.user.lang  = o.mess.userLang;
+			PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
+            PhDOE.user.isAdmin = o.mess.userIsAdmin;
+            PhDOE.user.conf = o.mess.userConf;
+			
             PhDOE.project   = o.mess.project;
-
-            PhDOE.appConf   = o.mess.appConf;
+            PhDOE.app.conf   = o.mess.appConf;
 
             //For the theme, we apply this.
-            Ext.get('appTheme').dom.href = PhDOE.userConf.theme;
+            Ext.get('appTheme').dom.href = PhDOE.user.conf.theme;
 
             // Draw the interface
             PhDOE.drawInterface();
@@ -4975,7 +5858,7 @@ ui.task.MarkDeleteTask = function(config)
                     scope   : this,
                     params  : {
                         task     : 'markAsNeedDelete',
-                        FilePath : PhDOE.userLang + this.fpath,
+                        FilePath : PhDOE.user.lang + this.fpath,
                         FileName : this.fname
                     },
                     success : function(r)
@@ -4983,15 +5866,110 @@ ui.task.MarkDeleteTask = function(config)
                         var o = Ext.util.JSON.decode(r.responseText);
 
                         Ext.getBody().unmask();
-                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
-                            o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
+                        ui.cmp.WorkTreeGrid.getInstance().addRecord(
+                            o.id, PhDOE.user.lang + this.fpath, this.fname, 'delete'
                         );
-                        this.storeRecord.set('needcommit', true);
+                        this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     }
                 });
             }
         }, this
     );
+};Ext.namespace('ui','ui.task');
+
+// config - { patchID, patchName, nodesToAdd }
+ui.task.MoveToPatch = function(config)
+{
+        Ext.apply(this, config);
+        
+        var filesID=[];
+
+        Ext.each(this.nodesToAdd, function(node) {
+            filesID.push(node.attributes.idDB);
+        });
+
+        Ext.getBody().mask(
+            '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+            _('Please, wait...')
+            );
+
+        XHR({
+            scope   : this,
+            params  : {
+                task    : 'moveToPatch',
+                patchID : this.patchID,
+                filesID : filesID.join(',')
+            },
+            success : function()
+            {
+                Ext.getBody().unmask();
+
+                // We add this new patch, and nodesToAdd into Patches for review component
+                ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd);
+
+                // We get all idDB from this nodes to delete record from Work in progress
+                if( this.nodesToAdd ) {
+                    Ext.each(this.nodesToAdd, function(node) {
+                        ui.cmp.WorkTreeGrid.getInstance().delRecord(node.attributes.idDB);
+                    });
+                }
+
+            },
+            failure : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText);
+                Ext.getBody().unmask();
+
+                Ext.MessageBox.alert('Error', o.err);
+            }
+        });
+};Ext.namespace('ui','ui.task');
+
+// config - { patchID, patchName, nodesToAdd }
+ui.task.MoveToWork = function(config)
+{
+        Ext.apply(this, config);
+        
+        var filesID=[];
+
+        Ext.each(this.nodesToAdd, function(node) {
+            filesID.push(node.attributes.idDB);
+        });
+
+        Ext.getBody().mask(
+            '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+            _('Please, wait...')
+            );
+
+        XHR({
+            scope   : this,
+            params  : {
+                task    : 'moveToWork',
+                filesID : filesID.join(',')
+            },
+            success : function()
+            {
+                Ext.getBody().unmask();
+
+                // We add this files into work component
+                ui.cmp.WorkTreeGrid.getInstance().addToWork(this.nodesToAdd);
+
+                // We get all idDB from this nodes to delete record from Patch for review
+                if( this.nodesToAdd ) {
+                    Ext.each(this.nodesToAdd, function(node) {
+                        ui.cmp.PatchesTreeGrid.getInstance().delRecord(node.attributes.idDB);
+                    });
+                }
+
+            },
+            failure : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText);
+                Ext.getBody().unmask();
+
+                Ext.MessageBox.alert('Error', o.err);
+            }
+        });
 };Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
 
 ui.task.PingTask = function()
@@ -5011,7 +5989,7 @@ ui.task.PingTask = function()
                 } else {
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
-                    if( PhDOE.userLang !== 'en' ) {
+                    if( PhDOE.user.lang !== 'en' ) {
 
                         var needReloadSummary = false;
 
@@ -5048,6 +6026,9 @@ ui.task.PingTask = function()
                     }
 
                     // This 3 modules is commun with EN and LANG
+					
+					// TODO : find a way to detect modification into WorkTreeGrid & Patches for review
+					/*
                     if( ui.cmp.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
                         ui.cmp.PendingCommitGrid.getInstance().store.reload();
                     }
@@ -5055,6 +6036,7 @@ ui.task.PingTask = function()
                     if( ui.cmp.PendingPatchGrid.getInstance().store.getCount() != o.totalData.NbPendingPatch ) {
                         ui.cmp.PendingPatchGrid.getInstance().store.reload();
                     }
+                    */
 
                     if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();
@@ -5089,62 +6071,6 @@ ui.task.PingTask.getInstance = function()
         ui.task._PingTask.instance = new ui.task.PingTask();
     }
     return ui.task._PingTask.instance;
-};Ext.namespace('ui','ui.task');
-
-// config - { fid, fuid, storeRecord }
-ui.task.RejectPatchTask = function(config)
-{
-    Ext.apply(this,config);
-
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
-
-    Ext.MessageBox.confirm(
-        _('Confirm'),
-        _('This action will <b>reject</b> this patch, send an email to his author and close this tab.'),
-        function (btn)
-        {
-            if (btn === 'yes') {
-                var msg = Ext.MessageBox.wait(_('Please, wait...'));
-
-                XHR({
-                    scope  : this,
-                    params : {
-                        task        : 'afterPatchReject',
-                        PatchUniqID : this.fuid
-                    },
-
-                    success : function()
-                    {
-                        var grid = ui.cmp.PendingPatchGrid.getInstance();
-                        // Remove this patch from the PendingPatchStore
-                        grid.store.remove(this.storeRecord);
-
-                        // We fire event datachanged to update the file count
-                        grid.store.fireEvent('datachanged', grid.store);
-
-                        // Remove this tab
-                        Ext.getCmp('main-panel').remove('PP-' + this.fid);
-
-                        // Remove wait msg
-                        msg.hide();
-
-                        // Notify
-                        PhDOE.notify('info', _('Patch rejected successfully'), _('The Patch was rejected successfully !'));
-                    },
-
-                    failure : function()
-                    {
-                        // Remove wait msg
-                        msg.hide();
-                        PhDOE.winForbidden();
-                    }
-                });
-            } // btn = yes
-        }, this // scope
-    );
 };Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
@@ -5155,11 +6081,6 @@ ui.task.SaveFileTask = function(config)
     var id_prefix = this.prefix + '-' + this.ftype,
         msg       = Ext.MessageBox.wait(_('Saving data...'));
 
-    if (PhDOE.userLogin === 'anonymous') {
-        msg.hide();
-        PhDOE.winForbidden();
-        return;
-    }
     XHR({
         scope  : this,
         params : {
@@ -5176,12 +6097,12 @@ ui.task.SaveFileTask = function(config)
 
             if (this.prefix === 'FNU') {
                 // Update our store
-                if( this.lang === 'en' ) {
+                if( this.ftype === 'EN' ) {
                     this.storeRecord.set('en_revision', o.revision);
-                    this.storeRecord.set('needCommitEN', true);
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                 } else {
                     this.storeRecord.set('revision', o.en_revision);
-                    this.storeRecord.set('needCommitLang', true);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.set('maintainer', o.maintainer);
                 }
                 this.storeRecord.commit();
@@ -5189,29 +6110,39 @@ ui.task.SaveFileTask = function(config)
 
             if (this.prefix === 'FE') {
                 // Update our store
-                if( this.lang !== 'en' ) {
+                if( this.ftype === 'EN' ) {
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+                } else {
                     this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
                 }
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.commit();
             }
             
             if (this.prefix === 'FNR') {
                 // Update our store
-                if( this.lang !== 'en' ) {
-                    this.storeRecord.set('maintainer', o.maintainer);
+                if( this.ftype === 'EN' ) {
                     this.storeRecord.set('reviewed', o.reviewed);
+                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+                } else {
+                    this.storeRecord.set('maintainer', o.maintainer);
+                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.commit();
+
                 }
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.commit();
             }
 
             if (this.prefix === 'AF') {
-                this.storeRecord.getUI().addClass('modified'); // tree node
+                this.storeRecord.getUI().addClass('fileModifiedByMe'); // tree node
             }
 
-            // Add this files into storePendingCommit
-            ui.cmp.PendingCommitGrid.getInstance().addRecord(
+            // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
+            ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
+			ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
+			
+            ui.cmp.WorkTreeGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );
 
@@ -5257,156 +6188,101 @@ ui.task.SaveFileTask = function(config)
             }
         }
     });
-};Ext.namespace('ui','ui.task');
+};Ext.namespace('ui', 'ui.task');
 
-// config - { prefix, ftype, fpath, fname, fid, lang, email }
-ui.task.SavePatchTask = function(config)
-{
+// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
+ui.task.SaveTransFileTask = function(config){
     Ext.apply(this, config);
-
-    var id_prefix = this.prefix + '-' + this.ftype,
-        msg       = Ext.MessageBox.wait(_('Saving data as a patch...'));
-
-    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
-    Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
-
-    Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
-        Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
-    );
-
-    if ( ( this.prefix === 'AF')  ||
-         ( this.prefix === 'FNT') ||
-         ( this.lang === 'en' && !Ext.getCmp(this.prefix+'-LANG-FILE-'+this.fid).isModified ) ||
-         ( this.lang !== 'en' && !Ext.getCmp(this.prefix+'-EN-FILE-'+this.fid).isModified )
-       ) {
-        Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-            Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-        );
-    }
-
-    // We save this patch
+    
+    var id_prefix = this.prefix + '-' + this.ftype, msg = Ext.MessageBox.wait(_('Saving data...'));
+    
     XHR({
-        scope  : this,
-        params : {
-            task        : 'saveFile',
-            filePath    : this.fpath,
-            fileName    : this.fname,
-            fileLang    : this.lang,
-            fileContent : Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCode(),
-            type        : 'patch',
-            emailAlert  : this.email
+        scope: this,
+        params: {
+            task: 'saveFile',
+            type: 'trans',
+            filePath: this.fpath,
+            fileName: this.fname,
+            fileLang: this.lang,
+            fileContent: Ext.getCmp(this.prefix + '-' + this.ftype +
+            '-FILE-' +
+            this.fid).getCode()
         },
-
-        success : function(r)
-        {
-            var o    = Ext.util.JSON.decode(r.responseText),
-                grid = ui.cmp.PendingPatchGrid.getInstance();
-
-            // Add this files into storePendingPatch
-            grid.store.insert(0,
-                new grid.store.recordType({
-                    id     : Ext.id('', ''),
-                    path   : this.lang + this.fpath,
-                    name   : this.fname,
-                    by     : PhDOE.userLogin,
-                    uniqID : o.uniqId,
-                    date   : new Date()
-                })
-            );
-
-            // Remove wait msg
-            msg.hide();
-
-            // Notify
-            PhDOE.notify('info', _('Patch saved'), _('Patch saved successfully !'));
-        },
-
-        failure : function(r)
-        {
+        
+        success: function(r){
             var o = Ext.util.JSON.decode(r.responseText);
-
+            
+            if (this.ftype != 'NEW') {
+                this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                this.storeRecord.commit();
+            }
+            else {
+                this.storeRecord.data.node.reload();
+            }
+            
+            // Add this files into WorkTreeGrid
+            ui.cmp.WorkTreeGrid.getInstance().addRecord(o.id, this.lang + this.fpath, this.fname, 'new');
+            
+            // reset file
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
+            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+            
+            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle);
+            // reset tab-panel
+            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(Ext.getCmp(this.prefix + '-' + this.fid).originTitle);
+            
             // Remove wait msg
             msg.hide();
-            if( o.type ) {
+            
+            // Notify
+            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
+        },
+        
+        failure: function(r){
+            var o = Ext.util.JSON.decode(r.responseText);
+            
+            // Remove wait msg
+            msg.hide();
+            if (o.type) {
                 PhDOE.winForbidden(o.type);
-            } else {
+            }
+            else {
                 PhDOE.winForbidden();
             }
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+Ext.namespace('ui','ui.task');
 
-// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
-ui.task.SaveTransFileTask = function(config)
+// config - { item, value, [notify=true] }
+ui.task.SetFileProgressTask = function(config)
 {
     Ext.apply(this, config);
 
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
-
-    var id_prefix = this.prefix + '-' + this.ftype,
-        msg       = Ext.MessageBox.wait(_('Saving data...'));
-
+    // Apply modification in DB
     XHR({
-        scope  : this,
-        params : {
-            task        : 'saveFile',
-            type        : 'trans',
-            filePath    : this.fpath,
-            fileName    : this.fname,
-            fileLang    : this.lang,
-            fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
-                                        '-FILE-' + this.fid).getCode()
+        scope   : this,
+        params  : {
+            task     : 'SetFileProgress',
+            idDB     : this.idDB,
+            progress : this.progress
         },
-
-        success : function(r)
-        {
-            var o = Ext.util.JSON.decode(r.responseText);
-
-            if( this.ftype != 'NEW' ) {
-                this.storeRecord.set('needcommit', true);
-                this.storeRecord.commit();
-            } else {
-                this.storeRecord.data.node.reload();
-            }
-
-            // Add this files into storePendingCommit
-            ui.cmp.PendingCommitGrid.getInstance().addRecord(
-                o.id, this.lang + this.fpath, this.fname, 'new'
-            );
-
-            // reset file
-            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
-            Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
-
-            Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
-                Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle
-            );
-            // reset tab-panel
-            Ext.getCmp(this.prefix + '-' + this.fid).setTitle(
-                Ext.getCmp(this.prefix + '-' + this.fid).originTitle
-            );
-
-            // Remove wait msg
-            msg.hide();
-
-            // Notify
-            PhDOE.notify('info', _('Document saved'), String.format(_('Document <br><br><b>{0}</b><br><br> was saved successfully !'), this.lang + this.fpath + this.fname));
-        },
-
         failure : function(r)
         {
-            var o = Ext.util.JSON.decode(r.responseText);
-
-            // Remove wait msg
-            msg.hide();
-            if( o.type ) {
-                PhDOE.winForbidden(o.type);
-            } else {
-                PhDOE.winForbidden();
+            var o = Ext.util.JSON.decode(r.responseText),
+                mess;
+            
+            if( o.err ) {                
+                if( o.err == 'file_dont_exist_in_workInProgress' ) {
+                    mess = _('The file you want to change the estimated progress don\'t exist into the database.');
+                }            
+                if( o.err == 'file_isnt_owned_by_current_user' ) {
+                    mess = _('The file you want to change the estimated progress isn\'t own by you.<br>You only can modify this information for yours files.');
+                }
+            }
+            
+            if( mess ) {
+                PhDOE.notify('error', _('Error'), mess);
             }
         }
     });
@@ -5552,7 +6428,7 @@ ui.task.UpdateConfTask = function(config)
         success : function()
         {
             // Update userConf object
-            PhDOE.userConf[this.item] = this.value;
+            PhDOE.user.conf[this.item] = this.value;
 
             // If we touch this config option, we need to reload this store too
             if( this.item == "errorSkipNbLiteralTag" ) {
@@ -5692,7 +6568,7 @@ ui.task._UpdateSingleFolderTask.update = function(node)
 ui.task.UpdateSingleFolderTask = function(node)
 {
     // If the user is anonymous, we don't update anything
-    if (PhDOE.userLogin === 'anonymous') {
+    if (PhDOE.user.isAnonymous) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
         return;
@@ -5720,7 +6596,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.userLogin +'_commit'
+            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.user.login +'_commit'
         },
         success : function()
         {
@@ -5862,7 +6738,7 @@ ui.task._VCSCommitTask.commit = function(files)
 ui.task.VCSCommitTask = function()
 {
     // If the user is anonymous, we don't commit anything
-    if (PhDOE.userLogin === 'anonymous') {
+    if (PhDOE.user.isAnonymous) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
 
@@ -5970,7 +6846,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
     {
         Ext.apply(this,
         {
-            title : String.format(_('About {0}'), PhDOE.appName),
+            title : String.format(_('About {0}'), PhDOE.app.name),
             items : {
                 xtype     : 'tabpanel',
                 activeTab : 0,
@@ -5980,10 +6856,10 @@ ui.cmp.About = Ext.extend(Ext.Window,
                 items     : [{
                     title : _('About'),
                     html  : '<div id="phd-oe-about">' +
-                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.appName +
+                                '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.app.name +
                             '</div>' +
-                            '<div id="phd-oe-about-info">' + PhDOE.appName + ' ver ' + PhDOE.appVer + '<br/>' +
-                                'UI: ' + PhDOE.uiRevision + '<br/>' +
+                            '<div id="phd-oe-about-info">' + PhDOE.app.name + ' ver ' + PhDOE.app.ver + '<br/>' +
+                                'UI: ' + PhDOE.app.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
@@ -6225,7 +7101,7 @@ ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
                 baseCls   : 'x-plain',
                 bodyStyle : 'padding:5px 5px 0',
                 html      : _('You\'re about to check the build via this command:') +
-                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + PhDOE.userLang + '<span id="option-xml-details-span" style="color: red; visibility: hidden;"> --enable-xml-details</span><br/><div id="option-xml-details-div" style="text-align: center; color: red; visibility: hidden;">'+_('<b>WARNING !</b><br/> This option use a lot of server ressource. If you don\'t know what are the consequence, please, don\'t use it.')+'</div>'
+                            '<br/><br/>/usr/bin/php configure.php --with-lang=' + PhDOE.user.lang + '<span id="option-xml-details-span" style="color: red; visibility: hidden;"> --enable-xml-details</span><br/><div id="option-xml-details-div" style="text-align: center; color: red; visibility: hidden;">'+_('<b>WARNING !</b><br/> This option use a lot of server ressource. If you don\'t know what are the consequence, please, don\'t use it.')+'</div>'
             }, {
                 xtype     : 'checkbox',
                 id        : 'option-xml-details',
@@ -6875,7 +7751,7 @@ ui.cmp._CommitLogManager.menu = Ext.extend(Ext.menu.Menu,
             items  : [{
                 scope   : this,
                 text    : _('Delete this Log Message'),
-                iconCls : 'iconDelete',
+                iconCls : 'iconTrash',
                 handler : function()
                 {
                     XHR({
@@ -7187,7 +8063,7 @@ ui.cmp._DictionaryGrid.store = Ext.extend(Ext.data.Store,
     },
     listeners: {
         load: function() {
-            if( PhDOE.userLogin != "anonymous" ) {
+            if( !PhDOE.user.isAnonymous ) {
                 // Enable the "add new word" button"
                 Ext.getCmp(this.fid + '-btn-new-word').enable();
             }
@@ -7220,7 +8096,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
                 {
                     var o = Ext.util.JSON.decode(r.responseText);
 
-                    record.set('lastUser', PhDOE.userLogin);
+                    record.set('lastUser', PhDOE.user.login);
                     record.set('lastDate', Date.parseDate(o.dateUpdate, 'Y-m-d H:i:s'));
 
                     record.commit();
@@ -7268,8 +8144,8 @@ ui.cmp._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
             items  : [{
                 scope   : this,
                 text    : _('Delete this word'),
-                iconCls : 'iconDelete',
-                disabled: (PhDOE.userLogin == "anonymous"),
+                iconCls : 'iconTrash',
+                disabled: (PhDOE.user.isAnonymous),
                 handler : function()
                 {
                     XHR({
@@ -7334,7 +8210,7 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                    }
                },
                {
-                   header: String.format(_('{0} word'), PhDOE.userLang.ucFirst() ),
+                   header: String.format(_('{0} word'), PhDOE.user.lang.ucFirst() ),
                    sortable: true,
                    dataIndex: 'valueLang',
                    editor    : {
@@ -7400,7 +8276,7 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                         id: 'new',
                         valueEn: '',
                         valueLang: '',
-                        lastUser: PhDOE.userLogin,
+                        lastUser: PhDOE.user.login,
                         lastDate: newDate
                     });
 
@@ -7516,7 +8392,7 @@ ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
         ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
         ['themes/empty.css',                                                  _('Default')],
         ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
-        ['http://extjs.cachefly.net/ext-3.2.0/resources/css/xtheme-gray.css', _('Gray')],
+        ['http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/css/xtheme-gray.css', _('Gray')],
         ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
         ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
         ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],
@@ -7558,7 +8434,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         xtype      : 'spinnerfield',
                         width      : 60,
                         name       : 'mainAppMainMenuWidth',
-                        value      : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                        value      : PhDOE.user.conf.mainAppMainMenuWidth || 300,
                         fieldLabel : _('Main Menu width'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -7569,7 +8445,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -7579,7 +8455,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -7601,7 +8477,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         mode           : 'local',
                         forceSelection : true,
                         editable       : false,
-                        value          : PhDOE.userConf.theme,
+                        value          : PhDOE.user.conf.theme,
                         store          : ui.cmp._EditorConf.themeStore,
                         listeners      : {
                             render : function()
@@ -7631,7 +8507,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items      : [{
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "ask-me") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "ask-me") ? true : false,
                         boxLabel   : _('Ask me if I want to check for error before saving the file'),
                         inputValue : 'ask-me',
                         listeners  : {
@@ -7648,7 +8524,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }, {
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "always") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "always") ? true : false,
                         boxLabel   : _('Always check for error before saving the file'),
                         inputValue : 'always',
                         listeners  : {
@@ -7665,7 +8541,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }, {
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "never") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "never") ? true : false,
                         boxLabel   : _('Never check for error before saving the file'),
                         inputValue : 'never',
                         listeners  : {
@@ -7693,7 +8569,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'mainAppLoadMailsAtStartUp',
-                        checked     : PhDOE.userConf.mainAppLoadMailsAtStartUp,
+                        checked     : PhDOE.user.conf.mainAppLoadMailsAtStartUp,
                         boxLabel    : _('Load mail at startUp'),
                         listeners   : {
                             check : function(field)
@@ -7714,7 +8590,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'mainAppLoadBugsAtStartUp',
-                        checked     : PhDOE.userConf.mainAppLoadBugsAtStartUp,
+                        checked     : PhDOE.user.conf.mainAppLoadBugsAtStartUp,
                         boxLabel    : _('Load bugs at startUp'),
                         listeners   : {
                             check : function(field)
@@ -7761,7 +8637,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         xtype      : 'spinnerfield',
                         width      : 60,
                         name       : 'newFileNbDisplay',
-                        value      : PhDOE.userConf.newFileNbDisplay || 0,
+                        value      : PhDOE.user.conf.newFileNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -7794,7 +8670,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'newFileScrollbars',
-                        checked     : PhDOE.userConf.newFileScrollbars,
+                        checked     : PhDOE.user.conf.newFileScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
@@ -7814,7 +8690,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'newFileGGPanel',
-                        checked     : PhDOE.userConf.newFileGGPanel,
+                        checked     : PhDOE.user.conf.newFileGGPanel,
                         boxLabel    : _('Display the Google Translation Panel'),
                         listeners   : {
                             check : function(field)
@@ -7839,7 +8715,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'newFileSpellCheck',
-                        checked     : PhDOE.userConf.newFileSpellCheck,
+                        checked     : PhDOE.user.conf.newFileSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -7886,7 +8762,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         width      : 60,
                         name       : 'needUpdateNbDisplay',
-                        value      : PhDOE.userConf.needUpdateNbDisplay || 0,
+                        value      : PhDOE.user.conf.needUpdateNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -7920,7 +8796,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'needUpdateScrollbars',
-                        checked     : PhDOE.userConf.needUpdateScrollbars,
+                        checked     : PhDOE.user.conf.needUpdateScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
@@ -7940,7 +8816,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'needUpdateDisplaylog',
-                        checked     : PhDOE.userConf.needUpdateDisplaylog,
+                        checked     : PhDOE.user.conf.needUpdateDisplaylog,
                         boxLabel    : _('Automatically load the log when displaying the file'),
                         listeners   : {
                             check : function(field)
@@ -7954,7 +8830,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdateDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -7976,7 +8852,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8003,7 +8879,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.needUpdateDiffPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdateDiffPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8025,7 +8901,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDiffPanelHeight',
-                            value      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
+                            value      : PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8044,7 +8920,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }]
                     }, {
                         name       : 'needUpdateDiff',
-                        checked    : (PhDOE.userConf.needUpdateDiff === "using-viewvc") ? true : false,
+                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-viewvc") ? true : false,
                         boxLabel   : _('Using ViewVc from php web site'),
                         inputValue : 'using-viewvc',
                         listeners  : {
@@ -8060,7 +8936,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'needUpdateDiff',
-                        checked    : (PhDOE.userConf.needUpdateDiff === "using-exec") ? true : false,
+                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-exec") ? true : false,
                         boxLabel   : _('Using diff -u command line'),
                         inputValue : 'using-exec',
                         listeners : {
@@ -8087,7 +8963,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name      : 'needUpdateSpellCheckEn',
-                        checked   : PhDOE.userConf.needUpdateSpellCheckEn,
+                        checked   : PhDOE.user.conf.needUpdateSpellCheckEn,
                         boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners : {
                             check : function(field)
@@ -8100,8 +8976,8 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }
                     },{
                         name      : 'needUpdateSpellCheckLang',
-                        checked   : PhDOE.userConf.needUpdateSpellCheckLang,
-                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked   : PhDOE.user.conf.needUpdateSpellCheckLang,
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners : {
                             check : function(field)
                             {
@@ -8139,7 +9015,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                 title   : _('Menu'),
                 iconCls : 'iconMenu',
                 items   : [{
-                    hidden      : ( PhDOE.userLang === 'en' ),
+                    hidden      : ( PhDOE.user.lang === 'en' ),
                     xtype       : 'fieldset',
                     title       : _('Error type'),
                     iconCls     : 'iconFilesError',
@@ -8147,7 +9023,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorSkipNbLiteralTag',
-                        checked    : PhDOE.userConf.errorSkipNbLiteralTag,
+                        checked    : PhDOE.user.conf.errorSkipNbLiteralTag,
                         boxLabel   : _('Skip nbLiteralTag error'),
                         listeners  : {
                             check  : function(field)
@@ -8171,7 +9047,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorScrollbars',
-                        checked    : PhDOE.userConf.errorScrollbars,
+                        checked    : PhDOE.user.conf.errorScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -8191,7 +9067,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorLogLoadData',
-                        checked    : PhDOE.userConf.errorLogLoadData,
+                        checked    : PhDOE.user.conf.errorLogLoadData,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -8204,7 +9080,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'errorEntitiesLoadData',
-                        checked    : PhDOE.userConf.errorEntitiesLoadData,
+                        checked    : PhDOE.user.conf.errorEntitiesLoadData,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -8217,7 +9093,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'errorAcronymsLoadData',
-                        checked    : PhDOE.userConf.errorAcronymsLoadData,
+                        checked    : PhDOE.user.conf.errorAcronymsLoadData,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -8231,7 +9107,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.errorDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.errorDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8253,7 +9129,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'errorDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.errorDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8280,7 +9156,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.errorDescPanel,
+                        collapsed      : !PhDOE.user.conf.errorDescPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8302,7 +9178,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'errorDescPanelHeight',
-                            value      : PhDOE.userConf.errorDescPanelHeight || 150,
+                            value      : PhDOE.user.conf.errorDescPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8331,9 +9207,9 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        hidden      : ( PhDOE.userLang === 'en' ),
+                        hidden      : ( PhDOE.user.lang === 'en' ),
                         name        : 'errorSpellCheckEn',
-                        checked     : PhDOE.userConf.errorSpellCheckEn,
+                        checked     : PhDOE.user.conf.errorSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
@@ -8346,8 +9222,8 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name        : 'errorSpellCheckLang',
-                        checked     : PhDOE.userConf.errorSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked     : PhDOE.user.conf.errorSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -8393,7 +9269,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         width      : 60,
                         name       : 'reviewedNbDisplay',
-                        value      : PhDOE.userConf.reviewedNbDisplay || 0,
+                        value      : PhDOE.user.conf.reviewedNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -8427,7 +9303,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'reviewedScrollbars',
-                        checked    : PhDOE.userConf.reviewedScrollbars,
+                        checked    : PhDOE.user.conf.reviewedScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -8447,7 +9323,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'reviewedDisplaylog',
-                        checked    : PhDOE.userConf.reviewedDisplaylog,
+                        checked    : PhDOE.user.conf.reviewedDisplaylog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -8461,7 +9337,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.reviewedDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.reviewedDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8483,7 +9359,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'reviewedDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8513,7 +9389,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'reviewedSpellCheckEn',
-                        checked     : PhDOE.userConf.reviewedSpellCheckEn,
+                        checked     : PhDOE.user.conf.reviewedSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
@@ -8526,8 +9402,8 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name        : 'reviewedSpellCheckLang',
-                        checked     : PhDOE.userConf.reviewedSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked     : PhDOE.user.conf.reviewedSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -8572,7 +9448,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'allFilesDisplayLog',
-                        checked    : PhDOE.userConf.allFilesDisplayLog,
+                        checked    : PhDOE.user.conf.allFilesDisplayLog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -8585,7 +9461,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'allFilesEntitiesLoadData',
-                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
+                        checked    : PhDOE.user.conf.allFilesEntitiesLoadData,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -8598,7 +9474,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         }
                     },{
                         name       : 'allFilesAcronymsLoadData',
-                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
+                        checked    : PhDOE.user.conf.allFilesAcronymsLoadData,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -8612,7 +9488,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.allFilesDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8634,7 +9510,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'allFilesDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8664,7 +9540,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'allFilesSpellCheck',
-                        checked     : PhDOE.userConf.allFilesSpellCheck,
+                        checked     : PhDOE.user.conf.allFilesSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -8710,7 +9586,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'patchScrollbars',
-                        checked    : PhDOE.userConf.patchScrollbars,
+                        checked    : PhDOE.user.conf.patchScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -8730,7 +9606,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'patchDisplaylog',
-                        checked    : PhDOE.userConf.patchDisplaylog,
+                        checked    : PhDOE.user.conf.patchDisplaylog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -8744,7 +9620,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.patchDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.patchDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8766,7 +9642,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'patchDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.patchDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8793,7 +9669,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.patchDisplayContentPanel,
+                        collapsed      : !PhDOE.user.conf.patchDisplayContentPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -8815,7 +9691,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'patchDisplayContentPanelHeight',
-                            value      : PhDOE.userConf.patchDisplayContentPanelHeight || 375,
+                            value      : PhDOE.user.conf.patchDisplayContentPanelHeight || 375,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8845,7 +9721,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'patchSpellCheck',
-                        checked     : PhDOE.userConf.patchSpellCheck,
+                        checked     : PhDOE.user.conf.patchSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -8896,7 +9772,7 @@ ui.cmp.EditorConf = Ext.extend(Ext.Window,
 
     initComponent : function()
     {
-        if (PhDOE.userLang === 'en') {
+        if (PhDOE.user.lang === 'en') {
             ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefEn);
         } else {
             ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefNonEn);
@@ -8974,7 +9850,7 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
 
                     Ext.Msg.alert(
                         _('Status'),
-                        String.format(_('Email sent to {0} with success!'), win.name),
+                        String.format(_('Email sent to {0} with success!'), win.name.ucFirst()),
                         Ext.emptyFn
                     );
                 }
@@ -8994,7 +9870,7 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
         this.name  = name;
         this.email = email;
 
-        this.items.items[0].items.items[0].setValue('"' + this.name + '" <' + this.email + '>');
+        this.items.items[0].items.items[0].setValue('"' + this.name.ucFirst() + '" <' + this.email + '>');
         this.items.items[0].items.items[1].setValue('');
         this.items.items[0].items.items[2].setValue('');
     },
@@ -9229,40 +10105,47 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
 
         ui.cmp.EntitiesAcronymsPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._ErrorFileGrid');
+});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._ErrorFileGrid');
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid internals
 
 // ErrorFileGrid store
-ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesError'
+ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore({
+    proxy: new Ext.data.HttpProxy({
+        url: './do/getFilesError'
     }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'maintainer'},
-            {name : 'type'},
-            {name : 'value_en'},
-            {name : 'value_lang'},
-            {name : 'needcommit'}
-        ]
+    reader: new Ext.data.JsonReader({
+        root: 'Items',
+        totalProperty: 'nbItems',
+        idProperty: 'id',
+        fields: [{
+            name: 'id'
+        }, {
+            name: 'path'
+        }, {
+            name: 'name'
+        }, {
+            name: 'maintainer'
+        }, {
+            name: 'type'
+        }, {
+            name: 'value_en'
+        }, {
+            name: 'value_lang'
+        }, {
+            name: 'fileModifiedEN'
+        }, {
+            name: 'fileModifiedLang'
+        }]
     }),
-    sortInfo : {
-        field     : 'path',
-        direction : 'ASC'
+    sortInfo: {
+        field: 'path',
+        direction: 'ASC'
     },
-    groupField : 'path',
-    listeners  : {
-        datachanged : function(ds)
-        {
+    groupField: 'path',
+    listeners: {
+        datachanged: function(ds){
             Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
         }
     }
@@ -9270,520 +10153,539 @@ ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore(
 
 // ErrorFileGrid columns definition
 ui.cmp._ErrorFileGrid.columns = [{
-    id        : 'name',
-    header    : _('Files'),
-    sortable  : true,
-    dataIndex : 'name'
+    id: 'name',
+    header: _('Files'),
+    sortable: true,
+    dataIndex: 'name',
+    renderer: function(v, metada, r){
+        var mess = '', infoEN, infoLang;
+        
+        if (r.data.fileModifiedEN) {
+        
+            infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
+            
+            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess = _('File EN modified by me') + "<br>";
+            }
+            else {
+                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+            }
+        }
+        
+        if (r.data.fileModifiedLang) {
+        
+            infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            
+            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
+            }
+            else {
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+            }
+        }
+        
+        if (mess != '') {
+            return "<span ext:qtip='" + mess + "'>" + v + "</span>";
+        }
+        else {
+            return v;
+        }
+    }
 }, {
-    header    : _('Type'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'type'
+    header: _('Type'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'type'
 }, {
-    header    : _('Maintainer'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'maintainer'
+    header: _('Maintainer'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'maintainer'
 }, {
-    header    : _('Path'),
-    dataIndex : 'path',
-    hidden    : true
+    header: _('Path'),
+    dataIndex: 'path',
+    hidden: true
 }];
 
 // ErrorFileGrid view
 ui.cmp._ErrorFileGrid.view = new Ext.grid.GroupingView({
-    emptyText      : '<div style="text-align: center;">'+_('No Files')+'</div>',
-    deferEmptyText : false,
-    forceFit       : true,
-    startCollapsed : true,
-    groupTextTpl   : '{[values.rs[0].data.path]} ' +
-                   '({[values.rs.length]} ' +
-                   '{[values.rs.length > 1 ? "'+_('Files')+'" : "'+_('File')+'"]})',
-    getRowClass : function(record)
-    {
-        if (record.data.needcommit) {
-            return 'file-need-commit';
+    emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>',
+    deferEmptyText: false,
+    forceFit: true,
+    startCollapsed: true,
+    groupTextTpl: '{[values.rs[0].data.path]} ' +
+    '({[values.rs.length]} ' +
+    '{[values.rs.length > 1 ? "' +
+    _('Files') +
+    '" : "' +
+    _('File') +
+    '"]})',
+    getRowClass: function(r){
+        if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
+        
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            
+            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     }
 });
 
 // ErrorFileGrid context menu
-// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.cmp._ErrorFileGrid.menu = function(config)
-{
+// config - { hideDiffMenu, grid, rowIdx, event, lang, fpath, fname }
+ui.cmp._ErrorFileGrid.menu = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._ErrorFileGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._ErrorFileGrid.menu, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                scope   : this,
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconFilesError',
-                handler : function()
-                {
-                    this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
-                    );
+Ext.extend(ui.cmp._ErrorFileGrid.menu, Ext.menu.Menu, {
+    init: function(){
+        Ext.apply(this, {
+            items: [{
+                scope: this,
+                text: '<b>' + _('Edit in a new tab') + '</b>',
+                iconCls: 'iconFilesError',
+                handler: function(){
+                    this.grid.fireEvent('rowdblclick', this.grid, this.rowIdx, this.event);
                 }
             }, {
-                scope   : this,
-                hidden  : this.hideCommit,
-                text    : ('View diff'),
-                iconCls : 'iconViewDiff',
-                handler : function()
-                {
-                    // Add tab for the diff
-                    Ext.getCmp('main-panel').add({
-                        xtype      : 'panel',
-                        id         : 'diff_panel_' + this.rowIdx,
-                        title      : _('Diff'),
-                        tabTip     : _('Diff'),
-                        closable   : true,
-                        autoScroll : true,
-                        iconCls    : 'iconTabLink',
-                        html       : '<div id="diff_content_' + this.rowIdx +
-                                     '" class="diff-content"></div>'
-                    });
-                    Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
-
-                    Ext.get('diff_panel_' + this.rowIdx).mask(
-                        '<img src="themes/img/loading.gif" ' +
-                        'style="vertical-align: middle;" />' +
-                        _('Please, wait...')
-                    );
-
-                    // Load diff data
-                    XHR({
-                        scope   : this,
-                        params  : {
-                            task     : 'getDiff',
-                            DiffType : 'file',
-                            FilePath : this.lang + this.fpath,
-                            FileName : this.fname
-                        },
-                        success : function(r)
-                        {
-                            var o = Ext.util.JSON.decode(r.responseText);
-                            // We display in diff div
-                            Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
-                            Ext.get('diff_panel_' + this.rowIdx).unmask();
+                scope: this,
+                hidden: this.hideDiffMenu,
+                text: _('View diff...'),
+                iconCls: 'iconViewDiff',
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedEN === false),
+                        text: String.format(_('... of the {0} file'), 'EN'),
+                        handler: function(){
+                            this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
                         }
-                    });
-                }
+                    }, {
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedLang === false),
+                        text: String.format(_('... of the {0} file'), PhDOE.user.lang.ucFirst()),
+                        handler: function(){
+                            this.openTab(this.rowIdx, PhDOE.user.lang, this.fpath, this.fname);
+                        }
+                    }]
+                })
             }, '-', {
-                text    : _('About error type'),
-                iconCls : 'iconHelp',
-                handler : function()
-                {
+                text: _('About error type'),
+                iconCls: 'iconHelp',
+                handler: function(){
                     if (!Ext.getCmp('main-panel').findById('FE-help')) {
-
+                    
                         Ext.getCmp('main-panel').add({
-                            id         : 'FE-help',
-                            title      : _('About error type'),
-                            iconCls    : 'iconHelp',
-                            closable   : true,
-                            autoScroll : true,
-                            autoLoad   : './error'
+                            id: 'FE-help',
+                            title: _('About error type'),
+                            iconCls: 'iconHelp',
+                            closable: true,
+                            autoScroll: true,
+                            autoLoad: './error'
                         });
-
+                        
                     }
                     Ext.getCmp('main-panel').setActiveTab('FE-help');
                 }
             }]
         });
+    },
+    
+    openTab: function(rowIdx, lang, fpath, fname){
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
+        
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype: 'panel',
+                id: 'diff_panel_' + lang + '_' + rowIdx,
+                title: _('Diff'),
+                tabTip: String.format(_('Diff for file: {0}'), lang + fpath + fname),
+                closable: true,
+                autoScroll: true,
+                iconCls: 'iconTabLink',
+                html: '<div id="diff_content_' + lang + '_' + rowIdx +
+                '" class="diff-content"></div>'
+            });
+            
+            // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+            
+            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask('<img src="themes/img/loading.gif" ' +
+            'style="vertical-align: middle;" />' +
+            _('Please, wait...'));
+            
+            // Load diff data
+            XHR({
+                params: {
+                    task: 'getDiff',
+                    DiffType: 'file',
+                    FilePath: lang + fpath,
+                    FileName: fname
+                },
+                success: function(r){
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    // We display in diff div
+                    Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
+                    
+                    Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
+                }
+            });
+        }
+        else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+        }
     }
 });
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid
-ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    loadMask         : true,
-    border           : false,
-    autoExpandColumn : 'name',
-    enableDragDrop   : true,
-    ddGroup          : 'mainPanelDDGroup',
-    view             : ui.cmp._ErrorFileGrid.view,
-    columns          : ui.cmp._ErrorFileGrid.columns,
-    listeners        : {
-        render : function(grid)
-        {
+ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
+    loadMask: true,
+    border: false,
+    autoExpandColumn: 'name',
+    enableDragDrop: true,
+    ddGroup: 'mainPanelDDGroup',
+    view: ui.cmp._ErrorFileGrid.view,
+    columns: ui.cmp._ErrorFileGrid.columns,
+    listeners: {
+        render: function(grid){
             grid.view.refresh();
         }
     },
-
-    onRowContextMenu : function(grid, rowIndex, e)
-    {
+    
+    onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-
-        var FilePath = grid.store.getAt(rowIndex).data.path,
-            FileName = grid.store.getAt(rowIndex).data.name;
-
+        
+        var data = grid.store.getAt(rowIndex).data, FilePath = data.path, FileName = data.name;
+        
         grid.getSelectionModel().selectRow(rowIndex);
-
+        
         new ui.cmp._ErrorFileGrid.menu({
-            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
-            grid       : grid,
-            event      : e,
-            rowIdx     : rowIndex,
-            lang       : PhDOE.userLang,
-            fpath      : FilePath,
-            fname      : FileName
+            hideDiffMenu: (data.fileModifiedEN === false && data.fileModifiedLang === false),
+            grid: grid,
+            event: e,
+            rowIdx: rowIndex,
+            lang: PhDOE.user.lang,
+            fpath: FilePath,
+            fname: FileName
         }).showAt(e.getXY());
     },
-
-    onRowDblClick : function(grid, rowIndex, e)
-    {
+    
+    onRowDblClick: function(grid, rowIndex, e){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-
-    openFile : function(rowId) 
-    {
-        var storeRecord = this.store.getById(rowId),
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FE-' + PhDOE.userLang + FilePath + FileName),
-            error       = [],
-            vcsPanel, filePanel;
-
+    
+    openFile: function(rowId){
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FE-' + PhDOE.user.lang + FilePath + FileName), error = [], vcsPanel, filePanel;
+        
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
-
+        
             // Find all error for this file to pass to error_type.php page
             error = [];
-
-            this.store.each(function(record)
-            {
-                if ( record.data.path === FilePath && record.data.name === FileName && !error[record.data.type] ) {
+            
+            this.store.each(function(record){
+                if (record.data.path === FilePath && record.data.name === FileName && !error[record.data.type]) {
                     error.push(record.data.type);
                 }
             });
-
-            vcsPanel = ( PhDOE.userLang === 'en' ) ? [
-                new ui.cmp.VCSLogGrid({
-                    layout    : 'fit',
-                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
-                    prefix    : 'FE-LANG',
-                    fid       : FileID,
-                    fpath     : PhDOE.userLang + FilePath,
-                    fname     : FileName,
-                    loadStore : PhDOE.userConf.errorLogLoadData
-                })
-            ] : [
-                new ui.cmp.VCSLogGrid({
-                    layout    : 'fit',
-                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
-                    prefix    : 'FE-LANG',
-                    fid       : FileID,
-                    fpath     : PhDOE.userLang + FilePath,
-                    fname     : FileName,
-                    loadStore : PhDOE.userConf.errorLogLoadData
-                }),
-                new ui.cmp.VCSLogGrid({
-                    layout    : 'fit',
-                    title     : String.format(_('{0} Log'), 'En'),
-                    prefix    : 'FE-EN',
-                    fid       : FileID,
-                    fpath     : 'en' + FilePath,
-                    fname     : FileName,
-                    loadStore : PhDOE.userConf.errorLogLoadData
-                })
-            ];
-
-            filePanel = ( PhDOE.userLang === 'en' ) ? [
-                new ui.cmp.FilePanel(
-                {
-                    id             : 'FE-LANG-PANEL-' + FileID,
-                    region         : 'center',
-                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                    prefix         : 'FE',
-                    ftype          : 'LANG',
-                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
-                    spellCheckConf : 'errorSpellCheckLang',
-                    fid            : FileID,
-                    fpath          : FilePath,
-                    fname          : FileName,
-                    lang           : PhDOE.userLang,
-                    parser         : 'xml',
-                    storeRecord    : storeRecord,
-                    syncScrollCB   : false,
-                    syncScroll     : false
-                })
-            ] : [
-                new ui.cmp.FilePanel(
-                {
-                    id             : 'FE-LANG-PANEL-' + FileID,
-                    region         : 'center',
-                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                    prefix         : 'FE',
-                    ftype          : 'LANG',
-                    spellCheck     : PhDOE.userConf.errorSpellCheckLang,
-                    spellCheckConf : 'errorSpellCheckLang',
-                    fid            : FileID,
-                    fpath          : FilePath,
-                    fname          : FileName,
-                    lang           : PhDOE.userLang,
-                    parser         : 'xml',
-                    storeRecord    : storeRecord,
-                    syncScrollCB   : true,
-                    syncScroll     : true,
-                    syncScrollConf : 'errorScrollbars'
-                }), new ui.cmp.FilePanel(
-                {
-                    id             : 'FE-EN-PANEL-' + FileID,
-                    region         : 'east',
-                    title          : _('en File: ') + FilePath + FileName,
-                    prefix         : 'FE',
-                    ftype          : 'EN',
-                    spellCheck     : PhDOE.userConf.errorSpellCheckEn,
-                    spellCheckConf : 'errorSpellCheckEn',
-                    fid            : FileID,
-                    fpath          : FilePath,
-                    fname          : FileName,
-                    lang           : 'en',
-                    parser         : 'xml',
-                    storeRecord    : storeRecord,
-                    syncScroll     : true,
-                    syncScrollConf : 'errorScrollbars'
-                })
-            ];
-
+            
+            vcsPanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.VCSLogGrid({
+                layout: 'fit',
+                title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
+                prefix: 'FE-LANG',
+                fid: FileID,
+                fpath: PhDOE.user.lang + FilePath,
+                fname: FileName,
+                loadStore: PhDOE.user.conf.errorLogLoadData
+            })] : [new ui.cmp.VCSLogGrid({
+                layout: 'fit',
+                title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
+                prefix: 'FE-LANG',
+                fid: FileID,
+                fpath: PhDOE.user.lang + FilePath,
+                fname: FileName,
+                loadStore: PhDOE.user.conf.errorLogLoadData
+            }), new ui.cmp.VCSLogGrid({
+                layout: 'fit',
+                title: String.format(_('{0} Log'), 'En'),
+                prefix: 'FE-EN',
+                fid: FileID,
+                fpath: 'en' + FilePath,
+                fname: FileName,
+                loadStore: PhDOE.user.conf.errorLogLoadData
+            })];
+            
+            filePanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.FilePanel({
+                id: 'FE-LANG-PANEL-' + FileID,
+                region: 'center',
+                title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
+                prefix: 'FE',
+                ftype: 'LANG',
+                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
+                spellCheckConf: 'errorSpellCheckLang',
+                fid: FileID,
+                fpath: FilePath,
+                fname: FileName,
+                lang: PhDOE.user.lang,
+                parser: 'xml',
+                storeRecord: storeRecord,
+                syncScrollCB: false,
+                syncScroll: false
+            })] : [new ui.cmp.FilePanel({
+                id: 'FE-LANG-PANEL-' + FileID,
+                region: 'center',
+                title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
+                prefix: 'FE',
+                ftype: 'LANG',
+                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
+                spellCheckConf: 'errorSpellCheckLang',
+                fid: FileID,
+                fpath: FilePath,
+                fname: FileName,
+                lang: PhDOE.user.lang,
+                parser: 'xml',
+                storeRecord: storeRecord,
+                syncScrollCB: true,
+                syncScroll: true,
+                syncScrollConf: 'errorScrollbars'
+            }), new ui.cmp.FilePanel({
+                id: 'FE-EN-PANEL-' + FileID,
+                region: 'east',
+                title: _('en File: ') + FilePath + FileName,
+                prefix: 'FE',
+                ftype: 'EN',
+                spellCheck: PhDOE.user.conf.errorSpellCheckEn,
+                spellCheckConf: 'errorSpellCheckEn',
+                fid: FileID,
+                fpath: FilePath,
+                fname: FileName,
+                lang: 'en',
+                parser: 'xml',
+                storeRecord: storeRecord,
+                syncScroll: true,
+                syncScrollConf: 'errorScrollbars'
+            })];
+            
             Ext.getCmp('main-panel').add({
-                id             : 'FE-' + FileID,
-                title          : FileName,
-                layout         : 'border',
-                iconCls        : 'iconTabError',
-                closable       : true,
-                tabLoaded      : false,
-                panVCSLang     : !PhDOE.userConf.errorDisplayLog,
-                panVCSEn       : ( PhDOE.userLang === 'en' ) ? true : !PhDOE.userConf.errorDisplayLog,
-                panLANGLoaded  : false,
-                panENLoaded    : ( PhDOE.userLang === 'en' ) ? true : false,
-                originTitle    : FileName,
-                defaults       : {split : true},
-                tabTip         : String.format(
-                    _('File with error : in {0}'), FilePath
-                ),
+                id: 'FE-' + FileID,
+                title: FileName,
+                layout: 'border',
+                iconCls: 'iconTabError',
+                closable: true,
+                tabLoaded: false,
+                panVCSLang: !PhDOE.user.conf.errorDisplayLog,
+                panVCSEn: (PhDOE.user.lang === 'en') ? true : !PhDOE.user.conf.errorDisplayLog,
+                panLANGLoaded: false,
+                panENLoaded: (PhDOE.user.lang === 'en') ? true : false,
+                originTitle: FileName,
+                defaults: {
+                    split: true
+                },
+                tabTip: String.format(_('File with error : in {0}'), FilePath),
                 listeners: {
-                    resize: function(panel) {
-                        ( PhDOE.userLang !== 'en' ) ? Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2) : '';
+                    resize: function(panel){
+                        (PhDOE.user.lang !== 'en') ? Ext.getCmp('FE-EN-PANEL-' + FileID).setWidth(panel.getWidth() / 2) : '';
                     }
                 },
-                items : [
-                    {
-                        xtype       : 'panel',
-                        id          : 'FE-error-desc-' + FileID,
-                        region      : 'north',
-                        layout      : 'fit',
-                        title       : _('Error description'),
-                        iconCls     : 'iconFilesError',
-                        collapsedIconCls : 'iconFilesError',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        height      : PhDOE.userConf.errorDescPanelHeight || 150,
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.errorDescPanel,
-                        autoScroll  : true,
-                        autoLoad    : './error?dir=' + FilePath +
-                                            '&file=' + FileName,
-                        listeners   : {
-                            collapse: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorDescPanel',
-                                        value : false
-                                    });
-                                }
-                            },
-                            expand: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorDescPanel',
-                                        value : true
-                                    });
-                                }
-                            },
-                            resize: function(a,b,newHeight) {
-
-                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.errorDescPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorDescPanelHeight',
-                                        value : newHeight
-                                    });
-                                }
-                            }
-                        }
-                    }, {
-                        region      : 'west',
-                        xtype       : 'panel',
-                        title       : _('Tools'),
-                        iconCls     : 'iconConf',
-                        collapsedIconCls : 'iconConf',
-                        plugins     : [Ext.ux.PanelCollapsedTitle],
-                        collapsible : true,
-                        collapsed   : !PhDOE.userConf.errorLogPanel,
-                        layout      : 'fit',
-                        bodyBorder  : false,
-                        width       : PhDOE.userConf.errorLogPanelWidth || 375,
-                        listeners   : {
-                            collapse: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorLogPanel',
-                                        value : false
-                                    });
-                                }
-                            },
-                            expand: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorLogPanel',
-                                        value : true
-                                    });
-                                }
-                            },
-                            resize: function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.errorLogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'errorLogPanelWidth',
-                                        value : newWidth
-                                    });
-                                }
+                items: [{
+                    xtype: 'panel',
+                    id: 'FE-error-desc-' + FileID,
+                    region: 'north',
+                    layout: 'fit',
+                    title: _('Error description'),
+                    iconCls: 'iconFilesError',
+                    collapsedIconCls: 'iconFilesError',
+                    plugins: [Ext.ux.PanelCollapsedTitle],
+                    height: PhDOE.user.conf.errorDescPanelHeight || 150,
+                    collapsible: true,
+                    collapsed: !PhDOE.user.conf.errorDescPanel,
+                    autoScroll: true,
+                    autoLoad: './error?dir=' + FilePath +
+                    '&file=' +
+                    FileName,
+                    listeners: {
+                        collapse: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorDescPanel',
+                                    value: false
+                                });
                             }
                         },
-                        items : {
-                            xtype           : 'tabpanel',
-                            activeTab       : 0,
-                            tabPosition     : 'bottom',
-                            enableTabScroll : true,
-                            defaults        : {autoScroll : true},
-                            items           : [
-                                vcsPanel,
-                                new ui.cmp.DictionaryGrid({
-                                    layout    : 'fit',
-                                    title     : _('Dictionary'),
-                                    prefix    : 'FE',
-                                    fid       : FileID
-                                }),
-                            {
-                                title  : _('Entities'),
-                                layout : 'fit',
-                                items  : [new ui.cmp.EntitiesAcronymsPanel({
-                                    dataType  : 'entities',
-                                    prefix    : 'FE',
-                                    ftype     : 'LANG',
-                                    fid       : FileID,
-                                    loadStore : PhDOE.userConf.errorEntitiesLoadData
-                                })]
-                            }, {
-                                title  : _('Acronyms'),
-                                layout : 'fit',
-                                items  : [new ui.cmp.EntitiesAcronymsPanel({
-                                    dataType  : 'acronyms',
-                                    prefix    : 'FE',
-                                    ftype     : 'LANG',
-                                    fid       : FileID,
-                                    loadStore : PhDOE.userConf.errorAcronymsLoadData
-                                })]
-                            }]
+                        expand: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorDescPanel',
+                                    value: true
+                                });
+                            }
+                        },
+                        resize: function(a, b, newHeight){
+                        
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.errorDescPanelHeight) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorDescPanelHeight',
+                                    value: newHeight
+                                });
+                            }
                         }
-                    }, filePanel
-                ]
+                    }
+                }, {
+                    region: 'west',
+                    xtype: 'panel',
+                    title: _('Tools'),
+                    iconCls: 'iconConf',
+                    collapsedIconCls: 'iconConf',
+                    plugins: [Ext.ux.PanelCollapsedTitle],
+                    collapsible: true,
+                    collapsed: !PhDOE.user.conf.errorLogPanel,
+                    layout: 'fit',
+                    bodyBorder: false,
+                    width: PhDOE.user.conf.errorLogPanelWidth || 375,
+                    listeners: {
+                        collapse: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorLogPanel',
+                                    value: false
+                                });
+                            }
+                        },
+                        expand: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorLogPanel',
+                                    value: true
+                                });
+                            }
+                        },
+                        resize: function(a, newWidth){
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.errorLogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item: 'errorLogPanelWidth',
+                                    value: newWidth
+                                });
+                            }
+                        }
+                    },
+                    items: {
+                        xtype: 'tabpanel',
+                        activeTab: 0,
+                        tabPosition: 'bottom',
+                        enableTabScroll: true,
+                        defaults: {
+                            autoScroll: true
+                        },
+                        items: [vcsPanel, new ui.cmp.DictionaryGrid({
+                            layout: 'fit',
+                            title: _('Dictionary'),
+                            prefix: 'FE',
+                            fid: FileID
+                        }), {
+                            title: _('Entities'),
+                            layout: 'fit',
+                            items: [new ui.cmp.EntitiesAcronymsPanel({
+                                dataType: 'entities',
+                                prefix: 'FE',
+                                ftype: 'LANG',
+                                fid: FileID,
+                                loadStore: PhDOE.user.conf.errorEntitiesLoadData
+                            })]
+                        }, {
+                            title: _('Acronyms'),
+                            layout: 'fit',
+                            items: [new ui.cmp.EntitiesAcronymsPanel({
+                                dataType: 'acronyms',
+                                prefix: 'FE',
+                                ftype: 'LANG',
+                                fid: FileID,
+                                loadStore: PhDOE.user.conf.errorAcronymsLoadData
+                            })]
+                        }]
+                    }
+                }, filePanel]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
     },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            store : ui.cmp._ErrorFileGrid.store,
-            tbar  : [
-                _('Filter: '), ' ',
-                new Ext.form.TwinTriggerField({
-                    id              : 'FE-filter',
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-
-                    validateOnBlur  :  false,
-                    validationEvent : false,
-
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-
-                    listeners : {
-                        keypress : function(f, e)
-                        {
-                            if (e.getKey() === e.ENTER) {
-                                this.onTrigger2Click();
-                            }
+    
+    initComponent: function(){
+        Ext.apply(this, {
+            store: ui.cmp._ErrorFileGrid.store,
+            tbar: [_('Filter: '), ' ', new Ext.form.TwinTriggerField({
+                id: 'FE-filter',
+                width: 180,
+                hideTrigger1: true,
+                enableKeyEvents: true,
+                
+                validateOnBlur: false,
+                validationEvent: false,
+                
+                trigger1Class: 'x-form-clear-trigger',
+                trigger2Class: 'x-form-search-trigger',
+                
+                listeners: {
+                    keypress: function(f, e){
+                        if (e.getKey() === e.ENTER) {
+                            this.onTrigger2Click();
                         }
-                    },
-                    onTrigger1Click : function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        ui.cmp._ErrorFileGrid.instance.store.clearFilter();
-                    },
-                    onTrigger2Click : function()
-                    {
-                        var v = this.getValue(), regexp;
-
-                        if (v === '' || v.length < 3) {
-                            this.markInvalid(
-                                _('Your filter must contain at least 3 characters')
-                            );
-                            return;
-                        }
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-
-                        regexp = new RegExp(v, 'i');
-
-                        // We filter on 'path', 'name', 'maintainer' and 'type'
-                        ui.cmp._ErrorFileGrid.instance.store.filterBy(function(record) {
-
-                            if( regexp.test(record.data.path)       ||
-                                regexp.test(record.data.name)       ||
-                                regexp.test(record.data.maintainer) ||
-                                regexp.test(record.data.type)
-                            ) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }, this);
                     }
-                })
-            ]
+                },
+                onTrigger1Click: function(){
+                    this.setValue('');
+                    this.triggers[0].hide();
+                    this.setSize(180, 10);
+                    ui.cmp._ErrorFileGrid.instance.store.clearFilter();
+                },
+                onTrigger2Click: function(){
+                    var v = this.getValue(), regexp;
+                    
+                    if (v === '' || v.length < 3) {
+                        this.markInvalid(_('Your filter must contain at least 3 characters'));
+                        return;
+                    }
+                    this.clearInvalid();
+                    this.triggers[0].show();
+                    this.setSize(180, 10);
+                    
+                    regexp = new RegExp(v, 'i');
+                    
+                    // We filter on 'path', 'name', 'maintainer' and 'type'
+                    ui.cmp._ErrorFileGrid.instance.store.filterBy(function(record){
+                    
+                        if (regexp.test(record.data.path) ||
+                        regexp.test(record.data.name) ||
+                        regexp.test(record.data.maintainer) ||
+                        regexp.test(record.data.type)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }, this);
+                }
+            })]
         });
         ui.cmp.ErrorFileGrid.superclass.initComponent.call(this);
-
+        
         this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
-
+        this.on('rowdblclick', this.onRowDblClick, this);
+        
         // For EN, we hide the column 'maintainer'
-        if( PhDOE.userLang === 'en' ) {
+        if (PhDOE.user.lang === 'en') {
             this.getColumnModel().setHidden(2, true);
         }
-
+        
     }
 });
 
 // singleton
 ui.cmp._ErrorFileGrid.instance = null;
-ui.cmp.ErrorFileGrid.getInstance = function(config)
-{
+ui.cmp.ErrorFileGrid.getInstance = function(config){
     if (!ui.cmp._ErrorFileGrid.instance) {
         if (!config) {
             config = {};
@@ -9791,7 +10693,8 @@ ui.cmp.ErrorFileGrid.getInstance = function(config)
         ui.cmp._ErrorFileGrid.instance = new ui.cmp.ErrorFileGrid(config);
     }
     return ui.cmp._ErrorFileGrid.instance;
-};Ext.namespace('ui','ui.cmp');
+};
+Ext.namespace('ui','ui.cmp');
 
 // ExecDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
@@ -9869,6 +10772,8 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
     {
         Ext.apply(this,
         {
+
+            id    : this.id_prefix + '-FILE-' + this.fid + '-grp-undoRedo',
             items : [{
                 id      : this.id_prefix + '-FILE-' + this.fid + '-btn-undo',
                 scope   : this,
@@ -9994,7 +10899,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                         Ext.getCmp(this.comp_id).insertIntoLine(
                             2, "end",
                             "\n<!-- EN-Revision: XX Maintainer: " +
-                            PhDOE.userLogin + " Status: ready -->"
+                            PhDOE.user.login + " Status: ready -->"
                             );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -10304,12 +11209,13 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
     {
         Ext.apply(this,
         {
+            id    : this.id_prefix + '-FILE-' + this.fid + '-grp-tools',
             items : [{
                 scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
                 iconCls      : 'iconSpellCheck',
-                pressed      : PhDOE.userConf[this.spellCheckConf],
+                pressed      : PhDOE.user.conf[this.spellCheckConf],
                 handler      : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
@@ -10346,7 +11252,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
-//    isPatch, fuid,               pending patch file config
+//    isPatch, fuid,               pending patch file config // TODO: obsolète. Inutile de fournir une interface spécifique pour les patchs
 //    parser, storeRecord,
 //    syncScrollCB {true | false}, display sync-scroll checkbox
 //    syncScroll {true | false},   indicate whether sync the scroll with corresponding file
@@ -10411,7 +11317,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             xtype     : 'checkbox',
             name      : 'needUpdateScrollbars',
             hideLabel : true,
-            checked   : PhDOE.userConf[this.syncScrollConf],
+            checked   : PhDOE.user.conf[this.syncScrollConf],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,
@@ -10454,63 +11360,10 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         }];
 
         if (!this.readOnly) {
-            this.tbar = (this.isPatch) ? [
-            // patch file pane tbar
-            new ui.cmp._FilePanel.tbar.items.common({
-                prefix          : this.prefix,
-                fid             : this.fid,
-                ftype           : this.ftype,
-                goToPreviousTab : this.goToPreviousTab,
-                goToNextTab     : this.goToNextTab
-            }),
-            {
-                xtype :'buttongroup',
-                items : [{
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
-                    scope    : this,
-                    tooltip  : _('<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)'),
-                    iconCls  : 'iconSaveFile',
-                    handler  : function()
-                    {
-                        new ui.task.AcceptPatchTask({
-                            fid         : this.fid,
-                            fpath       : this.fpath,
-                            fname       : this.fname,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }, {
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-reject',
-                    scope    : this,
-                    tooltip  : _('<b>Reject</b> this patch'),
-                    iconCls  : 'iconPageDelete',
-                    handler  : function()
-                    {
-                        new ui.task.RejectPatchTask({
-                            fid         : this.fid,
-                            fuid        : this.fuid,
-                            storeRecord : this.storeRecord
-                        });
-                    }
-                }]
-            }, new ui.cmp._FilePanel.tbar.items.undoRedo({
-                id_prefix : id_prefix,
-                fid       : this.fid
-            }),
-            new ui.cmp._FilePanel.tbar.items.reindentTags({
-                id_prefix      : id_prefix,
-                fid            : this.fid,
-                lang           : this.lang,
-                spellCheck     : this.spellCheck,
-                spellCheckConf : this.spellCheckConf
-            }), '->', 
-            new ui.cmp._FilePanel.tbar.items.usernotes({
-                fid : this.fid,
-                file: this.lang + this.fpath + this.fname
-            })
-            ] : [
-            // en/lang file pane tbar
+
+            // Tbar definition
+            // en/lang file panel tbar
+            this.tbar = [
             new ui.cmp._FilePanel.tbar.items.common({
                 prefix          : this.prefix,
                 fid             : this.fid,
@@ -10519,6 +11372,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 goToNextTab     : this.goToNextTab
             }), {
                 xtype : 'buttongroup',
+                id    : id_prefix + '-FILE-' + this.fid + '-grp-save',
                 items : [{
                     id       : id_prefix + '-FILE-' + this.fid + '-btn-save',
                     scope    : this,
@@ -10556,11 +11410,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         // We check the conf option : onSaveFile. Can be : ask-me, always or never
-                        if( !PhDOE.userConf.onSaveFile ) {
-                            PhDOE.userConf.onSaveFile = 'ask-me';
+                        if( !PhDOE.user.conf.onSaveFile ) {
+                            PhDOE.user.conf.onSaveFile = 'ask-me';
                         }
 
-                        switch (PhDOE.userConf.onSaveFile) {
+                        switch (PhDOE.user.conf.onSaveFile) {
 
                             case 'always':
                                 new ui.task.CheckFileTask({
@@ -10628,24 +11482,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 break;
                         }
                     }
-                }, {
-                    id       : id_prefix + '-FILE-' + this.fid + '-btn-saveas',
-                    scope    : this,
-                    tooltip  : _('<b>Save as</b> a patch'),
-                    iconCls  : 'iconSaveAsFile',
-                    disabled : true,
-                    handler  : function()
-                    {
-                        new ui.cmp.PatchPrompt({
-                            prefix       : this.prefix,
-                            ftype        : this.ftype,
-                            fid          : this.fid,
-                            fpath        : this.fpath,
-                            fname        : this.fname,
-                            lang         : this.lang,
-                            defaultEmail : (PhDOE.userLogin !== 'anonymous') ? PhDOE.userLogin + '@php.net' : ''
-                        }).show();
-                    }
                 }]
             }, new ui.cmp._FilePanel.tbar.items.undoRedo({
                 id_prefix : id_prefix,
@@ -10698,16 +11534,12 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var herePath, hereName;
 
-                        if( this.isPatch )
+                        if ( this.isTrans )
                         {
-                            herePath = this.fpath;
-                            hereName = this.fname + '.' + this.fuid + '.patch';
-                        } else if ( this.isTrans )
-                        {
-                            if( this.storeRecord.data.needcommit )
+                            if( this.storeRecord.data.fileModified )
                             {
                                 herePath = this.lang + this.fpath;
-                                hereName = this.fname+'.new';
+                                hereName = this.fname;
                             } else {
                                 herePath = 'en' + this.fpath;
                                 hereName = this.fname;
@@ -10722,8 +11554,10 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             ftype    : this.ftype,
                             fid      : this.fid,
                             fpath    : herePath,
+                            freadOnly: this.readOnly,
                             fname    : hereName,
-                            skeleton : this.skeleton
+                            skeleton : this.skeleton,
+                            storeRecord: this.storeRecord
                         });
                     },
 
@@ -10743,7 +11577,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                             // Do we need to remove the red mark into the Tab title ?
                             if(
-                                ( this.ftype === 'LANG' && PhDOE.userLang !== 'en' )
+                                ( this.ftype === 'LANG' && PhDOE.user.lang !== 'en' )
                                 ||
                                 this.ftype === 'EN'
                             ) {
@@ -10762,10 +11596,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             }
 
                             // Desactivate save button
-                            if ( !this.isPatch ) {
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').disable();
-                            }
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
 
                             // Mark as modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
@@ -10778,7 +11609,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if( this.readOnly ) {
                             return;
                         }
-
+						
+						// We follow the same rules as defined in GetFileTask.js.
+						// So, if the toolsBar is disabled here, we just skeep this function and return asap.
+						if( Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disabled ) {
+							return;
+						}
+						
                         var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
                             cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
@@ -10798,11 +11635,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
 
                             // Activate save button
-                            if ( !this.isPatch )
-                            {
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-saveas').enable();
-                            }
+                            Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
 
                             // Enable the undo btn
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-undo').enable();
@@ -10822,7 +11655,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var opp_prefix, opp_panel, opp_file;
 
-                        if( this.syncScroll && PhDOE.userConf[this.syncScrollConf] )
+                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf] )
                         {
                             switch (this.ftype) {
                                 case 'EN':
@@ -10892,7 +11725,7 @@ ui.cmp.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
             items:[{
                 xtype      : 'textarea',
                 anchor     : '90%',
-                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.userLang),
+                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.user.lang),
                 name       : 'GGTranslate-string',
                 id         : 'GGTranslate-string',
                 allowBlank : false
@@ -10945,14 +11778,14 @@ ui.cmp._MainMenu.store = new Ext.data.Store({
 ui.cmp._MainMenu.store.on('load', function(store)
 {
     // We put the lang libel into Info-Language
-    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
+    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.user.lang).data.name;
 
     store.each(function(record) {
 
         var tmp = new Ext.menu.Item({
             text    : record.data.name,
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
-            disabled: (record.data.code === PhDOE.userLang),
+            disabled: (record.data.code === PhDOE.user.lang),
             handler : function() {
                 
                 XHR({
@@ -10981,7 +11814,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
+                disabled : (PhDOE.user.isAnonymous),
                 iconCls  : 'iconRefresh',
                 handler  : function()
                 {
@@ -11019,7 +11852,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check build'),
-                        disabled : (PhDOE.userLogin === 'anonymous'),
+                        disabled : (PhDOE.user.isAnonymous),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {
@@ -11033,7 +11866,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                                 params  :
                                 {
                                     task     : 'checkLockFile',
-                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.user.lang
                                 },
                                 success : function()
                                 {
@@ -11114,7 +11947,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             }, {
                                 text    : _('Run this script'),
                                 iconCls : 'iconRun',
-                                disabled: (PhDOE.userLogin === 'anonymous'),
+                                disabled: (PhDOE.user.isAnonymous),
                                 handler : function()
                                 {
                                     // We test if there is a check in progress for this language
@@ -11199,7 +12032,6 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : MenuLang
             }, {
                 text     : _('Erase my personal data'),
-                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconErasePersonalData',
                 handler  : function()
                 {
@@ -11491,7 +12323,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
             if (PanType[0] === 'FE') {
                 stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
-                stateEn   = ( PhDOE.userLang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
+                stateEn   = ( PhDOE.user.lang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
             }
 
             if (PanType[0] === 'FNU') {
@@ -11542,7 +12374,91 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
     }
 });
-Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
+Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp');
+
+//config - { name, email }
+ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
+{
+    title       : '',
+    width       : 250,
+    height      : 100,
+    minWidth    : 250,
+    minHeight   : 100,
+    layout      : 'fit',
+    plain       : true,
+    bodyStyle   : 'padding:5px;',
+    buttonAlign : 'center',
+    iconCls     : 'iconPatch',
+    closeAction : 'hide',
+
+    nodesToAdd  : false,
+    defaultValue: '',
+    patchID     : false,
+
+    buttons     : [{
+        text   : _('Create'),
+        handler: function()
+        {
+            var win    = this.ownerCt.ownerCt,
+                values = win.findByType('form').shift().getForm().getValues();
+
+            XHR({
+                params  : {
+                    task    : 'managePatch',
+                    name    : values.name,
+                    patchID : win.patchID
+                },
+                success : function(r)
+                {
+                    var o = Ext.util.JSON.decode(r.responseText);
+
+                    win.hide();
+
+                    // If we want to modify the path name
+                    if( win.patchID ) {
+                        ui.cmp.PatchesTreeGrid.getInstance().modPatchName({
+                            newPatchName : values.name,
+                            patchID      : win.patchID
+                        });
+                    }
+					
+					// If there is some node to Add, we call this.
+					if (win.nodesToAdd) {
+						ui.task.MoveToPatch({
+							patchID: o.patchID,
+							patchName: values.name,
+							nodesToAdd: win.nodesToAdd
+						});
+					}
+                }
+            });
+        }
+    }, {
+        text    : _('Cancel'),
+        handler : function()
+        {
+            this.ownerCt.ownerCt.hide();
+        }
+    }],
+
+    initComponent : function()
+    {
+        Ext.apply(this, {
+            items : new Ext.form.FormPanel({
+                baseCls     : 'x-plain',
+                labelWidth  : 55,
+                defaultType : 'textfield',
+                items : [{
+                    name       : 'name',
+                    fieldLabel : _('Name'),
+                    anchor     : '100%',
+                    value      : this.defaultValue
+                }]
+            })
+        });
+        ui.cmp.ManagePatchPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
 
 //------------------------------------------------------------------------------
 // NotInENGrid internals
@@ -11561,7 +12477,7 @@ ui.cmp._NotInENGrid.store = new Ext.data.GroupingStore(
             {name : 'id'},
             {name : 'path'},
             {name : 'name'},
-            {name : 'needcommit'}
+            {name : 'fileModified'}
         ]
     }),
     sortInfo : {
@@ -11582,7 +12498,22 @@ ui.cmp._NotInENGrid.columns = [{
     id        : 'name',
     header    : _('Files'),
     sortable  : true,
-    dataIndex : 'name'
+    dataIndex : 'name',
+    renderer  : function(v, m, r)
+    {
+        if( r.data.fileModified ) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+			
+            if(info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+                return "<span ext:qtip='" + _('File removed by me') + "'>" + v + "</span>";
+            } else {
+                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+            }
+        } else {
+            return v;
+        }
+    }
 }, {
     header    : _('Path'),
     dataIndex : 'path',
@@ -11598,10 +12529,13 @@ ui.cmp._NotInENGrid.view = new Ext.grid.GroupingView({
                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
     deferEmptyText: false,
     emptyText     : '<div style="text-align: center;">' + _('No Files') + '</div>',
-    getRowClass   : function(record)
+    getRowClass   : function(r)
     {
-        if (record.data.needcommit) {
-            return 'file-need-commit';
+        if ( r.data.fileModified ) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+			
+            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     }
@@ -11623,7 +12557,7 @@ Ext.extend(ui.cmp._NotInENGrid.menu, Ext.menu.Menu,
         {
             items : [{
                 scope   : this,
-                text    : '<b>'+_('View in a new Tab')+'</b>',
+                text    : '<b>'+_('View in a new tab')+'</b>',
                 iconCls : 'iconView',
                 handler : function()
                 {
@@ -11634,7 +12568,8 @@ Ext.extend(ui.cmp._NotInENGrid.menu, Ext.menu.Menu,
             }, {
                 scope   : this,
                 text    : _('Remove this file'),
-                iconCls : 'iconDelete',
+                hidden  : ( this.grid.store.getAt(this.rowIdx).data.fileModified ),
+                iconCls : 'iconTrash',
                 handler : function()
                 {
                    var storeRecord = this.grid.store.getAt(this.rowIdx),
@@ -11670,14 +12605,11 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     
         grid.getSelectionModel().selectRow(rowIndex);
 
-        if (!grid.store.getAt(rowIndex).data.needcommit)
-        {
-            new ui.cmp._NotInENGrid.menu({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        }
+        new ui.cmp._NotInENGrid.menu({
+            grid   : grid,
+            rowIdx : rowIndex,
+            event  : e
+        }).showAt(e.getXY());
     },
 
     onRowDblClick: function(grid, rowIndex, e)
@@ -11690,7 +12622,7 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
         var storeRecord = this.store.getById(rowId),
             FilePath    = storeRecord.data.path,
             FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNIEN-' + PhDOE.userLang + FilePath + FileName);
+            FileID      = Ext.util.md5('FNIEN-' + PhDOE.user.lang + FilePath + FileName);
 
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNIEN-' + FileID))
@@ -11721,9 +12653,9 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                         fpath          : FilePath,
                         fname          : FileName,
                         readOnly       : true,
-                        lang           : PhDOE.userLang,
+                        lang           : PhDOE.user.lang,
                         parser         : 'xml',
-                        storeRecord    : '',
+                        storeRecord    : storeRecord,
                         syncScroll     : false
                     })
                 ]
@@ -11756,7 +12688,752 @@ ui.cmp.NotInENGrid.getInstance = function(config)
         ui.cmp._NotInENGrid.instance = new ui.cmp.NotInENGrid(config);
     }
     return ui.cmp._NotInENGrid.instance;
-};Ext.namespace('ui','ui.cmp');
+};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
+
+//------------------------------------------------------------------------------
+// PatchesTreeGrid internals
+
+// PatchesTreeGrid : context menu for users items
+// config - { node }
+ui.cmp._PatchesTreeGrid.menu.users = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._PatchesTreeGrid.menu.users.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._PatchesTreeGrid.menu.users, Ext.menu.Menu, {
+    init: function(){
+        var allFiles = [];
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        Ext.apply(this, {
+        
+            items: [{
+                scope: this,
+                text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
+                iconCls: 'iconSendEmail',
+                hidden: (this.node.attributes.task === PhDOE.user.login),
+                handler: function(){
+                    var win = new ui.cmp.EmailPrompt();
+                    
+                    win.setData(this.node.attributes.task, this.node.attributes.email);
+                    win.show(this.node.el);
+                }
+            }, {
+                text: _('Back all files to work in progress module'),
+                hidden: (this.node.attributes.task !== PhDOE.user.login),
+                disabled: Ext.isEmpty(allFiles),
+                iconCls: 'iconWorkInProgress',
+                handler: function(){
+                    ui.task.MoveToWork({
+                        nodesToAdd: allFiles
+                    });
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (this.node.attributes.task !== PhDOE.user.login || PhDOE.user.isAnonymous)
+            }, ((this.node.attributes.task === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                module: 'patches',
+                from: 'user',
+                node: false,
+                folderNode: false,
+                patchNode: false,
+                userNode: this.node
+            }) : '')]
+        });
+    }
+});
+
+// PatchesTreeGrid : context menu for patches items
+// config - { node, e }
+ui.cmp._PatchesTreeGrid.menu.patches = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._PatchesTreeGrid.menu.patches.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
+    init: function(){
+        var node = this.node, allFiles = [];
+        
+        // We don't display all of this menu if the current user isn't the owner
+        if (this.node.parentNode.attributes.task !== PhDOE.user.login) {
+            return false;
+        }
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        
+        Ext.apply(this, {
+            items: [{
+                text: _('Edit the name of this patch'),
+                iconCls: 'iconPendingPatch',
+                handler: function(){
+                    var win = new ui.cmp.ManagePatchPrompt({
+                        title: _('Modify this patch name'),
+                        defaultValue: node.attributes.task,
+                        patchID: node.attributes.idDB
+                    });
+                    win.show(this.el);
+                }
+            }, {
+                text: _('Delete this patch'),
+                iconCls: 'iconTrash',
+                handler: function(){
+                    ui.task.DeletePatchTask({
+                        patchID: node.attributes.idDB
+                    });
+                }
+            }, '-', {
+                text: _('Back all this patch to work in progress module'),
+                iconCls: 'iconWorkInProgress',
+                disabled: Ext.isEmpty(allFiles),
+                handler: function(){
+                    ui.task.MoveToWork({
+                        nodesToAdd: allFiles
+                    });
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (PhDOE.user.isAnonymous)
+            },
+			((!PhDOE.user.isAnonymous) ?
+				new ui.cmp._WorkTreeGrid.menu.commit({
+	                module: 'patches',
+	                from: 'patch',
+	                node: false,
+	                folderNode: false,
+	                patchNode: this.node,
+	                userNode: this.node.parentNode
+	            }) : ''
+			)]
+        });
+    }
+});
+
+// PatchesTreeGrid : context menu for folders items
+// config - { node }
+ui.cmp._PatchesTreeGrid.menu.folders = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._PatchesTreeGrid.menu.folders.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
+    init: function(){
+        var allFiles = [];
+        
+        // We don't display all of this menu if the current user isn't the owner
+        if (this.node.parentNode.parentNode.attributes.task !== PhDOE.user.login) {
+            return false;
+        }
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        Ext.apply(this, {
+            items: [{
+                text: _('Back all this folder to work in progress module'),
+                iconCls: 'iconWorkInProgress',
+                handler: function(){
+                    ui.task.MoveToWork({
+                        nodesToAdd: allFiles
+                    });
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (PhDOE.user.isAnonymous)
+            }, 
+            ((!PhDOE.user.isAnonymous) ?
+			new ui.cmp._WorkTreeGrid.menu.commit({
+                module: 'patches',
+                from: 'folder',
+                node: false,
+                folderNode: this.node,
+                patchNode: this.node.parentNode,
+                userNode: this.node.parentNode.parentNode
+            }) : ''
+			)]
+        });
+    }
+});
+
+// PatchesTreeGrid : context menu for files items
+// config - { node }
+ui.cmp._PatchesTreeGrid.menu.files = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._PatchesTreeGrid.menu.files.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
+    init: function(){
+        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task;
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        Ext.apply(this, {
+            items: [{
+                text: '<b>' + ((FileType == 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
+                iconCls: 'iconEdit',
+                handler: function(){
+                    ui.cmp.WorkTreeGrid.getInstance().openFile(node);
+                }
+            }, {
+                text: _('Back this file to work in progress module'),
+                hidden: (owner != PhDOE.user.login),
+                iconCls: 'iconWorkInProgress',
+                handler: function(){
+                    ui.task.MoveToWork({
+                        nodesToAdd: allFiles
+                    });
+                }
+            }, '-', {
+                text: _('View diff'),
+                iconCls: 'iconViewDiff',
+                hidden: (FileType == 'delete' || FileType == 'new'),
+                handler: function(){
+                    // Render only if this tab don't exist yet
+                    if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + FileID)) {
+                    
+                        // Add tab for the diff
+                        Ext.getCmp('main-panel').add({
+                            xtype: 'panel',
+                            id: 'diff_panel_pending_' + FileID,
+                            iconCls: 'iconTabLink',
+                            title: _('Diff'),
+                            tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
+                            closable: true,
+                            autoScroll: true,
+                            html: '<div id="diff_content_pending_' + FileID + '" class="diff-content"></div>'
+                        });
+                        
+                        // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+                        
+                        Ext.get('diff_panel_pending_' + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                        _('Please, wait...'));
+                        
+                        // Load diff data
+                        XHR({
+                            scope: this,
+                            params: {
+                                task: 'getDiff',
+                                DiffType: 'file',
+                                FilePath: FilePath,
+                                FileName: FileName
+                            },
+                            success: function(r){
+                                var o = Ext.util.JSON.decode(r.responseText);
+                                
+                                // We display in diff div
+                                Ext.get('diff_content_pending_' + FileID).dom.innerHTML = o.content;
+                                Ext.get('diff_panel_pending_' + FileID).unmask();
+                            }
+                        });
+                    }
+                    else {
+                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+                    }
+                }
+            }, {
+                text: _('Download the diff as a patch'),
+                iconCls: 'iconDownloadDiff',
+                hidden: (FileType == 'delete' || FileType == 'new'),
+                handler: function(){
+                    window.location.href = './do/downloadPatch' +
+                    '?FilePath=' +
+                    FilePath +
+                    '&FileName=' +
+                    FileName;
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (FileType === 'delete' || FileType == 'new' || owner != PhDOE.user.login)
+            }, {
+                text: ((FileType === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
+                hidden: (owner !== PhDOE.user.login),
+                iconCls: 'iconPageDelete',
+                handler: function(){
+                    new ui.task.ClearLocalChangeTask({
+                        ftype: FileType,
+                        fpath: FilePath,
+                        fname: FileName
+                    });
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (PhDOE.user.isAnonymous || owner != PhDOE.user.login)
+            }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                module: 'patches',
+                from: 'file',
+                node: this.node,
+                folderNode: this.node.parentNode,
+                patchNode: this.node.parentNode.parentNode,
+                userNode: this.node.parentNode.parentNode.parentNode
+            }) : '')]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// PatchesTreeGrid
+ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
+    onContextMenu: function(node, e){
+        e.stopEvent();
+        
+        var type = node.attributes.type, contextMenu;
+        
+        switch (type) {
+        
+            case "user":
+                node.select();
+                contextMenu = new ui.cmp._PatchesTreeGrid.menu.users({
+                    node: node
+                });
+                break;
+                
+            case "folder":
+                node.select();
+                contextMenu = new ui.cmp._PatchesTreeGrid.menu.folders({
+                    node: node
+                });
+                break;
+                
+            case "patch":
+                node.select();
+                contextMenu = new ui.cmp._PatchesTreeGrid.menu.patches({
+                    node: node
+                });
+                break;
+                
+            default: // Use default for file as the type can be update, delete or new
+                node.select();
+                contextMenu = new ui.cmp._PatchesTreeGrid.menu.files({
+                    node: node
+                });
+                break;
+                
+        }
+        
+        contextMenu.showAt(e.getXY());
+        
+    },
+    
+    modPatchName: function(a){
+        var rootNode = this.getRootNode();
+        var patchNode = rootNode.findChild('idDB', a.patchID, true);
+        patchNode.setText(a.newPatchName);
+    },
+    
+    initComponent: function(){
+    
+        Ext.apply(this, {
+            animate: true,
+            //enableDD        : true,
+            //ddGroup         : 'mainPanelDDGroup',
+            useArrows: true,
+            autoScroll: true,
+            border: false,
+            containerScroll: true,
+            selModel: new Ext.tree.MultiSelectionModel(),
+            columns: [{
+                header: _('Users'),
+                dataIndex: 'task',
+                uiProvider: {
+                    editable: true,
+                    qtip: 'help'
+                },
+                tpl: new Ext.XTemplate('{task:this.formatUserName}', {
+                    formatUserName: function(v, data){
+                        // Only ucFirst user's name
+                        return (data.type === 'user') ? v.ucFirst() : v;
+                    }
+                    
+                })
+            }, {
+                header: _('Last modified'),
+                width: 120,
+                dataIndex: 'last_modified',
+                align: 'center'
+            }],
+            loader: {
+                dataUrl: './do/getWork',
+                baseParams: {
+                    module: 'PatchesForReview'
+                }
+            }
+			/*
+            tbar: [{
+                scope: this,
+                iconCls: 'iconRefresh',
+                handler: function(){
+                    this.getRootNode().reload();
+                }
+            }]
+            */      
+        });
+        ui.cmp.PatchesTreeGrid.superclass.initComponent.call(this);
+        
+        this.on('contextmenu', this.onContextMenu, this);
+        this.on('resize', this.resizeCmp, this);
+        this.on('dblclick', ui.cmp.WorkTreeGrid.getInstance().openFile, this);
+        
+        this.getRootNode().on('beforechildrenrendered', function(){
+            this.updateFilesCounter.defer(200, this);
+        }, this);
+    },
+    
+    resizeCmp: function(c, a, b, w){
+    
+        this.columns[0].width = w - (this.columns[1].width + 5);
+        this.updateColumnWidths();
+    },
+    
+    deletePatch: function(patchID){
+        var rootNode = this.getRootNode(), user, patches, folders, file, nodesToAdd = [], i, j, k, l;
+        
+        for (i = 0; i < rootNode.childNodes.length; i++) {
+            user = rootNode.childNodes[i];
+            
+            for (j = 0; j < user.childNodes.length; j++) {
+                patches = user.childNodes[j];
+                
+                if (patches.attributes.idDB === patchID) {
+                
+                    // If this patch contains some folders/Files, we get it to put into work in progress module
+                    if (!Ext.isEmpty(patches.childNodes)) {
+                    
+                        for (k = 0; k < patches.childNodes.length; k++) {
+                            folders = patches.childNodes[k];
+                            
+                            for (l = 0; l < folders.childNodes.length; l++) {
+                                file = folders.childNodes[k];
+                                nodesToAdd.push(file);
+                            }
+                        }
+                        
+                        // We put this files to work in progress module
+                        ui.cmp.WorkTreeGrid.getInstance().addToWork(nodesToAdd);
+                        
+                    }
+                    
+                    // Now, we remove this patches
+                    patches.remove(true);
+                    
+                    // Is Folder contains some others child ? If not, we remove this user too.
+                    if (Ext.isEmpty(user.childNodes)) {
+                        user.remove(true);
+                    }
+                    
+                    // We update the FilesCounter
+                    this.updateFilesCounter();
+                    
+                    return;
+                    
+                    
+                }
+            }
+        }
+    },
+    
+    delRecord: function(fid){
+        var rootNode = this.getRootNode(), user, patches, folder, file, i, j, g, h;
+        
+        for (i = 0; i < rootNode.childNodes.length; i++) {
+            user = rootNode.childNodes[i];
+            
+            for (j = 0; j < user.childNodes.length; j++) {
+                patches = user.childNodes[j];
+                
+                for (g = 0; g < patches.childNodes.length; g++) {
+                    folder = patches.childNodes[g];
+                    
+                    for (h = 0; h < folder.childNodes.length; h++) {
+                        file = folder.childNodes[h];
+                        
+                        if (file.attributes.idDB == fid) {
+                        
+                            file.remove(true);
+                            
+                            // Is Folder contains some others child ?
+                            if (Ext.isEmpty(folder.childNodes)) {
+                            
+                                folder.remove(true);
+                                
+                                // Is User contains some others child ?
+                                if (Ext.isEmpty(user.childNodes)) {
+                                
+                                    user.remove(true);
+                                    
+                                    this.updateFilesCounter();
+                                    return;
+                                }
+                                this.updateFilesCounter();
+                                return;
+                            }
+                            this.updateFilesCounter();
+                            return;
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        // We update the FilesCounter
+        this.updateFilesCounter();
+    },
+    
+    getUserPatchesList: function(){
+        var rootNode = this.getRootNode(), userNode = rootNode.findChild('task', PhDOE.user.login), patchesList = [];
+        
+        // We start by searching if this user have a node
+        if (!userNode) {
+            return false;
+        }
+        else {
+        
+            if (!userNode.hasChildNodes()) {
+                return false;
+            }
+            else {
+            
+                userNode.eachChild(function(node){
+                    patchesList.push(node);
+                }, this);
+                
+                return patchesList;
+            }
+        }
+    },
+    
+    addToPatch: function(PatchID, PatchName, nodesToAdd){
+        var rootNode, userNode, PatchNode, folderNode, type, iconCls, fileNode, nowDate, i;
+        
+        rootNode = this.getRootNode();
+        
+        // We start by searching if this user have a node
+        userNode = rootNode.findChild('task', PhDOE.user.login);
+        
+        // If the user node don't exist, we create it
+        if (!userNode) {
+        
+            userNode = new Ext.tree.TreeNode({
+                task: PhDOE.user.login,
+                type: 'user',
+                email: PhDOE.user.email,
+                iconCls: 'iconUser',
+                expanded: true
+            });
+            
+            rootNode.appendChild(userNode);
+            rootNode.expand(); // This allow to show our new node
+        }
+        
+        // We search now into this user the right patch
+        PatchNode = userNode.findChild('task', PatchName);
+        
+        // If this folder don't exist, we create it
+        if (!PatchNode) {
+        
+            PatchNode = new Ext.tree.TreeNode({
+                task: PatchName,
+                type: 'patch',
+                iconCls: 'iconPatch',
+                expanded: true,
+                idDB: PatchID
+            });
+            
+            userNode.appendChild(PatchNode);
+            userNode.expand(); // This allow to show our new node
+        }
+        
+        /* Now, our patch exist into the tree. If there is some files to add in, we add it now */
+        if (nodesToAdd) {
+        
+            // We walk into the nodes to add
+            for (i = 0; i < nodesToAdd.length; i++) {
+            
+                // We search now into this patch the right folder
+                folderNode = PatchNode.findChild('task', nodesToAdd[i].parentNode.attributes.task);
+                
+                // If this folder don't exist, we create it
+                if (!folderNode) {
+                
+                    folderNode = new Ext.tree.TreeNode({
+                        task: nodesToAdd[i].parentNode.attributes.task,
+                        type: 'folder',
+                        iconCls: 'iconFolderOpen',
+                        expanded: true
+                    });
+                    
+                    PatchNode.appendChild(folderNode);
+                    PatchNode.expand(); // This allow to show our new node
+                }
+                
+                // We add now this file into this folder
+                type = nodesToAdd[i].attributes.type;
+                
+                if (type === 'update') {
+                    iconCls = 'iconRefresh';
+                }
+                if (type === 'new') {
+                    iconCls = 'iconNewFiles';
+                }
+                if (type === 'delete') {
+                    iconCls = 'iconTrash';
+                }
+                
+                nowDate = new Date();
+                
+                fileNode = new Ext.tree.TreeNode({
+                    task: nodesToAdd[i].attributes.task,
+                    type: type,
+                    iconCls: iconCls,
+                    expanded: true,
+                    last_modified: nowDate.format('Y-m-d H:i:s'),
+                    progress: nodesToAdd[i].attributes.progress,
+                    idDB: nodesToAdd[i].attributes.idDB
+                });
+                
+                folderNode.appendChild(fileNode);
+                folderNode.expand(); // This allow to show our new node
+            }
+            
+        } // End of adding folders/files into this patch
+        // We update the FilesCounter
+        this.updateFilesCounter();
+        
+    },
+    
+    addRecord: function(fid, fpath, fname, type){
+        var rootNode, userNode, folderNode, fileNode, nowDate, iconCls;
+        
+        rootNode = this.getRootNode();
+        
+        // We start by searching if this user have a node
+        userNode = rootNode.findChild('task', PhDOE.user.login);
+        
+        // If the user node don't exist, we create it
+        if (!userNode) {
+        
+            userNode = new Ext.tree.TreeNode({
+                task: PhDOE.user.login,
+                type: 'user',
+                email: PhDOE.user.email,
+                iconCls: 'iconUser',
+                expanded: true,
+                nbFiles: 1
+            });
+            
+            rootNode.appendChild(userNode);
+            rootNode.expand(); // This allow to show our new node
+        }
+        
+        // We search now into this user the right folder
+        folderNode = userNode.findChild('task', fpath);
+        
+        // If this folder don't exist, we create it
+        if (!folderNode) {
+        
+            folderNode = new Ext.tree.TreeNode({
+                task: fpath,
+                type: 'folder',
+                iconCls: 'iconFolderOpen',
+                expanded: true
+            });
+            
+            userNode.appendChild(folderNode);
+            userNode.expand(); // This allow to show our new node
+        }
+        
+        // We search now into this folder the right file
+        fileNode = folderNode.findChild('task', fname);
+        
+        // If this folder don't exist, we create it
+        if (!fileNode) {
+        
+            if (type === 'update') {
+                iconCls = 'iconRefresh';
+            }
+            if (type === 'new') {
+                iconCls = 'iconNewFiles';
+            }
+            if (type === 'delete') {
+                iconCls = 'iconTrash';
+            }
+            
+            nowDate = new Date();
+            
+            fileNode = new Ext.tree.TreeNode({
+                task: fname,
+                type: type,
+                iconCls: iconCls,
+                expanded: true,
+                last_modified: nowDate.format('Y-m-d H:i:s'),
+                progress: 100,
+                idDB: fid
+            });
+            
+            folderNode.appendChild(fileNode);
+            folderNode.expand(); // This allow to show our new node
+        }
+        
+        // We update the FilesCounter
+        this.updateFilesCounter();
+    },
+    
+    countFiles: function(){
+        var rootNode = this.getRootNode(), nbFiles = 0, user, folder, files, i, j, h, g;
+        
+		rootNode.cascade(function(node){
+			if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
+				if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+					nbFiles++;
+				}
+			}
+		}, this);
+		
+        return nbFiles;
+    },
+    
+    updateFilesCounter: function(){
+        var count = this.countFiles();
+        
+        Ext.getDom('acc-patches-nb').innerHTML = count;
+        
+    }
+});
+
+// singleton
+ui.cmp._PatchesTreeGrid.instance = null;
+ui.cmp.PatchesTreeGrid.getInstance = function(config){
+    if (!ui.cmp._PatchesTreeGrid.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.cmp._PatchesTreeGrid.instance = new ui.cmp.PatchesTreeGrid(config);
+    }
+    return ui.cmp._PatchesTreeGrid.instance;
+};
+Ext.namespace('ui','ui.cmp');
 
 // config - {defaultEmail, prefix, ftype, fid, fpath, fname, lang}
 ui.cmp.PatchPrompt = Ext.extend(Ext.Window,
@@ -11817,1053 +13494,43 @@ ui.cmp.PatchPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.PatchPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._PendingCommitGrid');
-
-//------------------------------------------------------------------------------
-// PendingCommitGrid internals
-
-// PendingCommitGrid store
-ui.cmp._PendingCommitGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesPendingCommit'
-    }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'by'},
-            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'},
-            {name : 'type'}
-        ]
-    }),
-    sortInfo : {
-        field     : 'name',
-        direction : 'ASC'
-    },
-    groupField : 'path',
-    listeners  : {
-        add : function(ds)
-        {
-            Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
-        },
-        datachanged : function(ds)
-        {
-            Ext.getDom('acc-pendingCommit-nb').innerHTML = ds.getCount();
-        }
-    }
-});
-
-// PendingCommitGrid columns definition
-ui.cmp._PendingCommitGrid.columns = [{
-    id        : 'name',
-    header    : _('Files'),
-    sortable  : true,
-    dataIndex : 'name'
-}, {
-    header    : _('Modified by'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'by'
-}, {
-    header    : _('Date'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'date',
-    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-}, {
-    header    : _('Path'),
-    dataIndex : 'path',
-    hidden    : true
-}];
-
-// PendingCommitGrid view
-ui.cmp._PendingCommitGrid.view = new Ext.grid.GroupingView({
-    forceFit       : true,
-    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
-                     '({[values.rs.length]} ' +
-                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    emptyText      : '<div style="text-align: center;">' + _('No pending for Commit') + '</div>',
-    deferEmptyText : false,
-    getRowClass    : function(record)
-    {
-        if ( record.data.type === 'update' ) {
-            return 'file-needcommit-update';
-        }
-        if ( record.data.type === 'delete' ) {
-            return 'file-needcommit-delete';
-        }
-        if ( record.data.type === 'new' ) {
-            return 'file-needcommit-new';
-        }
-        return false;
-    }
-});
-
-Ext.namespace('ui.cmp._PendingCommitGrid.menu');
-// PendingCommitGrid common sub-menu
-// config - { rowIdx }
-ui.cmp._PendingCommitGrid.menu.common = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingCommitGrid.menu.common.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingCommitGrid.menu.common, Ext.menu.Item,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            text     : _('Commit...'),
-            iconCls  : 'iconCommitFileVcs',
-            disabled : (PhDOE.userLogin === 'anonymous'),
-            handler  : function() { return false; },
-            menu     : new Ext.menu.Menu({
-                items : [{
-                    scope   : this,
-                    text    : _('...this file'),
-                    iconCls : 'iconCommitFileVcs',
-                    handler : function()
-                    {
-                        var record = ui.cmp.PendingCommitGrid.getInstance().store.getAt(this.rowIdx),
-                            fdbid  = record.data.id,
-                            fpath  = record.data.path,
-                            fname  = record.data.name,
-                            fid    = Ext.util.md5(fpath + fname),
-                            ftype  = record.data.type,
-                            fdate  = record.data.date,
-                            fby    = record.data.by;
-
-                        new ui.cmp.CommitPrompt({
-                            files : [{
-                                fid   : fid,
-                                fpath : fpath,
-                                fname : fname,
-                                fdbid : fdbid,
-                                ftype : ftype,
-                                fdate : fdate,
-                                fby   : fby
-                            }]
-                        }).show();
-                    }
-                }, {
-                    scope   : this,
-                    text    : _('...all files modified by me'),
-                    iconCls : 'iconCommitFileVcs',
-                    handler : function()
-                    {
-                        var files = [],
-                            grid  = ui.cmp.PendingCommitGrid.getInstance();
-
-                        grid.store.each(function(record)
-                        {
-                            if (record.data.by === PhDOE.userLogin) {
-                                var fdbid  = record.data.id,
-                                    fpath  = record.data.path,
-                                    fname  = record.data.name,
-                                    fid    = Ext.util.md5(fpath + fname),
-                                    ftype  = record.data.type,
-                                    fdate  = record.data.date,
-                                    fby    = record.data.by;
-
-                                files.push({
-                                    fid   : fid,
-                                    fpath : fpath,
-                                    fname : fname,
-                                    fdbid : fdbid,
-                                    ftype : ftype,
-                                    fdate : fdate,
-                                    fby   : fby
-                                });
-                            }
-                        });
-
-                        new ui.cmp.CommitPrompt({
-                            files : files
-                        }).show();
-                    }
-                }, {
-                    scope   : this,
-                    text    : _('...all files modified'),
-                    iconCls : 'iconCommitFileVcs',
-                    handler : function()
-                    {
-                        var files = [],
-                            grid  = ui.cmp.PendingCommitGrid.getInstance();
-
-                        grid.store.each(function(record)
-                        {
-                            var fdbid  = record.data.id,
-                                fpath  = record.data.path,
-                                fname  = record.data.name,
-                                fid    = Ext.util.md5(fpath + fname),
-                                ftype  = record.data.type,
-                                fdate  = record.data.date,
-                                fby    = record.data.by;
-
-                            files.push({
-                                fid   : fid,
-                                fpath : fpath,
-                                fname : fname,
-                                fdbid : fdbid,
-                                ftype : ftype,
-                                fdate : fdate,
-                                fby   : fby
-                            });
-                        });
-
-                        new ui.cmp.CommitPrompt({
-                            files : files
-                        }).show();
-                    }
-                }]
-            })
-        });
-    }
-});
-
-// PendingCommitGrid menu for pending update file
-// config - { fpath, fname, rowIdx, grid, event }
-ui.cmp._PendingCommitGrid.menu.update = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingCommitGrid.menu.update.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingCommitGrid.menu.update, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items: [
-                {
-                    scope   : this,
-                    text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                    iconCls : 'iconPendingCommit',
-                    handler : function()
-                    {
-                        this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                    }
-                }, '-', {
-                    scope   : this,
-                    text    : _('View diff'),
-                    iconCls : 'iconViewDiff',
-                    handler : function()
-                    {
-
-                        // Render only if this tab don't exist yet
-                        if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + this.rowIdx)) {
-
-                            // Add tab for the diff
-                            Ext.getCmp('main-panel').add({
-                                xtype      : 'panel',
-                                id         : 'diff_panel_pending_' + this.rowIdx,
-                                iconCls    : 'iconTabLink',
-                                title      : _('Diff'),
-                                tabTip     : String.format(_('Diff for file: {0}'), this.fpath+this.fname),
-                                closable   : true,
-                                autoScroll : true,
-                                html       : '<div id="diff_content_pending_' + this.rowIdx + '" class="diff-content"></div>'
-                            });
-
-                            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
-                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
-
-                            Ext.get('diff_panel_pending_' + this.rowIdx).mask(
-                                '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                                _('Please, wait...')
-                            );
-
-                            // Load diff data
-                            XHR({
-                                scope   : this,
-                                params  : {
-                                    task     : 'getDiff',
-                                    DiffType : 'file',
-                                    FilePath : this.fpath,
-                                    FileName : this.fname
-                                },
-                                success : function(r)
-                                {
-                                    var o = Ext.util.JSON.decode(r.responseText);
-
-                                    // We display in diff div
-                                    Ext.get('diff_content_pending_' + this.rowIdx).dom.innerHTML = o.content;
-                                    Ext.get('diff_panel_pending_' + this.rowIdx).unmask();
-                                }
-                            });
-                        } else {
-                            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + this.rowIdx);
-                        }
-                    }
-                }, {
-                    scope   : this,
-                    text    : _('Download the diff as a patch'),
-                    iconCls : 'iconDownloadDiff',
-                    handler : function()
-                    {
-                        window.location.href = './do/downloadPatch' +
-                                               '?FilePath=' + this.fpath +
-                                               '&FileName=' + this.fname;
-                    }
-                }, '-', {
-                    scope    : this,
-                    text     : _('Clear this change'),
-                    iconCls  : 'iconPageDelete',
-                    disabled : (PhDOE.userLogin === 'anonymous'),
-                    handler  : function()
-                    {
-                        new ui.task.ClearLocalChangeTask({
-                            storeRecord : this.grid.store.getAt(this.rowIdx),
-                            ftype       : 'update',
-                            fpath       : this.fpath,
-                            fname       : this.fname
-                        });
-                    }
-                }, '-', new ui.cmp._PendingCommitGrid.menu.common({
-                    rowIdx : this.rowIdx
-                })
-            ]
-        });
-    }
-});
-
-// PendingCommitGrid menu for pending delete file
-// config - { rowIdx, grid, event }
-ui.cmp._PendingCommitGrid.menu.del = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingCommitGrid.menu.del.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingCommitGrid.menu.del, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items: [{
-                scope   : this,
-                text    : '<b>'+_('View in a new Tab')+'</b>',
-                iconCls : 'iconPendingCommit',
-                handler : function()
-                {
-                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                }
-            }, {
-                scope    : this,
-                text     : _('Cancel this deletion'),
-                iconCls  : 'iconPageDelete',
-                disabled : (PhDOE.userLogin === 'anonymous'),
-                handler : function()
-                {
-                   var storeRecord = this.grid.store.getAt(this.rowIdx),
-                       FilePath    = storeRecord.data.path,
-                       FileName    = storeRecord.data.name;
-
-                   new ui.task.ClearLocalChangeTask({
-                       storeRecord : storeRecord,
-                       ftype       : 'delete',
-                       fpath       : FilePath,
-                       fname       : FileName
-                   });
-
-                }
-            }, '-', new ui.cmp._PendingCommitGrid.menu.common({
-                rowIdx : this.rowIdx
-            })]
-        });
-    }
-});
-
-
-// PendingCommitGrid menu for pending new file
-// config - { rowIdx, grid, event }
-ui.cmp._PendingCommitGrid.menu.newFile = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingCommitGrid.menu.newFile.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingCommitGrid.menu.newFile, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                scope   : this,
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconPendingCommit',
-                handler : function()
-                {
-                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                }
-            }, '-',{
-                scope    : this,
-                text     : _('Clear this change'),
-                iconCls  : 'iconPageDelete',
-                disabled : (PhDOE.userLogin === 'anonymous'),
-                handler  : function()
-                {
-                   var storeRecord = this.grid.store.getAt(this.rowIdx),
-                       FilePath    = storeRecord.data.path,
-                       FileName    = storeRecord.data.name;
-
-                   new ui.task.ClearLocalChangeTask({
-                        storeRecord : storeRecord,
-                        ftype       : 'new',
-                        fpath       : FilePath,
-                        fname       : FileName
-                    });
-                }
-            }, '-',new ui.cmp._PendingCommitGrid.menu.common({
-                rowIdx : this.rowIdx
-            })]
-        });
-    }
-});
-
-//------------------------------------------------------------------------------
-// PendingCommitGrid
-ui.cmp.PendingCommitGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    loadMask         : true,
-    border           : false,
-    autoExpandColumn : 'name',
-    columns          : ui.cmp._PendingCommitGrid.columns,
-    view             : ui.cmp._PendingCommitGrid.view,
-    enableDragDrop   : true,
-    sm               : new Ext.grid.RowSelectionModel({ singleSelect: true}),
-    ddGroup          : 'mainPanelDDGroup',
-
-    onRowContextMenu : function(grid, rowIndex, e)
-    {
-        e.stopEvent();
-    
-        var storeRecord = grid.store.getAt(rowIndex),
-            FileType    = storeRecord.data.type,
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name;
-
-        grid.getSelectionModel().selectRow(rowIndex);
-
-        if (FileType === 'new')
-        {
-            new ui.cmp._PendingCommitGrid.menu.newFile({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        }
-
-        if (FileType === 'delete')
-        {
-            new ui.cmp._PendingCommitGrid.menu.del({
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        }
-
-        if (FileType === 'update')
-        {
-            new ui.cmp._PendingCommitGrid.menu.update({
-                fpath  : FilePath,
-                fname  : FileName,
-                grid   : grid,
-                rowIdx : rowIndex,
-                event  : e
-            }).showAt(e.getXY());
-        }
-    },
-
-    onRowDblClick: function(grid, rowIndex)
-    {
-        this.openFile(this.store.getAt(rowIndex).data.id);
-    },
-
-    openFile: function(rowId)
-    {
-        var storeRecord = false;
-
-        this.store.each(function(r)
-        {
-            if (r.data.id === rowId) {
-                storeRecord = r;
-            }
-        });
-
-        var FileType = storeRecord.data.type,
-            FilePath = storeRecord.data.path,
-            FileName = storeRecord.data.name,
-            FileLang, tmp, found;
-
-        if (FileType === 'new')
-        {
-            tmp      = FilePath.split('/');
-            FileLang = tmp[0];
-            tmp.shift();
-
-            FilePath = "/" + tmp.join('/');
-
-            // Find the id of this row into PendingTranslateGrid.store and open it !
-            ui.cmp.PendingTranslateGrid.getInstance().store.each(function(row)
-            {
-                if( ( row.data.path ) === FilePath && row.data.name === FileName ) {
-                    ui.cmp.PendingTranslateGrid.getInstance().openFile(row.data.id);
-                    return;
-                }
-            });
-        }
-
-        if (FileType === 'update')
-        {
-            tmp      = FilePath.split('/');
-            FileLang = tmp[0];
-            tmp.shift();
-
-            FilePath = "/" + tmp.join('/');
-
-            // For EN file, we open this new file into the "All files" module
-            if( FileLang === 'en' ) {
-                ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
-            } else {
-
-                found = false;
-
-                // Find the id of this row into StaleFileGrid.store and open it !
-                ui.cmp.StaleFileGrid.getInstance().store.each(function(row) {
-
-                    if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                        ui.cmp.StaleFileGrid.getInstance().openFile(row.data.id);
-                        found = true;
-                        return;
-                    }
-                });
-
-                // If we haven't found this file in StaleFileGrid, we try into File in error grid.
-                if( !found ) {
-
-                    // Find the id of this row into ErrorFileGrid.store and open it !
-                    ui.cmp.ErrorFileGrid.getInstance().store.each(function(row) {
-
-                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                            ui.cmp.ErrorFileGrid.getInstance().openFile(row.data.id);
-                            found = true;
-                            return;
-                        }
-                    });
-                }
-
-                // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
-                if( !found ) {
-
-                    // Find the id of this row into PendingReviewGrid.store and open it !
-                    ui.cmp.PendingReviewGrid.getInstance().store.each(function(row) {
-
-                        if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                            ui.cmp.PendingReviewGrid.getInstance().openFile(row.data.id);
-                            found = true;
-                            return;
-                        }
-                    });
-                }
-
-                // FallBack : We open it into "All files" modules
-                if( !found ) {
-                    ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang+FilePath, FileName);
-                }
-
-            }
-        }
-
-        if (FileType === 'delete')
-        {
-            tmp      = FilePath.split('/');
-            FileLang = tmp[0];
-            tmp.shift();
-
-            FilePath = "/" + tmp.join('/');
-
-            // Find the id of this row into NotInENGrid.store and open it !
-            ui.cmp.NotInENGrid.getInstance().store.each(function(row) {
-
-                if( (row.data.path) === FilePath && row.data.name === FileName ) {
-                    ui.cmp.NotInENGrid.getInstance().openFile(row.data.id);
-                    return;
-                }
-            });
-        }
-    },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            store : ui.cmp._PendingCommitGrid.store
-        });
-        ui.cmp.PendingCommitGrid.superclass.initComponent.call(this);
-
-        this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
-    },
-
-    addRecord : function(fid, fpath, fname, type)
-    {
-        var exist = false;
-
-        this.store.each(function(r)
-        {
-            if (r.data.path === fpath && r.data.name === fname) {
-                exist = true;
-            }
-        });
-
-        if (!exist) {
-            // if not exist, add to store
-            this.store.insert(0,
-                new this.store.recordType({
-                    id   : fid,
-                    path : fpath,
-                    name : fname,
-                    by   : PhDOE.userLogin,
-                    date : new Date(),
-                    type : type
-                })
-            );
-            this.store.groupBy('path', true); // regroup
-        }
-    }
-});
-
-// singleton
-ui.cmp._PendingCommitGrid.instance = null;
-ui.cmp.PendingCommitGrid.getInstance = function(config)
-{
-    if (!ui.cmp._PendingCommitGrid.instance) {
-        if (!config) {
-           config = {};
-        }
-        ui.cmp._PendingCommitGrid.instance = new ui.cmp.PendingCommitGrid(config);
-    }
-    return ui.cmp._PendingCommitGrid.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PendingPatchGrid');
-
-//------------------------------------------------------------------------------
-// PendingPatchGrid internals
-
-// PendingPatchGrid store
-ui.cmp._PendingPatchGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesPendingPatch'
-    }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'by'},
-            {name : 'uniqID'},
-            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s'}
-        ]
-    }),
-    sortInfo : {
-        field     : 'name',
-        direction : 'ASC'
-    },
-    groupField : 'path',
-    listeners  : {
-        add : function(ds)
-        {
-            Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
-        },
-        datachanged : function(ds)
-        {
-            Ext.getDom('acc-pendingPatch-nb').innerHTML = ds.getCount();
-        }
-    }
-});
-
-// PendingPatchGrid columns definition
-ui.cmp._PendingPatchGrid.columns = [{
-    id        : 'name',
-    header    : _('Files'),
-    sortable  : true,
-    dataIndex : 'name'
-}, {
-    header    : _('Posted by'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'by'
-}, {
-    header    : _('Date'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'date',
-    renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
-}, {
-    header    : _('Path'),
-    dataIndex : 'path',
-    'hidden'  : true
-}];
-
-// PendingPatchGrid view
-ui.cmp._PendingPatchGrid.view = new Ext.grid.GroupingView({
-    forceFit      : true,
-    groupTextTpl  : '{[values.rs[0].data["path"]]} ' +
-                    '({[values.rs.length]} ' +
-                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    emptyText     : '<div style="text-align: center;">' + _('No pending patches') + '</div>',
-    deferEmptyText: false
-});
-
-// PendingPatchGrid context menu
-// config - { grid, rowIdx, event, fid, fpath, fname, fuid }
-ui.cmp._PendingPatchGrid.menu = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingPatchGrid.menu.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingPatchGrid.menu, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                scope   : this,
-                text    : '<b>' + _('Edit in a new Tab') + '</b>',
-                iconCls : 'iconPendingPatch',
-                handler : function()
-                {
-                    this.grid.openFile(this.grid.store.getAt(this.rowIdx).data.id);
-                }
-            }, '-', {
-                scope   : this,
-                text    : _('Reject this patch'),
-                disabled: (PhDOE.userLogin === 'anonymous'),
-                iconCls : 'iconTrash',
-                handler : function()
-                {
-                    new ui.task.RejectPatchTask({
-                        fid         : this.fid,
-                        fuid        : this.fuid,
-                        storeRecord : this.grid.store.getAt(this.rowIdx)
-                    });
-                }
-            }]
-        });
-    }
-});
-
-//------------------------------------------------------------------------------
-// PendingPatchGrid
-ui.cmp.PendingPatchGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    columns          : ui.cmp._PendingPatchGrid.columns,
-    view             : ui.cmp._PendingPatchGrid.view,
-    loadMask         : true,
-    border           : false,
-    autoExpandColumn : 'name',
-    enableDragDrop   : true,
-    ddGroup          : 'mainPanelDDGroup',
-
-    onRowDblClick: function(grid, rowIndex)
-    {
-        this.openFile(this.store.getAt(rowIndex).data.id);
-    },
-
-    openFile: function(rowId)
-    {
-        var storeRecord = false;
-
-        this.store.each(function(r)
-        {
-            if (r.data.id === rowId) {
-                storeRecord = r;
-            }
-        });
-
-        var FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            FileUniqID  = storeRecord.data.uniqID,
-            FileID      = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
-
-        // Render only if this tab don't exist yet
-        if (!Ext.getCmp('main-panel').findById('PP-' + FileID)) {
-
-            Ext.getCmp('main-panel').add({
-                id             : 'PP-' + FileID,
-                layout         : 'border',
-                iconCls        : 'iconPendingPatch',
-                title          : FileName,
-                originTitle    : FileName,
-                tabTip         : String.format(_('Patch for {0}'), FilePath + FileName),
-                closable       : true,
-                tabLoaded      : false,
-                panPatchContent: false,
-                panVCS         : !PhDOE.userConf.patchDisplayLog,
-                panPatchLoaded : false,
-                panOriginLoaded: false,
-                defaults       : { split : true },
-                items          : [{
-                        xtype            : 'panel',
-                        id               : 'PP-patch-desc-' + FileID,
-                        title            : _('Patch content'),
-                        iconCls          : 'iconPendingPatch',
-                        collapsedIconCls : 'iconPendingPatch',
-                        plugins          : [Ext.ux.PanelCollapsedTitle],
-                        layout           : 'fit',
-                        region           : 'north',
-                        border           : false,
-                        height           : PhDOE.userConf.patchDisplayContentPanelHeight || 150,
-                        autoScroll       : true,
-                        collapsible      : true,
-                        collapsed        : !PhDOE.userConf.patchDisplayContentPanel,
-                        html             : '<div id="diff_content_' + FileID + '" class="diff-content"></div>',
-                        listeners        : {
-                            collapse: function()
-                            {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplayContentPanel',
-                                        value : false,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            expand: function()
-                            {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplayContentPanel',
-                                        value : true,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            resize: function(a,b,newHeight)
-                            {
-                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.patchDisplayContentPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplayContentPanelHeight',
-                                        value : newHeight,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            render : function()
-                            {
-                                // Load diff data
-                                XHR({
-                                    params  : {
-                                        task     : 'getDiff',
-                                        FilePath : FilePath,
-                                        FileName : FileName,
-                                        DiffType : 'patch',
-                                        uniqID   : FileUniqID
-                                    },
-                                    success : function(response)
-                                    {
-                                        var o = Ext.util.JSON.decode(response.responseText);
-                                        // We display in diff div
-                                        Ext.get('diff_content_' + FileID).dom.innerHTML = o.content;
-                                    },
-                                    callback: function() {
-                                        Ext.getCmp('PP-' + FileID).panPatchContent = true;
-                                        Ext.getCmp('main-panel').fireEvent('tabLoaded', 'PP', FileID);
-                                    }
-                                });
-                            }
-                        }
-                    }, {
-                        region           : 'west',
-                        xtype            : 'panel',
-                        title            : _('VCS Log'),
-                        iconCls          : 'iconVCSLog',
-                        collapsedIconCls : 'iconVCSLog',
-                        plugins          : [Ext.ux.PanelCollapsedTitle],
-                        layout           : 'fit',
-                        bodyBorder       : false,
-                        collapsible      : true,
-                        collapsed        : !PhDOE.userConf.patchDisplaylogPanel,
-                        width            : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
-                        listeners        : {
-                            collapse : function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplaylogPanel',
-                                        value : false,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            expand : function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplaylogPanel',
-                                        value : true,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            resize : function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.patchDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'patchDisplaylogPanelWidth',
-                                        value : newWidth,
-                                        notify: false
-                                    });
-                                }
-                            }
-                        },
-                        items       : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            tabPosition : 'bottom',
-                            defaults    : { autoScroll : true },
-                            items       : new ui.cmp.VCSLogGrid({
-                                layout    : 'fit',
-                                title     : _('Log'),
-                                prefix    : 'PP',
-                                fid       : FileID,
-                                fpath     : FilePath,
-                                fname     : FileName,
-                                loadStore : PhDOE.userConf.patchDisplayLog
-                            })
-                        }
-                    }, new ui.cmp.FilePanel(
-                    {
-                        id             : 'PP-PATCH-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : String.format(_('Proposed Patch for {0}'), FilePath + FileName),
-                        prefix         : 'PP',
-                        ftype          : 'PATCH',
-                        spellCheck     : PhDOE.userConf.patchSpellCheck,
-                        spellCheckConf : 'patchSpellCheck',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        isPatch        : true,
-                        fuid           : FileUniqID,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
-                        syncScrollConf : 'patchScrollbars'
-                    }), new ui.cmp.FilePanel(
-                    {
-                        id             : 'PP-ORIGIN-PANEL-' + FileID,
-                        region         : 'east',
-                        width          : 575,
-                        title          : _('Original File: ') + FilePath + FileName,
-                        prefix         : 'PP',
-                        ftype          : 'ORIGIN',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : '',
-                        readOnly       : true,
-                        parser         : 'xml',
-                        syncScroll     : true,
-                        syncScrollConf : 'patchScrollbars'
-                    })
-                ]
-            });
-        }
-        Ext.getCmp('main-panel').setActiveTab('PP-' + FileID);
-    },
-
-    onRowContextMenu : function(grid, rowIndex, e)
-    {
-        e.stopEvent();
-
-        var FilePath   = grid.store.getAt(rowIndex).data.path,
-            FileName   = grid.store.getAt(rowIndex).data.name,
-            FileUniqID = grid.store.getAt(rowIndex).data.uniqID,
-            FileID     = Ext.util.md5('PP-' + FileUniqID + FilePath + FileName);
-
-        grid.getSelectionModel().selectRow(rowIndex);
-
-        new ui.cmp._PendingPatchGrid.menu({
-            grid   : grid,
-            rowIdx : rowIndex,
-            event  : e,
-            fid    : FileID,
-            fpath  : FilePath,
-            fname  : FileName,
-            fuid   : FileUniqID
-        }).showAt(e.getXY());
-    },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            store : ui.cmp._PendingPatchGrid.store
-        });
-        ui.cmp.PendingPatchGrid.superclass.initComponent.call(this);
-
-        this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,    this);
-    }
-});
-
-// singleton
-ui.cmp._PendingPatchGrid.instance = null;
-ui.cmp.PendingPatchGrid.getInstance = function(config)
-{
-    if (!ui.cmp._PendingPatchGrid.instance) {
-        if (!config) {
-            config = {};
-        }
-        ui.cmp._PendingPatchGrid.instance = new ui.cmp.PendingPatchGrid(config);
-    }
-    return ui.cmp._PendingPatchGrid.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PendingReviewGrid');
+});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingReviewGrid');
 
 //------------------------------------------------------------------------------
 // PendingReviewGrid internals
 
 // PendingReviewGrid store
-ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesNeedReviewed'
+ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore({
+    proxy: new Ext.data.HttpProxy({
+        url: './do/getFilesNeedReviewed'
     }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'reviewed'},
-            {name : 'maintainer'},
-            {name : 'needcommit'}
-        ]
+    reader: new Ext.data.JsonReader({
+        root: 'Items',
+        totalProperty: 'nbItems',
+        idProperty: 'id',
+        fields: [{
+            name: 'id'
+        }, {
+            name: 'path'
+        }, {
+            name: 'name'
+        }, {
+            name: 'reviewed'
+        }, {
+            name: 'maintainer'
+        }, {
+            name: 'fileModifiedEN'
+        }, {
+            name: 'fileModifiedLang'
+        }]
     }),
-    sortInfo : {
-        field     : 'name',
-        direction : 'ASC'
+    sortInfo: {
+        field: 'name',
+        direction: 'ASC'
     },
-    groupField : 'path',
-    listeners  : {
-        datachanged : function(ds)
-        {
+    groupField: 'path',
+    listeners: {
+        datachanged: function(ds){
             Ext.getDom('acc-need-reviewed-nb').innerHTML = ds.getCount();
         }
     }
@@ -12871,158 +13538,129 @@ ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore(
 
 // PendingReviewGrid columns definition
 ui.cmp._PendingReviewGrid.columns = [{
-    id        : 'name',
-    header    : _('Files'),
-    sortable  : true,
-    dataIndex : 'name'
+    id: 'name',
+    header: _('Files'),
+    sortable: true,
+    dataIndex: 'name',
+    renderer: function(v, m, r){
+        var mess = '', infoEN, infoLang;
+        
+        if (r.data.fileModifiedEN) {
+        
+            infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
+            
+            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess = _('File EN modified by me') + "<br>";
+            }
+            else {
+                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+            }
+        }
+        
+        if (r.data.fileModifiedLang) {
+        
+            infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            
+            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
+            }
+            else {
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+            }
+        }
+        
+        if (mess != '') {
+            return "<span ext:qtip='" + mess + "'>" + v + "</span>";
+        }
+        else {
+            return v;
+        }
+    }
 }, {
-    header    : _('Reviewed'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'reviewed'
+    header: _('Reviewed'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'reviewed'
 }, {
-    header    : _('Maintainer'),
-    width     : 45,
-    sortable  : true,
-    dataIndex : 'maintainer'
+    header: _('Maintainer'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'maintainer'
 }, {
-    header    : _('Path'),
-    dataIndex : 'path',
-    hidden    : true
+    header: _('Path'),
+    dataIndex: 'path',
+    hidden: true
 }];
 
 // PendingReviewGrid view
 ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
-    forceFit      : true,
+    forceFit: true,
     startCollapsed: true,
-    groupTextTpl  : '{[values.rs[0].data["path"]]} ' +
-                    '({[values.rs.length]} ' +
-                    '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    getRowClass   : function(record)
-    {
-        if (record.data.needcommit) {
-            return 'file-need-commit';
+    groupTextTpl: '{[values.rs[0].data["path"]]} ' +
+    '({[values.rs.length]} ' +
+    '{[values.rs.length > 1 ? "' +
+    _('Files') +
+    '" : "' +
+    _('File') +
+    '"]})',
+    getRowClass: function(r){
+        if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
+        
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     },
-    deferEmptyText : false,
-    emptyText      : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    deferEmptyText: false,
+    emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
 Ext.namespace('ui.cmp._PendingReviewGrid.menu');
-// PendingReviewGrid diff menu
-// config - { rowIdx, fpath, fname }
-ui.cmp._PendingReviewGrid.menu.diff = function(config)
-{
-    Ext.apply(this, config);
-    this.init();
-    ui.cmp._PendingReviewGrid.menu.diff.superclass.constructor.call(this);
-};
-Ext.extend(ui.cmp._PendingReviewGrid.menu.diff, Ext.menu.Item,
-{
-    text    : _('View diff'),
-    iconCls : 'iconViewDiff',
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            handler : function()
-            {
-                // Add tab for the diff
-                Ext.getCmp('main-panel').add({
-                    xtype      : 'panel',
-                    id         : 'diff_panel_' + this.rowIdx,
-                    title      : _('Diff'),
-                    tabTip     : _('Diff'),
-                    closable   : true,
-                    autoScroll : true,
-                    iconCls    : 'iconTabLink',
-                    html       : '<div id="diff_content_' + this.rowIdx + '" class="diff-content"></div>'
-                });
-                Ext.getCmp('main-panel').setActiveTab('diff_panel_' + this.rowIdx);
-
-                Ext.get('diff_panel_' + this.rowIdx).mask(
-                    '<img src="themes/img/loading.gif" ' +
-                        'style="vertical-align: middle;" /> ' +
-                    _('Please, wait...')
-                );
-
-                // Load diff data
-                XHR({
-                    scope   : this,
-                    params  : {
-                        task     : 'getDiff',
-                        FilePath : PhDOE.userLang + this.fpath,
-                        FileName : this.fname
-                    },
-                    success : function(r)
-                    {
-                        var o = Ext.util.JSON.decode(r.responseText);
-
-                        // We display in diff div
-                        Ext.get('diff_content_' + this.rowIdx).dom.innerHTML = o.content;
-                        Ext.get('diff_panel_' + this.rowIdx).unmask();
-                    }
-                });
-            }
-        });
-    }
-});
-
 // PendingReviewGrid refence group menu
 // config - { gname }
-ui.cmp._PendingReviewGrid.menu.group = function(config)
-{
+ui.cmp._PendingReviewGrid.menu.group = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._PendingReviewGrid.menu.group.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item,
-{
-    iconCls : 'iconViewDiff',
-    init    : function()
-    {
-        Ext.apply(this,
-        {
-            text    : String.format(
-                _('Open all files about {0} extension'), this.gname
-            ),
-            handler : function()
-            {
-                Ext.getBody().mask(
-                    '<img src="themes/img/loading.gif" ' +
-                        'style="vertical-align: middle;" /> ' +
-                    String.format(_('Open all files about {0} extension'), this.gname) + '. ' +
-                    _('Please, wait...')
-                );
-
+Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
+    iconCls: 'iconViewDiff',
+    init: function(){
+        console.log('here');
+        console.log(this.gname);
+        
+        Ext.apply(this, {
+            text: String.format(_('Open all files about {0} extension'), this.gname.ucFirst()),
+            handler: function(){
+                Ext.getBody().mask('<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" /> ' +
+                String.format(_('Open all files about {0} extension'), this.gname.ucFirst()) +
+                '. ' +
+                _('Please, wait...'));
+                
                 XHR({
-                    params  : {
-                        task    : 'getAllFilesAboutExtension',
-                        ExtName : this.gname
+                    params: {
+                        task: 'getAllFilesAboutExtension',
+                        ExtName: this.gname
                     },
-                    success : function(r)
-                    {
+                    success: function(r){
                         var o = Ext.util.JSON.decode(r.responseText);
-
+                        
                         PhDOE.AFfilePendingOpen = [];
-
+                        
                         for (var i = 0; i < o.files.length; i = i + 1) {
                             PhDOE.AFfilePendingOpen[i] = {
-                                fpath : PhDOE.userLang + o.files[i].path,
-                                fname : o.files[i].name
+                                fpath: PhDOE.user.lang + o.files[i].path,
+                                fname: o.files[i].name
                             };
                         }
-
+                        
                         // Start the first
-                        ui.cmp.RepositoryTree.getInstance().openFile(
-                            'byPath',
-                            PhDOE.AFfilePendingOpen[0].fpath,
-                            PhDOE.AFfilePendingOpen[0].fname
-                        );
-
+                        ui.cmp.RepositoryTree.getInstance().openFile('byPath', PhDOE.AFfilePendingOpen[0].fpath, PhDOE.AFfilePendingOpen[0].fname);
+                        
                         PhDOE.AFfilePendingOpen.shift();
-
+                        
                         Ext.getBody().unmask();
                     }
                 });
@@ -13032,303 +13670,338 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item,
 });
 
 // PendingReviewGrid menu
-// config - { hideDiff, hideGroup, gname, grid, rowIdx, event, fpath, fname }
-ui.cmp._PendingReviewGrid.menu.main = function(config)
-{
+// config - { hideDiffMenu, hideGroup, gname, grid, rowIdx, event, fpath, fname }
+ui.cmp._PendingReviewGrid.menu.main = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._PendingReviewGrid.menu.main.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._PendingReviewGrid.menu.main, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconFilesNeedReviewed',
-                scope   : this,
-                handler : function()
-                {
-                    this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
-                    );
+Ext.extend(ui.cmp._PendingReviewGrid.menu.main, Ext.menu.Menu, {
+    init: function(){
+        Ext.apply(this, {
+            items: [{
+                text: '<b>' + _('Edit in a new tab') + '</b>',
+                iconCls: 'iconFilesNeedReviewed',
+                scope: this,
+                handler: function(){
+                    this.grid.fireEvent('rowdblclick', this.grid, this.rowIdx, this.event);
                 }
-            }, new ui.cmp._PendingReviewGrid.menu.diff({
-                fpath  : this.fpath,
-                fname  : this.fname,
-                rowIdx : this.rowIdx,
-                hidden : this.hideDiff
-            }), new Ext.menu.Separator({ // Only display a separator when we display the group menu
-                hidden : this.hideGroup
+            }, {
+                scope: this,
+                hidden: this.hideDiffMenu,
+                text: _('View diff...'),
+                iconCls: 'iconViewDiff',
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedEN === false),
+                        text: String.format(_('... of the {0} file'), 'EN'),
+                        handler: function(){
+                            this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
+                        }
+                    }, {
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedLang === false),
+                        text: String.format(_('... of the {0} file'), PhDOE.user.lang.ucFirst()),
+                        handler: function(){
+                            this.openTab(this.rowIdx, PhDOE.user.lang, this.fpath, this.fname);
+                        }
+                    }]
+                })
+            }, new Ext.menu.Separator({ // Only display a separator when we display the group menu
+                hidden: this.hideGroup
             }), new ui.cmp._PendingReviewGrid.menu.group({
-                gname  : this.gname,
-                hidden : this.hideGroup
+                gname: this.gname,
+                hidden: this.hideGroup
             })]
         });
+    },
+    
+    openTab: function(rowIdx, lang, fpath, fname){
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
+        
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype: 'panel',
+                id: 'diff_panel_' + lang + '_' + rowIdx,
+                title: _('Diff'),
+                tabTip: String.format(_('Diff for file: {0}'), lang + fpath + fname),
+                closable: true,
+                autoScroll: true,
+                iconCls: 'iconTabLink',
+                html: '<div id="diff_content_' + lang + '_' + rowIdx +
+                '" class="diff-content"></div>'
+            });
+            
+            // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+            
+            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask('<img src="themes/img/loading.gif" ' +
+            'style="vertical-align: middle;" />' +
+            _('Please, wait...'));
+            
+            // Load diff data
+            XHR({
+                params: {
+                    task: 'getDiff',
+                    DiffType: 'file',
+                    FilePath: lang + fpath,
+                    FileName: fname
+                },
+                success: function(r){
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    // We display in diff div
+                    Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
+                    
+                    Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
+                }
+            });
+        }
+        else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
+        }
     }
 });
 
 //------------------------------------------------------------------------------
 // PendingReviewGrid
-ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    loadMask         : true,
-    border           : false,
-    autoExpandColumn : 'name',
-    enableDragDrop   : true,
-    ddGroup          : 'mainPanelDDGroup',
-    columns          : ui.cmp._PendingReviewGrid.columns,
-    view             : ui.cmp._PendingReviewGrid.view,
-
-    onRowContextMenu: function(grid, rowIndex, e)
-    {
+ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
+    loadMask: true,
+    border: false,
+    autoExpandColumn: 'name',
+    enableDragDrop: true,
+    ddGroup: 'mainPanelDDGroup',
+    columns: ui.cmp._PendingReviewGrid.columns,
+    view: ui.cmp._PendingReviewGrid.view,
+    
+    onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-
-        var storeRecord = grid.store.getAt(rowIndex),
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            fpath_split = FilePath.split('/');
-
+        
+        var storeRecord = grid.store.getAt(rowIndex), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, fpath_split = FilePath.split('/');
+        
+        console.log(fpath_split);
+        
         grid.getSelectionModel().selectRow(rowIndex);
-
+        
         new ui.cmp._PendingReviewGrid.menu.main({
-            grid      : grid,
-            rowIdx    : rowIndex,
-            event     : e,
-            fpath     : FilePath,
-            fname     : FileName,
-            hideDiff  : (!storeRecord.data.needcommit),
-            hideGroup : (fpath_split[1] !== 'reference'),
-            gname     : fpath_split[2]
+            grid: grid,
+            rowIdx: rowIndex,
+            event: e,
+            fpath: FilePath,
+            fname: FileName,
+            hideDiffMenu: (storeRecord.data.fileModifiedEN === false && storeRecord.data.fileModifiedLang === false),
+            hideGroup: (fpath_split[1] !== 'reference'),
+            gname: (fpath_split[2]) ? fpath_split[2] : ''
         }).showAt(e.getXY());
     },
-
-    onRowDblClick: function(grid, rowIndex, e)
-    {
+    
+    onRowDblClick: function(grid, rowIndex, e){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-
-    openFile: function(rowId)
-    {
-        var storeRecord = this.store.getById(rowId),
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNR-' + PhDOE.userLang + FilePath + FileName);
-
+    
+    openFile: function(rowId){
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNR-' + PhDOE.user.lang + FilePath + FileName);
+        
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
-
+        
             Ext.getCmp('main-panel').add({
-                id             : 'FNR-' + FileID,
-                title          : FileName,
-                layout         : 'border',
-                iconCls        : 'iconTabNeedReviewed',
-                closable       : true,
-                tabLoaded      : false,
-                panVCSLang     : !PhDOE.userConf.reviewedDisplaylog,
-                panVCSEn       : !PhDOE.userConf.reviewedDisplaylog,
-                panLANGLoaded  : false, // Use to monitor if the LANG panel is loaded
-                panENLoaded    : false, // Use to monitor if the EN panel is loaded
-                originTitle    : FileName,
-                defaults       : { split : true },
-                tabTip         : String.format(
-                    _('Need Reviewed in: {0}'), FilePath
-                ),
+                id: 'FNR-' + FileID,
+                title: FileName,
+                layout: 'border',
+                iconCls: 'iconTabNeedReviewed',
+                closable: true,
+                tabLoaded: false,
+                panVCSLang: !PhDOE.user.conf.reviewedDisplaylog,
+                panVCSEn: !PhDOE.user.conf.reviewedDisplaylog,
+                panLANGLoaded: false, // Use to monitor if the LANG panel is loaded
+                panENLoaded: false, // Use to monitor if the EN panel is loaded
+                originTitle: FileName,
+                defaults: {
+                    split: true
+                },
+                tabTip: String.format(_('Need Reviewed in: {0}'), FilePath),
                 listeners: {
-                    resize: function(panel) {
-                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    resize: function(panel){
+                        Ext.getCmp('FNR-EN-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                     }
                 },
-                items : [{
-                    region           : 'west',
-                    xtype            : 'panel',
-                    title            : _('Tools'),
-                    iconCls          : 'iconConf',
-                    collapsedIconCls : 'iconConf',
-                    plugins          : [Ext.ux.PanelCollapsedTitle],
-                    collapsible      : true,
-                    collapsed        : !PhDOE.userConf.reviewedDisplaylogPanel,
-                    layout           : 'fit',
-                    bodyBorder       : false,
-                    width            : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
-                    listeners        : {
-                        collapse: function() {
-                            if ( this.ownerCt.tabLoaded ) {
+                items: [{
+                    region: 'west',
+                    xtype: 'panel',
+                    title: _('Tools'),
+                    iconCls: 'iconConf',
+                    collapsedIconCls: 'iconConf',
+                    plugins: [Ext.ux.PanelCollapsedTitle],
+                    collapsible: true,
+                    collapsed: !PhDOE.user.conf.reviewedDisplaylogPanel,
+                    layout: 'fit',
+                    bodyBorder: false,
+                    width: PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    listeners: {
+                        collapse: function(){
+                            if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
-                                    value : false,
+                                    item: 'reviewedDisplaylogPanel',
+                                    value: false,
                                     notify: false
                                 });
                             }
                         },
-                        expand: function() {
-                            if ( this.ownerCt.tabLoaded ) {
+                        expand: function(){
+                            if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
-                                    value : true,
+                                    item: 'reviewedDisplaylogPanel',
+                                    value: true,
                                     notify: false
                                 });
                             }
                         },
-                        resize: function(a,newWidth) {
-                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                        resize: function(a, newWidth){
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanelWidth',
-                                    value : newWidth,
+                                    item: 'reviewedDisplaylogPanelWidth',
+                                    value: newWidth,
                                     notify: false
                                 });
                             }
                         }
                     },
-                    items : {
-                        xtype          : 'tabpanel',
-                        activeTab      : 0,
-                        tabPosition    : 'bottom',
-                        enableTabScroll:true,
-                        defaults       : { autoScroll : true },
-                        items          : [
-                            new ui.cmp.VCSLogGrid({
-                                layout    : 'fit',
-                                title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
-                                prefix    : 'FNR-LANG',
-                                fid       : FileID,
-                                fpath     : PhDOE.userLang + FilePath,
-                                fname     : FileName,
-                                loadStore : PhDOE.userConf.reviewedDisplaylog
-                            }),
-                            new ui.cmp.VCSLogGrid({
-                                layout    : 'fit',
-                                title     : String.format(_('{0} Log'), 'En'),
-                                prefix    : 'FNR-EN',
-                                fid       : FileID,
-                                fpath     : 'en' + FilePath,
-                                fname     : FileName,
-                                loadStore : PhDOE.userConf.reviewedDisplaylog
-                            }),
-                            new ui.cmp.DictionaryGrid({
-                                layout    : 'fit',
-                                title     : _('Dictionary'),
-                                prefix    : 'FNR',
-                                fid       : FileID
-                            })
-                        ]
+                    items: {
+                        xtype: 'tabpanel',
+                        activeTab: 0,
+                        tabPosition: 'bottom',
+                        enableTabScroll: true,
+                        defaults: {
+                            autoScroll: true
+                        },
+                        items: [new ui.cmp.VCSLogGrid({
+                            layout: 'fit',
+                            title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
+                            prefix: 'FNR-LANG',
+                            fid: FileID,
+                            fpath: PhDOE.user.lang + FilePath,
+                            fname: FileName,
+                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                        }), new ui.cmp.VCSLogGrid({
+                            layout: 'fit',
+                            title: String.format(_('{0} Log'), 'En'),
+                            prefix: 'FNR-EN',
+                            fid: FileID,
+                            fpath: 'en' + FilePath,
+                            fname: FileName,
+                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                        }), new ui.cmp.DictionaryGrid({
+                            layout: 'fit',
+                            title: _('Dictionary'),
+                            prefix: 'FNR',
+                            fid: FileID
+                        })]
                     }
                 }, new ui.cmp.FilePanel({
-                    id             : 'FNR-LANG-PANEL-' + FileID,
-                    region         : 'center',
-                    title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                    prefix         : 'FNR',
-                    ftype          : 'LANG',
-                    spellCheck     : PhDOE.userConf.reviewedSpellCheckLang,
-                    spellCheckConf : 'reviewedSpellCheckLang',
-                    fid            : FileID,
-                    fpath          : FilePath,
-                    fname          : FileName,
-                    lang           : PhDOE.userLang,
-                    parser         : 'xml',
-                    storeRecord    : storeRecord,
-                    syncScrollCB   : true,
-                    syncScroll     : true,
-                    syncScrollConf : 'reviewedScrollbars'
+                    id: 'FNR-LANG-PANEL-' + FileID,
+                    region: 'center',
+                    title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
+                    prefix: 'FNR',
+                    ftype: 'LANG',
+                    spellCheck: PhDOE.user.conf.reviewedSpellCheckLang,
+                    spellCheckConf: 'reviewedSpellCheckLang',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScrollCB: true,
+                    syncScroll: true,
+                    syncScrollConf: 'reviewedScrollbars'
                 }), new ui.cmp.FilePanel({
-                    id             : 'FNR-EN-PANEL-' + FileID,
-                    region         : 'east',
-                    title          : _('en File: ') + FilePath + FileName,
-                    prefix         : 'FNR',
-                    ftype          : 'EN',
-                    spellCheck     : PhDOE.userConf.reviewedSpellCheckEn,
-                    spellCheckConf : 'reviewedSpellCheckEn',
-                    fid            : FileID,
-                    fpath          : FilePath,
-                    fname          : FileName,
-                    lang           : 'en',
-                    parser         : 'xml',
-                    storeRecord    : storeRecord,
-                    syncScroll     : true,
-                    syncScrollConf : 'reviewedScrollbars'
+                    id: 'FNR-EN-PANEL-' + FileID,
+                    region: 'east',
+                    title: _('en File: ') + FilePath + FileName,
+                    prefix: 'FNR',
+                    ftype: 'EN',
+                    spellCheck: PhDOE.user.conf.reviewedSpellCheckEn,
+                    spellCheckConf: 'reviewedSpellCheckEn',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: 'en',
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScroll: true,
+                    syncScrollConf: 'reviewedScrollbars'
                 })]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
     },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            store : ui.cmp._PendingReviewGrid.store,
-            tbar  : [
-                _('Filter: '), ' ',
-                new Ext.form.TwinTriggerField({
-                    id              : 'FNR-filter',
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-                    validateOnBlur  : false,
-                    validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    listeners : {
-                        keypress : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
+    
+    initComponent: function(){
+        Ext.apply(this, {
+            store: ui.cmp._PendingReviewGrid.store,
+            tbar: [_('Filter: '), ' ', new Ext.form.TwinTriggerField({
+                id: 'FNR-filter',
+                width: 180,
+                hideTrigger1: true,
+                enableKeyEvents: true,
+                validateOnBlur: false,
+                validationEvent: false,
+                trigger1Class: 'x-form-clear-trigger',
+                trigger2Class: 'x-form-search-trigger',
+                listeners: {
+                    keypress: function(field, e){
+                        if (e.getKey() == e.ENTER) {
+                            this.onTrigger2Click();
                         }
-                    },
-                    onTrigger1Click : function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        ui.cmp._PendingReviewGrid.instance.store.clearFilter();
-                    },
-                    onTrigger2Click : function()
-                    {
-                        var v = this.getValue(), regexp;
-
-                        if( v === '' || v.length < 3) {
-                            this.markInvalid(
-                                _('Your filter must contain at least 3 characters')
-                            );
-                            return;
-                        }
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-
-                        regexp = new RegExp(v, 'i');
-
-                        // We filter on 'path', 'name', 'reviewed', 'maintainer'
-                        ui.cmp._PendingReviewGrid.instance.store.filterBy(function(record) {
-
-                            if( regexp.test(record.data.path)       ||
-                                regexp.test(record.data.name)       ||
-                                regexp.test(record.data.reviewed)   ||
-                                regexp.test(record.data.maintainer)
-                            ) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }, this);
                     }
-                })
-            ]
+                },
+                onTrigger1Click: function(){
+                    this.setValue('');
+                    this.triggers[0].hide();
+                    this.setSize(180, 10);
+                    ui.cmp._PendingReviewGrid.instance.store.clearFilter();
+                },
+                onTrigger2Click: function(){
+                    var v = this.getValue(), regexp;
+                    
+                    if (v === '' || v.length < 3) {
+                        this.markInvalid(_('Your filter must contain at least 3 characters'));
+                        return;
+                    }
+                    this.clearInvalid();
+                    this.triggers[0].show();
+                    this.setSize(180, 10);
+                    
+                    regexp = new RegExp(v, 'i');
+                    
+                    // We filter on 'path', 'name', 'reviewed', 'maintainer'
+                    ui.cmp._PendingReviewGrid.instance.store.filterBy(function(record){
+                    
+                        if (regexp.test(record.data.path) ||
+                        regexp.test(record.data.name) ||
+                        regexp.test(record.data.reviewed) ||
+                        regexp.test(record.data.maintainer)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }, this);
+                }
+            })]
         });
         ui.cmp.PendingReviewGrid.superclass.initComponent.call(this);
-
+        
         this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
+        this.on('rowdblclick', this.onRowDblClick, this);
     }
 });
 
 // singleton
 ui.cmp._PendingReviewGrid.instance = null;
-ui.cmp.PendingReviewGrid.getInstance = function(config)
-{
+ui.cmp.PendingReviewGrid.getInstance = function(config){
     if (!ui.cmp._PendingReviewGrid.instance) {
         if (!config) {
             config = {};
@@ -13336,34 +14009,36 @@ ui.cmp.PendingReviewGrid.getInstance = function(config)
         ui.cmp._PendingReviewGrid.instance = new ui.cmp.PendingReviewGrid(config);
     }
     return ui.cmp._PendingReviewGrid.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PendingTranslateGrid');
+};
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingTranslateGrid');
 
 //------------------------------------------------------------------------------
 // PendingTranslateGrid data store
-ui.cmp._PendingTranslateGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesNeedTranslate'
+ui.cmp._PendingTranslateGrid.store = new Ext.data.GroupingStore({
+    proxy: new Ext.data.HttpProxy({
+        url: './do/getFilesNeedTranslate'
     }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'needcommit'}
-        ]
+    reader: new Ext.data.JsonReader({
+        root: 'Items',
+        totalProperty: 'nbItems',
+        idProperty: 'id',
+        fields: [{
+            name: 'id'
+        }, {
+            name: 'path'
+        }, {
+            name: 'name'
+        }, {
+            name: 'fileModified'
+        }]
     }),
-    sortInfo : {
-        field     : 'name',
-        direction : 'ASC'
+    sortInfo: {
+        field: 'name',
+        direction: 'ASC'
     },
-    groupField : 'path',
-    listeners  : {
-        datachanged : function(ds)
-        {
+    groupField: 'path',
+    listeners: {
+        datachanged: function(ds){
             Ext.getDom('acc-need-translate-nb').innerHTML = ds.getCount();
         }
     }
@@ -13371,59 +14046,74 @@ ui.cmp._PendingTranslateGrid.store = new Ext.data.GroupingStore(
 
 // PendingTranslateGrid view
 ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
-    forceFit       : true,
-    startCollapsed : true,
-    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
-                     '({[values.rs.length]} ' +
-                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    deferEmptyText : false,
-    getRowClass    : function(record)
-    {
-        if (record.data.needcommit) {
-            return 'file-need-commit';
+    forceFit: true,
+    startCollapsed: true,
+    groupTextTpl: '{[values.rs[0].data["path"]]} ' +
+    '({[values.rs.length]} ' +
+    '{[values.rs.length > 1 ? "' +
+    _('Files') +
+    '" : "' +
+    _('File') +
+    '"]})',
+    deferEmptyText: false,
+    getRowClass: function(r){
+        if (r.data.fileModified) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+            
+            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
+        
         return false;
     },
-    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
 // PendingTranslateGrid columns definition
-ui.cmp._PendingTranslateGrid.columns = [
-    {
-        id        : 'name',
-        header    : _('Files'),
-        sortable  : true,
-        dataIndex : 'name'
-    }, {
-        header    : _('Path'),
-        dataIndex : 'path',
-        hidden    : true
+ui.cmp._PendingTranslateGrid.columns = [{
+    id: 'name',
+    header: _('Files'),
+    sortable: true,
+    dataIndex: 'name',
+    renderer: function(v, metada, r){
+        if (r.data.fileModified) {
+        
+            var info = Ext.util.JSON.decode(r.data.fileModified);
+            
+            if (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+                return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
+            }
+            else {
+                return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+            }
+            
+        }
+        else {
+            return v;
+        }
     }
-];
+}, {
+    header: _('Path'),
+    dataIndex: 'path',
+    hidden: true
+}];
 
 // PendingTranslateGrid context menu
-// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.cmp._PendingTranslateGrid.menu = function(config)
-{
+// config - { grid, rowIdx, event }
+ui.cmp._PendingTranslateGrid.menu = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._StaleFileGrid.menu.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._PendingTranslateGrid.menu, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
+Ext.extend(ui.cmp._PendingTranslateGrid.menu, Ext.menu.Menu, {
+    init: function(){
+        Ext.apply(this, {
             items: [{
-                scope   : this,
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconTabNeedTranslate',
-                handler : function()
-                {
-                    this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
-                    );
+                scope: this,
+                text: '<b>' + _('Edit in a new tab') + '</b>',
+                iconCls: 'iconTabNeedTranslate',
+                handler: function(){
+                    this.grid.fireEvent('rowdblclick', this.grid, this.rowIdx, this.event);
                 }
             }]
         });
@@ -13433,259 +14123,229 @@ Ext.extend(ui.cmp._PendingTranslateGrid.menu, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // PendingTranslateGrid
-ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    view             : ui.cmp._PendingTranslateGrid.view,
-    loadMask         : true,
-    autoExpandColumn : 'name',
-    enableDragDrop   : true,
-    ddGroup          : 'mainPanelDDGroup',
-    border           : false,
-
-    onRowContextMenu : function(grid, rowIndex, e)
-    {
+ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
+    view: ui.cmp._PendingTranslateGrid.view,
+    loadMask: true,
+    autoExpandColumn: 'name',
+    enableDragDrop: true,
+    ddGroup: 'mainPanelDDGroup',
+    border: false,
+    
+    onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-
-        var FilePath = grid.store.getAt(rowIndex).data.path,
-            FileName = grid.store.getAt(rowIndex).data.name;
-
+        
         grid.getSelectionModel().selectRow(rowIndex);
-
+        
         new ui.cmp._PendingTranslateGrid.menu({
-            hideCommit : (grid.store.getAt(rowIndex).data.needcommit === false),
-            grid       : grid,
-            event      : e,
-            rowIdx     : rowIndex,
-            lang       : PhDOE.userLang,
-            fpath      : FilePath,
-            fname      : FileName
+            grid: grid,
+            event: e,
+            rowIdx: rowIndex
         }).showAt(e.getXY());
     },
-
-    onRowDblClick : function(grid, rowIndex)
-    {
+    
+    onRowDblClick: function(grid, rowIndex){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-
-    openFile : function(rowId)
-    {
-        var storeRecord = this.store.getById(rowId),
-            FilePath    = storeRecord.data.path,
-            FileName    = storeRecord.data.name,
-            FileID      = Ext.util.md5('FNT-' + PhDOE.userLang + FilePath + FileName);
-
+    
+    openFile: function(rowId){
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName);
+        
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
-
-            Ext.getCmp('main-panel').add(
-            {
-                id               : 'FNT-' + FileID,
-                layout           : 'border',
-                title            : FileName,
-                originTitle      : FileName,
-                iconCls          : 'iconTabNeedTranslate',
-                closable         : true,
-                tabLoaded        : false,
-                panTRANSLoaded   : false,
-                panGGTRANSLoaded : !PhDOE.userConf.newFileGGPanel,
-                defaults         : { split : true },
-                tabTip           : String.format(
-                    _('Need Translate: in {0}'), FilePath
-                ),
-                listeners : {
-                    resize: function(panel) {
-                        if( PhDOE.userConf.newFileGGPanel ) {
-                            Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+        
+            Ext.getCmp('main-panel').add({
+                id: 'FNT-' + FileID,
+                layout: 'border',
+                title: FileName,
+                originTitle: FileName,
+                iconCls: 'iconTabNeedTranslate',
+                closable: true,
+                tabLoaded: false,
+                panTRANSLoaded: false,
+                panGGTRANSLoaded: !PhDOE.user.conf.newFileGGPanel,
+                defaults: {
+                    split: true
+                },
+                tabTip: String.format(_('Need translate: in {0}'), FilePath),
+                listeners: {
+                    resize: function(panel){
+                        if (PhDOE.user.conf.newFileGGPanel) {
+                            Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                         }
                     }
                 },
-                items : [{
-                    region           : 'west',
-                    xtype            : 'panel',
-                    title            : _('Tools'),
-                    iconCls          : 'iconConf',
-                    collapsedIconCls : 'iconConf',
-                    plugins          : [Ext.ux.PanelCollapsedTitle],
-                    collapsible      : true,
-                    collapsed        : true, //!PhDOE.userConf.reviewedDisplaylogPanel,
-                    layout           : 'fit',
-                    bodyBorder       : false,
-                    width            : 375, //PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
-                    listeners        : {
-                        collapse: function() {
+                items: [{
+                    region: 'west',
+                    xtype: 'panel',
+                    title: _('Tools'),
+                    iconCls: 'iconConf',
+                    collapsedIconCls: 'iconConf',
+                    plugins: [Ext.ux.PanelCollapsedTitle],
+                    collapsible: true,
+                    collapsed: true, //!PhDOE.user.conf.reviewedDisplaylogPanel,
+                    layout: 'fit',
+                    bodyBorder: false,
+                    width: 375, //PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    listeners: {
+                        collapse: function(){
                             /*
-                            if ( this.ownerCt.tabLoaded ) {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
-                                    value : false,
-                                    notify: false
-                                });
-                            }
-                            */
+                             if ( this.ownerCt.tabLoaded ) {
+                             new ui.task.UpdateConfTask({
+                             item  : 'reviewedDisplaylogPanel',
+                             value : false,
+                             notify: false
+                             });
+                             }
+                             */
                         },
-                        expand: function() {
+                        expand: function(){
                             /*
-                            if ( this.ownerCt.tabLoaded ) {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
-                                    value : true,
-                                    notify: false
-                                });
-                            }
-                            */
+                             if ( this.ownerCt.tabLoaded ) {
+                             new ui.task.UpdateConfTask({
+                             item  : 'reviewedDisplaylogPanel',
+                             value : true,
+                             notify: false
+                             });
+                             }
+                             */
                         },
-                        resize: function(a,newWidth) {
+                        resize: function(a, newWidth){
                             /*
-                            if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanelWidth',
-                                    value : newWidth,
-                                    notify: false
-                                });
-                            }
-                            */
+                             if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                             new ui.task.UpdateConfTask({
+                             item  : 'reviewedDisplaylogPanelWidth',
+                             value : newWidth,
+                             notify: false
+                             });
+                             }
+                             */
                         }
                     },
-                    items : {
-                        xtype       : 'tabpanel',
-                        activeTab   : 0,
-                        tabPosition : 'bottom',
-                        defaults    : { autoScroll : true },
-                        items       : [
-                            new ui.cmp.DictionaryGrid({
-                                layout    : 'fit',
-                                title     : _('Dictionary'),
-                                prefix    : 'FNT',
-                                fid       : FileID
-                            })
-                        ]
+                    items: {
+                        xtype: 'tabpanel',
+                        activeTab: 0,
+                        tabPosition: 'bottom',
+                        defaults: {
+                            autoScroll: true
+                        },
+                        items: [new ui.cmp.DictionaryGrid({
+                            layout: 'fit',
+                            title: _('Dictionary'),
+                            prefix: 'FNT',
+                            fid: FileID
+                        })]
                     }
-                }, new ui.cmp.FilePanel(
-                    {
-                        id             : 'FNT-TRANS-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : _('New File: ') + PhDOE.userLang + FilePath + FileName,
-                        isTrans        : true,
-                        prefix         : 'FNT',
-                        ftype          : 'TRANS',
-                        spellCheck     : PhDOE.userConf.newFileSpellCheck,
-                        spellCheckConf : 'newFileSpellCheck',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : PhDOE.userLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : PhDOE.userConf.newFileGGPanel,
-                        syncScroll     : PhDOE.userConf.newFileGGPanel,
-                        syncScrollConf : 'newFileScrollbars'
-                    }),
-                    (( PhDOE.userConf.newFileGGPanel ) ?
-                    new ui.cmp.FilePanel(
-                    {
-                        id             : 'FNT-GGTRANS-PANEL-' + FileID,
-                        region         : 'east',
-                        title          : _('Automatic translation: ') + PhDOE.userLang + FilePath + FileName,
-                        isTrans        : true,
-                        prefix         : 'FNT',
-                        ftype          : 'GGTRANS',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        readOnly       : true,
-                        lang           : PhDOE.userLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScroll     : true,
-                        syncScrollConf : 'newFileScrollbars'
-                    }) : false )
-
-                ]
+                }, new ui.cmp.FilePanel({
+                    id: 'FNT-TRANS-PANEL-' + FileID,
+                    region: 'center',
+                    title: _('New file: ') + PhDOE.user.lang + FilePath + FileName,
+                    isTrans: true,
+                    prefix: 'FNT',
+                    ftype: 'TRANS',
+                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
+                    spellCheckConf: 'newFileSpellCheck',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScrollCB: PhDOE.user.conf.newFileGGPanel,
+                    syncScroll: PhDOE.user.conf.newFileGGPanel,
+                    syncScrollConf: 'newFileScrollbars'
+                }), ((PhDOE.user.conf.newFileGGPanel) ? new ui.cmp.FilePanel({
+                    id: 'FNT-GGTRANS-PANEL-' + FileID,
+                    region: 'east',
+                    title: _('Automatic translation: ') + PhDOE.user.lang + FilePath + FileName,
+                    isTrans: true,
+                    prefix: 'FNT',
+                    ftype: 'GGTRANS',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    readOnly: true,
+                    lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScroll: true,
+                    syncScrollConf: 'newFileScrollbars'
+                }) : false)]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
     },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            columns : ui.cmp._PendingTranslateGrid.columns,
-            store   : ui.cmp._PendingTranslateGrid.store,
-            tbar:[
-                _('Filter: '), ' ',
-                new Ext.form.TwinTriggerField({
-                    id              : 'FNT-filter',
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-                    validateOnBlur  : false,
-                    validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    listeners : {
-                        keypress : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
+    
+    initComponent: function(){
+        Ext.apply(this, {
+            columns: ui.cmp._PendingTranslateGrid.columns,
+            store: ui.cmp._PendingTranslateGrid.store,
+            tbar: [_('Filter: '), ' ', new Ext.form.TwinTriggerField({
+                id: 'FNT-filter',
+                width: 180,
+                hideTrigger1: true,
+                enableKeyEvents: true,
+                validateOnBlur: false,
+                validationEvent: false,
+                trigger1Class: 'x-form-clear-trigger',
+                trigger2Class: 'x-form-search-trigger',
+                listeners: {
+                    keypress: function(field, e){
+                        if (e.getKey() == e.ENTER) {
+                            this.onTrigger2Click();
                         }
-                    },
-                    onTrigger1Click: function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        ui.cmp._PendingTranslateGrid.instance.store.clearFilter();
-                    },
-                    onTrigger2Click: function()
-                    {
-                        var v = this.getValue(), regexp;
-
-                        if (v === '' || v.length < 3) {
-                            this.markInvalid(
-                                _('Your filter must contain at least 3 characters')
-                            );
-                            return;
-                        }
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-
-                        regexp = new RegExp(v, 'i');
-
-                        // We filter on 'path' and 'name'
-                        ui.cmp._PendingTranslateGrid.instance.store.filterBy(function(record) {
-
-                            if( regexp.test(record.data.path) || regexp.test(record.data.name) ) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }, this);
                     }
-                })
-            ]
+                },
+                onTrigger1Click: function(){
+                    this.setValue('');
+                    this.triggers[0].hide();
+                    this.setSize(180, 10);
+                    ui.cmp._PendingTranslateGrid.instance.store.clearFilter();
+                },
+                onTrigger2Click: function(){
+                    var v = this.getValue(), regexp;
+                    
+                    if (v === '' || v.length < 3) {
+                        this.markInvalid(_('Your filter must contain at least 3 characters'));
+                        return;
+                    }
+                    this.clearInvalid();
+                    this.triggers[0].show();
+                    this.setSize(180, 10);
+                    
+                    regexp = new RegExp(v, 'i');
+                    
+                    // We filter on 'path' and 'name'
+                    ui.cmp._PendingTranslateGrid.instance.store.filterBy(function(record){
+                    
+                        if (regexp.test(record.data.path) || regexp.test(record.data.name)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }, this);
+                }
+            })]
         });
         ui.cmp.PendingTranslateGrid.superclass.initComponent.call(this);
-
+        
         this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
+        this.on('rowdblclick', this.onRowDblClick, this);
     }
 });
 
 // singleton
 ui.cmp._PendingTranslateGrid.instance = null;
-ui.cmp.PendingTranslateGrid.getInstance = function(config)
-{
+ui.cmp.PendingTranslateGrid.getInstance = function(config){
     if (!ui.cmp._PendingTranslateGrid.instance) {
         if (!config) {
-           config = {};
+            config = {};
         }
         ui.cmp._PendingTranslateGrid.instance = new ui.cmp.PendingTranslateGrid(config);
     }
     return ui.cmp._PendingTranslateGrid.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletBugs');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletBugs');
 
 //------------------------------------------------------------------------------
 // PortletBugs internals
@@ -13904,7 +14564,7 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
                     value : false,
@@ -13913,7 +14573,7 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletBugsCollapsed',
                     value : true,
@@ -13922,7 +14582,7 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletBugsCollapsed ) {
+            if( PhDOE.user.conf.portletBugsCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();
@@ -14132,7 +14792,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
                     value : false,
@@ -14141,7 +14801,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
                     value : true,
@@ -14150,7 +14810,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletInfoCollapsed ) {
+            if( PhDOE.user.conf.portletInfoCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();
@@ -14349,7 +15009,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
                     value : false,
@@ -14358,7 +15018,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
                     value : true,
@@ -14367,7 +15027,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletLocalMailCollapsed ) {
+            if( PhDOE.user.conf.portletLocalMailCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();
@@ -14533,7 +15193,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
                     value : false,
@@ -14542,7 +15202,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletSummaryCollapsed',
                     value : true,
@@ -14572,7 +15232,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
             cls   : 'flags flag-'+this.lang
         }, 'first');
 
-        if( PhDOE.userConf.portletSummaryCollapsed ) {
+        if( PhDOE.user.conf.portletSummaryCollapsed ) {
             this.collapse();
         } else {
             this.expand();
@@ -14617,7 +15277,7 @@ ui.cmp._PortletTranslationGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 {
     height        : 400,
-    url           : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    url           : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
     dataField     : 'total',
     categoryField : 'libel',
     store         : ui.cmp._PortletTranslationGraph.store,
@@ -14707,7 +15367,7 @@ ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 {
     height      : 400,
-    url         : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    url         : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
     xField      : 'libel',
     tipRenderer : function(chart, record){
         return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
@@ -14937,11 +15597,11 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
                     }
                 }, '-', {
                     scope   : this,
-                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.appConf.projectMailList, this.lang)),
+                    text    : String.format(_('Send an email to the {0}'), String.format(PhDOE.app.conf.projectMailList, this.lang)),
                     iconCls : 'iconSendEmail',
                     handler : function()
                     {
-                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.appConf.projectMailList, this.lang));
+                        this.EmailPrompt.setData('Php Doc Team ' + this.lang, String.format(PhDOE.app.conf.projectMailList, this.lang));
                         this.EmailPrompt.show('lastUpdateTime');
                     }
                 }]
@@ -14999,7 +15659,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
                     value : false,
@@ -15008,7 +15668,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletTranslatorCollapsed',
                     value : true,
@@ -15017,7 +15677,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletTranslatorCollapsed ) {
+            if( PhDOE.user.conf.portletTranslatorCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();
@@ -15046,183 +15706,169 @@ ui.cmp.PortletTranslator.getInstance = function(config)
         ui.cmp._PortletTranslator.instance = new ui.cmp.PortletTranslator(config);
     }
     return ui.cmp._PortletTranslator.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._RepositoryTree');
+};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
 
 //------------------------------------------------------------------------------
 // RepositoryTree internals
 
 // RepositoryTree root node
 ui.cmp._RepositoryTree.root = {
-    nodeType  : 'async',
-    id        : '/',
-    text      : _('Repository'),
-    draggable : false
+    nodeType: 'async',
+    id: '/',
+    text: _('Repository'),
+    draggable: false
 };
 
 // RepositoryTree default tree loader
 ui.cmp._RepositoryTree.loader = new Ext.tree.TreeLoader({
-    dataUrl : './do/getAllFiles'
+    dataUrl: './do/getAllFiles'
 });
 
 // RepositoryTree : window to add a new file
-ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
-{
-    title      : _('Add a new file'),
-    iconCls    : 'iconFilesNeedTranslate',
-    id         : 'win-add-new-file',
-    layout     : 'form',
-    width      : 350,
-    height     : 170,
-    resizable  : false,
-    modal      : true,
-    bodyStyle  : 'padding:5px 5px 0',
-    labelWidth : 150,
-    buttons    : [{
-        id      : 'win-add-new-file-btn',
-        text    : _('Open the editor'),
+ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
+    title: _('Add a new file'),
+    iconCls: 'iconFilesNeedTranslate',
+    id: 'win-add-new-file',
+    layout: 'form',
+    width: 350,
+    height: 170,
+    resizable: false,
+    modal: true,
+    bodyStyle: 'padding:5px 5px 0',
+    labelWidth: 150,
+    buttons: [{
+        id: 'win-add-new-file-btn',
+        text: _('Open the editor'),
         disabled: true,
-        handler : function()
-        {
-            var cmp          = Ext.getCmp('win-add-new-file'),
-                parentFolder = cmp.node.id,
-                newFileName  = cmp.items.items[1].getValue(),
-                skeleton     = cmp.items.items[2].getValue();
-
-            if(cmp.node.findChild("id", parentFolder + "/" + newFileName)) {
+        handler: function(){
+            var cmp = Ext.getCmp('win-add-new-file'), parentFolder = cmp.node.id, newFileName = cmp.items.items[1].getValue(), skeleton = cmp.items.items[2].getValue();
+            
+            if (cmp.node.findChild("id", parentFolder + "/" + newFileName)) {
                 // This file already exist.
                 PhDOE.winForbidden('file_already_exist');
                 return true;
             }
-
+            
             cmp.openFile(parentFolder + "/", newFileName, skeleton);
             cmp.close();
             return true;
             
         }
     }],
-
-    openFile: function(FilePath, FileName, skeleton)
-    {
-        var FileID      = Ext.util.md5('FNT-' + FilePath + FileName),
-            storeRecord = {
-                data: {
-                    needcommit: false,
-                    node: this.node
-                }
-            }, // simulate a needCommit option to fit with the classic comportement of FNT panel
-            t = FilePath.split('/'), FileLang;
-
+    
+    openFile: function(FilePath, FileName, skeleton){
+        var FileID = Ext.util.md5('FNT-' + FilePath + FileName), storeRecord = {
+            data: {
+                fileModified: false,
+                node: this.node
+            }
+        }, // simulate a needCommit option to fit with the classic comportement of FNT panel
+        t = FilePath.split('/'), FileLang;
+        
         t.shift();
-
+        
         FileLang = t[0];
-
+        
         t.shift();
         t.pop();
-
+        
         FilePath = '/' + t.join('/') + '/';
-        if( FilePath === "//" ) {
+        if (FilePath === "//") {
             FilePath = "/";
         }
-
-        FileID   = Ext.util.md5('FNT-' + FilePath + FileName);
-
+        
+        FileID = Ext.util.md5('FNT-' + FilePath + FileName);
+        
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
-
-            Ext.getCmp('main-panel').add(
-            {
-                id               : 'FNT-' + FileID,
-                layout           : 'border',
-                title            : FileName,
-                originTitle      : FileName,
-                iconCls          : 'iconTabNeedTranslate',
-                closable         : true,
-                tabLoaded        : false,
-                panTRANSLoaded   : false,
-                panGGTRANSLoaded : true, // Simulate true for google translate panel
-                defaults         : { split : true },
-                tabTip           : String.format(
-                    _('New file: in {0}'), FileLang+FilePath
-                ),
-                items : [new ui.cmp.FilePanel(
-                    {
-                        id             : 'FNT-NEW-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : _('New File: ') + FileLang + FilePath + FileName,
-                        isTrans        : true,
-                        prefix         : 'FNT',
-                        ftype          : 'NEW',
-                        spellCheck     : PhDOE.userConf.newFileSpellCheck,
-                        spellCheckConf : 'newFileSpellCheck',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : FileLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : false,
-                        syncScroll     : false,
-                        skeleton       : skeleton
-                    })
-                ]
+        
+            Ext.getCmp('main-panel').add({
+                id: 'FNT-' + FileID,
+                layout: 'border',
+                title: FileName,
+                originTitle: FileName,
+                iconCls: 'iconTabNeedTranslate',
+                closable: true,
+                tabLoaded: false,
+                panTRANSLoaded: false,
+                panGGTRANSLoaded: true, // Simulate true for google translate panel
+                defaults: {
+                    split: true
+                },
+                tabTip: String.format(_('New file: in {0}'), FileLang + FilePath),
+                items: [new ui.cmp.FilePanel({
+                    id: 'FNT-NEW-PANEL-' + FileID,
+                    region: 'center',
+                    title: _('New file: ') + FileLang + FilePath + FileName,
+                    isTrans: true,
+                    prefix: 'FNT',
+                    ftype: 'NEW',
+                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
+                    spellCheckConf: 'newFileSpellCheck',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: FileLang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScrollCB: false,
+                    syncScroll: false,
+                    skeleton: skeleton
+                })]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
     },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
+    
+    initComponent: function(){
+        Ext.apply(this, {
             items: [{
-                xtype      : 'displayfield',
-                fieldLabel : _('Parent Folder'),
-                value      : this.node.id
+                xtype: 'displayfield',
+                fieldLabel: _('Parent Folder'),
+                value: this.node.id
             }, {
-                xtype      : 'textfield',
-                fieldLabel : _('Name for the new file'),
-                name       : 'newFolderName',
-                listeners  : {
-                    valid : function()
-                    {
+                xtype: 'textfield',
+                fieldLabel: _('Name for the new file'),
+                name: 'newFolderName',
+                listeners: {
+                    valid: function(){
                         Ext.getCmp('win-add-new-file-btn').enable();
                     },
-                    invalid : function()
-                    {
+                    invalid: function(){
                         Ext.getCmp('win-add-new-file-btn').disable();
                     }
                 }
             }, {
-                xtype         : 'combo',
-                triggerAction : 'all',
-                width         : 160,
-                editable      : false,
-                store         : new Ext.data.Store({
-                    proxy : new Ext.data.HttpProxy({
-                        url : './do/getSkeletonsNames'
+                xtype: 'combo',
+                triggerAction: 'all',
+                width: 160,
+                editable: false,
+                store: new Ext.data.Store({
+                    proxy: new Ext.data.HttpProxy({
+                        url: './do/getSkeletonsNames'
                     }),
-                    reader : new Ext.data.JsonReader({
-                        root      : 'Items',
+                    reader: new Ext.data.JsonReader({
+                        root: 'Items',
                         idProperty: 'name',
-                        fields    : [
-                            {name : 'name'},
-                            {name : 'path'}
-                        ]
+                        fields: [{
+                            name: 'name'
+                        }, {
+                            name: 'path'
+                        }]
                     })
                 }),
-                listeners : {
-                    select : function(c, r, n)
-                    {
+                listeners: {
+                    select: function(c, r, n){
                         // If we haven't set any name for this file, we put the name of the skeleton
-                        if( c.ownerCt.items.items[1].getValue() === "" ) {
+                        if (c.ownerCt.items.items[1].getValue() === "") {
                             c.ownerCt.items.items[1].setValue(r.data.name);
                         }
-
+                        
                     }
                 },
-                valueField   : 'path',
-                displayField : 'name',
-                fieldLabel   : _('Chose a skeleton')
+                valueField: 'path',
+                displayField: 'name',
+                fieldLabel: _('Chose a skeleton')
             }]
         });
         ui.cmp._RepositoryTree.winAddNewFile.superclass.initComponent.call(this);
@@ -15230,83 +15876,76 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window,
 });
 
 // RepositoryTree : window to add a new folder
-ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
-{
-    title      : _('Add a new folder'),
-    iconCls    : 'iconFolderNew',
-    id         : 'win-add-new-folder',
-    layout     : 'form',
-    width      : 350,
-    height     : 200,
-    resizable  : false,
-    modal      : true,
-    bodyStyle  : 'padding:5px 5px 0',
-    labelWidth : 150,
-    buttons    : [{
-        id      : 'win-add-new-folder-btn',
-        text    : 'Add',
+ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
+    title: _('Add a new folder'),
+    iconCls: 'iconFolderNew',
+    id: 'win-add-new-folder',
+    layout: 'form',
+    width: 350,
+    height: 200,
+    resizable: false,
+    modal: true,
+    bodyStyle: 'padding:5px 5px 0',
+    labelWidth: 150,
+    buttons: [{
+        id: 'win-add-new-folder-btn',
+        text: 'Add',
         disabled: true,
-        handler : function()
-        {
+        handler: function(){
             var cmp = Ext.getCmp('win-add-new-folder');
             var parentFolder = cmp.node.id;
             var newFolderName = cmp.items.items[1].getValue();
-
+            
             XHR({
-                params  : {
-                    task          : 'addNewFolder',
-                    parentFolder  : parentFolder,
-                    newFolderName : newFolderName
+                params: {
+                    task: 'addNewFolder',
+                    parentFolder: parentFolder,
+                    newFolderName: newFolderName
                 },
-                success : function()
-                {
+                success: function(){
                     Ext.getCmp('win-add-new-folder').close();
-
+                    
                     cmp.node.reload();
-
+                    
                     // Notify
                     PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !'), newFolderName, parentFolder));
                 },
-                failure : function(r)
-                {
+                failure: function(r){
                     //Ext.getCmp('win-add-new-folder').close();
                     var o = Ext.util.JSON.decode(r.responseText);
                     
-                    if( o.type ) {
+                    if (o.type) {
                         PhDOE.winForbidden(o.type);
-                    } else {
+                    }
+                    else {
                         PhDOE.winForbidden();
                     }
                 }
             });
         }
     }],
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                xtype      : 'displayfield',
-                fieldLabel : _('Parent Folder'),
-                value      : this.node.id
+    initComponent: function(){
+        Ext.apply(this, {
+            items: [{
+                xtype: 'displayfield',
+                fieldLabel: _('Parent Folder'),
+                value: this.node.id
             }, {
-                xtype      : 'textfield',
-                fieldLabel : _('Name for the new folder'),
-                name       : 'newFolderName',
-                vtype      : 'alphanum',
-                listeners  : {
-                    valid : function()
-                    {
+                xtype: 'textfield',
+                fieldLabel: _('Name for the new folder'),
+                name: 'newFolderName',
+                vtype: 'alphanum',
+                listeners: {
+                    valid: function(){
                         Ext.getCmp('win-add-new-folder-btn').enable();
                     },
-                    invalid : function()
-                    {
+                    invalid: function(){
                         Ext.getCmp('win-add-new-folder-btn').disable();
                     }
                 }
-            },{
-                xtype : 'box',
-                html  : _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
+            }, {
+                xtype: 'box',
+                html: _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
             }]
         });
         ui.cmp._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
@@ -15316,24 +15955,19 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window,
 Ext.namespace('ui.cmp._RepositoryTree.menu');
 // RepositoryTree folder context menu
 // config - { node }
-ui.cmp._RepositoryTree.menu.folder = function(config)
-{
+ui.cmp._RepositoryTree.menu.folder = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._RepositoryTree.menu.folder.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                text    : (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
-                iconCls : 'iconFolderClose',
-                scope   : this,
-                handler : function()
-                {
+Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
+    init: function(){
+        Ext.apply(this, {
+            items: [{
+                text: (this.node.isExpanded()) ? '<b>' + _('Collapse') + '</b>' : '<b>' + _('Expand') + '</b>',
+                iconCls: 'iconFolderClose',
+                scope: this,
+                handler: function(){
                     if (this.node.isExpanded()) {
                         this.node.collapse();
                     }
@@ -15341,48 +15975,47 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu,
                         this.node.expand();
                     }
                 }
-            },'-', {
-                text    : _('Update this folder'),
-                iconCls : 'iconFilesNeedUpdate',
-                scope   : this,
-                handler : function()
-                {
+            }, '-', {
+                text: _('Update this folder'),
+                iconCls: 'iconFilesNeedUpdate',
+                scope: this,
+                handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-
+                    
                     //... and fire the update processus
                     new ui.task.UpdateSingleFolderTask(this.node);
                 }
             }, {
-                text    : _('Add a new folder'),
-                iconCls : 'iconFolderNew',
-                hidden  : (  this.node.id === '/' ||
-                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
-                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
-                scope   : this,
-                handler : function()
-                {
+                text: _('Add a new folder'),
+                iconCls: 'iconFolderNew',
+                hidden: (this.node.id === '/' ||
+                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                scope: this,
+                handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-
+                    
                     // We display the Add New Folder window
-                    var win = new ui.cmp._RepositoryTree.winAddNewFolder({node : this.node});
+                    var win = new ui.cmp._RepositoryTree.winAddNewFolder({
+                        node: this.node
+                    });
                     win.show(this.node.ui.getEl());
                 }
             }, {
-                text    : _('Add a new file'),
-                iconCls : 'iconFilesNeedTranslate',
-                hidden  : (  this.node.id === '/' ||
-                           ( Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base' )
-                          ), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
-                scope   : this,
-                handler : function()
-                {
+                text: _('Add a new file'),
+                iconCls: 'iconFilesNeedTranslate',
+                hidden: (this.node.id === '/' ||
+                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                scope: this,
+                handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-
+                    
                     // We display the Add New Folder window
-                    var win = new ui.cmp._RepositoryTree.winAddNewFile({node : this.node});
+                    var win = new ui.cmp._RepositoryTree.winAddNewFile({
+                        node: this.node
+                    });
                     win.show(this.node.ui.getEl());
                 }
             }]
@@ -15392,56 +16025,41 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu,
 
 // RepositoryTree file context menu
 // config - { node }
-ui.cmp._RepositoryTree.menu.file = function(config)
-{
+ui.cmp._RepositoryTree.menu.file = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._RepositoryTree.menu.file.superclass.constructor.call(this);
 };
-Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu,
-{
-    init : function()
-    {
-        var FileName = this.node.attributes.text,
-            t        = this.node.attributes.id.split('/'),
-            FileLang, FilePath;
-
-            t.shift();
-            FileLang = t[0];
-            t.shift();
-            t.pop();
-
-            FilePath = t.join('/') + '/';
- 
-        Ext.apply(this,
-        {
-            items : [{
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconTabNeedReviewed',
-                scope   : this,
-                handler : function()
-                {
+Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu, {
+    init: function(){
+        var FileName = this.node.attributes.text, t = this.node.attributes.id.split('/'), FileLang, FilePath;
+        
+        t.shift();
+        FileLang = t[0];
+        t.shift();
+        t.pop();
+        
+        FilePath = t.join('/') + '/';
+        
+        Ext.apply(this, {
+            items: [{
+                text: '<b>' + _('Edit in a new tab') + '</b>',
+                iconCls: 'iconTabNeedReviewed',
+                scope: this,
+                handler: function(){
                     ui.cmp._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
-                hidden  : (this.node.attributes.from === 'search' || PhDOE.userLang == 'en' ),
-                text    : (FileLang === 'en') ? String.format( _('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.userLang)) : String.format( _('Open the same file in <b>{0}</b>'), 'EN'),
-                iconCls : 'iconTabNeedReviewed',
-                scope   : this,
-                handler : function()
-                {
+                hidden: (this.node.attributes.from === 'search' || PhDOE.user.lang == 'en'),
+                text: (FileLang === 'en') ? String.format(_('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.user.lang)) : String.format(_('Open the same file in <b>{0}</b>'), 'EN'),
+                iconCls: 'iconTabNeedReviewed',
+                scope: this,
+                handler: function(){
                     if (FileLang === 'en') {
-                        ui.cmp._RepositoryTree.instance.openFile(
-                            'byPath',
-                            PhDOE.userLang + '/' + FilePath,
-                            FileName
-                        );
-                    } else {
-                        ui.cmp._RepositoryTree.instance.openFile(
-                            'byPath',
-                            'en/' + FilePath,
-                            FileName
-                        );
+                        ui.cmp._RepositoryTree.instance.openFile('byPath', PhDOE.user.lang + '/' + FilePath, FileName);
+                    }
+                    else {
+                        ui.cmp._RepositoryTree.instance.openFile('byPath', 'en/' + FilePath, FileName);
                     }
                 }
             }]
@@ -15451,56 +16069,47 @@ Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu,
 
 //------------------------------------------------------------------------------
 // RepositoryTree
-ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
-{
-    animate         : true,
-    enableDD        : true,
-    ddGroup         : 'mainPanelDDGroup',
-    useArrows       : true,
-    autoScroll      : true,
-    border          : false,
-    containerScroll : true,
-    root            : ui.cmp._RepositoryTree.root,
-    loader          : ui.cmp._RepositoryTree.loader,
-
-    onContextMenu   : function(node, e)
-    {
+ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
+    animate: true,
+    enableDD: true,
+    ddGroup: 'mainPanelDDGroup',
+    useArrows: true,
+    autoScroll: true,
+    border: false,
+    containerScroll: true,
+    root: ui.cmp._RepositoryTree.root,
+    loader: ui.cmp._RepositoryTree.loader,
+    
+    onContextMenu: function(node, e){
         e.stopEvent();
         node.select();
-
+        
         if (node.attributes.type === 'folder' || node.isRoot) {
             new ui.cmp._RepositoryTree.menu.folder({
-                node : node
-            }).showAt(e.getXY());
-        } else if (node.attributes.type === 'file') {
-            new ui.cmp._RepositoryTree.menu.file({
-                node : node
+                node: node
             }).showAt(e.getXY());
         }
+        else 
+            if (node.attributes.type === 'file') {
+                new ui.cmp._RepositoryTree.menu.file({
+                    node: node
+                }).showAt(e.getXY());
+            }
     },
-
-    onDblClick : function(node)
-    {
+    
+    onDblClick: function(node){
         if (node.attributes.type === 'file') // files only
         {
-            this.openFile(
-                'byId',
-                node.attributes.id,
-                false
-            );
+            this.openFile('byId', node.attributes.id, false);
         }
     },
-
-    openFile : function(ftype, first, second)
-    {
+    
+    openFile: function(ftype, first, second){
         // Here, first argument is fpath and second, fname
-        if( ftype === 'byPath' )
-        {
+        if (ftype === 'byPath') {
             Ext.getCmp('acc-all-files').expand();
-
-            var fpath = first, fname = second,
-            t = fpath.split('/'), cb = function(node)
-            {
+            
+            var fpath = first, fname = second, t = fpath.split('/'), cb = function(node){
                 node.ensureVisible();
                 if (t[0] && t[0] !== '') {
                     // walk into childs
@@ -15510,7 +16119,8 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
                             node.childNodes[j].expand(false, true, cb.createDelegate(this));
                         }
                     }
-                } else {
+                }
+                else {
                     // leaf node
                     for (var i = 0; i < node.childNodes.length; ++i) {
                         if (node.childNodes[i].text === fname) {
@@ -15524,253 +16134,240 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel,
             };
             this.root.expand(false, true, cb.createDelegate(this));
         }
-
+        
         // Here, first argument is a nodeID. Second arguments don't exist
-        if( ftype === 'byId' )
-        {
-            var node      = this.getNodeById(first),
-                FilePath  = node.attributes.id,
-                extension = node.attributes.extension,
-                t, FileID, FileLang, FileName, parser,
-                panelWest, panelCenter;
-
+        if (ftype === 'byId') {
+            var node = this.getNodeById(first), FilePath = node.attributes.id, extension = node.attributes.extension, t, FileID, FileLang, FileName, parser, panelWest, panelCenter;
+            
             // CleanUp the path
             t = FilePath.split('/');
             t.shift();
-
+            
             FileName = t.pop();
-
+            
             FileLang = t.shift();
             FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
-
+            
             FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
-
+            
             // Render only if this tab don't exist yet
             if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
-
-                if ( extension !== 'html' ) {
+            
+                if (extension !== 'html') {
                     parser = extension;
-                } else {
+                }
+                else {
                     parser = 'xml';
                 }
-
-                if (extension === 'gif' || extension === 'png')
-                {
+                
+                if (extension === 'gif' || extension === 'png') {
                     panelWest = {};
-
+                    
                     panelCenter = {
-                        id        : 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
-                        xtype     : 'panel',
-                        region    : 'center',
-                        layout    : 'fit',
-                        bodyStyle : 'padding:5px 5px 0',
-                        html      : '<img src="./do/getImageContent?' +
-                                'FileLang=' + FileLang + '&' +
-                                'FilePath=' + FilePath + '&' +
-                                'FileName=' + FileName +
-                                '" />'
+                        id: 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
+                        xtype: 'panel',
+                        region: 'center',
+                        layout: 'fit',
+                        bodyStyle: 'padding:5px 5px 0',
+                        html: '<img src="./do/getImageContent?' +
+                        'FileLang=' +
+                        FileLang +
+                        '&' +
+                        'FilePath=' +
+                        FilePath +
+                        '&' +
+                        'FileName=' +
+                        FileName +
+                        '" />'
                     };
-
-                } else {
-
+                    
+                }
+                else {
+                
                     panelWest = {
-                        xtype            : 'panel',
-                        region           : 'west',
-                        title            : _('Tools'),
-                        iconCls          : 'iconConf',
-                        collapsedIconCls : 'iconConf',
-                        plugins          : [Ext.ux.PanelCollapsedTitle],
-                        layout           : 'fit',
-                        bodyBorder       : false,
-                        split            : true,
-                        collapsible      : true,
-                        collapsed        : !PhDOE.userConf.allFilesDisplaylogPanel,
-                        width            : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
-                        listeners        : {
-                            collapse : function() {
-                                if ( this.ownerCt.tabLoaded ) {
+                        xtype: 'panel',
+                        region: 'west',
+                        title: _('Tools'),
+                        iconCls: 'iconConf',
+                        collapsedIconCls: 'iconConf',
+                        plugins: [Ext.ux.PanelCollapsedTitle],
+                        layout: 'fit',
+                        bodyBorder: false,
+                        split: true,
+                        collapsible: true,
+                        collapsed: !PhDOE.user.conf.allFilesDisplaylogPanel,
+                        width: PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
+                        listeners: {
+                            collapse: function(){
+                                if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'allFilesDisplaylogPanel',
-                                        value : false,
+                                        item: 'allFilesDisplaylogPanel',
+                                        value: false,
                                         notify: false
                                     });
                                 }
                             },
-                            expand : function() {
-                                if ( this.ownerCt.tabLoaded ) {
+                            expand: function(){
+                                if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'allFilesDisplaylogPanel',
-                                        value : true,
+                                        item: 'allFilesDisplaylogPanel',
+                                        value: true,
                                         notify: false
                                     });
                                 }
                             },
-                            resize : function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.allFilesDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
+                            resize: function(a, newWidth){
+                                if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.allFilesDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
-                                        item  : 'allFilesDisplaylogPanelWidth',
-                                        value : newWidth,
+                                        item: 'allFilesDisplaylogPanelWidth',
+                                        value: newWidth,
                                         notify: false
                                     });
                                 }
                             }
                         },
-                        items : {
-                            xtype       : 'tabpanel',
-                            activeTab   : 0,
-                            defaults    : {autoScroll: true},
-                            items       : [{
-                                title  : _('Log'),
-                                layout : 'fit',
-                                items  : [new ui.cmp.VCSLogGrid({
-                                    prefix    : 'AF',
-                                    fid       : FileID,
-                                    fpath     : FileLang + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf.allFilesDisplayLog
+                        items: {
+                            xtype: 'tabpanel',
+                            activeTab: 0,
+                            defaults: {
+                                autoScroll: true
+                            },
+                            items: [{
+                                title: _('Log'),
+                                layout: 'fit',
+                                items: [new ui.cmp.VCSLogGrid({
+                                    prefix: 'AF',
+                                    fid: FileID,
+                                    fpath: FileLang + FilePath,
+                                    fname: FileName,
+                                    loadStore: PhDOE.user.conf.allFilesDisplayLog
                                 })]
                             }, {
-                                title  : _('Entities'),
-                                layout : 'fit',
-                                items  : [new ui.cmp.EntitiesAcronymsPanel({
-                                    dataType  : 'entities',
-                                    prefix    : 'AF',
-                                    ftype     : 'ALL',
-                                    fid       : FileID,
-                                    loadStore : PhDOE.userConf.allFilesEntitiesLoadData
+                                title: _('Entities'),
+                                layout: 'fit',
+                                items: [new ui.cmp.EntitiesAcronymsPanel({
+                                    dataType: 'entities',
+                                    prefix: 'AF',
+                                    ftype: 'ALL',
+                                    fid: FileID,
+                                    loadStore: PhDOE.user.conf.allFilesEntitiesLoadData
                                 })]
                             }, {
-                                title  : _('Acronyms'),
-                                layout : 'fit',
-                                items  : [new ui.cmp.EntitiesAcronymsPanel({
-                                    dataType  : 'acronyms',
-                                    prefix    : 'AF',
-                                    ftype     : 'ALL',
-                                    fid       : FileID,
-                                    loadStore : PhDOE.userConf.allFilesAcronymsLoadData
+                                title: _('Acronyms'),
+                                layout: 'fit',
+                                items: [new ui.cmp.EntitiesAcronymsPanel({
+                                    dataType: 'acronyms',
+                                    prefix: 'AF',
+                                    ftype: 'ALL',
+                                    fid: FileID,
+                                    loadStore: PhDOE.user.conf.allFilesAcronymsLoadData
                                 })]
                             }]
                         }
                     };
-
+                    
                     panelCenter = new ui.cmp.FilePanel({
-                        id             : 'AF' + '-ALL-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : _('File: ') + FileLang + FilePath + FileName,
-                        prefix         : 'AF',
-                        ftype          : 'ALL',
-                        spellCheck     : PhDOE.userConf.allFilesSpellCheck,
-                        spellCheckConf : 'allFilesSpellCheck',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : FileLang,
-                        parser         : parser,
-                        storeRecord    : node,
-                        syncScrollCB   : false,
-                        syncScroll     : false
+                        id: 'AF' + '-ALL-PANEL-' + FileID,
+                        region: 'center',
+                        title: _('File: ') + FileLang + FilePath + FileName,
+                        prefix: 'AF',
+                        ftype: 'ALL',
+                        spellCheck: PhDOE.user.conf.allFilesSpellCheck,
+                        spellCheckConf: 'allFilesSpellCheck',
+                        fid: FileID,
+                        fpath: FilePath,
+                        fname: FileName,
+                        lang: FileLang,
+                        parser: parser,
+                        storeRecord: node,
+                        syncScrollCB: false,
+                        syncScroll: false
                     });
                 }
-
+                
                 Ext.getCmp('main-panel').add({
-                    id          : 'AF-' + FileID,
-                    layout      : 'border',
-                    title       : FileName,
-                    originTitle : FileName,
-                    closable    : true,
-                    tabLoaded   : false,
-                    panEntities : !PhDOE.userConf.allFilesEntitiesLoadData,
-                    panAcronyms : !PhDOE.userConf.allFilesAcronymsLoadData,
-                    panVCS      : !PhDOE.userConf.allFilesDisplayLog,
-                    panLoaded   : false,
-                    tabTip      : String.format(_('in {0}'), FilePath),
-                    iconCls     : 'iconAllFiles',
-                    items       : [panelCenter, panelWest]
+                    id: 'AF-' + FileID,
+                    layout: 'border',
+                    title: FileName,
+                    originTitle: FileName,
+                    closable: true,
+                    tabLoaded: false,
+                    panEntities: !PhDOE.user.conf.allFilesEntitiesLoadData,
+                    panAcronyms: !PhDOE.user.conf.allFilesAcronymsLoadData,
+                    panVCS: !PhDOE.user.conf.allFilesDisplayLog,
+                    panLoaded: false,
+                    tabTip: String.format(_('in {0}'), FilePath),
+                    iconCls: 'iconAllFiles',
+                    items: [panelCenter, panelWest]
                 });
             }
             Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
         }
     },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            tbar:[
-                _('Search: '), ' ',
-                new Ext.form.TwinTriggerField({
-                    id              : 'AF-search',
-                    validationEvent : false,
-                    validateOnBlur  : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    hideTrigger1    : true,
-                    width           : 180,
-                    enableKeyEvents : true,
-                    listeners : {
-                        keypress : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
+    
+    initComponent: function(){
+        Ext.apply(this, {
+            tbar: [_('Search: '), ' ', new Ext.form.TwinTriggerField({
+                id: 'AF-search',
+                validationEvent: false,
+                validateOnBlur: false,
+                trigger1Class: 'x-form-clear-trigger',
+                trigger2Class: 'x-form-search-trigger',
+                hideTrigger1: true,
+                width: 180,
+                enableKeyEvents: true,
+                listeners: {
+                    keypress: function(field, e){
+                        if (e.getKey() == e.ENTER) {
+                            this.onTrigger2Click();
                         }
-                    },
-                    onTrigger1Click : function()
-                    {
-                        var instance = ui.cmp._RepositoryTree.instance;
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        instance.root.setText(_('Repository'));
-
-                        // clear search
-                        delete instance.loader.baseParams.search;
-                        instance.root.reload();
-                    },
-                    onTrigger2Click: function()
-                    {
-                        var instance = ui.cmp._RepositoryTree.instance,
-                            v        = this.getValue();
-
-                        if( v === '' || v.length < 3) {
-                            this.markInvalid(_('Your search must contain at least 3 characters'));
-                            return;
-                        }
-                        this.clearInvalid();
-
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-
-                        // carry search
-                        instance.loader.baseParams.search = v;
-                        instance.root.reload(function()
-                        {
-                            instance.root.setText(
-                                String.format(
-                                    _('Search result: {0}'),
-                                    instance.root.childNodes.length
-                                )
-                            );
-                        });
                     }
-                })
-            ]
+                },
+                onTrigger1Click: function(){
+                    var instance = ui.cmp._RepositoryTree.instance;
+                    this.setValue('');
+                    this.triggers[0].hide();
+                    this.setSize(180, 10);
+                    instance.root.setText(_('Repository'));
+                    
+                    // clear search
+                    delete instance.loader.baseParams.search;
+                    instance.root.reload();
+                },
+                onTrigger2Click: function(){
+                    var instance = ui.cmp._RepositoryTree.instance, v = this.getValue();
+                    
+                    if (v === '' || v.length < 3) {
+                        this.markInvalid(_('Your search must contain at least 3 characters'));
+                        return;
+                    }
+                    this.clearInvalid();
+                    
+                    this.triggers[0].show();
+                    this.setSize(180, 10);
+                    
+                    // carry search
+                    instance.loader.baseParams.search = v;
+                    instance.root.reload(function(){
+                        instance.root.setText(String.format(_('Search result: {0}'), instance.root.childNodes.length));
+                    });
+                }
+            })]
         });
         ui.cmp.RepositoryTree.superclass.initComponent.call(this);
-
+        
         this.on('contextmenu', this.onContextMenu, this);
-        this.on('dblclick',    this.onDblClick,  this);
-
+        this.on('dblclick', this.onDblClick, this);
+        
         new Ext.tree.TreeSorter(this, {
-            folderSort : true
+            folderSort: true
         });
     }
 });
 
 // singleton
 ui.cmp._RepositoryTree.instance = null;
-ui.cmp.RepositoryTree.getInstance = function(config)
-{
+ui.cmp.RepositoryTree.getInstance = function(config){
     if (!ui.cmp._RepositoryTree.instance) {
         if (!config) {
             config = {};
@@ -15778,40 +16375,47 @@ ui.cmp.RepositoryTree.getInstance = function(config)
         ui.cmp._RepositoryTree.instance = new ui.cmp.RepositoryTree(config);
     }
     return ui.cmp._RepositoryTree.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._StaleFileGrid');
+};
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._StaleFileGrid');
 
 //------------------------------------------------------------------------------
 // StaleFileGrid data store
 
-ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore(
-{
-    proxy : new Ext.data.HttpProxy({
-        url : './do/getFilesNeedUpdate'
+ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore({
+    proxy: new Ext.data.HttpProxy({
+        url: './do/getFilesNeedUpdate'
     }),
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        idProperty    : 'id',
-        fields        : [
-            {name : 'id'},
-            {name : 'path'},
-            {name : 'name'},
-            {name : 'revision'},
-            {name : 'original_revision'},
-            {name : 'en_revision'},
-            {name : 'maintainer'},
-            {name : 'needCommitEN'},
-            {name : 'needCommitLang'}
-        ]
+    reader: new Ext.data.JsonReader({
+        root: 'Items',
+        totalProperty: 'nbItems',
+        idProperty: 'id',
+        fields: [{
+            name: 'id'
+        }, {
+            name: 'path'
+        }, {
+            name: 'name'
+        }, {
+            name: 'revision'
+        }, {
+            name: 'original_revision'
+        }, {
+            name: 'en_revision'
+        }, {
+            name: 'maintainer'
+        }, {
+            name: 'fileModifiedEN'
+        }, {
+            name: 'fileModifiedLang'
+        }]
     }),
-    sortInfo : {
-        field     : 'name',
-        direction : 'ASC'
+    sortInfo: {
+        field: 'name',
+        direction: 'ASC'
     },
-    groupField : 'path',
-    listeners  : {
-        datachanged : function(ds)
-        {
+    groupField: 'path',
+    listeners: {
+        datachanged: function(ds){
             Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
         }
     }
@@ -15819,480 +16423,482 @@ ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore(
 
 // StaleFileGrid view
 ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
-    forceFit       : true,
-    startCollapsed : true,
-    groupTextTpl   : '{[values.rs[0].data["path"]]} ' +
-                     '({[values.rs.length]} ' +
-                     '{[values.rs.length > 1 ? "' + _('Files') + '" : "' + _('File') + '"]})',
-    deferEmptyText : false,
-    getRowClass    : function(r)
-    {
-        if (r.data.needCommitEN || r.data.needCommitLang) {
-            return 'file-need-commit';
+    forceFit: true,
+    startCollapsed: true,
+    groupTextTpl: '{[values.rs[0].data["path"]]} ' +
+    '({[values.rs.length]} ' +
+    '{[values.rs.length > 1 ? "' +
+    _('Files') +
+    '" : "' +
+    _('File') +
+    '"]})',
+    deferEmptyText: false,
+    getRowClass: function(r){
+        if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
+        
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            
+            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
+        
         return false;
     },
-    emptyText : '<div style="text-align: center;">' + _('No Files') + '</div>'
+    emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>'
 });
 
 // StaleFileGrid columns definition
-ui.cmp._StaleFileGrid.columns = [
-    {
-        id        : 'name',
-        header    : _('Files'),
-        sortable  : true,
-        dataIndex : 'name'
-    }, {
-        header    : _('EN revision'),
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'en_revision'
-    }, {
-        header    : '', // bounded in StaleFileGrid.initComponent
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'revision'
-    }, {
-        header    : _('Maintainer'),
-        width     : 45,
-        sortable  : true,
-        dataIndex : 'maintainer'
-    }, {
-        header    : _('Path'),
-        dataIndex : 'path',
-        'hidden'  : true
+ui.cmp._StaleFileGrid.columns = [{
+    id: 'name',
+    header: _('Files'),
+    sortable: true,
+    dataIndex: 'name',
+    renderer: function(v, metada, r){
+    
+        var mess = '', infoEN, infoLang;
+        
+        if (r.data.fileModifiedEN) {
+        
+            infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
+            
+            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess = _('File EN modified by me') + "<br>";
+            }
+            else {
+                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+            }
+        }
+        
+        if (r.data.fileModifiedLang) {
+        
+            infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            
+            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+                mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
+            }
+            else {
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+            }
+        }
+        
+        if (mess != '') {
+            return "<span ext:qtip='" + mess + "'>" + v + "</span>";
+        }
+        else {
+            return v;
+        }
     }
-];
+}, {
+    header: _('EN revision'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'en_revision'
+}, {
+    header: '', // bounded in StaleFileGrid.initComponent
+    width: 45,
+    sortable: true,
+    dataIndex: 'revision'
+}, {
+    header: _('Maintainer'),
+    width: 45,
+    sortable: true,
+    dataIndex: 'maintainer'
+}, {
+    header: _('Path'),
+    dataIndex: 'path',
+    'hidden': true
+}];
 
 // StaleFileGrid context menu
-// config - { hideCommit, grid, rowIdx, event, lang, fpath, fname }
-ui.cmp._StaleFileGrid.menu = function(config)
-{
+// config - { hideDiffMenu, grid, rowIdx, event, lang, fpath, fname }
+ui.cmp._StaleFileGrid.menu = function(config){
     Ext.apply(this, config);
     this.init();
     ui.cmp._StaleFileGrid.menu.superclass.constructor.call(this);
 };
 
-Ext.extend(ui.cmp._StaleFileGrid.menu, Ext.menu.Menu,
-{
-    init : function()
-    {
-        Ext.apply(this,
-        {
+Ext.extend(ui.cmp._StaleFileGrid.menu, Ext.menu.Menu, {
+    init: function(){
+        Ext.apply(this, {
             items: [{
-                scope   : this,
-                text    : '<b>'+_('Edit in a new Tab')+'</b>',
-                iconCls : 'iconTabNeedUpdate',
-                handler : function()
-                {
-                    this.grid.fireEvent('rowdblclick',
-                        this.grid, this.rowIdx, this.event
-                    );
+                scope: this,
+                text: '<b>' + _('Edit in a new tab') + '</b>',
+                iconCls: 'iconTabNeedUpdate',
+                handler: function(){
+                    this.grid.fireEvent('rowdblclick', this.grid, this.rowIdx, this.event);
                 }
             }, {
-                scope   : this,
-                hidden  : this.hideCommit,
-                text    : _('View diff...'),
-                iconCls : 'iconViewDiff',
-                menu    : new Ext.menu.Menu({
-                    items : [{
-                        scope  : this,
-                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitEN === false),
-                        text   : String.format(_('... of the {0} file'), 'EN'),
-                        handler: function() {
+                scope: this,
+                hidden: this.hideDiffMenu,
+                text: _('View diff...'),
+                iconCls: 'iconViewDiff',
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedEN === false),
+                        text: String.format(_('... of the {0} file'), 'EN'),
+                        handler: function(){
                             this.openTab(this.rowIdx, 'en', this.fpath, this.fname);
                         }
                     }, {
-                        scope  : this,
-                        hidden : (this.grid.store.getAt(this.rowIdx).data.needCommitLang === false),
-                        text   : String.format(_('... of the {0} file'), PhDOE.userLang),
-                        handler: function() {
-                            this.openTab(this.rowIdx, PhDOE.userLang, this.fpath, this.fname);
+                        scope: this,
+                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedLang === false),
+                        text: String.format(_('... of the {0} file'), PhDOE.user.lang.ucFirst()),
+                        handler: function(){
+                            this.openTab(this.rowIdx, PhDOE.user.lang, this.fpath, this.fname);
                         }
                     }]
                 })
             }]
         });
     },
-
-    openTab: function(rowIdx, lang, fpath, fname)
-    {
+    
+    openTab: function(rowIdx, lang, fpath, fname){
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('diff_panel_' + lang + '_' + rowIdx)) {
-
+        
             // Add tab for the diff
             Ext.getCmp('main-panel').add({
-                xtype      : 'panel',
-                id         : 'diff_panel_' + lang + '_' + rowIdx,
-                title      : _('Diff'),
-                tabTip     : String.format(_('Diff for file: {0}'), lang+fpath+fname),
-                closable   : true,
-                autoScroll : true,
-                iconCls    : 'iconTabLink',
-                html       : '<div id="diff_content_' + lang + '_' + rowIdx +
-                             '" class="diff-content"></div>'
+                xtype: 'panel',
+                id: 'diff_panel_' + lang + '_' + rowIdx,
+                title: _('Diff'),
+                tabTip: String.format(_('Diff for file: {0}'), lang + fpath + fname),
+                closable: true,
+                autoScroll: true,
+                iconCls: 'iconTabLink',
+                html: '<div id="diff_content_' + lang + '_' + rowIdx +
+                '" class="diff-content"></div>'
             });
-
+            
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
-
-            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask(
-                '<img src="themes/img/loading.gif" ' +
-                'style="vertical-align: middle;" />' +
-                _('Please, wait...')
-            );
-
+            
+            Ext.get('diff_panel_' + lang + '_' + rowIdx).mask('<img src="themes/img/loading.gif" ' +
+            'style="vertical-align: middle;" />' +
+            _('Please, wait...'));
+            
             // Load diff data
             XHR({
-                params  : {
-                    task     : 'getDiff',
-                    DiffType : 'file',
-                    FilePath : lang + fpath,
-                    FileName : fname
+                params: {
+                    task: 'getDiff',
+                    DiffType: 'file',
+                    FilePath: lang + fpath,
+                    FileName: fname
                 },
-                success : function(r)
-                {
+                success: function(r){
                     var o = Ext.util.JSON.decode(r.responseText);
                     // We display in diff div
                     Ext.get('diff_content_' + lang + '_' + rowIdx).dom.innerHTML = o.content;
-
+                    
                     Ext.get('diff_panel_' + lang + '_' + rowIdx).unmask();
                 }
             });
-        } else {
+        }
+        else {
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + lang + '_' + rowIdx);
         }
     }
-
+    
 });
 
 
 //------------------------------------------------------------------------------
 // StaleFileGrid
-ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel,
-{
-    view             : ui.cmp._StaleFileGrid.view,
-    loadMask         : true,
-    autoExpandColumn : 'name',
-    border           : false,
-    enableDragDrop   : true,
-    ddGroup          : 'mainPanelDDGroup',
-
-    onRowContextMenu : function(grid, rowIndex, e)
-    {
-        e.stopEvent();
+ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
+    view: ui.cmp._StaleFileGrid.view,
+    loadMask: true,
+    autoExpandColumn: 'name',
+    border: false,
+    enableDragDrop: true,
+    ddGroup: 'mainPanelDDGroup',
     
-        var FilePath = this.store.getAt(rowIndex).data.path,
-            FileName = this.store.getAt(rowIndex).data.name;
-
+    onRowContextMenu: function(grid, rowIndex, e){
+        e.stopEvent();
+        
+        var data = this.store.getAt(rowIndex).data, FilePath = data.path, FileName = data.name;
+        
         this.getSelectionModel().selectRow(rowIndex);
-
+        
         new ui.cmp._StaleFileGrid.menu({
-            hideCommit : (this.store.getAt(rowIndex).data.needCommitEN === false && this.store.getAt(rowIndex).data.needCommitLang === false),
-            grid       : this,
-            event      : e,
-            rowIdx     : rowIndex,
-            lang       : PhDOE.userLang,
-            fpath      : FilePath,
-            fname      : FileName
+            hideDiffMenu: (data.fileModifiedEN === false && data.fileModifiedLang === false),
+            grid: this,
+            event: e,
+            rowIdx: rowIndex,
+            lang: PhDOE.user.lang,
+            fpath: FilePath,
+            fname: FileName
         }).showAt(e.getXY());
     },
-
-    onRowDblClick: function(grid, rowIndex)
-    {
+    
+    onRowDblClick: function(grid, rowIndex){
         this.openFile(this.store.getAt(rowIndex).data.id);
     },
-
-    openFile: function(rowId)
-    {
-        var storeRecord      = this.store.getById(rowId),
-            FilePath         = storeRecord.data.path,
-            FileName         = storeRecord.data.name,
-            en_revision      = storeRecord.data.en_revision,
-            revision         = storeRecord.data.revision,
-            originalRevision = storeRecord.data.original_revision,
-            FileID           = Ext.util.md5('FNU-' + PhDOE.userLang + FilePath + FileName),
-            diff             = '';
-
+    
+    openFile: function(rowId){
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, en_revision = storeRecord.data.en_revision, revision = storeRecord.data.revision, originalRevision = storeRecord.data.original_revision, FileID = Ext.util.md5('FNU-' + PhDOE.user.lang + FilePath + FileName), diff = '';
+        
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
-
-            if (PhDOE.userConf.needUpdateDiff === "using-viewvc") {
+        
+            if (PhDOE.user.conf.needUpdateDiff === "using-viewvc") {
                 diff = ui.cmp.ViewVCDiff;
-            } else if (PhDOE.userConf.needUpdateDiff === "using-exec") {
-                diff = ui.cmp.ExecDiff;
             }
-
-            Ext.getCmp('main-panel').add(
-            {
-                id             : 'FNU-' + FileID,
-                layout         : 'border',
-                title          : FileName,
-                originTitle    : FileName,
-                iconCls        : 'iconTabNeedUpdate',
-                closable       : true,
-                tabLoaded      : false,
-                panVCSLang     : !PhDOE.userConf.needUpdateDisplaylog,
-                panVCSEn       : !PhDOE.userConf.needUpdateDisplaylog,
-                panDiffLoaded  : (PhDOE.userConf.needUpdateDiff === "using-viewvc"),
-                panLANGLoaded  : false,
-                panENLoaded    : false,
-                defaults       : { split : true },
-                tabTip         : String.format(
-                    _('Need Update: in {0}'), FilePath
-                ),
+            else 
+                if (PhDOE.user.conf.needUpdateDiff === "using-exec") {
+                    diff = ui.cmp.ExecDiff;
+                }
+            
+            Ext.getCmp('main-panel').add({
+                id: 'FNU-' + FileID,
+                layout: 'border',
+                title: FileName,
+                originTitle: FileName,
+                iconCls: 'iconTabNeedUpdate',
+                closable: true,
+                tabLoaded: false,
+                panVCSLang: !PhDOE.user.conf.needUpdateDisplaylog,
+                panVCSEn: !PhDOE.user.conf.needUpdateDisplaylog,
+                panDiffLoaded: (PhDOE.user.conf.needUpdateDiff === "using-viewvc"),
+                panLANGLoaded: false,
+                panENLoaded: false,
+                defaults: {
+                    split: true
+                },
+                tabTip: String.format(_('Need Update: in {0}'), FilePath),
                 listeners: {
-                    resize: function(panel) {
-                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setWidth(panel.getWidth()/2);
+                    resize: function(panel){
+                        Ext.getCmp('FNU-EN-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                     }
                 },
-                items : [
-                    new diff({
-                        region      : 'north',
-                        collapsible : true,
-                        height      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
-                        prefix      : 'FNU',
-                        collapsed   : !PhDOE.userConf.needUpdateDiffPanel,
-                        fid         : FileID,
-                        fpath       : FilePath,
-                        fname       : FileName,
-                        rev1        : (originalRevision) ? originalRevision : revision,
-                        rev2        : en_revision,
-                        listeners   : {
-                            collapse: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDiffPanel',
-                                        value : false,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            expand: function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDiffPanel',
-                                        value : true,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            resize: function(a,b,newHeight) {
-
-                                if( this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.userConf.needUpdateDiffPanelHeight ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDiffPanelHeight',
-                                        value : newHeight,
-                                        notify: false
-                                    });
-                                }
-                            }
-                        }
-                    }), {
-                        region           : 'west',
-                        xtype            : 'panel',
-                        title            : _('Tools'),
-                        iconCls          : 'iconConf',
-                        collapsedIconCls : 'iconConf',
-                        collapsible      : true,
-                        collapsed        : !PhDOE.userConf.needUpdateDisplaylogPanel,
-                        layout           : 'fit',
-                        bodyBorder       : false,
-                        plugins          : [Ext.ux.PanelCollapsedTitle],
-                        width            : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
-                        listeners        : {
-                            collapse : function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDisplaylogPanel',
-                                        value : false,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            expand : function() {
-                                if ( this.ownerCt.tabLoaded ) {
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDisplaylogPanel',
-                                        value : true,
-                                        notify: false
-                                    });
-                                }
-                            },
-                            resize : function(a,newWidth) {
-                                if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.userConf.needUpdateDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                                    new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDisplaylogPanelWidth',
-                                        value : newWidth,
-                                        notify: false
-                                    });
-                                }
+                items: [new diff({
+                    region: 'north',
+                    collapsible: true,
+                    height: PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
+                    prefix: 'FNU',
+                    collapsed: !PhDOE.user.conf.needUpdateDiffPanel,
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    rev1: (originalRevision) ? originalRevision : revision,
+                    rev2: en_revision,
+                    listeners: {
+                        collapse: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDiffPanel',
+                                    value: false,
+                                    notify: false
+                                });
                             }
                         },
-                        items : {
-                            xtype           : 'tabpanel',
-                            activeTab       : 0,
-                            tabPosition     : 'bottom',
-                            enableTabScroll : true,
-                            defaults        : { autoScroll: true },
-                            items           : [
-                                new ui.cmp.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : String.format(_('{0} Log'), PhDOE.userLang.ucFirst()),
-                                    prefix    : 'FNU-LANG',
-                                    fid       : FileID,
-                                    fpath     : PhDOE.userLang + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
-                                }),
-                                new ui.cmp.VCSLogGrid({
-                                    layout    : 'fit',
-                                    title     : String.format(_('{0} Log'), 'En'),
-                                    prefix    : 'FNU-EN',
-                                    fid       : FileID,
-                                    fpath     : 'en' + FilePath,
-                                    fname     : FileName,
-                                    loadStore : PhDOE.userConf.needUpdateDisplaylog
-                                }),
-                                new ui.cmp.DictionaryGrid({
-                                    layout    : 'fit',
-                                    title     : _('Dictionary'),
-                                    prefix    : 'FNU',
-                                    fid       : FileID
-                                })
-                            ]
+                        expand: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDiffPanel',
+                                    value: true,
+                                    notify: false
+                                });
+                            }
+                        },
+                        resize: function(a, b, newHeight){
+                        
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdateDiffPanelHeight) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDiffPanelHeight',
+                                    value: newHeight,
+                                    notify: false
+                                });
+                            }
                         }
-                    }, new ui.cmp.FilePanel(
-                    {
-                        id             : 'FNU-LANG-PANEL-' + FileID,
-                        region         : 'center',
-                        title          : String.format(_('{0} File: '), PhDOE.userLang) + FilePath + FileName,
-                        prefix         : 'FNU',
-                        ftype          : 'LANG',
-                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckLang,
-                        spellCheckConf : 'needUpdateSpellCheckLang',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : PhDOE.userLang,
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScrollCB   : true,
-                        syncScroll     : true,
-                        syncScrollConf : 'needUpdateScrollbars'
-                    }), new ui.cmp.FilePanel(
-                    {
-                        id             : 'FNU-EN-PANEL-' + FileID,
-                        region         : 'east',
-                        title          : _('en File: ') + FilePath + FileName,
-                        prefix         : 'FNU',
-                        ftype          : 'EN',
-                        spellCheck     : PhDOE.userConf.needUpdateSpellCheckEn,
-                        spellCheckConf : 'needUpdateSpellCheckEn',
-                        fid            : FileID,
-                        fpath          : FilePath,
-                        fname          : FileName,
-                        lang           : 'en',
-                        parser         : 'xml',
-                        storeRecord    : storeRecord,
-                        syncScroll     : true,
-                        syncScrollConf : 'needUpdateScrollbars'
-                    })
-                ]
+                    }
+                }), {
+                    region: 'west',
+                    xtype: 'panel',
+                    title: _('Tools'),
+                    iconCls: 'iconConf',
+                    collapsedIconCls: 'iconConf',
+                    collapsible: true,
+                    collapsed: !PhDOE.user.conf.needUpdateDisplaylogPanel,
+                    layout: 'fit',
+                    bodyBorder: false,
+                    plugins: [Ext.ux.PanelCollapsedTitle],
+                    width: PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
+                    listeners: {
+                        collapse: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDisplaylogPanel',
+                                    value: false,
+                                    notify: false
+                                });
+                            }
+                        },
+                        expand: function(){
+                            if (this.ownerCt.tabLoaded) {
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDisplaylogPanel',
+                                    value: true,
+                                    notify: false
+                                });
+                            }
+                        },
+                        resize: function(a, newWidth){
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.needUpdateDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    item: 'needUpdateDisplaylogPanelWidth',
+                                    value: newWidth,
+                                    notify: false
+                                });
+                            }
+                        }
+                    },
+                    items: {
+                        xtype: 'tabpanel',
+                        activeTab: 0,
+                        tabPosition: 'bottom',
+                        enableTabScroll: true,
+                        defaults: {
+                            autoScroll: true
+                        },
+                        items: [new ui.cmp.VCSLogGrid({
+                            layout: 'fit',
+                            title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
+                            prefix: 'FNU-LANG',
+                            fid: FileID,
+                            fpath: PhDOE.user.lang + FilePath,
+                            fname: FileName,
+                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                        }), new ui.cmp.VCSLogGrid({
+                            layout: 'fit',
+                            title: String.format(_('{0} Log'), 'En'),
+                            prefix: 'FNU-EN',
+                            fid: FileID,
+                            fpath: 'en' + FilePath,
+                            fname: FileName,
+                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                        }), new ui.cmp.DictionaryGrid({
+                            layout: 'fit',
+                            title: _('Dictionary'),
+                            prefix: 'FNU',
+                            fid: FileID
+                        })]
+                    }
+                }, new ui.cmp.FilePanel({
+                    id: 'FNU-LANG-PANEL-' + FileID,
+                    region: 'center',
+                    title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
+                    prefix: 'FNU',
+                    ftype: 'LANG',
+                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckLang,
+                    spellCheckConf: 'needUpdateSpellCheckLang',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScrollCB: true,
+                    syncScroll: true,
+                    syncScrollConf: 'needUpdateScrollbars'
+                }), new ui.cmp.FilePanel({
+                    id: 'FNU-EN-PANEL-' + FileID,
+                    region: 'east',
+                    title: _('en File: ') + FilePath + FileName,
+                    prefix: 'FNU',
+                    ftype: 'EN',
+                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckEn,
+                    spellCheckConf: 'needUpdateSpellCheckEn',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    lang: 'en',
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScroll: true,
+                    syncScrollConf: 'needUpdateScrollbars'
+                })]
             });
         }
         Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
     },
-
-    initComponent : function()
-    {
-        ui.cmp._StaleFileGrid.columns[2].header = String.format(
-            _('{0} revision'), Ext.util.Format.uppercase(PhDOE.userLang)
-        );
-
-        Ext.apply(this,
-        {
-            columns : ui.cmp._StaleFileGrid.columns,
-            store   : ui.cmp._StaleFileGrid.store,
-            tbar:[
-                _('Filter: '), ' ',
-                new Ext.form.TwinTriggerField({
-                    id              : 'FNU-filter',
-                    width           : 180,
-                    hideTrigger1    : true,
-                    enableKeyEvents : true,
-                    validateOnBlur  : false,
-                    validationEvent : false,
-                    trigger1Class   : 'x-form-clear-trigger',
-                    trigger2Class   : 'x-form-search-trigger',
-                    listeners       : {
-                        specialkey : function(field, e)
-                        {
-                            if (e.getKey() == e.ENTER) {
-                                this.onTrigger2Click();
-                            }
+    
+    initComponent: function(){
+        ui.cmp._StaleFileGrid.columns[2].header = String.format(_('{0} revision'), Ext.util.Format.uppercase(PhDOE.user.lang));
+        
+        Ext.apply(this, {
+            columns: ui.cmp._StaleFileGrid.columns,
+            store: ui.cmp._StaleFileGrid.store,
+            tbar: [_('Filter: '), ' ', new Ext.form.TwinTriggerField({
+                id: 'FNU-filter',
+                width: 180,
+                hideTrigger1: true,
+                enableKeyEvents: true,
+                validateOnBlur: false,
+                validationEvent: false,
+                trigger1Class: 'x-form-clear-trigger',
+                trigger2Class: 'x-form-search-trigger',
+                listeners: {
+                    specialkey: function(field, e){
+                        if (e.getKey() == e.ENTER) {
+                            this.onTrigger2Click();
                         }
-                    },
-                    onTrigger1Click : function()
-                    {
-                        this.setValue('');
-                        this.triggers[0].hide();
-                        this.setSize(180,10);
-                        ui.cmp._StaleFileGrid.instance.store.clearFilter();
-                    },
-                    onTrigger2Click : function()
-                    {
-                        var v = this.getValue(), regexp;
-
-                        if (v === '' || v.length < 3) {
-                            this.markInvalid(
-                                _('Your filter must contain at least 3 characters')
-                            );
-                            return;
-                        }
-                        this.clearInvalid();
-                        this.triggers[0].show();
-                        this.setSize(180,10);
-
-                        regexp = new RegExp(v, 'i');
-
-                        // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
-                        ui.cmp._StaleFileGrid.instance.store.filterBy(function(record) {
-
-                            if( regexp.test(record.data.path)        ||
-                                regexp.test(record.data.name)        ||
-                                regexp.test(record.data.revision)    ||
-                                regexp.test(record.data.en_revision) ||
-                                regexp.test(record.data.maintainer)
-                            ) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }, this);
                     }
-                })
-            ]
+                },
+                onTrigger1Click: function(){
+                    this.setValue('');
+                    this.triggers[0].hide();
+                    this.setSize(180, 10);
+                    ui.cmp._StaleFileGrid.instance.store.clearFilter();
+                },
+                onTrigger2Click: function(){
+                    var v = this.getValue(), regexp;
+                    
+                    if (v === '' || v.length < 3) {
+                        this.markInvalid(_('Your filter must contain at least 3 characters'));
+                        return;
+                    }
+                    this.clearInvalid();
+                    this.triggers[0].show();
+                    this.setSize(180, 10);
+                    
+                    regexp = new RegExp(v, 'i');
+                    
+                    // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
+                    ui.cmp._StaleFileGrid.instance.store.filterBy(function(record){
+                    
+                        if (regexp.test(record.data.path) ||
+                        regexp.test(record.data.name) ||
+                        regexp.test(record.data.revision) ||
+                        regexp.test(record.data.en_revision) ||
+                        regexp.test(record.data.maintainer)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }, this);
+                }
+            })]
         });
         ui.cmp.StaleFileGrid.superclass.initComponent.call(this);
-
+        
         this.on('rowcontextmenu', this.onRowContextMenu, this);
-        this.on('rowdblclick',    this.onRowDblClick,  this);
+        this.on('rowdblclick', this.onRowDblClick, this);
     }
 });
 
 // singleton
 ui.cmp._StaleFileGrid.instance = null;
-ui.cmp.StaleFileGrid.getInstance = function(config)
-{
+ui.cmp.StaleFileGrid.getInstance = function(config){
     if (!ui.cmp._StaleFileGrid.instance) {
         if (!config) {
-           config = {};
+            config = {};
         }
         ui.cmp._StaleFileGrid.instance = new ui.cmp.StaleFileGrid(config);
     }
     return ui.cmp._StaleFileGrid.instance;
-};Ext.namespace('ui','ui.cmp');
+};
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.SystemUpdatePrompt = Ext.extend(Ext.Window,
 {
@@ -16604,28 +17210,1015 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                 items      : [
                     new Ext.ux.IFrameComponent({
                         id  : 'frame-' + this.prefix + '-diff-' + this.fid,
-                        url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
+                        url : String.format(PhDOE.app.conf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
                     })
                 ]
             }
         });
         ui.cmp.ViewVCDiff.superclass.initComponent.call(this);
     }
-});var PhDOE = function()
+});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._WorkTreeGrid', 'ui.cmp._WorkTreeGrid.menu');
+
+//------------------------------------------------------------------------------
+// WorkTreeGrid internals
+ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
+    new ui.task.SetFileProgressTask({
+        idDB: this.node.attributes.idDB,
+        progress: this.node.attributes.progress
+    });
+});
+
+// WorkTreeGrid : commit items for the context menu
+// config - { module, from, node, folderNode, userNode }
+ui.cmp._WorkTreeGrid.menu.commit = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.commit.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
+    init: function(){
+		
+        Ext.apply(this, {
+            text: _('Commit...'),
+            iconCls: 'iconCommitFileVcs',
+            disabled: (PhDOE.user.isAnonymous),
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                items: [{
+                    scope: this,
+                    text: _('...this file'),
+                    hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch'),
+                    iconCls: 'iconCommitFileVcs',
+                    handler: function(){
+                        var file = [{
+                            fid: Ext.util.md5(this.folderNode.attributes.task + this.node.attributes.task),
+                            fpath: this.folderNode.attributes.task,
+                            fname: this.node.attributes.task,
+                            fdbid: this.node.attributes.idDB,
+                            ftype: this.node.attributes.type,
+                            fdate: new Date(this.node.attributes.last_modified),
+                            fby: this.userNode.attributes.task
+                        }];
+                        
+                        new ui.cmp.CommitPrompt({
+                            files: file
+                        }).show();
+                    }
+                }, {
+                    scope: this,
+                    text: _('...all files from this folder'),
+                    hidden: (this.from === 'user' || this.from === 'patch'),
+                    iconCls: 'iconCommitFileVcs',
+                    handler: function(){
+                        var files = [];
+                        
+                        this.folderNode.cascade(function(node){
+                            if (node.attributes.type !== 'folder' && node.attributes.type !== 'user') {
+                                files.push({
+                                    fid: Ext.util.md5(this.folderNode.attributes.task + node.attributes.task),
+                                    fpath: this.folderNode.attributes.task,
+                                    fname: node.attributes.task,
+                                    fdbid: node.attributes.idDB,
+                                    ftype: node.attributes.type,
+                                    fdate: new Date(node.attributes.last_modified),
+                                    fby: this.userNode.attributes.task
+                                });
+                            }
+                        }, this);
+                        
+                        new ui.cmp.CommitPrompt({
+                            files: files
+                        }).show();
+                        
+                    }
+                }, {
+                    scope: this,
+                    text: _('...all files from this patch'),
+                    hidden: (this.module !== 'patches' || this.from === 'user'),
+                    iconCls: 'iconCommitFileVcs',
+                    handler: function(){
+                        var files = [];
+                        
+                        this.patchNode.cascade(function(node){
+                            if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
+                                files.push({
+                                    fid: Ext.util.md5(node.parentNode.attributes.task + node.attributes.task),
+                                    fpath: node.parentNode.attributes.task,
+                                    fname: node.attributes.task,
+                                    fdbid: node.attributes.idDB,
+                                    ftype: node.attributes.type,
+                                    fdate: new Date(node.attributes.last_modified),
+                                    fby: this.userNode.attributes.task
+                                });
+                            }
+                        }, this);
+                        
+                        new ui.cmp.CommitPrompt({
+                            files: files
+                        }).show();
+                        
+                    }
+                }, {
+                    scope: this,
+                    text: _('...all files modified by me'),
+                    iconCls: 'iconCommitFileVcs',
+                    handler: function(){
+                        var files = [];
+                        
+                        this.userNode.cascade(function(node){
+                            if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
+                                files.push({
+                                    fid: Ext.util.md5(node.parentNode.attributes.task + node.attributes.task),
+                                    fpath: node.parentNode.attributes.task,
+                                    fname: node.attributes.task,
+                                    fdbid: node.attributes.idDB,
+                                    ftype: node.attributes.type,
+                                    fdate: new Date(node.attributes.last_modified),
+                                    fby: this.userNode.attributes.task
+                                });
+                            }
+                        }, this);
+                        
+                        new ui.cmp.CommitPrompt({
+                            files: files
+                        }).show();
+                    }
+                }]
+            })
+        });
+    }
+});
+
+ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
+    Ext.apply(this, config);
+    
+    var menu = Ext.getCmp(this.menuID), newItem, patchesList;
+    
+    if (!menu.itemRendered) {
+        menu.removeAll();
+        menu.doLayout();
+        
+        patchesList = ui.cmp.PatchesTreeGrid.getInstance().getUserPatchesList();
+        
+        if (patchesList) {
+        
+            Ext.each(patchesList, function(item){
+            
+                newItem = new Ext.menu.Item({
+                    id: Ext.id(),
+                    text: item.attributes.task,
+                    handler: function(){
+                        ui.task.MoveToPatch({
+                            patchID: item.attributes.idDB,
+                            patchName: item.attributes.task,
+                            nodesToAdd: menu.nodesToAdd
+                        });
+                    }
+                });
+                menu.add(newItem);
+                
+            }, this);
+            
+        }
+        else {
+            newItem = new Ext.menu.Item({
+                disabled: true,
+                text: _('You have no patch currently. You must create one.')
+            });
+            menu.add(newItem);
+        }
+        
+        // Set the default action : Add a new patch
+        newItem = new Ext.menu.Item({
+            text: _('Create a new patch'),
+            iconCls: 'iconAdd',
+            handler: function(){
+                var win = new ui.cmp.ManagePatchPrompt({
+                    title: _('Create a new patch'),
+                    nodesToAdd: menu.nodesToAdd
+                });
+                win.show(this.el);
+            }
+        });
+        menu.add('-', newItem);
+        
+        menu.doLayout();
+        menu.itemRendered = true;
+    }
+    
+};
+
+
+// WorkTreeGrid : context menu for users items
+// config - { node }
+ui.cmp._WorkTreeGrid.menu.users = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.users.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
+    listeners: {
+        show: function(){
+            if (this.node.attributes.task === PhDOE.user.login) {
+                ui.cmp._WorkTreeGrid.menu.usersPatch({
+                    menuID: 'usersPatchesMenu'
+                });
+            }
+        }
+    },
+    
+    init: function(){
+        var allFiles = [], items;
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type != 'user' && node.attributes.type != 'folder') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        items = (this.node.attributes.task === PhDOE.user.login) ? [{
+            text: _('Submit all files for review in patch:'),
+            iconCls: 'iconPendingPatch',
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                id: 'usersPatchesMenu',
+                itemRendered: false,
+                nodesToAdd: allFiles
+            })
+        }, {
+            xtype: 'menuseparator',
+            hidden: (PhDOE.user.isAnonymous)
+        }, 
+		
+		(( !PhDOE.user.isAnonymous ) ?
+			new ui.cmp._WorkTreeGrid.menu.commit({
+	            from: 'user',
+	            node: false,
+	            folderNode: false,
+	            userNode: this.node
+	        }) : ''
+		)
+		] : [{
+            scope: this,
+            text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
+            iconCls: 'iconSendEmail',
+            handler: function(){
+                var win = new ui.cmp.EmailPrompt();
+                
+                win.setData(this.node.attributes.task, this.node.attributes.email);
+                win.show(this.node.el);
+            }
+        }];
+        
+        Ext.apply(this, {
+            items: items
+        });
+    }
+});
+
+// WorkTreeGrid : context menu for folders items
+// config - { node }
+ui.cmp._WorkTreeGrid.menu.folders = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.folders.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
+    listeners: {
+        show: function(){
+        
+            if (this.node.parentNode.attributes.task === PhDOE.user.login) {
+                ui.cmp._WorkTreeGrid.menu.usersPatch({
+                    menuID: 'foldersPatchesMenu'
+                });
+            }
+        }
+    },
+    
+    init: function(){
+        var allFiles = [];
+        
+        // We don't display all of this menu if the current user isn't the owner
+        if (this.node.parentNode.attributes.task !== PhDOE.user.login) {
+            return false;
+        }
+        
+        // We search for files to pass to patch
+        this.node.cascade(function(node){
+            if (node.attributes.type != 'folder') {
+                allFiles.push(node);
+            }
+        }, this);
+        
+        
+        Ext.apply(this, {
+            items: [{
+                text: _('Submit all files in this directory in patch:'),
+                iconCls: 'iconPendingPatch',
+                handler: function(){
+                    return false;
+                },
+                menu: new Ext.menu.Menu({
+                    id: 'foldersPatchesMenu',
+                    itemRendered: false,
+                    nodesToAdd: allFiles
+                })
+            }, {
+	            xtype: 'menuseparator',
+	            hidden: (PhDOE.user.isAnonymous)
+	        },
+			((!PhDOE.user.isAnonymous) ?
+			new ui.cmp._WorkTreeGrid.menu.commit({
+                from: 'folder',
+                node: false,
+                folderNode: this.node,
+                userNode: this.node.parentNode
+            }) : ''
+			)]
+        });
+    }
+});
+
+
+
+// WorkTreeGrid : context menu for files items
+// config - { node, progressValue }
+ui.cmp._WorkTreeGrid.menu.files = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.files.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
+    listeners: {
+        show: function(){
+            if (this.node.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+                ui.cmp._WorkTreeGrid.menu.usersPatch({
+                    menuID: 'filePatchesMenu'
+                });
+            }
+        }
+    },
+    
+    init: function(){
+        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [];
+        
+        allFiles.push(this.node);
+        
+        Ext.apply(this, {
+            items: [{
+                text: '<b>' + ((FileType == 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
+                iconCls: 'iconEdit',
+                handler: function(){
+                    treeGrid.openFile(node);
+                }
+            }, {
+                text: _('Submit as patch for review in:'),
+                iconCls: 'iconPendingPatch',
+                hidden: (owner !== PhDOE.user.login),
+                handler: function(){
+                    return false;
+                },
+                menu: new Ext.menu.Menu({
+                    id: 'filePatchesMenu',
+                    itemRendered: false,
+                    nodesToAdd: allFiles
+                })
+            }, {
+                text: _('Set the progress...'),
+                iconCls: 'iconProgress',
+                hidden: (FileType == 'delete' || owner !== PhDOE.user.login),
+                menu: {
+                    xtype: 'menu',
+                    showSeparator: false,
+                    items: [{
+                        xtype: 'slider',
+                        width: 200,
+                        value: this.node.attributes.progress,
+                        increment: 10,
+                        minValue: 0,
+                        maxValue: 100,
+                        plugins: new Ext.slider.Tip({
+                            getText: function(thumb){
+                                return String.format('<b>' + _('{0}% complete') + '</b>', thumb.value);
+                            }
+                        }),
+                        refreshNodeColumns: function(n){
+                            var t = n.getOwnerTree(), a = n.attributes, cols = t.columns, el = n.ui.getEl().firstChild, cells = el.childNodes, i, d, v, len;
+                            
+                            for (i = 1, len = cols.length; i < len; i++) {
+                                d = cols[i].dataIndex;
+                                v = (a[d] != null) ? a[d] : '';
+                                
+                                if (cols[i].tpl && cols[i].tpl.html === "{progress:this.formatProgress}") {
+                                    cells[i].firstChild.innerHTML = cols[i].tpl.apply('out:' + v);
+                                }
+                            }
+                        },
+                        listeners: {
+                            scope: this,
+                            change: function(s, n){
+                                this.node.attributes.progress = n;
+                                s.refreshNodeColumns(this.node);
+                                
+                                ui.cmp._WorkTreeGrid.SetProgress.delay(1000, null, this);
+                            }
+                        }
+                    }]
+                }
+            }, '-', {
+                text: _('View diff'),
+                iconCls: 'iconViewDiff',
+                hidden: (FileType == 'delete' || FileType == 'new'),
+                handler: function(){
+                    // Render only if this tab don't exist yet
+                    if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + FileID)) {
+                    
+                        // Add tab for the diff
+                        Ext.getCmp('main-panel').add({
+                            xtype: 'panel',
+                            id: 'diff_panel_pending_' + FileID,
+                            iconCls: 'iconTabLink',
+                            title: _('Diff'),
+                            tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
+                            closable: true,
+                            autoScroll: true,
+                            html: '<div id="diff_content_pending_' + FileID + '" class="diff-content"></div>'
+                        });
+                        
+                        // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+                        
+                        Ext.get('diff_panel_pending_' + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+                        _('Please, wait...'));
+                        
+                        // Load diff data
+                        XHR({
+                            scope: this,
+                            params: {
+                                task: 'getDiff',
+                                DiffType: 'file',
+                                FilePath: FilePath,
+                                FileName: FileName
+                            },
+                            success: function(r){
+                                var o = Ext.util.JSON.decode(r.responseText);
+                                
+                                // We display in diff div
+                                Ext.get('diff_content_pending_' + FileID).dom.innerHTML = o.content;
+                                Ext.get('diff_panel_pending_' + FileID).unmask();
+                            }
+                        });
+                    }
+                    else {
+                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+                    }
+                }
+            }, {
+                text: _('Download the diff as a patch'),
+                iconCls: 'iconDownloadDiff',
+                hidden: (FileType == 'delete' || FileType == 'new'),
+                handler: function(){
+                    window.location.href = './do/downloadPatch' +
+                    '?FilePath=' +
+                    FilePath +
+                    '&FileName=' +
+                    FileName;
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isAdmin) )
+            }, {
+                text: ((FileType == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
+                iconCls: 'iconPageDelete',
+                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isAdmin ),
+                handler: function(){
+                    new ui.task.ClearLocalChangeTask({
+                        ftype: FileType,
+                        fpath: FilePath,
+                        fname: FileName
+                    });
+                }
+            }, {
+                xtype: 'menuseparator',
+                hidden: (PhDOE.user.isAnonymous || owner !== PhDOE.user.login)
+            }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                from: 'file',
+                node: this.node,
+                folderNode: this.node.parentNode,
+                userNode: this.node.parentNode.parentNode
+            }) : '')]
+        });
+    }
+});
+
+//------------------------------------------------------------------------------
+// WorkTreeGrid
+ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
+    onContextMenu: function(node, e){
+        e.stopEvent();
+        
+        var type = node.attributes.type, contextMenu;
+        
+        switch (type) {
+        
+            case "user":
+                // We only select this row/ If there is multi-selection, this clear the selection and select only the current one.
+                node.select();
+                
+                contextMenu = new ui.cmp._WorkTreeGrid.menu.users({
+                    node: node
+                });
+                break;
+                
+            case "folder":
+                node.select();
+                contextMenu = new ui.cmp._WorkTreeGrid.menu.folders({
+                    node: node
+                });
+                break;
+                
+            default: // Use default for file as the type can be update, delete or new
+                node.select();
+                contextMenu = new ui.cmp._WorkTreeGrid.menu.files({
+                    node: node
+                });
+                break;
+                
+        }
+        
+        contextMenu.showAt(e.getXY());
+        
+    },
+    
+    initComponent: function(){
+        function renderProgress(v, p){
+            p.css += ' x-grid3-progresscol';
+            
+            return String.format('<div class="x-progress-wrap"><div class="x-progress-inner"><div class="x-progress-bar{0}" style="width:{1}%;">{2}</div></div>', this.getStyle(v), (v / this.ceiling) * 100, this.getText(v));
+        }
+        
+        Ext.apply(this, {
+            animate: true,
+            useArrows: true,
+            autoScroll: true,
+            border: false,
+            containerScroll: true,
+            defaults: {
+                autoScroll: true
+            },
+            selModel: new Ext.tree.MultiSelectionModel(),
+            columns: [{
+                // By default, it's the first column who is an autoExpandColumn
+                header: _('Users'),
+                dataIndex: 'task',
+                tpl: new Ext.XTemplate('{task:this.formatUserName}', {
+                    formatUserName: function(v, data){
+                        // Only ucFirst user's name
+                        return (data.type === 'user') ? v.ucFirst() : v;
+                    }
+                    
+                })
+            }, {
+                header: _('Last modified'),
+                width: 120,
+                dataIndex: 'last_modified',
+                align: 'center'
+            }, {
+                header: _('Estimated progress'),
+                dataIndex: 'progress',
+                width: 100,
+                align: 'center',
+                tpl: new Ext.XTemplate('{progress:this.formatProgress}', {
+                    formatProgress: function(v, v2){
+                    
+                        // We re-use this template from the slider. So, we must use this hack to pass the new value
+                        if (Ext.util.Format.substr(v2, 0, 4) == 'out:') {
+                            var t = v2.split(':');
+                            v = t[1];
+                        }
+                        
+                        if (!v && v != 0) 
+                            return '';
+                        
+                        function getText(v){
+                            var textClass = (v < (100 / 2)) ? 'x-progress-text-back' : 'x-progress-text-front' +
+                            (Ext.isIE6 ? '-ie6' : '');
+                            
+                            // ugly hack to deal with IE6 issue
+                            var text = String.format('</div><div class="x-progress-text {0}" style="width:100%;" id="{1}">{2}</div></div>', textClass, Ext.id(), v + '%');
+                            
+                            return (v < (100 / 1.05)) ? text.substring(0, text.length - 6) : text.substr(6);
+                        }
+                        
+                        function getStyle(v){
+                            if (v <= 100 && v > (100 * 0.67)) 
+                                return '-green';
+                            if (v < (100 * 0.67) && v > (100 * 0.33)) 
+                                return '-orange';
+                            if (v < (100 * 0.33)) 
+                                return '-red';
+                            
+                            return '';
+                        }
+                        
+                        return String.format('<div class="x-progress-wrap"><div class="x-progress-inner"><div class="x-progress-bar{0}" style="width:{1}%;">{2}</div></div>', getStyle(v), (v / 100) * 100, getText(v));
+                    }
+                })
+            
+            }],
+            loader: {
+                dataUrl: './do/getWork',
+                baseParams: {
+                    module: 'workInProgress'
+                }
+            }
+			/*
+            tbar: [{
+                scope: this,
+                iconCls: 'iconRefresh',
+                handler: function(){
+                    this.getRootNode().reload();
+                }
+            }]
+            */
+        
+        });
+        ui.cmp.WorkTreeGrid.superclass.initComponent.call(this);
+        
+        this.on('contextmenu', this.onContextMenu, this);
+        this.on('resize', this.resizeCmp, this);
+        this.on('dblclick', this.openFile, this);
+        
+        this.getRootNode().on('beforechildrenrendered', function(){
+            this.updateFilesCounter.defer(200, this);
+        }, this);
+    },
+    
+    resizeCmp: function(c, a, b, w){
+    
+        this.columns[0].width = w - (this.columns[1].width + this.columns[2].width + 5);
+        this.updateColumnWidths();
+    },
+    
+    delRecord: function(fid){
+        var rootNode = this.getRootNode();
+        
+        for (var i = 0; i < rootNode.childNodes.length; i++) {
+            var user = rootNode.childNodes[i];
+            
+            for (var j = 0; j < user.childNodes.length; j++) {
+                var folder = user.childNodes[j];
+                
+                for (var h = 0; h < folder.childNodes.length; h++) {
+                    var file = folder.childNodes[h];
+                    
+                    if (file.attributes.idDB == fid) {
+                    
+                        file.remove(true);
+                        
+                        // Is Folder contains some others child ?
+                        if (Ext.isEmpty(folder.childNodes)) {
+                        
+                            folder.remove(true);
+                            
+                            // Is User contains some others child ?
+                            if (Ext.isEmpty(user.childNodes)) {
+                            
+                                user.remove(true);
+                                
+                                this.updateFilesCounter();
+                                return;
+                            }
+                            this.updateFilesCounter();
+                            return;
+                        }
+                        this.updateFilesCounter();
+                        return;
+                    }
+                }
+                
+            }
+        }
+        
+        // We update the FilesCounter
+        this.updateFilesCounter();
+    },
+    
+    addToWork: function(nodesToAdd){
+        var rootNode, userNode, folderNode, type, iconCls, fileNode, nowDate, i;
+        
+        rootNode = this.getRootNode();
+        
+        // We start by searching if this user have a node
+        userNode = rootNode.findChild('task', PhDOE.user.login);
+        
+        // If the user node don't exist, we create it
+        if (!userNode) {
+        
+            userNode = new Ext.tree.TreeNode({
+                task: PhDOE.user.login,
+                type: 'user',
+                email: PhDOE.user.email,
+                iconCls: 'iconUser',
+                expanded: true
+            });
+            
+            rootNode.appendChild(userNode);
+            rootNode.expand(); // This allow to show our new node
+        }
+        
+        if (nodesToAdd) {
+        
+            // We walk into the nodes to add
+            for (i = 0; i < nodesToAdd.length; i++) {
+            
+                // We search now into this patch the right folder
+                folderNode = userNode.findChild('task', nodesToAdd[i].parentNode.attributes.task);
+                
+                // If this folder don't exist, we create it
+                if (!folderNode) {
+                
+                    folderNode = new Ext.tree.TreeNode({
+                        task: nodesToAdd[i].parentNode.attributes.task,
+                        type: 'folder',
+                        iconCls: 'iconFolderOpen',
+                        expanded: true
+                    });
+                    
+                    userNode.appendChild(folderNode);
+                    userNode.expand(); // This allow to show our new node
+                }
+                
+                // We add now this file into this folder
+                type = nodesToAdd[i].attributes.type;
+                
+                if (type === 'update') {
+                    iconCls = 'iconRefresh';
+                }
+                if (type === 'new') {
+                    iconCls = 'iconNewFiles';
+                }
+                if (type === 'delete') {
+                    iconCls = 'iconTrash';
+                }
+                
+                nowDate = new Date();
+                
+                fileNode = new Ext.tree.TreeNode({
+                    task: nodesToAdd[i].attributes.task,
+                    type: type,
+                    iconCls: iconCls,
+                    expanded: true,
+                    last_modified: nowDate.format('Y-m-d H:i:s'),
+                    progress: nodesToAdd[i].attributes.progress,
+                    idDB: nodesToAdd[i].attributes.idDB
+                });
+                
+                folderNode.appendChild(fileNode);
+                folderNode.expand(); // This allow to show our new node
+            }
+            
+        } // End of adding folders/files into this patch
+        // We update the FilesCounter
+        this.updateFilesCounter();
+        
+    },
+    
+    addRecord: function(fid, fpath, fname, type){
+        var rootNode = this.getRootNode();
+        
+        // We start by searching if this user have a node
+        var userNode = rootNode.findChild('task', PhDOE.user.login);
+        
+        // If the user node don't exist, we create it
+        if (!userNode) {
+        
+            userNode = new Ext.tree.TreeNode({
+                task: PhDOE.user.login,
+                type: 'user',
+                email: PhDOE.user.email,
+                iconCls: 'iconUser',
+                expanded: true,
+                nbFiles: 1
+            });
+            
+            rootNode.appendChild(userNode);
+            rootNode.expand(); // This allow to show our new node
+        }
+        
+        // We search now into this user the right folder
+        var folderNode = userNode.findChild('task', fpath);
+        
+        // If this folder don't exist, we create it
+        if (!folderNode) {
+        
+            folderNode = new Ext.tree.TreeNode({
+                task: fpath,
+                type: 'folder',
+                iconCls: 'iconFolderOpen',
+                expanded: true
+            });
+            
+            userNode.appendChild(folderNode);
+            userNode.expand(); // This allow to show our new node
+        }
+        
+        // We search now into this folder the right file
+        var fileNode = folderNode.findChild('task', fname), iconCls;
+        
+        // If this folder don't exist, we create it
+        if (!fileNode) {
+        
+            if (type == 'update') {
+                iconCls = 'iconRefresh';
+            }
+            if (type == 'new') {
+                iconCls = 'iconNewFiles';
+            }
+            if (type == 'delete') {
+                iconCls = 'iconTrash';
+            }
+            
+            var nowDate = new Date();
+            
+            fileNode = new Ext.tree.TreeNode({
+                task: fname,
+                type: type,
+                iconCls: iconCls,
+                expanded: true,
+                last_modified: nowDate.format('Y-m-d H:i:s'),
+                progress: 100,
+                idDB: fid
+            });
+            
+            folderNode.appendChild(fileNode);
+            folderNode.expand(); // This allow to show our new node
+        }
+        
+        // We update the FilesCounter
+        this.updateFilesCounter();
+    },
+    
+    countFiles: function(){
+        var rootNode = this.getRootNode(), nbFiles = 0;
+        
+        rootNode.cascade(function(node){
+            if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' ) {
+                if (node.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+                    nbFiles++;
+                }
+            }
+        }, this);
+		
+        return nbFiles;
+    },
+    
+    updateFilesCounter: function(){
+        var count = this.countFiles();
+        
+        Ext.getDom('acc-work-in-progress-nb').innerHTML = count;
+        
+    },
+    
+    openFile: function(node){
+        var FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, tmp;
+        
+        if (FileType == 'user' || FileType == 'folder') {
+            return false;
+        }
+        
+        tmp = FilePath.split('/');
+        FileLang = tmp[0];
+        tmp.shift();
+        
+        FilePath = "/" + tmp.join('/');
+        
+        switch (FileType) {
+            case "new":
+                // Find the id of this row into PendingTranslateGrid.store and open it !
+                ui.cmp.PendingTranslateGrid.getInstance().store.each(function(row){
+                    if ((row.data.path) === FilePath && row.data.name === FileName) {
+                        ui.cmp.PendingTranslateGrid.getInstance().openFile(row.data.id);
+                        return;
+                    }
+                });
+                break;
+                
+            case "delete":
+                // Find the id of this row into NotInENGrid.store and open it !
+                ui.cmp.NotInENGrid.getInstance().store.each(function(row){
+                
+                    if ((row.data.path) === FilePath && row.data.name === FileName) {
+                        ui.cmp.NotInENGrid.getInstance().openFile(row.data.id);
+                        return;
+                    }
+                });
+                break;
+                
+            case "update":
+                // For EN file, we open this new file into the "All files" module
+                if (FileLang === 'en') {
+                    ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang + FilePath, FileName);
+                }
+                else {
+                
+                    found = false;
+                    
+                    // Find the id of this row into StaleFileGrid.store and open it !
+                    ui.cmp.StaleFileGrid.getInstance().store.each(function(row){
+                    
+                        if ((row.data.path) === FilePath && row.data.name === FileName) {
+                            ui.cmp.StaleFileGrid.getInstance().openFile(row.data.id);
+                            found = true;
+                            return;
+                        }
+                    });
+                    
+                    // If we haven't found this file in StaleFileGrid, we try into File in error grid.
+                    if (!found) {
+                    
+                        // Find the id of this row into ErrorFileGrid.store and open it !
+                        ui.cmp.ErrorFileGrid.getInstance().store.each(function(row){
+                        
+                            if ((row.data.path) === FilePath && row.data.name === FileName) {
+                                ui.cmp.ErrorFileGrid.getInstance().openFile(row.data.id);
+                                found = true;
+                                return;
+                            }
+                        });
+                    }
+                    
+                    // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
+                    if (!found) {
+                    
+                        // Find the id of this row into PendingReviewGrid.store and open it !
+                        ui.cmp.PendingReviewGrid.getInstance().store.each(function(row){
+                        
+                            if ((row.data.path) === FilePath && row.data.name === FileName) {
+                                ui.cmp.PendingReviewGrid.getInstance().openFile(row.data.id);
+                                found = true;
+                                return;
+                            }
+                        });
+                    }
+                    
+                    // FallBack : We open it into "All files" modules
+                    if (!found) {
+                        ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang + FilePath, FileName);
+                    }
+                }
+                break;
+        }
+    }
+});
+
+// singleton
+ui.cmp._WorkTreeGrid.instance = null;
+ui.cmp.WorkTreeGrid.getInstance = function(config){
+    if (!ui.cmp._WorkTreeGrid.instance) {
+        if (!config) {
+            config = {};
+        }
+        ui.cmp._WorkTreeGrid.instance = new ui.cmp.WorkTreeGrid(config);
+    }
+    return ui.cmp._WorkTreeGrid.instance;
+};
+var PhDOE = function()
 {
     Ext.QuickTips.init();
 
     return {
-        // Variable
-        userLogin  : null,
-        userLang   : null,
-        appName    : 'Php Docbook Online Editor',
-        appVer     : 'X.XX',
-        appLoaded  : false,
-        uiRevision : '$Revision: 298099 $',
+		
+        /**
+         * Hold user's variable such as login, configuration or email
+         */
+		user : {
+			login: null,
+			anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
+			isAnonymous: null,
+			isAdmin: false,
+			lang: null,
+			conf: '',
+			email: ''
+		},
+        
+        /**
+         * Hold application's variable such as name, version or configuration
+         */
+		app: {
+			name: 'Php Docbook Online Editor',
+			ver : 'X.XX',
+			loaded: false,
+            uiRevision: '$Revision: 298516 $',
+			conf: ''
+		},
 
         lastInfoDate : null,
-        userConf   : '',
 
         project    : '',
 
@@ -16670,7 +18263,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
         winForbidden : function(type)
         {
             var title = _('Forbidden'),
-                mess  = _('You can\'t do this action as anonymous user.');
+                mess  = '';
 
             switch (type) {
                 case 'fs_error' :
@@ -16693,6 +18286,19 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                     title = _('Error');
                     mess  = _('This file already exist in the current folder.');
                     break;
+                case 'save_you_cant_modify_it' :
+                    title = _('Error');
+                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you wan to be able to modify it.');
+                    break;
+                case 'file_isnt_owned_by_current_user' :
+                    title = _('Error');
+                    mess  = _('The file you want to clear local change isn\'t own by you.<br>You can only do this action for yours files.');
+                    break;
+                case 'file_localchange_didnt_exist' :
+                    title = _('Error');
+                    mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
+                    break;
+					
             }
 
             Ext.MessageBox.alert(
@@ -16714,18 +18320,18 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
         // All we want to do after all dataStore are loaded
         afterLoadAllStore : function()
         {
-            this.appLoaded = true;
+            this.app.loaded = true;
 
             // Run DirectAccess if present
             this.runDirectAccess();
 
             //Load external data
             // Mails ?
-            if( this.userConf.mainAppLoadMailsAtStartUp ) {
+            if( this.user.conf.mainAppLoadMailsAtStartUp ) {
                 ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
-            if( this.userConf.mainAppLoadBugsAtStartUp ) {
+            if( this.user.conf.mainAppLoadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
@@ -16743,66 +18349,56 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
 
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/13, '1 of 13...');
+                progressBar.updateProgress(1/11, '1 of 11...');
                 ui.cmp._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/13, '2 of 13...');
+                        progressBar.updateProgress(2/11, '2 of 11...');
                         ui.cmp.StaleFileGrid.getInstance().store.load({
                             callback: function() {
-                                progressBar.updateProgress(3/13, '3 of 13...');
+                                progressBar.updateProgress(3/11, '3 of 11...');
                                 ui.cmp.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
-                                        progressBar.updateProgress(4/13, '4 of 13...');
+                                        progressBar.updateProgress(4/11, '4 of 11...');
                                         ui.cmp.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
-                                                progressBar.updateProgress(5/13, '5 of 13...');
+                                                progressBar.updateProgress(5/11, '5 of 11...');
                                                 ui.cmp.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
-                                                        progressBar.updateProgress(6/13, '6 of 13...');
-                                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
-                                                            callback: function() {
-                                                                progressBar.updateProgress(7/13, '7 of 13...');
-                                                                ui.cmp.PendingPatchGrid.getInstance().store.load({
-                                                                    callback: function() {
-                                                                        progressBar.updateProgress(8/13, '8 of 13...');
-                                                                        ui.cmp.PortletSummary.getInstance().store.load({
-                                                                            callback: function() {
-                                                                                progressBar.updateProgress(9/13, '9 of 13...');
-                                                                                ui.cmp.PortletTranslationGraph.getInstance().store.load({
-                                                                                    callback: function() {
-                                                                                        progressBar.updateProgress(10/13, '10 of 13...');
-                                                                                        ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-                                                                                            callback: function() {
-                                                                                                progressBar.updateProgress(11/13, '11 of 13...');
-                                                                                                ui.cmp.PortletTranslator.getInstance().store.load({
-                                                                                                    callback: function() {
-                                                                                                        progressBar.updateProgress(12/13, '12 of 13...');
-                                                                                                        ui.cmp.PendingTranslateGrid.getInstance().store.load({
-                                                                                                            callback: function() {
-                                                                                                                progressBar.updateProgress(13/13, '13 of 13...');
-                                                                                                                ui.cmp.PortletInfo.getInstance().store.load({
-                                                                                                                    callback: function() {
-                                                                                                                        // Now, we can to remove the global mask
-                                                                                                                        Ext.get('loading').remove();
-                                                                                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                                                                                        progressBar.destroy();
-                                                                                                                        PhDOE.afterLoadAllStore();
-                                                                                                                    }
-                                                                                                                });
-                                                                                                            }
-                                                                                                        });
-                                                                                                    }
-                                                                                                });
-                                                                                            }
-                                                                                        });
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
+	                                                    progressBar.updateProgress(6/11, '6 of 11...');
+	                                                    ui.cmp.PortletSummary.getInstance().store.load({
+	                                                        callback: function() {
+	                                                            progressBar.updateProgress(7/11, '7 of 11...');
+	                                                            ui.cmp.PortletTranslationGraph.getInstance().store.load({
+	                                                                callback: function() {
+	                                                                    progressBar.updateProgress(8/11, '8 of 11...');
+	                                                                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
+	                                                                        callback: function() {
+	                                                                            progressBar.updateProgress(9/11, '9 of 11...');
+	                                                                            ui.cmp.PortletTranslator.getInstance().store.load({
+	                                                                                callback: function() {
+	                                                                                    progressBar.updateProgress(10/11, '10 of 11...');
+	                                                                                    ui.cmp.PendingTranslateGrid.getInstance().store.load({
+	                                                                                        callback: function() {
+	                                                                                            progressBar.updateProgress(11/11, '11 of 11...');
+	                                                                                            ui.cmp.PortletInfo.getInstance().store.load({
+	                                                                                                callback: function() {
+	                                                                                                    // Now, we can to remove the global mask
+	                                                                                                    Ext.get('loading').remove();
+	                                                                                                    Ext.fly('loading-mask').fadeOut({ remove : true });
+	                                                                                                    progressBar.destroy();
+	                                                                                                    PhDOE.afterLoadAllStore();
+	                                                                                                }
+	                                                                                            });
+	                                                                                        }
+	                                                                                    });
+	                                                                                }
+	                                                                            });
+	                                                                        }
+	                                                                    });
+	                                                                }
+	                                                            });
+	                                                        }
+	                                                    });
                                                     }
                                                 });
                                             }
@@ -16816,39 +18412,29 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
             } else {
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/6, '1 of 6...');
+                progressBar.updateProgress(1/4, '1 of 4...');
                 ui.cmp._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/6, '2 of 6...');
-                        ui.cmp.PendingPatchGrid.getInstance().store.load({
-                            callback: function() {
-                                progressBar.updateProgress(3/6, '3 of 6...');
-                                ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-                                    callback: function() {
-                                        progressBar.updateProgress(4/6, '4 of 6...');
-                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
-                                            callback: function() {
-                                                progressBar.updateProgress(5/6, '5 of 6...');
-                                                ui.cmp.ErrorFileGrid.getInstance().store.load({
-                                                    callback: function() {
-                                                        progressBar.updateProgress(6/6, '5 of 6...');
-                                                        ui.cmp.PortletInfo.getInstance().store.load({
-                                                            callback: function() {
-                                                                // Now, we can to remove the global mask
-                                                                Ext.get('loading').remove();
-                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                                progressBar.destroy();
-                                                                PhDOE.afterLoadAllStore();
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+	                    progressBar.updateProgress(2/4, '2 of 4...');
+	                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
+	                        callback: function() {
+	                            progressBar.updateProgress(3/4, '3 of 4...');
+	                            ui.cmp.ErrorFileGrid.getInstance().store.load({
+	                                callback: function() {
+	                                    progressBar.updateProgress(4/4, '4 of 4...');
+	                                    ui.cmp.PortletInfo.getInstance().store.load({
+	                                        callback: function() {
+	                                            // Now, we can to remove the global mask
+	                                            Ext.get('loading').remove();
+	                                            Ext.fly('loading-mask').fadeOut({ remove : true });
+	                                            progressBar.destroy();
+	                                            PhDOE.afterLoadAllStore();
+	                                        }
+	                                    });
+	                                }
+	                            });
+	                        }
+	                    });
                     }
                 });
             }
@@ -16869,10 +18455,10 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                                             callback: function() {
                                                 ui.cmp.NotInENGrid.getInstance().store.reload({
                                                     callback: function() {
-                                                        ui.cmp.PendingCommitGrid.getInstance().store.reload({
-                                                            callback: function() {
-                                                                ui.cmp.PendingPatchGrid.getInstance().store.reload({
-                                                                    callback: function() {
+                                                        ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
+                                                            function() {
+                                                                ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload(
+                                                                    function() {
                                                                         ui.cmp.PortletSummary.getInstance().store.reload({
                                                                             callback: function() {
                                                                                 ui.cmp.PortletTranslator.getInstance().store.reload({
@@ -16887,9 +18473,9 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                                                                             }
                                                                         });
                                                                     }
-                                                                });
+                                                                );
                                                             }
-                                                        });
+                                                        );
                                                     }
                                                 });
                                             }
@@ -16902,11 +18488,11 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                 });
             } else {
                 // Store to reload only for EN project
-                ui.cmp.PendingCommitGrid.getInstance().store.reload({
-                    callback: function() {
-                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
+                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
+                    function() {
+                        ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
                     }
-                });
+                );
             }
         },
 
@@ -16915,7 +18501,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
             var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
             
             // Default value for portalEN & portalLANG sort
-            
+
             portalEN = {
                 'col1' : ["portletLocalMail","portletBugs"],
                 'col2' : ["portletInfo","portletTranslationsGraph"]
@@ -16927,22 +18513,22 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
             };
             
             // Get user conf
-            if ( this.userLang === 'en' ) {
-                (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
+            if ( PhDOE.user.lang === 'en' ) {
+                portal = (PhDOE.user.conf.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortEN) : portalEN;
 
-                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
                 allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
             else
             {
-                (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
+                portal = (PhDOE.user.conf.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortLANG) : portalLANG;
                 
-                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: this.userLang});
-                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: this.userLang});
-                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
 
                 allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
                 allPortlet["portletTranslationGraph"] = ui.cmp.PortletTranslationGraph.getInstance();
@@ -16956,7 +18542,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
             for( var j=0; j < portal.col2.length; j++ ) {
                 mainContentRight.push(allPortlet[portal.col2[j]]);
             }
-            
+
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
@@ -16969,7 +18555,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                     html       : '<h1 class="x-panel-header">' +
                                     '<img src="themes/img/mini_php.png" ' +
                                         'style="vertical-align: middle;" />&nbsp;&nbsp;' +
-                                    this.appName +
+                                    this.app.name +
                                  '</h1>',
                     autoHeight : true,
                     border     : false,
@@ -16983,12 +18569,12 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                    width        : PhDOE.user.conf.mainAppMainMenuWidth || 300,
                     header       : false,
                     listeners    : {
                         resize : function(a, newWidth) {
 
-                            if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                            if( newWidth && newWidth != PhDOE.user.conf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
                                     item  : 'mainAppMainMenuWidth',
                                     value : newWidth,
@@ -17008,7 +18594,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedTranslate',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingTranslateGrid.getInstance() ],
                         collapsed : true
                     },{
@@ -17017,12 +18603,12 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedUpdate',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.StaleFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-error',
-                        title     : (this.userLang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
+                        title     : (PhDOE.user.lang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
@@ -17034,7 +18620,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedReviewed',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingReviewGrid.getInstance() ],
                         collapsed : true
                     }, {
@@ -17043,7 +18629,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconNotInEn',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.NotInENGrid.getInstance() ],
                         collapsed : true
                     }, {
@@ -17055,40 +18641,40 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                         items     : [ ui.cmp.RepositoryTree.getInstance() ],
                         collapsed : true
                     }, {
-                        id        : 'acc-need-pendingCommit',
+                        id        : 'acc-work-in-progress',
+                        title     : _('Work in progress') + ' (<em id="acc-work-in-progress-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconWorkInProgress',
+                        items     : [ ui.cmp.WorkTreeGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-patches',
                         tools     : [{
                             id      : 'gear',
-                            hidden  : (this.userLogin == 'anonymous' ),
+                            hidden  : (this.user.isAnonymous ),
                             qtip    : _('Open the Log Message Manager'),
                             handler : function() {
                                 if( ! Ext.getCmp('commit-log-win') )
                                 {
                                     var win = new ui.cmp.CommitLogManager();
                                 }
-                                Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
+                                Ext.getCmp('commit-log-win').show('acc-patches');
                             }
                         }],
-                        title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',
+                        title     : _('Patches for review') + ' (<em id="acc-patches-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'iconPendingCommit',
-                        items     : [ ui.cmp.PendingCommitGrid.getInstance() ],
-                        collapsed : true
-                    }, {
-                        id        : 'acc-need-pendingPatch',
-                        title     : _('Pending patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
-                        layout    : 'fit',
-                        border    : false,
-                        iconCls   : 'iconPendingPatch',
-                        items     : [ ui.cmp.PendingPatchGrid.getInstance() ],
-                        collapsed : true
+                        iconCls   : 'iconPatch',
+                        items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
+                        collapsed : false
                     }, {
                         id        : 'acc-google-translate',
                         title     : _('Google translation'),
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconGoogle',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
                     }]
@@ -17110,8 +18696,8 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin.ucFirst()) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
-                                                ', ' + _('Project: ') + '<em id="Info-Project">' + this.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
+                                                String.format(_('Connected as {0}'), (( PhDOE.user.isAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+												', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +
                                      '</div>'

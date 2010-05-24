@@ -176,7 +176,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
             if (PanType[0] === 'FE') {
                 stateLang = Ext.getCmp('FE-LANG-FILE-' + PanType[1]).isModified;
-                stateEn   = ( PhDOE.userLang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
+                stateEn   = ( PhDOE.user.lang === 'en' ) ? false : Ext.getCmp('FE-EN-FILE-' + PanType[1]).isModified;
             }
 
             if (PanType[0] === 'FNU') {

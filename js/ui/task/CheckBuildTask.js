@@ -5,7 +5,7 @@ ui.task._CheckBuildTask.display = function()
     XHR({
         params  : {
             task : 'getLogFile',
-            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.userLang
+            file : 'project_' + PhDOE.project + '_log_check_build_' + PhDOE.user.lang
         },
         success : function(r)
         {
@@ -17,21 +17,21 @@ ui.task._CheckBuildTask.display = function()
             ui.task.PingTask.getInstance().delay(30000);
 
             // Display
-            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.userLang) ) {
-                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.userLang);
+            if ( Ext.getCmp('main-panel').findById('check_build_panel_' + PhDOE.user.lang) ) {
+                Ext.getCmp('main-panel').remove('check_build_panel_' + PhDOE.user.lang);
             }
 
             Ext.getCmp('main-panel').add({
                 xtype      : 'panel',
-                id         : 'check_build_panel_' + PhDOE.userLang,
-                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.userLang)),
-                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                id         : 'check_build_panel_' + PhDOE.user.lang,
+                title      : String.format(_('Check build result for {0}'),Ext.util.Format.uppercase(PhDOE.user.lang)),
+                tabTip     : String.format(_('Check build result for the documentation {0}'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                 closable   : true,
                 autoScroll : true,
                 iconCls    : 'iconCheckBuild',
                 html       : '<div class="check-build-content">' + o.mess + '</div>'
             });
-            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.userLang);
+            Ext.getCmp('main-panel').setActiveTab('check_build_panel_' + PhDOE.user.lang);
         }
     });
 };
@@ -41,7 +41,7 @@ ui.task._CheckBuildTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+            lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.user.lang
         },
         success : function()
         {

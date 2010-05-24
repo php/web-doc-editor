@@ -49,6 +49,16 @@ class DBConnection
         return $this->conn->insert_id;
     }
 
+    public function num_rows()
+    {
+        return $this->conn->num_rows;
+    }
+
+    public function affected_rows()
+    {
+        return $this->conn->affected_rows;
+    }
+
     public function real_escape_string($escape_str)
     {
         return $this->conn->real_escape_string($escape_str);

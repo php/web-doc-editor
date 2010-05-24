@@ -179,7 +179,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
                     value : false,
@@ -188,7 +188,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletInfoCollapsed',
                     value : true,
@@ -197,7 +197,7 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletInfoCollapsed ) {
+            if( PhDOE.user.conf.portletInfoCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();

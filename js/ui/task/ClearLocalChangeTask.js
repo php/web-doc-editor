@@ -1,14 +1,9 @@
 Ext.namespace('ui','ui.task');
 
-// config - { ftype, fpath, fname, storeRecord }
+// config - { ftype, fpath, fname }
 ui.task.ClearLocalChangeTask = function(config)
 {
     Ext.apply(this, config);
-
-    if (PhDOE.userLogin === 'anonymous') {
-        PhDOE.winForbidden();
-        return;
-    }
 
     Ext.MessageBox.confirm(
         _('Confirm'),
@@ -41,15 +36,13 @@ ui.task.ClearLocalChangeTask = function(config)
                     },
                     success : function(r)
                     {
-                        var pending_commit_grid = ui.cmp.PendingCommitGrid.getInstance(),
-                            o                   = Ext.util.JSON.decode(r.responseText),
+                        var o = Ext.util.JSON.decode(r.responseText),
                             node;
 
-                        // We delete this record from the pending commit store
-                        pending_commit_grid.store.remove(this.storeRecord);
-
-                        // We fire event datachanged to update the file count
-                        pending_commit_grid.store.fireEvent('datachanged', pending_commit_grid.store);
+                        // We delete this record from the work in progress module
+                        ui.cmp.WorkTreeGrid.getInstance().delRecord(o.oldIdDB);
+                        // .. and Patches module
+                        ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.oldIdDB);
 
                         // Action for EN file
                         if( o.lang === 'en' && this.ftype === 'update' ) {
@@ -59,7 +52,7 @@ ui.task.ClearLocalChangeTask = function(config)
                                 function(record)
                                 {
                                     if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
-                                        record.set('needCommitEN', false);
+                                        record.set('fileModifiedEN', false);
                                         record.set('en_revision', o.revision);
                                         record.commit();
                                     }
@@ -69,8 +62,8 @@ ui.task.ClearLocalChangeTask = function(config)
                             ui.cmp.ErrorFileGrid.getInstance().store.each(
                                 function(record)
                                 {
-                                    if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                        record.set('needcommit', false);
+                                    if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                        record.set('fileModifiedEN', false);
                                     }
                                 }, this);
 
@@ -78,7 +71,7 @@ ui.task.ClearLocalChangeTask = function(config)
                             node = false;
                             node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                             if (node) {
-                              node.getUI().removeClass('modified');
+                              node.getUI().removeClass('fileModifiedByMe');
                             }
 
                             Ext.getBody().unmask();
@@ -93,8 +86,9 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.PendingTranslateGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModified', false);
+                                    record.commit();
                                 }
                             }, this);
 
@@ -102,10 +96,20 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.StaleFileGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needCommitLang', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
                                     record.set('revision', o.revision);
                                     record.set('maintainer', o.maintainer);
+                                    record.commit();
+                                }
+                            }, this);
+
+                        // Browse FileError
+                        ui.cmp.ErrorFileGrid.getInstance().store.each(
+                            function(record)
+                            {
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
                                     record.commit();
                                 }
                             }, this);
@@ -114,8 +118,9 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.PendingReviewGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModifiedLang', false);
+                                    record.commit();
                                 }
                             }, this);
 
@@ -123,8 +128,8 @@ ui.task.ClearLocalChangeTask = function(config)
                         ui.cmp.NotInENGrid.getInstance().store.each(
                             function(record)
                             {
-                                if ((PhDOE.userLang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('needcommit', false);
+                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
+                                    record.set('fileModified', false);
                                 }
                             }, this);
 
@@ -132,17 +137,21 @@ ui.task.ClearLocalChangeTask = function(config)
                         node = false;
                         node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
                         if (node) {
-                          node.getUI().removeClass('modified');
+                          node.getUI().removeClass('fileModifiedByMe');
                         }
 
                         Ext.getBody().unmask();
                     },
 
-                    failure : function()
+                    failure : function(r)
                     {
-                        // clear local change failure
                         Ext.getBody().unmask();
-                        PhDOE.winForbidden();
+						
+			            var o = Ext.util.JSON.decode(r.responseText);
+			            
+			            if( o.err ) { 
+						    PhDOE.winForbidden(o.err);
+			            }
                     }
                 });
             }

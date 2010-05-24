@@ -116,7 +116,7 @@ ui.task._UpdateSingleFolderTask.update = function(node)
 ui.task.UpdateSingleFolderTask = function(node)
 {
     // If the user is anonymous, we don't update anything
-    if (PhDOE.userLogin === 'anonymous') {
+    if (PhDOE.user.isAnonymous) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
         return;

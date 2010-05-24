@@ -168,7 +168,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
     }],
     listeners : {
         expand : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
                     value : false,
@@ -177,7 +177,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             }
         },
         collapse : function() {
-            if( PhDOE.appLoaded ) {
+            if( PhDOE.app.loaded ) {
                 new ui.task.UpdateConfTask({
                     item  : 'portletLocalMailCollapsed',
                     value : true,
@@ -186,7 +186,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
             }
         },
         afterrender : function(cmp) {
-            if( PhDOE.userConf.portletLocalMailCollapsed ) {
+            if( PhDOE.user.conf.portletLocalMailCollapsed ) {
                 cmp.collapse();
             } else {
                 cmp.expand();

@@ -71,7 +71,7 @@ ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
         ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
         ['themes/empty.css',                                                  _('Default')],
         ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
-        ['http://extjs.cachefly.net/ext-3.2.0/resources/css/xtheme-gray.css', _('Gray')],
+        ['http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/css/xtheme-gray.css', _('Gray')],
         ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
         ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
         ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],
@@ -113,7 +113,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         xtype      : 'spinnerfield',
                         width      : 60,
                         name       : 'mainAppMainMenuWidth',
-                        value      : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                        value      : PhDOE.user.conf.mainAppMainMenuWidth || 300,
                         fieldLabel : _('Main Menu width'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -124,7 +124,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -134,7 +134,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.userConf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -156,7 +156,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         mode           : 'local',
                         forceSelection : true,
                         editable       : false,
-                        value          : PhDOE.userConf.theme,
+                        value          : PhDOE.user.conf.theme,
                         store          : ui.cmp._EditorConf.themeStore,
                         listeners      : {
                             render : function()
@@ -186,7 +186,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items      : [{
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "ask-me") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "ask-me") ? true : false,
                         boxLabel   : _('Ask me if I want to check for error before saving the file'),
                         inputValue : 'ask-me',
                         listeners  : {
@@ -203,7 +203,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }, {
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "always") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "always") ? true : false,
                         boxLabel   : _('Always check for error before saving the file'),
                         inputValue : 'always',
                         listeners  : {
@@ -220,7 +220,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     }, {
                         autoHeight : true,
                         name       : 'onSaveFile',
-                        checked    : (PhDOE.userConf.onSaveFile === "never") ? true : false,
+                        checked    : (PhDOE.user.conf.onSaveFile === "never") ? true : false,
                         boxLabel   : _('Never check for error before saving the file'),
                         inputValue : 'never',
                         listeners  : {
@@ -248,7 +248,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'mainAppLoadMailsAtStartUp',
-                        checked     : PhDOE.userConf.mainAppLoadMailsAtStartUp,
+                        checked     : PhDOE.user.conf.mainAppLoadMailsAtStartUp,
                         boxLabel    : _('Load mail at startUp'),
                         listeners   : {
                             check : function(field)
@@ -269,7 +269,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'mainAppLoadBugsAtStartUp',
-                        checked     : PhDOE.userConf.mainAppLoadBugsAtStartUp,
+                        checked     : PhDOE.user.conf.mainAppLoadBugsAtStartUp,
                         boxLabel    : _('Load bugs at startUp'),
                         listeners   : {
                             check : function(field)
@@ -316,7 +316,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                         xtype      : 'spinnerfield',
                         width      : 60,
                         name       : 'newFileNbDisplay',
-                        value      : PhDOE.userConf.newFileNbDisplay || 0,
+                        value      : PhDOE.user.conf.newFileNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -349,7 +349,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'newFileScrollbars',
-                        checked     : PhDOE.userConf.newFileScrollbars,
+                        checked     : PhDOE.user.conf.newFileScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
@@ -369,7 +369,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'newFileGGPanel',
-                        checked     : PhDOE.userConf.newFileGGPanel,
+                        checked     : PhDOE.user.conf.newFileGGPanel,
                         boxLabel    : _('Display the Google Translation Panel'),
                         listeners   : {
                             check : function(field)
@@ -394,7 +394,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         autoHeight  : true,
                         name        : 'newFileSpellCheck',
-                        checked     : PhDOE.userConf.newFileSpellCheck,
+                        checked     : PhDOE.user.conf.newFileSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -441,7 +441,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         width      : 60,
                         name       : 'needUpdateNbDisplay',
-                        value      : PhDOE.userConf.needUpdateNbDisplay || 0,
+                        value      : PhDOE.user.conf.needUpdateNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -475,7 +475,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'needUpdateScrollbars',
-                        checked     : PhDOE.userConf.needUpdateScrollbars,
+                        checked     : PhDOE.user.conf.needUpdateScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
@@ -495,7 +495,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'needUpdateDisplaylog',
-                        checked     : PhDOE.userConf.needUpdateDisplaylog,
+                        checked     : PhDOE.user.conf.needUpdateDisplaylog,
                         boxLabel    : _('Automatically load the log when displaying the file'),
                         listeners   : {
                             check : function(field)
@@ -509,7 +509,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.needUpdateDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdateDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -531,7 +531,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.needUpdateDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -558,7 +558,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.needUpdateDiffPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdateDiffPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -580,7 +580,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'needUpdateDiffPanelHeight',
-                            value      : PhDOE.userConf.needUpdateDiffPanelHeight || 150,
+                            value      : PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -599,7 +599,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }]
                     }, {
                         name       : 'needUpdateDiff',
-                        checked    : (PhDOE.userConf.needUpdateDiff === "using-viewvc") ? true : false,
+                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-viewvc") ? true : false,
                         boxLabel   : _('Using ViewVc from php web site'),
                         inputValue : 'using-viewvc',
                         listeners  : {
@@ -615,7 +615,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'needUpdateDiff',
-                        checked    : (PhDOE.userConf.needUpdateDiff === "using-exec") ? true : false,
+                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-exec") ? true : false,
                         boxLabel   : _('Using diff -u command line'),
                         inputValue : 'using-exec',
                         listeners : {
@@ -642,7 +642,7 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name      : 'needUpdateSpellCheckEn',
-                        checked   : PhDOE.userConf.needUpdateSpellCheckEn,
+                        checked   : PhDOE.user.conf.needUpdateSpellCheckEn,
                         boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners : {
                             check : function(field)
@@ -655,8 +655,8 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         }
                     },{
                         name      : 'needUpdateSpellCheckLang',
-                        checked   : PhDOE.userConf.needUpdateSpellCheckLang,
-                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked   : PhDOE.user.conf.needUpdateSpellCheckLang,
+                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners : {
                             check : function(field)
                             {
@@ -694,7 +694,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                 title   : _('Menu'),
                 iconCls : 'iconMenu',
                 items   : [{
-                    hidden      : ( PhDOE.userLang === 'en' ),
+                    hidden      : ( PhDOE.user.lang === 'en' ),
                     xtype       : 'fieldset',
                     title       : _('Error type'),
                     iconCls     : 'iconFilesError',
@@ -702,7 +702,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorSkipNbLiteralTag',
-                        checked    : PhDOE.userConf.errorSkipNbLiteralTag,
+                        checked    : PhDOE.user.conf.errorSkipNbLiteralTag,
                         boxLabel   : _('Skip nbLiteralTag error'),
                         listeners  : {
                             check  : function(field)
@@ -726,7 +726,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorScrollbars',
-                        checked    : PhDOE.userConf.errorScrollbars,
+                        checked    : PhDOE.user.conf.errorScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -746,7 +746,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'errorLogLoadData',
-                        checked    : PhDOE.userConf.errorLogLoadData,
+                        checked    : PhDOE.user.conf.errorLogLoadData,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -759,7 +759,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'errorEntitiesLoadData',
-                        checked    : PhDOE.userConf.errorEntitiesLoadData,
+                        checked    : PhDOE.user.conf.errorEntitiesLoadData,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -772,7 +772,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'errorAcronymsLoadData',
-                        checked    : PhDOE.userConf.errorAcronymsLoadData,
+                        checked    : PhDOE.user.conf.errorAcronymsLoadData,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -786,7 +786,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.errorDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.errorDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -808,7 +808,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'errorDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.errorDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.errorDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -835,7 +835,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.errorDescPanel,
+                        collapsed      : !PhDOE.user.conf.errorDescPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -857,7 +857,7 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'errorDescPanelHeight',
-                            value      : PhDOE.userConf.errorDescPanelHeight || 150,
+                            value      : PhDOE.user.conf.errorDescPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -886,9 +886,9 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        hidden      : ( PhDOE.userLang === 'en' ),
+                        hidden      : ( PhDOE.user.lang === 'en' ),
                         name        : 'errorSpellCheckEn',
-                        checked     : PhDOE.userConf.errorSpellCheckEn,
+                        checked     : PhDOE.user.conf.errorSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
@@ -901,8 +901,8 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name        : 'errorSpellCheckLang',
-                        checked     : PhDOE.userConf.errorSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked     : PhDOE.user.conf.errorSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -948,7 +948,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         width      : 60,
                         name       : 'reviewedNbDisplay',
-                        value      : PhDOE.userConf.reviewedNbDisplay || 0,
+                        value      : PhDOE.user.conf.reviewedNbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -982,7 +982,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'reviewedScrollbars',
-                        checked    : PhDOE.userConf.reviewedScrollbars,
+                        checked    : PhDOE.user.conf.reviewedScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -1002,7 +1002,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'reviewedDisplaylog',
-                        checked    : PhDOE.userConf.reviewedDisplaylog,
+                        checked    : PhDOE.user.conf.reviewedDisplaylog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -1016,7 +1016,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.reviewedDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.reviewedDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -1038,7 +1038,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'reviewedDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.reviewedDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -1068,7 +1068,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'reviewedSpellCheckEn',
-                        checked     : PhDOE.userConf.reviewedSpellCheckEn,
+                        checked     : PhDOE.user.conf.reviewedSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
@@ -1081,8 +1081,8 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name        : 'reviewedSpellCheckLang',
-                        checked     : PhDOE.userConf.reviewedSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.userLang)),
+                        checked     : PhDOE.user.conf.reviewedSpellCheckLang,
+                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
@@ -1127,7 +1127,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'allFilesDisplayLog',
-                        checked    : PhDOE.userConf.allFilesDisplayLog,
+                        checked    : PhDOE.user.conf.allFilesDisplayLog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -1140,7 +1140,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         name       : 'allFilesEntitiesLoadData',
-                        checked    : PhDOE.userConf.allFilesEntitiesLoadData,
+                        checked    : PhDOE.user.conf.allFilesEntitiesLoadData,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -1153,7 +1153,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         }
                     },{
                         name       : 'allFilesAcronymsLoadData',
-                        checked    : PhDOE.userConf.allFilesAcronymsLoadData,
+                        checked    : PhDOE.user.conf.allFilesAcronymsLoadData,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners  : {
                             check : function(field)
@@ -1167,7 +1167,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.allFilesDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.allFilesDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -1189,7 +1189,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'allFilesDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.allFilesDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -1219,7 +1219,7 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'allFilesSpellCheck',
-                        checked     : PhDOE.userConf.allFilesSpellCheck,
+                        checked     : PhDOE.user.conf.allFilesSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -1265,7 +1265,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'patchScrollbars',
-                        checked    : PhDOE.userConf.patchScrollbars,
+                        checked    : PhDOE.user.conf.patchScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
@@ -1285,7 +1285,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name       : 'patchDisplaylog',
-                        checked    : PhDOE.userConf.patchDisplaylog,
+                        checked    : PhDOE.user.conf.patchDisplaylog,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
@@ -1299,7 +1299,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.patchDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.patchDisplaylogPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -1321,7 +1321,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'patchDisplaylogPanelWidth',
-                            value      : PhDOE.userConf.patchDisplaylogPanelWidth || 375,
+                            value      : PhDOE.user.conf.patchDisplaylogPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -1348,7 +1348,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.userConf.patchDisplayContentPanel,
+                        collapsed      : !PhDOE.user.conf.patchDisplayContentPanel,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
@@ -1370,7 +1370,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                             xtype      : 'spinnerfield',
                             width      : 60,
                             name       : 'patchDisplayContentPanelHeight',
-                            value      : PhDOE.userConf.patchDisplayContentPanelHeight || 375,
+                            value      : PhDOE.user.conf.patchDisplayContentPanelHeight || 375,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -1400,7 +1400,7 @@ ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         name        : 'patchSpellCheck',
-                        checked     : PhDOE.userConf.patchSpellCheck,
+                        checked     : PhDOE.user.conf.patchSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
@@ -1451,7 +1451,7 @@ ui.cmp.EditorConf = Ext.extend(Ext.Window,
 
     initComponent : function()
     {
-        if (PhDOE.userLang === 'en') {
+        if (PhDOE.user.lang === 'en') {
             ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefEn);
         } else {
             ui.cmp._EditorConf.menuStore.loadData(ui.cmp._EditorConf.menuDefNonEn);

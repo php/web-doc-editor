@@ -212,10 +212,21 @@ class ToolsError
             $type = '';
         }
 
-        $s    = 'SELECT * FROM `errorfiles` WHERE '.$type.'
-        `project` = \''.$project.'\' AND
-        `lang`=\''.$this->lang.'\' AND
-        `type` != \'-No error-\'';
+        $s = sprintf(
+            'SELECT
+                *
+             FROM
+                `errorfiles`
+             WHERE
+                %s
+                `project`=  "%s" AND
+                `lang`   =  "%s" AND
+                `type`   != "-No error-" LIMIT 3',
+            $type,
+            $project,
+            $this->lang
+        );
+        
         $r    = DBConnection::getInstance()->query($s);
         $node = array();
 
@@ -225,38 +236,43 @@ class ToolsError
 
             if (!isset($alreadyNode[$a->path.$a->name])) {
 
-                if (isset($ModifiedFiles[$this->lang.$a->path.$a->name]) || isset($ModifiedFiles['en'.$a->path.$a->name])) {
+                $isModifiedEN   = ( isset($ModifiedFiles['en'.$a->path.$a->name]) )        ? $ModifiedFiles['en'.$a->path.$a->name]        : false ;
+                $isModifiedLang = ( isset($ModifiedFiles[$this->lang.$a->path.$a->name]) ) ? $ModifiedFiles[$this->lang.$a->path.$a->name] : false ;
 
-                    if (isset($ModifiedFiles['en'.$a->path.$a->name])) {
+                if ( $isModifiedEN || $isModifiedLang ) {
+
+                    if ( $isModifiedEN ) {
                         $new_maintainer   = $a->maintainer;
                     }
 
-                    if (isset($ModifiedFiles[$this->lang.$a->path.$a->name])) {
-                        $new_maintainer   = $ModifiedFiles[$this->lang.$a->path.$a->name]['maintainer'];
+                    if ( $isModifiedLang ) {
+                        $new_maintainer   = $isModifiedLang['maintainer'];
                     }
 
                     $node[] = array(
-                    "id"         => $a->id,
-                    "path"       => $a->path,
-                    "name"       => $a->name,
-                    "maintainer" => $new_maintainer,
-                    "value_en"   => $a->value_en,
-                    "value_lang" => $a->value_lang,
-                    "type"       => $a->type,
-                    "needcommit" => true
+                    "id"                => $a->id,
+                    "path"              => $a->path,
+                    "name"              => $a->name,
+                    "maintainer"        => $new_maintainer,
+                    "value_en"          => $a->value_en,
+                    "value_lang"        => $a->value_lang,
+                    "type"              => $a->type,
+                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 } else {
 
                     $node[] = array(
-                    "id"         => $a->id,
-                    "path"       => $a->path,
-                    "name"       => $a->name,
-                    "maintainer" => ( isset($ModifiedFiles[$this->lang.$a->path.$a->name]) ) ? $ModifiedFiles[$this->lang.$a->path.$a->name]['maintainer'] : $a->maintainer,
-                    "value_en"   => $a->value_en,
-                    "value_lang" => $a->value_lang,
-                    "type"       => $a->type,
-                    "needcommit" => false
+                    "id"                => $a->id,
+                    "path"              => $a->path,
+                    "name"              => $a->name,
+                    "maintainer"        => ( $isModifiedLang ) ? $isModifiedLang['maintainer'] : $a->maintainer,
+                    "value_en"          => $a->value_en,
+                    "value_lang"        => $a->value_lang,
+                    "type"              => $a->type,
+                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 }

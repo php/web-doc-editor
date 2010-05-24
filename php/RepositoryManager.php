@@ -219,7 +219,7 @@ class RepositoryManager
                 // We get versions for this files
                 while( list($k, $v) = each($actualFiles) ) {
 
-                    $file = new File($firstFolder, $pathWithoutLang, $k);
+                    $file = new File($firstFolder, $pathWithoutLang.$k);
                     $info = $file->getInfo();
                     $actualFiles[$k]['version'] = $info['rev'];
 
@@ -250,7 +250,7 @@ class RepositoryManager
                 // We get versions of this files
                 while( list($k, $v) = each($nowFiles) )
                 {
-                    $file = new File($firstFolder, $pathWithoutLang, $k);
+                    $file = new File($firstFolder, $pathWithoutLang.$k);
                     $info = $file->getInfo();
                     $nowFiles[$k]['version'] = $info['rev'];
                 }
@@ -374,13 +374,14 @@ class RepositoryManager
         $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
+        $anonymousIdent = $am->anonymousIdent;
         $project  = $am->project;
 
         $s = sprintf(
             'SELECT
                 id
              FROM
-                `progressWork`
+                `work`
              WHERE
                 `project`="%s" AND
                 `lang`="%s" AND
@@ -393,15 +394,15 @@ class RepositoryManager
         );
         $r = $db->query($s);
 
-        // We insert or update the pendingCommit table
+        // We insert or update the work table
         if ($r->num_rows == 0) {
 
             $s = sprintf(
                 'INSERT into
-                    `progressWork`
-                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `date`, `type`)
+                    `work`
+                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
                  VALUES
-                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
+                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
                 $project,
                 $file->lang,
                 $file->path,
@@ -411,6 +412,7 @@ class RepositoryManager
                 $reviewed,
                 $maintainer,
                 $vcsLogin,
+                $anonymousIdent,
                 $type
             );
             $db->query($s);
@@ -422,18 +424,25 @@ class RepositoryManager
 
             $s = sprintf(
                 'UPDATE
-                    `progressWork`
+                    `work`
                  SET
                     `revision`="%s",
                     `en_revision`="%s",
                     `reviewed`="%s",
-                    `maintainer`="%s"
+                    `maintainer`="%s",
+                    `user`="%s",
+                    `anonymousIdent`="%s",
+                    `date`=now(),
+                    `module`="workInProgress",
+                    `patchID` = NULL
                  WHERE
                     `id`="%s"',
                 $revision,
                 $en_revision,
                 $reviewed,
                 $maintainer,
+                $am->vcsLogin,
+                $am->anonymousIdent,
                 $a->id
             );
             $db->query($s);
@@ -442,68 +451,13 @@ class RepositoryManager
 
         return $fileID;
     }
-
+    
     /**
-     * @TODO : DEPRECATED. Need to be removed.
-     * 
-     * Register a file as need to be commited, into the database.
-     *
-     * @param $file        The file object to be commited.
-     * @param $revision    The revision of this file.
-     * @param $en_revision The EN revision of this file.
-     * @param $reviewed    The stats of the reviewed tag.
-     * @param $maintainer  The maintainer.
-     * @param $type        The type of commit. Can be 'new' for new file, 'update' for an uptaded file or 'delete' for a file marked as delete.
-     * @return fileID of the file
-     */
-    public function addPendingCommit($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
-    {
-        $db       = DBConnection::getInstance();
-        $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
-        $project  = $am->project;
-
-        $s = sprintf(
-            'SELECT id FROM `pendingCommit` WHERE `project`="%s" AND `lang`="%s" AND `path`="%s" AND `name`="%s"',
-            $project,
-            $file->lang, $file->path, $file->name
-        );
-        $r = $db->query($s);
-
-        // We insert or update the pendingCommit table
-        if ($r->num_rows == 0) {
-
-            $s = sprintf(
-                'INSERT into `pendingCommit` (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
-                $project,
-                $file->lang, $file->path, $file->name, $revision, $en_revision,
-                $reviewed, $maintainer, $vcsLogin, $type
-            );
-            $db->query($s);
-            $fileID = $db->insert_id();
-
-        } else {
-
-            $a = $r->fetch_object();
-
-            $s = sprintf(
-                'UPDATE `pendingCommit` SET `revision`="%s", `en_revision`="%s", `reviewed`="%s", `maintainer`="%s" WHERE id="%s"',
-                $revision, $en_revision, $reviewed, $maintainer, $a->id
-            );
-            $db->query($s);
-            $fileID = $a->id;
-        }
-
-        return $fileID;
-    }
-
-
-    /**
-     * Remove the mark "needCommit" into DB for a set of files.
+     * Delete files from work in progress module.
      *
      * @param $files An array of File instances.
      */
-    public function delPendingCommit($files)
+    public function delWork($files)
     {
         $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
@@ -511,7 +465,7 @@ class RepositoryManager
 
         while( list($path, $data) = each($files))
         {
-            $query = sprintf('DELETE FROM `pendingCommit`
+            $query = sprintf('DELETE FROM `work`
                 WHERE
                     `project` = "%s" AND
                     `lang` = "%s" AND
@@ -523,30 +477,215 @@ class RepositoryManager
             $db->query($query);
         }
     }
-
+    
     /**
-     * Register a new patch, into the database.
+     * Move some files into a specific patch.
      *
-     * @param $file  The file object of the patch
-     * @param $email The email of the user who propose this patch.
-     * @return Patch unique Id.
+     * @param $patchID The DB Id of the patch
+     * @param $filesID A comma separated list of files's Id
+     * @return true
      */
-    public function addPendingPatch($file, $email)
+    public function moveToPatch($patchID, $filesID)
     {
+        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $uniqID = md5(uniqid(rand(), true));
+        $s = sprintf(
+             'SELECT
+                 `name`
+              FROM
+                 `patches`
+              WHERE
+                 `project` = "%s" AND
+                 `id`      = "%s" AND
+                 `user`    = "%s"',
+             $project,
+             $patchID,
+             $vcsLogin
+        );
+        $r = $db->query($s);
+
+        if( $db->affected_rows() == 0 ) {
+            return 'Patches unknow for this project or for this user';
+        }
 
         $s = sprintf(
-            'INSERT into `pendingPatch` (`project`, `lang`, `path`, `name`, `posted_by`, `date`, `email`, `uniqID`) VALUES ("%s", "%s", "%s", "%s", "%s", now(), "%s", "%s")',
-            $project,
-            $file->lang, $file->path, $file->name, $vcsLogin, $email, $uniqID
-        );
-        DBConnection::getInstance()->query($s);
+            'UPDATE
+                `work`
+             SET
+                `patchID` = "%s",
+                `module`  = "PatchesForReview"
+            WHERE
+                `project` = "%s" AND
+                `user`    = "%s" AND
+                `id` IN (%s)',
 
-        return $uniqID;
+            $patchID,
+            $project,
+            $vcsLogin,
+            $filesID
+        );
+        $r = $db->query($s);
+        
+        if( $db->affected_rows() < 1 ) {
+            return 'Error. Is this file(s) is(are) own by you ?';
+        } else {
+            return true;
+        }
+
+    }
+    
+    /**
+     * Move some files into work in progress module.
+     *
+     * @param $filesID A comma separated list of files's Id
+     * @return true
+     */
+    public function moveToWork($filesID)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = sprintf(
+            'UPDATE
+                `work`
+             SET
+                `patchID` = NULL,
+                `module`  = "workInProgress"
+            WHERE
+                `project` = "%s" AND
+                `user`    = "%s" AND
+                `id` IN (%s)',
+
+            $project,
+            $vcsLogin,
+            $filesID
+        );
+        $r = $db->query($s);
+        
+        if( $db->affected_rows() < 1 ) {
+            return 'Error. Is this file(s) is(are) own by you ?';
+        } else {
+            return true;
+        }
+
+    }
+
+    /**
+     * Delete a patch.
+     *
+     * @param $patchID The ID of the patch we want to delete
+     * @return true
+     */
+    public function deletePatch($patchID)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        // We start by change files for this patch.
+        $s = sprintf(
+            'UPDATE
+                `work`
+            SET
+                `patchID` = NULL,
+                `module`  = "workInProgress"
+            WHERE
+                `project` = "%s" AND
+                `user`    = "%s" AND
+                `patchID` =  %s',
+            $project,
+            $vcsLogin,
+            $patchID
+        );
+        $db->query($s);
+
+        // We now delete this patch
+        $s = sprintf(
+            'DELETE FROM
+                `patches`
+            WHERE
+                `project` = "%s" AND
+                `user`    = "%s" AND
+                `id`      =  %s',
+            $project,
+            $vcsLogin,
+            $patchID
+        );
+        $db->query($s);
+
+        return true;
+    }
+
+    /**
+     * Create a new patch for the current user.
+     *
+     * @param $name The name for this new patch
+     * @return true
+     */
+    public function createPatch($name)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = sprintf(
+            'INSERT INTO
+                `patches`
+                (`project`, `name`, `user`, `anonymousIdent`)
+            VALUES
+                ("%s", "%s", "%s", "%s")',
+            $project,
+            $name,
+            $vcsLogin,
+            $am->anonymousIdent
+        );
+        $db->query($s);
+
+        return $db->insert_id();
+
+    }
+
+    /**
+     * Modify the patch name for the current user.
+     * @param $patchID The ID of the patch we want to modify
+     * @param $name The new name for this patch
+     * @return true
+     */
+    public function modPatch($patchID, $name)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = sprintf(
+            'UPDATE
+                `patches`
+             SET
+                `name` = "%s"
+             WHERE
+                `project` = "%s" AND
+                `user`    = "%s" AND
+                `id`      = %s',
+            $name,
+            $project,
+            $vcsLogin,
+            $patchID
+        );
+        $db->query($s);
+
+        if( $db->affected_rows() != 1 ) {
+            return 'Error';
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -561,24 +700,29 @@ class RepositoryManager
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
+        $anonymousIdent = $am->anonymousIdent;
 
         $date = @date("Y-m-d H:i:s");
 
         $s = sprintf(
-            'INSERT INTO `pendingCommit`
-                (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `modified_by`, `date`, `type`)
+            'INSERT INTO
+                `work`
+                (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
             VALUES
-                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")',
+                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "%s", "delete")',
             $project,
-            $file->lang, $file->path, $file->name,
+            $file->lang,
+            $file->path,
+            $file->name,
             $vcsLogin,
+            $anonymousIdent,
             $date
         );
         $db->query($s);
 
         return array(
             'id'   => $db->insert_id(),
-            'by'   => $vcsLogin,
+            'by'   => Array("user"=> $vcsLogin, "anonymousIdent" => $anonymousIdent),
             'date' => $date
         );
     }
@@ -616,11 +760,11 @@ class RepositoryManager
                         // Delete this new file from the fileSystem
 //~                        @unlink($files[$i]->full_path.'.new');
 
-                        // Delete from pendingCommit table
+                        // Delete from work table
                         $tmp = Array($files[$i]);
 
                         // exclude from commit
-                        $this->delPendingCommit($tmp);
+                        $this->delWork($tmp);
 
                         // We must now update information into the app for this new file
                         $this->updateFileInfo($tmp);
@@ -659,7 +803,7 @@ class RepositoryManager
                             $tmp = array($files[$i]);
 
                             // exclude from commit
-                            $this->delPendingCommit($tmp);
+                            $this->delWork($tmp);
 
                             // We must now update information into the app for this file
                             $this->updateFileInfo($tmp);
@@ -680,8 +824,8 @@ class RepositoryManager
                         // Delete this new file from the fileSystem
                         @unlink($files[$i]->full_path.'.new');
 
-                        // Delete from pendingCommit table
-                        $this->delPendingCommit(array($files[$i]));
+                        // Delete from work table
+                        $this->delWork(array($files[$i]));
 
                     }
 
@@ -707,11 +851,11 @@ class RepositoryManager
                         // This file don't exist in the repository ! We can't commit it as a deleted file now.
                         // We must update this file into the app, and suppress it from this commit process
 
-                        // Delete from pendingCommit table
+                        // Delete from work table
                         $tmp = array($files[$i]);
 
                         // exclude from commit
-                        $this->delPendingCommit($tmp);
+                        $this->delWork($tmp);
 
                         // Remove this files from db
                         $this->delFiles($tmp);
@@ -731,7 +875,7 @@ class RepositoryManager
     /**
      * Get only Folders we need to commit according to chosen files
      *
-     * @param $folders An array of folders that are in pendingCommit queue
+     * @param $folders An array of folders that are in work queue
      * @param $l$filesog An array of files chosen to be commited
      * @return An associated array similar of $folders params, but contained only folders witch need to be commited for this files
      */
@@ -858,7 +1002,7 @@ class RepositoryManager
         if( $foldersInfos ) {
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
             $commitLog = array_merge($commitLog, $c);
-            $this->delPendingCommit($foldersInfos);
+            $this->delWork($foldersInfos);
         }
 
         // Task for files
@@ -870,8 +1014,7 @@ class RepositoryManager
         for( $i=0; $i < count($fileInfos); $i++) {
             $f = new File(
                 $fileInfos[$i]['lang'],
-                $fileInfos[$i]['path'],
-                $fileInfos[$i]['name']
+                $fileInfos[$i]['path'].$fileInfos[$i]['name']
             );
             switch ($fileInfos[$i]['type']) {
                 case 'new'    : $create_stack[] = $f; break;
@@ -945,6 +1088,68 @@ class RepositoryManager
     }
 
     /**
+     * Set the progress for a file in work table.
+     *
+     * @param $idDB The type of the file. Can be 'update', 'delete' or 'new'
+     * @param $progress The File instance of the file.
+     * @return TRUE if the progress have been saved succesfully, false otherwises
+     */
+    public function SetFileProgress($idDB, $progress)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $project  = $am->project;
+        $vcsLogin = $am->vcsLogin;
+        $anonymousIdent = $am->anonymousIdent;
+
+        // We start by get the current row
+        $s = sprintf(
+            'SELECT
+                `user`,
+                `anonymousIdent`
+             FROM
+                `work`
+             WHERE
+                `project` = "%s" AND
+                `id`      = %s',
+            $project,
+            $idDB
+        );
+        $r = $db->query($s);
+
+        if( $r->num_rows == 0 ) {
+            return 'file_dont_exist_in_workInProgress';
+        } else {
+
+            $a = $r->fetch_object();
+            
+            if( !($a->user == $vcsLogin && $a->anonymousIdent == $anonymousIdent) ) {
+                return 'file_isnt_owned_by_current_user';
+            }
+        }
+
+        $s = sprintf(
+            'UPDATE
+                `work`
+             SET
+                `progress` = %s
+             WHERE
+                `project`        = "%s" AND
+                `user`           = "%s" AND
+                `anonymousIdent` = "%s" AND
+                `id`             = %s',
+            $progress,
+            $project,
+            $vcsLogin,
+            $anonymousIdent,
+            $idDB
+        );
+        $db->query($s);
+
+        return true;
+    }
+
+    /**
      * clear local change of a file.
      *
      * @param $type The type of the file. Can be 'update', 'delete' or 'new'
@@ -957,6 +1162,8 @@ class RepositoryManager
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
+        $vcsLogin = $am->vcsLogin;
+        $anonymousIdent = $am->anonymousIdent;
 
         $lang = $file->lang;
         $path = $file->path;
@@ -971,14 +1178,47 @@ class RepositoryManager
         $return['errorState'] = false;
         $return['errorFirst'] = 0;
 
-        // We need select row from pendingCommit table
-        $s = "SELECT `id` FROM `pendingCommit`
-              WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
+        // We need select row from work table
+        $s = sprintf("
+              SELECT
+                 `id`
+              FROM
+                 `work`
+              WHERE
+                 `project`        = '%s' AND
+                 `lang`           = '%s' AND
+                 `path`           = '%s' AND
+                 `name`           = '%s'",
+              $project,
+              $lang,
+              $path,
+              $name
+        );
+        
         $r = $db->query($s);
-        $a = $r->fetch_object();
+        
+        if( $r->num_rows == 0 ) {
+        	
+            return 'file_localchange_didnt_exist';
+            
+        } else {
+        	
+        	// Rules to allow clearLocalChange or not.
+            $a = $r->fetch_object();
+            if( $a->user != $am->vcsLogin && $a->anonymousIdent != $am->anonymousIdent ) {
+            	// This file isn't own by the current user
+            	if( ! $am->isAdmin() ) {
+            		return 'file_isnt_owned_by_current_user';
+            	}
+            }
+            
+        }
+        
+        $return['oldIdDB'] = $a->id;
 
-        // We need delete row from pendingCommit table
-        $s = 'DELETE FROM `pendingCommit` WHERE `id`="' .$a->id. '"';
+        // We need delete row from work table
+        $s = 'DELETE FROM `work` WHERE `id`="' .$a->id. '"';
+
         $db->query($s);
 
         // If type == delete, we stop here and return
@@ -1056,99 +1296,6 @@ class RepositoryManager
     }
 
     /**
-     * All we must do after a patch have been accepted.
-     *
-     * @param $uniqID ID of the accepted patch.
-     */
-    public function postPatchAccept($uniqID)
-    {
-        $am       = AccountManager::getInstance();
-        $appConf  = $am->appConf;
-        $project  = $am->project;
-        $vcsLogin = $am->vcsLogin;
-
-        $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
-        $r = DBConnection::getInstance()->query($s);
-        $a = $r->fetch_object();
-
-        // We need to send an email ?
-        if (trim($a->email) != '' ) {
-
-            // We get the diff content to include it into the email
-            $file = new File($a->lang, $a->path, $a->name);
-            $patchContent = $file->rawDiff(true, $uniqID);
-
-            $to      = trim($a->email);
-            $subject = '['.$project.'-DOC] - Patch accepted for '.$a->lang.$a->path.$a->name;
-            $msg     = <<<EOD
-Your patch was accepted and applied to the $project Manual.
-
-Since the online and downloadable versions of the documentation need some
-time to get updated, we would like to ask you to be a bit patient.
-
-Here is the content of your patch :
-
-$patchContent
-
-Thank you for your submission, and for helping us make our documentation better.
-
---
-{$vcsLogin}@php.net
-EOD;
-            $am->email($to, $subject, $msg);
-        }
-
-        @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
-        $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
-        DBConnection::getInstance()->query($s);
-    }
-
-    /**
-     * All we must do after a patch have been rejected.
-     *
-     * @param $PatchUniqID ID of the accepted patch.
-     */
-    public function postPatchReject($uniqID)
-    {
-        $am       = AccountManager::getInstance();
-        $appConf  = $am->appConf;
-        $project  = $am->project;
-        $vcsLogin = $am->vcsLogin;
-
-        $s = "SELECT * FROM `pendingPatch` WHERE `uniqID` = '$uniqID'";
-        $r = DBConnection::getInstance()->query($s);
-        $a = $r->fetch_object();
-
-        // We need to send an email ?
-        if (trim($a->email) != '' ) {
-
-            // We get the diff content to include it into the email
-            $file = new File($a->lang, $a->path, $a->name);
-            $patchContent = $file->rawDiff(true, $uniqID);
-
-            $to      = trim($a->email);
-            $subject = '[PHP-DOC] - Patch Rejected for '.$a->lang.$a->path.$a->name;
-            $msg     = <<<EOD
-Your following patch was rejected from the PHP Manual.
-
-Here is the content of your patch :
-
-$patchContent
-
-Thank you for your submission.
-
---
-{$vcsLogin}@php.net
-EOD;
-            $am->email($to, $subject, $msg);
-        }
-
-        @unlink($appConf[$project]['vcs.path'].$a->lang.$a->path.$a->name.'.'.$a->uniqID.'.patch');
-        $s = sprintf('DELETE FROM `pendingPatch` WHERE `id` = "%s"', $a->id);
-        DBConnection::getInstance()->query($s);
-    }
-
-    /**
      * Update information about a file after commit (update informations added with revcheck tools).
      *
      * @param $files An array of File instances for info update.
@@ -1200,7 +1347,7 @@ EOD;
             } else { // lang file
 
                 // If this file don't exist in EN, we should skip all this proces
-                $en = new File('en', $file->path, $file->name);
+                $en = new File('en', $file->path.$file->name);
 
                 if( $en->exist() ) {
 
@@ -1312,7 +1459,7 @@ EOD;
 
             // Path to find translation.xml file, set default values,
             // in case we can't find the translation file
-            $translation_xml = new File($lang, '/', 'translation.xml');
+            $translation_xml = new File($lang, '/translation.xml');
 
             if ( file_exists($translation_xml->full_path) ) {
                 // Else go on, and load in the file, replacing all
@@ -1382,19 +1529,42 @@ EOD;
     {
         $name = $file->name;
         $path = $file->path;
+        
+        if( substr($name, -4) === '.new' ) {
+        	$toDisplay = true;
+        } else {
+            $toDisplay = false;
+        }
+        
+        $return = "needParsing : \n";
+        $return .= " => name : $name\n";
+        $return .= " => path : $path\n";
+        
         if (
-            (!$file->exist() && !in_array(substr($name, -3), array('xml','ent'))
-                && substr($name, -13) != 'PHPEditBackup')
+            !$file->exist()
+            || ( is_file($file->full_path) && !in_array(substr($name, -3), array('xml','ent')) )
+            || substr($name, -13) == 'PHPEditBackup'
             || strpos($name, 'entities.') === 0
-            || $path == '/chmonly/' || $path == '/internals/' || $path == '/internals2/'
-            || $name == 'contributors.ent' || $name == 'contributors.xml'
+            || $path == '/chmonly/'
+            || $path == '/internals/'
+            || $path == '/internals2/'
+            || $name == 'contributors.ent'
+            || $name == 'contributors.xml'
             || ($path == '/appendices/' && ($name == 'reserved.constants.xml' || $name == 'extensions.xml'))
-            || $name == 'README' || $name == 'DO_NOT_TRANSLATE' || $name == 'rsusi.txt'
-            || $name == 'translation.xml' || $name == 'missing-ids.xml'
-            || $name == 'license.xml' || $name == 'versions.xml'
+            || $name == 'README'
+            || $name == 'DO_NOT_TRANSLATE'
+            || $name == 'rsusi.txt'
+            || $name == 'translation.xml'
+            || $name == 'missing-ids.xml'
+            || $name == 'license.xml'
+            || $name == 'versions.xml'
         ) {
+        	$return .= " FALSE !\n\n\n";
+        	if( $toDisplay ) echo $return;
             return false;
         } else {
+            $return .= " TRUE !\n\n\n";
+            if( $toDisplay ) echo $return;
             return true;
         }
     }
@@ -1429,18 +1599,24 @@ EOD;
             $files = array();
 
             while (($name = readdir($dh)) !== false) {
-                $file = new File($lang, $path, $name);
+                
+            	if( $name == '.' || $name == '..') {
+                    continue;
+                }
+                
+                $file = new File($lang, $path.$name);
                 if (!$this->needParsing($file)) {
                     continue;
                 }
-                if ($name != '.' && $name != '..' && $name != '.svn' && $path != '/functions/') {
-                    if (is_dir($file->full_path)) {
-                        $dirs[] = $file;
-                    } elseif (is_file($file->full_path)) {
-                        $files[] = $file;
-                    }
+
+                if ( $file->isDir ) {
+                    $dirs[] = $file;
+                } elseif ( $file->isFile ) {
+                    $files[] = $file;
                 }
+                
             }
+            @closedir($dh);
 
             foreach($files as $f) {
                 $en_file   = $appConf[$project]['vcs.path'] .'en'  .$f->path .$f->name;
@@ -1458,10 +1634,9 @@ EOD;
             }
 
             foreach ($dirs as $d) {
-                $this->doUpdateNotInEN($d->path.$d->name.'/', $lang);
+                $this->doUpdateNotInEN($d->path.'/', $lang);
             }
         }
-        @closedir($dh);
     }
 
     /**
@@ -1485,28 +1660,24 @@ EOD;
             $files = array();
 
             while (($name = readdir($dh)) !== false) {
-
-                $file = new File('en', $path, $name);
+            	
+            	if( $name == '.' || $name == '..') {
+            		continue;
+            	}
+            	
+                $file = new File('en', $path.$name);
                 if (!$this->needParsing($file)) {
                     continue;
                 }
 
-                if ($name != '.' && $name != '..' && $name != '.svn'
-                 && !preg_match('/\.png$/', $name)
-                 && !preg_match('/\.gif$/', $name)
-                 && !preg_match('/\.jpg$/', $name)
-                 && !preg_match('/\.new$/', $name)
-                 && !preg_match('/\.patch$/', $name)
-                 && $path != '/functions/'
-                ) {
-                    if (is_dir($file->full_path)) {
-                        $dirs[] = $file;
-                    } elseif (is_file($file->full_path)) {
-                        $files[] = $file;
-                    }
+                if ( $file->isDir ) {
+                    $dirs[] = $file;
+                } elseif ( $file->isFile ) {
+                    $files[] = $file;
                 }
             }
-
+            closedir($dh);
+            
             foreach($files as $f) {
 
                 $en_size = intval(filesize($f->full_path) / 1024);
@@ -1609,7 +1780,7 @@ EOD;
                         continue;
                     }
 
-                    $lang_file = new File($lang, $f->path, $f->name);
+                    $lang_file = new File($lang, $f->path.$f->name);
 
                     // If the type of this revcheck is an update, we start be delete all reference to this file in table...
                     if( $revType == 'update' )
@@ -1637,7 +1808,7 @@ EOD;
                         $db->query($query);
                     }
 
-                    if (is_file($lang_file->full_path)) {
+                    if ( $lang_file->exist() ) {
 
                         // Initial revcheck method
                         $size = intval(filesize($lang_file->full_path) / 1024);
@@ -1690,10 +1861,9 @@ EOD;
             }
 
             foreach ($dirs as $d) {
-                $this->applyRevCheck($d->path.$d->name.'/', $revType, $revLang);
+                $this->applyRevCheck($d->path, $revType, $revLang);
             }
         }
-        @closedir($dh);
     }
 
     /**

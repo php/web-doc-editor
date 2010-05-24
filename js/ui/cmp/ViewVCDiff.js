@@ -21,7 +21,7 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
                 items      : [
                     new Ext.ux.IFrameComponent({
                         id  : 'frame-' + this.prefix + '-diff-' + this.fid,
-                        url : String.format(PhDOE.appConf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
+                        url : String.format(PhDOE.app.conf.viewVcUrl, this.fpath + this.fname, this.rev1, this.rev2)
                     })
                 ]
             }

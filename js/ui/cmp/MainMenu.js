@@ -29,14 +29,14 @@ ui.cmp._MainMenu.store = new Ext.data.Store({
 ui.cmp._MainMenu.store.on('load', function(store)
 {
     // We put the lang libel into Info-Language
-    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.userLang).data.name;
+    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.user.lang).data.name;
 
     store.each(function(record) {
 
         var tmp = new Ext.menu.Item({
             text    : record.data.name,
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
-            disabled: (record.data.code === PhDOE.userLang),
+            disabled: (record.data.code === PhDOE.user.lang),
             handler : function() {
                 
                 XHR({
@@ -65,7 +65,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
+                disabled : (PhDOE.user.isAnonymous),
                 iconCls  : 'iconRefresh',
                 handler  : function()
                 {
@@ -103,7 +103,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check build'),
-                        disabled : (PhDOE.userLogin === 'anonymous'),
+                        disabled : (PhDOE.user.isAnonymous),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {
@@ -117,7 +117,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                                 params  :
                                 {
                                     task     : 'checkLockFile',
-                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.userLang
+                                    lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.user.lang
                                 },
                                 success : function()
                                 {
@@ -198,7 +198,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             }, {
                                 text    : _('Run this script'),
                                 iconCls : 'iconRun',
-                                disabled: (PhDOE.userLogin === 'anonymous'),
+                                disabled: (PhDOE.user.isAnonymous),
                                 handler : function()
                                 {
                                     // We test if there is a check in progress for this language
@@ -283,7 +283,6 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : MenuLang
             }, {
                 text     : _('Erase my personal data'),
-                disabled : (PhDOE.userLogin === 'anonymous') ? true : false,
                 iconCls  : 'iconErasePersonalData',
                 handler  : function()
                 {

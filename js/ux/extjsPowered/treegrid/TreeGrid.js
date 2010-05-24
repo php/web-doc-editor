@@ -221,6 +221,7 @@ Ext.ux.tree.TreeGrid = Ext.extend(Ext.tree.TreePanel, {
     },
 
     updateColumnWidths : function() {
+
         var cols = this.columns,
             colCount = cols.length,
             groups = this.outerCt.query('colgroup'),
@@ -416,3 +417,39 @@ Ext.ux.tree.TreeGrid = Ext.extend(Ext.tree.TreePanel, {
 });
 
 Ext.reg('treegrid', Ext.ux.tree.TreeGrid);
+
+
+Ext.override(Ext.ux.tree.TreeGrid, {
+  onResize: function(w, h) {
+    Ext.ux.tree.TreeGrid.superclass.onResize.apply(this, arguments);
+
+    var bd = this.innerBody.dom;
+    var hd = this.innerHd.dom;
+
+    if (!bd) {
+      return;
+    }
+
+    if (Ext.isNumber(h)) {
+      //bd.style.height = this.body.getHeight(true) - hd.offsetHeight + 'px';
+      bd.style.height = this.body.getHeight(true) - 24 + 'px';  // Here is my fix to avoid the vertical scrollBar
+    }
+
+    if (Ext.isNumber(w)) {
+      if (Ext.isIE && !(Ext.isStrict && Ext.isIE8)) {
+        var bdWith = this.body.getWidth(true) + 'px';
+        bd.style.width = bdWith;
+        hd.style.width = bdWith;
+      }
+      var sw = Ext.num(this.scrollOffset, Ext.getScrollBarWidth());
+      if (this.reserveScrollOffset || ((bd.offsetWidth - bd.clientWidth) > 10)) {
+        this.setScrollOffset(sw);
+      } else {
+        var me = this;
+        setTimeout(function() {
+          me.setScrollOffset(bd.offsetWidth - bd.clientWidth > 10 ? sw : 0);
+        }, 10);
+      }
+    }
+  }
+});

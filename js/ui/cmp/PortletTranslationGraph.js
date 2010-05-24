@@ -24,7 +24,7 @@ ui.cmp._PortletTranslationGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 {
     height        : 400,
-    url           : 'http://extjs.cachefly.net/ext-3.2.0/resources/charts.swf',
+    url           : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
     dataField     : 'total',
     categoryField : 'libel',
     store         : ui.cmp._PortletTranslationGraph.store,

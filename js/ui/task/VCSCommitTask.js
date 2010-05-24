@@ -20,7 +20,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
     XHR({
         params  : {
             task     : 'checkLockFile',
-            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.userLogin +'_commit'
+            lockFile : 'project_' + PhDOE.project + '_lock_'+ PhDOE.user.login +'_commit'
         },
         success : function()
         {
@@ -162,7 +162,7 @@ ui.task._VCSCommitTask.commit = function(files)
 ui.task.VCSCommitTask = function()
 {
     // If the user is anonymous, we don't commit anything
-    if (PhDOE.userLogin === 'anonymous') {
+    if (PhDOE.user.isAnonymous) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
 

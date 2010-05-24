@@ -471,6 +471,8 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
 
         storeLang    : '',
         storeProject : '',
+		
+		email : Ext.util.Cookies.get("email"),
 
         init : function()
         {
@@ -532,7 +534,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                 win = new Ext.Window({
                     layout      : 'border',
                     width       : 380,
-                    height      : 250,
+                    height      : 270,
                     closable    : false,
                     closeAction : 'hide',
                     resizable   : false,
@@ -550,9 +552,10 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         })
                     ],
                     listeners : {
-                        render : function()
+                        render : function(c)
                         {
                             var t = new Ext.util.DelayedTask(function() {
+								
                                 Ext.getCmp('login-form-vcsLogin').focus();
                             });
 
@@ -573,7 +576,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         url         : './do/login',
                         bodyStyle   : 'padding:5px 5px 0',
                         border      : false,
-                        height      : 120,
+                        height      : 140,
                         width       : 350,
                         labelWidth  : 110,
                         defaults    : { width : 217 },
@@ -636,6 +639,21 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             name            : 'vcsPassword',
                             id              : 'login-form-vcsPasswd',
                             inputType       : 'password',
+                            enableKeyEvents : true,
+                            listeners       : {
+                                keypress : function(field, e)
+                                {
+                                    if (e.getKey() == e.ENTER) {
+                                        Ext.getCmp('login-form-email').focus();
+                                    }
+                                }
+                            }
+                        }, {
+                            fieldLabel      : 'Email',
+                            name            : 'email',
+                            id              : 'login-form-email',
+							vtype           : 'email',
+							value           : this.email,
                             enableKeyEvents : true,
                             listeners       : {
                                 keypress : function(field, e)

@@ -34,7 +34,7 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
 
                     Ext.Msg.alert(
                         _('Status'),
-                        String.format(_('Email sent to {0} with success!'), win.name),
+                        String.format(_('Email sent to {0} with success!'), win.name.ucFirst()),
                         Ext.emptyFn
                     );
                 }
@@ -54,7 +54,7 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
         this.name  = name;
         this.email = email;
 
-        this.items.items[0].items.items[0].setValue('"' + this.name + '" <' + this.email + '>');
+        this.items.items[0].items.items[0].setValue('"' + this.name.ucFirst() + '" <' + this.email + '>');
         this.items.items[0].items.items[1].setValue('');
         this.items.items[0].items.items[2].setValue('');
     },

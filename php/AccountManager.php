@@ -1,4 +1,8 @@
 <?php
+/**
+ * A class for managing account over the application.
+ *
+ */
 
 require_once dirname(__FILE__) . '/VCSFactory.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
@@ -23,6 +27,9 @@ class AccountManager
     public $vcsPasswd;
     public $vcsLang;
     public $userConf;
+    public $email;
+    public $anonymousIdent;
+    public $isAnonymous;
     public $defaultConf;
     public $appConf;
 
@@ -93,6 +100,10 @@ class AccountManager
 
     }
 
+    /**
+     * Change the current language
+     * @param $lang string The new language we want to change to
+     */
     public function switchLang($lang) {
         $_SESSION['lang'] = $lang;
         $this->vcsLang    = $lang;
@@ -126,6 +137,9 @@ class AccountManager
         $this->vcsPasswd = $_SESSION['vcsPasswd'];
         $this->vcsLang   = $_SESSION['lang'];
         $this->project   = $_SESSION['project'];
+        $this->anonymousIdent = $_SESSION['anonymousIdent'];
+        $this->isAnonymous = $_SESSION['isAnonymous'];
+        $this->email = $_SESSION['email'];
 
         ProjectManager::getInstance()->setProject($this->project);
 
@@ -144,12 +158,12 @@ class AccountManager
      * @param $project   The project we want to work on.
      * @param $vcsLogin  The login use to identify this user into PHP VCS server.
      * @param $vcsPasswd The password, in plain text, to identify this user into PHP VCS server.
+     * @param $email     The email for this user. Need to contact him via the application.
      * @param $lang      The language we want to access.
      * @return An associated array.
      */
-    public function login($project, $vcsLogin, $vcsPasswd, $lang='en')
+    public function login($project, $vcsLogin, $vcsPasswd, $email, $lang='en')
     {
-
         // Var to return into ExtJs
         $return = array();
 
@@ -176,6 +190,8 @@ class AccountManager
 
            // Even if the user provide an empty login, we force it to be 'anonymous'
            $vcsLogin  = 'anonymous';
+           
+           $this->isAnonymous = true;
 
         } // End anonymous's login
         else {
@@ -194,6 +210,10 @@ class AccountManager
 
         if( $AuthReturn === true ) {
 
+           // We check if there is a cookie to identify this user. If not, we set one.
+           $this->anonymousIdent = ( isset($_COOKIE['anonymousIdent']) ) ? $_COOKIE['anonymousIdent'] : uniqid('', true);
+           setcookie("anonymousIdent", $this->anonymousIdent, time() + 3600*24*365, "/"); // One year ;)
+
            // Check the karma
            $karma = VCSFactory::getInstance()->checkKarma($vcsLogin, $lang);
 
@@ -207,12 +227,22 @@ class AccountManager
            $this->vcsLogin  = $vcsLogin;
            $this->vcsPasswd = $vcsPasswd;
            $this->vcsLang   = $lang;
+           $this->email     = $email;
 
-           // Is this user already exist on this server ? database check
-           $s = sprintf(
-               'SELECT * FROM `users` WHERE `vcs_login`="%s"',
-               $vcsLogin
-           );
+	       $s = sprintf(
+	           'SELECT
+	              *
+	           FROM
+	              `users`
+	           WHERE
+	              `project`        = "%s" AND
+	              `vcs_login`      = "%s" AND
+	              `anonymousIdent` = "%s" ',
+	           $project,
+	           $this->vcsLogin,
+	           $this->anonymousIdent
+	       );
+           
            $r = DBConnection::getInstance()->query($s);
 
            if ($r->num_rows == 1) {
@@ -222,13 +252,26 @@ class AccountManager
 
               // ... object's property ...
               $this->userConf = json_decode($a->conf);
+              
+              $this->userID = $a->userID;
 
               // ... and into the php's session
-              $_SESSION['userID']    = $a->userID;
-              $_SESSION['vcsLogin']  = $this->vcsLogin;
+              $_SESSION['userID']  = $this->userID;
+              $_SESSION['project'] = $this->project;
+              if($this->vcsLogin=='anonymous'){
+                  $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$a->userID;
+              } else {
+              	  $_SESSION['vcsLogin'] = $this->vcsLogin;
+              }
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+              $_SESSION['isAnonymous'] = $this->isAnonymous;
+              $_SESSION['anonymousIdent'] = $this->anonymousIdent;
               $_SESSION['lang']      = $this->vcsLang;
               $_SESSION['userConf']  = $this->userConf;
+              $_SESSION['email']  = $this->email;
+              
+              // We update the email if this user have decided to change it.
+              $this->updateEmail();
 
               // We construct the return's var for ExtJs
               $return['state'] = true;
@@ -242,8 +285,16 @@ class AccountManager
 
               //We store his configuration into object's property
               $_SESSION['userID']    = $userID;
-              $_SESSION['vcsLogin']  = $this->vcsLogin;
+              if($this->vcsLogin=='anonymous'){
+                  $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$userID;
+              } else {
+                  $_SESSION['vcsLogin'] = $this->vcsLogin;
+              }
+              $_SESSION['project'] = $this->project;
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+              $_SESSION['isAnonymous'] = $this->isAnonymous;
+              $_SESSION['anonymousIdent'] = $this->anonymousIdent;
+              $_SESSION['email']      = $this->email;
               $_SESSION['lang']      = $this->vcsLang;
               $_SESSION['userConf']  = json_decode(json_encode($this->defaultConf));
 
@@ -253,7 +304,14 @@ class AccountManager
            }
 
            // We put this username into a cookie after a valid login
-           setcookie("loginApp", $_SESSION['vcsLogin'], time() + 3600*24*365, "/"); // One year ;)
+           if( $this->isAnonymous ) {
+           	$cookieLogin = 'anonymous';
+           } else {
+            $cookieLogin = $_SESSION['vcsLogin'];
+           }
+           
+           setcookie("loginApp", $cookieLogin, time() + 3600*24*365, "/"); // One year ;)
+           setcookie("email", $email, time() + 3600*24*365, "/");
 
         } elseif ($AuthReturn == 'Bad password') {
 
@@ -272,18 +330,78 @@ class AccountManager
     }
 
     /**
+     * Check if a user is an anonymous or not based only on his name.
+     * @param string The user name to check
+     * @return boolean TRUE if the given user is an anonymous, FALSE otherwise.
+     */
+    public function anonymous($userName)
+    {
+    	return ( substr(strtolower($userName), 0, 11) === 'anonymous #' ) ? true : false;
+    }
+
+    public function isAdmin()
+    {
+    	$admin = explode(",", $this->appConf[$this->project]['project.admin']);
+    	return ( in_array($this->vcsLogin, $admin) ) ? true : false;
+    }
+    
+    public function updateEmail()
+    {
+        $db = DBConnection::getInstance();
+        
+        $s = sprintf(
+            'UPDATE `users` SET `email`="%s" WHERE `userID`="%s"',
+            $this->email, $this->userID
+        );
+        $db->query($s);
+    }
+    
+
+    /**
+     * Get the email for a user
+     *
+     * @return The email or false if we haven't found it.
+     */
+    public function getUserEmail($user)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $s = sprintf(
+            'SELECT
+                `email`
+             FROM
+                `users`
+             WHERE
+                `project`   = "%s" AND
+                `vcs_login` = "%s"',
+            $project, $user
+        );
+        $r = DBConnection::getInstance()->query($s);
+        $nb = $r->num_rows;
+
+        // We have found an email
+        if( $nb != 0 ) {
+            $a = $r->fetch_object();
+            return $a->email;
+        } else {
+            return false;
+        }
+
+    }
+    
+    /**
      * Register a new valid user on the application.
      *
      * @return int The database insert id
      */
     private function register()
     {
-
         $db = DBConnection::getInstance();
 
         $s = sprintf(
-            'INSERT INTO `users` (`vcs_login`, `conf`) VALUES ("%s","%s")',
-            $this->vcsLogin, $db->real_escape_string(json_encode($this->defaultConf))
+            'INSERT INTO `users` (`project`, `vcs_login`, `email`, `anonymousIdent`, `conf`) VALUES ("%s","%s","%s","%s","%s")',
+            $this->project, $this->vcsLogin, $this->email, $this->anonymousIdent, $db->real_escape_string(json_encode($this->defaultConf))
         );
         $db->query($s);
         return $db->insert_id();
@@ -297,7 +415,6 @@ class AccountManager
      */
     public function updateConf($item, $value)
     {
-
         if( $value == "false" ) {
             $value = false;
         }
@@ -316,16 +433,24 @@ class AccountManager
         $db = DBConnection::getInstance();
 
         // In DB
-        $s = sprintf(
-            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
-            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
-        );
+        if( $this->vcsLogin == 'anonymous' ) {
+	        $s = sprintf(
+	            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s" AND `anonymousIdent`="%s"',
+	            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin, $this->anonymousIdent
+	        );
+        } else {
+	        $s = sprintf(
+	            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
+	            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
+	        );
+        }
         $db->query($s);
 
     }
 
     /**
-     * Erase personal data. Delete all reference into the DB for this user.
+     * Erase personal data for the current user.
+     * Delete all reference from `users` & `commitMessage` DB tables.
      */
     public function eraseData()
     {
@@ -343,9 +468,8 @@ class AccountManager
         DBConnection::getInstance()->query($s);
     }
 
-
     /**
-     * Send an email.
+     * Send an email
      *
      * @param $to The Receiver.
      * @param $subject The subject of the email.
@@ -357,7 +481,7 @@ class AccountManager
         if( $from != 'www' ) $from = $this->vcsLogin;
 
         $headers = 'From: '.$from.'@php.net' . "\r\n" .
-                   'X-Mailer: PhpDocumentation Online Editor' ."\r\n" .
+                   'X-Mailer: Php Docbook Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";
 
         mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers);

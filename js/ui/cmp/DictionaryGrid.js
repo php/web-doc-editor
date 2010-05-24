@@ -25,7 +25,7 @@ ui.cmp._DictionaryGrid.store = Ext.extend(Ext.data.Store,
     },
     listeners: {
         load: function() {
-            if( PhDOE.userLogin != "anonymous" ) {
+            if( !PhDOE.user.isAnonymous ) {
                 // Enable the "add new word" button"
                 Ext.getCmp(this.fid + '-btn-new-word').enable();
             }
@@ -58,7 +58,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
                 {
                     var o = Ext.util.JSON.decode(r.responseText);
 
-                    record.set('lastUser', PhDOE.userLogin);
+                    record.set('lastUser', PhDOE.user.login);
                     record.set('lastDate', Date.parseDate(o.dateUpdate, 'Y-m-d H:i:s'));
 
                     record.commit();
@@ -106,8 +106,8 @@ ui.cmp._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
             items  : [{
                 scope   : this,
                 text    : _('Delete this word'),
-                iconCls : 'iconDelete',
-                disabled: (PhDOE.userLogin == "anonymous"),
+                iconCls : 'iconTrash',
+                disabled: (PhDOE.user.isAnonymous),
                 handler : function()
                 {
                     XHR({
@@ -172,7 +172,7 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                    }
                },
                {
-                   header: String.format(_('{0} word'), PhDOE.userLang.ucFirst() ),
+                   header: String.format(_('{0} word'), PhDOE.user.lang.ucFirst() ),
                    sortable: true,
                    dataIndex: 'valueLang',
                    editor    : {
@@ -238,7 +238,7 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                         id: 'new',
                         valueEn: '',
                         valueLang: '',
-                        lastUser: PhDOE.userLogin,
+                        lastUser: PhDOE.user.login,
                         lastDate: newDate
                     });
 

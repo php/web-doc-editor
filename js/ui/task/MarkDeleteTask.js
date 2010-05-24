@@ -20,7 +20,7 @@ ui.task.MarkDeleteTask = function(config)
                     scope   : this,
                     params  : {
                         task     : 'markAsNeedDelete',
-                        FilePath : PhDOE.userLang + this.fpath,
+                        FilePath : PhDOE.user.lang + this.fpath,
                         FileName : this.fname
                     },
                     success : function(r)
@@ -28,10 +28,10 @@ ui.task.MarkDeleteTask = function(config)
                         var o = Ext.util.JSON.decode(r.responseText);
 
                         Ext.getBody().unmask();
-                        ui.cmp.PendingCommitGrid.getInstance().addRecord(
-                            o.id, PhDOE.userLang + this.fpath, this.fname, 'delete'
+                        ui.cmp.WorkTreeGrid.getInstance().addRecord(
+                            o.id, PhDOE.user.lang + this.fpath, this.fname, 'delete'
                         );
-                        this.storeRecord.set('needcommit', true);
+                        this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     }
                 });
             }

@@ -34,7 +34,10 @@ ui.task.GetFileTask = function(config)
                 path = 'http://' + window.location.host + ':' + window.location.port + window.location.pathname
                        + '?perm=/' + this.fpath.split('/')[0] + '/' + o.xmlid.split('|')[0] + '.php&project=' + PhDOE.project,
                 perm = '<a href="' + path + '" target="_blank"><img src="themes/img/anchor.png" alt="permlink" style="vertical-align: middle;" ext:qtip="' + _('Permanent link to this page') + '" /></a>&nbsp;',
-                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
+                p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
+                pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
+                f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
+				fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -43,8 +46,7 @@ ui.task.GetFileTask = function(config)
               )
             {
                 p.permlink = '';
-            } else if( this.ftype  === 'GGTRANS' )
-            {
+            } else if( this.ftype  === 'GGTRANS' ) {
                 p.setTitle(p.originTitle);
                 p.setIconClass('iconGoogle');
             } else {
@@ -53,17 +55,17 @@ ui.task.GetFileTask = function(config)
             }
 
             // We define the content into the editor
-            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(o.content);
+            f.setCode(o.content);
 
             // If this is and automatic translation from Google API, we reint the file now.
             if( this.ftype  === 'GGTRANS' ) {
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).reIndentAll();
+                f.reIndentAll();
             }
 
             // Remove the mask from the editor
-            Ext.get(id_prefix + '-PANEL-' + this.fid).unmask();
+            pEl.unmask();
 
-            if( o.warn_tab ) {
+            if( o.warn_tab && !this.freadOnly  ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
@@ -74,10 +76,10 @@ ui.task.GetFileTask = function(config)
                 });
 
                 // Mark as dirty this editor now
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
             }
 
-            if( o.warn_encoding ) {
+            if( o.warn_encoding && !this.freadOnly ) {
 
                 // Display a warn message if this file containes some tab caracter.
                 Ext.MessageBox.show({
@@ -87,71 +89,133 @@ ui.task.GetFileTask = function(config)
                     icon    : Ext.MessageBox.WARNING
                 });
 
-                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
+                f.setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
 
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
             }
+            
+            var dataModified;
+            
+            if( this.prefix === 'FNT' || this.prefix === 'FNIEN' ) { dataModified = 'fileModified'; }
+            if( this.prefix === 'FNU' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+            if( this.prefix === 'FE'  ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+            if( this.prefix === 'FNR' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
+
+
+            // We ensure that this file have been marked as modified into the store
+            if( o.fileModified && this.prefix !== 'AF' ) {
+                this.storeRecord.set(dataModified, o.fileModified);
+                this.storeRecord.commit();
+            }
+
+            // Special case for AF module
+            if( this.prefix === 'AF' ) {
+
+                this.storeRecord.data = {};
+
+                this.storeRecord.data.fileModified = false;
+                if( o.fileModified ) {
+                    this.storeRecord.data.fileModified = o.fileModified;
+                }
+            }
+
+            // This file have been modified by a different user than the current one.
+            if( o.fileModified && ( fileModifiedInfo.user !== PhDOE.user.login || fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent ) ) {
+
+                // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
+				if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+					
+					Ext.MessageBox.show({
+                        title   : _('Information'),
+                        msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst()+' mais vous êtes un utilisateur authentifié, vous pouvez donc le modifier.',
+                        buttons : Ext.MessageBox.OK,
+                        icon    : Ext.MessageBox.INFO
+                    });
+					
+				} else {						
+	                if( !this.freadOnly ) {
+	                    // We disable save group, undoRdeo group, and tools group from the toolBars
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
+	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
+	                }
+	
+	                // If the current user isn't the user who have modified this file, we disable the panel
+	
+	                var mess = Ext.MessageBox.show({
+	                    title   : _('Information'),
+	                    msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst(),
+	                    buttons : Ext.MessageBox.OK,
+	                    icon    : Ext.MessageBox.INFO
+	                });
+	
+	                mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
+	                mess.getDialog().mask.alignTo(pEl.dom, "tl");
+				}
+            }
         },
         callback : function()
         {
+            var tab = Ext.getCmp(this.prefix + '-' + this.fid);
+
             // Mark FNT panel as loaded
             if( this.prefix == 'FNT' ) {
                 if( this.ftype == 'TRANS' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panTRANSLoaded = true;
+                    tab.panTRANSLoaded = true;
                 }
                 if( this.ftype == 'GGTRANS' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panGGTRANSLoaded = true;
+                    tab.panGGTRANSLoaded = true;
                 }
             }
 
             // Mark FNU panel as loaded
             if( this.prefix == 'FNU' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FE panel as loaded
             if( this.prefix == 'FE' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FNR panel as loaded
             if( this.prefix == 'FNR' ) {
                 if( this.ftype == 'LANG' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                    tab.panLANGLoaded = true;
                 }
                 if( this.ftype == 'EN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panENLoaded = true;
+                    tab.panENLoaded = true;
                 }
             }
 
             // Mark FNIEN panel as loaded
             if( this.prefix == 'FNIEN' ) {
-                Ext.getCmp(this.prefix + '-' + this.fid).panLANGLoaded = true;
+                tab.panLANGLoaded = true;
             }
 
             // Mark AF panel as loaded
             if( this.prefix == 'AF' ) {
-                Ext.getCmp(this.prefix + '-' + this.fid).panLoaded = true;
+                tab.panLoaded = true;
             }
 
             // Mark PP panel as loaded
             if( this.prefix == 'PP' ) {
                 if( this.ftype == 'PATCH' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panPatchLoaded = true;
+                    tab.panPatchLoaded = true;
                 }
                 if( this.ftype == 'ORIGIN' ) {
-                    Ext.getCmp(this.prefix + '-' + this.fid).panOriginLoaded = true;
+                    tab.panOriginLoaded = true;
                 }
             }
 

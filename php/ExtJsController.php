@@ -82,8 +82,9 @@ class ExtJsController
         $vcsPasswd = $this->getRequestVariable('vcsPassword');
         $lang      = $this->getRequestVariable('lang');
         $project   = $this->getRequestVariable('project');
+        $email   = $this->getRequestVariable('email');
 
-        $response = $am->login($project, $vcsLogin, $vcsPasswd, $lang);
+        $response = $am->login($project, $vcsLogin, $vcsPasswd, $email, $lang);
 
         if ($response['state'] === true) {
             // This user is already know as a valid user
@@ -95,14 +96,19 @@ class ExtJsController
             RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
             return JsonResponseBuilder::success();
+            
         } elseif ($response['state'] === false) {
+        	
             // This user is unknow from this server
             return JsonResponseBuilder::failure(array(
               'msg'        => $response['msg'],
               'authMethod' => $response['authMethod']
             ));
+            
         } else {
+        	
             return JsonResponseBuilder::failure();
+            
         }
     }
 
@@ -147,10 +153,10 @@ class ExtJsController
         array_shift($t); // skip the first witch is empty
         array_shift($t); // skip the second witch is the lang
 
-        $filePath = "/".implode("/", $t);
+        $filePath = "/".implode("/", $t).$newFolderName;
 
-        $file = new File($fileLang, $filePath, '');
-
+        $file = new File($fileLang, $filePath);
+        
         // We test if this folder not already exist
         if( $file->exist() )
         {
@@ -356,8 +362,9 @@ class ExtJsController
             $data['NbNotInEn']       = $rf->getNbNotInEn();
         }
 
-        $data['NbPendingCommit'] = $rf->getNbPendingCommit();
-        $data['NbPendingPatch']  = $rf->getNbPendingPatch();
+        // TODO : find a way to detect modification into Work & patches modules
+        //$data['NbPendingCommit'] = $rf->getNbPendingCommit();
+        //$data['NbPendingPatch']  = $rf->getNbPendingPatch();
 
         $data['lastInfoDate'] = $rf->getLastInfoDate();
 
@@ -455,20 +462,17 @@ class ExtJsController
     }
 
     /**
-     * Get all files witch need to be commited
+     * Get all files in work module
      */
-    public function getFilesPendingCommit()
+    public function getWork()
     {
         AccountManager::getInstance()->isLogged();
 
-        $r = RepositoryFetcher::getInstance()->getPendingCommit();
+        $module = $this->getRequestVariable('module');
 
-        return JsonResponseBuilder::success(
-            array(
-                'nbItems' => $r['nb'],
-                'Items'   => $r['node']
-            )
-        );
+        $r = RepositoryFetcher::getInstance()->getWork($module);
+
+        return $r;
     }
 
     /**
@@ -696,7 +700,7 @@ class ExtJsController
         // We must detect the encoding of the file with the first line "xml version="1.0" encoding="utf-8"
         // If this utf-8, we don't need to use utf8_encode to pass to this app, else, we apply it
 
-        $file = new File($FileLang, $FilePath, $FileName);
+        $file = new File($FileLang, $FilePath.$FileName);
 
         // If we want to get the translation from google translate API
         if( $ggTranslate ) {
@@ -705,6 +709,7 @@ class ExtJsController
             $return['warn_tab'] = false;
             $return['warn_encoding'] = false;
             $return['xmlid'] = '';
+            $return['fileModified'] = false;
             return JsonResponseBuilder::success($return);
         }
 
@@ -732,6 +737,9 @@ class ExtJsController
         // Warn if this file contains some tab caracter (the online editor will replace them by a space)
         $return['warn_tab'] = ( strstr($return['content'], "\t") ) ? true : false ;
 
+        // We must check if this file isn't own by the current user
+        $return['fileModified'] = $file->isModified();
+
         return JsonResponseBuilder::success($return);
     }
 
@@ -751,7 +759,7 @@ class ExtJsController
         // Replace &nbsp; by space
         $FileContent = str_replace("&nbsp;", "", $FileContent);
 
-        $file = new File($FileLang, $FilePath, $FileName);
+        $file = new File($FileLang, $FilePath.$FileName);
         // Detect encoding
         $charset = $file->getEncoding($FileContent);
 
@@ -762,7 +770,7 @@ class ExtJsController
         }
 
         // Get EN content to check error with
-        $en_file    = new File('en', $FilePath, $FileName);
+        $en_file    = new File('en', $FilePath.$FileName);
         $en_content = $en_file->read();
 
         // Update DB with this new Error (if any)
@@ -792,7 +800,8 @@ class ExtJsController
      */
     public function saveFile()
     {
-        AccountManager::getInstance()->isLogged();
+    	$am = AccountManager::getInstance();
+        $am->isLogged();
 
         $filePath   = $this->getRequestVariable('filePath');
         $fileName   = $this->getRequestVariable('fileName');
@@ -803,10 +812,6 @@ class ExtJsController
         $emailAlert = $this->hasRequestVariable('emailAlert')
                         ? $this->getRequestVariable('emailAlert')
                         : '';
-
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous' && ($type == 'file' || $type == 'trans')) {
-            return JsonResponseBuilder::failure();
-        }
 
         // Clean up path
         $filePath = str_replace('//', '/', $filePath);
@@ -826,9 +831,35 @@ class ExtJsController
 
         // Replace &nbsp; by space
         $fileContent = str_replace("&nbsp;", "", $fileContent);
-
+        
+        // Get file object
+        $file = new File($fileLang, $filePath.$fileName);
+        
+        // Rules to allow this file to be saved or not.
+        if( $infoModified = $file->isModified() ) {
+        	
+        	$infoModified = json_decode($infoModified);
+        	
+        	// If the user who have modified this file isn't the current one
+        	if( $infoModified->user ==  $am->vcsLogin && $infoModified->anonymousIdent == $am->anonymousIdent ) {
+        		// We can modify it, it's mine ;)
+        	} else {
+        		// If he is an anonymous and current user, an authenticated user, the current one can modify it.
+        		if( $am->anonymous($infoModified->user) && !$am->anonymous($am->vcsLogin) ) {
+        			// The current user can modify it
+        		} else {
+        			// We must trow an error. We can't modify it.
+        			
+		            return JsonResponseBuilder::failure(
+			            array(
+			              'type' => 'save_you_cant_modify_it'
+			            )
+		            );
+        		}
+        	}
+        }
+        
         // Detect encoding
-        $file = new File($fileLang, $filePath, $fileName);
         $charset = $file->getEncoding($fileContent);
 
         // If the new charset is set to utf-8, we don't need to decode it
@@ -853,12 +884,12 @@ class ExtJsController
 
             $er = $file->save($fileContent, false);
 
-
             if( $er['state'] ) {
 
-                $r = RepositoryManager::getInstance()->addPendingCommit(
+                $r = RepositoryManager::getInstance()->addProgressWork(
                     $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']
                 );
+
                 return JsonResponseBuilder::success(
                     array(
                         'id'           => $r,
@@ -885,10 +916,11 @@ class ExtJsController
                $er = $file->save($fileContent, false);
 
                if( $er['state'] ) {
-
-                   $r = RepositoryManager::getInstance()->addPendingCommit(
+               	
+                   $r = RepositoryManager::getInstance()->addProgressWork(
                        $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'new'
                    );
+
                    return JsonResponseBuilder::success(
                        array(
                            'id'           => $r,
@@ -908,26 +940,6 @@ class ExtJsController
                        )
                    );
                }
-            } else {
-              return JsonResponseBuilder::failure();
-            }
-        } else {
-
-            // We must ensure that this folder exist localy
-            if( $file->folderExist() ) {
-
-                $uniqID = RepositoryManager::getInstance()->addPendingPatch(
-                    $file, $emailAlert
-                );
-
-                $file->save($fileContent, true, $uniqID);
-
-                return JsonResponseBuilder::success(
-                    array(
-                        'uniqId' => $uniqID
-                    )
-                );
-
             } else {
               return JsonResponseBuilder::failure();
             }
@@ -1063,7 +1075,7 @@ class ExtJsController
 
         }
 
-        $file = new File($FileLang, $FilePath, $FileName);
+        $file = new File($FileLang, $FilePath.$FileName);
         $r = $file->Diff($DiffType, $opt);
 
         return JsonResponseBuilder::success(
@@ -1112,10 +1124,6 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
-            return JsonResponseBuilder::failure();
-        }
-
         $FileType = $this->getRequestVariable('FileType');
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -1125,21 +1133,30 @@ class ExtJsController
         $FilePath = implode('/', $t);
 
         $info = RepositoryManager::getInstance()->clearLocalChange(
-            $FileType, new File($FileLang, $FilePath, $FileName)
+            $FileType, new File($FileLang, $FilePath.$FileName)
         );
-
-        return JsonResponseBuilder::success(
-            array(
-                'path'       => $FilePath,
-                'name'       => $FileName,
-                'lang'       => $FileLang,
-                'revision'   => $info['rev'],
-                'en-revision'=> $info['en-rev'],
-                'maintainer' => $info['maintainer'],
-                'error'      => $info['errorFirst'],
-                'reviewed'   => $info['reviewed']
-            )
-        );
+        
+        if(is_array($info)) {
+	        return JsonResponseBuilder::success(
+	            array(
+	                'path'       => $FilePath,
+	                'name'       => $FileName,
+	                'lang'       => $FileLang,
+	                'revision'   => $info['rev'],
+	                'en-revision'=> $info['en-rev'],
+	                'maintainer' => $info['maintainer'],
+	                'error'      => $info['errorFirst'],
+	                'reviewed'   => $info['reviewed'],
+	                'oldIdDB'    => $info['oldIdDB']
+	            )
+	        );
+        } else {
+	        return JsonResponseBuilder::failure(
+	            array(
+	                'err' => $info
+	            )
+	        );
+        }
     }
 
     /**
@@ -1255,7 +1272,7 @@ class ExtJsController
 
         $am->isLogged();
 
-        if ($am->vcsLogin == 'anonymous') {
+        if ( $am->isAnonymous ) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1295,8 +1312,7 @@ class ExtJsController
                     if( $nodes[$i]['type'] == 'update' || $nodes[$i]['type'] == 'new' ) {
                         $existFiles[] = new File(
                             $nodes[$i]['lang'],
-                            $nodes[$i]['path'],
-                            $nodes[$i]['name']
+                            $nodes[$i]['path'].$nodes[$i]['name']
                         );
                     }
 
@@ -1315,8 +1331,8 @@ class ExtJsController
                     // Update revision & reviewed for all this files (LANG & EN)
                     $rm->updateFileInfo($existFiles);
 
-                    // Remove all this files in needcommit
-                    $rm->delPendingCommit($existFiles);
+                    // Remove all this files in work
+                    $rm->delWork($existFiles);
 
                 } // End of $existFiles stuff
 
@@ -1326,8 +1342,8 @@ class ExtJsController
                     // Remove this files from db
                     $rm->delFiles($deleteFiles);
 
-                    // Remove all this files in needcommit
-                    $rm->delPendingCommit($deleteFiles);
+                    // Remove all this files in work tables
+                    $rm->delWork($deleteFiles);
 
                 } // End of $deleteFiles stuff
 
@@ -1358,6 +1374,7 @@ class ExtJsController
     public function getConf()
     {
         $am = AccountManager::getInstance();
+        $rf = RepositoryFetcher::getInstance();
 
         $am->isLogged();
 
@@ -1365,7 +1382,10 @@ class ExtJsController
         $r['project']   = $am->project;
         $r['userLang']  = $am->vcsLang;
         $r['userLogin'] = $am->vcsLogin;
+        $r['userIsAnonymous']  = $am->isAnonymous;
+        $r['userIsAdmin']  = $am->isAdmin();
         $r['userConf']  = $am->userConf;
+        $r['userEmail'] = $am->email;
         $r['appConf']   = Array(
             "projectMailList" => $am->appConf[$am->project]['project.mail.list'],
             "viewVcUrl"       => $am->appConf[$am->project]['viewVc.url']
@@ -1481,38 +1501,6 @@ class ExtJsController
                 'files' => $r
             )
         );
-    }
-
-    /**
-     * All tasks to be done after a patch have been accepted
-     */
-    public function afterPatchAccept()
-    {
-        AccountManager::getInstance()->isLogged();
-
-        $PatchUniqID = $this->getRequestVariable('PatchUniqID');
-
-        RepositoryManager::getInstance()->postPatchAccept($PatchUniqID);
-
-        return JsonResponseBuilder::success();
-    }
-
-    /**
-     * All tasks to be done after a patch have been rejected
-     */
-    public function afterPatchReject()
-    {
-        AccountManager::getInstance()->isLogged();
-
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
-            return JsonResponseBuilder::failure();
-        }
-
-        $PatchUniqID = $this->getRequestVariable('PatchUniqID');
-
-        RepositoryManager::getInstance()->postPatchReject($PatchUniqID);
-
-        return JsonResponseBuilder::success();
     }
 
     /**
@@ -1640,6 +1628,126 @@ class ExtJsController
     }
 
     /**
+     * Delete a patch.
+     * @params patchID The ID of the patch we want to delete
+     */
+    public function deletePatch()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $patchID = $this->getRequestVariable('patchID');
+
+        RepositoryManager::getInstance()->deletePatch($patchID);
+        
+        return JsonResponseBuilder::success();
+    }
+
+    /**
+     * Manage patch.
+     * @params patchID : If provided, the patch name will be modify by the given name
+     */
+    public function managePatch()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $name    = $this->getRequestVariable('name');
+        $patchID = $this->getRequestVariable('patchID');
+
+        if( $patchID != "false" ) {
+            $r = RepositoryManager::getInstance()->modPatch($patchID, $name);
+
+            if( $r != true ) {
+
+                return JsonResponseBuilder::failure(
+                    array(
+                        'err' => $r
+                    )
+                );
+            } else {
+                return JsonResponseBuilder::success();
+            }
+
+        } else {
+            $r = RepositoryManager::getInstance()->createPatch($name);
+            return JsonResponseBuilder::success(
+                array(
+                    'patchID' => $r
+                )
+            );
+        }
+
+    }
+
+    /**
+     * Move some files to work in progress module
+     */
+    public function moveToWork()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $filesID = $this->getRequestVariable('filesID');
+
+        $r = RepositoryManager::getInstance()->moveToWork($filesID);
+
+        if( $r === true ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $r
+                )
+            );
+        }
+    }
+
+    /**
+     * Move some files to a patch
+     */
+    public function moveToPatch()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $patchID = $this->getRequestVariable('patchID');
+        $filesID = $this->getRequestVariable('filesID');
+
+        $r = RepositoryManager::getInstance()->moveToPatch($patchID, $filesID);
+
+        if( $r === true ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $r
+                )
+            );
+        }
+    }
+
+
+    /**
+     * Start the dowload of a given patch
+     */
+    public function SetFileProgress()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $idDB     = $this->getRequestVariable('idDB');
+        $progress = $this->getRequestVariable('progress');
+
+        $r = RepositoryManager::getInstance()->SetFileProgress($idDB, $progress);
+
+        if( $r === true ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $r
+                )
+            );
+        }
+    }
+
+    /**
      * Start the dowload of a given patch
      */
     public function downloadPatch()
@@ -1653,7 +1761,7 @@ class ExtJsController
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
-        $file  = new File($FileLang, $FilePath, $FileName);
+        $file  = new File($FileLang, $FilePath.$FileName);
         $patch = $file->rawDiff(false);
 
         $name = 'patch-' . time() . '.patch';
@@ -1777,7 +1885,7 @@ class ExtJsController
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
-        $file = new File($FileLang, $FilePath, $FileName);
+        $file = new File($FileLang, $FilePath.$FileName);
 
         $r = RepositoryManager::getInstance()->addPendingDelete($file);
 
@@ -1797,7 +1905,7 @@ class ExtJsController
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $file  = new File($FileLang, $FilePath, $FileName);
+        $file  = new File($FileLang, $FilePath.$FileName);
         $imageContent = $file->getImageContent();
 
         header("Content-Type: ".$imageContent['content-type']);

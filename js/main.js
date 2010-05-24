@@ -3,16 +3,32 @@ var PhDOE = function()
     Ext.QuickTips.init();
 
     return {
-        // Variable
-        userLogin  : null,
-        userLang   : null,
-        appName    : 'Php Docbook Online Editor',
-        appVer     : 'X.XX',
-        appLoaded  : false,
-        uiRevision : '$Revision$',
+		
+        /**
+         * Hold user's variable such as login, configuration or email
+         */
+		user : {
+			login: null,
+			anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
+			isAnonymous: null,
+			isAdmin: false,
+			lang: null,
+			conf: '',
+			email: ''
+		},
+        
+        /**
+         * Hold application's variable such as name, version or configuration
+         */
+		app: {
+			name: 'Php Docbook Online Editor',
+			ver : 'X.XX',
+			loaded: false,
+            uiRevision: '$Revision$',
+			conf: ''
+		},
 
         lastInfoDate : null,
-        userConf   : '',
 
         project    : '',
 
@@ -57,7 +73,7 @@ var PhDOE = function()
         winForbidden : function(type)
         {
             var title = _('Forbidden'),
-                mess  = _('You can\'t do this action as anonymous user.');
+                mess  = '';
 
             switch (type) {
                 case 'fs_error' :
@@ -80,6 +96,19 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('This file already exist in the current folder.');
                     break;
+                case 'save_you_cant_modify_it' :
+                    title = _('Error');
+                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you wan to be able to modify it.');
+                    break;
+                case 'file_isnt_owned_by_current_user' :
+                    title = _('Error');
+                    mess  = _('The file you want to clear local change isn\'t own by you.<br>You can only do this action for yours files.');
+                    break;
+                case 'file_localchange_didnt_exist' :
+                    title = _('Error');
+                    mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
+                    break;
+					
             }
 
             Ext.MessageBox.alert(
@@ -101,18 +130,18 @@ var PhDOE = function()
         // All we want to do after all dataStore are loaded
         afterLoadAllStore : function()
         {
-            this.appLoaded = true;
+            this.app.loaded = true;
 
             // Run DirectAccess if present
             this.runDirectAccess();
 
             //Load external data
             // Mails ?
-            if( this.userConf.mainAppLoadMailsAtStartUp ) {
+            if( this.user.conf.mainAppLoadMailsAtStartUp ) {
                 ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
-            if( this.userConf.mainAppLoadBugsAtStartUp ) {
+            if( this.user.conf.mainAppLoadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
@@ -130,66 +159,56 @@ var PhDOE = function()
 
                 // We load all stores, one after the others
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/13, '1 of 13...');
+                progressBar.updateProgress(1/11, '1 of 11...');
                 ui.cmp._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/13, '2 of 13...');
+                        progressBar.updateProgress(2/11, '2 of 11...');
                         ui.cmp.StaleFileGrid.getInstance().store.load({
                             callback: function() {
-                                progressBar.updateProgress(3/13, '3 of 13...');
+                                progressBar.updateProgress(3/11, '3 of 11...');
                                 ui.cmp.ErrorFileGrid.getInstance().store.load({
                                     callback: function() {
-                                        progressBar.updateProgress(4/13, '4 of 13...');
+                                        progressBar.updateProgress(4/11, '4 of 11...');
                                         ui.cmp.PendingReviewGrid.getInstance().store.load({
                                             callback: function() {
-                                                progressBar.updateProgress(5/13, '5 of 13...');
+                                                progressBar.updateProgress(5/11, '5 of 11...');
                                                 ui.cmp.NotInENGrid.getInstance().store.load({
                                                     callback: function() {
-                                                        progressBar.updateProgress(6/13, '6 of 13...');
-                                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
-                                                            callback: function() {
-                                                                progressBar.updateProgress(7/13, '7 of 13...');
-                                                                ui.cmp.PendingPatchGrid.getInstance().store.load({
-                                                                    callback: function() {
-                                                                        progressBar.updateProgress(8/13, '8 of 13...');
-                                                                        ui.cmp.PortletSummary.getInstance().store.load({
-                                                                            callback: function() {
-                                                                                progressBar.updateProgress(9/13, '9 of 13...');
-                                                                                ui.cmp.PortletTranslationGraph.getInstance().store.load({
-                                                                                    callback: function() {
-                                                                                        progressBar.updateProgress(10/13, '10 of 13...');
-                                                                                        ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-                                                                                            callback: function() {
-                                                                                                progressBar.updateProgress(11/13, '11 of 13...');
-                                                                                                ui.cmp.PortletTranslator.getInstance().store.load({
-                                                                                                    callback: function() {
-                                                                                                        progressBar.updateProgress(12/13, '12 of 13...');
-                                                                                                        ui.cmp.PendingTranslateGrid.getInstance().store.load({
-                                                                                                            callback: function() {
-                                                                                                                progressBar.updateProgress(13/13, '13 of 13...');
-                                                                                                                ui.cmp.PortletInfo.getInstance().store.load({
-                                                                                                                    callback: function() {
-                                                                                                                        // Now, we can to remove the global mask
-                                                                                                                        Ext.get('loading').remove();
-                                                                                                                        Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                                                                                        progressBar.destroy();
-                                                                                                                        PhDOE.afterLoadAllStore();
-                                                                                                                    }
-                                                                                                                });
-                                                                                                            }
-                                                                                                        });
-                                                                                                    }
-                                                                                                });
-                                                                                            }
-                                                                                        });
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
+	                                                    progressBar.updateProgress(6/11, '6 of 11...');
+	                                                    ui.cmp.PortletSummary.getInstance().store.load({
+	                                                        callback: function() {
+	                                                            progressBar.updateProgress(7/11, '7 of 11...');
+	                                                            ui.cmp.PortletTranslationGraph.getInstance().store.load({
+	                                                                callback: function() {
+	                                                                    progressBar.updateProgress(8/11, '8 of 11...');
+	                                                                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
+	                                                                        callback: function() {
+	                                                                            progressBar.updateProgress(9/11, '9 of 11...');
+	                                                                            ui.cmp.PortletTranslator.getInstance().store.load({
+	                                                                                callback: function() {
+	                                                                                    progressBar.updateProgress(10/11, '10 of 11...');
+	                                                                                    ui.cmp.PendingTranslateGrid.getInstance().store.load({
+	                                                                                        callback: function() {
+	                                                                                            progressBar.updateProgress(11/11, '11 of 11...');
+	                                                                                            ui.cmp.PortletInfo.getInstance().store.load({
+	                                                                                                callback: function() {
+	                                                                                                    // Now, we can to remove the global mask
+	                                                                                                    Ext.get('loading').remove();
+	                                                                                                    Ext.fly('loading-mask').fadeOut({ remove : true });
+	                                                                                                    progressBar.destroy();
+	                                                                                                    PhDOE.afterLoadAllStore();
+	                                                                                                }
+	                                                                                            });
+	                                                                                        }
+	                                                                                    });
+	                                                                                }
+	                                                                            });
+	                                                                        }
+	                                                                    });
+	                                                                }
+	                                                            });
+	                                                        }
+	                                                    });
                                                     }
                                                 });
                                             }
@@ -203,39 +222,29 @@ var PhDOE = function()
             } else {
                 // Store to load only for EN project
                 document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/6, '1 of 6...');
+                progressBar.updateProgress(1/4, '1 of 4...');
                 ui.cmp._MainMenu.store.load({
                     callback: function() {
-                        progressBar.updateProgress(2/6, '2 of 6...');
-                        ui.cmp.PendingPatchGrid.getInstance().store.load({
-                            callback: function() {
-                                progressBar.updateProgress(3/6, '3 of 6...');
-                                ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-                                    callback: function() {
-                                        progressBar.updateProgress(4/6, '4 of 6...');
-                                        ui.cmp.PendingCommitGrid.getInstance().store.load({
-                                            callback: function() {
-                                                progressBar.updateProgress(5/6, '5 of 6...');
-                                                ui.cmp.ErrorFileGrid.getInstance().store.load({
-                                                    callback: function() {
-                                                        progressBar.updateProgress(6/6, '5 of 6...');
-                                                        ui.cmp.PortletInfo.getInstance().store.load({
-                                                            callback: function() {
-                                                                // Now, we can to remove the global mask
-                                                                Ext.get('loading').remove();
-                                                                Ext.fly('loading-mask').fadeOut({ remove : true });
-                                                                progressBar.destroy();
-                                                                PhDOE.afterLoadAllStore();
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+	                    progressBar.updateProgress(2/4, '2 of 4...');
+	                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
+	                        callback: function() {
+	                            progressBar.updateProgress(3/4, '3 of 4...');
+	                            ui.cmp.ErrorFileGrid.getInstance().store.load({
+	                                callback: function() {
+	                                    progressBar.updateProgress(4/4, '4 of 4...');
+	                                    ui.cmp.PortletInfo.getInstance().store.load({
+	                                        callback: function() {
+	                                            // Now, we can to remove the global mask
+	                                            Ext.get('loading').remove();
+	                                            Ext.fly('loading-mask').fadeOut({ remove : true });
+	                                            progressBar.destroy();
+	                                            PhDOE.afterLoadAllStore();
+	                                        }
+	                                    });
+	                                }
+	                            });
+	                        }
+	                    });
                     }
                 });
             }
@@ -256,10 +265,10 @@ var PhDOE = function()
                                             callback: function() {
                                                 ui.cmp.NotInENGrid.getInstance().store.reload({
                                                     callback: function() {
-                                                        ui.cmp.PendingCommitGrid.getInstance().store.reload({
-                                                            callback: function() {
-                                                                ui.cmp.PendingPatchGrid.getInstance().store.reload({
-                                                                    callback: function() {
+                                                        ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
+                                                            function() {
+                                                                ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload(
+                                                                    function() {
                                                                         ui.cmp.PortletSummary.getInstance().store.reload({
                                                                             callback: function() {
                                                                                 ui.cmp.PortletTranslator.getInstance().store.reload({
@@ -274,9 +283,9 @@ var PhDOE = function()
                                                                             }
                                                                         });
                                                                     }
-                                                                });
+                                                                );
                                                             }
-                                                        });
+                                                        );
                                                     }
                                                 });
                                             }
@@ -289,11 +298,11 @@ var PhDOE = function()
                 });
             } else {
                 // Store to reload only for EN project
-                ui.cmp.PendingCommitGrid.getInstance().store.reload({
-                    callback: function() {
-                        ui.cmp.PendingPatchGrid.getInstance().store.reload();
+                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
+                    function() {
+                        ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
                     }
-                });
+                );
             }
         },
 
@@ -302,7 +311,7 @@ var PhDOE = function()
             var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
             
             // Default value for portalEN & portalLANG sort
-            
+
             portalEN = {
                 'col1' : ["portletLocalMail","portletBugs"],
                 'col2' : ["portletInfo","portletTranslationsGraph"]
@@ -314,22 +323,22 @@ var PhDOE = function()
             };
             
             // Get user conf
-            if ( this.userLang === 'en' ) {
-                (this.userConf.portalSortEN) ? portal = Ext.util.JSON.decode(this.userConf.portalSortEN) : portal = portalEN;
+            if ( PhDOE.user.lang === 'en' ) {
+                portal = (PhDOE.user.conf.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortEN) : portalEN;
 
-                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
                 allPortlet["portletTranslationsGraph"] = ui.cmp.PortletTranslationsGraph.getInstance();
             }
             else
             {
-                (this.userConf.portalSortLANG) ? portal = Ext.util.JSON.decode(this.userConf.portalSortLANG) : portal = portalLANG;
+                portal = (PhDOE.user.conf.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortLANG) : portalLANG;
                 
-                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: this.userLang});
-                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: this.userLang});
-                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: this.userLang});
-                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: this.userLang});
+                allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
+                allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
 
                 allPortlet["portletInfo"] = ui.cmp.PortletInfo.getInstance();
                 allPortlet["portletTranslationGraph"] = ui.cmp.PortletTranslationGraph.getInstance();
@@ -343,7 +352,7 @@ var PhDOE = function()
             for( var j=0; j < portal.col2.length; j++ ) {
                 mainContentRight.push(allPortlet[portal.col2[j]]);
             }
-            
+
             // We keel alive our session by sending a ping every minute
             ui.task.PingTask.getInstance().delay(30000); // start after 1 minute.
 
@@ -356,7 +365,7 @@ var PhDOE = function()
                     html       : '<h1 class="x-panel-header">' +
                                     '<img src="themes/img/mini_php.png" ' +
                                         'style="vertical-align: middle;" />&nbsp;&nbsp;' +
-                                    this.appName +
+                                    this.app.name +
                                  '</h1>',
                     autoHeight : true,
                     border     : false,
@@ -370,12 +379,12 @@ var PhDOE = function()
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    width        : PhDOE.userConf.mainAppMainMenuWidth || 300,
+                    width        : PhDOE.user.conf.mainAppMainMenuWidth || 300,
                     header       : false,
                     listeners    : {
                         resize : function(a, newWidth) {
 
-                            if( newWidth && newWidth != PhDOE.userConf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                            if( newWidth && newWidth != PhDOE.user.conf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
                                     item  : 'mainAppMainMenuWidth',
                                     value : newWidth,
@@ -395,7 +404,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedTranslate',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingTranslateGrid.getInstance() ],
                         collapsed : true
                     },{
@@ -404,12 +413,12 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedUpdate',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.StaleFileGrid.getInstance() ],
                         collapsed : true
                     }, {
                         id        : 'acc-error',
-                        title     : (this.userLang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
+                        title     : (PhDOE.user.lang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesError',
@@ -421,7 +430,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconFilesNeedReviewed',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingReviewGrid.getInstance() ],
                         collapsed : true
                     }, {
@@ -430,7 +439,7 @@ var PhDOE = function()
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconNotInEn',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.NotInENGrid.getInstance() ],
                         collapsed : true
                     }, {
@@ -442,40 +451,40 @@ var PhDOE = function()
                         items     : [ ui.cmp.RepositoryTree.getInstance() ],
                         collapsed : true
                     }, {
-                        id        : 'acc-need-pendingCommit',
+                        id        : 'acc-work-in-progress',
+                        title     : _('Work in progress') + ' (<em id="acc-work-in-progress-nb">0</em>)',
+                        layout    : 'fit',
+                        border    : false,
+                        iconCls   : 'iconWorkInProgress',
+                        items     : [ ui.cmp.WorkTreeGrid.getInstance() ],
+                        collapsed : true
+                    }, {
+                        id        : 'acc-patches',
                         tools     : [{
                             id      : 'gear',
-                            hidden  : (this.userLogin == 'anonymous' ),
+                            hidden  : (this.user.isAnonymous ),
                             qtip    : _('Open the Log Message Manager'),
                             handler : function() {
                                 if( ! Ext.getCmp('commit-log-win') )
                                 {
                                     var win = new ui.cmp.CommitLogManager();
                                 }
-                                Ext.getCmp('commit-log-win').show('acc-need-pendingCommit');
+                                Ext.getCmp('commit-log-win').show('acc-patches');
                             }
                         }],
-                        title     : _('Pending for commit') + ' (<em id="acc-pendingCommit-nb">0</em>)',
+                        title     : _('Patches for review') + ' (<em id="acc-patches-nb">0</em>)',
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'iconPendingCommit',
-                        items     : [ ui.cmp.PendingCommitGrid.getInstance() ],
-                        collapsed : true
-                    }, {
-                        id        : 'acc-need-pendingPatch',
-                        title     : _('Pending patches') + ' (<em id="acc-pendingPatch-nb">0</em>)',
-                        layout    : 'fit',
-                        border    : false,
-                        iconCls   : 'iconPendingPatch',
-                        items     : [ ui.cmp.PendingPatchGrid.getInstance() ],
-                        collapsed : true
+                        iconCls   : 'iconPatch',
+                        items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
+                        collapsed : false
                     }, {
                         id        : 'acc-google-translate',
                         title     : _('Google translation'),
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconGoogle',
-                        hidden    : (this.userLang === 'en'),
+                        hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
                     }]
@@ -497,8 +506,8 @@ var PhDOE = function()
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                ((this.userLogin != "anonymous") ? String.format(_('Connected as <em>{0}</em>'), this.userLogin.ucFirst()) : String.format(_('Connected as <em>{0}</em>'), _('anonymous'))) +
-                                                ', ' + _('Project: ') + '<em id="Info-Project">' + this.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
+                                                String.format(_('Connected as {0}'), (( PhDOE.user.isAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+												', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +
                                      '</div>'
