@@ -70,7 +70,7 @@ var i18n = new Array();
   
   i18n["Submit all files for review in patch:"] = "Enviar todos los ficheros para revisar como parche:";
   i18n["Submit all files in this directory in patch:"] = "Enviar todos los ficheros de este directorio como parche:";
-  i18n["Submit as patch for review in:"] = "Placer ce fichier dans le patch :";
+  i18n["Submit as patch for review in:"] = "Enviar como parche para ser revisado en:";
   
   i18n["Create a new patch"] = "Crear nuevo parche";
   
