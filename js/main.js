@@ -108,7 +108,7 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
                     break;
-					
+
             }
 
             Ext.MessageBox.alert(
@@ -275,7 +275,11 @@ var PhDOE = function()
                                                                                     callback: function() {
                                                                                         ui.cmp.PortletTranslationGraph.getInstance().store.reload({
                                                                                             callback: function() {
-                                                                                                ui.cmp.PortletTranslationsGraph.getInstance().store.reload();
+                                                                                                ui.cmp.PortletTranslationsGraph.getInstance().store.reload({
+                                                                                                    callback: function() {
+                                                                                                        ui.cmp.PortletInfo.getInstance().store.reload();
+                                                                                                    }
+                                                                                                });
                                                                                             }
                                                                                         });
                                                                                     }
@@ -300,7 +304,11 @@ var PhDOE = function()
                 // Store to reload only for EN project
                 ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
                     function() {
-                        ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
+                        ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload(
+                            function() {
+                                ui.cmp.PortletInfo.getInstance().store.reload();
+                            }
+                        );
                     }
                 );
             }
