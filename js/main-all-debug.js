@@ -18214,7 +18214,7 @@ var PhDOE = function()
 			name: 'Php Docbook Online Editor',
 			ver : 'X.XX',
 			loaded: false,
-            uiRevision: '$Revision: 299715 $',
+            uiRevision: '$Revision: 299808 $',
 			conf: ''
 		},
 
@@ -18310,7 +18310,7 @@ var PhDOE = function()
         runDirectAccess: function()
         {
             if (directAccess) {
-                ui.cmp.RepositoryTree.getInstance().openFile(
+                ui.cmp.RepositoryTree.getInstance().openFile('byPath',
                     directAccess.lang + directAccess.path,
                     directAccess.name
                 );

@@ -120,7 +120,7 @@ var PhDOE = function()
         runDirectAccess: function()
         {
             if (directAccess) {
-                ui.cmp.RepositoryTree.getInstance().openFile(
+                ui.cmp.RepositoryTree.getInstance().openFile('byPath',
                     directAccess.lang + directAccess.path,
                     directAccess.name
                 );
