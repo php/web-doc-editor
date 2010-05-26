@@ -485,7 +485,7 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconPatch',
                         items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
-                        collapsed : false
+                        collapsed : true
                     }, {
                         id        : 'acc-google-translate',
                         title     : _('Google translation'),
