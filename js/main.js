@@ -3,30 +3,30 @@ var PhDOE = function()
     Ext.QuickTips.init();
 
     return {
-		
+
         /**
          * Hold user's variable such as login, configuration or email
          */
-		user : {
-			login: null,
-			anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
-			isAnonymous: null,
-			isAdmin: false,
-			lang: null,
-			conf: '',
-			email: ''
-		},
+        user : {
+            login: null,
+            anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
+            isAnonymous: null,
+            isAdmin: false,
+            lang: null,
+            conf: '',
+            email: ''
+        },
         
         /**
          * Hold application's variable such as name, version or configuration
          */
-		app: {
-			name: 'Php Docbook Online Editor',
-			ver : 'X.XX',
-			loaded: false,
+        app: {
+            name: 'Php Docbook Online Editor',
+            ver : 'X.XX',
+            loaded: false,
             uiRevision: '$Revision$',
-			conf: ''
-		},
+            conf: ''
+        },
 
         lastInfoDate : null,
 
