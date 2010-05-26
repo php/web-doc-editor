@@ -1090,13 +1090,15 @@ class ExtJsController
      */
     public function erasePersonalData()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
 
-        if ( AccountManager::getInstance()->isAnonymous ) {
+        $am->isLogged();
+
+        if ( $am->isAnonymous ) {
             return JsonResponseBuilder::failure();
         }
 
-        AccountManager::getInstance()->eraseData();
+        $am->eraseData();
 
         return JsonResponseBuilder::success();
     }
