@@ -412,52 +412,12 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                     }]
                 }
             }, '-', {
+                scope: this,
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
                 hidden: (FileType == 'delete' || FileType == 'new'),
                 handler: function(){
-                    // Render only if this tab don't exist yet
-                    if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + FileID)) {
-                    
-                        // Add tab for the diff
-                        Ext.getCmp('main-panel').add({
-                            xtype: 'panel',
-                            id: 'diff_panel_pending_' + FileID,
-                            iconCls: 'iconTabLink',
-                            title: _('Diff'),
-                            tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
-                            closable: true,
-                            autoScroll: true,
-                            html: '<div id="diff_content_pending_' + FileID + '" class="diff-content"></div>'
-                        });
-                        
-                        // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
-                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
-                        
-                        Ext.get('diff_panel_pending_' + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                        _('Please, wait...'));
-                        
-                        // Load diff data
-                        XHR({
-                            scope: this,
-                            params: {
-                                task: 'getDiff',
-                                DiffType: 'file',
-                                FilePath: FilePath,
-                                FileName: FileName
-                            },
-                            success: function(r){
-                                var o = Ext.util.JSON.decode(r.responseText);
-                                
-                                // We display in diff div
-                                Ext.get('diff_content_pending_' + FileID).dom.innerHTML = o.content;
-                                Ext.get('diff_panel_pending_' + FileID).unmask();
-                            }
-                        });
-                    }
-                    else {
-                        Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
-                    }
+                    ui.cmp.WorkTreeGrid.getInstance().displayDiff(FileID, FilePath, FileName);
                 }
             }, {
                 text: _('Download the diff as a patch'),
@@ -618,16 +578,6 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     module: 'workInProgress'
                 }
             }
-			/*
-            tbar: [{
-                scope: this,
-                iconCls: 'iconRefresh',
-                handler: function(){
-                    this.getRootNode().reload();
-                }
-            }]
-            */
-        
         });
         ui.cmp.WorkTreeGrid.superclass.initComponent.call(this);
         
@@ -646,6 +596,51 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         this.updateColumnWidths();
     },
     
+    displayDiff: function(FileID, FilePath, FileName) {
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_pending_' + FileID)) {
+        
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype: 'panel',
+                id: 'diff_panel_pending_' + FileID,
+                iconCls: 'iconTabLink',
+                title: _('Diff'),
+                tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
+                closable: true,
+                autoScroll: true,
+                html: '<div id="diff_content_pending_' + FileID + '" class="diff-content"></div>'
+            });
+            
+            // We need to activate HERE this tab, otherwise, we can mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+            
+            Ext.get('diff_panel_pending_' + FileID).mask('<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+            _('Please, wait...'));
+            
+            // Load diff data
+            XHR({
+                scope: this,
+                params: {
+                    task: 'getDiff',
+                    DiffType: 'file',
+                    FilePath: FilePath,
+                    FileName: FileName
+                },
+                success: function(r){
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    
+                    // We display in diff div
+                    Ext.get('diff_content_pending_' + FileID).dom.innerHTML = o.content;
+                    Ext.get('diff_panel_pending_' + FileID).unmask();
+                }
+            });
+        }
+        else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_pending_' + FileID);
+        }
+    },
+                                 
     delRecord: function(fid){
         var rootNode = this.getRootNode();
         
