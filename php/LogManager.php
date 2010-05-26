@@ -28,11 +28,15 @@ class LogManager
      */
     public function getCommitLog()
     {
+        $am = AccountManager::getInstance();
+        $project = $am->project;
+        $vcsLogin = $am->vcsLogin;
+
         $result = array();
 
         $s = sprintf(
-            'SELECT `id`, `text` FROM `commitMessage` WHERE userID="%s"',
-            AccountManager::getInstance()->userID
+            'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s"',
+            $project, $vcsLogin
         );
         $r = DBConnection::getInstance()->query($s);
         while ($a = $r->fetch_assoc()) {
@@ -50,20 +54,22 @@ class LogManager
      */
     public function addCommitLog($log)
     {
-        $db     = DBConnection::getInstance();
-        $log    = $db->real_escape_string($log);
-        $userID = AccountManager::getInstance()->userID;
+        $am       = AccountManager::getInstance();
+        $db       = DBConnection::getInstance();
+        $log      = $db->real_escape_string($log);
+        $project  = $am->project;
+        $vcsLogin = $am->vcsLogin;
 
         $s = sprintf(
-            'SELECT id FROM `commitMessage` WHERE `text`="%s" AND `userID`="%s"',
-            $log, $userID
+            'SELECT id FROM `commitMessage` WHERE `project`="%s" AND `text`="%s" AND `user`="%s"',
+            $project, $log, $vcsLogin
         );
         $r = $db->query($s);
 
         if ($r->num_rows == 0 ) {
             $s = sprintf(
-                'INSERT INTO `commitMessage` (`text`,`userID`) VALUES ("%s", "%s")',
-                $log, $userID
+                'INSERT INTO `commitMessage` (`project`, `text`,`user`) VALUES ("%s", "%s", "%s")',
+                $project, $log, $vcsLogin
             );
             $db->query($s);
         }
