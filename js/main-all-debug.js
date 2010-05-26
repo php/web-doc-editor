@@ -12033,6 +12033,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
             }, {
                 text     : _('Erase my personal data'),
                 iconCls  : 'iconErasePersonalData',
+                disabled : (PhDOE.user.isAnonymous),
                 handler  : function()
                 {
                     Ext.MessageBox.confirm(_('Confirm'),
@@ -12064,6 +12065,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                                     },
                                     failure : function()
                                     {
+                                        Ext.getBody().unmask();
                                         PhDOE.winForbidden();
                                     }
                                 });
