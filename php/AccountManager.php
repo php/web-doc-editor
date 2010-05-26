@@ -454,18 +454,19 @@ class AccountManager
      */
     public function eraseData()
     {
+        $db = DBConnection::getInstance();
 
         $s = sprintf(
-            'DELETE FROM `commitMessage` WHERE `userID`="%s"',
-            $this->userID
+            'DELETE FROM `commitMessage` WHERE `user`="%s"',
+            $this->vcsLogin
         );
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
 
         $s = sprintf(
             'DELETE FROM `users` WHERE `userID`="%s"',
             $this->userID
         );
-        DBConnection::getInstance()->query($s);
+        $db->query($s);
     }
 
     /**
