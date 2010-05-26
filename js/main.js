@@ -515,7 +515,7 @@ var PhDOE = function()
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
                                                 String.format(_('Connected as {0}'), (( PhDOE.user.isAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
-												', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
+                                                ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +
                                      '</div>'
