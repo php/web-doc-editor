@@ -119,7 +119,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1092,7 +1092,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if ( AccountManager::getInstance()->isAnonymous ) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1186,7 +1186,7 @@ class ExtJsController
 
         $ac->isLogged();
 
-        if ($ac->vcsLogin == 'anonymous') {
+        if ($ac->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1216,7 +1216,7 @@ class ExtJsController
 
         $am->isLogged();
 
-        if ($am->vcsLogin == 'anonymous') {
+        if ($am->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1455,7 +1455,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1474,7 +1474,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1924,7 +1924,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1967,7 +1967,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -2006,7 +2006,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 
@@ -2025,7 +2025,7 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        if (AccountManager::getInstance()->vcsLogin == 'anonymous') {
+        if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
         }
 

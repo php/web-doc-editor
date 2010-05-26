@@ -433,7 +433,7 @@ class AccountManager
         $db = DBConnection::getInstance();
 
         // In DB
-        if( $this->vcsLogin == 'anonymous' ) {
+        if( $this->isAnonymous ) {
 	        $s = sprintf(
 	            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s" AND `anonymousIdent`="%s"',
 	            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin, $this->anonymousIdent
