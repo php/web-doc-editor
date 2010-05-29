@@ -160,7 +160,7 @@ class ToolsError
         $am      = AccountManager::getInstance();
         $project = $am->project;
 
-        if ( $am->userConf->errorSkipNbLiteralTag ) {
+        if ( $am->userConf->error->skipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
@@ -206,7 +206,7 @@ class ToolsError
         $am      = AccountManager::getInstance();
         $project = $am->project;
 
-        if ( $am->userConf->errorSkipNbLiteralTag ) {
+        if ( $am->userConf->error->skipNbLiteralTag ) {
             $type = ' type != \'nbLiteralTag\' AND ';
         } else {
             $type = '';
@@ -280,6 +280,10 @@ class ToolsError
                 $alreadyNode[$a->path.$a->name] = 1;
             }
 
+        }
+
+        if( count($node) > $am->userConf->error->nbDisplay && $am->userConf->error->nbDisplay != 0 ) {
+            $node = array_slice($node, 0, $am->userConf->error->nbDisplay);
         }
 
         return array('nb'=>count($node), 'node'=>$node);

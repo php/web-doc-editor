@@ -137,11 +137,11 @@ var PhDOE = function()
 
             //Load external data
             // Mails ?
-            if( this.user.conf.mainAppLoadMailsAtStartUp ) {
+            if( this.user.conf.main.loadMailsAtStartUp ) {
                 ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
-            if( this.user.conf.mainAppLoadBugsAtStartUp ) {
+            if( this.user.conf.main.loadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
@@ -387,14 +387,15 @@ var PhDOE = function()
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    width        : PhDOE.user.conf.mainAppMainMenuWidth || 300,
+                    width        : PhDOE.user.conf.main.mainMenuWidth || 300,
                     header       : false,
                     listeners    : {
                         resize : function(a, newWidth) {
 
-                            if( newWidth && newWidth != PhDOE.user.conf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                            if( newWidth && newWidth != PhDOE.user.conf.main.mainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'mainAppMainMenuWidth',
+                                    module   : 'main',
+                                    itemName : 'mainMenuWidth',
                                     value : newWidth,
                                     notify: false
                                 });

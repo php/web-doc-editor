@@ -12,15 +12,15 @@ ui.task.LoadConfigTask = function(config)
 
             PhDOE.user.login = o.mess.userLogin;
             PhDOE.user.lang  = o.mess.userLang;
-			PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
+            PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
             PhDOE.user.isAdmin = o.mess.userIsAdmin;
             PhDOE.user.conf = o.mess.userConf;
-			
+
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
 
-            //For the theme, we apply this.
-            Ext.get('appTheme').dom.href = PhDOE.user.conf.theme;
+            //For the theme, we apply it.
+            Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 
             // Draw the interface
             PhDOE.drawInterface();

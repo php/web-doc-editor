@@ -150,14 +150,14 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 closable: true,
                 tabLoaded: false,
                 panTRANSLoaded: false,
-                panGGTRANSLoaded: !PhDOE.user.conf.newFileGGPanel,
+                panGGTRANSLoaded: !PhDOE.user.conf.newFile.googlePanelDisplay,
                 defaults: {
                     split: true
                 },
                 tabTip: String.format(_('Need translate: in {0}'), FilePath),
                 listeners: {
                     resize: function(panel){
-                        if (PhDOE.user.conf.newFileGGPanel) {
+                        if (PhDOE.user.conf.newFile.googlePanelDisplay) {
                             Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                         }
                     }
@@ -170,43 +170,40 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: true, //!PhDOE.user.conf.reviewedDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.newFile.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: 375, //PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.newFile.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
-                            /*
-                             if ( this.ownerCt.tabLoaded ) {
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanel',
-                             value : false,
-                             notify: false
-                             });
-                             }
-                             */
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : false,
+                                    notify: false
+                                });
+                            }
                         },
                         expand: function(){
-                            /*
-                             if ( this.ownerCt.tabLoaded ) {
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanel',
-                             value : true,
-                             notify: false
-                             });
-                             }
-                             */
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : true,
+                                    notify: false
+                                });
+                            }
                         },
                         resize: function(a, newWidth){
-                            /*
-                             if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanelWidth',
-                             value : newWidth,
-                             notify: false
-                             });
-                             }
-                             */
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.newFile.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    module     : 'newFile',
+                                    itemName   : 'toolsPanelWidth',
+                                    value: newWidth,
+                                    notify: false
+                                });
+                            }
                         }
                     },
                     items: {
@@ -230,18 +227,18 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     isTrans: true,
                     prefix: 'FNT',
                     ftype: 'TRANS',
-                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
-                    spellCheckConf: 'newFileSpellCheck',
+                    spellCheck: PhDOE.user.conf.newFile.enableSpellCheck,
+                    spellCheckConf: { module : 'newFile', itemName : 'enableSpellCheck' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
                     lang: PhDOE.user.lang,
                     parser: 'xml',
                     storeRecord: storeRecord,
-                    syncScrollCB: PhDOE.user.conf.newFileGGPanel,
-                    syncScroll: PhDOE.user.conf.newFileGGPanel,
-                    syncScrollConf: 'newFileScrollbars'
-                }), ((PhDOE.user.conf.newFileGGPanel) ? new ui.cmp.FilePanel({
+                    syncScrollCB: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScroll: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
+                }), ((PhDOE.user.conf.newFile.googlePanelDisplay) ? new ui.cmp.FilePanel({
                     id: 'FNT-GGTRANS-PANEL-' + FileID,
                     region: 'east',
                     title: _('Automatic translation: ') + PhDOE.user.lang + FilePath + FileName,
@@ -256,7 +253,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'newFileScrollbars'
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
                 }) : false)]
             });
         }

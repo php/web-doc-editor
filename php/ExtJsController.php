@@ -1423,10 +1423,11 @@ class ExtJsController
     {
         AccountManager::getInstance()->isLogged();
 
-        $item      = $this->getRequestVariable('item');
-        $value     = $this->getRequestVariable('value');
+        $module   = $this->getRequestVariable('module');
+        $itemName = $this->getRequestVariable('itemName');
+        $value    = $this->getRequestVariable('value');
 
-        AccountManager::getInstance()->updateConf($item, $value);
+        AccountManager::getInstance()->updateConf($module, $itemName, $value);
 
         return JsonResponseBuilder::success();
     }

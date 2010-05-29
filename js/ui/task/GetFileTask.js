@@ -37,7 +37,7 @@ ui.task.GetFileTask = function(config)
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
                 pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
                 f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-				fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
+                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -124,35 +124,32 @@ ui.task.GetFileTask = function(config)
             if( o.fileModified && ( fileModifiedInfo.user !== PhDOE.user.login || fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent ) ) {
 
                 // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
-				if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
-					
-					Ext.MessageBox.show({
+                if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+                    Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst()+' mais vous êtes un utilisateur authentifié, vous pouvez donc le modifier.',
+                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
-					
-				} else {						
-	                if( !this.freadOnly ) {
-	                    // We disable save group, undoRdeo group, and tools group from the toolBars
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
-	                }
-	
-	                // If the current user isn't the user who have modified this file, we disable the panel
-	
-	                var mess = Ext.MessageBox.show({
-	                    title   : _('Information'),
-	                    msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst(),
-	                    buttons : Ext.MessageBox.OK,
-	                    icon    : Ext.MessageBox.INFO
-	                });
-	
-	                mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
-	                mess.getDialog().mask.alignTo(pEl.dom, "tl");
-				}
+                } else {
+                    if( !this.freadOnly ) {
+                        // We disable save group, undoRdeo group, and tools group from the toolBars
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
+                    }
+                    
+                    // If the current user isn't the user who have modified this file, we disable the panel
+                    
+                    var mess = Ext.MessageBox.show({
+                        title   : _('Information'),
+                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
+                        buttons : Ext.MessageBox.OK,
+                        icon    : Ext.MessageBox.INFO
+                    });
+                    mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
+                    mess.getDialog().mask.alignTo(pEl.dom, "tl");
+                }
             }
         },
         callback : function()
@@ -207,16 +204,6 @@ ui.task.GetFileTask = function(config)
             // Mark AF panel as loaded
             if( this.prefix == 'AF' ) {
                 tab.panLoaded = true;
-            }
-
-            // Mark PP panel as loaded
-            if( this.prefix == 'PP' ) {
-                if( this.ftype == 'PATCH' ) {
-                    tab.panPatchLoaded = true;
-                }
-                if( this.ftype == 'ORIGIN' ) {
-                    tab.panOriginLoaded = true;
-                }
             }
 
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);

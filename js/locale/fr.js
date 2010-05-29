@@ -46,14 +46,6 @@ var i18n = new Array();
   i18n["Open selected files"] = "Ouvrir les fichiers sélectionnés";
   i18n["Please, wait..."] = "Veuillez patienter...";
 
-// In file: ../../js/ui/component/PendingCommitGrid.js
-  //i18n["No pending for Commit"] = "Aucun commit en attente";
-  //i18n["View diff"] = "Voir la différence";
-  //i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
-  //i18n["Clear this change"] = "Effacer cette modification";
-  //i18n["View in a new tab"] = "Voir dans un nouvel onglet";
-  //i18n["Cancel this deletion"] = "Annuler cette suppression";
-
 // In file: ../../js/ui/component/WorkTreeGrid.js
   i18n["Modified by"] = "Modifié par";
   i18n["Date"] = "Date";
@@ -67,30 +59,18 @@ var i18n = new Array();
   i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
   i18n["Clear this change"] = "Effacer cette modification";
   i18n["Cancel this deletion"] = "Annuler cette suppression";
-  
   i18n["Submit all files for review in patch:"] = "Placer tous les fichiers dans le patch :";
   i18n["Submit all files in this directory in patch:"] = "Placer tous les fichiers de ce dossier dans le patch :";
   i18n["Submit as patch for review in:"] = "Placer ce fichier dans le patch :";
-  
   i18n["Create a new patch"] = "Créer un nouveau patch";
-  
   i18n["Commit..."] = "Valider...";
   i18n["...this file"] = "...ce fichier";
   i18n["...all files from this folder"] = "...tous les fichiers de ce dossier";
   i18n["...all files from this patch"] = "...tous les fichiers de ce patch";
   i18n["...all files modified by me"] = "...tous les fichiers que j'ai modifié";
-  
   i18n["You have no patch currently. You must create one."] = "Vous n'avez aucun patch en cours actuellement. Vous devez en créer un.";
-
   i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
   
-// In file: ../../js/ui/component/PendingPatchGrid.js
-  //i18n["Posted by"] = "Proposé par";
-  //i18n["No pending patches"] = "Aucun patch en attente";
-  //i18n["Reject this patch"] = "Rejeter ce patch";
-  //i18n["Patch for {0}"] = "Patch pour {0}";
-  //i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
-  //i18n["Original File: "] = "Fichier original : ";
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the name of this patch"] = "Éditer le nom de ce patch";
@@ -288,7 +268,6 @@ var i18n = new Array();
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
   i18n["Module \"All files\""] = "Module \"Tous les fichiers\"";
-  i18n["Module \"Pending patches\""] = "Module \"Patchs en attente\"";
   i18n["Module \"Files need translate\""] = "Module \"Nouveaux Fichiers à traduire\"";
   i18n["Module \"Files need update\""] = "Module \"Fichiers à mettre à jour\"";
   i18n["Module \"Files with error\""] = "Module \"Fichiers avec des erreurs\"";
@@ -305,7 +284,7 @@ var i18n = new Array();
   i18n["SilverCherry"] = "SilverCherry";
   i18n["Ubuntu Human"] = "Ubuntu Human";
   i18n["User Interface"] = "Interface utilisateur";
-  i18n["Main Menu width"] = "Largeur du menu principal";
+  i18n["Main menu width"] = "Largeur du menu principal";
   i18n["Appearance"] = "Apparence";
   i18n["Choose a theme"] = "Choisissez un thème ";
   i18n["On save file"] = "Lors de la sauvegarde d'un fichier";
@@ -560,7 +539,9 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "Lien permanent vers cette page";
   i18n["Warning"] = "Alerte";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "L'éditeur a modifié automatiquement le fichier {0} en UTF-8.";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";  
+  i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "Fichier modifié par {0} (utilisateur anonyme) mais vu que vous êtes un utilisateur authentifié, vous pouvez le modifier.";
+  i18n["File modified by {0}."] = "Fichier modifié par {0}.";
 
 
 // In file: ../../js/ui/task/UpdateConfTask.js

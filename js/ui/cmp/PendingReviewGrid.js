@@ -317,10 +317,10 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                 iconCls: 'iconTabNeedReviewed',
                 closable: true,
                 tabLoaded: false,
-                panVCSLang: !PhDOE.user.conf.reviewedDisplaylog,
-                panVCSEn: !PhDOE.user.conf.reviewedDisplaylog,
-                panLANGLoaded: false, // Use to monitor if the LANG panel is loaded
-                panENLoaded: false, // Use to monitor if the EN panel is loaded
+                panVCSLang: !PhDOE.user.conf.reviewed.toolsPanelLogLoad,
+                panVCSEn: !PhDOE.user.conf.reviewed.toolsPanelLogLoad,
+                panLANGLoaded: false,
+                panENLoaded: false,
                 originTitle: FileName,
                 defaults: {
                     split: true
@@ -339,15 +339,16 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.reviewedDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.reviewed.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.reviewed.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -356,16 +357,18 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewed.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanelWidth',
+                                    module     : 'reviewed',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth,
                                     notify: false
                                 });
@@ -387,7 +390,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: PhDOE.user.lang + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                            loadStore: PhDOE.user.conf.reviewed.toolsPanelLogLoad
                         }), new ui.cmp.VCSLogGrid({
                             layout: 'fit',
                             title: String.format(_('{0} Log'), 'En'),
@@ -395,7 +398,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: 'en' + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                            loadStore: PhDOE.user.conf.reviewed.toolsPanelLogLoad
                         }), new ui.cmp.DictionaryGrid({
                             layout: 'fit',
                             title: _('Dictionary'),
@@ -409,8 +412,8 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
                     prefix: 'FNR',
                     ftype: 'LANG',
-                    spellCheck: PhDOE.user.conf.reviewedSpellCheckLang,
-                    spellCheckConf: 'reviewedSpellCheckLang',
+                    spellCheck: PhDOE.user.conf.reviewed.enableSpellCheckLang,
+                    spellCheckConf: { module : 'reviewed', itemName : 'enableSpellCheckLang' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -419,15 +422,15 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     storeRecord: storeRecord,
                     syncScrollCB: true,
                     syncScroll: true,
-                    syncScrollConf: 'reviewedScrollbars'
+                    syncScrollConf: { module : 'reviewed', itemName : 'syncScrollbars' }
                 }), new ui.cmp.FilePanel({
                     id: 'FNR-EN-PANEL-' + FileID,
                     region: 'east',
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNR',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.reviewedSpellCheckEn,
-                    spellCheckConf: 'reviewedSpellCheckEn',
+                    spellCheck: PhDOE.user.conf.reviewed.enableSpellCheckEn,
+                    spellCheckConf: { module : 'reviewed', itemName : 'enableSpellCheckEn' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -435,7 +438,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'reviewedScrollbars'
+                    syncScrollConf: { module : 'reviewed', itemName : 'syncScrollbars' }
                 })]
             });
         }

@@ -562,18 +562,19 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         this.bbar = (this.syncScrollCB) ? [{
             height    : 22,
             xtype     : 'checkbox',
-            name      : 'needUpdateScrollbars',
+            name      : 'syncScrollConf.module',
             hideLabel : true,
-            checked   : PhDOE.user.conf[this.syncScrollConf],
+            checked   : PhDOE.user.conf[this.syncScrollConf.module][this.syncScrollConf.itemName],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,
                 check : function(c)
                 {
                     new ui.task.UpdateConfTask({
-                        item  : this.syncScrollConf,
-                        value : c.getValue(),
-                        notify: false
+                        module   : this.syncScrollConf.module,
+                        itemName : this.syncScrollConf.itemName,
+                        value    : c.getValue(),
+                        notify   : false
                     });
                 },
                 render : function(c)
@@ -657,11 +658,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         // We check the conf option : onSaveFile. Can be : ask-me, always or never
-                        if( !PhDOE.user.conf.onSaveFile ) {
-                            PhDOE.user.conf.onSaveFile = 'ask-me';
+                        if( !PhDOE.user.conf.main.onSaveFile ) {
+                            PhDOE.user.conf.main.onSaveFile = 'ask-me';
                         }
 
-                        switch (PhDOE.user.conf.onSaveFile) {
+                        switch (PhDOE.user.conf.main.onSaveFile) {
 
                             case 'always':
                                 new ui.task.CheckFileTask({
@@ -754,7 +755,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     ftype           : this.ftype,
                     goToPreviousTab : this.goToPreviousTab,
                     goToNextTab     : this.goToNextTab
-                }), '->', (( this.ftype !== 'GGTRANS' &&  this.ftype !== 'ORIGIN' ) ?
+                }), '->', (( this.ftype !== 'GGTRANS' ) ?
                             new ui.cmp._FilePanel.tbar.items.usernotes({
                                 fid : this.fid,
                                 file: this.lang + this.fpath + this.fname
@@ -902,7 +903,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var opp_prefix, opp_panel, opp_file;
 
-                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf] )
+                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf.module][this.syncScrollConf.itemName] )
                         {
                             switch (this.ftype) {
                                 case 'EN':
@@ -910,12 +911,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     break;
                                 case 'LANG':
                                     opp_prefix = this.prefix + '-EN';
-                                    break;
-                                case 'PATCH':
-                                    opp_prefix = this.prefix + '-ORIGIN';
-                                    break;
-                                case 'ORIGIN':
-                                    opp_prefix = this.prefix + '-PATCH';
                                     break;
                                 case 'TRANS':
                                     opp_prefix = this.prefix + '-GGTRANS';

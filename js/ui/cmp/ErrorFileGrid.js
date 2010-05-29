@@ -293,7 +293,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: PhDOE.user.lang + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             })] : [new ui.cmp.VCSLogGrid({
                 layout: 'fit',
                 title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
@@ -301,7 +301,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: PhDOE.user.lang + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             }), new ui.cmp.VCSLogGrid({
                 layout: 'fit',
                 title: String.format(_('{0} Log'), 'En'),
@@ -309,7 +309,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: 'en' + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             })];
             
             filePanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.FilePanel({
@@ -318,8 +318,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'LANG',
-                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
-                spellCheckConf: 'errorSpellCheckLang',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckLang,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckLang' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -334,8 +334,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'LANG',
-                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
-                spellCheckConf: 'errorSpellCheckLang',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckLang,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckLang' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -344,15 +344,15 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 storeRecord: storeRecord,
                 syncScrollCB: true,
                 syncScroll: true,
-                syncScrollConf: 'errorScrollbars'
+                syncScrollConf: { module : 'error', itemName : 'syncScrollbars' }
             }), new ui.cmp.FilePanel({
                 id: 'FE-EN-PANEL-' + FileID,
                 region: 'east',
                 title: _('en File: ') + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'EN',
-                spellCheck: PhDOE.user.conf.errorSpellCheckEn,
-                spellCheckConf: 'errorSpellCheckEn',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckEn,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckEn' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -360,7 +360,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 parser: 'xml',
                 storeRecord: storeRecord,
                 syncScroll: true,
-                syncScrollConf: 'errorScrollbars'
+                syncScrollConf: { module : 'error', itemName : 'syncScrollbars' }
             })];
             
             Ext.getCmp('main-panel').add({
@@ -393,9 +393,9 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     iconCls: 'iconFilesError',
                     collapsedIconCls: 'iconFilesError',
                     plugins: [Ext.ux.PanelCollapsedTitle],
-                    height: PhDOE.user.conf.errorDescPanelHeight || 150,
+                    height: PhDOE.user.conf.error.descPanelHeight || 150,
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.errorDescPanel,
+                    collapsed: !PhDOE.user.conf.error.descPanelDisplay,
                     autoScroll: true,
                     autoLoad: './error?dir=' + FilePath +
                     '&file=' +
@@ -404,7 +404,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value: false
                                 });
                             }
@@ -412,16 +413,18 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value: true
                                 });
                             }
                         },
                         resize: function(a, b, newHeight){
                         
-                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.errorDescPanelHeight) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.error.descPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanelHeight',
+                                    module     : 'error',
+                                    itemName   : 'descPanelHeight',
                                     value: newHeight
                                 });
                             }
@@ -435,15 +438,16 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.errorLogPanel,
+                    collapsed: !PhDOE.user.conf.error.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: PhDOE.user.conf.errorLogPanelWidth || 375,
+                    width: PhDOE.user.conf.error.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false
                                 });
                             }
@@ -451,15 +455,17 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.errorLogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.error.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanelWidth',
+                                    module     : 'error',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth
                                 });
                             }
@@ -486,7 +492,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                                 prefix: 'FE',
                                 ftype: 'LANG',
                                 fid: FileID,
-                                loadStore: PhDOE.user.conf.errorEntitiesLoadData
+                                loadStore: PhDOE.user.conf.error.toolsPanelEntitiesLoad
                             })]
                         }, {
                             title: _('Acronyms'),
@@ -496,7 +502,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                                 prefix: 'FE',
                                 ftype: 'LANG',
                                 fid: FileID,
-                                loadStore: PhDOE.user.conf.errorAcronymsLoadData
+                                loadStore: PhDOE.user.conf.error.toolsPanelAcronymsLoad
                             })]
                         }]
                     }

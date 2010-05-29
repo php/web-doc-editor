@@ -262,11 +262,11 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
         
-            if (PhDOE.user.conf.needUpdateDiff === "using-viewvc") {
+            if (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc") {
                 diff = ui.cmp.ViewVCDiff;
             }
             else 
-                if (PhDOE.user.conf.needUpdateDiff === "using-exec") {
+                if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
                     diff = ui.cmp.ExecDiff;
                 }
             
@@ -278,9 +278,9 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 iconCls: 'iconTabNeedUpdate',
                 closable: true,
                 tabLoaded: false,
-                panVCSLang: !PhDOE.user.conf.needUpdateDisplaylog,
-                panVCSEn: !PhDOE.user.conf.needUpdateDisplaylog,
-                panDiffLoaded: (PhDOE.user.conf.needUpdateDiff === "using-viewvc"),
+                panVCSLang: !PhDOE.user.conf.needUpdate.toolsPanelLogLoad,
+                panVCSEn: !PhDOE.user.conf.needUpdate.toolsPanelLogLoad,
+                panDiffLoaded: (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc"),
                 panLANGLoaded: false,
                 panENLoaded: false,
                 defaults: {
@@ -295,9 +295,9 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 items: [new diff({
                     region: 'north',
                     collapsible: true,
-                    height: PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
+                    height: PhDOE.user.conf.needUpdate.diffPanelHeight || 150,
                     prefix: 'FNU',
-                    collapsed: !PhDOE.user.conf.needUpdateDiffPanel,
+                    collapsed: !PhDOE.user.conf.needUpdate.diffPanelDisplay,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -307,7 +307,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -316,7 +317,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
@@ -324,9 +326,10 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         },
                         resize: function(a, b, newHeight){
                         
-                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdateDiffPanelHeight) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdate.diffPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanelHeight',
+                                    module     : 'needUpdate',
+                                    itemName   : 'diffPanelHeight',
                                     value: newHeight,
                                     notify: false
                                 });
@@ -340,16 +343,17 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     iconCls: 'iconConf',
                     collapsedIconCls: 'iconConf',
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.needUpdateDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.needUpdate.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
                     plugins: [Ext.ux.PanelCollapsedTitle],
-                    width: PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.needUpdate.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -358,16 +362,18 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.needUpdateDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.needUpdate.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanelWidth',
+                                    module     : 'needUpdate',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth,
                                     notify: false
                                 });
@@ -389,7 +395,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: PhDOE.user.lang + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                            loadStore: PhDOE.user.conf.needUpdate.toolsPanelLogLoad
                         }), new ui.cmp.VCSLogGrid({
                             layout: 'fit',
                             title: String.format(_('{0} Log'), 'En'),
@@ -397,7 +403,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: 'en' + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                            loadStore: PhDOE.user.conf.needUpdate.toolsPanelLogLoad
                         }), new ui.cmp.DictionaryGrid({
                             layout: 'fit',
                             title: _('Dictionary'),
@@ -411,8 +417,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
                     prefix: 'FNU',
                     ftype: 'LANG',
-                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckLang,
-                    spellCheckConf: 'needUpdateSpellCheckLang',
+                    spellCheck: PhDOE.user.conf.needUpdate.enableSpellCheckLang,
+                    spellCheckConf: { module : 'needUpdate', itemName : 'enableSpellCheckLang' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -421,15 +427,15 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     storeRecord: storeRecord,
                     syncScrollCB: true,
                     syncScroll: true,
-                    syncScrollConf: 'needUpdateScrollbars'
+                    syncScrollConf: { module : 'needUpdate', itemName : 'syncScrollbars' }
                 }), new ui.cmp.FilePanel({
                     id: 'FNU-EN-PANEL-' + FileID,
                     region: 'east',
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNU',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckEn,
-                    spellCheckConf: 'needUpdateSpellCheckEn',
+                    spellCheck: PhDOE.user.conf.needUpdate.enableSpellCheckEn,
+                    spellCheckConf: { module : 'needUpdate', itemName : 'enableSpellCheckEn' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -437,7 +443,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'needUpdateScrollbars'
+                    syncScrollConf: { module : 'needUpdate', itemName : 'syncScrollbars' }
                 })]
             });
         }

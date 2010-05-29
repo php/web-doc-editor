@@ -35,69 +35,68 @@ class AccountManager
 
     private function __construct()
     {
-        $this->defaultConf = array(
-            "onSaveFile"                => 'ask-me',
-
-            "mainAppMainMenuWidth"      => 300,
-            "mainAppLoadMailsAtStartUp" => false,
-            "mainAppLoadBugsAtStartUp"  => false,
-
-            "newFileNbDisplay"      => 0, // 0 means no limit
-            "newFileSpellCheck"     => false,
-            "newFileScrollbars"     => false,
-            "newFileGGPanel"        => true,
-
-            "needUpdateNbDisplay"            => 0, // 0 means no limit
-            "needUpdateDiff"                 => 'using-exec',
-            "needUpdateDiffPanel"            => true,
-            "needUpdateDiffPanelHeight"      => 150,
-            "needUpdateDisplaylog"           => false,
-            "needUpdateDisplaylogPanel"      => false,
-            "needUpdateDisplaylogPanelWidth" => 375,
-            "needUpdateScrollbars"           => true,
-            "needUpdateSpellCheckEn"         => false,
-            "needUpdateSpellCheckLang"       => false,
-
-            "errorEntitiesLoadData"     => false,
-            "errorAcronymsLoadData"     => false,
-            "errorLogLoadData"          => false,
-            "errorLogPanel"             => false,
-            "errorLogPanelWidth"        => 375,
-            "errorDescPanel"            => true,
-            "errorDescPanelHeight"      => 150,
-            "errorScrollbars"           => true,
-            "errorSkipNbLiteralTag"     => true,
-            "errorSpellCheckEn"         => false,
-            "errorSpellCheckLang"       => false,
-
-            "reviewedNbDisplay"            => 0, // 0 means no limit
-            "reviewedDisplaylog"           => false,
-            "reviewedDisplaylogPanel"      => false,
-            "reviewedDisplaylogPanelWidth" => 375,
-            "reviewedScrollbars"           => true,
-            "reviewedSpellCheckEn"         => false,
-            "reviewedSpellCheckLang"       => false,
-
-            "allFilesEntitiesLoadData"           => false,
-            "allFilesAcronymsLoadData"           => false,
-            "allFilesDisplayLog"                 => false,
-            "allFilesDisplaylogPanel"            => false,
-            "allFilesDisplaylogPanelWidth"       => 375,
-            "allFilesSpellCheck"                 => false,
-
-            "patchDisplayLog"                => false,
-            "patchDisplaylogPanel"           => false,
-            "patchDisplaylogPanelWidth"      => 375,
-            "patchDisplayContentPanel"       => true,
-            "patchDisplayContentPanelHeight" => 150,
-            "patchScrollbars"                => true,
-            "patchSpellCheck"                => false,
-
-            "theme"                          => 'themes/empty.css'
+        $this->defaultConf = (object) Array(
+            'allFiles' => (object) Array(
+                'enableSpellCheck' => false,
+                'toolsPanelAcronymsLoad' => false,
+                'toolsPanelDisplay' => false,
+                'toolsPanelEntitiesLoad' => false,
+                'toolsPanelLogLoad' => false,
+                'toolsPanelWidth' => 375
+            ),
+            'error' => (object) Array(
+                'descPanelDisplay' => true,
+                'descPanelHeight' => 150,
+                'enableSpellCheckEn' => false,
+                'enableSpellCheckLang' => false,
+                'nbDisplay' => 0,
+                'skipNbLiteralTag' => true,
+                'syncScrollbars' => true,
+                'toolsPanelAcronymsLoad' => false,
+                'toolsPanelDisplay' => false,
+                'toolsPanelEntitiesLoad' => false,
+                'toolsPanelLogLoad' => false,
+                'toolsPanelWidth' => 375
+            ),
+            'main' => (object) Array(
+                'loadBugsAtStartUp' => false,
+                'loadMailsAtStartUp' => false,
+                'mainMenuWidth' => 300,
+                'onSaveFile' => 'ask-me',
+                'theme' => 'themes/empty.css'
+            ),
+            'needUpdate' => (object) Array(
+                'diffMethod'       => 'using-exec',
+                'diffPanelDisplay' => true,
+                'diffPanelHeight' => 150,
+                'enableSpellCheckEn' => false,
+                'enableSpellCheckLang' => false,
+                'nbDisplay' => 0,
+                'syncScrollbars' => true,
+                'toolsPanelDisplay' => false,
+                'toolsPanelLogLoad' => false,
+                'toolsPanelWidth' => 375
+            ),
+            'newFile' => (object) Array(
+                'enableSpellCheck' => false,
+                'googlePanelDisplay' => true,
+                'nbDisplay' => 0,
+                'toolsPanelDisplay' => false,
+                'toolsPanelWidth' => 375,
+                'syncScrollbars' => true
+            ),
+            'reviewed' => (object) Array(
+                'enableSpellCheckEn' => false,
+                'enableSpellCheckLang' => false,
+                'nbDisplay' => 0,
+                'syncScrollbars' => true,
+                'toolsPanelDisplay' => false,
+                'toolsPanelLogLoad' => false,
+                'toolsPanelWidth' => 375
+            )
         );
 
         $this->appConf = Config::getInstance()->getConf();
-
     }
 
     /**
@@ -296,7 +295,7 @@ class AccountManager
               $_SESSION['anonymousIdent'] = $this->anonymousIdent;
               $_SESSION['email']      = $this->email;
               $_SESSION['lang']      = $this->vcsLang;
-              $_SESSION['userConf']  = json_decode(json_encode($this->defaultConf));
+              $_SESSION['userConf']  = $this->defaultConf;
 
               // We construct the return's var for ExtJs
               $return['state'] = true;
@@ -413,7 +412,7 @@ class AccountManager
      * @param $item The name of the option.
      * @param $value The value of the option.
      */
-    public function updateConf($item, $value)
+    public function updateConf($module, $itemName, $value)
     {
         if( $value == "false" ) {
             $value = false;
@@ -422,30 +421,28 @@ class AccountManager
         if( $value == "true" ) {
             $value = true;
         }
-
-        unset($this->userConf->$item);
-        $this->userConf->$item = ( is_numeric($value) ) ? (int) $value : $value;
+        unset($this->userConf->{$module}->{$itemName});
+        $this->userConf->{$module}->{$itemName} = ( is_numeric($value) ) ? (int) $value : $value;
         
         // In session
-        unset($_SESSION['userConf']->$item);
-        $_SESSION['userConf']->$item = ( is_numeric($value) ) ? (int) $value : $value;
+        unset($_SESSION['userConf']->{$module}->{$itemName});
+        $_SESSION['userConf']->{$module}->{$itemName} = ( is_numeric($value) ) ? (int) $value : $value;
         
         $db = DBConnection::getInstance();
 
         // In DB
         if( $this->isAnonymous ) {
-	        $s = sprintf(
-	            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s" AND `anonymousIdent`="%s"',
-	            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin, $this->anonymousIdent
-	        );
+            $s = sprintf(
+                'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s" AND `anonymousIdent`="%s"',
+                $db->real_escape_string(json_encode($this->userConf)), "anonymous", $this->anonymousIdent
+            );
         } else {
-	        $s = sprintf(
-	            'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
-	            $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
-	        );
+            $s = sprintf(
+                'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
+                $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
+            );
         }
         $db->query($s);
-
     }
 
     /**

@@ -95,8 +95,8 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
                     isTrans: true,
                     prefix: 'FNT',
                     ftype: 'NEW',
-                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
-                    spellCheckConf: 'newFileSpellCheck',
+                    spellCheck: PhDOE.user.conf.newFile.enableSpellCheck,
+                    spellCheckConf: { module : 'newFile', itemName : 'enableSpellCheck' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -487,13 +487,14 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         bodyBorder: false,
                         split: true,
                         collapsible: true,
-                        collapsed: !PhDOE.user.conf.allFilesDisplaylogPanel,
-                        width: PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
+                        collapsed: !PhDOE.user.conf.allFiles.toolsPanelDisplay,
+                        width: PhDOE.user.conf.allFiles.toolsPanelWidth || 375,
                         listeners: {
                             collapse: function(){
                                 if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanel',
+                                        module   : 'allFiles',
+                                        itemName : 'toolsPanelDisplay',
                                         value: false,
                                         notify: false
                                     });
@@ -502,16 +503,18 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                             expand: function(){
                                 if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanel',
+                                        module   : 'allFiles',
+                                        itemName : 'toolsPanelDisplay',
                                         value: true,
                                         notify: false
                                     });
                                 }
                             },
                             resize: function(a, newWidth){
-                                if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.allFilesDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.allFiles.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanelWidth',
+                                        module     : 'allFiles',
+                                        itemName   : 'toolsPanelWidth',
                                         value: newWidth,
                                         notify: false
                                     });
@@ -532,7 +535,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     fid: FileID,
                                     fpath: FileLang + FilePath,
                                     fname: FileName,
-                                    loadStore: PhDOE.user.conf.allFilesDisplayLog
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelLogLoad
                                 })]
                             }, {
                                 title: _('Entities'),
@@ -542,7 +545,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     prefix: 'AF',
                                     ftype: 'ALL',
                                     fid: FileID,
-                                    loadStore: PhDOE.user.conf.allFilesEntitiesLoadData
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelEntitiesLoad
                                 })]
                             }, {
                                 title: _('Acronyms'),
@@ -552,7 +555,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     prefix: 'AF',
                                     ftype: 'ALL',
                                     fid: FileID,
-                                    loadStore: PhDOE.user.conf.allFilesAcronymsLoadData
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelAcronymsLoad
                                 })]
                             }]
                         }
@@ -564,8 +567,8 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         title: _('File: ') + FileLang + FilePath + FileName,
                         prefix: 'AF',
                         ftype: 'ALL',
-                        spellCheck: PhDOE.user.conf.allFilesSpellCheck,
-                        spellCheckConf: 'allFilesSpellCheck',
+                        spellCheck: PhDOE.user.conf.allFiles.enableSpellCheck,
+                        spellCheckConf: {module : 'allFiles', itemName : 'enableSpellCheck'},
                         fid: FileID,
                         fpath: FilePath,
                         fname: FileName,
@@ -584,9 +587,9 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                     originTitle: FileName,
                     closable: true,
                     tabLoaded: false,
-                    panEntities: !PhDOE.user.conf.allFilesEntitiesLoadData,
-                    panAcronyms: !PhDOE.user.conf.allFilesAcronymsLoadData,
-                    panVCS: !PhDOE.user.conf.allFilesDisplayLog,
+                    panEntities: !PhDOE.user.conf.allFiles.toolsPanelEntitiesLoad,
+                    panAcronyms: !PhDOE.user.conf.allFiles.toolsPanelAcronymsLoad,
+                    panVCS: !PhDOE.user.conf.allFiles.toolsPanelLogLoad,
                     panLoaded: false,
                     tabTip: String.format(_('in {0}'), FilePath),
                     iconCls: 'iconAllFiles',

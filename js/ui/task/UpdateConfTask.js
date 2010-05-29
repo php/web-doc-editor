@@ -9,27 +9,28 @@ ui.task.UpdateConfTask = function(config)
     XHR({
         scope   : this,
         params  : {
-            task  : 'confUpdate',
-            item  : this.item,
-            value : this.value
+            task      : 'confUpdate',
+            module    : this.module,
+            itemName  : this.itemName,
+            value     : this.value
         },
         success : function()
         {
             // Update userConf object
-            PhDOE.user.conf[this.item] = this.value;
-
+            PhDOE.user.conf[this.module][this.itemName] = this.value;
+            
             // If we touch this config option, we need to reload this store too
-            if( this.item == "errorSkipNbLiteralTag" ) {
-                ui.cmp.ErrorFileGrid.getInstance().store.reload();
+            if( this.module == "newFile" &&  this.itemName == "nbDisplay" ) {
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
             }
-            if( this.item == "needUpdateNbDisplay" ) {
+            if( this.module == "needUpdate" &&  this.itemName == "nbDisplay" ) {
                 ui.cmp.StaleFileGrid.getInstance().store.reload();
             }
-            if( this.item == "reviewedNbDisplay" ) {
-                ui.cmp.PendingReviewGrid.getInstance().store.reload();
+            if( this.module == "error" &&  (this.itemName == "skipNbLiteralTag" || this.itemName == "nbDisplay") ) {
+                ui.cmp.ErrorFileGrid.getInstance().store.reload();
             }
-            if( this.item == "newFileNbDisplay" ) {
-                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
+            if( this.module == "reviewed" &&  this.itemName == "nbDisplay" ) {
+                ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             
             // Notify

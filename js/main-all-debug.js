@@ -5593,7 +5593,7 @@ ui.task.GetFileTask = function(config)
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
                 pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
                 f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-				fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
+                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -5680,35 +5680,32 @@ ui.task.GetFileTask = function(config)
             if( o.fileModified && ( fileModifiedInfo.user !== PhDOE.user.login || fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent ) ) {
 
                 // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
-				if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
-					
-					Ext.MessageBox.show({
+                if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+                    Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst()+' mais vous êtes un utilisateur authentifié, vous pouvez donc le modifier.',
+                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
-					
-				} else {						
-	                if( !this.freadOnly ) {
-	                    // We disable save group, undoRdeo group, and tools group from the toolBars
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
-	                    Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
-	                }
-	
-	                // If the current user isn't the user who have modified this file, we disable the panel
-	
-	                var mess = Ext.MessageBox.show({
-	                    title   : _('Information'),
-	                    msg     : 'Fichier modifié par '+fileModifiedInfo.user.ucFirst(),
-	                    buttons : Ext.MessageBox.OK,
-	                    icon    : Ext.MessageBox.INFO
-	                });
-	
-	                mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
-	                mess.getDialog().mask.alignTo(pEl.dom, "tl");
-				}
+                } else {
+                    if( !this.freadOnly ) {
+                        // We disable save group, undoRdeo group, and tools group from the toolBars
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
+                        Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
+                    }
+                    
+                    // If the current user isn't the user who have modified this file, we disable the panel
+                    
+                    var mess = Ext.MessageBox.show({
+                        title   : _('Information'),
+                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
+                        buttons : Ext.MessageBox.OK,
+                        icon    : Ext.MessageBox.INFO
+                    });
+                    mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
+                    mess.getDialog().mask.alignTo(pEl.dom, "tl");
+                }
             }
         },
         callback : function()
@@ -5765,16 +5762,6 @@ ui.task.GetFileTask = function(config)
                 tab.panLoaded = true;
             }
 
-            // Mark PP panel as loaded
-            if( this.prefix == 'PP' ) {
-                if( this.ftype == 'PATCH' ) {
-                    tab.panPatchLoaded = true;
-                }
-                if( this.ftype == 'ORIGIN' ) {
-                    tab.panOriginLoaded = true;
-                }
-            }
-
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
         }
     });
@@ -5822,15 +5809,15 @@ ui.task.LoadConfigTask = function(config)
 
             PhDOE.user.login = o.mess.userLogin;
             PhDOE.user.lang  = o.mess.userLang;
-			PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
+            PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
             PhDOE.user.isAdmin = o.mess.userIsAdmin;
             PhDOE.user.conf = o.mess.userConf;
-			
+
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
 
-            //For the theme, we apply this.
-            Ext.get('appTheme').dom.href = PhDOE.user.conf.theme;
+            //For the theme, we apply it.
+            Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 
             // Draw the interface
             PhDOE.drawInterface();
@@ -6421,27 +6408,28 @@ ui.task.UpdateConfTask = function(config)
     XHR({
         scope   : this,
         params  : {
-            task  : 'confUpdate',
-            item  : this.item,
-            value : this.value
+            task      : 'confUpdate',
+            module    : this.module,
+            itemName  : this.itemName,
+            value     : this.value
         },
         success : function()
         {
             // Update userConf object
-            PhDOE.user.conf[this.item] = this.value;
-
+            PhDOE.user.conf[this.module][this.itemName] = this.value;
+            
             // If we touch this config option, we need to reload this store too
-            if( this.item == "errorSkipNbLiteralTag" ) {
-                ui.cmp.ErrorFileGrid.getInstance().store.reload();
+            if( this.module == "newFile" &&  this.itemName == "nbDisplay" ) {
+                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
             }
-            if( this.item == "needUpdateNbDisplay" ) {
+            if( this.module == "needUpdate" &&  this.itemName == "nbDisplay" ) {
                 ui.cmp.StaleFileGrid.getInstance().store.reload();
             }
-            if( this.item == "reviewedNbDisplay" ) {
-                ui.cmp.PendingReviewGrid.getInstance().store.reload();
+            if( this.module == "error" &&  (this.itemName == "skipNbLiteralTag" || this.itemName == "nbDisplay") ) {
+                ui.cmp.ErrorFileGrid.getInstance().store.reload();
             }
-            if( this.item == "newFileNbDisplay" ) {
-                ui.cmp.PendingTranslateGrid.getInstance().store.reload();
+            if( this.module == "reviewed" &&  this.itemName == "nbDisplay" ) {
+                ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             
             // Notify
@@ -8339,8 +8327,7 @@ ui.cmp._EditorConf.tplMenu.compile();
 ui.cmp._EditorConf.menuDefEn = [
     ['1', 'card1', _('Main')],
     ['4', 'card4', _('Module "Files with error"')],
-    ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending patches"')]
+    ['6', 'card6', _('Module "All files"')]
 ];
 
 // EditorConf Win-Menu items definition for Non-EN
@@ -8350,8 +8337,7 @@ ui.cmp._EditorConf.menuDefNonEn = [
     ['3', 'card3', _('Module "Files need update"')],
     ['4', 'card4', _('Module "Files with error"')],
     ['5', 'card5', _('Module "Files need reviewed"')],
-    ['6', 'card6', _('Module "All files"')],
-    ['7', 'card7', _('Module "Pending patches"')]
+    ['6', 'card6', _('Module "All files"')]
 ];
 
 // EditorConf Win-Menu items store
@@ -8406,8 +8392,9 @@ ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
 ui.cmp._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
 {
     new ui.task.UpdateConfTask({
-        item  : this.name,
-        value : this.getValue()
+        module   : this.module,
+        itemName : this.itemName,
+        value    : this.getValue()
     });
 });
 
@@ -8433,9 +8420,11 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     items   : [{
                         xtype      : 'spinnerfield',
                         width      : 60,
-                        name       : 'mainAppMainMenuWidth',
-                        value      : PhDOE.user.conf.mainAppMainMenuWidth || 300,
-                        fieldLabel : _('Main Menu width'),
+                        name       : 'PhDOE.user.conf.main.mainMenuWidth',
+                        module     : 'main',
+                        itemName   : 'mainMenuWidth',
+                        value      : PhDOE.user.conf.main.mainMenuWidth || 300,
+                        fieldLabel : _('Main menu width'),
                         minValue   : 0,
                         maxValue   : 10000,
                         accelerate : true,
@@ -8445,7 +8434,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.main.mainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -8455,7 +8444,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                     var cmp = Ext.getCmp('main-menu-panel'),
                                         val = this.getValue();
-                                    PhDOE.user.conf.mainAppMainMenuWidth = val;
+                                    PhDOE.user.conf.main.mainMenuWidth = val;
                                     cmp.setWidth(val);
                                     cmp.ownerCt.doLayout();
 
@@ -8477,7 +8466,7 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         mode           : 'local',
                         forceSelection : true,
                         editable       : false,
-                        value          : PhDOE.user.conf.theme,
+                        value          : PhDOE.user.conf.main.theme,
                         store          : ui.cmp._EditorConf.themeStore,
                         listeners      : {
                             render : function()
@@ -8491,8 +8480,9 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                                 Ext.get('appTheme').dom.href = hrefTheme;
 
                                 new ui.task.UpdateConfTask({
-                                    item  : 'theme',
-                                    value : hrefTheme
+                                    module   : 'main',
+                                    itemName : 'theme',
+                                    value    : hrefTheme
                                 });
                             }
                         }
@@ -8506,8 +8496,10 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     defaultType: 'radio',
                     items      : [{
                         autoHeight : true,
-                        name       : 'onSaveFile',
-                        checked    : (PhDOE.user.conf.onSaveFile === "ask-me") ? true : false,
+                        name       : 'PhDOE.user.conf.main.onSaveFile',
+                        module     : 'main',
+                        itemName   : 'onSaveFile',
+                        checked    : (PhDOE.user.conf.main.onSaveFile === "ask-me") ? true : false,
                         boxLabel   : _('Ask me if I want to check for error before saving the file'),
                         inputValue : 'ask-me',
                         listeners  : {
@@ -8515,7 +8507,8 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveFile',
+                                        module   : 'main',
+                                        itemName : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -8523,8 +8516,10 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         autoHeight : true,
-                        name       : 'onSaveFile',
-                        checked    : (PhDOE.user.conf.onSaveFile === "always") ? true : false,
+                        name       : 'PhDOE.user.conf.main.onSaveFile',
+                        module     : 'main',
+                        itemName   : 'onSaveFile',
+                        checked    : (PhDOE.user.conf.main.onSaveFile === "always") ? true : false,
                         boxLabel   : _('Always check for error before saving the file'),
                         inputValue : 'always',
                         listeners  : {
@@ -8532,7 +8527,8 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveFile',
+                                        module   : 'main',
+                                        itemName : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -8540,8 +8536,10 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }, {
                         autoHeight : true,
-                        name       : 'onSaveFile',
-                        checked    : (PhDOE.user.conf.onSaveFile === "never") ? true : false,
+                        name       : 'PhDOE.user.conf.main.onSaveFile',
+                        module     : 'main',
+                        itemName   : 'onSaveFile',
+                        checked    : (PhDOE.user.conf.main.onSaveFile === "never") ? true : false,
                         boxLabel   : _('Never check for error before saving the file'),
                         inputValue : 'never',
                         listeners  : {
@@ -8549,7 +8547,8 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'onSaveFile',
+                                        module   : 'main',
+                                        itemName : 'onSaveFile',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -8568,14 +8567,15 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         autoHeight  : true,
-                        name        : 'mainAppLoadMailsAtStartUp',
-                        checked     : PhDOE.user.conf.mainAppLoadMailsAtStartUp,
+                        name        : 'PhDOE.user.conf.main.loadMailsAtStartUp',
+                        checked     : PhDOE.user.conf.main.loadMailsAtStartUp,
                         boxLabel    : _('Load mail at startUp'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'mainAppLoadMailsAtStartUp',
+                                    module   : 'main',
+                                    itemName : 'loadMailsAtStartUp',
                                     value : field.getValue()
                                 });
                             }
@@ -8589,14 +8589,15 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         autoHeight  : true,
-                        name        : 'mainAppLoadBugsAtStartUp',
-                        checked     : PhDOE.user.conf.mainAppLoadBugsAtStartUp,
+                        name        : 'PhDOE.user.conf.main.loadBugsAtStartUp',
+                        checked     : PhDOE.user.conf.main.loadBugsAtStartUp,
                         boxLabel    : _('Load bugs at startUp'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'mainAppLoadBugsAtStartUp',
+                                    module   : 'main',
+                                    itemName : 'loadBugsAtStartUp',
                                     value : field.getValue()
                                 });
                             }
@@ -8636,8 +8637,10 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype      : 'spinnerfield',
                         width      : 60,
-                        name       : 'newFileNbDisplay',
-                        value      : PhDOE.user.conf.newFileNbDisplay || 0,
+                        name       : 'PhDOE.user.conf.newFile.nbDisplay',
+                        module     : 'newFile',
+                        itemName   : 'nbDisplay',
+                        value      : PhDOE.user.conf.newFile.nbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -8669,14 +8672,15 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'newFileScrollbars',
-                        checked     : PhDOE.user.conf.newFileScrollbars,
+                        name        : 'PhDOE.user.conf.newFile.syncScrollbars',
+                        checked     : PhDOE.user.conf.newFile.syncScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'newFileScrollbars',
+                                    module   : 'newFile',
+                                    itemName : 'syncScrollbars',
                                     value : field.getValue()
                                 });
                             }
@@ -8684,19 +8688,73 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     }]
                 },{
                     xtype       : 'fieldset',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'checkbox',
+                    items       : [{
+                        xtype          : 'fieldset',
+                        checkboxToggle : true,
+                        collapsed      : !PhDOE.user.conf.newFile.toolsPanelDisplay,
+                        title          : _('Start with the panel open'),
+                        listeners      : {
+                            collapse : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : false
+                                });
+                            },
+                            expand : function()
+                            {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : true
+                                });
+                            }
+                        },
+                        items : [{
+                            xtype      : 'spinnerfield',
+                            width      : 60,
+                            name       : 'newFile.toolsPanelWidth',
+                            module     : 'newFile',
+                            itemName   : 'toolsPanelWidth',
+                            value      : PhDOE.user.conf.newFile.toolsPanelWidth || 375,
+                            fieldLabel : _('Panel width'),
+                            minValue   : 0,
+                            maxValue   : 10000,
+                            accelerate : true,
+                            enableKeyEvents : true,
+                            listeners  : {
+                                keyup : function()
+                                {
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
+                                },
+                                spin : function()
+                                {
+                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
+                                }
+                            }
+                        }]
+                    }]
+                }, {
+                    xtype       : 'fieldset',
                     title       : _('Google translate Panel'),
                     iconCls     : 'iconGoogle',
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'newFileGGPanel',
-                        checked     : PhDOE.user.conf.newFileGGPanel,
+                        name        : 'PhDOE.user.conf.newFile.googlePanelDisplay',
+                        checked     : PhDOE.user.conf.newFile.googlePanelDisplay,
                         boxLabel    : _('Display the Google Translation Panel'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'newFileGGPanel',
+                                    module   : 'newFile',
+                                    itemName : 'googlePanelDisplay',
                                     value : field.getValue()
                                 });
                             }
@@ -8714,14 +8772,15 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         autoHeight  : true,
-                        name        : 'newFileSpellCheck',
-                        checked     : PhDOE.user.conf.newFileSpellCheck,
+                        name        : 'PhDOE.user.conf.newFile.enableSpellCheck',
+                        checked     : PhDOE.user.conf.newFile.enableSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'newFileSpellCheck',
+                                    module   : 'newFile',
+                                    itemName : 'enableSpellCheck',
                                     value : field.getValue()
                                 });
                             }
@@ -8761,8 +8820,10 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaultType : 'spinnerfield',
                     items       : [{
                         width      : 60,
-                        name       : 'needUpdateNbDisplay',
-                        value      : PhDOE.user.conf.needUpdateNbDisplay || 0,
+                        name       : 'PhDOE.user.conf.needUpdate.nbDisplay',
+                        module     : 'needUpdate',
+                        itemName   : 'nbDisplay',
+                        value      : PhDOE.user.conf.needUpdate.nbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -8795,14 +8856,15 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'needUpdateScrollbars',
-                        checked     : PhDOE.user.conf.needUpdateScrollbars,
+                        name        : 'needUpdate.syncScrollbars',
+                        checked     : PhDOE.user.conf.needUpdate.syncScrollbars,
                         boxLabel    : _('Synchronize scroll bars'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateScrollbars',
+                                    module   : 'needUpdate',
+                                    itemName : 'syncScrollbars',
                                     value : field.getValue()
                                 });
                             }
@@ -8810,19 +8872,20 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype       : 'fieldset',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'needUpdateDisplaylog',
-                        checked     : PhDOE.user.conf.needUpdateDisplaylog,
+                        name        : 'needUpdate.toolsPanelLogLoad',
+                        checked     : PhDOE.user.conf.needUpdate.toolsPanelLogLoad,
                         boxLabel    : _('Automatically load the log when displaying the file'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDisplaylog',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelLogLoad',
                                     value : field.getValue()
                                 });
                             }
@@ -8830,20 +8893,22 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.needUpdateDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdate.toolsPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value : true
                                 });
                             }
@@ -8851,8 +8916,10 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'needUpdateDisplaylogPanelWidth',
-                            value      : PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
+                            name       : 'needUpdate.toolsPanelWidth',
+                            module     : 'needUpdate',
+                            itemName   : 'toolsPanelWidth',
+                            value      : PhDOE.user.conf.needUpdate.toolsPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8879,20 +8946,22 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.needUpdateDiffPanel,
+                        collapsed      : !PhDOE.user.conf.needUpdate.diffPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value : true
                                 });
                             }
@@ -8900,8 +8969,10 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                         items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'needUpdateDiffPanelHeight',
-                            value      : PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
+                            name       : 'needUpdate.diffPanelHeight',
+                            module     : 'needUpdate',
+                            itemName   : 'diffPanelHeight',
+                            value      : PhDOE.user.conf.needUpdate.diffPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -8919,8 +8990,8 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             }
                         }]
                     }, {
-                        name       : 'needUpdateDiff',
-                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-viewvc") ? true : false,
+                        name       : 'needUpdate.diffMethod',
+                        checked    : (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc") ? true : false,
                         boxLabel   : _('Using ViewVc from php web site'),
                         inputValue : 'using-viewvc',
                         listeners  : {
@@ -8928,15 +8999,16 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDiff',
+                                        module   : 'needUpdate',
+                                        itemName : 'diffMethod',
                                         value : field.getRawValue()
                                     });
                                 }
                             }
                         }
                     }, {
-                        name       : 'needUpdateDiff',
-                        checked    : (PhDOE.user.conf.needUpdateDiff === "using-exec") ? true : false,
+                        name       : 'needUpdate.diffMethod',
+                        checked    : (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") ? true : false,
                         boxLabel   : _('Using diff -u command line'),
                         inputValue : 'using-exec',
                         listeners : {
@@ -8944,7 +9016,8 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                             {
                                 if (field.checked) {
                                     new ui.task.UpdateConfTask({
-                                        item  : 'needUpdateDiff',
+                                        module   : 'needUpdate',
+                                        itemName : 'diffMethod',
                                         value : field.getRawValue()
                                     });
                                 }
@@ -8962,27 +9035,29 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name      : 'needUpdateSpellCheckEn',
-                        checked   : PhDOE.user.conf.needUpdateSpellCheckEn,
+                        name      : 'needUpdate.enableSpellCheckEn',
+                        checked   : PhDOE.user.conf.needUpdate.enableSpellCheckEn,
                         boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateSpellCheckEn',
+                                    module   : 'needUpdate',
+                                    itemName : 'enableSpellCheckEn',
                                     value : field.getValue()
                                 });
                             }
                         }
                     },{
-                        name      : 'needUpdateSpellCheckLang',
-                        checked   : PhDOE.user.conf.needUpdateSpellCheckLang,
+                        name      : 'needUpdate.enableSpellCheckLang',
+                        checked   : PhDOE.user.conf.needUpdate.enableSpellCheckLang,
                         boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'needUpdateSpellCheckLang',
+                                    module   : 'needUpdate',
+                                    itemName : 'enableSpellCheckLang',
                                     value : field.getValue()
                                 });
                             }
@@ -9015,6 +9090,39 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                 title   : _('Menu'),
                 iconCls : 'iconMenu',
                 items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Nb files to display'),
+                    iconCls     : 'iconFilesToDisplay',
+                    defaults    : { hideLabel: true },
+                    defaultType : 'spinnerfield',
+                    items       : [{
+                        width      : 60,
+                        name       : 'PhDOE.user.conf.error.nbDisplay',
+                        module     : 'error',
+                        itemName   : 'nbDisplay',
+                        value      : PhDOE.user.conf.error.nbDisplay || 0,
+                        boxLabel   : _('files to display'),
+                        minValue   : 0,
+                        maxValue   : 10000,
+                        accelerate : true,
+                        enableKeyEvents : true,
+                        listeners  : {
+                            keyup : function()
+                            {
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
+                            },
+                            spin : function()
+                            {
+                                ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
+                            }
+                        }
+
+                    }, {
+                        xtype : 'displayfield',
+                        value : _('0 means no limit'),
+                        style : { fontStyle: 'italic'}
+                    }]
+                }, {
                     hidden      : ( PhDOE.user.lang === 'en' ),
                     xtype       : 'fieldset',
                     title       : _('Error type'),
@@ -9022,14 +9130,15 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'errorSkipNbLiteralTag',
-                        checked    : PhDOE.user.conf.errorSkipNbLiteralTag,
+                        name       : 'error.skipNbLiteralTag',
+                        checked    : PhDOE.user.conf.error.skipNbLiteralTag,
                         boxLabel   : _('Skip nbLiteralTag error'),
                         listeners  : {
                             check  : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorSkipNbLiteralTag',
+                                    module   : 'error',
+                                    itemName : 'skipNbLiteralTag',
                                     value : field.getValue()
                                 });
                             }
@@ -9046,14 +9155,15 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'errorScrollbars',
-                        checked    : PhDOE.user.conf.errorScrollbars,
+                        name       : 'error.syncScrollbars',
+                        checked    : PhDOE.user.conf.error.syncScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorScrollbars',
+                                    module   : 'error',
+                                    itemName : 'syncScrollbars',
                                     value : field.getValue()
                                 });
                             }
@@ -9066,40 +9176,43 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'errorLogLoadData',
-                        checked    : PhDOE.user.conf.errorLogLoadData,
+                        name       : 'error.toolsPanelLogLoad',
+                        checked    : PhDOE.user.conf.error.toolsPanelLogLoad,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorLogLoadData',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelLogLoad',
                                     value : field.getValue()
                                 });
                             }
                         }
                     }, {
-                        name       : 'errorEntitiesLoadData',
-                        checked    : PhDOE.user.conf.errorEntitiesLoadData,
+                        name       : 'error.toolsPanelEntitiesLoad',
+                        checked    : PhDOE.user.conf.error.toolsPanelEntitiesLoad,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorEntitiesLoadData',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelEntitiesLoad',
                                     value : field.getValue()
                                 });
                             }
                         }
                     }, {
-                        name       : 'errorAcronymsLoadData',
-                        checked    : PhDOE.user.conf.errorAcronymsLoadData,
+                        name       : 'error.toolsPanelAcronymsLoad',
+                        checked    : PhDOE.user.conf.error.toolsPanelAcronymsLoad,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorAcronymsLoadData',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelAcronymsLoad',
                                     value : field.getValue()
                                 });
                             }
@@ -9107,20 +9220,22 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.errorDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.error.toolsPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorDisplaylogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorDisplaylogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value : true
                                 });
                             }
@@ -9128,8 +9243,10 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         items: [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'errorDisplaylogPanelWidth',
-                            value      : PhDOE.user.conf.errorDisplaylogPanelWidth || 375,
+                            name       : 'error.toolsPanelWidth',
+                            module     : 'error',
+                            itemName   : 'toolsPanelWidth',
+                            value      : PhDOE.user.conf.error.toolsPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -9156,20 +9273,22 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     items       : [{
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.errorDescPanel,
+                        collapsed      : !PhDOE.user.conf.error.descPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value : true
                                 });
                             }
@@ -9177,8 +9296,10 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'errorDescPanelHeight',
-                            value      : PhDOE.user.conf.errorDescPanelHeight || 150,
+                            name       : 'error.descPanelHeight',
+                            module     : 'error',
+                            itemName   : 'descPanelHeight',
+                            value      : PhDOE.user.conf.error.descPanelHeight || 150,
                             fieldLabel : _('Panel height'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -9208,27 +9329,29 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                     defaultType : 'checkbox',
                     items       : [{
                         hidden      : ( PhDOE.user.lang === 'en' ),
-                        name        : 'errorSpellCheckEn',
-                        checked     : PhDOE.user.conf.errorSpellCheckEn,
+                        name        : 'error.enableSpellCheckEn',
+                        checked     : PhDOE.user.conf.error.enableSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorSpellCheckEn',
+                                    module   : 'error',
+                                    itemName : 'enableSpellCheckEn',
                                     value : field.getValue()
                                 });
                             }
                         }
                     }, {
-                        name        : 'errorSpellCheckLang',
-                        checked     : PhDOE.user.conf.errorSpellCheckLang,
+                        name        : 'error.enableSpellCheckLang',
+                        checked     : PhDOE.user.conf.error.enableSpellCheckLang,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'errorSpellCheckLang',
+                                    module   : 'error',
+                                    itemName : 'enableSpellCheckLang',
                                     value : field.getValue()
                                 });
                             }
@@ -9268,8 +9391,10 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaultType : 'spinnerfield',
                     items       : [{
                         width      : 60,
-                        name       : 'reviewedNbDisplay',
-                        value      : PhDOE.user.conf.reviewedNbDisplay || 0,
+                        name       : 'reviewed.nbDisplay',
+                        module     : 'reviewed',
+                        itemName   : 'nbDisplay',
+                        value      : PhDOE.user.conf.reviewed.nbDisplay || 0,
                         boxLabel   : _('files to display'),
                         minValue   : 0,
                         maxValue   : 10000,
@@ -9302,14 +9427,15 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'reviewedScrollbars',
-                        checked    : PhDOE.user.conf.reviewedScrollbars,
+                        name       : 'reviewed.syncScrollbars',
+                        checked    : PhDOE.user.conf.reviewed.syncScrollbars,
                         boxLabel   : _('Synchronize scroll bars'),
                         listeners  : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedScrollbars',
+                                    module   : 'reviewed',
+                                    itemName : 'syncScrollbars',
                                     value : field.getValue()
                                 });
                             }
@@ -9317,19 +9443,20 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype       : 'fieldset',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
+                    title       : _('Tools'),
+                    iconCls     : 'iconConf',
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'reviewedDisplaylog',
-                        checked    : PhDOE.user.conf.reviewedDisplaylog,
+                        name       : 'reviewed.toolsPanelLogLoad',
+                        checked    : PhDOE.user.conf.reviewed.toolsPanelLogLoad,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylog',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelLogLoad',
                                     value : field.getValue()
                                 });
                             }
@@ -9337,20 +9464,22 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.reviewedDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.reviewed.toolsPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value : true
                                 });
                             }
@@ -9358,8 +9487,10 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                         items : [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'reviewedDisplaylogPanelWidth',
-                            value      : PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                            name       : 'reviewed.toolsPanelWidth',
+                            module     : 'reviewed',
+                            itemName   : 'toolsPanelWidth',
+                            value      : PhDOE.user.conf.reviewed.toolsPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -9388,27 +9519,29 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'reviewedSpellCheckEn',
-                        checked     : PhDOE.user.conf.reviewedSpellCheckEn,
+                        name        : 'reviewed.enableSpellCheckEn',
+                        checked     : PhDOE.user.conf.reviewed.enableSpellCheckEn,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedSpellCheckEn',
+                                    module   : 'reviewed',
+                                    itemName : 'enableSpellCheckEn',
                                     value : field.getValue()
                                 });
                             }
                         }
                     }, {
-                        name        : 'reviewedSpellCheckLang',
-                        checked     : PhDOE.user.conf.reviewedSpellCheckLang,
+                        name        : 'reviewed.enableSpellCheckLang',
+                        checked     : PhDOE.user.conf.reviewed.enableSpellCheckLang,
                         boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'reviewedSpellCheckLang',
+                                    module   : 'reviewed',
+                                    itemName : 'enableSpellCheckLang',
                                     value : field.getValue()
                                 });
                             }
@@ -9447,40 +9580,43 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name       : 'allFilesDisplayLog',
-                        checked    : PhDOE.user.conf.allFilesDisplayLog,
+                        name       : 'allFiles.toolsPanelLogLoad',
+                        checked    : PhDOE.user.conf.allFiles.toolsPanelLogLoad,
                         boxLabel   : _('Automatically load the log when displaying the file'),
                         listeners  : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesDisplayLog',
+                                    module   : 'allFiles',
+                                    itemName : 'toolsPanelLogLoad',
                                     value : field.getValue()
                                 });
                             }
                         }
                     }, {
-                        name       : 'allFilesEntitiesLoadData',
-                        checked    : PhDOE.user.conf.allFilesEntitiesLoadData,
+                        name       : 'allFiles.toolsPanelEntitiesLoad',
+                        checked    : PhDOE.user.conf.allFiles.toolsPanelEntitiesLoad,
                         boxLabel   : _('Automatically load entities data when displaying the file'),
                         listeners  : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesEntitiesLoadData',
+                                    module   : 'allFiles',
+                                    itemName : 'toolsPanelEntitiesLoad',
                                     value : field.getValue()
                                 });
                             }
                         }
                     },{
-                        name       : 'allFilesAcronymsLoadData',
-                        checked    : PhDOE.user.conf.allFilesAcronymsLoadData,
+                        name       : 'allFiles.toolsPanelAcronymsLoad',
+                        checked    : PhDOE.user.conf.allFiles.toolsPanelAcronymsLoad,
                         boxLabel   : _('Automatically load acronyms data when displaying the file'),
                         listeners  : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesAcronymsLoadData',
+                                    module   : 'allFiles',
+                                    itemName : 'toolsPanelAcronymsLoad',
                                     value : field.getValue()
                                 });
                             }
@@ -9488,20 +9624,22 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     }, {
                         xtype          : 'fieldset',
                         checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.allFilesDisplaylogPanel,
+                        collapsed      : !PhDOE.user.conf.allFiles.toolsPanelDisplay,
                         title          : _('Start with the panel open'),
                         listeners      : {
                             collapse : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesDisplaylogPanel',
+                                    module   : 'allFiles',
+                                    itemName : 'toolsPanelDisplay',
                                     value : false
                                 });
                             },
                             expand : function()
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesDisplaylogPanel',
+                                    module   : 'allFiles',
+                                    itemName : 'toolsPanelDisplay',
                                     value : true
                                 });
                             }
@@ -9509,8 +9647,10 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                         items: [{
                             xtype      : 'spinnerfield',
                             width      : 60,
-                            name       : 'allFilesDisplaylogPanelWidth',
-                            value      : PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
+                            name       : 'allFiles.toolsPanelWidth',
+                            module     : 'allFiles',
+                            itemName   : 'toolsPanelWidth',
+                            value      : PhDOE.user.conf.allFiles.toolsPanelWidth || 375,
                             fieldLabel : _('Panel width'),
                             minValue   : 0,
                             maxValue   : 10000,
@@ -9539,14 +9679,15 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                     defaults    : { hideLabel: true },
                     defaultType : 'checkbox',
                     items       : [{
-                        name        : 'allFilesSpellCheck',
-                        checked     : PhDOE.user.conf.allFilesSpellCheck,
+                        name        : 'allFiles.enableSpellCheck',
+                        checked     : PhDOE.user.conf.allFiles.enableSpellCheck,
                         boxLabel    : _('Enable spell checking'),
                         listeners   : {
                             check : function(field)
                             {
                                 new ui.task.UpdateConfTask({
-                                    item  : 'allFilesSpellCheck',
+                                    module   : 'allFiles',
+                                    itemName : 'enableSpellCheck',
                                     value : field.getValue()
                                 });
                             }
@@ -9556,187 +9697,6 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
             }]
         });
         ui.cmp._EditorConf.card6.superclass.initComponent.call(this);
-    }
-});
-
-// EditorConf card7 - Module "Pending Patch" Config
-ui.cmp._EditorConf.card7 = Ext.extend(Ext.TabPanel,
-{
-    id         : 'conf-card-7',
-    autoScroll : true,
-    activeTab  : 0,
-    defaults   : {
-        bodyStyle  : 'padding: 5px;',
-        autoHeight : true,
-        autoScroll : true
-    },
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                title   : _('User Interface'),
-                iconCls : 'iconUI',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('ScrollBars'),
-                    iconCls     : 'iconScrollBar',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name       : 'patchScrollbars',
-                        checked    : PhDOE.user.conf.patchScrollbars,
-                        boxLabel   : _('Synchronize scroll bars'),
-                        listeners  : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchScrollbars',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }]
-                }, {
-                    xtype       : 'fieldset',
-                    title       : _('VCS Log'),
-                    iconCls     : 'iconVCSLog',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name       : 'patchDisplaylog',
-                        checked    : PhDOE.user.conf.patchDisplaylog,
-                        boxLabel   : _('Automatically load the log when displaying the file'),
-                        listeners : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplaylog',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }, {
-                        xtype          : 'fieldset',
-                        checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.patchDisplaylogPanel,
-                        title          : _('Start with the panel open'),
-                        listeners      : {
-                            collapse : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplaylogPanel',
-                                    value : false
-                                });
-                            },
-                            expand : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplaylogPanel',
-                                    value : true
-                                });
-                            }
-                        },
-                        items: [{
-                            xtype      : 'spinnerfield',
-                            width      : 60,
-                            name       : 'patchDisplaylogPanelWidth',
-                            value      : PhDOE.user.conf.patchDisplaylogPanelWidth || 375,
-                            fieldLabel : _('Panel width'),
-                            minValue   : 0,
-                            maxValue   : 10000,
-                            accelerate : true,
-                            enableKeyEvents : true,
-                            listeners  : {
-                                keyup : function()
-                                {
-                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
-                                },
-                                spin : function()
-                                {
-                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
-                                }
-                            }
-                        }]
-                    }]
-                }, {
-                    xtype       : 'fieldset',
-                    title       : _('Patch content'),
-                    iconCls     : 'iconPendingPatch',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        xtype          : 'fieldset',
-                        checkboxToggle : true,
-                        collapsed      : !PhDOE.user.conf.patchDisplayContentPanel,
-                        title          : _('Start with the panel open'),
-                        listeners      : {
-                            collapse : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplayContentPanel',
-                                    value : false
-                                });
-                            },
-                            expand : function()
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchDisplayContentPanel',
-                                    value : true
-                                });
-                            }
-                        },
-                        items : [{
-                            xtype      : 'spinnerfield',
-                            width      : 60,
-                            name       : 'patchDisplayContentPanelHeight',
-                            value      : PhDOE.user.conf.patchDisplayContentPanelHeight || 375,
-                            fieldLabel : _('Panel height'),
-                            minValue   : 0,
-                            maxValue   : 10000,
-                            accelerate : true,
-                            enableKeyEvents : true,
-                            listeners  : {
-                                keyup : function()
-                                {
-                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
-                                },
-                                spin : function()
-                                {
-                                    ui.cmp._EditorConf.CommitChange.delay(1000, null, this);
-                                }
-                            }
-                        }]
-                    }]
-                }]
-            }, {
-                title   : _('Editor'),
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name        : 'patchSpellCheck',
-                        checked     : PhDOE.user.conf.patchSpellCheck,
-                        boxLabel    : _('Enable spell checking'),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    item  : 'patchSpellCheck',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }]
-                }]
-            }]
-        });
-        ui.cmp._EditorConf.card7.superclass.initComponent.call(this);
     }
 });
 
@@ -9807,8 +9767,7 @@ ui.cmp.EditorConf = Ext.extend(Ext.Window,
                     new ui.cmp._EditorConf.card3(),
                     new ui.cmp._EditorConf.card4(),
                     new ui.cmp._EditorConf.card5(),
-                    new ui.cmp._EditorConf.card6(),
-                    new ui.cmp._EditorConf.card7()
+                    new ui.cmp._EditorConf.card6()
                 ]
             }]
         });
@@ -10400,7 +10359,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: PhDOE.user.lang + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             })] : [new ui.cmp.VCSLogGrid({
                 layout: 'fit',
                 title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
@@ -10408,7 +10367,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: PhDOE.user.lang + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             }), new ui.cmp.VCSLogGrid({
                 layout: 'fit',
                 title: String.format(_('{0} Log'), 'En'),
@@ -10416,7 +10375,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fid: FileID,
                 fpath: 'en' + FilePath,
                 fname: FileName,
-                loadStore: PhDOE.user.conf.errorLogLoadData
+                loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             })];
             
             filePanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.FilePanel({
@@ -10425,8 +10384,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'LANG',
-                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
-                spellCheckConf: 'errorSpellCheckLang',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckLang,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckLang' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -10441,8 +10400,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'LANG',
-                spellCheck: PhDOE.user.conf.errorSpellCheckLang,
-                spellCheckConf: 'errorSpellCheckLang',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckLang,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckLang' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -10451,15 +10410,15 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 storeRecord: storeRecord,
                 syncScrollCB: true,
                 syncScroll: true,
-                syncScrollConf: 'errorScrollbars'
+                syncScrollConf: { module : 'error', itemName : 'syncScrollbars' }
             }), new ui.cmp.FilePanel({
                 id: 'FE-EN-PANEL-' + FileID,
                 region: 'east',
                 title: _('en File: ') + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'EN',
-                spellCheck: PhDOE.user.conf.errorSpellCheckEn,
-                spellCheckConf: 'errorSpellCheckEn',
+                spellCheck: PhDOE.user.conf.error.enableSpellCheckEn,
+                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckEn' },
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -10467,7 +10426,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 parser: 'xml',
                 storeRecord: storeRecord,
                 syncScroll: true,
-                syncScrollConf: 'errorScrollbars'
+                syncScrollConf: { module : 'error', itemName : 'syncScrollbars' }
             })];
             
             Ext.getCmp('main-panel').add({
@@ -10500,9 +10459,9 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     iconCls: 'iconFilesError',
                     collapsedIconCls: 'iconFilesError',
                     plugins: [Ext.ux.PanelCollapsedTitle],
-                    height: PhDOE.user.conf.errorDescPanelHeight || 150,
+                    height: PhDOE.user.conf.error.descPanelHeight || 150,
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.errorDescPanel,
+                    collapsed: !PhDOE.user.conf.error.descPanelDisplay,
                     autoScroll: true,
                     autoLoad: './error?dir=' + FilePath +
                     '&file=' +
@@ -10511,7 +10470,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value: false
                                 });
                             }
@@ -10519,16 +10479,18 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanel',
+                                    module   : 'error',
+                                    itemName : 'descPanelDisplay',
                                     value: true
                                 });
                             }
                         },
                         resize: function(a, b, newHeight){
                         
-                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.errorDescPanelHeight) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.error.descPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorDescPanelHeight',
+                                    module     : 'error',
+                                    itemName   : 'descPanelHeight',
                                     value: newHeight
                                 });
                             }
@@ -10542,15 +10504,16 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.errorLogPanel,
+                    collapsed: !PhDOE.user.conf.error.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: PhDOE.user.conf.errorLogPanelWidth || 375,
+                    width: PhDOE.user.conf.error.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false
                                 });
                             }
@@ -10558,15 +10521,17 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanel',
+                                    module   : 'error',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.errorLogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.error.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'errorLogPanelWidth',
+                                    module     : 'error',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth
                                 });
                             }
@@ -10593,7 +10558,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                                 prefix: 'FE',
                                 ftype: 'LANG',
                                 fid: FileID,
-                                loadStore: PhDOE.user.conf.errorEntitiesLoadData
+                                loadStore: PhDOE.user.conf.error.toolsPanelEntitiesLoad
                             })]
                         }, {
                             title: _('Acronyms'),
@@ -10603,7 +10568,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                                 prefix: 'FE',
                                 ftype: 'LANG',
                                 fid: FileID,
-                                loadStore: PhDOE.user.conf.errorAcronymsLoadData
+                                loadStore: PhDOE.user.conf.error.toolsPanelAcronymsLoad
                             })]
                         }]
                     }
@@ -11315,18 +11280,19 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         this.bbar = (this.syncScrollCB) ? [{
             height    : 22,
             xtype     : 'checkbox',
-            name      : 'needUpdateScrollbars',
+            name      : 'syncScrollConf.module',
             hideLabel : true,
-            checked   : PhDOE.user.conf[this.syncScrollConf],
+            checked   : PhDOE.user.conf[this.syncScrollConf.module][this.syncScrollConf.itemName],
             boxLabel  : _('Synchronize scroll bars'),
             listeners : {
                 scope : this,
                 check : function(c)
                 {
                     new ui.task.UpdateConfTask({
-                        item  : this.syncScrollConf,
-                        value : c.getValue(),
-                        notify: false
+                        module   : this.syncScrollConf.module,
+                        itemName : this.syncScrollConf.itemName,
+                        value    : c.getValue(),
+                        notify   : false
                     });
                 },
                 render : function(c)
@@ -11410,11 +11376,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
 
                         // We check the conf option : onSaveFile. Can be : ask-me, always or never
-                        if( !PhDOE.user.conf.onSaveFile ) {
-                            PhDOE.user.conf.onSaveFile = 'ask-me';
+                        if( !PhDOE.user.conf.main.onSaveFile ) {
+                            PhDOE.user.conf.main.onSaveFile = 'ask-me';
                         }
 
-                        switch (PhDOE.user.conf.onSaveFile) {
+                        switch (PhDOE.user.conf.main.onSaveFile) {
 
                             case 'always':
                                 new ui.task.CheckFileTask({
@@ -11507,7 +11473,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     ftype           : this.ftype,
                     goToPreviousTab : this.goToPreviousTab,
                     goToNextTab     : this.goToNextTab
-                }), '->', (( this.ftype !== 'GGTRANS' &&  this.ftype !== 'ORIGIN' ) ?
+                }), '->', (( this.ftype !== 'GGTRANS' ) ?
                             new ui.cmp._FilePanel.tbar.items.usernotes({
                                 fid : this.fid,
                                 file: this.lang + this.fpath + this.fname
@@ -11655,7 +11621,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     {
                         var opp_prefix, opp_panel, opp_file;
 
-                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf] )
+                        if( this.syncScroll && PhDOE.user.conf[this.syncScrollConf.module][this.syncScrollConf.itemName] )
                         {
                             switch (this.ftype) {
                                 case 'EN':
@@ -11663,12 +11629,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     break;
                                 case 'LANG':
                                     opp_prefix = this.prefix + '-EN';
-                                    break;
-                                case 'PATCH':
-                                    opp_prefix = this.prefix + '-ORIGIN';
-                                    break;
-                                case 'ORIGIN':
-                                    opp_prefix = this.prefix + '-PATCH';
                                     break;
                                 case 'TRANS':
                                     opp_prefix = this.prefix + '-GGTRANS';
@@ -13765,10 +13725,10 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                 iconCls: 'iconTabNeedReviewed',
                 closable: true,
                 tabLoaded: false,
-                panVCSLang: !PhDOE.user.conf.reviewedDisplaylog,
-                panVCSEn: !PhDOE.user.conf.reviewedDisplaylog,
-                panLANGLoaded: false, // Use to monitor if the LANG panel is loaded
-                panENLoaded: false, // Use to monitor if the EN panel is loaded
+                panVCSLang: !PhDOE.user.conf.reviewed.toolsPanelLogLoad,
+                panVCSEn: !PhDOE.user.conf.reviewed.toolsPanelLogLoad,
+                panLANGLoaded: false,
+                panENLoaded: false,
                 originTitle: FileName,
                 defaults: {
                     split: true
@@ -13787,15 +13747,16 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.reviewedDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.reviewed.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.reviewed.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -13804,16 +13765,18 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanel',
+                                    module   : 'reviewed',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewed.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'reviewedDisplaylogPanelWidth',
+                                    module     : 'reviewed',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth,
                                     notify: false
                                 });
@@ -13835,7 +13798,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: PhDOE.user.lang + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                            loadStore: PhDOE.user.conf.reviewed.toolsPanelLogLoad
                         }), new ui.cmp.VCSLogGrid({
                             layout: 'fit',
                             title: String.format(_('{0} Log'), 'En'),
@@ -13843,7 +13806,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: 'en' + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.reviewedDisplaylog
+                            loadStore: PhDOE.user.conf.reviewed.toolsPanelLogLoad
                         }), new ui.cmp.DictionaryGrid({
                             layout: 'fit',
                             title: _('Dictionary'),
@@ -13857,8 +13820,8 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: String.format(_('{0} File: '), PhDOE.user.lang.ucFirst()) + FilePath + FileName,
                     prefix: 'FNR',
                     ftype: 'LANG',
-                    spellCheck: PhDOE.user.conf.reviewedSpellCheckLang,
-                    spellCheckConf: 'reviewedSpellCheckLang',
+                    spellCheck: PhDOE.user.conf.reviewed.enableSpellCheckLang,
+                    spellCheckConf: { module : 'reviewed', itemName : 'enableSpellCheckLang' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -13867,15 +13830,15 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     storeRecord: storeRecord,
                     syncScrollCB: true,
                     syncScroll: true,
-                    syncScrollConf: 'reviewedScrollbars'
+                    syncScrollConf: { module : 'reviewed', itemName : 'syncScrollbars' }
                 }), new ui.cmp.FilePanel({
                     id: 'FNR-EN-PANEL-' + FileID,
                     region: 'east',
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNR',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.reviewedSpellCheckEn,
-                    spellCheckConf: 'reviewedSpellCheckEn',
+                    spellCheck: PhDOE.user.conf.reviewed.enableSpellCheckEn,
+                    spellCheckConf: { module : 'reviewed', itemName : 'enableSpellCheckEn' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -13883,7 +13846,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'reviewedScrollbars'
+                    syncScrollConf: { module : 'reviewed', itemName : 'syncScrollbars' }
                 })]
             });
         }
@@ -14114,14 +14077,14 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 closable: true,
                 tabLoaded: false,
                 panTRANSLoaded: false,
-                panGGTRANSLoaded: !PhDOE.user.conf.newFileGGPanel,
+                panGGTRANSLoaded: !PhDOE.user.conf.newFile.googlePanelDisplay,
                 defaults: {
                     split: true
                 },
                 tabTip: String.format(_('Need translate: in {0}'), FilePath),
                 listeners: {
                     resize: function(panel){
-                        if (PhDOE.user.conf.newFileGGPanel) {
+                        if (PhDOE.user.conf.newFile.googlePanelDisplay) {
                             Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                         }
                     }
@@ -14134,43 +14097,40 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     collapsedIconCls: 'iconConf',
                     plugins: [Ext.ux.PanelCollapsedTitle],
                     collapsible: true,
-                    collapsed: true, //!PhDOE.user.conf.reviewedDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.newFile.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
-                    width: 375, //PhDOE.user.conf.reviewedDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.newFile.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
-                            /*
-                             if ( this.ownerCt.tabLoaded ) {
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanel',
-                             value : false,
-                             notify: false
-                             });
-                             }
-                             */
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : false,
+                                    notify: false
+                                });
+                            }
                         },
                         expand: function(){
-                            /*
-                             if ( this.ownerCt.tabLoaded ) {
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanel',
-                             value : true,
-                             notify: false
-                             });
-                             }
-                             */
+                            if ( this.ownerCt.tabLoaded ) {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'newFile',
+                                    itemName : 'toolsPanelDisplay',
+                                    value : true,
+                                    notify: false
+                                });
+                            }
                         },
                         resize: function(a, newWidth){
-                            /*
-                             if( this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.reviewedDisplaylogPanelWidth ) { // As the type is different, we can't use !== to compare with !
-                             new ui.task.UpdateConfTask({
-                             item  : 'reviewedDisplaylogPanelWidth',
-                             value : newWidth,
-                             notify: false
-                             });
-                             }
-                             */
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.newFile.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                new ui.task.UpdateConfTask({
+                                    module     : 'newFile',
+                                    itemName   : 'toolsPanelWidth',
+                                    value: newWidth,
+                                    notify: false
+                                });
+                            }
                         }
                     },
                     items: {
@@ -14194,18 +14154,18 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     isTrans: true,
                     prefix: 'FNT',
                     ftype: 'TRANS',
-                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
-                    spellCheckConf: 'newFileSpellCheck',
+                    spellCheck: PhDOE.user.conf.newFile.enableSpellCheck,
+                    spellCheckConf: { module : 'newFile', itemName : 'enableSpellCheck' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
                     lang: PhDOE.user.lang,
                     parser: 'xml',
                     storeRecord: storeRecord,
-                    syncScrollCB: PhDOE.user.conf.newFileGGPanel,
-                    syncScroll: PhDOE.user.conf.newFileGGPanel,
-                    syncScrollConf: 'newFileScrollbars'
-                }), ((PhDOE.user.conf.newFileGGPanel) ? new ui.cmp.FilePanel({
+                    syncScrollCB: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScroll: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
+                }), ((PhDOE.user.conf.newFile.googlePanelDisplay) ? new ui.cmp.FilePanel({
                     id: 'FNT-GGTRANS-PANEL-' + FileID,
                     region: 'east',
                     title: _('Automatic translation: ') + PhDOE.user.lang + FilePath + FileName,
@@ -14220,7 +14180,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'newFileScrollbars'
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
                 }) : false)]
             });
         }
@@ -15755,8 +15715,8 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
                     isTrans: true,
                     prefix: 'FNT',
                     ftype: 'NEW',
-                    spellCheck: PhDOE.user.conf.newFileSpellCheck,
-                    spellCheckConf: 'newFileSpellCheck',
+                    spellCheck: PhDOE.user.conf.newFile.enableSpellCheck,
+                    spellCheckConf: { module : 'newFile', itemName : 'enableSpellCheck' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -16147,13 +16107,14 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         bodyBorder: false,
                         split: true,
                         collapsible: true,
-                        collapsed: !PhDOE.user.conf.allFilesDisplaylogPanel,
-                        width: PhDOE.user.conf.allFilesDisplaylogPanelWidth || 375,
+                        collapsed: !PhDOE.user.conf.allFiles.toolsPanelDisplay,
+                        width: PhDOE.user.conf.allFiles.toolsPanelWidth || 375,
                         listeners: {
                             collapse: function(){
                                 if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanel',
+                                        module   : 'allFiles',
+                                        itemName : 'toolsPanelDisplay',
                                         value: false,
                                         notify: false
                                     });
@@ -16162,16 +16123,18 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                             expand: function(){
                                 if (this.ownerCt.tabLoaded) {
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanel',
+                                        module   : 'allFiles',
+                                        itemName : 'toolsPanelDisplay',
                                         value: true,
                                         notify: false
                                     });
                                 }
                             },
                             resize: function(a, newWidth){
-                                if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.allFilesDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                                if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.allFiles.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                     new ui.task.UpdateConfTask({
-                                        item: 'allFilesDisplaylogPanelWidth',
+                                        module     : 'allFiles',
+                                        itemName   : 'toolsPanelWidth',
                                         value: newWidth,
                                         notify: false
                                     });
@@ -16192,7 +16155,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     fid: FileID,
                                     fpath: FileLang + FilePath,
                                     fname: FileName,
-                                    loadStore: PhDOE.user.conf.allFilesDisplayLog
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelLogLoad
                                 })]
                             }, {
                                 title: _('Entities'),
@@ -16202,7 +16165,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     prefix: 'AF',
                                     ftype: 'ALL',
                                     fid: FileID,
-                                    loadStore: PhDOE.user.conf.allFilesEntitiesLoadData
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelEntitiesLoad
                                 })]
                             }, {
                                 title: _('Acronyms'),
@@ -16212,7 +16175,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                                     prefix: 'AF',
                                     ftype: 'ALL',
                                     fid: FileID,
-                                    loadStore: PhDOE.user.conf.allFilesAcronymsLoadData
+                                    loadStore: PhDOE.user.conf.allFiles.toolsPanelAcronymsLoad
                                 })]
                             }]
                         }
@@ -16224,8 +16187,8 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         title: _('File: ') + FileLang + FilePath + FileName,
                         prefix: 'AF',
                         ftype: 'ALL',
-                        spellCheck: PhDOE.user.conf.allFilesSpellCheck,
-                        spellCheckConf: 'allFilesSpellCheck',
+                        spellCheck: PhDOE.user.conf.allFiles.enableSpellCheck,
+                        spellCheckConf: {module : 'allFiles', itemName : 'enableSpellCheck'},
                         fid: FileID,
                         fpath: FilePath,
                         fname: FileName,
@@ -16244,9 +16207,9 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                     originTitle: FileName,
                     closable: true,
                     tabLoaded: false,
-                    panEntities: !PhDOE.user.conf.allFilesEntitiesLoadData,
-                    panAcronyms: !PhDOE.user.conf.allFilesAcronymsLoadData,
-                    panVCS: !PhDOE.user.conf.allFilesDisplayLog,
+                    panEntities: !PhDOE.user.conf.allFiles.toolsPanelEntitiesLoad,
+                    panAcronyms: !PhDOE.user.conf.allFiles.toolsPanelAcronymsLoad,
+                    panVCS: !PhDOE.user.conf.allFiles.toolsPanelLogLoad,
                     panLoaded: false,
                     tabTip: String.format(_('in {0}'), FilePath),
                     iconCls: 'iconAllFiles',
@@ -16592,11 +16555,11 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
         
-            if (PhDOE.user.conf.needUpdateDiff === "using-viewvc") {
+            if (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc") {
                 diff = ui.cmp.ViewVCDiff;
             }
             else 
-                if (PhDOE.user.conf.needUpdateDiff === "using-exec") {
+                if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
                     diff = ui.cmp.ExecDiff;
                 }
             
@@ -16608,9 +16571,9 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 iconCls: 'iconTabNeedUpdate',
                 closable: true,
                 tabLoaded: false,
-                panVCSLang: !PhDOE.user.conf.needUpdateDisplaylog,
-                panVCSEn: !PhDOE.user.conf.needUpdateDisplaylog,
-                panDiffLoaded: (PhDOE.user.conf.needUpdateDiff === "using-viewvc"),
+                panVCSLang: !PhDOE.user.conf.needUpdate.toolsPanelLogLoad,
+                panVCSEn: !PhDOE.user.conf.needUpdate.toolsPanelLogLoad,
+                panDiffLoaded: (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc"),
                 panLANGLoaded: false,
                 panENLoaded: false,
                 defaults: {
@@ -16625,9 +16588,9 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 items: [new diff({
                     region: 'north',
                     collapsible: true,
-                    height: PhDOE.user.conf.needUpdateDiffPanelHeight || 150,
+                    height: PhDOE.user.conf.needUpdate.diffPanelHeight || 150,
                     prefix: 'FNU',
-                    collapsed: !PhDOE.user.conf.needUpdateDiffPanel,
+                    collapsed: !PhDOE.user.conf.needUpdate.diffPanelDisplay,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -16637,7 +16600,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -16646,7 +16610,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'diffPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
@@ -16654,9 +16619,10 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         },
                         resize: function(a, b, newHeight){
                         
-                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdateDiffPanelHeight) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdate.diffPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDiffPanelHeight',
+                                    module     : 'needUpdate',
+                                    itemName   : 'diffPanelHeight',
                                     value: newHeight,
                                     notify: false
                                 });
@@ -16670,16 +16636,17 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     iconCls: 'iconConf',
                     collapsedIconCls: 'iconConf',
                     collapsible: true,
-                    collapsed: !PhDOE.user.conf.needUpdateDisplaylogPanel,
+                    collapsed: !PhDOE.user.conf.needUpdate.toolsPanelDisplay,
                     layout: 'fit',
                     bodyBorder: false,
                     plugins: [Ext.ux.PanelCollapsedTitle],
-                    width: PhDOE.user.conf.needUpdateDisplaylogPanelWidth || 375,
+                    width: PhDOE.user.conf.needUpdate.toolsPanelWidth || 375,
                     listeners: {
                         collapse: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value: false,
                                     notify: false
                                 });
@@ -16688,16 +16655,18 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                         expand: function(){
                             if (this.ownerCt.tabLoaded) {
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanel',
+                                    module   : 'needUpdate',
+                                    itemName : 'toolsPanelDisplay',
                                     value: true,
                                     notify: false
                                 });
                             }
                         },
                         resize: function(a, newWidth){
-                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.needUpdateDisplaylogPanelWidth) { // As the type is different, we can't use !== to compare with !
+                            if (this.ownerCt.tabLoaded && newWidth && newWidth != PhDOE.user.conf.needUpdate.toolsPanelWidth) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
-                                    item: 'needUpdateDisplaylogPanelWidth',
+                                    module     : 'needUpdate',
+                                    itemName   : 'toolsPanelWidth',
                                     value: newWidth,
                                     notify: false
                                 });
@@ -16719,7 +16688,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: PhDOE.user.lang + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                            loadStore: PhDOE.user.conf.needUpdate.toolsPanelLogLoad
                         }), new ui.cmp.VCSLogGrid({
                             layout: 'fit',
                             title: String.format(_('{0} Log'), 'En'),
@@ -16727,7 +16696,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             fid: FileID,
                             fpath: 'en' + FilePath,
                             fname: FileName,
-                            loadStore: PhDOE.user.conf.needUpdateDisplaylog
+                            loadStore: PhDOE.user.conf.needUpdate.toolsPanelLogLoad
                         }), new ui.cmp.DictionaryGrid({
                             layout: 'fit',
                             title: _('Dictionary'),
@@ -16741,8 +16710,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: String.format(_('{0} File: '), PhDOE.user.lang) + FilePath + FileName,
                     prefix: 'FNU',
                     ftype: 'LANG',
-                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckLang,
-                    spellCheckConf: 'needUpdateSpellCheckLang',
+                    spellCheck: PhDOE.user.conf.needUpdate.enableSpellCheckLang,
+                    spellCheckConf: { module : 'needUpdate', itemName : 'enableSpellCheckLang' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -16751,15 +16720,15 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     storeRecord: storeRecord,
                     syncScrollCB: true,
                     syncScroll: true,
-                    syncScrollConf: 'needUpdateScrollbars'
+                    syncScrollConf: { module : 'needUpdate', itemName : 'syncScrollbars' }
                 }), new ui.cmp.FilePanel({
                     id: 'FNU-EN-PANEL-' + FileID,
                     region: 'east',
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNU',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.needUpdateSpellCheckEn,
-                    spellCheckConf: 'needUpdateSpellCheckEn',
+                    spellCheck: PhDOE.user.conf.needUpdate.enableSpellCheckEn,
+                    spellCheckConf: { module : 'needUpdate', itemName : 'enableSpellCheckEn' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -16767,7 +16736,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,
-                    syncScrollConf: 'needUpdateScrollbars'
+                    syncScrollConf: { module : 'needUpdate', itemName : 'syncScrollbars' }
                 })]
             });
         }
@@ -18274,11 +18243,11 @@ var PhDOE = function()
 
             //Load external data
             // Mails ?
-            if( this.user.conf.mainAppLoadMailsAtStartUp ) {
+            if( this.user.conf.main.loadMailsAtStartUp ) {
                 ui.cmp.PortletLocalMail.getInstance().reloadData();
             }
             // Bugs ?
-            if( this.user.conf.mainAppLoadBugsAtStartUp ) {
+            if( this.user.conf.main.loadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
         },
@@ -18524,14 +18493,15 @@ var PhDOE = function()
                     collapseMode : 'mini',
                     animate      : true,
                     split        : true,
-                    width        : PhDOE.user.conf.mainAppMainMenuWidth || 300,
+                    width        : PhDOE.user.conf.main.mainMenuWidth || 300,
                     header       : false,
                     listeners    : {
                         resize : function(a, newWidth) {
 
-                            if( newWidth && newWidth != PhDOE.user.conf.mainAppMainMenuWidth ) { // As the type is different, we can't use !== to compare with !
+                            if( newWidth && newWidth != PhDOE.user.conf.main.mainMenuWidth ) { // As the type is different, we can't use !== to compare with !
                                 var tmp = new ui.task.UpdateConfTask({
-                                    item  : 'mainAppMainMenuWidth',
+                                    module   : 'main',
+                                    itemName : 'mainMenuWidth',
                                     value : newWidth,
                                     notify: false
                                 });

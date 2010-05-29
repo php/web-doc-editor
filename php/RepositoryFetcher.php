@@ -225,7 +225,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $am->userConf->needUpdateNbDisplay && $am->userConf->needUpdateNbDisplay != 0 ) ? $am->userConf->needUpdateNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->needUpdate->nbDisplay && $am->userConf->needUpdate->nbDisplay != 0 ) ? $am->userConf->needUpdate->nbDisplay : $a->total;
        
     }
     /**
@@ -240,7 +240,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->needUpdateNbDisplay ) ? 'LIMIT '.$am->userConf->needUpdateNbDisplay : '';
+        $limit = ( $am->userConf->needUpdate->nbDisplay ) ? 'LIMIT '.$am->userConf->needUpdate->nbDisplay : '';
 
         $m = $this->getModifies();
 
@@ -336,7 +336,7 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $am->userConf->reviewedNbDisplay && $am->userConf->reviewedNbDisplay != 0 ) ? $am->userConf->reviewedNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->reviewed->nbDisplay && $am->userConf->reviewed->nbDisplay != 0 ) ? $am->userConf->reviewed->nbDisplay : $a->total;
     }
     /**
      * Get all files witch need to be reviewed.
@@ -350,7 +350,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->reviewedNbDisplay ) ? 'LIMIT '.$am->userConf->reviewedNbDisplay : '';
+        $limit = ( $am->userConf->reviewed->nbDisplay ) ? 'LIMIT '.$am->userConf->reviewed->nbDisplay : '';
 
         $m = $this->getModifies();
         $s = sprintf(
@@ -502,8 +502,9 @@ class RepositoryFetcher
         $r = DBConnection::getInstance()->query($s);
         $a = $r->fetch_object();
 
-        return ( $a->total > $am->userConf->newFileNbDisplay && $am->userConf->newFileNbDisplay != 0 ) ? $am->userConf->newFileNbDisplay : $a->total;
+        return ( $a->total > $am->userConf->newFile->nbDisplay && $am->userConf->newFile->nbDisplay != 0 ) ? $am->userConf->newFile->nbDisplay : $a->total;
     }
+
     /**
      * Get all files which need to be translated
      *
@@ -516,7 +517,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->newFileNbDisplay ) ? 'LIMIT '.$am->userConf->newFileNbDisplay : '';
+        $limit = ( $am->userConf->newFile->nbDisplay ) ? 'LIMIT '.$am->userConf->newFile->nbDisplay : '';
 
         $m = $this->getModifies();
         $s = sprintf('
