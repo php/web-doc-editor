@@ -108,6 +108,14 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Information"] = "Informations";
+  i18n["Since"] = "Depuis";
+  i18n["{0} year(s)"] = "{0} année(s)";
+  i18n["{0} month(s)"] = "{0} mois";
+  i18n["{0} week(s)"] = "{0} semaine(s)";
+  i18n["{0} day(s)"] = "{0} jour(s)";
+  i18n["{0} hour(s)"] = "{0} hour(s)";
+  i18n["{0} minute(s)"] = "{0} minute(s)";
+  i18n["{0} second(s)"] = "{0} seconde(s)";  
   i18n["{0} check all entitites"] = "{0} a vérifié toutes les entitiés";
   i18n["{0} updated app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} logged out"] = "{0} s'est déconnecté";

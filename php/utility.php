@@ -35,4 +35,37 @@ function errlog($mess)
     fclose($fp);
 }
 
+function elapsedTime($startDate, $endDate) {
+
+    $return = array();
+
+    $units = Array(
+        'year(s)'   => 12 *4*7*24*60*60,
+        'month(s)'  => 4    *7*24*60*60,
+        'week(s)'   => 7      *24*60*60,
+        'day(s)'    =>         24*60*60,
+        'hour(s)'   =>            60*60,
+        'minute(s)' =>               60,
+        'second(s)' =>                1
+    );
+
+    $startDate = strtotime($startDate);
+    $endDate = strtotime($endDate);
+
+    $seconds = floor(($endDate - $startDate));
+
+    if( $seconds < 1 ) {
+        return '';
+    }
+
+    while( list($k, $v) = each($units) ) {
+
+        if( ($seconds / $v) >= 1 || $k == 'seconds' ) {
+            $secondsConverted = floor($seconds / $v);
+            return Array('units' => $k,
+                         'value' => $secondsConverted);
+        }
+
+    }
+}
 ?>

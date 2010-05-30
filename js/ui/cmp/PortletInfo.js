@@ -20,7 +20,8 @@ ui.cmp._PortletInfo.store = new Ext.data.Store({
             {name : 'id'},
             {name : 'field'},
             {name : 'value'},
-            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s' }
+            {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s' },
+            {name : 'elapsedTime'}
         ]
     }),
     listeners : {
@@ -124,10 +125,19 @@ ui.cmp._PortletInfo.gridColumns = [
         dataIndex : 'field',
         renderer  : ui.cmp._PortletInfo.typeRenderer
     }, {
+        header    : _('Since'),
+        width     : 110,
+        sortable  : false,
+        dataIndex : 'elapsedTime',
+        renderer  : function(v, m, r) {
+            return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + String.format(_('{0} ' + v.units), v.value) + "</span>";
+        }
+    },{
         header    : _('Date'),
         width     : 110,
         sortable  : true,
         dataIndex : 'date',
+        hidden    : true,
         renderer  : Ext.util.Format.dateRenderer(_('Y-m-d, H:i'))
     }
 ];
