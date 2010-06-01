@@ -102,7 +102,7 @@ class RepositoryFetcher
             $infos['value'][$i]['field'] = $a['field'];
             $infos['value'][$i]['value'] = json_decode($a['value']);
             $infos['value'][$i]['date']  = $a['date'];
-            $infos['value'][$i]['elapsedTime']  = elapsedTime($a['date'], @date("Y-m-d h:i:s"));
+            $infos['value'][$i]['elapsedTime']  = elapsedTime($a['date'], @date("Y-m-d H:i:s"));
             $i++;
         }
 
