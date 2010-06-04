@@ -1181,7 +1181,9 @@ class RepositoryManager
         // We need select row from work table
         $s = sprintf("
               SELECT
-                 `id`
+                 `id`,
+                 `user`,
+                 `anonymousIdent`
               FROM
                  `work`
               WHERE
