@@ -5341,6 +5341,48 @@ ui.task.CheckFileTask = function(config)
             ui.cmp.ErrorFileGrid.getInstance().store.reload();
         }
     });
+};Ext.namespace('ui', 'ui.task');
+
+// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
+ui.task.CheckXml = function(config)
+{
+    Ext.apply(this, config);
+
+    var id_prefix = this.prefix + '-' + this.ftype,
+        msg       = Ext.MessageBox.wait(_('XML check. Please, wait...'));
+
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'checkXml',
+            fileContent : Ext.getCmp(this.idPrefix + '-FILE-' + this.fid).getCode()
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+            
+            // Is there some errors ?
+            if( o.errors !== 'no_error' ) {
+                
+                new ui.cmp.CheckXmlWin({
+                    errors : o.errors
+                });
+                
+            } else {
+                PhDOE.notify('info', _('XML check'), _('There is no error.'));
+            }
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // Remove wait msg
+            msg.hide();
+        }
+    });
 };Ext.namespace('ui','ui.task');
 
 // config - { ftype, fpath, fname }
@@ -7660,6 +7702,94 @@ ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
             }]
         });
         ui.cmp.CheckEntitiesPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.cmp','ui.cmp._CheckXmlWin');
+
+ui.cmp._CheckXmlWin.store = new Ext.data.Store({
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        fields        : [
+            {name : 'line'},
+            {name : 'libel'}
+        ]
+    })
+});
+
+ui.cmp._CheckXmlWin.cm = new Ext.grid.ColumnModel([
+    {
+        header    : _('Line'),
+        dataIndex : 'line'
+    },
+    {
+        id        : 'libel_id',
+        header    : _('Libel'),
+        dataIndex : 'libel'
+    }
+]);
+
+
+ui.cmp._CheckXmlWin.sm = new Ext.grid.RowSelectionModel({
+    singleSelect: true
+});
+
+ui.cmp._CheckXmlWin.grid = Ext.extend(Ext.grid.GridPanel,
+{
+    loadMask         : true,
+    autoExpandColumn : 'libel_id',
+    cm               : ui.cmp._CheckXmlWin.cm,
+    sm               : ui.cmp._CheckXmlWin.sm,
+    store            : ui.cmp._CheckXmlWin.store,
+
+    initComponent: function(config)
+    {
+        ui.cmp._CheckXmlWin.grid.superclass.initComponent.call(this);
+        Ext.apply(this, config);
+    }
+});
+
+ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
+{
+    id         : 'xml-errors-win',
+    title      : _('XML Errors'),
+    iconCls    : 'iconXml',
+    width      : 650,
+    height     : 350,
+    layout     : 'fit',
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+    closeAction: 'close',
+    buttons    : [{
+        text    : _('Close'),
+        handler : function()
+        {
+            Ext.getCmp('xml-errors-win').close();
+        }
+    }],
+    
+    addErrorsInStore : function() {
+        
+        var record = Ext.data.Record.create({name: 'line'}, {name: 'libel'});
+
+        for( i=0; i < this.errors.length; i++ ) {
+            this.items.items[0].store.add( new record({'line': this.errors[i].line, 'libel' : this.errors[i].libel+"<br>"+Ext.util.Format.htmlEncode(this.errors[i].ctx1)}) );
+        }
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [new ui.cmp._CheckXmlWin.grid()]
+        });
+        
+        ui.cmp.CheckXmlWin.superclass.initComponent.call(this);
+        
+        // We add errors into the store
+        this.addErrorsInStore();
+        
+        this.show();
     }
 });Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
 
@@ -11176,6 +11306,17 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
         {
             id    : this.id_prefix + '-FILE-' + this.fid + '-grp-tools',
             items : [{
+                scope        : this,
+                tooltip      : _('<b>Check</b> XML with XmlLint'),
+                iconCls      : 'iconXml',
+                handler      : function(btn)
+                {
+                    new ui.task.CheckXml({
+                        idPrefix : this.id_prefix,
+                        fid      : this.fid,
+                    });
+                }
+            },{
                 scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,

@@ -459,6 +459,17 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
             id    : this.id_prefix + '-FILE-' + this.fid + '-grp-tools',
             items : [{
                 scope        : this,
+                tooltip      : _('<b>Check</b> XML with XmlLint'),
+                iconCls      : 'iconXml',
+                handler      : function(btn)
+                {
+                    new ui.task.CheckXml({
+                        idPrefix : this.id_prefix,
+                        fid      : this.fid,
+                    });
+                }
+            },{
+                scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
                 iconCls      : 'iconSpellCheck',

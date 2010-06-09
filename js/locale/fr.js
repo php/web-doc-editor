@@ -271,6 +271,7 @@ var i18n = new Array();
   i18n["Do you want to check for errors before saving?"] = "Voulez-vous vérifier si le fichier contient des erreurs avant de le sauvegarder ?";
   i18n["<b>Save as</b> a patch"] = "<b>Sauvegarder sous</b> la forme d'un patch";
   i18n["modified"] = "modifié";
+  i18n["<b>Check</b> XML with XmlLint"] = "<b>Vérification</b> XML avec XmlLint";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -597,3 +598,16 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "La note a été ajoutée avec succès !";
   i18n["Note deleted"] = "Note effacée";
   i18n["The note was deleted successfully !"] = "La note a été effacée avec succès !";
+  
+  
+// In file: ../../js/ui/task/CheckXml.js
+  i18n["XML check. Please, wait..."] = "Vérification XML. Veuillez patienter...";
+  i18n["XML check"] = "Vérification XML";
+  
+  
+// In file: ../../js/ui/cmp/CheckXmlWin.js
+  i18n["Line"] = "Ligne";
+  i18n["Libel"] = "Libellé";
+  i18n["XML Errors"] = "Erreurs XML";
+  
+  

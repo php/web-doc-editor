@@ -18,6 +18,7 @@ require_once dirname(__FILE__) . '/NewsReader.php';
 require_once dirname(__FILE__) . '/ProjectManager.php';
 require_once dirname(__FILE__) . '/RepositoryFetcher.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
+require_once dirname(__FILE__) . '/ToolsXmllint.php';
 require_once dirname(__FILE__) . '/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/TranslatorStatistic.php';
 require_once dirname(__FILE__) . '/UserNotes.php';
@@ -796,11 +797,34 @@ class ExtJsController
     }
 
     /**
+     *
+     */
+    public function checkXml()
+    {
+        $am = AccountManager::getInstance();
+        $tx = new ToolsXmllint();
+        $am->isLogged();
+
+        $fileContent = $this->getRequestVariable('fileContent');
+
+        // Replace &nbsp; by space
+        $fileContent = str_replace("&nbsp;", "", $fileContent);
+
+        $r = $tx->checkForError($fileContent);
+
+        return JsonResponseBuilder::success(
+            array(
+                'errors' => $r
+            )
+        );
+
+    }
+    /**
      * Save a file. The new file have an extension like ".new", and is saved in the same folder as the original.
      */
     public function saveFile()
     {
-    	$am = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
         $am->isLogged();
 
         $filePath   = $this->getRequestVariable('filePath');
