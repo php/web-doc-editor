@@ -1,5 +1,5 @@
 /*
-* This file must be encoded in UTF-8 --- Rev. transalted: 299715
+* This file must be encoded in UTF-8 --- Rev. transalted: 300322
 */
 
 var i18n = new Array();
@@ -46,14 +46,6 @@ var i18n = new Array();
   i18n["Open selected files"] = "Abrir todos los ficheros seleccionados";
   i18n["Please, wait..."] = "Por favor, espere...";
 
-// In file: ../../js/ui/component/PendingCommitGrid.js
-  //i18n["No pending for Commit"] = "Aucun commit en attente";
-  //i18n["View diff"] = "Voir la différence";
-  //i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
-  //i18n["Clear this change"] = "Effacer cette modification";
-  //i18n["View in a new tab"] = "Voir dans un nouvel onglet";
-  //i18n["Cancel this deletion"] = "Annuler cette suppression";
-
 // In file: ../../js/ui/component/WorkTreeGrid.js
   i18n["Modified by"] = "Modificado por";
   i18n["Date"] = "Fecha";
@@ -66,32 +58,19 @@ var i18n = new Array();
   i18n["View diff"] = "Ver la diferencia";  
   i18n["Download the diff as a patch"] = "Descargar la diferencia como parche";
   i18n["Clear this change"] = "Descartar cambio";
-  i18n["Cancel this deletion"] = "Cancelar esta eliminación";
-  
+  i18n["Cancel this deletion"] = "Cancelar esta eliminación";  
   i18n["Submit all files for review in patch:"] = "Enviar todos los ficheros para revisar como parche:";
   i18n["Submit all files in this directory in patch:"] = "Enviar todos los ficheros de este directorio como parche:";
   i18n["Submit as patch for review in:"] = "Enviar como parche para ser revisado en:";
-  
-  i18n["Create a new patch"] = "Crear nuevo parche";
-  
+  i18n["Create a new patch"] = "Crear nuevo parche";  
   i18n["Commit..."] = "Validar...";
   i18n["...this file"] = "...este fichero";
   i18n["...all files from this folder"] = "...todos los ficheros de este directorio";
   i18n["...all files from this patch"] = "...todos los ficheros de este parche";
-  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";
-  
+  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";  
   i18n["You have no patch currently. You must create one."] = "Actualmente no tiene ningún parche. Debe crear uno.";
-
   i18n["Diff for file: {0}"] = "Diferencia para el fichero : {0}";
-  
-// In file: ../../js/ui/component/PendingPatchGrid.js
-  //i18n["Posted by"] = "Proposé par";
-  //i18n["No pending patches"] = "Aucun patch en attente";
-  //i18n["Reject this patch"] = "Rejeter ce patch";
-  //i18n["Patch for {0}"] = "Patch pour {0}";
-  //i18n["Proposed Patch for {0}"] = "Patch proposé pour le fichier {0}";
-  //i18n["Original File: "] = "Fichier original : ";
-  
+    
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the name of this patch"] = "Editar el nombre del parche";
   i18n["Delete this patch"] = "Eliminar este parche";
@@ -128,6 +107,14 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Information"] = "Información";
+  i18n["Since"] = "Desde";
+  i18n["{0} year(s)"] = "{0} año(s)";
+  i18n["{0} month(s)"] = "{0} meses";
+  i18n["{0} week(s)"] = "{0} semana(s)";
+  i18n["{0} day(s)"] = "{0} dia(s)";
+  i18n["{0} hour(s)"] = "{0} hora(s)";
+  i18n["{0} minute(s)"] = "{0} minuto(s)";
+  i18n["{0} second(s)"] = "{0} segundo(s)"; 
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} logged out"] = "{0} se ha desconectado";
@@ -287,8 +274,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
-  i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";
-  i18n["Module \"Pending patches\""] = "Módulo \"Parches pendientes\"";
+  i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";  
   i18n["Module \"Files need translate\""] = "Módulo \"Ficheros a traducir\"";
   i18n["Module \"Files need update\""] = "Módulo \"Ficheros a actualizar\"";
   i18n["Module \"Files with error\""] = "Módulo \"Ficheros con errores\"";
@@ -305,7 +291,7 @@ var i18n = new Array();
   i18n["SilverCherry"] = "SilverCherry";
   i18n["Ubuntu Human"] = "Ubuntu Human";
   i18n["User Interface"] = "Interfaz de usuario";
-  i18n["Main Menu width"] = "Ancho del menú principal";
+  i18n["Main menu width"] = "Ancho del menú principal";
   i18n["Appearance"] = "Apariencia";
   i18n["Choose a theme"] = "Seleccione un tema ";
   i18n["On save file"] = "Al guardar un archivo";
@@ -557,6 +543,8 @@ var i18n = new Array();
   i18n["Warning"] = "Atención";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "El editor ha convertido automáticamente el fichero {0} a UTF-8.";
   i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "El fichero {0} contiene algunos caracteres de tabulación.<br>El editor automáticamente los reemplazará por espacios.";
+  i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "Fichero modificado por {0} (usuario anónimo) pero como usted es un usuario autenticado, puede modificar este fichero.";
+  i18n["File modified by {0}."] = "Fichero modificado por {0}.";
 
 
 // In file: ../../js/ui/task/UpdateConfTask.js
