@@ -70,7 +70,7 @@ while( list($key, $project) = each($availableProject) ) {
         This email is send automatically by the Php Docbook Online Editor.
         ";
 
-                $to = "doc-$lang@lists.php.net";
+                $to = ( $lang === 'en' ) ? "phpdoc@lists.php.net" : "doc-$lang@lists.php.net";
 
                 $subject = "[DOC-".strtoupper($lang)."] - Your documentation is broken";
 
