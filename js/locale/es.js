@@ -232,7 +232,7 @@ var i18n = new Array();
   i18n["Open the related file"] = "Abrir el fichero asociado";
   i18n["Summary"] = "Sumario";
   i18n["Error when loading open bugs from Php.net !"] = "Error al intentar cargar los bugs desde Php.net !";
-  i18n["No open bugs"] = "Noy hay bugs pendientes";
+  i18n["No open bugs"] = "No hay bugs pendientes";
   i18n["Open bugs for {0}"] = "Bugs pendientes para {0}";
 
 
