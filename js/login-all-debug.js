@@ -675,7 +675,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             iconClsField    : 'iconCls',
                             iconClsBase     : 'flags',
                             mode            : 'local',
-                            value           : 'en',
+                            value           : ( Ext.util.Cookies.get("lang") ) ? Ext.util.Cookies.get("lang") : 'en',
                             listWidth       : 235,
                             maxHeight       : 150,
                             editable        : true,
