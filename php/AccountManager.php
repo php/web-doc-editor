@@ -79,7 +79,7 @@ class AccountManager
             ),
             'newFile' => (object) Array(
                 'enableSpellCheck' => false,
-                'googlePanelDisplay' => true,
+                'googlePanelDisplay' => false,
                 'nbDisplay' => 0,
                 'toolsPanelDisplay' => false,
                 'toolsPanelWidth' => 375,
