@@ -311,6 +311,7 @@ class AccountManager
            
            setcookie("loginApp", $cookieLogin, time() + 3600*24*365, "/"); // One year ;)
            setcookie("email", $email, time() + 3600*24*365, "/");
+           setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
 
         } elseif ($AuthReturn == 'Bad password') {
 
