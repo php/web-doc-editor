@@ -33,6 +33,12 @@ ui.task.UpdateConfTask = function(config)
                 ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             
+            if( this.module == "main" &&  this.itemName == "displayENWork" ) {
+                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(function() {
+                    ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
+                });
+            }
+            
             // Notify
             if( this.notify !== false ) {
                 PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));

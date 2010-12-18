@@ -65,7 +65,8 @@ class AccountManager
                 'onSaveFile' => 'ask-me',
                 'theme' => 'themes/empty.css',
                 'portalSortEN'=> '{"col1":["portletLocalMail","portletBugs"],"col2":["portletInfo","portletTranslationsGraph"]}',
-                'portalSortLANG'=> '{"col1":["portletSummary","portletTranslator","portletLocalMail","portletBugs"],"col2":["portletInfo","portletTranslationGraph","portletTranslationsGraph"]}'
+                'portalSortLANG'=> '{"col1":["portletSummary","portletTranslator","portletLocalMail","portletBugs"],"col2":["portletInfo","portletTranslationGraph","portletTranslationsGraph"]}',
+                'displayENWork'=>true
             ),
             'needUpdate' => (object) Array(
                 'diffMethod'       => 'using-exec',

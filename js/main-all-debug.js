@@ -6474,6 +6474,12 @@ ui.task.UpdateConfTask = function(config)
                 ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
             
+            if( this.module == "main" &&  this.itemName == "displayENWork" ) {
+                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(function() {
+                    ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
+                });
+            }
+            
             // Notify
             if( this.notify !== false ) {
                 PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));
@@ -8683,6 +8689,21 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             }
                         }
                     }]
+                 },{
+                        xtype       : 'checkbox',
+                        name        : 'PhDOE.user.conf.main.displayENWork',
+                        checked     : PhDOE.user.conf.main.displayENWork,
+                        boxLabel    : _('Display EN work in "Work in progress" & "Patches for review" modules'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'main',
+                                    itemName : 'displayENWork',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
                  }]
              }, {
                 title   : _('External Data'),

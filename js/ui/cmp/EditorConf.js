@@ -246,6 +246,21 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                             }
                         }
                     }]
+                 },{
+                        xtype       : 'checkbox',
+                        name        : 'PhDOE.user.conf.main.displayENWork',
+                        checked     : PhDOE.user.conf.main.displayENWork,
+                        boxLabel    : _('Display EN work in "Work in progress" & "Patches for review" modules'),
+                        listeners   : {
+                            check : function(field)
+                            {
+                                new ui.task.UpdateConfTask({
+                                    module   : 'main',
+                                    itemName : 'displayENWork',
+                                    value : field.getValue()
+                                });
+                            }
+                        }
                  }]
              }, {
                 title   : _('External Data'),

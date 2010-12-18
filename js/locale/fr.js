@@ -330,6 +330,7 @@ var i18n = new Array();
   i18n["Automatically load entities data when displaying the file"] = "Charger automatiquement les entités lors de l'édition d'un fichier";
   i18n["Google translate Panel"] = "Panneau de traduction automatique Google";
   i18n["Display the Google Translation Panel"] = "Afficher le panneau de traduction Google";
+  i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Afficher le travail en EN dans les modules \"Travaux en cours\" & \"Patches en attente de relecture\"";
 
 
 // In file: ../../js/ui/component/CheckEntities.js

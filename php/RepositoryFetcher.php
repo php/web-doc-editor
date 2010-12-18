@@ -700,7 +700,13 @@ class RepositoryFetcher
                 $node[$a->user][$a->patchName]['folders'] = array();
             }
 
-
+            // Do we need to display EN Work ?
+            if( $am->userConf->main->displayENWork ) {
+                $langFilter = '(`lang` = "%s" OR `lang`="en")';
+            } else {
+                $langFilter = '(`lang` = "%s")';
+            }
+            
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
             $s = sprintf(
                 'SELECT
@@ -709,7 +715,7 @@ class RepositoryFetcher
                     `work`
                  WHERE
                     `project` = "%s" AND
-                    (`lang`   = "%s" OR `lang`="en") AND
+                    '.$langFilter.' AND
                     `name`   != "-"  AND
                     `module`  = "%s" AND
                     `patchID` IN (%s)',
@@ -804,6 +810,14 @@ class RepositoryFetcher
 
         if( $module == 'workInProgress' ) {
 
+            // Do we need to display EN Work ?
+            if( $am->userConf->main->displayENWork ) {
+                $langFilter = '(`lang` = "%s" OR `lang`="en")';
+            } else {
+                $langFilter = '(`lang` = "%s")';
+            }
+            
+            
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
             $s = sprintf(
                 'SELECT
@@ -812,7 +826,7 @@ class RepositoryFetcher
                     `work`
                  WHERE
                     `project` = "%s" AND
-                    (`lang`   = "%s" OR `lang`="en") AND
+                    '.$langFilter.' AND
                     `name`   != "-" AND
                     `module`  = "%s" AND
                     `patchID` IS NULL',
