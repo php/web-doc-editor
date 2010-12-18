@@ -17,7 +17,7 @@ ui.cmp._PortletLocalMail.store = new Ext.data.Store({
             {name : 'title'},
             {name : 'link'},
             {name : 'description'},
-            {name : 'pubDate', type : 'date',dateFormat : 'Y-m-d H:i:s' }
+            {name : 'pubDate', type : 'date',dateFormat : 'Y/m/d H:i:s' }
         ]
 
     })
