@@ -376,6 +376,7 @@ var i18n = new Array();
   i18n["Check build"] = "Vérifier la compilation";
   i18n["Verify if there is a check in progress. Please, wait..."] = "Vérification s'il y a une vérification de la compilation ce langage en cours. Merci de patienter...";
   i18n["Show last failed build"] = "Dernier échec de la compilation";
+  i18n["Last failed build"] = "Dernier échec de la compilation";
   i18n["EN tools"] = "Outils EN";
   i18n["Script check entities"] = "Script de vérification des entités";
   i18n["View the last result"] = "Voir le résultat de la dernière vérification";
@@ -534,6 +535,8 @@ var i18n = new Array();
   i18n["Please, wait until commit..."] = "Veuillez patienter...";
   i18n["The log message is required."] = "Le message pour l'historique est obligatoire.";
   i18n["You must choose at least one file."] = "Vous devez sélectionner au moins un fichier.";
+  i18n["There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?"] = "Il y a {0} fichiers à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je les ferme pour vous ?";
+  i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?"] = "Il y a {0} fichier à fermer avant de commiter.<br><br>{1}<br/><br/>Voulez-vous que je le ferme pour vous ?";
 
 
 // In file: ../../js/ui/task/MarkDeleteTask.js

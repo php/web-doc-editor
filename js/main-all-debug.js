@@ -6830,12 +6830,10 @@ ui.task.VCSCommitTask = function()
             icon    : Ext.MessageBox.INFO,
             buttons : Ext.MessageBox.YESNOCANCEL,
             msg     : (NeedToBeClose.length > 1) ? String.format(
-                        _('There are {0} files to close before commit.<br><br>' +
-                          '{1}<br/><br/>Would you like me to close them for you ?'),
+                        _('There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?'),
                         NeedToBeClose.length, labelNeedToBeClose)
                     : String.format(
-                        _('There is {0} file to close before commit.<br><br>' +
-                          '{1}<br/><br/>Would you like me to close it for you ?'),
+                        _('There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?'),
                           NeedToBeClose.length, labelNeedToBeClose),
             fn : function(btn)
             {
