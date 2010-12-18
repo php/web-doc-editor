@@ -1,0 +1,16 @@
+/*
+* Css for the IconCombo Ux -
+*
+*/
+
+.ux-icon-combo-input {
+    padding-left: 25px !important;
+}
+
+.ux-icon-combo-value {
+    padding-left: 22px !important;
+}
+
+.ux-icon-combo-item {
+    padding-left: 3px !important;
+}
