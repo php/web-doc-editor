@@ -5719,7 +5719,14 @@ ui.task.GetFileTask = function(config)
             }
 
             // This file have been modified by a different user than the current one.
-            if( o.fileModified && ( fileModifiedInfo.user !== PhDOE.user.login || fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent ) ) {
+            if( o.fileModified && 
+                
+                (
+                    ( !PhDOE.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
+                    ( PhDOE.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
+                )
+                
+            ) {
 
                 // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
                 if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {

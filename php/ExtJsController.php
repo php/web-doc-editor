@@ -865,7 +865,10 @@ class ExtJsController
         	$infoModified = json_decode($infoModified);
         	
         	// If the user who have modified this file isn't the current one
-        	if( $infoModified->user ==  $am->vcsLogin && $infoModified->anonymousIdent == $am->anonymousIdent ) {
+        	if( 
+                    ( !$am->isAnonymous && ( $infoModified->user ==  $am->vcsLogin ) ) ||
+                    (  $am->isAnonymous && ( $infoModified->anonymousIdent == $am->anonymousIdent ) )
+                ) {
         		// We can modify it, it's mine ;)
         	} else {
         		// If he is an anonymous and current user, an authenticated user, the current one can modify it.
