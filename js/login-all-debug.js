@@ -95,7 +95,7 @@ function XHR(config)
 Ext.namespace('Ext.ux.plugins');
 
 /**
-  * Ext.ux.IconCombo Extension Class for Ext 2.x Library
+  * Ext.ux.IconCombo Extension Class for Ext 2.x Library -
   *
   * @author  Ing. Jozef Sakalos
   * @version $Id: Ext.ux.IconCombo.js 617 2007-12-20 11:29:56Z jozo $
@@ -172,14 +172,15 @@ Ext.override(Ext.Window.DD, {
     // private - used for dragging
     startDrag : function()
     {
-        var w = this.win;
+        var w = this.win, so, s;
+        
         w.fireEvent('ghost', []);
         this.proxy = w.ghost();
         if (w.constrain !== false) {
-            var so = w.el.shadowOffset;
+            so = w.el.shadowOffset;
             this.constrainTo(w.container, {right: so, left: so, bottom: so});
         } else if (w.constrainHeader !== false) {
-            var s = this.proxy.getSize();
+            s = this.proxy.getSize();
             this.constrainTo(w.container, {right: -(s.width - this.headerOffsets[0]), bottom: -(s.height - this.headerOffsets[1])});
         }
     }
@@ -209,6 +210,8 @@ Ext.override(Ext.Window, {
         this.lastZIndex = index;
     }
 });
+
+Ext.namespace('Ext.ux','Ext.ux.plugins');
 
 // Drawer Base Class
 Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {

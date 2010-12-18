@@ -211,7 +211,7 @@ var PhDOE_loginPage = function()
                             iconClsField    : 'iconCls',
                             iconClsBase     : 'flags',
                             mode            : 'local',
-                            value           : 'en',
+                            value           : ( Ext.util.Cookies.get("lang") ) ? Ext.util.Cookies.get("lang") : 'en',
                             listWidth       : 235,
                             maxHeight       : 150,
                             editable        : true,
