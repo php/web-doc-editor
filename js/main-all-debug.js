@@ -6445,7 +6445,7 @@ ui.task.SystemUpdateTask = function()
 ui.task.UpdateConfTask = function(config)
 {
     Ext.apply(this, config);
-
+    
     // Apply modification in DB
     XHR({
         scope   : this,
@@ -14604,7 +14604,6 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
 {
     title      : '',
     iconCls    : 'iconBugs',
-    id         : 'portletBugs',
     layout     : 'fit',
     store      : ui.cmp._PortletBugs.store,
     reloadData : ui.cmp._PortletBugs.reloadData,
@@ -14643,11 +14642,14 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent: function(config) {
-
-        ui.cmp.PortletBugs.superclass.initComponent.call(this);
-        Ext.apply(this, config);
+    initComponent: function(config)
+    {
+        this.id = 'portletBugs';
         this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
+        
+        Ext.apply(this, config);
+        
+        ui.cmp.PortletBugs.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletBugs.grid());
 
     }
@@ -14842,7 +14844,6 @@ ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Information'),
-    id      : 'portletInfo',
     iconCls : 'iconInfo',
     layout  : 'fit',
     store   : ui.cmp._PortletInfo.store,
@@ -14883,8 +14884,9 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.cmp.PortletInfo.superclass.initComponent.call(this);
+        this.id = 'portletInfo';
         Ext.apply(this, config);
+        ui.cmp.PortletInfo.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletInfo.grid());
 
@@ -15059,7 +15061,6 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 {
     title      : '',
     iconCls    : 'iconMailing',
-    id         : 'portletLocalMail',
     layout     : 'fit',
     store      : ui.cmp._PortletLocalMail.store,
     reloadData : ui.cmp._PortletLocalMail.reloadData,
@@ -15100,8 +15101,10 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.cmp.PortletLocalMail.superclass.initComponent.call(this);
+        this.id = 'portletLocalMail';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletLocalMail.superclass.initComponent.apply(this);
 
         this.title = String.format(_('Mail from {0}'), 'doc-' + this.lang);
         this.add(new ui.cmp._PortletLocalMail.grid());
@@ -15244,7 +15247,6 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Summary'),
     iconCls : '',
-    id      : 'portletSummary',
     layout  : 'fit',
     store   : ui.cmp._PortletSummary.store,
     tools   : [{
@@ -15277,8 +15279,10 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
 
     initComponent : function(config)
     {
-        ui.cmp.PortletSummary.superclass.initComponent.call(this);
+        this.id = 'portletSummary';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletSummary.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletSummary.grid());
 
@@ -15376,7 +15380,6 @@ ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 ui.cmp.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics'),
-    id      : 'portletTranslationGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
     store   : ui.cmp._PortletTranslationGraph.store,
@@ -15389,8 +15392,9 @@ ui.cmp.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
     }],
     initComponent : function(config)
     {
-        ui.cmp.PortletTranslationGraph.superclass.initComponent.call(this);
+        this.id = 'portletTranslationGraph';
         Ext.apply(this, config);
+        ui.cmp.PortletTranslationGraph.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletTranslationGraph.chart());
     }
 
@@ -15461,7 +15465,6 @@ ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 ui.cmp.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics for all languages'),
-    id      : 'portletTranslationsGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
     store   : ui.cmp._PortletTranslationsGraph.store,
@@ -15474,8 +15477,9 @@ ui.cmp.PortletTranslationsGraph = Ext.extend(Ext.ux.Portlet,
     }],
     initComponent : function(config)
     {
-        ui.cmp.PortletTranslationsGraph.superclass.initComponent.call(this);
+        this.id = 'portletTranslationsGraph';
         Ext.apply(this, config);
+        ui.cmp.PortletTranslationsGraph.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletTranslationsGraph.chart());
     }
 
@@ -15710,7 +15714,6 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Translators'),
     iconCls : 'iconTranslator',
-    id      : 'portletTranslator',
     layout  : 'fit',
     store   : ui.cmp._PortletTranslator.store,
     tools   : [{
@@ -15748,10 +15751,12 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent : function(config) {
-
-        ui.cmp.PortletTranslator.superclass.initComponent.call(this);
+    initComponent : function(config)
+    {
+        this.id = 'portletTranslator';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletTranslator.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletTranslator.grid({lang: this.lang}));
 
@@ -18589,7 +18594,7 @@ var PhDOE = function()
             
             // Get user conf
             if ( PhDOE.user.lang === 'en' ) {
-                portal = (PhDOE.user.conf.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortEN) : portalEN;
+                portal = (PhDOE.user.conf.main.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortEN) : portalEN;
 
                 allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
@@ -18598,7 +18603,7 @@ var PhDOE = function()
             }
             else
             {
-                portal = (PhDOE.user.conf.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortLANG) : portalLANG;
+                portal = (PhDOE.user.conf.main.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortLANG) : portalLANG;
                 
                 allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: PhDOE.user.lang});
@@ -18799,8 +18804,9 @@ var PhDOE = function()
                                         id = a.portal.items.items[0].items.items[i].id;
                                         col1Sort.push(id);
                                     }
+                                    
                                     // Column 2
-                                    for( var j=0; i < a.portal.items.items[1].items.items.length; j++ ) {
+                                    for( var j=0; j < a.portal.items.items[1].items.items.length; j++ ) {
                                         id = a.portal.items.items[1].items.items[j].id;
                                         col2Sort.push(id);
                                     }
@@ -18809,11 +18815,12 @@ var PhDOE = function()
                                         'col1' : col1Sort,
                                         'col2' : col2Sort
                                     };
-
+                                    
                                     // We store this config var into portalSortEN for EN users, and portalSortLANG for LANG users
 
                                     new ui.task.UpdateConfTask({
-                                        item  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
+                                        module:'main',
+                                        itemName  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
                                         value : Ext.util.JSON.encode(portal),
                                         notify: false
                                     });

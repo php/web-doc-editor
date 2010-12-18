@@ -332,7 +332,7 @@ var PhDOE = function()
             
             // Get user conf
             if ( PhDOE.user.lang === 'en' ) {
-                portal = (PhDOE.user.conf.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortEN) : portalEN;
+                portal = (PhDOE.user.conf.main.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortEN) : portalEN;
 
                 allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletBugs"] = ui.cmp.PortletBugs.getInstance({lang: PhDOE.user.lang});
@@ -341,7 +341,7 @@ var PhDOE = function()
             }
             else
             {
-                portal = (PhDOE.user.conf.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.portalSortLANG) : portalLANG;
+                portal = (PhDOE.user.conf.main.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortLANG) : portalLANG;
                 
                 allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: PhDOE.user.lang});
@@ -542,8 +542,9 @@ var PhDOE = function()
                                         id = a.portal.items.items[0].items.items[i].id;
                                         col1Sort.push(id);
                                     }
+                                    
                                     // Column 2
-                                    for( var j=0; i < a.portal.items.items[1].items.items.length; j++ ) {
+                                    for( var j=0; j < a.portal.items.items[1].items.items.length; j++ ) {
                                         id = a.portal.items.items[1].items.items[j].id;
                                         col2Sort.push(id);
                                     }
@@ -552,11 +553,12 @@ var PhDOE = function()
                                         'col1' : col1Sort,
                                         'col2' : col2Sort
                                     };
-
+                                    
                                     // We store this config var into portalSortEN for EN users, and portalSortLANG for LANG users
 
                                     new ui.task.UpdateConfTask({
-                                        item  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
+                                        module:'main',
+                                        itemName  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
                                         value : Ext.util.JSON.encode(portal),
                                         notify: false
                                     });

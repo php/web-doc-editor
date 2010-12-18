@@ -216,7 +216,6 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Translators'),
     iconCls : 'iconTranslator',
-    id      : 'portletTranslator',
     layout  : 'fit',
     store   : ui.cmp._PortletTranslator.store,
     tools   : [{
@@ -254,10 +253,12 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent : function(config) {
-
-        ui.cmp.PortletTranslator.superclass.initComponent.call(this);
+    initComponent : function(config)
+    {
+        this.id = 'portletTranslator';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletTranslator.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletTranslator.grid({lang: this.lang}));
 

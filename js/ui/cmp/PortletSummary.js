@@ -123,7 +123,6 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Summary'),
     iconCls : '',
-    id      : 'portletSummary',
     layout  : 'fit',
     store   : ui.cmp._PortletSummary.store,
     tools   : [{
@@ -156,8 +155,10 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
 
     initComponent : function(config)
     {
-        ui.cmp.PortletSummary.superclass.initComponent.call(this);
+        this.id = 'portletSummary';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletSummary.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletSummary.grid());
 

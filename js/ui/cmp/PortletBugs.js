@@ -204,7 +204,6 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
 {
     title      : '',
     iconCls    : 'iconBugs',
-    id         : 'portletBugs',
     layout     : 'fit',
     store      : ui.cmp._PortletBugs.store,
     reloadData : ui.cmp._PortletBugs.reloadData,
@@ -243,11 +242,14 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
         }
     },
 
-    initComponent: function(config) {
-
-        ui.cmp.PortletBugs.superclass.initComponent.call(this);
-        Ext.apply(this, config);
+    initComponent: function(config)
+    {
+        this.id = 'portletBugs';
         this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
+        
+        Ext.apply(this, config);
+        
+        ui.cmp.PortletBugs.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletBugs.grid());
 
     }

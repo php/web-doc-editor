@@ -155,7 +155,6 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 {
     title      : '',
     iconCls    : 'iconMailing',
-    id         : 'portletLocalMail',
     layout     : 'fit',
     store      : ui.cmp._PortletLocalMail.store,
     reloadData : ui.cmp._PortletLocalMail.reloadData,
@@ -196,8 +195,10 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.cmp.PortletLocalMail.superclass.initComponent.call(this);
+        this.id = 'portletLocalMail';
+        
         Ext.apply(this, config);
+        ui.cmp.PortletLocalMail.superclass.initComponent.apply(this);
 
         this.title = String.format(_('Mail from {0}'), 'doc-' + this.lang);
         this.add(new ui.cmp._PortletLocalMail.grid());

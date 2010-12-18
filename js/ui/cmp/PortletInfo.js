@@ -176,7 +176,6 @@ ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Information'),
-    id      : 'portletInfo',
     iconCls : 'iconInfo',
     layout  : 'fit',
     store   : ui.cmp._PortletInfo.store,
@@ -217,8 +216,9 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
 
     initComponent: function(config)
     {
-        ui.cmp.PortletInfo.superclass.initComponent.call(this);
+        this.id = 'portletInfo';
         Ext.apply(this, config);
+        ui.cmp.PortletInfo.superclass.initComponent.apply(this);
 
         this.add(new ui.cmp._PortletInfo.grid());
 

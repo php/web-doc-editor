@@ -60,7 +60,6 @@ ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 ui.cmp.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
 {
     title   : _('Graphics'),
-    id      : 'portletTranslationGraph',
     iconCls : 'iconGraphic',
     layout  : 'fit',
     store   : ui.cmp._PortletTranslationGraph.store,
@@ -73,8 +72,9 @@ ui.cmp.PortletTranslationGraph = Ext.extend(Ext.ux.Portlet,
     }],
     initComponent : function(config)
     {
-        ui.cmp.PortletTranslationGraph.superclass.initComponent.call(this);
+        this.id = 'portletTranslationGraph';
         Ext.apply(this, config);
+        ui.cmp.PortletTranslationGraph.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletTranslationGraph.chart());
     }
 

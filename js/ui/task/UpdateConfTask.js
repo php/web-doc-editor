@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.task');
 ui.task.UpdateConfTask = function(config)
 {
     Ext.apply(this, config);
-
+    
     // Apply modification in DB
     XHR({
         scope   : this,
