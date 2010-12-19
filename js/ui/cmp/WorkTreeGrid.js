@@ -9,6 +9,46 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
     });
 });
 
+// WorkTreeGrid : adminstrator items for the context menu
+// config - { module, from, node, folderNode, userNode }
+ui.cmp._WorkTreeGrid.menu.admin = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
+    init: function(){
+                
+        Ext.apply(this, {
+            text: _('Administrator menu'),
+            iconCls: 'iconAdmin',
+            disabled: (!PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == this.fileLang && PhDOE.user.isLangAdmin) ),
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                items: [{
+                    scope: this,
+                    iconCls: 'iconSwitchLang',
+                    text: _('Change file\'s owner'),
+                    handler: function()
+                    {
+                        new ui.cmp.ChangeFileOwner({
+                            fileIdDB: this.node.attributes.idDB,
+                            fileLang: this.fileLang,
+                            fileFolder: this.folderNode.attributes.task,
+                            fileName: this.node.attributes.task,
+                            currentOwner: this.userNode.attributes.task
+                        });
+                    }
+                }]
+            })
+        });
+    }
+});
+
+
+
 // WorkTreeGrid : commit items for the context menu
 // config - { module, from, node, folderNode, userNode }
 ui.cmp._WorkTreeGrid.menu.commit = function(config){
@@ -346,7 +386,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
     },
     
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [];
+        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [], tmp;
+        
+        // Get the lang of this file
+        tmp = node.parentNode.attributes.task.split('/');
+        FileLang = tmp[0];
         
         allFiles.push(this.node);
         
@@ -432,11 +476,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isAdmin) )
+                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin) )
             }, {
                 text: ((FileType == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 iconCls: 'iconPageDelete',
-                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isAdmin ),
+                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ),
                 handler: function(){
                     new ui.task.ClearLocalChangeTask({
                         ftype: FileType,
@@ -452,7 +496,19 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 node: this.node,
                 folderNode: this.node.parentNode,
                 userNode: this.node.parentNode.parentNode
-            }) : '')]
+            }) : ''),
+            {
+                xtype: 'menuseparator',
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+            },
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                    fileLang: FileLang,
+                    from: 'file',
+                    node: this.node,
+                    folderNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode
+                }) : '')
+            ]
         });
     }
 });

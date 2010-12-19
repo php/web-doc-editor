@@ -50,6 +50,14 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
                     user.ucFirst());
 
         break;
+        case 'changeFilesOwner' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} changed file\'s owner'),
+                    user.ucFirst());
+
+        break;
         case 'checkEntities' :
             user = record.data.value.user;
 
@@ -130,7 +138,14 @@ ui.cmp._PortletInfo.gridColumns = [
         sortable  : false,
         dataIndex : 'elapsedTime',
         renderer  : function(v, m, r) {
-            return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + String.format(_('{0} ' + v.units), v.value) + "</span>";
+            
+            if( !v ) {
+                v = _('Less than one second');
+            } else {
+                v = String.format(_('{0} ' + v.units), v.value);
+            }
+            return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + v + "</span>";
+            
         }
     },{
         header    : _('Date'),

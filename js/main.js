@@ -108,6 +108,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
                     break;
+                case 'changeFilesOwnerNotAdmin' :
+                    title = _('Error');
+                    mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
+                    break;
 
             }
 
@@ -515,7 +519,7 @@ var PhDOE = function()
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                String.format(_('Connected as {0}'), (( PhDOE.user.isAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+                                                String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
                                                 ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +

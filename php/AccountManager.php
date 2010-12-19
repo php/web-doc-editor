@@ -342,10 +342,16 @@ class AccountManager
     	return ( substr(strtolower($userName), 0, 11) === 'anonymous #' ) ? true : false;
     }
 
-    public function isAdmin()
+    public function isGlobalAdmin()
     {
-    	$admin = explode(",", $this->appConf[$this->project]['project.admin']);
+    	$admin = explode(",", $this->appConf[$this->project]['project.globaladmin']);
     	return ( in_array($this->vcsLogin, $admin) ) ? true : false;
+    }
+
+    public function isLangAdmin()
+    {
+        $admin = explode(",", $this->appConf[$this->project]['project.langadmin.'.$this->vcsLang]);
+        return ( in_array($this->vcsLogin, $admin) ) ? true : false;
     }
     
     public function updateEmail()
@@ -355,6 +361,41 @@ class AccountManager
         $s = sprintf(
             'UPDATE `users` SET `email`="%s" WHERE `userID`="%s"',
             $this->email, $this->userID
+        );
+        $db->query($s);
+    }
+    
+    public function getVCSUsers()
+    {
+        $db = DBConnection::getInstance();
+        
+        $s = 'SELECT DISTINCT(`vcs_login`) as userName FROM `users` WHERE project="'.$this->project.'" AND vcs_login != "anonymous"';
+        $r = $db->query($s);
+        
+        $result = array();
+        $i=0;
+        
+        while( $a = $r->fetch_object() ) {
+            $result[$i]['id'] = $i;
+            $result[$i]['userName'] = $a->userName;
+            $i++;
+        }
+        return $result;
+    }
+    
+    public function setFileOwner($fileIdDB, $newOwner)
+    {
+        $db = DBConnection::getInstance();
+        
+        $s = sprintf(
+            'UPDATE
+                `work`
+             SET
+                `user` = "%s"
+             WHERE
+                `id` = "%s"',
+            $db->real_escape_string($newOwner),
+            $fileIdDB
         );
         $db->query($s);
     }

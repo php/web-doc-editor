@@ -189,7 +189,10 @@ ui.cmp._PatchesTreeGrid.menu.files = function(config){
 };
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task;
+        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task, tmp;
+        
+        tmp = node.parentNode.attributes.task.split('/');
+        FileLang = tmp[0];
         
         // We search for files to pass to patch
         this.node.cascade(function(node){
@@ -256,7 +259,19 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 folderNode: this.node.parentNode,
                 patchNode: this.node.parentNode.parentNode,
                 userNode: this.node.parentNode.parentNode.parentNode
-            }) : '')]
+            }) : ''),
+            {
+                xtype: 'menuseparator',
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+            },
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                    fileLang: FileLang,
+                    from: 'file',
+                    node: this.node,
+                    folderNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode.parentNode
+                }) : '')
+            ]
         });
     }
 });

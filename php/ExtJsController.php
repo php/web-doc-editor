@@ -1131,6 +1131,58 @@ class ExtJsController
     }
 
     /**
+     * Get user list
+     */
+    public function getVCSUsers()
+    {
+        $am = AccountManager::getInstance();
+
+        $am->isLogged();
+
+        $users = $am->getVCSUsers();
+
+        return JsonResponseBuilder::success(
+            array(
+                 'nbItems' => count($users),
+                 'Items'   => $users
+            )
+        );
+    }
+    
+    /**
+     * 
+     */
+    public function setFileOwner()
+    {
+        $am = AccountManager::getInstance();
+
+        $am->isLogged();
+        
+        $fileIdDB = $this->getRequestVariable('fileIdDB');
+        $newOwner = $this->getRequestVariable('newOwner');
+        
+        // This user must be a global admin or the admin for this lang
+        if( $am->isGlobalAdmin() || $am->isLangAdmin() )
+        {
+            $am->setFileOwner($fileIdDB, $newOwner);
+            
+            $value = array();
+            $value['user'] = $am->vcsLogin;
+            RepositoryManager::getInstance()->setStaticValue('info', 'changeFilesOwner', json_encode($value), true);
+            
+            return JsonResponseBuilder::success();
+        }
+        else
+        {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'changeFilesOwnerNotAdmin'
+                )
+            );
+        }
+    }
+    
+    /**
      * Get the commit log Message after a VCS commit.
      */
     public function getCommitLogMessage()
@@ -1412,7 +1464,8 @@ class ExtJsController
         $r['userLang']  = $am->vcsLang;
         $r['userLogin'] = $am->vcsLogin;
         $r['userIsAnonymous']  = $am->isAnonymous;
-        $r['userIsAdmin']  = $am->isAdmin();
+        $r['userIsGlobalAdmin']  = $am->isGlobalAdmin();
+        $r['userIsLangAdmin']  = $am->isLangAdmin();
         $r['userConf']  = $am->userConf;
         $r['userEmail'] = $am->email;
         $r['appConf']   = Array(

@@ -5095,7 +5095,53 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 });
 
 Ext.reg('usernotes', Ext.ux.UserNotes);
-Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
+Ext.namespace('ui', 'ui.task');
+
+// config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
+ui.task.ChangeFileOwner = function(config)
+{
+    Ext.apply(this, config);
+
+    var msg = Ext.MessageBox.wait(_('Saving data...'));
+        
+    XHR({
+        scope  : this,
+        params : {
+            task        : 'setFileOwner',
+            fileIdDB    : this.fileIdDB,
+            newOwner    : this.newOwner
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+
+            // We reload 2 stores to reflect this change
+            ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(function() {
+                ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
+            });
+            
+            // We reload the information Portlet to reflect this change
+            ui.cmp.PortletInfo.getInstance().store.reload();
+            
+            // Remove wait msg
+            msg.hide();
+            
+            this.from.close();
+            
+            // Notify
+            PhDOE.notify('info', _('Owner changed'), _('The owner for this file have been changed successfully !'));
+        },
+        failure : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            // Remove wait msg
+            msg.hide();
+            PhDOE.winForbidden(o.type);
+            
+            this.from.close();
+        }
+    });
+};Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
 
 ui.task._CheckBuildTask.display = function()
 {
@@ -5859,7 +5905,8 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.user.login = o.mess.userLogin;
             PhDOE.user.lang  = o.mess.userLang;
             PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
-            PhDOE.user.isAdmin = o.mess.userIsAdmin;
+            PhDOE.user.isGlobalAdmin = o.mess.userIsGlobalAdmin;
+            PhDOE.user.isLangAdmin = o.mess.userIsLangAdmin;
             PhDOE.user.conf = o.mess.userConf;
 
             PhDOE.project   = o.mess.project;
@@ -7110,7 +7157,119 @@ ui.cmp.BuildStatus = Ext.extend(Ext.grid.GridPanel,
         this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
 });
-Ext.namespace('ui','ui.cmp');
+Ext.namespace('ui','ui.cmp','ui.cmp._ChangeFileOwner');
+
+ui.cmp._ChangeFileOwner.store = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getVCSUsers'
+    }),
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        fields        : [
+            {name : 'id'},
+            {name : 'userName'}
+        ]
+    }),
+    sortInfo: {
+        field: 'userName',
+        direction: 'ASC'
+    }
+});
+
+
+ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
+{
+    title      : _('Change file\'s owner'),
+    iconCls    : 'iconSwitchLang',
+    width      : 550,
+    height     : 255,
+    layout     : 'form',
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+    closeAction: 'close',
+    padding    : 10,
+    buttons    : [{
+        text    : _('Save'),
+        disabled: true,
+        handler : function()
+        {
+            var win = this.ownerCt.ownerCt,
+                newOwner = win.items.items[1].items.items[0].getValue();
+            
+            new ui.task.ChangeFileOwner({
+                fileIdDB : win.fileIdDB,
+                newOwner : newOwner,
+                from     : win
+            });
+            
+        }
+    },{
+        text    : _('Close'),
+        handler : function()
+        {
+            var win = this.ownerCt.ownerCt;
+            win.close();
+        }
+    }],
+
+    initComponent : function()
+    {
+        var win = this;
+        
+        Ext.apply(this,
+        {
+            defaults: {
+                labelWidth : 120
+            },
+            items : [{
+                xtype   : 'fieldset',
+                title   : _('Information'),
+                iconCls : 'iconInfo',
+                width   : 515,
+                items   : [{
+                    xtype:'displayfield',
+                    fieldLabel: _('File'),
+                    value: this.fileFolder + this.fileName
+                },{
+                    xtype:'displayfield',
+                    fieldLabel: _('Current owner'),
+                    value: this.currentOwner
+                }]
+            },{
+                xtype   : 'fieldset',
+                title   : _('Action'),
+                iconCls : 'iconSwitchLang',
+                width   : 515,
+                items   : [{
+                    xtype         : 'combo',
+                    name          : 'newOwner',
+                    fieldLabel    : _('New owner'),
+                    editable      : false,
+                    store         : ui.cmp._ChangeFileOwner.store,
+                    triggerAction : 'all',
+                    valueField    : 'userName',
+                    displayField  : 'userName',
+                    listeners     : {
+                        afterrender : function()
+                        {
+                            this.store.load();
+                        },
+                        select : function()
+                        {
+                            win.fbar.items.items[0].enable();
+                        }
+                    }
+                }]
+            }]
+        });
+        
+        ui.cmp.ChangeFileOwner.superclass.initComponent.call(this);
+        
+        this.show();
+    }
+});Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
@@ -13008,7 +13167,10 @@ ui.cmp._PatchesTreeGrid.menu.files = function(config){
 };
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task;
+        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task, tmp;
+        
+        tmp = node.parentNode.attributes.task.split('/');
+        FileLang = tmp[0];
         
         // We search for files to pass to patch
         this.node.cascade(function(node){
@@ -13075,7 +13237,19 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 folderNode: this.node.parentNode,
                 patchNode: this.node.parentNode.parentNode,
                 userNode: this.node.parentNode.parentNode.parentNode
-            }) : '')]
+            }) : ''),
+            {
+                xtype: 'menuseparator',
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+            },
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                    fileLang: FileLang,
+                    from: 'file',
+                    node: this.node,
+                    folderNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode.parentNode
+                }) : '')
+            ]
         });
     }
 });
@@ -14744,6 +14918,14 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
                     user.ucFirst());
 
         break;
+        case 'changeFilesOwner' :
+            user = record.data.value.user;
+
+            return String.format(
+                    _('{0} changed file\'s owner'),
+                    user.ucFirst());
+
+        break;
         case 'checkEntities' :
             user = record.data.value.user;
 
@@ -14824,7 +15006,14 @@ ui.cmp._PortletInfo.gridColumns = [
         sortable  : false,
         dataIndex : 'elapsedTime',
         renderer  : function(v, m, r) {
-            return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + String.format(_('{0} ' + v.units), v.value) + "</span>";
+            
+            if( !v ) {
+                v = _('Less than one second');
+            } else {
+                v = String.format(_('{0} ' + v.units), v.value);
+            }
+            return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + v + "</span>";
+            
         }
     },{
         header    : _('Date'),
@@ -17331,6 +17520,46 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
     });
 });
 
+// WorkTreeGrid : adminstrator items for the context menu
+// config - { module, from, node, folderNode, userNode }
+ui.cmp._WorkTreeGrid.menu.admin = function(config){
+    Ext.apply(this, config);
+    this.init();
+    ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
+};
+Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
+    init: function(){
+                
+        Ext.apply(this, {
+            text: _('Administrator menu'),
+            iconCls: 'iconAdmin',
+            disabled: (!PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == this.fileLang && PhDOE.user.isLangAdmin) ),
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                items: [{
+                    scope: this,
+                    iconCls: 'iconSwitchLang',
+                    text: _('Change file\'s owner'),
+                    handler: function()
+                    {
+                        new ui.cmp.ChangeFileOwner({
+                            fileIdDB: this.node.attributes.idDB,
+                            fileLang: this.fileLang,
+                            fileFolder: this.folderNode.attributes.task,
+                            fileName: this.node.attributes.task,
+                            currentOwner: this.userNode.attributes.task
+                        });
+                    }
+                }]
+            })
+        });
+    }
+});
+
+
+
 // WorkTreeGrid : commit items for the context menu
 // config - { module, from, node, folderNode, userNode }
 ui.cmp._WorkTreeGrid.menu.commit = function(config){
@@ -17668,7 +17897,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
     },
     
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [];
+        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [], tmp;
+        
+        // Get the lang of this file
+        tmp = node.parentNode.attributes.task.split('/');
+        FileLang = tmp[0];
         
         allFiles.push(this.node);
         
@@ -17754,11 +17987,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isAdmin) )
+                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin) )
             }, {
                 text: ((FileType == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 iconCls: 'iconPageDelete',
-                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isAdmin ),
+                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ),
                 handler: function(){
                     new ui.task.ClearLocalChangeTask({
                         ftype: FileType,
@@ -17774,7 +18007,19 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 node: this.node,
                 folderNode: this.node.parentNode,
                 userNode: this.node.parentNode.parentNode
-            }) : '')]
+            }) : ''),
+            {
+                xtype: 'menuseparator',
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+            },
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                    fileLang: FileLang,
+                    from: 'file',
+                    node: this.node,
+                    folderNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode
+                }) : '')
+            ]
         });
     }
 });
@@ -18396,6 +18641,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
                     break;
+                case 'changeFilesOwnerNotAdmin' :
+                    title = _('Error');
+                    mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
+                    break;
 
             }
 
@@ -18803,7 +19052,7 @@ var PhDOE = function()
                             html   : '<div class="res-block">' +
                                         '<div class="res-block-inner">' +
                                             '<h3>' +
-                                                String.format(_('Connected as {0}'), (( PhDOE.user.isAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+                                                String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
                                                 ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                             '</h3>' +
                                         '</div>' +

@@ -72,6 +72,7 @@ var i18n = new Array();
   i18n["...all files modified by me"] = "...tous les fichiers que j'ai modifié";
   i18n["You have no patch currently. You must create one."] = "Vous n'avez aucun patch en cours actuellement. Vous devez en créer un.";
   i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
+  i18n["Administrator menu"] = "Menu Administrateur";
   
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
@@ -117,13 +118,15 @@ var i18n = new Array();
   i18n["{0} day(s)"] = "{0} jour(s)";
   i18n["{0} hour(s)"] = "{0} heure(s)";
   i18n["{0} minute(s)"] = "{0} minute(s)";
-  i18n["{0} second(s)"] = "{0} seconde(s)";  
+  i18n["{0} second(s)"] = "{0} seconde(s)";
+  i18n["Less than one second"] = "Moins d'une seconde";
   i18n["{0} check all entitites"] = "{0} a vérifié toutes les entitiés";
   i18n["{0} updated app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} logged out"] = "{0} s'est déconnecté";
   i18n["{0} is logged in using the {1} language"] = "{0} s'est connecté en langue {1}";
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
   i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
+  i18n["{0} changed file\'s owner"] = "{0} a modifié le propriétaire d'un fichier";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -615,5 +618,15 @@ var i18n = new Array();
   i18n["Line"] = "Ligne";
   i18n["Libel"] = "Libellé";
   i18n["XML Errors"] = "Erreurs XML";
+  
+// In file: ../../js/ui/cmp/ChangeFileOwner.js
+  i18n["Current owner"] = "Propriétaire actuel";
+  i18n["Action"] = "Action";
+  i18n["New owner"] = "Nouveau propriétaire";
+  i18n["Change file's owner"] = "Modification du propriétaire d'un fichier";
+  
+// In file: ../../js/ui/task/ChangeFileOwner.js
+  i18n["Owner changed"] = "Propriétaire modifié";
+  i18n["The owner for this file have been changed successfully !"] = "Le propriétaire de ce fichier a été modifié avec succès !";
   
   
