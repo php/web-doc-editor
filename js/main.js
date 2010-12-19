@@ -419,7 +419,13 @@ var PhDOE = function()
                         iconCls   : 'iconFilesNeedTranslate',
                         hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingTranslateGrid.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        listeners : {
+                            expand: function(cmp) {
+                                Ext.getCmp('FNT-filter').wrap.setWidth(180);
+                                Ext.getCmp('FNT-filter').syncSize();
+                            }
+                        }
                     },{
                         id        : 'acc-need-update',
                         title     : _('Files need update') + ' (<em id="acc-need-update-nb">0</em>)',
@@ -428,7 +434,13 @@ var PhDOE = function()
                         iconCls   : 'iconFilesNeedUpdate',
                         hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.StaleFileGrid.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        listeners : {
+                            expand: function(cmp) {
+                                Ext.getCmp('FNU-filter').wrap.setWidth(180);
+                                Ext.getCmp('FNU-filter').syncSize();
+                            }
+                        }
                     }, {
                         id        : 'acc-error',
                         title     : (PhDOE.user.lang === 'en') ? "Number of failures to meet 'strict standards'" + ' (<em id="acc-error-nb">0</em>)' : _('Error in current translation') + ' (<em id="acc-error-nb">0</em>)',
@@ -436,7 +448,13 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconFilesError',
                         items     : [ ui.cmp.ErrorFileGrid.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        listeners : {
+                            expand: function(cmp) {
+                                Ext.getCmp('FE-filter').wrap.setWidth(180);
+                                Ext.getCmp('FE-filter').syncSize();
+                            }
+                        }
                     }, {
                         id        : 'acc-need-reviewed',
                         title     : _('Files need reviewed') + ' (<em id="acc-need-reviewed-nb">0</em>)',
@@ -445,7 +463,13 @@ var PhDOE = function()
                         iconCls   : 'iconFilesNeedReviewed',
                         hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ ui.cmp.PendingReviewGrid.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        listeners : {
+                            expand: function(cmp) {
+                                Ext.getCmp('FNR-filter').wrap.setWidth(180);
+                                Ext.getCmp('FNR-filter').syncSize();
+                            }
+                        }
                     }, {
                         id        : 'acc-notInEn',
                         title     : _('Not in EN tree') + ' (<em id="acc-notInEn-nb">0</em>)',
@@ -462,7 +486,13 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconAllFiles',
                         items     : [ ui.cmp.RepositoryTree.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        listeners : {
+                            expand: function(cmp) {
+                                Ext.getCmp('AF-search').wrap.setWidth(180);
+                                Ext.getCmp('AF-search').syncSize();
+                            }
+                        }
                     }, {
                         id        : 'acc-work-in-progress',
                         title     : _('Work in progress') + ' (<em id="acc-work-in-progress-nb">0</em>)',

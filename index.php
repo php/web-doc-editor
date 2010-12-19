@@ -2,7 +2,7 @@
 
 session_start();
 
-$ExtJsVersion = "3.2.1";
+$ExtJsVersion = "3.3.1";
 
 require_once './php/html.templates.php';
 
