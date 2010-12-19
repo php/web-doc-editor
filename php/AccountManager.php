@@ -350,6 +350,10 @@ class AccountManager
 
     public function isLangAdmin()
     {
+        if( !isset($this->appConf[$this->project]['project.langadmin.'.$this->vcsLang]) ) {
+            return false;
+        }
+        
         $admin = explode(",", $this->appConf[$this->project]['project.langadmin.'.$this->vcsLang]);
         return ( in_array($this->vcsLogin, $admin) ) ? true : false;
     }
