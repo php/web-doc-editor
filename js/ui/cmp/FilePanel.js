@@ -479,10 +479,12 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
 
                     new ui.task.UpdateConfTask({
-                        item  : this.spellCheckConf,
-                        value : btn.pressed,
-                        notify: false
+                        module    : this.spellCheckConf.module,
+                        itemName  : this.spellCheckConf.itemName,
+                        value     : btn.pressed,
+                        notify    : false
                     });
+                    
                 }
             },{
                 scope   : this,
