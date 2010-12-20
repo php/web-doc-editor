@@ -29,7 +29,7 @@ var i18n = new Array();
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Parece ser que ha introducido algunos caracteres de tabulación en este fichero. Por favor reemplacelos por espacios.<br>Pista: puede usar el botón \"re-formatear todo el fichero\" para reemplazar todas las tabulaciones por espacios.";
 
- i18n["You can't modify this file as it was modify by another user. Contact an administrator if you wan to be able to modify it."] = "No puede editar este fichero ya que fue modificado por otro usuario. Contacte con el administrador si deasea poder anular esta restricción";
+ i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "No puede editar este fichero ya que fue modificado por otro usuario. Contacte con el administrador si deasea poder anular esta restricción";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Doble clic en la celda para abrir la selección de ficheros";
