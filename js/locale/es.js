@@ -1,5 +1,5 @@
 /*
-* This file must be encoded in UTF-8 --- Rev. transalted: 300322
+* This file must be encoded in UTF-8 --- Rev. transalted: 306463
 */
 
 var i18n = new Array();
@@ -28,6 +28,8 @@ var i18n = new Array();
   i18n["Language: "] = "Idioma: ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Parece ser que ha introducido algunos caracteres de tabulación en este fichero. Por favor reemplacelos por espacios.<br>Pista: puede usar el botón \"re-formatear todo el fichero\" para reemplazar todas las tabulaciones por espacios.";
+
+ i18n["You can't modify this file as it was modify by another user. Contact an administrator if you wan to be able to modify it."] = "No puede editar este fichero ya que fue modificado por otro usuario. Contacte con el administrador si deasea poder anular esta restricción";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Doble clic en la celda para abrir la selección de ficheros";
@@ -70,7 +72,7 @@ var i18n = new Array();
   i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";  
   i18n["You have no patch currently. You must create one."] = "Actualmente no tiene ningún parche. Debe crear uno.";
   i18n["Diff for file: {0}"] = "Diferencia para el fichero : {0}";
-    
+  i18n["Administrator menu"] = "Menú de Administrador";    
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the name of this patch"] = "Editar el nombre del parche";
   i18n["Delete this patch"] = "Eliminar este parche";
@@ -114,14 +116,15 @@ var i18n = new Array();
   i18n["{0} day(s)"] = "{0} dia(s)";
   i18n["{0} hour(s)"] = "{0} hora(s)";
   i18n["{0} minute(s)"] = "{0} minuto(s)";
-  i18n["{0} second(s)"] = "{0} segundo(s)"; 
+  i18n["{0} second(s)"] = "{0} segundo(s)";
+  i18n["Less than one second"] = "Menos de un segundo";   
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} logged out"] = "{0} se ha desconectado";
   i18n["{0} is logged in using the {1} language"] = "{0} Está conectado usando el idioma {1}";
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a enviado {1} nueva(s) directorios(s) en el idioma {2}";
   i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} cometidos {1} fichero(s) ({2} nuevo(s), {3} actualizados, {4} eliminados(s)) en el idioma {5}";
-
+  i18n["{0} changed file\'s owner"] = "{0} cambiar propietario de un fichero";
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
   i18n["Type"] = "Tipo";
@@ -175,6 +178,7 @@ var i18n = new Array();
 
   i18n["Add a new folder"] = "Añadir nuevo directorio";
   i18n["Parent Folder"] = "Directorio padre";
+  i18n["Name for the new folder"] = "Nombre del nuevo directorio";
   i18n["Folder created"] = "Directorio creado";
   i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info: Esta nueva carpeta no será enviada al repositorio hasta que se haga un commit de almenos un fichero en su interior. Si se guarda ningún fichero, la carpeta será automáticamente eliminada en 8 días.";
   i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "La carpeta <br><br><b>{0}</b><br><br> fue creada satisfactoriamente en {1} !";
@@ -270,7 +274,7 @@ var i18n = new Array();
   i18n["Do you want to check for errors before saving?"] = "¿Quiere comprobar errores antes de guardar el fichero?";
   i18n["<b>Save as</b> a patch"] = "<b>Guardar como</b> parche";
   i18n["modified"] = "modificado";
-
+  i18n["<b>Check</b> XML with XmlLint"] = "<b>Verificar</b> XML con XmlLint";
 
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
@@ -328,7 +332,7 @@ var i18n = new Array();
   i18n["Automatically load entities data when displaying the file"] = "Cargar automáticamente las entidades cuando se carga un fichero";
   i18n["Google translate Panel"] = "Panel de traducción automática de Google";
   i18n["Display the Google Translation Panel"] = "Mostrar el panel de traducción de Google";
-
+  i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Mostrar trabajo de EN dentro de los módulos \"Trabajo en curso\" & \"Patches (only EN)\"";
 // In file: ../../js/ui/component/CheckEntities.js
   i18n["Entities"] = "Entidades";
   i18n["Url"] = "Url";
@@ -373,6 +377,7 @@ var i18n = new Array();
   i18n["Check build"] = "Probar de compilar";
   i18n["Verify if there is a check in progress. Please, wait..."] = "Comprobando si hay alguna compilación en curso. Por favor, espere...";
   i18n["Show last failed build"] = "Mostrar última compilación que falló";
+  i18n["Last failed build"] = "Última vez que falló la compilación";
   i18n["EN tools"] = "Herramientas EN";
   i18n["Script check entities"] = "Script de verificación de entidades";
   i18n["View the last result"] = "Ver el último resultado";
@@ -528,8 +533,8 @@ var i18n = new Array();
   i18n["Please, wait until commit..."] = "Por favor espere...";
   i18n["The log message is required."] = "El comentario para el histórico es obligatorio.";
   i18n["You must choose at least one file."] = "Debe escoger almenos un fichero.";
-
-
+  i18n["There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?"] = "Hay {0} ficheros pendientes de ser cerrados antes de cometer.<br><br>{1}<br/><br/>¿Quiere cerrarlos automáticamente?";
+  i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?"] = "Hay un {0} fichero pendiente de ser cerrado antes de cometer. ¿Quiere cerrarlo automáticamente?"; 
 // In file: ../../js/ui/task/MarkDeleteTask.js
   i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "¿Desea marcar este fichero como pendiente de eliminar?<br/><br/>Necesita hacer commit para que este cambio tenga efecto.<br/><br/>Por favor, confirme esta acción.";
 
