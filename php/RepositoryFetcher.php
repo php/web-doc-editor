@@ -701,7 +701,7 @@ class RepositoryFetcher
             }
 
             // Do we need to display EN Work ?
-            if( $am->userConf->main->displayENWork ) {
+            if( isset($am->userConf->main->displayENWork) && $am->userConf->main->displayENWork === true ) {
                 $langFilter = '(`lang` = "%s" OR `lang`="en")';
             } else {
                 $langFilter = '(`lang` = "%s")';
