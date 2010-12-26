@@ -531,7 +531,7 @@ class AccountManager
                    'X-Mailer: Php Docbook Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";
 
-        mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers);
+        mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers, "-fnoreply@php.net");
     }
 }
 
