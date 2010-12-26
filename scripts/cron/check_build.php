@@ -53,9 +53,6 @@ while( list($key, $project) = each($availableProject) ) {
             // What we must do when the build failed
             if( $return["state"] == "ko" ) {
 
-                // We put into mail only 20 lines
-                $return["logContent"] = array_slice($return["logContent"], 0, 20);
-
                 $msg = "Your documentation is broken. The build is done on Friday.
 
         Please, try to fix it *quickly*.
@@ -64,7 +61,7 @@ while( list($key, $project) = each($availableProject) ) {
 
         =============================
 
-        ".implode("\n", $return["logContent"])."
+        ".$return["logContent"]."
 
         --
         This email is send automatically by the Php Docbook Online Editor.
@@ -79,7 +76,7 @@ while( list($key, $project) = each($availableProject) ) {
 
                 echo "email send !\n";
                 // We store it into DB
-                LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
+                LogManager::getInstance()->saveFailedBuild($lang, explode("\n",$return["logContent"]));
 
             }
         }
