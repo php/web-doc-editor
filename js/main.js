@@ -98,7 +98,7 @@ var PhDOE = function()
                     break;
                 case 'save_you_cant_modify_it' :
                     title = _('Error');
-                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you wan to be able to modify it.');
+                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it.');
                     break;
                 case 'file_isnt_owned_by_current_user' :
                     title = _('Error');
