@@ -66,6 +66,9 @@ while( list($key, $project) = each($availableProject) ) {
         --
         This email is send automatically by the Php Docbook Online Editor.
         ";
+        
+                //Usefull for language like pt_BR for example, because doc-pt_br don't exist, it's doc-pt-br
+                $lang = str_replace("_", "-", strtolower($lang));
 
                 $to = ( $lang === 'en' ) ? "phpdoc@lists.php.net" : "doc-$lang@lists.php.net";
 
