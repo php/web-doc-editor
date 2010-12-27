@@ -309,21 +309,6 @@ class RepositoryManager
     }
 
     /**
-     * Personnal exec to allow STDERR catch.
-     * Found in user's note : http://php.net/manual/fr/function.system.php
-     */
-    public function my_exec($cmd, $input='')
-    {
-        $proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
-        fwrite($pipes[0], $input);fclose($pipes[0]);
-        $stdout=stream_get_contents($pipes[1]);fclose($pipes[1]);
-        $stderr=stream_get_contents($pipes[2]);fclose($pipes[2]);
-        $rtn=proc_close($proc);
-
-        return $stdout.$stderr;
-    } 
-
-    /**
      * Check the build of the documentation (using configure.php script).
      *
      * @param $lang The lang of the documentation we want to check the build. We must take out $lang to be able to use this method from cron script on multiple language
@@ -356,16 +341,16 @@ class RepositoryManager
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
-            $output ='';
-            $output = $this->my_exec($cmd);
-            if (strlen(trim($output)) != 0) break;
+            $output =array();
+            exec($cmd, $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
         }
 
         $return["logContent"] = $output;
 
         // We save the result of this check only if it failed.
-        if ( strstr($output, 'Eyh man. No worries. Happ shittens. Try again after fixing the errors above.') ||
-             strstr($output, 'There were warnings loading the manual') )
+        if ( strstr(implode(" ", $output), 'Eyh man. No worries. Happ shittens. Try again after fixing the errors above.') ||
+             strstr(implode(" ", $output), 'There were warnings loading the manual') )
         {
             $return["state"] = "ko";
         }

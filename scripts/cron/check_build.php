@@ -61,7 +61,7 @@ while( list($key, $project) = each($availableProject) ) {
 
         =============================
 
-        ".$return["logContent"]."
+        ".implode("\n", $return["logContent"])."
 
         --
         This email is send automatically by the Php Docbook Online Editor.
@@ -76,7 +76,7 @@ while( list($key, $project) = each($availableProject) ) {
 
                 echo "email send !\n";
                 // We store it into DB
-                LogManager::getInstance()->saveFailedBuild($lang, explode("\n",$return["logContent"]));
+                LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
 
             }
         }
