@@ -553,17 +553,6 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             height    : 80
                         })
                     ],
-                    listeners : {
-                        render : function(c)
-                        {
-                            var t = new Ext.util.DelayedTask(function() {
-
-                                Ext.getCmp('login-form-vcsLogin').focus();
-                            });
-
-                            t.delay(200);
-                        }
-                    },
                     items : [{
                         xtype     : 'panel',
                         baseCls   : 'x-plain',
@@ -648,6 +637,26 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                         if( currentLoginText == 'Anonymous login' ) {
                                             Ext.getCmp('login-btn').setText('Login');
                                         }
+                                    }
+                                    
+                                },
+                                focus : function(f)
+                                {
+                                    var v = this.getValue();
+                                    if( v == 'anonymous' )
+                                    {
+                                        this.setValue('');
+                                        Ext.getCmp('login-btn').setText('Login');
+                                    }
+                                    
+                                },
+                                blur : function(f)
+                                {
+                                    var v = this.getValue();
+                                    if( v == 'anonymous' || v == '' )
+                                    {
+                                        this.setValue('');
+                                        Ext.getCmp('login-btn').setText('Anonymous login');
                                     }
                                     
                                 }
