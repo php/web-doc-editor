@@ -94,7 +94,7 @@ This email is send automatically by the Php Docbook Online Editor.
             $subject = "Contributions are ready for review";
 
             // We send an email for this failed build
-            AccountManager::getInstance()->email($to, $subject, $msg, 'www');
+            AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
 
             echo "email send !\n";
 

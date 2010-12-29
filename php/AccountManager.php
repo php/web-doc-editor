@@ -522,12 +522,15 @@ class AccountManager
      * @param $subject The subject of the email.
      * @param $msg The content of the email. Don't use HTML here ; only plain text.
      * @param $from The email we place into From header.
+     * @param $fromType Either "user" or "list". Default to user
      */
-    public function email($to, $subject, $msg, $from='')
+    public function email($to, $subject, $msg, $from='', $fromType='user')
     {
-        if( $from != 'www' ) $from = $this->vcsLogin;
+        if( $fromType == 'user' ) {
+            $from = $this->vcsLogin."@php.net";
+        }
 
-        $headers = 'From: '.$from.'@php.net' . "\r\n" .
+        $headers = 'From: '.$from . "\r\n" .
                    'X-Mailer: Php Docbook Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";
 
