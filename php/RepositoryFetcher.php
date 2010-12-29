@@ -658,6 +658,86 @@ class RepositoryFetcher
         return $a->total;
     }
     
+    
+    /**
+     * Get all files in Work module (progress work and patches for review).
+     * Actually only used in scripts/cron/send_work_to_list.php
+     *
+     * @return An associated array containing informations about files in work
+     */
+    public function getRawWork($lang)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+        
+        /**** We start by the work in progress module ****/
+        
+        // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+        $s = sprintf(
+            'SELECT
+                CONCAT(`lang`, `path`, `name`) as filePath,
+                `user`,
+                `date`,
+                `type`
+                FROM
+                `work`
+                WHERE
+                `module` = "workInProgress" AND
+                `lang` = "%s" AND
+                `project`  = "%s"',
+            $lang,
+            $project
+        );
+        $r = DBConnection::getInstance()->query($s);
+        
+        $workInProgress = Array('nb'=>0,'data'=>Array());
+
+        if( $r->num_rows != 0 )
+        {
+            $workInProgress['nb'] = $r->num_rows;
+            while ($a = $r->fetch_array(MYSQLI_ASSOC)) {
+                $workInProgress['data'][] = $a;
+            }
+        }
+        
+        /**** then, by the patches for review module ****/
+        
+        // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+        $s = sprintf(
+            'SELECT
+                CONCAT(`lang`, `path`, `name`) as filePath,
+                `user`,
+                `date`,
+                `type`
+                FROM
+                `work`
+                WHERE
+                `module` = "PatchesForReview" AND
+                `lang` = "%s" AND
+                `project`  = "%s"',
+            $lang,
+            $project
+        );
+        $r = DBConnection::getInstance()->query($s);
+        
+        $PatchesForReview = Array('nb'=>0,'data'=>Array());
+
+        if( $r->num_rows != 0 )
+        {
+            $PatchesForReview['nb'] = $r->num_rows;
+            while ($a = $r->fetch_array(MYSQLI_ASSOC)) {
+                $PatchesForReview['data'][] = $a;
+            }
+        }
+
+        // We return the result now
+        return Array(
+            "total"            => ($workInProgress['nb'] + $PatchesForReview['nb']),
+            "workInProgress"   => $workInProgress,
+            "PatchesForReview" => $PatchesForReview
+            );
+    }
+    
     /**
      * Get all files in Work module (progress work or patches for review).
      *
