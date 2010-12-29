@@ -474,8 +474,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
 
         storeLang    : '',
         storeProject : '',
-		
-		email : Ext.util.Cookies.get("email"),
+        email : Ext.util.Cookies.get("email"),
 
         init : function()
         {
@@ -558,7 +557,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         render : function(c)
                         {
                             var t = new Ext.util.DelayedTask(function() {
-								
+
                                 Ext.getCmp('login-form-vcsLogin').focus();
                             });
 
@@ -635,6 +634,22 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                     if (e.getKey() == e.ENTER) {
                                         Ext.getCmp('login-form-vcsPasswd').focus();
                                     }
+                                },
+                                keyup: function(f,e)
+                                {
+                                    var v = this.getValue(),
+                                        currentLoginText = Ext.getCmp('login-btn').getText();
+                                        
+                                    if( v == 'anonymous' || v == '' ) {
+                                        if( currentLoginText != 'Anonymous login' ) {
+                                            Ext.getCmp('login-btn').setText('Anonymous login');
+                                        }
+                                    } else {
+                                        if( currentLoginText == 'Anonymous login' ) {
+                                            Ext.getCmp('login-btn').setText('Login');
+                                        }
+                                    }
+                                    
                                 }
                             }
                         }, {
@@ -655,8 +670,8 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             fieldLabel      : 'Email',
                             name            : 'email',
                             id              : 'login-form-email',
-							vtype           : 'email',
-							value           : this.email,
+                            vtype           : 'email',
+                            value           : this.email,
                             enableKeyEvents : true,
                             listeners       : {
                                 keypress : function(field, e)
@@ -718,7 +733,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             }
                         }
                     }, '->', {
-                        text      : 'Login',
+                        text      :  ( Ext.util.Cookies.get("loginApp") && Ext.util.Cookies.get("loginApp") != 'anonymous' ) ? 'Login' : 'Anonymous login',
                         id        : 'login-btn',
                         disabled  : false,
                         listeners : {
