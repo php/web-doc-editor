@@ -684,7 +684,9 @@ class RepositoryFetcher
                 WHERE
                 `module` = "workInProgress" AND
                 `lang` = "%s" AND
-                `project`  = "%s"',
+                `project`  = "%s"
+                ORDER BY
+                type, date',
             $lang,
             $project
         );
@@ -714,7 +716,9 @@ class RepositoryFetcher
                 WHERE
                 `module` = "PatchesForReview" AND
                 `lang` = "%s" AND
-                `project`  = "%s"',
+                `project`  = "%s"
+                ORDER BY
+                type, date',
             $lang,
             $project
         );

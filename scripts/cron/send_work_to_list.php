@@ -50,7 +50,7 @@ while( list($key, $project) = each($availableProject) ) {
         if( $data["total"] != 0 ) {
 
 
-            $msg = "Hello Php ".strtoupper($lang)." Documentation team,
+            $msg = "Hello PHP ".strtoupper($lang)." Documentation team,
 
 There are contributions within the online editor queue for this language.
 Please review, then commit or delete these patches.
