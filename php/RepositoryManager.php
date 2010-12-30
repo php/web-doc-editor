@@ -638,13 +638,14 @@ class RepositoryManager
         $s = sprintf(
             'INSERT INTO
                 `patches`
-                (`project`, `name`, `user`, `anonymousIdent`)
+                (`project`, `name`, `user`, `anonymousIdent`, `date`)
             VALUES
-                ("%s", "%s", "%s", "%s")',
+                ("%s", "%s", "%s", "%s", %s)',
             $project,
             $name,
             $vcsLogin,
-            $am->anonymousIdent
+            $am->anonymousIdent,
+            "now()"
         );
         $db->query($s);
 
