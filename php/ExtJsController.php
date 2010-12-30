@@ -1162,7 +1162,7 @@ class ExtJsController
         $newOwner = $this->getRequestVariable('newOwner');
         
         // This user must be a global admin or the admin for this lang
-        if( $am->isGlobalAdmin() || $am->isLangAdmin() )
+        if( $am->isAdmin(true) )
         {
             $am->setFileOwner($fileIdDB, $newOwner);
             
