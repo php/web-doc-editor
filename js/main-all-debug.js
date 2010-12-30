@@ -17531,7 +17531,7 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
     init: function(){
-                
+        
         Ext.apply(this, {
             text: _('Administrator menu'),
             iconCls: 'iconAdmin',
@@ -17554,6 +17554,18 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                             currentOwner: this.userNode.attributes.task
                         });
                     }
+                },{
+                    scope: this,
+                    iconCls: 'iconPageDelete',
+                    text: ((this.node.attributes.type == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
+                    handler: function()
+                    {
+                        new ui.task.ClearLocalChangeTask({
+                            ftype: this.node.attributes.type,
+                            fpath: this.folderNode.attributes.task,
+                            fname: this.node.attributes.task
+                        });
+                    }
                 }]
             })
         });
@@ -17571,7 +17583,7 @@ ui.cmp._WorkTreeGrid.menu.commit = function(config){
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
     init: function(){
-		
+
         Ext.apply(this, {
             text: _('Commit...'),
             iconCls: 'iconCommitFileVcs',
@@ -17989,12 +18001,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType == 'delete' || FileType == 'new' || (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin) )
+                hidden: owner !== PhDOE.user.login
             }, {
                 text: ((FileType == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 iconCls: 'iconPageDelete',
-                hidden: (owner !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ),
+                hidden: owner !== PhDOE.user.login,
                 handler: function(){
+                    
                     new ui.task.ClearLocalChangeTask({
                         ftype: FileType,
                         fpath: FilePath,
