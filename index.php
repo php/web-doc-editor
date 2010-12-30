@@ -9,26 +9,33 @@ require_once './php/html.templates.php';
 // Perm link management
 if (isset($_REQUEST['perm'])) {
 
-    require_once dirname(__FILE__) . '/php/ProjectManager.php';
-    require_once dirname(__FILE__) . '/php/RepositoryFetcher.php';
+    $perm = trim($_REQUEST['perm'], '/ ');
+    
+    if( substr($perm, -4) == '.php' )
+    {
+        require_once dirname(__FILE__) . '/php/ProjectManager.php';
+        require_once dirname(__FILE__) . '/php/RepositoryFetcher.php';
 
-    $_project = $_REQUEST['project'];
+        $_project = $_REQUEST['project'];
 
-    // Set the project
-    ProjectManager::getInstance()->setProject($_project);
+        // Set the project
+        ProjectManager::getInstance()->setProject($_project);
 
-    $_p    = explode('/', trim($_REQUEST['perm'], '/'));
-    $_lang = array_shift($_p);
-    $_file = array_pop($_p);
+        $_p    = explode('/', $perm);
+        $_lang = array_shift($_p);
+        $_file = array_pop($_p);
 
-    $_id   = explode('.', $_file);
-    array_pop($_id);
-    $xmlid = implode('.', $_id);
+        $_id   = explode('.', $_file);
+        array_pop($_id);
+        $xmlid = implode('.', $_id);
 
-    $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
+        $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
 
-    if (false == is_null($r)) {
-        $jsVar = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"};';
+        if ( $r ) {
+            $jsVar = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"};';
+        } else {
+            $jsVar = 'var directAccess = false;';
+        }
     } else {
         $jsVar = 'var directAccess = false;';
     }

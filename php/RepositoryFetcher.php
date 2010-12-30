@@ -1033,12 +1033,60 @@ TODO: Handle project here
      */
     public function getFileByXmlID($lang, $id)
     {
+        $db = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
-        $s = "SELECT `lang`, `path`, `name` FROM `files`
-              WHERE `project`='$project' AND `lang` = '$lang' AND `xmlid` LIKE '%$id%'";
-        $r = DBConnection::getInstance()->query($s);
-        return $r->fetch_object();
+        // If user forget ".php" at this end of the permlink, this is "function" how is search into DB.
+        // We don't allow it, neither blank ID
+        if( $id == 'function' || empty($id) ) {
+            return false;
+        }
+        
+        // We start by searching file witch only this ID
+        $s = sprintf(
+            'SELECT
+                `lang`, `path`, `name`
+             FROM
+                 `files`
+             WHERE
+                 `project`="%s" AND
+                 `lang` = "%s" AND
+                 `xmlid` = "%s"',
+            $project,
+            $lang,
+            $id
+        );
+        $r = $db->query($s);
+        $nb = $r->num_rows;
+        
+        if( $nb >= 1 ) {
+            return $r->fetch_object();
+        } else {
+            
+            // We now search file which contain this ID
+            $s = sprintf(
+                'SELECT
+                    `lang`, `path`, `name`
+                FROM
+                    `files`
+                WHERE
+                    `project`="%s" AND
+                    `lang` = "%s" AND
+                    `xmlid` LIKE "%%%s%%"',
+                $project,
+                $lang,
+                $id
+            );
+            $r = $db->query($s);
+            $nb = $r->num_rows;
+            
+            if( $nb == 0 ) {
+                return false;
+            } else {
+                return $r->fetch_object();
+            }
+            
+        }
     }
 
     /**
