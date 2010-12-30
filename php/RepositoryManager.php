@@ -1200,18 +1200,20 @@ class RepositoryManager
         $r = $db->query($s);
         
         if( $r->num_rows == 0 ) {
-        	
+
             return 'file_localchange_didnt_exist';
             
         } else {
-        	
-        	// Rules to allow clearLocalChange or not.
             $a = $r->fetch_object();
-            if( $a->user != $am->vcsLogin && $a->anonymousIdent != $am->anonymousIdent ) {
-            	// This file isn't own by the current user
-            	if( ! $am->isAdmin() ) {
-            		return 'file_isnt_owned_by_current_user';
-            	}
+
+            // Rules to allow clearLocalChange or not.
+            // Either the user who made the modification, either a global admin for this project, either a lang admin
+            if( $a->user != $am->vcsLogin || ( $am->isAnonymous && ($a->anonymousIdent != $am->anonymousIdent) ) ) {
+                // This file isn't own by the current user
+                // Is the current user is a global admin or a lang admin ?
+                if( ! $am->isAdmin(true) ) {
+                    return 'file_isnt_owned_by_current_user';
+                }
             }
             
         }
