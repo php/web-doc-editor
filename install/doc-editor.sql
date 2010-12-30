@@ -222,5 +222,6 @@ CREATE TABLE IF NOT EXISTS `patches` (
   `name` varchar(255) NOT NULL,
   `user` varchar(255) NOT NULL,
   `anonymousIdent` varchar(255) NOT NULL,
+  `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
