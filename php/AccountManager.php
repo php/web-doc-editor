@@ -358,6 +358,19 @@ class AccountManager
         return ( in_array($this->vcsLogin, $admin) ) ? true : false;
     }
     
+    public function isAdmin($lang=false)
+    {
+        // If lang is true, this method must return true if current user is either a global admin, or a lang admin
+        if( $lang ) {
+            return ( $this->isGlobalAdmin() || $this->isLangAdmin() ) ? true : false;
+        } else {
+            // If lang is false, this method must return true if current user is ONLY a global admin
+            return ( $this->isGlobalAdmin() ) ? true : false;
+        }
+        
+        return false;
+    }
+    
     public function updateEmail()
     {
         $db = DBConnection::getInstance();
