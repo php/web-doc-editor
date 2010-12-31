@@ -29,7 +29,7 @@ class RepositoryManager
          3 => Array('code' => 'zh',    'iconCls' => 'flags flag-zh',    'name' => 'Chinese (Simplified)'),
          4 => Array('code' => 'hk',    'iconCls' => 'flags flag-hk',    'name' => 'Chinese (Hong Kong Cantonese)'),
          5 => Array('code' => 'tw',    'iconCls' => 'flags flag-tw',    'name' => 'Chinese (Traditional)'),
-         6 => Array('code' => 'cs',    'iconCls' => 'flags flag-cs',    'name' => 'Czech'),
+         6 => Array('code' => 'cs',    'iconCls' => 'flags flag-cz',    'name' => 'Czech'),
          7 => Array('code' => 'da',    'iconCls' => 'flags flag-da',    'name' => 'Danish'),
          8 => Array('code' => 'nl',    'iconCls' => 'flags flag-nl',    'name' => 'Dutch'),
          9 => Array('code' => 'en',    'iconCls' => 'flags flag-en',    'name' => 'English'),
