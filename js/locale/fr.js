@@ -478,6 +478,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
+  i18n["View in a new tab"] = "Voir dans un nouvel onglet";
   i18n["Remove this file"] = "Supprimer ce fichier";
   i18n["File removed by me"] = "Fichier supprimé par moi";
   i18n["File removed by {0}"] = "Fichier supprimé par {0}";
