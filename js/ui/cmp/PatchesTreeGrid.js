@@ -234,7 +234,11 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 iconCls: 'iconViewDiff',
                 hidden: (FileType == 'delete' || FileType == 'new'),
                 handler: function(){
-                    ui.cmp.WorkTreeGrid.getInstance().displayDiff(FileID, FilePath, FileName);
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        FileName: FileName,
+                        FilePath: FilePath
+                    });
                 }
             }, {
                 text: _('Download the diff as a patch'),

@@ -225,6 +225,55 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             return true;
         }
 
+    },
+    openDiffTab: function(DiffOption)
+    {
+        var DiffType = DiffOption.DiffType,
+            FileName = DiffOption.FileName,
+            FilePath = DiffOption.FilePath,
+            FileMD5  = Ext.util.md5(FilePath+FileName);
+        
+        // Render only if this tab don't exist yet
+        if (!Ext.getCmp('main-panel').findById('diff_panel_' + FileMD5)) {
+        
+            // Add tab for the diff
+            Ext.getCmp('main-panel').add({
+                xtype: 'panel',
+                id: 'diff_panel_' + FileMD5,
+                title: _('Diff'),
+                tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
+                closable: true,
+                autoScroll: true,
+                iconCls: 'iconTabLink',
+                html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>'
+            });
+            
+            // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + FileMD5);
+            
+            Ext.get('diff_panel_' + FileMD5).mask('<img src="themes/img/loading.gif" ' +
+            'style="vertical-align: middle;" />' +
+            _('Please, wait...'));
+            
+            // Load diff data
+            XHR({
+                params: {
+                    task: 'getDiff',
+                    DiffType: DiffType,
+                    FilePath: FilePath,
+                    FileName: FileName
+                },
+                success: function(r){
+                    var o = Ext.util.JSON.decode(r.responseText);
+                    // We display in diff div
+                    Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;
+                    Ext.get('diff_panel_' + FileMD5).unmask();
+                }
+            });
+        }
+        else {
+            Ext.getCmp('main-panel').setActiveTab('diff_panel_' + FileMD5);
+        }
     }
 });
 Ext.reg('mainpanel', ui.cmp.MainPanel);
