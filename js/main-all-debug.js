@@ -13356,7 +13356,11 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                         }
                         
                         if( data.type === 'patch' ) {
-                            data.qtip= _('Creation date: ') + Date.parseDate(data.creationDate, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                            
+                            if( data.creationDate ) {
+                                data.qtip= _('Creation date: ') + Date.parseDate(data.creationDate, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                            }
+                            
                             return v;
                         }
                         
@@ -18627,7 +18631,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 306649 $',
+            uiRevision: '$Revision: 306944 $',
             conf: ''
         },
 
