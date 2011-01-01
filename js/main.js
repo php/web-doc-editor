@@ -112,6 +112,14 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
                     break;
+                case 'patch_delete_dont_exist' :
+                    title = _('Error');
+                    mess  = _('The patch you want to delete didn\'t exist.');
+                    break;
+                case 'patch_delete_isnt_own_by_current_user' :
+                    title = _('Error');
+                    mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
+                    break;
 
             }
 

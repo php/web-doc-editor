@@ -11,6 +11,7 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
 
 // WorkTreeGrid : adminstrator items for the context menu
 // config - { module, from, node, folderNode, userNode }
+
 ui.cmp._WorkTreeGrid.menu.admin = function(config){
     Ext.apply(this, config);
     this.init();
@@ -19,15 +20,11 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
     init: function(){
         
-        Ext.apply(this, {
-            text: _('Administrator menu'),
-            iconCls: 'iconAdmin',
-            disabled: (!PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == this.fileLang && PhDOE.user.isLangAdmin) ),
-            handler: function(){
-                return false;
-            },
-            menu: new Ext.menu.Menu({
-                items: [{
+        var items;
+        
+        switch(this.from) {
+            case 'file' :
+                items = [{
                     scope: this,
                     iconCls: 'iconSwitchLang',
                     text: _('Change file\'s owner'),
@@ -53,7 +50,32 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                             fname: this.node.attributes.task
                         });
                     }
-                }]
+                }];
+                break;
+                
+            case 'patch' :
+                items = [{
+                    scope: this,
+                    iconCls: 'iconTrash',
+                    text: _('Delete this patch'),
+                    handler: function()
+                    {
+                        ui.task.DeletePatchTask({
+                            patchID: this.node.attributes.idDB
+                        });
+                    }
+                }];
+                break;
+        };
+        
+        Ext.apply(this, {
+            text: _('Administrator menu'),
+            iconCls: 'iconAdmin',
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                items: items
             })
         });
     }
@@ -287,16 +309,16 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             xtype: 'menuseparator',
             hidden: (PhDOE.user.isAnonymous)
         }, 
-		
-		(( !PhDOE.user.isAnonymous ) ?
-			new ui.cmp._WorkTreeGrid.menu.commit({
-	            from: 'user',
-	            node: false,
-	            folderNode: false,
-	            userNode: this.node
-	        }) : ''
-		)
-		] : [{
+
+        (( !PhDOE.user.isAnonymous ) ?
+            new ui.cmp._WorkTreeGrid.menu.commit({
+                from: 'user',
+                node: false,
+                folderNode: false,
+                userNode: this.node
+            }) : ''
+        )
+        ] : [{
             scope: this,
             text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
             iconCls: 'iconSendEmail',

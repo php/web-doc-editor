@@ -1171,9 +1171,7 @@ class ExtJsController
             RepositoryManager::getInstance()->setStaticValue('info', 'changeFilesOwner', json_encode($value), true);
             
             return JsonResponseBuilder::success();
-        }
-        else
-        {
+        } else {
             return JsonResponseBuilder::failure(
                 array(
                     'type' => 'changeFilesOwnerNotAdmin'
@@ -1720,9 +1718,17 @@ class ExtJsController
 
         $patchID = $this->getRequestVariable('patchID');
 
-        RepositoryManager::getInstance()->deletePatch($patchID);
+        $r = RepositoryManager::getInstance()->deletePatch($patchID);
         
-        return JsonResponseBuilder::success();
+        if( $r === true ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $r
+                )
+            );
+        }
     }
 
     /**

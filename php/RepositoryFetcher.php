@@ -763,7 +763,8 @@ class RepositoryFetcher
                 'SELECT
                     `id`,
                     `name` as patchName,
-                    `user`
+                    `user`,
+                    `date`
                  FROM
                     `patches`
                  WHERE
@@ -781,6 +782,7 @@ class RepositoryFetcher
                 );
 
                 $node[$a->user][$a->patchName]['idDB'] = $a->id;
+                $node[$a->user][$a->patchName]['date'] = $a->date;
                 $node[$a->user][$a->patchName]['folders'] = array();
             }
 
@@ -841,7 +843,7 @@ class RepositoryFetcher
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
-                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,draggable: false, idDB:".$dataPatch["idDB"].", children:[";
+                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,creationDate:'".$dataPatch["date"]."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
 
                     // We now walk into the folders for this patch
                     while( list($folder, $dataFiles) = each($dataPatch['folders'])) {

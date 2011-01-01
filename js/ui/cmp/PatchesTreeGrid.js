@@ -68,10 +68,11 @@ ui.cmp._PatchesTreeGrid.menu.patches = function(config){
 };
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
-        var node = this.node, allFiles = [];
+        var node = this.node, allFiles = [],
+        currentUser = this.node.parentNode.attributes.task;
         
         // We don't display all of this menu if the current user isn't the owner
-        if (this.node.parentNode.attributes.task !== PhDOE.user.login) {
+        if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ) {
             return false;
         }
         
@@ -87,6 +88,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             items: [{
                 text: _('Edit the name of this patch'),
                 iconCls: 'iconPendingPatch',
+                hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     var win = new ui.cmp.ManagePatchPrompt({
                         title: _('Modify this patch name'),
@@ -98,14 +100,19 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             }, {
                 text: _('Delete this patch'),
                 iconCls: 'iconTrash',
+                hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     ui.task.DeletePatchTask({
                         patchID: node.attributes.idDB
                     });
                 }
-            }, '-', {
+            }, {
+                xtype: 'menuseparator',
+                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
+            }, {
                 text: _('Back all this patch to work in progress module'),
                 iconCls: 'iconWorkInProgress',
+                hidden: (currentUser !== PhDOE.user.login),
                 disabled: Ext.isEmpty(allFiles),
                 handler: function(){
                     ui.task.MoveToWork({
@@ -114,18 +121,23 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous)
+                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
             },
-			((!PhDOE.user.isAnonymous) ?
-				new ui.cmp._WorkTreeGrid.menu.commit({
-	                module: 'patches',
-	                from: 'patch',
-	                node: false,
-	                folderNode: false,
-	                patchNode: this.node,
-	                userNode: this.node.parentNode
-	            }) : ''
-			)]
+            ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    module: 'patches',
+                    from: 'patch',
+                    node: false,
+                    folderNode: false,
+                    patchNode: this.node,
+                    userNode: this.node.parentNode
+                }) : ''
+            ),
+            (( PhDOE.user.isGlobalAdmin ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                from: 'patch',
+                node: this.node
+            }) : '')
+            ]
         });
     }
 });
@@ -347,7 +359,16 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
                     formatUserName: function(v, data){
                         // Only ucFirst user's name
-                        return (data.type === 'user') ? v.ucFirst() : v;
+                        if( data.type === 'user' ) {
+                            return v.ucFirst();
+                        }
+                        
+                        if( data.type === 'patch' ) {
+                            data.qtip= _('Creation date: ') + Date.parseDate(data.creationDate, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                            return v;
+                        }
+                        
+                        return v;
                     }
                     
                 })

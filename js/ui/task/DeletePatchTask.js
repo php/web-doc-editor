@@ -19,13 +19,25 @@ ui.task.DeletePatchTask = function(config)
             success : function()
             {
                 Ext.getBody().unmask();
-				
-				// We remove the patch from Patches for review module
-				ui.cmp.PatchesTreeGrid.getInstance().deletePatch(this.patchID);
-				
-	            // Notify
-	            PhDOE.notify('info', _('Patch deleted'), _('The patch have been deleted !'));
 
+                // We remove the patch from Patches for review module
+                ui.cmp.PatchesTreeGrid.getInstance().deletePatch(this.patchID);
+
+                // Notify
+                PhDOE.notify('info', _('Patch deleted'), _('The patch have been deleted !'));
+
+            },
+            failure : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText);
+
+                // Remove wait msg
+                Ext.getBody().unmask();
+                if( o.err ) {
+                    PhDOE.winForbidden(o.err);
+                } else {
+                    PhDOE.winForbidden();
+                }   
             }
         });
 };

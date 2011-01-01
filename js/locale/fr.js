@@ -28,8 +28,9 @@ var i18n = new Array();
   i18n["Language: "] = "Langue : ";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter toutle fichier\" pour remplacer toutes les tabulations par des espaces.";
-
   i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "Vous ne pouvez pas modifier ce fichier car il l\'a déjà été par un autre utilisateur. Contactez un administrateur si vous voulez outrepasser cette restriction.";
+  i18n["The patch you want to delete didn't exist."] = "Le patch que vous voulez effacer n'existe pas.";
+  i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
   
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
@@ -82,6 +83,7 @@ var i18n = new Array();
   i18n["Back all this patch to work in progress module"] = "Re-placer le contenu complet de ce patch dans le module \"Travaux en cours\"";
   i18n["Back all this folder to work in progress module"] = "Re-placer tous les fichiers de ce dossier dans le module \"Travaux en cours\"";
   i18n["Back this file to work in progress module"] = "Re-placer ce fichier dans le module \"Travaux en cours\"";
+  i18n["Creation date: "] = "Date de création : ";
 
 
 // In file: ../../js/ui/component/ManagePatchPrompt.js

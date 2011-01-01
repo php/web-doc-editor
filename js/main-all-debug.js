@@ -5609,13 +5609,25 @@ ui.task.DeletePatchTask = function(config)
             success : function()
             {
                 Ext.getBody().unmask();
-				
-				// We remove the patch from Patches for review module
-				ui.cmp.PatchesTreeGrid.getInstance().deletePatch(this.patchID);
-				
-	            // Notify
-	            PhDOE.notify('info', _('Patch deleted'), _('The patch have been deleted !'));
 
+                // We remove the patch from Patches for review module
+                ui.cmp.PatchesTreeGrid.getInstance().deletePatch(this.patchID);
+
+                // Notify
+                PhDOE.notify('info', _('Patch deleted'), _('The patch have been deleted !'));
+
+            },
+            failure : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText);
+
+                // Remove wait msg
+                Ext.getBody().unmask();
+                if( o.err ) {
+                    PhDOE.winForbidden(o.err);
+                } else {
+                    PhDOE.winForbidden();
+                }   
             }
         });
 };Ext.namespace('ui','ui.task');
@@ -13048,10 +13060,11 @@ ui.cmp._PatchesTreeGrid.menu.patches = function(config){
 };
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
-        var node = this.node, allFiles = [];
+        var node = this.node, allFiles = [],
+        currentUser = this.node.parentNode.attributes.task;
         
         // We don't display all of this menu if the current user isn't the owner
-        if (this.node.parentNode.attributes.task !== PhDOE.user.login) {
+        if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ) {
             return false;
         }
         
@@ -13067,6 +13080,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             items: [{
                 text: _('Edit the name of this patch'),
                 iconCls: 'iconPendingPatch',
+                hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     var win = new ui.cmp.ManagePatchPrompt({
                         title: _('Modify this patch name'),
@@ -13078,14 +13092,19 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             }, {
                 text: _('Delete this patch'),
                 iconCls: 'iconTrash',
+                hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     ui.task.DeletePatchTask({
                         patchID: node.attributes.idDB
                     });
                 }
-            }, '-', {
+            }, {
+                xtype: 'menuseparator',
+                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
+            }, {
                 text: _('Back all this patch to work in progress module'),
                 iconCls: 'iconWorkInProgress',
+                hidden: (currentUser !== PhDOE.user.login),
                 disabled: Ext.isEmpty(allFiles),
                 handler: function(){
                     ui.task.MoveToWork({
@@ -13094,18 +13113,23 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous)
+                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
             },
-			((!PhDOE.user.isAnonymous) ?
-				new ui.cmp._WorkTreeGrid.menu.commit({
-	                module: 'patches',
-	                from: 'patch',
-	                node: false,
-	                folderNode: false,
-	                patchNode: this.node,
-	                userNode: this.node.parentNode
-	            }) : ''
-			)]
+            ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    module: 'patches',
+                    from: 'patch',
+                    node: false,
+                    folderNode: false,
+                    patchNode: this.node,
+                    userNode: this.node.parentNode
+                }) : ''
+            ),
+            (( PhDOE.user.isGlobalAdmin ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                from: 'patch',
+                node: this.node
+            }) : '')
+            ]
         });
     }
 });
@@ -13327,7 +13351,16 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
                     formatUserName: function(v, data){
                         // Only ucFirst user's name
-                        return (data.type === 'user') ? v.ucFirst() : v;
+                        if( data.type === 'user' ) {
+                            return v.ucFirst();
+                        }
+                        
+                        if( data.type === 'patch' ) {
+                            data.qtip= _('Creation date: ') + Date.parseDate(data.creationDate, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                            return v;
+                        }
+                        
+                        return v;
                     }
                     
                 })
@@ -17524,6 +17557,7 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
 
 // WorkTreeGrid : adminstrator items for the context menu
 // config - { module, from, node, folderNode, userNode }
+
 ui.cmp._WorkTreeGrid.menu.admin = function(config){
     Ext.apply(this, config);
     this.init();
@@ -17532,15 +17566,11 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
     init: function(){
         
-        Ext.apply(this, {
-            text: _('Administrator menu'),
-            iconCls: 'iconAdmin',
-            disabled: (!PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == this.fileLang && PhDOE.user.isLangAdmin) ),
-            handler: function(){
-                return false;
-            },
-            menu: new Ext.menu.Menu({
-                items: [{
+        var items;
+        
+        switch(this.from) {
+            case 'file' :
+                items = [{
                     scope: this,
                     iconCls: 'iconSwitchLang',
                     text: _('Change file\'s owner'),
@@ -17566,7 +17596,32 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                             fname: this.node.attributes.task
                         });
                     }
-                }]
+                }];
+                break;
+                
+            case 'patch' :
+                items = [{
+                    scope: this,
+                    iconCls: 'iconTrash',
+                    text: _('Delete this patch'),
+                    handler: function()
+                    {
+                        ui.task.DeletePatchTask({
+                            patchID: this.node.attributes.idDB
+                        });
+                    }
+                }];
+                break;
+        };
+        
+        Ext.apply(this, {
+            text: _('Administrator menu'),
+            iconCls: 'iconAdmin',
+            handler: function(){
+                return false;
+            },
+            menu: new Ext.menu.Menu({
+                items: items
             })
         });
     }
@@ -17800,16 +17855,16 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             xtype: 'menuseparator',
             hidden: (PhDOE.user.isAnonymous)
         }, 
-		
-		(( !PhDOE.user.isAnonymous ) ?
-			new ui.cmp._WorkTreeGrid.menu.commit({
-	            from: 'user',
-	            node: false,
-	            folderNode: false,
-	            userNode: this.node
-	        }) : ''
-		)
-		] : [{
+
+        (( !PhDOE.user.isAnonymous ) ?
+            new ui.cmp._WorkTreeGrid.menu.commit({
+                from: 'user',
+                node: false,
+                folderNode: false,
+                userNode: this.node
+            }) : ''
+        )
+        ] : [{
             scope: this,
             text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
             iconCls: 'iconSendEmail',
@@ -18659,6 +18714,14 @@ var PhDOE = function()
                 case 'changeFilesOwnerNotAdmin' :
                     title = _('Error');
                     mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
+                    break;
+                case 'patch_delete_dont_exist' :
+                    title = _('Error');
+                    mess  = _('The patch you want to delete didn\'t exist.');
+                    break;
+                case 'patch_delete_isnt_own_by_current_user' :
+                    title = _('Error');
+                    mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
                     break;
 
             }

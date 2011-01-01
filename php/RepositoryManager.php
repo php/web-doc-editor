@@ -588,6 +588,22 @@ class RepositoryManager
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
+        // We start by retrieve patch information
+        $patchInfo = $this->getPatchInfo($patchID);
+        
+        if( !$patchInfo ) {
+            return 'patch_delete_dont_exist'; // the patch don't exist
+        } else {
+            
+            // We must check if we can delete this patch
+            // Either this patch must be own by the current user or the current user is a global admin for this project
+            if( $patchInfo->user != $am->vcsLogin || ( $am->isAnonymous && ($patchInfo->anonymousIdent != $am->anonymousIdent) ) ) {
+                if( ! $am->isAdmin() ) {
+                    return 'patch_delete_isnt_own_by_current_user';
+                }
+            }
+        }
+        
         // We start by change files for this patch.
         $s = sprintf(
             'UPDATE
@@ -597,10 +613,8 @@ class RepositoryManager
                 `module`  = "workInProgress"
             WHERE
                 `project` = "%s" AND
-                `user`    = "%s" AND
                 `patchID` =  %s',
             $project,
-            $vcsLogin,
             $patchID
         );
         $db->query($s);
@@ -611,10 +625,8 @@ class RepositoryManager
                 `patches`
             WHERE
                 `project` = "%s" AND
-                `user`    = "%s" AND
                 `id`      =  %s',
             $project,
-            $vcsLogin,
             $patchID
         );
         $db->query($s);
@@ -622,6 +634,37 @@ class RepositoryManager
         return true;
     }
 
+    /**
+     * Get information about a patch by his ID.
+     *
+     * @param $patchID The ID of this patch
+     * @return An associative array containing informations about this patch, or false if no patch exist for this ID
+     */
+    public function getPatchInfo($patchID)
+    {
+        $db       = DBConnection::getInstance();
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = sprintf(
+            'SELECT
+                *
+             FROM
+                `patches`
+            WHERE
+                `id` = "%s"',
+            $patchID
+        );
+        $r = $db->query($s);
+        
+        if( $r->num_rows == 0 ) {
+            return false;
+        } else {
+            return $r->fetch_object();
+        }
+    }
+    
     /**
      * Create a new patch for the current user.
      *
