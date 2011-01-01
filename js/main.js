@@ -132,10 +132,19 @@ var PhDOE = function()
         runDirectAccess: function()
         {
             if (directAccess) {
-                ui.cmp.RepositoryTree.getInstance().openFile('byPath',
-                    directAccess.lang + directAccess.path,
-                    directAccess.name
-                );
+                if( directAccess.link == 'perm' ) {
+                    ui.cmp.RepositoryTree.getInstance().openFile('byPath',
+                        directAccess.lang + directAccess.path,
+                        directAccess.name
+                    );
+                }
+                if( directAccess.link == 'patch' ) {
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        FilePath: directAccess.path,
+                        FileName: directAccess.name
+                    });
+                }
             }
         },
 

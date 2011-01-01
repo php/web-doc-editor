@@ -247,6 +247,8 @@ var i18n = new Array();
 // In file: ../../js/ui/component/MainPanel.js
   i18n["Confirm"] = "Confirmation";
   i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Ce fichier a été modifié sans être sauvegardé.<br/>Voulez-vous vraiment fermer cet onglet ?";
+  i18n["File: "] = "Fichier : ";
+  i18n["Direct link to this patch"] = "Lien direct vers ce patch";
 
 
 // In file: ../../js/ui/component/FilePanel.js

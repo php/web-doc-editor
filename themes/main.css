@@ -205,6 +205,13 @@
     font-weight: bold !important;
     background-color: #DCDCDC !important;
 }
+.diff-content h2 {
+    font-size: 12px;
+    font-weight: normal;
+    background: transparent url(./img/anchor.png) no-repeat 0 0;
+    margin: 5px;
+    padding-left: 20px;
+}
 .diff-content table.code {
     border: 1px solid #ddd;
     border-spacing: 0;

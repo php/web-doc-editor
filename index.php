@@ -32,13 +32,29 @@ if (isset($_REQUEST['perm'])) {
         $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
 
         if ( $r ) {
-            $jsVar = 'var directAccess = {"lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"};';
+            $jsVar = 'var directAccess = {"link":"perm", "lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"};';
         } else {
             $jsVar = 'var directAccess = false;';
         }
     } else {
         $jsVar = 'var directAccess = false;';
     }
+
+} else if (isset($_REQUEST['patch'])) {
+
+    $patch = trim($_REQUEST['patch'], '/ ');
+    $_project = $_REQUEST['project'];
+
+    require_once dirname(__FILE__) . '/php/ProjectManager.php';
+
+    // Set the project
+    ProjectManager::getInstance()->setProject($_project);
+    
+    $_patch = explode('/', $patch);
+    $fileName = $_patch[count($_patch)-1];
+    $filePath = substr($patch, 0, (strlen($patch)-strlen($fileName)));
+    
+    $jsVar = 'var directAccess = {"link":"patch", "lang":"en", "path":"'.$filePath.'", "name":"'.$fileName.'", "project":"'.$_project.'"};';
 
 } else {
     $jsVar = 'var directAccess = false;';

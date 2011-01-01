@@ -265,6 +265,10 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 },
                 success: function(r){
                     var o = Ext.util.JSON.decode(r.responseText);
+                    
+                    // We add the perm link into the content
+                    o.content = '<a href="http://' + window.location.host + ':' + window.location.port + window.location.pathname + '?patch='+FilePath+FileName+'&project='+PhDOE.project+'"><h2>'+_('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>' + o.content;
+                    
                     // We display in diff div
                     Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;
                     Ext.get('diff_panel_' + FileMD5).unmask();
