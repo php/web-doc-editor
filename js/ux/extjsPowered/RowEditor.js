@@ -1,13 +1,8 @@
 /*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- *
- * Modified according to :
- * http://www.extjs.com/forum/showthread.php?80362-3.0.1-Little-fixes-for-a-rowEditor-bugs.&p=403130#post403130
- * & according to me ;)
- * 
+ * Ext JS Library 3.3.1
+ * Copyright(c) 2006-2010 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
  */
 Ext.ns('Ext.ux.grid');
 
@@ -168,20 +163,8 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
                 this.initFields();
             }
             var cm = g.getColumnModel(), fields = this.items.items, f, val;
-
             for(var i = 0, len = cm.getColumnCount(); i < len; i++){
-
-                if( cm.config[i].editor.hideField ) {
-                    continue;
-                }
-
-                //console.log(fields);
                 val = this.preEditValue(record, cm.getDataIndex(i));
-
-                if(!cm.isCellEditable(i, this.rowIndex)) {
-                    val = cm.getRenderer(i)(val);
-                }
-
                 f = fields[i];
                 f.setValue(val);
                 this.values[f.id] = Ext.isEmpty(val) ? '' : val;
@@ -217,21 +200,14 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             cm = this.grid.colModel,
             fields = this.items.items;
         for(var i = 0, len = cm.getColumnCount(); i < len; i++){
-
-            if( cm.config[i].editor.hideField ) {
-                continue;
-            }
-
-            if(!cm.isHidden(i) && cm.isCellEditable(i, this.rowIndex) ){
+            if(!cm.isHidden(i)){
                 var dindex = cm.getDataIndex(i);
                 if(!Ext.isEmpty(dindex)){
-                    var oldValue = r.data[dindex];
-                    if(fields[i].column.editable || fields[i].column.editor) {
-                        var value = this.postEditValue(fields[i].getValue(), oldValue, r, dindex);
-                        if(String(oldValue) !== String(value)){
-                            changes[dindex] = value;
-                            hasChange = true;
-                        }
+                    var oldValue = r.data[dindex],
+                        value = this.postEditValue(fields[i].getValue(), oldValue, r, dindex);
+                    if(String(oldValue) !== String(value)){
+                        changes[dindex] = value;
+                        hasChange = true;
                     }
                 }
             }
@@ -253,11 +229,6 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             this.setSize(Ext.fly(row).getWidth(), Ext.isIE ? Ext.fly(row).getHeight() + 9 : undefined);
             var cm = this.grid.colModel, fields = this.items.items;
             for(var i = 0, len = cm.getColumnCount(); i < len; i++){
-
-                if( cm.config[i].editor.hideField ) {
-                    continue;
-                }
-
                 if(!cm.isHidden(i)){
                     var adjust = 0;
                     if(i === (len - 1)){
@@ -286,11 +257,6 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         for(var i = 0, len = cm.getColumnCount(); i < len; i++){
             var c = cm.getColumnAt(i),
                 ed = c.getEditor();
-            // If hidden, we skip this field
-            if( ed.hideField ) {
-                continue;
-            }
-
             if(!ed){
                 ed = c.displayEditor || new Ext.form.DisplayField();
             }
@@ -299,7 +265,12 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             } else if(i == len - 1){
                 ed.margins = pm('0 0 2 1');
             } else{
-                ed.margins = pm('0 1 2');
+                if (Ext.isIE) {
+                    ed.margins = pm('0 0 2 0');
+                }
+                else {
+                    ed.margins = pm('0 1 2 0');
+                }
             }
             ed.setWidth(cm.getColumnWidth(i));
             ed.column = c;
@@ -416,18 +387,6 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     // private
     preEditValue : function(r, field){
         var value = r.data[field];
-        if(typeof value === 'object' && typeof value.getDate !== 'undefined') {
-            var items = r.fields.items ;
-            for(var i = 0; i < items.length; i++) {
-                if(items[i].name == field) {
-                    if(typeof items[i].dateFormat !== 'undefined') {
-                        return Ext.util.Format.dateRenderer(items[i].dateFormat)(value);
-                    }
-                    break ;
-                }
-            }
-        }
-
         return this.autoEncode && typeof value === 'string' ? Ext.util.Format.htmlDecode(value) : value;
     },
 
@@ -514,6 +473,17 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         this.fireEvent('validation', this, valid);
     },
 
+    lastVisibleColumn : function() {
+        var i = this.items.getCount() - 1,
+            c;
+        for(; i >= 0; i--) {
+            c = this.items.items[i];
+            if (!c.hidden) {
+                return c;
+            }
+        }
+    },
+
     showTooltip: function(msg){
         var t = this.tooltip;
         if(!t){
@@ -534,7 +504,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             h = this.el.getHeight();
 
         if(top + h >= scroll){
-            t.initTarget(this.items.last().getEl());
+            t.initTarget(this.lastVisibleColumn().getEl());
             if(!t.rendered){
                 t.show();
                 t.hide();
