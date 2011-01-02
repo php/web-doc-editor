@@ -93,7 +93,10 @@ class File
      */
     public function translate()
     {
-        $originalContent = file_get_contents($this->full_path);
+        // We must check if the file exist.
+        // For example, when we start a translation, save it, and then open it from work in progress module, the path (without .new) don't exist and we must use the fallback path for translation
+        
+        $originalContent = ( is_file($this->full_path) ) ? file_get_contents($this->full_path) : file_get_contents($this->full_path_fallback);
 
         // We search for new line caracters and mark it ! (Google API delete new line)
         $originalContent = str_replace("\n", "[@]", $originalContent);
@@ -101,7 +104,6 @@ class File
         $lang = AccountManager::getInstance()->vcsLang;
 
         $translation = false;
-
         $gt = new Gtranslate;
         $gt->setRequestType('curl');
         $translation = $gt->translate('en', $lang, $originalContent);
