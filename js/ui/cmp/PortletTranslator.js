@@ -31,7 +31,7 @@ ui.cmp._PortletTranslator.store.setDefaultSort('nick', 'asc');
 ui.cmp._PortletTranslator.translatorSumRenderer = function(v)
 {
     if (v) {
-        var v = (v === 0 || v > 1) ? v : 1;
+        v = (v === 0 || v > 1) ? v : 1;
         return String.format('('+_('{0} Translators')+')', v);
     } else {
         return false;
@@ -142,7 +142,7 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
         var nick  = this.store.getAt(rowIndex).data.nick;
 
         // Don't open the email Prompt if the user is "nobody"
-        if( nick == 'nobody' ) {
+        if( nick === 'nobody' ) {
             return;
         }
 

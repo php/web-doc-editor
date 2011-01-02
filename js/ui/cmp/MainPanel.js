@@ -26,7 +26,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         var cmp = Ext.getCmp(prefix + '-' + fid);
 
         // FNT panel
-        if( prefix == 'FNT' ) {
+        if( prefix === 'FNT' ) {
             if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
 
                 cmp.tabLoaded = true;
@@ -41,7 +41,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FNU panel
-        if( prefix == 'FNU' ) {
+        if( prefix === 'FNU' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panDiffLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -55,7 +55,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FE panel
-        if( prefix == 'FE' ) {
+        if( prefix === 'FE' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -69,7 +69,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FNR panel
-        if( prefix == 'FNR' ) {
+        if( prefix === 'FNR' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -84,7 +84,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // FNIEN panel
-        if( prefix == 'FNIEN' ) {
+        if( prefix === 'FNIEN' ) {
             if( cmp.panLANGLoaded ) {
 
                 cmp.tabLoaded = true;
@@ -98,7 +98,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // AF panel
-        if( prefix == 'AF' ) {
+        if( prefix === 'AF' ) {
             if( cmp.panLoaded && cmp.panVCS && cmp.panEntities && cmp.panAcronyms ) {
 
                 cmp.tabLoaded = true;
@@ -116,7 +116,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // PP panel
-        if( prefix == 'PP' ) {
+        if( prefix === 'PP' ) {
             if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
 
                 cmp.tabLoaded = true;

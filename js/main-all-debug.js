@@ -5577,12 +5577,12 @@ ui.task.ClearLocalChangeTask = function(config)
                     failure : function(r)
                     {
                         Ext.getBody().unmask();
-						
-			            var o = Ext.util.JSON.decode(r.responseText);
-			            
-			            if( o.err ) { 
-						    PhDOE.winForbidden(o.err);
-			            }
+
+                        var o = Ext.util.JSON.decode(r.responseText);
+                        
+                        if( o.err ) { 
+                            PhDOE.winForbidden(o.err);
+                        }
                     }
                 });
             }
@@ -5693,7 +5693,8 @@ ui.task.GetFileTask = function(config)
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
                 pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
                 f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
+                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false,
+                dataModified, mess;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -5706,7 +5707,7 @@ ui.task.GetFileTask = function(config)
                 p.setTitle(p.originTitle);
                 p.setIconClass('iconGoogle');
             } else {
-                p.permlink = (o.xmlid != 'NULL') ? perm : '';
+                p.permlink = (o.xmlid !== 'NULL') ? perm : '';
                 p.setTitle(p.permlink + p.originTitle);
             }
 
@@ -5750,8 +5751,6 @@ ui.task.GetFileTask = function(config)
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
             }
-            
-            var dataModified;
             
             if( this.prefix === 'FNT' || this.prefix === 'FNIEN' ) { dataModified = 'fileModified'; }
             if( this.prefix === 'FNU' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
@@ -5804,7 +5803,7 @@ ui.task.GetFileTask = function(config)
                     
                     // If the current user isn't the user who have modified this file, we disable the panel
                     
-                    var mess = Ext.MessageBox.show({
+                    mess = Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
@@ -5820,52 +5819,52 @@ ui.task.GetFileTask = function(config)
             var tab = Ext.getCmp(this.prefix + '-' + this.fid);
 
             // Mark FNT panel as loaded
-            if( this.prefix == 'FNT' ) {
-                if( this.ftype == 'TRANS' ) {
+            if( this.prefix === 'FNT' ) {
+                if( this.ftype === 'TRANS' ) {
                     tab.panTRANSLoaded = true;
                 }
-                if( this.ftype == 'GGTRANS' ) {
+                if( this.ftype === 'GGTRANS' ) {
                     tab.panGGTRANSLoaded = true;
                 }
             }
 
             // Mark FNU panel as loaded
-            if( this.prefix == 'FNU' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FNU' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FE panel as loaded
-            if( this.prefix == 'FE' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FE' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FNR panel as loaded
-            if( this.prefix == 'FNR' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FNR' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FNIEN panel as loaded
-            if( this.prefix == 'FNIEN' ) {
+            if( this.prefix === 'FNIEN' ) {
                 tab.panLANGLoaded = true;
             }
 
             // Mark AF panel as loaded
-            if( this.prefix == 'AF' ) {
+            if( this.prefix === 'AF' ) {
                 tab.panLoaded = true;
             }
 
@@ -6077,7 +6076,7 @@ ui.task.PingTask = function()
             },
             success : function(r)
             {
-                var o = Ext.util.JSON.decode(r.responseText);
+                var o = Ext.util.JSON.decode(r.responseText), needReloadSummary;
 
                 if (o.ping !== 'pong') {
                     window.location.href = './';
@@ -6086,30 +6085,30 @@ ui.task.PingTask = function()
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
                     if( PhDOE.user.lang !== 'en' ) {
 
-                        var needReloadSummary = false;
+                        needReloadSummary = false;
 
                         // We look for modules specifics for translation
-                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingTranslate ) {
                             ui.cmp.PendingTranslateGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingUpdate ) {
                             ui.cmp.StaleFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() !== o.totalData.NbFilesError ) {
                             ui.cmp.ErrorFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingReview ) {
                             ui.cmp.PendingReviewGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() !== o.totalData.NbNotInEn ) {
                             ui.cmp.NotInENGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
@@ -6133,7 +6132,7 @@ ui.task.PingTask = function()
                     }
                     */
 
-                    if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
+                    if( o.totalData.lastInfoDate !== PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();
                     }
 
@@ -8412,7 +8411,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
         },
         canceledit: function(editor) {            
             // If we cancel Edit on a new word
-            if( editor.record.data.id == "new" ) {
+            if( editor.record.data.id === "new" ) {
                 editor.record.store.remove(editor.record);
             }
         }
@@ -8558,21 +8557,19 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                 iconCls : 'iconNewWord',
                 handler : function()
                 {
-                    var record = Ext.data.Record.create([{
-                        name: 'id'
-                    }, {
-                        name: 'valueEn'
-                    }, {
-                        name: 'valueLang'
-                    },{
-                        name: 'lastUser'
-                    },{
-                        name: 'lastDate'
-                    }]);
-
-                    var newDate = new Date();
-
-                    var e = new record({
+                    var Record = Ext.data.Record.create([{
+                            name: 'id'
+                        }, {
+                            name: 'valueEn'
+                        }, {
+                            name: 'valueLang'
+                        },{
+                            name: 'lastUser'
+                        },{
+                            name: 'lastDate'
+                        }]),
+                    newDate = new Date(),
+                    e = new Record({
                         id: 'new',
                         valueEn: '',
                         valueLang: '',
@@ -10208,7 +10205,7 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
         var data           = grid.getSelectionModel().getSelected().data,
             cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
             cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition()),
-            dataInserted   = (this.dataType == 'entities') ? '&' + data.items + ';' : '<acronym>' + data.items + '</acronym>';
+            dataInserted   = (this.dataType === 'entities') ? '&' + data.items + ';' : '<acronym>' + data.items + '</acronym>';
 
         //Insert the entities at the cursor position
         cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, dataInserted);
@@ -10218,9 +10215,9 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
     {
        var url;
 
-       if( this.dataType == 'entities' ) {
+       if( this.dataType === 'entities' ) {
            url = "./do/getEntities";
-       } else if( this.dataType == 'acronyms' ) {
+       } else if( this.dataType === 'acronyms' ) {
            url = "./do/getAcronyms";
        }
 
@@ -10251,9 +10248,9 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                    scope : this,
                    load  : function()
                    {
-                       if( this.dataType == 'entities' ) {
+                       if( this.dataType === 'entities' ) {
                            Ext.getCmp(this.prefix + '-' + this.fid).panEntities = true;
-                       } else if( this.dataType == 'acronyms' ) {
+                       } else if( this.dataType === 'acronyms' ) {
                            Ext.getCmp(this.prefix + '-' + this.fid).panAcronyms = true;
                        }
                        Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
@@ -10295,7 +10292,7 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                     listeners : {
                         specialkey : function(f, e)
                         {
-                            if (e.getKey() == e.ENTER) {
+                            if (e.getKey() === e.ENTER) {
                                 this.onTrigger2Click();
                             }
                         }
@@ -10357,9 +10354,9 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
     {
         var panelDesc;
 
-        if( this.dataType == 'entities' ) {
+        if( this.dataType === 'entities' ) {
             panelDesc = _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.');
-        } else if( this.dataType == 'acronyms' ) {
+        } else if( this.dataType === 'acronyms' ) {
             panelDesc = _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.');
         }
 
@@ -10470,7 +10467,7 @@ ui.cmp._ErrorFileGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {
@@ -11476,7 +11473,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 {
                     new ui.task.CheckXml({
                         idPrefix : this.id_prefix,
-                        fid      : this.fid,
+                        fid      : this.fid
                     });
                 }
             },{
@@ -12441,7 +12438,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         var cmp = Ext.getCmp(prefix + '-' + fid);
 
         // FNT panel
-        if( prefix == 'FNT' ) {
+        if( prefix === 'FNT' ) {
             if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
 
                 cmp.tabLoaded = true;
@@ -12456,7 +12453,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FNU panel
-        if( prefix == 'FNU' ) {
+        if( prefix === 'FNU' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panDiffLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -12470,7 +12467,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FE panel
-        if( prefix == 'FE' ) {
+        if( prefix === 'FE' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -12484,7 +12481,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             }
         }
         // FNR panel
-        if( prefix == 'FNR' ) {
+        if( prefix === 'FNR' ) {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
@@ -12499,7 +12496,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // FNIEN panel
-        if( prefix == 'FNIEN' ) {
+        if( prefix === 'FNIEN' ) {
             if( cmp.panLANGLoaded ) {
 
                 cmp.tabLoaded = true;
@@ -12513,7 +12510,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // AF panel
-        if( prefix == 'AF' ) {
+        if( prefix === 'AF' ) {
             if( cmp.panLoaded && cmp.panVCS && cmp.panEntities && cmp.panAcronyms ) {
 
                 cmp.tabLoaded = true;
@@ -12531,7 +12528,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
 
         // PP panel
-        if( prefix == 'PP' ) {
+        if( prefix === 'PP' ) {
             if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
 
                 cmp.tabLoaded = true;
@@ -13226,14 +13223,14 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
         
         Ext.apply(this, {
             items: [{
-                text: '<b>' + ((FileType == 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
+                text: '<b>' + ((FileType === 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
                 iconCls: 'iconEdit',
                 handler: function(){
                     ui.cmp.WorkTreeGrid.getInstance().openFile(node);
                 }
             }, {
                 text: _('Back this file to work in progress module'),
-                hidden: (owner != PhDOE.user.login),
+                hidden: (owner !== PhDOE.user.login),
                 iconCls: 'iconWorkInProgress',
                 handler: function(){
                     ui.task.MoveToWork({
@@ -13243,7 +13240,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, '-', {
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
@@ -13254,7 +13251,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Download the diff as a patch'),
                 iconCls: 'iconDownloadDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
                     '?FilePath=' +
@@ -13264,7 +13261,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType === 'delete' || FileType == 'new' || owner != PhDOE.user.login)
+                hidden: (FileType === 'delete' || FileType === 'new' || owner !== PhDOE.user.login)
             }, {
                 text: ((FileType === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 hidden: (owner !== PhDOE.user.login),
@@ -13278,7 +13275,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous || owner != PhDOE.user.login)
+                hidden: (PhDOE.user.isAnonymous || owner !== PhDOE.user.login)
             }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
                 module: 'patches',
                 from: 'file',
@@ -13289,9 +13286,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }) : ''),
             {
                 xtype: 'menuseparator',
-                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) )
             },
-                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
                     fileLang: FileLang,
                     from: 'file',
                     node: this.node,
@@ -13348,8 +13345,8 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
     
     modPatchName: function(a){
-        var rootNode = this.getRootNode();
-        var patchNode = rootNode.findChild('idDB', a.patchID, true);
+        var rootNode  = this.getRootNode(),
+            patchNode = rootNode.findChild('idDB', a.patchID, true);
         patchNode.setText(a.newPatchName);
     },
     
@@ -13483,7 +13480,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
                         
-                        if (file.attributes.idDB == fid) {
+                        if (file.attributes.idDB === fid) {
                         
                             file.remove(true);
                             
@@ -13884,7 +13881,7 @@ ui.cmp._PendingReviewGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {
@@ -13958,11 +13955,11 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
                         ExtName: this.gname
                     },
                     success: function(r){
-                        var o = Ext.util.JSON.decode(r.responseText);
+                        var o = Ext.util.JSON.decode(r.responseText), i;
                         
                         PhDOE.AFfilePendingOpen = [];
                         
-                        for (var i = 0; i < o.files.length; i = i + 1) {
+                        for (i = 0; i < o.files.length; i = i + 1) {
                             PhDOE.AFfilePendingOpen[i] = {
                                 fpath: PhDOE.user.lang + o.files[i].path,
                                 fname: o.files[i].name
@@ -14228,7 +14225,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }
@@ -14563,7 +14560,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }
@@ -15764,7 +15761,7 @@ ui.cmp._PortletTranslator.store.setDefaultSort('nick', 'asc');
 ui.cmp._PortletTranslator.translatorSumRenderer = function(v)
 {
     if (v) {
-        var v = (v === 0 || v > 1) ? v : 1;
+        v = (v === 0 || v > 1) ? v : 1;
         return String.format('('+_('{0} Translators')+')', v);
     } else {
         return false;
@@ -15875,7 +15872,7 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
         var nick  = this.store.getAt(rowIndex).data.nick;
 
         // Don't open the email Prompt if the user is "nobody"
-        if( nick == 'nobody' ) {
+        if( nick === 'nobody' ) {
             return;
         }
 
@@ -16195,9 +16192,9 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
         text: 'Add',
         disabled: true,
         handler: function(){
-            var cmp = Ext.getCmp('win-add-new-folder');
-            var parentFolder = cmp.node.id;
-            var newFolderName = cmp.items.items[1].getValue();
+            var cmp = Ext.getCmp('win-add-new-folder'),
+                parentFolder = cmp.node.id,
+                newFolderName = cmp.items.items[1].getValue();
             
             XHR({
                 params: {
@@ -16293,7 +16290,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 text: _('Add a new folder'),
                 iconCls: 'iconFolderNew',
                 hidden: (this.node.id === '/' ||
-                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                (Ext.util.Format.substr(this.node.id, 0, 3) !== '/en' && Ext.util.Format.substr(this.node.id, 0, 9) !== '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope: this,
                 handler: function(){
                     // We start by expand this node.
@@ -16309,7 +16306,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 text: _('Add a new file'),
                 iconCls: 'iconFilesNeedTranslate',
                 hidden: (this.node.id === '/' ||
-                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                (Ext.util.Format.substr(this.node.id, 0, 3) !== '/en' && Ext.util.Format.substr(this.node.id, 0, 9) !== '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope: this,
                 handler: function(){
                     // We start by expand this node.
@@ -16353,7 +16350,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu, {
                     ui.cmp._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
-                hidden: (this.node.attributes.from === 'search' || PhDOE.user.lang == 'en'),
+                hidden: (this.node.attributes.from === 'search' || PhDOE.user.lang === 'en'),
                 text: (FileLang === 'en') ? String.format(_('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.user.lang)) : String.format(_('Open the same file in <b>{0}</b>'), 'EN'),
                 iconCls: 'iconTabNeedReviewed',
                 scope: this,
@@ -16408,6 +16405,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
     },
     
     openFile: function(ftype, first, second){
+        
         // Here, first argument is fpath and second, fname
         if (ftype === 'byPath') {
             Ext.getCmp('acc-all-files').expand();
@@ -16624,7 +16622,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                 enableKeyEvents: true,
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }
@@ -16787,7 +16785,7 @@ ui.cmp._StaleFileGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {
@@ -17112,7 +17110,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     specialkey: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }
@@ -17376,10 +17374,10 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 }
             }
         }),
-        columns = [];
+        columns = [], i;
 
         columns.push(sm);
-        for (var i = 0; i < ui.cmp._VCSLogGrid.columns.length; ++i) {
+        for (i = 0; i < ui.cmp._VCSLogGrid.columns.length; ++i) {
             columns.push(ui.cmp._VCSLogGrid.columns[i]);
         }
 
@@ -17430,12 +17428,12 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                         },
                         success : function(r)
                         {
-                            var o = Ext.util.JSON.decode(r.responseText);
+                            var o = Ext.util.JSON.decode(r.responseText), winStatus;
 
                             Ext.getBody().unmask();
 
                             // We display in diff window
-                            var winStatus = new Ext.Window({
+                            winStatus = new Ext.Window({
                                 title      : String.format(_('Diff between {0} & {1}'), rev1, rev2),
                                 width      : 650,
                                 height     : 350,
@@ -17510,7 +17508,7 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
     ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
-    init: function(){
+    init: function() {
         
         var items;
         
@@ -17533,7 +17531,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                 },{
                     scope: this,
                     iconCls: 'iconPageDelete',
-                    text: ((this.node.attributes.type == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
+                    text: ((this.node.attributes.type === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                     handler: function()
                     {
                         new ui.task.ClearLocalChangeTask({
@@ -17558,7 +17556,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                     }
                 }];
                 break;
-        };
+        }
         
         Ext.apply(this, {
             text: _('Administrator menu'),
@@ -17781,7 +17779,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
         
         // We search for files to pass to patch
         this.node.cascade(function(node){
-            if (node.attributes.type != 'user' && node.attributes.type != 'folder') {
+            if (node.attributes.type !== 'user' && node.attributes.type !== 'folder') {
                 allFiles.push(node);
             }
         }, this);
@@ -17857,7 +17855,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
         
         // We search for files to pass to patch
         this.node.cascade(function(node){
-            if (node.attributes.type != 'folder') {
+            if (node.attributes.type !== 'folder') {
                 allFiles.push(node);
             }
         }, this);
@@ -17912,7 +17910,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
     },
     
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, owner = node.parentNode.parentNode.attributes.task, allFiles = [], tmp;
+        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, owner = node.parentNode.parentNode.attributes.task, allFiles = [], tmp;
         
         // Get the lang of this file
         tmp = node.parentNode.attributes.task.split('/');
@@ -17922,7 +17920,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
         
         Ext.apply(this, {
             items: [{
-                text: '<b>' + ((FileType == 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
+                text: '<b>' + ((FileType === 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
                 iconCls: 'iconEdit',
                 handler: function(){
                     treeGrid.openFile(node);
@@ -17942,7 +17940,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Set the progress...'),
                 iconCls: 'iconProgress',
-                hidden: (FileType == 'delete' || owner !== PhDOE.user.login),
+                hidden: (FileType === 'delete' || owner !== PhDOE.user.login),
                 menu: {
                     xtype: 'menu',
                     showSeparator: false,
@@ -17963,7 +17961,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                             
                             for (i = 1, len = cols.length; i < len; i++) {
                                 d = cols[i].dataIndex;
-                                v = (a[d] != null) ? a[d] : '';
+                                v = (a[d] !== null) ? a[d] : '';
                                 
                                 if (cols[i].tpl && cols[i].tpl.html === "{progress:this.formatProgress}") {
                                     cells[i].firstChild.innerHTML = cols[i].tpl.apply('out:' + v);
@@ -17985,7 +17983,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 scope: this,
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
@@ -17996,7 +17994,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Download the diff as a patch'),
                 iconCls: 'iconDownloadDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
                     '?FilePath=' +
@@ -18008,7 +18006,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 xtype: 'menuseparator',
                 hidden: owner !== PhDOE.user.login
             }, {
-                text: ((FileType == 'delete') ? _('Cancel this deletion') : _('Clear this change')),
+                text: ((FileType === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 iconCls: 'iconPageDelete',
                 hidden: owner !== PhDOE.user.login,
                 handler: function(){
@@ -18030,9 +18028,9 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             }) : ''),
             {
                 xtype: 'menuseparator',
-                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) )
             },
-                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
                     fileLang: FileLang,
                     from: 'file',
                     node: this.node,
@@ -18084,6 +18082,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
     
     initComponent: function(){
+        
         function renderProgress(v, p){
             p.css += ' x-grid3-progresscol';
             
@@ -18125,32 +18124,35 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     formatProgress: function(v, v2){
                     
                         // We re-use this template from the slider. So, we must use this hack to pass the new value
-                        if (Ext.util.Format.substr(v2, 0, 4) == 'out:') {
+                        if (Ext.util.Format.substr(v2, 0, 4) === 'out:') {
                             var t = v2.split(':');
                             v = t[1];
                         }
                         
-                        if (!v && v != 0) 
+                        if (!v && v !== 0) {
                             return '';
+                        }
                         
                         function getText(v){
                             var textClass = (v < (100 / 2)) ? 'x-progress-text-back' : 'x-progress-text-front' +
-                            (Ext.isIE6 ? '-ie6' : '');
+                            (Ext.isIE6 ? '-ie6' : ''), text;
                             
                             // ugly hack to deal with IE6 issue
-                            var text = String.format('</div><div class="x-progress-text {0}" style="width:100%;" id="{1}">{2}</div></div>', textClass, Ext.id(), v + '%');
+                            text = String.format('</div><div class="x-progress-text {0}" style="width:100%;" id="{1}">{2}</div></div>', textClass, Ext.id(), v + '%');
                             
                             return (v < (100 / 1.05)) ? text.substring(0, text.length - 6) : text.substr(6);
                         }
                         
                         function getStyle(v){
-                            if (v <= 100 && v > (100 * 0.67)) 
+                            if (v <= 100 && v > (100 * 0.67)) {
                                 return '-green';
-                            if (v < (100 * 0.67) && v > (100 * 0.33)) 
+                            }
+                            if (v < (100 * 0.67) && v > (100 * 0.33)) {
                                 return '-orange';
-                            if (v < (100 * 0.33)) 
+                            }
+                            if (v < (100 * 0.33)) {
                                 return '-red';
-                            
+                            }
                             return '';
                         }
                         
@@ -18184,18 +18186,18 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
                   
     delRecord: function(fid){
-        var rootNode = this.getRootNode();
+        var rootNode = this.getRootNode(), i, j, h, user, folder, file;
         
-        for (var i = 0; i < rootNode.childNodes.length; i++) {
-            var user = rootNode.childNodes[i];
+        for (i = 0; i < rootNode.childNodes.length; i++) {
+            user = rootNode.childNodes[i];
             
-            for (var j = 0; j < user.childNodes.length; j++) {
-                var folder = user.childNodes[j];
+            for (j = 0; j < user.childNodes.length; j++) {
+                folder = user.childNodes[j];
                 
-                for (var h = 0; h < folder.childNodes.length; h++) {
-                    var file = folder.childNodes[h];
+                for (h = 0; h < folder.childNodes.length; h++) {
+                    file = folder.childNodes[h];
                     
-                    if (file.attributes.idDB == fid) {
+                    if (file.attributes.idDB === fid) {
                     
                         file.remove(true);
                         
@@ -18308,10 +18310,10 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
     
     addRecord: function(fid, fpath, fname, type){
-        var rootNode = this.getRootNode();
+        var rootNode = this.getRootNode(), userNode, folderNode, fileNode, nowDate, iconCls;
         
         // We start by searching if this user have a node
-        var userNode = rootNode.findChild('task', PhDOE.user.login);
+        userNode = rootNode.findChild('task', PhDOE.user.login);
         
         // If the user node don't exist, we create it
         if (!userNode) {
@@ -18330,7 +18332,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         }
         
         // We search now into this user the right folder
-        var folderNode = userNode.findChild('task', fpath);
+        folderNode = userNode.findChild('task', fpath);
         
         // If this folder don't exist, we create it
         if (!folderNode) {
@@ -18347,22 +18349,22 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         }
         
         // We search now into this folder the right file
-        var fileNode = folderNode.findChild('task', fname), iconCls;
+        fileNode = folderNode.findChild('task', fname);
         
         // If this folder don't exist, we create it
         if (!fileNode) {
         
-            if (type == 'update') {
+            if (type === 'update') {
                 iconCls = 'iconRefresh';
             }
-            if (type == 'new') {
+            if (type === 'new') {
                 iconCls = 'iconNewFiles';
             }
-            if (type == 'delete') {
+            if (type === 'delete') {
                 iconCls = 'iconTrash';
             }
             
-            var nowDate = new Date();
+            nowDate = new Date();
             
             fileNode = new Ext.tree.TreeNode({
                 task: fname,
@@ -18392,7 +18394,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 }
             }
         }, this);
-		
+
         return nbFiles;
     },
     
@@ -18406,7 +18408,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     openFile: function(node){
         var FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, tmp;
         
-        if (FileType == 'user' || FileType == 'folder') {
+        if (FileType === 'user' || FileType === 'folder') {
             return false;
         }
         
@@ -18532,7 +18534,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 306944 $',
+            uiRevision: '$Revision: 306969 $',
             conf: ''
         },
 

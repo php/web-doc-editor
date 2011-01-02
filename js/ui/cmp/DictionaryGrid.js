@@ -74,7 +74,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
         },
         canceledit: function(editor) {            
             // If we cancel Edit on a new word
-            if( editor.record.data.id == "new" ) {
+            if( editor.record.data.id === "new" ) {
                 editor.record.store.remove(editor.record);
             }
         }
@@ -220,21 +220,19 @@ ui.cmp._DictionaryGrid.grid = Ext.extend(Ext.grid.GridPanel,
                 iconCls : 'iconNewWord',
                 handler : function()
                 {
-                    var record = Ext.data.Record.create([{
-                        name: 'id'
-                    }, {
-                        name: 'valueEn'
-                    }, {
-                        name: 'valueLang'
-                    },{
-                        name: 'lastUser'
-                    },{
-                        name: 'lastDate'
-                    }]);
-
-                    var newDate = new Date();
-
-                    var e = new record({
+                    var Record = Ext.data.Record.create([{
+                            name: 'id'
+                        }, {
+                            name: 'valueEn'
+                        }, {
+                            name: 'valueLang'
+                        },{
+                            name: 'lastUser'
+                        },{
+                            name: 'lastDate'
+                        }]),
+                    newDate = new Date(),
+                    e = new Record({
                         id: 'new',
                         valueEn: '',
                         valueLang: '',

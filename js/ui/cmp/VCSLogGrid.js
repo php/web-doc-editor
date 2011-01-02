@@ -161,10 +161,10 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                 }
             }
         }),
-        columns = [];
+        columns = [], i;
 
         columns.push(sm);
-        for (var i = 0; i < ui.cmp._VCSLogGrid.columns.length; ++i) {
+        for (i = 0; i < ui.cmp._VCSLogGrid.columns.length; ++i) {
             columns.push(ui.cmp._VCSLogGrid.columns[i]);
         }
 
@@ -215,12 +215,12 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
                         },
                         success : function(r)
                         {
-                            var o = Ext.util.JSON.decode(r.responseText);
+                            var o = Ext.util.JSON.decode(r.responseText), winStatus;
 
                             Ext.getBody().unmask();
 
                             // We display in diff window
-                            var winStatus = new Ext.Window({
+                            winStatus = new Ext.Window({
                                 title      : String.format(_('Diff between {0} & {1}'), rev1, rev2),
                                 width      : 650,
                                 height     : 350,

@@ -465,7 +465,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 {
                     new ui.task.CheckXml({
                         idPrefix : this.id_prefix,
-                        fid      : this.fid,
+                        fid      : this.fid
                     });
                 }
             },{

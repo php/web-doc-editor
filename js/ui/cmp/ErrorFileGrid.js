@@ -77,7 +77,7 @@ ui.cmp._ErrorFileGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {

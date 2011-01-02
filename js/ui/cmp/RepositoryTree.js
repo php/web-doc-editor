@@ -184,9 +184,9 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
         text: 'Add',
         disabled: true,
         handler: function(){
-            var cmp = Ext.getCmp('win-add-new-folder');
-            var parentFolder = cmp.node.id;
-            var newFolderName = cmp.items.items[1].getValue();
+            var cmp = Ext.getCmp('win-add-new-folder'),
+                parentFolder = cmp.node.id,
+                newFolderName = cmp.items.items[1].getValue();
             
             XHR({
                 params: {
@@ -282,7 +282,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 text: _('Add a new folder'),
                 iconCls: 'iconFolderNew',
                 hidden: (this.node.id === '/' ||
-                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                (Ext.util.Format.substr(this.node.id, 0, 3) !== '/en' && Ext.util.Format.substr(this.node.id, 0, 9) !== '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope: this,
                 handler: function(){
                     // We start by expand this node.
@@ -298,7 +298,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 text: _('Add a new file'),
                 iconCls: 'iconFilesNeedTranslate',
                 hidden: (this.node.id === '/' ||
-                (Ext.util.Format.substr(this.node.id, 0, 3) != '/en' && Ext.util.Format.substr(this.node.id, 0, 9) != '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
+                (Ext.util.Format.substr(this.node.id, 0, 3) !== '/en' && Ext.util.Format.substr(this.node.id, 0, 9) !== '/doc-base')), // Don't allow to add a new folder into root system & in others root folder than /en & /doc-base
                 scope: this,
                 handler: function(){
                     // We start by expand this node.
@@ -342,7 +342,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu, {
                     ui.cmp._RepositoryTree.instance.fireEvent('dblclick', this.node);
                 }
             }, {
-                hidden: (this.node.attributes.from === 'search' || PhDOE.user.lang == 'en'),
+                hidden: (this.node.attributes.from === 'search' || PhDOE.user.lang === 'en'),
                 text: (FileLang === 'en') ? String.format(_('Open the same file in <b>{0}</b>'), Ext.util.Format.uppercase(PhDOE.user.lang)) : String.format(_('Open the same file in <b>{0}</b>'), 'EN'),
                 iconCls: 'iconTabNeedReviewed',
                 scope: this,
@@ -397,6 +397,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
     },
     
     openFile: function(ftype, first, second){
+        
         // Here, first argument is fpath and second, fname
         if (ftype === 'byPath') {
             Ext.getCmp('acc-all-files').expand();
@@ -613,7 +614,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                 enableKeyEvents: true,
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }

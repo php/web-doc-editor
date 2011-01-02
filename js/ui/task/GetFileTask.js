@@ -37,7 +37,8 @@ ui.task.GetFileTask = function(config)
                 p    = Ext.getCmp(id_prefix + '-PANEL-' + this.fid),
                 pEl  = Ext.get(id_prefix + '-PANEL-' + this.fid),
                 f    = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
-                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false;
+                fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false,
+                dataModified, mess;
 
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
@@ -50,7 +51,7 @@ ui.task.GetFileTask = function(config)
                 p.setTitle(p.originTitle);
                 p.setIconClass('iconGoogle');
             } else {
-                p.permlink = (o.xmlid != 'NULL') ? perm : '';
+                p.permlink = (o.xmlid !== 'NULL') ? perm : '';
                 p.setTitle(p.permlink + p.originTitle);
             }
 
@@ -94,8 +95,6 @@ ui.task.GetFileTask = function(config)
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
             }
-            
-            var dataModified;
             
             if( this.prefix === 'FNT' || this.prefix === 'FNIEN' ) { dataModified = 'fileModified'; }
             if( this.prefix === 'FNU' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
@@ -148,7 +147,7 @@ ui.task.GetFileTask = function(config)
                     
                     // If the current user isn't the user who have modified this file, we disable the panel
                     
-                    var mess = Ext.MessageBox.show({
+                    mess = Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
@@ -164,52 +163,52 @@ ui.task.GetFileTask = function(config)
             var tab = Ext.getCmp(this.prefix + '-' + this.fid);
 
             // Mark FNT panel as loaded
-            if( this.prefix == 'FNT' ) {
-                if( this.ftype == 'TRANS' ) {
+            if( this.prefix === 'FNT' ) {
+                if( this.ftype === 'TRANS' ) {
                     tab.panTRANSLoaded = true;
                 }
-                if( this.ftype == 'GGTRANS' ) {
+                if( this.ftype === 'GGTRANS' ) {
                     tab.panGGTRANSLoaded = true;
                 }
             }
 
             // Mark FNU panel as loaded
-            if( this.prefix == 'FNU' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FNU' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FE panel as loaded
-            if( this.prefix == 'FE' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FE' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FNR panel as loaded
-            if( this.prefix == 'FNR' ) {
-                if( this.ftype == 'LANG' ) {
+            if( this.prefix === 'FNR' ) {
+                if( this.ftype === 'LANG' ) {
                     tab.panLANGLoaded = true;
                 }
-                if( this.ftype == 'EN' ) {
+                if( this.ftype === 'EN' ) {
                     tab.panENLoaded = true;
                 }
             }
 
             // Mark FNIEN panel as loaded
-            if( this.prefix == 'FNIEN' ) {
+            if( this.prefix === 'FNIEN' ) {
                 tab.panLANGLoaded = true;
             }
 
             // Mark AF panel as loaded
-            if( this.prefix == 'AF' ) {
+            if( this.prefix === 'AF' ) {
                 tab.panLoaded = true;
             }
 

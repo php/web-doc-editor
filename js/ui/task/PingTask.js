@@ -10,7 +10,7 @@ ui.task.PingTask = function()
             },
             success : function(r)
             {
-                var o = Ext.util.JSON.decode(r.responseText);
+                var o = Ext.util.JSON.decode(r.responseText), needReloadSummary;
 
                 if (o.ping !== 'pong') {
                     window.location.href = './';
@@ -19,30 +19,30 @@ ui.task.PingTask = function()
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
                     if( PhDOE.user.lang !== 'en' ) {
 
-                        var needReloadSummary = false;
+                        needReloadSummary = false;
 
                         // We look for modules specifics for translation
-                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingTranslate ) {
+                        if( ui.cmp.PendingTranslateGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingTranslate ) {
                             ui.cmp.PendingTranslateGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingUpdate ) {
+                        if( ui.cmp.StaleFileGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingUpdate ) {
                             ui.cmp.StaleFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() != o.totalData.NbFilesError ) {
+                        if( ui.cmp.ErrorFileGrid.getInstance().store.getTotalCount() !== o.totalData.NbFilesError ) {
                             ui.cmp.ErrorFileGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() != o.totalData.NbPendingReview ) {
+                        if( ui.cmp.PendingReviewGrid.getInstance().store.getTotalCount() !== o.totalData.NbPendingReview ) {
                             ui.cmp.PendingReviewGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
 
-                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() != o.totalData.NbNotInEn ) {
+                        if( ui.cmp.NotInENGrid.getInstance().store.getTotalCount() !== o.totalData.NbNotInEn ) {
                             ui.cmp.NotInENGrid.getInstance().store.reload();
                             needReloadSummary = true;
                         }
@@ -66,7 +66,7 @@ ui.task.PingTask = function()
                     }
                     */
 
-                    if( o.totalData.lastInfoDate != PhDOE.lastInfoDate ) {
+                    if( o.totalData.lastInfoDate !== PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();
                     }
 

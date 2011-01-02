@@ -275,7 +275,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }

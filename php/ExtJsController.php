@@ -351,16 +351,16 @@ class ExtJsController
         $lang = $am->vcsLang;
 
         if( $lang != 'en' ) {
-            $data['NbPendingTranslate'] = $rf->getNbPendingTranslate();
-            $data['NbPendingUpdate']    = $rf->getNbPendingUpdate();
+            $data['NbPendingTranslate'] = (int)$rf->getNbPendingTranslate();
+            $data['NbPendingUpdate']    = (int)$rf->getNbPendingUpdate();
 
             $errorTools = new ToolsError();
             $errorTools->setParams('', '', $am->vcsLang, '', '', '');
             $t = $errorTools->getFilesError($rf->getModifies());
-            $data['NbFilesError'] = $t['nb'];
+            $data['NbFilesError'] = (int)$t['nb'];
 
-            $data['NbPendingReview'] = $rf->getNbPendingReview();
-            $data['NbNotInEn']       = $rf->getNbNotInEn();
+            $data['NbPendingReview'] = (int)$rf->getNbPendingReview();
+            $data['NbNotInEn']       = (int)$rf->getNbNotInEn();
         }
 
         // TODO : find a way to detect modification into Work & patches modules

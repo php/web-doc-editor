@@ -103,7 +103,7 @@ ui.cmp._StaleFileGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {
@@ -428,7 +428,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     specialkey: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }

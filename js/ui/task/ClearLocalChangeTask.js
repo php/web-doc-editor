@@ -146,12 +146,12 @@ ui.task.ClearLocalChangeTask = function(config)
                     failure : function(r)
                     {
                         Ext.getBody().unmask();
-						
-			            var o = Ext.util.JSON.decode(r.responseText);
-			            
-			            if( o.err ) { 
-						    PhDOE.winForbidden(o.err);
-			            }
+
+                        var o = Ext.util.JSON.decode(r.responseText);
+                        
+                        if( o.err ) { 
+                            PhDOE.winForbidden(o.err);
+                        }
                     }
                 });
             }

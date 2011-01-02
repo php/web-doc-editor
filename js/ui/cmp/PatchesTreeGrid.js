@@ -215,14 +215,14 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
         
         Ext.apply(this, {
             items: [{
-                text: '<b>' + ((FileType == 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
+                text: '<b>' + ((FileType === 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
                 iconCls: 'iconEdit',
                 handler: function(){
                     ui.cmp.WorkTreeGrid.getInstance().openFile(node);
                 }
             }, {
                 text: _('Back this file to work in progress module'),
-                hidden: (owner != PhDOE.user.login),
+                hidden: (owner !== PhDOE.user.login),
                 iconCls: 'iconWorkInProgress',
                 handler: function(){
                     ui.task.MoveToWork({
@@ -232,7 +232,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, '-', {
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
@@ -243,7 +243,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Download the diff as a patch'),
                 iconCls: 'iconDownloadDiff',
-                hidden: (FileType == 'delete' || FileType == 'new'),
+                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
                     '?FilePath=' +
@@ -253,7 +253,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType === 'delete' || FileType == 'new' || owner != PhDOE.user.login)
+                hidden: (FileType === 'delete' || FileType === 'new' || owner !== PhDOE.user.login)
             }, {
                 text: ((FileType === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
                 hidden: (owner !== PhDOE.user.login),
@@ -267,7 +267,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous || owner != PhDOE.user.login)
+                hidden: (PhDOE.user.isAnonymous || owner !== PhDOE.user.login)
             }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
                 module: 'patches',
                 from: 'file',
@@ -278,9 +278,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }) : ''),
             {
                 xtype: 'menuseparator',
-                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) )
+                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) )
             },
-                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang == FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
                     fileLang: FileLang,
                     from: 'file',
                     node: this.node,
@@ -337,8 +337,8 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
     
     modPatchName: function(a){
-        var rootNode = this.getRootNode();
-        var patchNode = rootNode.findChild('idDB', a.patchID, true);
+        var rootNode  = this.getRootNode(),
+            patchNode = rootNode.findChild('idDB', a.patchID, true);
         patchNode.setText(a.newPatchName);
     },
     
@@ -472,7 +472,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
                         
-                        if (file.attributes.idDB == fid) {
+                        if (file.attributes.idDB === fid) {
                         
                             file.remove(true);
                             

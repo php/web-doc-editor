@@ -18,7 +18,7 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
         var data           = grid.getSelectionModel().getSelected().data,
             cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
             cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition()),
-            dataInserted   = (this.dataType == 'entities') ? '&' + data.items + ';' : '<acronym>' + data.items + '</acronym>';
+            dataInserted   = (this.dataType === 'entities') ? '&' + data.items + ';' : '<acronym>' + data.items + '</acronym>';
 
         //Insert the entities at the cursor position
         cmp.insertIntoLine(cursorPosition.line, cursorPosition.caracter, dataInserted);
@@ -28,9 +28,9 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
     {
        var url;
 
-       if( this.dataType == 'entities' ) {
+       if( this.dataType === 'entities' ) {
            url = "./do/getEntities";
-       } else if( this.dataType == 'acronyms' ) {
+       } else if( this.dataType === 'acronyms' ) {
            url = "./do/getAcronyms";
        }
 
@@ -61,9 +61,9 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                    scope : this,
                    load  : function()
                    {
-                       if( this.dataType == 'entities' ) {
+                       if( this.dataType === 'entities' ) {
                            Ext.getCmp(this.prefix + '-' + this.fid).panEntities = true;
-                       } else if( this.dataType == 'acronyms' ) {
+                       } else if( this.dataType === 'acronyms' ) {
                            Ext.getCmp(this.prefix + '-' + this.fid).panAcronyms = true;
                        }
                        Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
@@ -105,7 +105,7 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
                     listeners : {
                         specialkey : function(f, e)
                         {
-                            if (e.getKey() == e.ENTER) {
+                            if (e.getKey() === e.ENTER) {
                                 this.onTrigger2Click();
                             }
                         }
@@ -167,9 +167,9 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
     {
         var panelDesc;
 
-        if( this.dataType == 'entities' ) {
+        if( this.dataType === 'entities' ) {
             panelDesc = _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.');
-        } else if( this.dataType == 'acronyms' ) {
+        } else if( this.dataType === 'acronyms' ) {
             panelDesc = _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.');
         }
 

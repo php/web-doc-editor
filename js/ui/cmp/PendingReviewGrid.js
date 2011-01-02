@@ -73,7 +73,7 @@ ui.cmp._PendingReviewGrid.columns = [{
             }
         }
         
-        if (mess != '') {
+        if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
         else {
@@ -147,11 +147,11 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
                         ExtName: this.gname
                     },
                     success: function(r){
-                        var o = Ext.util.JSON.decode(r.responseText);
+                        var o = Ext.util.JSON.decode(r.responseText), i;
                         
                         PhDOE.AFfilePendingOpen = [];
                         
-                        for (var i = 0; i < o.files.length; i = i + 1) {
+                        for (i = 0; i < o.files.length; i = i + 1) {
                             PhDOE.AFfilePendingOpen[i] = {
                                 fpath: PhDOE.user.lang + o.files[i].path,
                                 fname: o.files[i].name
@@ -417,7 +417,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                 trigger2Class: 'x-form-search-trigger',
                 listeners: {
                     keypress: function(field, e){
-                        if (e.getKey() == e.ENTER) {
+                        if (e.getKey() === e.ENTER) {
                             this.onTrigger2Click();
                         }
                     }
