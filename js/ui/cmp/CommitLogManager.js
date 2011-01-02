@@ -113,6 +113,9 @@ ui.cmp._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
     sm               : ui.cmp._CommitLogManager.sm,
     store            : ui.cmp._CommitLogManager.store,
     plugins          : [ui.cmp._CommitLogManager.editor],
+    viewConfig       : {
+        emptyText : '<div class="x-grid-empty" style="text-align:center;">'+_('No log message currently')+'</div>'
+    },
     listeners        : {
         render : function(grid)
         {

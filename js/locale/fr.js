@@ -103,6 +103,7 @@ var i18n = new Array();
   i18n["Submit"] = "Envoyer";
   i18n["Close"] = "Fermer";
   i18n["Older messages"] = "Anciens messages";
+  i18n["No log message currently"] = "Aucun message actuellement";
   i18n["Log message"] = "Message";
 
 

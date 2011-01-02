@@ -170,6 +170,7 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
                 valueField    : 'id',
                 displayField  : 'text',
+                listEmptyText : '<div class="x-grid-empty" style="text-align:center;">'+_('No log message currently')+'</div>',
                 listeners     : {
                     select : function(combo, record)
                     {

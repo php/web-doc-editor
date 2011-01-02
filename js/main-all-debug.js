@@ -8087,6 +8087,9 @@ ui.cmp._CommitLogManager.grid = Ext.extend(Ext.grid.GridPanel,
     sm               : ui.cmp._CommitLogManager.sm,
     store            : ui.cmp._CommitLogManager.store,
     plugins          : [ui.cmp._CommitLogManager.editor],
+    viewConfig       : {
+        emptyText : '<div class="x-grid-empty" style="text-align:center;">'+_('No log message currently')+'</div>'
+    },
     listeners        : {
         render : function(grid)
         {
@@ -8317,6 +8320,7 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 tpl           : '<tpl for="."><div class="x-combo-list-item">{[values.text.split("\n").join("<br/>")]}</div></tpl>',
                 valueField    : 'id',
                 displayField  : 'text',
+                listEmptyText : '<div class="x-grid-empty" style="text-align:center;">'+_('No log message currently')+'</div>',
                 listeners     : {
                     select : function(combo, record)
                     {
