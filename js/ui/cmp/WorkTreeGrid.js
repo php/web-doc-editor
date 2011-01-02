@@ -107,13 +107,14 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
+                        
                         var file = [{
                             fid: Ext.util.md5(this.folderNode.attributes.task + this.node.attributes.task),
                             fpath: this.folderNode.attributes.task,
                             fname: this.node.attributes.task,
                             fdbid: this.node.attributes.idDB,
                             ftype: this.node.attributes.type,
-                            fdate: new Date(this.node.attributes.last_modified),
+                            fdate: Date.parseDate(this.node.attributes.last_modified,'Y-m-d H:i:s'),
                             fby: this.userNode.attributes.task
                         }];
                         
@@ -137,7 +138,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                     fname: node.attributes.task,
                                     fdbid: node.attributes.idDB,
                                     ftype: node.attributes.type,
-                                    fdate: new Date(node.attributes.last_modified),
+                                    fdate: Date.parseDate(node.attributes.last_modified,'Y-m-d H:i:s'),
                                     fby: this.userNode.attributes.task
                                 });
                             }
@@ -164,7 +165,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                     fname: node.attributes.task,
                                     fdbid: node.attributes.idDB,
                                     ftype: node.attributes.type,
-                                    fdate: new Date(node.attributes.last_modified),
+                                    fdate: Date.parseDate(node.attributes.last_modified,'Y-m-d H:i:s'),
                                     fby: this.userNode.attributes.task
                                 });
                             }
@@ -190,7 +191,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                     fname: node.attributes.task,
                                     fdbid: node.attributes.idDB,
                                     ftype: node.attributes.type,
-                                    fdate: new Date(node.attributes.last_modified),
+                                    fdate: Date.parseDate(node.attributes.last_modified,'Y-m-d H:i:s'),
                                     fby: this.userNode.attributes.task
                                 });
                             }
@@ -384,17 +385,17 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
                     nodesToAdd: allFiles
                 })
             }, {
-	            xtype: 'menuseparator',
-	            hidden: (PhDOE.user.isAnonymous)
-	        },
-			((!PhDOE.user.isAnonymous) ?
-			new ui.cmp._WorkTreeGrid.menu.commit({
-                from: 'folder',
-                node: false,
-                folderNode: this.node,
-                userNode: this.node.parentNode
-            }) : ''
-			)]
+                xtype: 'menuseparator',
+                hidden: (PhDOE.user.isAnonymous)
+            },
+            ((!PhDOE.user.isAnonymous) ?
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    from: 'folder',
+                    node: false,
+                    folderNode: this.node,
+                    userNode: this.node.parentNode
+                }) : ''
+            )]
         });
     }
 });
@@ -624,7 +625,16 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 header: _('Last modified'),
                 width: 120,
                 dataIndex: 'last_modified',
-                align: 'center'
+                align: 'center',
+                tpl: new Ext.XTemplate('{last_modified:this.formatDate}', {
+                    formatDate: function(v, data){
+                        if( data.type !== 'user' && data.type !== 'folder' ) {
+                            return Date.parseDate(v, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                        } else {
+                            return '';
+                        }
+                    }
+                })
             }, {
                 header: _('Estimated progress'),
                 dataIndex: 'progress',

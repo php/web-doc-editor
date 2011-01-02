@@ -179,15 +179,15 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
                 hidden: (PhDOE.user.isAnonymous)
             }, 
             ((!PhDOE.user.isAnonymous) ?
-			new ui.cmp._WorkTreeGrid.menu.commit({
-                module: 'patches',
-                from: 'folder',
-                node: false,
-                folderNode: this.node,
-                patchNode: this.node.parentNode,
-                userNode: this.node.parentNode.parentNode
-            }) : ''
-			)]
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    module: 'patches',
+                    from: 'folder',
+                    node: false,
+                    folderNode: this.node,
+                    patchNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode
+                }) : ''
+            )]
         });
     }
 });
@@ -384,7 +384,16 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 header: _('Last modified'),
                 width: 120,
                 dataIndex: 'last_modified',
-                align: 'center'
+                align: 'center',
+                tpl: new Ext.XTemplate('{last_modified:this.formatDate}', {
+                    formatDate: function(v, data){
+                        if( data.type !== 'user' && data.type !== 'folder'  && data.type !== 'patch') {
+                            return Date.parseDate(v, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
+                        } else {
+                            return '';
+                        }
+                    }
+                })
             }],
             loader: {
                 dataUrl: './do/getWork',
