@@ -118,6 +118,23 @@ class File
         $translation = str_replace("&quot;", '"', $translation);
         $translation = str_replace("&lt;"  , '<', $translation);
         $translation = str_replace("&gt;"  , '>', $translation);
+        
+        // CLeanUp entities. Google return it like this : & Reftitle.parameters;. We convert it like this : &reftitle.parameters;
+        $translation = preg_replace_callback("/(&)\s(.)(.[^;]*?)(;)/s",
+            create_function(
+                '$matches',
+                'return $matches[1].strtolower($matches[2]).$matches[3].$matches[4];'
+            ),
+        $translation);
+        
+        // We remove extra space after :: operator
+        $translation = preg_replace("/(\w+)(::)(\s)(\w+)/s", "$1$2$4", $translation);
+        
+        // We delete space into tab like this </ b>
+        $translation = preg_replace("/(<\/\s(\w+[^>]*)>)/s", "</$2>", $translation);
+        
+        // We delete space just after an open tag, and just before a close tag, like this <b> foo </b>
+        $translation = preg_replace("/(<(\w+[^>]*)>)(\s?)(.[^>]*?)(\s?)(<\/(\\2)>)/s", "<$2>$4</$7>", $translation);
 
         return $translation;
     }
