@@ -1216,25 +1216,25 @@ class ExtJsController
         );
         
         if(is_array($info)) {
-	        return JsonResponseBuilder::success(
-	            array(
-	                'path'       => $FilePath,
-	                'name'       => $FileName,
-	                'lang'       => $FileLang,
-	                'revision'   => $info['rev'],
-	                'en-revision'=> $info['en-rev'],
-	                'maintainer' => $info['maintainer'],
-	                'error'      => $info['errorFirst'],
-	                'reviewed'   => $info['reviewed'],
-	                'oldIdDB'    => $info['oldIdDB']
-	            )
-	        );
+            return JsonResponseBuilder::success(
+                array(
+                    'path'       => $FilePath,
+                    'name'       => $FileName,
+                    'lang'       => $FileLang,
+                    'revision'   => $info['rev'],
+                    'en-revision'=> $info['en-rev'],
+                    'maintainer' => $info['maintainer'],
+                    'error'      => $info['errorFirst'],
+                    'reviewed'   => $info['reviewed'],
+                    'oldIdDB'    => (int)$info['oldIdDB']
+                )
+            );
         } else {
-	        return JsonResponseBuilder::failure(
-	            array(
-	                'err' => $info
-	            )
-	        );
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $info
+                )
+            );
         }
     }
 
