@@ -323,6 +323,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             scope: this,
             text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
             iconCls: 'iconSendEmail',
+            hidden: (this.node.attributes.email === 'false'),
             handler: function(){
                 var win = new ui.cmp.EmailPrompt();
                 
