@@ -34,7 +34,7 @@ ui.cmp._MainMenu.store.on('load', function(store)
     store.each(function(record) {
 
         var tmp = new Ext.menu.Item({
-            text    : record.data.name,
+            text    : record.data.name + ' (' + record.data.code + ')',
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
             disabled: (record.data.code === PhDOE.user.lang),
             handler : function() {
