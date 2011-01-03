@@ -166,8 +166,7 @@ class ExtJsController
         {
             return JsonResponseBuilder::failure(
                 array(
-                    'type' => 'folder_already_exist',
-                    'mess' => ''
+                    'type' => 'folder_already_exist'
                 )
             );
         }
@@ -901,8 +900,7 @@ class ExtJsController
         if( strstr("\t", $fileContent) ) {
             return JsonResponseBuilder::failure(
                 array(
-                    'type' => 'tabs_found',
-                    'mess' => ''
+                    'type' => 'tabs_found'
                 )
             );
         }
@@ -933,8 +931,7 @@ class ExtJsController
             } else {
                 return JsonResponseBuilder::failure(
                     array(
-                        'type' => 'fs_error',
-                        'mess' => ''
+                        'type' => 'fs_error'
                     )
                 );
             }
@@ -965,8 +962,7 @@ class ExtJsController
                } else {
                    return JsonResponseBuilder::failure(
                        array(
-                           'type' => 'fs_error',
-                           'mess' => ''
+                           'type' => 'fs_error'
                        )
                    );
                }
