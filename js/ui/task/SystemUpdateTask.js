@@ -116,7 +116,7 @@ ui.task.SystemUpdateTask = function()
 
             if (o && o.success === false) {
                 Ext.getCmp('sys-update-win').close();
-                PhDOE.winForbidden();
+                PhDOE.winForbidden(o.type);
             } else {
                 ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }

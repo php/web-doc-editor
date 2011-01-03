@@ -120,6 +120,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
                     break;
+                case 'action_only_global_admin' :
+                    title = _('Error');
+                    mess  = _('This action is available only to global administrator.');
+                    break;
 
             }
 

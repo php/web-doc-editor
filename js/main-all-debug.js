@@ -6469,7 +6469,7 @@ ui.task.SystemUpdateTask = function()
 
             if (o && o.success === false) {
                 Ext.getCmp('sys-update-win').close();
-                PhDOE.winForbidden();
+                PhDOE.winForbidden(o.type);
             } else {
                 ui.task._SystemUpdateTask.vcs_poll.delay(5000);
             }
@@ -12052,8 +12052,9 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (PhDOE.user.isAnonymous),
+                disabled : (!PhDOE.user.isGlobalAdmin),
                 iconCls  : 'iconRefresh',
+                tooltip: 'test',
                 handler  : function()
                 {
                     // We test if there is an update in progress or not
@@ -18624,6 +18625,10 @@ var PhDOE = function()
                 case 'patch_delete_isnt_own_by_current_user' :
                     title = _('Error');
                     mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
+                    break;
+                case 'action_only_global_admin' :
+                    title = _('Error');
+                    mess  = _('This action is available only to global administrator.');
                     break;
 
             }

@@ -99,7 +99,7 @@ class ExtJsController
             return JsonResponseBuilder::success();
             
         } elseif ($response['state'] === false) {
-        	
+
             // This user is unknow from this server
             return JsonResponseBuilder::failure(array(
               'msg'        => $response['msg'],
@@ -107,9 +107,7 @@ class ExtJsController
             ));
             
         } else {
-        	
             return JsonResponseBuilder::failure();
-            
         }
     }
 
@@ -118,10 +116,15 @@ class ExtJsController
      */
     public function updateRepository()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+        $am->isLogged();
 
-        if (AccountManager::getInstance()->isAnonymous) {
-            return JsonResponseBuilder::failure();
+        if ( !$am->isGlobalAdmin() ) {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'action_only_global_admin'
+                )
+            );
         }
 
         RepositoryManager::getInstance()->updateRepository();
