@@ -103,7 +103,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check build'),
-                        disabled : (PhDOE.user.isAnonymous),
+                        disabled : (!PhDOE.user.isGlobalAdmin && !PhDOE.user.isLangAdmin),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {

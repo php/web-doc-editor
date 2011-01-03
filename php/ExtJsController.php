@@ -1294,10 +1294,16 @@ class ExtJsController
 
         $am->isLogged();
 
-        if ($am->isAnonymous) {
-            return JsonResponseBuilder::failure();
+        if ( !$am->isGlobalAdmin() && !$am->isLangAdmin() ) {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'action_only_admin'
+                )
+            );
         }
-
+        
+return JsonResponseBuilder::success();
+exit;
         $xmlDetails = $this->getRequestVariable('xmlDetails');
         $return = "";
 

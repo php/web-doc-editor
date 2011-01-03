@@ -124,6 +124,10 @@ var PhDOE = function()
                     title = _('Error');
                     mess  = _('This action is available only to global administrator.');
                     break;
+                case 'action_only_admin' :
+                    title = _('Error');
+                    mess  = _('This action is available only to global administrator or to administrator for this lang.');
+                    break;
 
             }
 

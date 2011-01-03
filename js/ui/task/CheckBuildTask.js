@@ -86,7 +86,7 @@ ui.task.CheckBuildTask = function()
                 // Re-enable TaskPing
                 ui.task.PingTask.getInstance().delay(30000);
                 Ext.getBody().unmask();
-                PhDOE.winForbidden();
+                PhDOE.winForbidden(o.type);
             } else {
                 // take over 30sec (max Keep-Alive time)
                 // poll every XX secondes if the check build is finish

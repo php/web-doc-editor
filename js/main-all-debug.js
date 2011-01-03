@@ -5200,7 +5200,7 @@ ui.task.CheckBuildTask = function()
                 // Re-enable TaskPing
                 ui.task.PingTask.getInstance().delay(30000);
                 Ext.getBody().unmask();
-                PhDOE.winForbidden();
+                PhDOE.winForbidden(o.type);
             } else {
                 // take over 30sec (max Keep-Alive time)
                 // poll every XX secondes if the check build is finish
@@ -12054,7 +12054,6 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 text     : _('Refresh all data'),
                 disabled : (!PhDOE.user.isGlobalAdmin),
                 iconCls  : 'iconRefresh',
-                tooltip: 'test',
                 handler  : function()
                 {
                     // We test if there is an update in progress or not
@@ -12091,7 +12090,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 menu    : new Ext.menu.Menu({
                     items : [{
                         text     : _('Check build'),
-                        disabled : (PhDOE.user.isAnonymous),
+                        disabled : (!PhDOE.user.isGlobalAdmin && !PhDOE.user.isLangAdmin),
                         iconCls  : 'iconCheckBuild',
                         handler  : function()
                         {
@@ -18530,7 +18529,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 306969 $',
+            uiRevision: '$Revision: 307033 $',
             conf: ''
         },
 
@@ -18629,6 +18628,10 @@ var PhDOE = function()
                 case 'action_only_global_admin' :
                     title = _('Error');
                     mess  = _('This action is available only to global administrator.');
+                    break;
+                case 'action_only_admin' :
+                    title = _('Error');
+                    mess  = _('This action is available only to global administrator or to administrator for this lang.');
                     break;
 
             }

@@ -32,6 +32,7 @@ var i18n = new Array();
   i18n["The patch you want to delete didn't exist."] = "Le patch que vous voulez effacer n'existe pas.";
   i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
   i18n["This action is available only to global administrator."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
+  i18n["This action is available only to global administrator or to administrator for this lang."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
   
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
