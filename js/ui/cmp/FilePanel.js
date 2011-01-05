@@ -754,7 +754,57 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 lang           : this.lang,
                 spellCheck     : this.spellCheck,
                 spellCheckConf : this.spellCheckConf
-            }), '->',
+            }), {
+                scope: this,
+                iconCls:'iconZoom',
+                handler: function(b) {
+                    var winMax = new Ext.Window({
+                        title: this.originTitle,
+                        bodyStyle:    'background-color:white',
+                        maximized :true,
+                        animateTarget: b.el,
+                        items: [{
+                            xtype      : 'codemirror',
+                            id         : id_prefix + '-FILE-' + this.fid + 'maximized',
+                            readOnly   : false,
+                            parser     : 'xml',
+                            spellCheck : false,
+                            isModified : false,
+                            listeners  : {
+                                scope: this,
+                                initialize : function() {
+                                    
+                                    var codeMirrorMax =Ext.getCmp(id_prefix + '-FILE-' + this.fid + 'maximized'),
+                                        currentCode = Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCode();
+                                        
+                                    // We set the current code into the maximized window editor
+                                    codeMirrorMax.setCode(currentCode);
+                                    
+                                    // We must wait until the winMax is rendered to rize the editor
+                                    var waitTask = new Ext.util.DelayedTask(function(){
+                                        
+                                        if( winMax.rendered ) {
+                                            codeMirrorMax.resize(false, winMax.getInnerHeight());
+                                        } else {
+                                            waitTask.delay(500);
+                                        }
+                                        
+                                    });
+                                    waitTask.delay(500);
+                                }
+                            }
+                        }],
+                        listeners : {
+                            scope: this,
+                            beforeclose : function(p) {
+                                var newCode = p.items.items[0].mirror.getCode();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(newCode);
+                            }
+                        }
+                    });
+                    winMax.show();
+                }
+            },'->',
             new ui.cmp._FilePanel.tbar.items.usernotes({
                 fid : this.fid,
                 file: this.lang + this.fpath + this.fname
