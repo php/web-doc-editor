@@ -1302,8 +1302,6 @@ class ExtJsController
             );
         }
         
-return JsonResponseBuilder::success();
-exit;
         $xmlDetails = $this->getRequestVariable('xmlDetails');
         $return = "";
 
