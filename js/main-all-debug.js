@@ -5100,6 +5100,10 @@ ui.task.ChangeFileOwner = function(config)
             // Remove wait msg
             msg.hide();
             
+            if( Ext.isDefined(this.fromType) && this.fromType === 'tab') {
+                Ext.getCmp('main-panel').remove(this.from.curTab);
+            }
+            
             this.from.close();
             
             // Notify
@@ -5111,6 +5115,10 @@ ui.task.ChangeFileOwner = function(config)
             // Remove wait msg
             msg.hide();
             PhDOE.winForbidden(o.type);
+            
+            if( Ext.isDefined(this.fromType) && this.fromType === 'tab') {
+                Ext.getCmp('main-panel').remove(this.from.curTab);
+            }
             
             this.from.close();
         }
@@ -5405,163 +5413,171 @@ ui.task.CheckXml = function(config)
     });
 };Ext.namespace('ui','ui.task');
 
-// config - { ftype, fpath, fname }
+// config - { ftype, fpath, fname, noConfirm }
 ui.task.ClearLocalChangeTask = function(config)
 {
     Ext.apply(this, config);
 
-    Ext.MessageBox.confirm(
-        _('Confirm'),
-        _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'),
-        function(btn)
-        {
-            if (btn === 'yes') {
-                Ext.getBody().mask(
-                    '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
-                    _('Please, wait...')
-                );
+    var ftype = this.ftype,
+        fpath = this.fpath,
+        fname = this.fname;
+    
+    
+    goClear = function() {
+        Ext.getBody().mask(
+            '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
+            _('Please, wait...')
+        );
 
-                // Before clear local change, we close the file if there is open
+        // Before clear local change, we close the file if there is open
 
-                var panel = ["FNT", "FNU", "FE", "FNR", "FNIEN", "AF"];
+        var panel = ["FNT", "FNU", "FE", "FNR", "FNIEN", "AF"];
 
-                for( var i=0; i < panel.length; i++) {
-                    if (Ext.getCmp('main-panel').findById(panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname))) {
-                        Ext.getCmp('main-panel').remove(  panel[i] + '-' + Ext.util.md5(panel[i] + '-' + this.fpath + this.fname));
-                    }
+        for( var i=0; i < panel.length; i++) {
+            if (Ext.getCmp('main-panel').findById(panel[i] + '-' + Ext.util.md5(panel[i] + '-' + fpath + fname))) {
+                Ext.getCmp('main-panel').remove(  panel[i] + '-' + Ext.util.md5(panel[i] + '-' + fpath + fname));
+            }
+        }
+
+        XHR({
+            params : {
+                task     : 'clearLocalChange',
+                FileType : ftype,
+                FilePath : fpath,
+                FileName : fname
+            },
+            success : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText),
+                    node;
+
+                // We delete this record from the work in progress module
+                ui.cmp.WorkTreeGrid.getInstance().delRecord(o.oldIdDB);
+                // .. and Patches module
+                ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.oldIdDB);
+
+                /** Common action for EN and LANG file **/
+                
+                // find open node in All Files modules
+                node = false;
+                node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+fpath+fname);
+                if (node) {
+                    node.getUI().removeClass(['fileModifiedByMe','fileModifiedByAnother']);
+                }
+                    
+                /** Action for EN file **/
+                if( o.lang === 'en' && ftype === 'update' ) {
+
+                    // trow StaleFile store
+                    ui.cmp.StaleFileGrid.getInstance().store.each(
+                        function(record)
+                        {
+                            if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
+                                record.set('fileModifiedEN', false);
+                                record.set('en_revision', o.revision);
+                                record.commit();
+                            }
+                        }, this);
+
+                    // Browse FileError
+                    ui.cmp.ErrorFileGrid.getInstance().store.each(
+                        function(record)
+                        {
+                            if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                                record.set('fileModifiedEN', false);
+                            }
+                        }, this);
+
+
+                    Ext.getBody().unmask();
+                    return;
                 }
 
-                XHR({
-                    scope  : this,
-                    params : {
-                        task     : 'clearLocalChange',
-                        FileType : this.ftype,
-                        FilePath : this.fpath,
-                        FileName : this.fname
-                    },
-                    success : function(r)
+                /** All after this is only available for LANG file  **/
+
+                // We try to search in others stores if this file is marked as needCommit
+
+                // Browse PendingTranslate store
+                ui.cmp.PendingTranslateGrid.getInstance().store.each(
+                    function(record)
                     {
-                        var o = Ext.util.JSON.decode(r.responseText),
-                            node;
-
-                        // We delete this record from the work in progress module
-                        ui.cmp.WorkTreeGrid.getInstance().delRecord(o.oldIdDB);
-                        // .. and Patches module
-                        ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.oldIdDB);
-
-                        // Action for EN file
-                        if( o.lang === 'en' && this.ftype === 'update' ) {
-
-                            // trow StaleFile store
-                            ui.cmp.StaleFileGrid.getInstance().store.each(
-                                function(record)
-                                {
-                                    if ((record.data.path) === '/'+o.path && record.data.name === o.name ) {
-                                        record.set('fileModifiedEN', false);
-                                        record.set('en_revision', o.revision);
-                                        record.commit();
-                                    }
-                                }, this);
-
-                            // Browse FileError
-                            ui.cmp.ErrorFileGrid.getInstance().store.each(
-                                function(record)
-                                {
-                                    if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                        record.set('fileModifiedEN', false);
-                                    }
-                                }, this);
-
-                            // find open node in All Files modules
-                            node = false;
-                            node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
-                            if (node) {
-                              node.getUI().removeClass('fileModifiedByMe');
-                            }
-
-                            Ext.getBody().unmask();
-                            return;
+                        if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                            record.set('fileModified', false);
+                            record.commit();
                         }
+                    }, this);
 
-                        // All after this is only available for LANG file
-
-                        // We try to search in others stores if this file is marked as needCommit
-
-                        // Browse PendingTranslate store
-                        ui.cmp.PendingTranslateGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('fileModified', false);
-                                    record.commit();
-                                }
-                            }, this);
-
-                        // Browse StaleFile store
-                        ui.cmp.StaleFileGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('fileModifiedLang', false);
-                                    record.set('revision', o.revision);
-                                    record.set('maintainer', o.maintainer);
-                                    record.commit();
-                                }
-                            }, this);
-
-                        // Browse FileError
-                        ui.cmp.ErrorFileGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('fileModifiedLang', false);
-                                    record.commit();
-                                }
-                            }, this);
-
-                        // Browse storeFilesNeedReviewed
-                        ui.cmp.PendingReviewGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('fileModifiedLang', false);
-                                    record.commit();
-                                }
-                            }, this);
-
-                        // Browse storeNotInEn
-                        ui.cmp.NotInENGrid.getInstance().store.each(
-                            function(record)
-                            {
-                                if ((PhDOE.user.lang+record.data.path) === this.fpath && record.data.name === this.fname ) {
-                                    record.set('fileModified', false);
-                                }
-                            }, this);
-
-                        // find open node in All Files modules
-                        node = false;
-                        node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+this.fpath+this.fname);
-                        if (node) {
-                          node.getUI().removeClass('fileModifiedByMe');
-                        }
-
-                        Ext.getBody().unmask();
-                    },
-
-                    failure : function(r)
+                // Browse StaleFile store
+                ui.cmp.StaleFileGrid.getInstance().store.each(
+                    function(record)
                     {
-                        Ext.getBody().unmask();
-
-                        var o = Ext.util.JSON.decode(r.responseText);
-                        
-                        if( o.err ) { 
-                            PhDOE.winForbidden(o.err);
+                        if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                            record.set('fileModifiedLang', false);
+                            record.set('revision', o.revision);
+                            record.set('maintainer', o.maintainer);
+                            record.commit();
                         }
-                    }
-                });
+                    }, this);
+
+                // Browse FileError
+                ui.cmp.ErrorFileGrid.getInstance().store.each(
+                    function(record)
+                    {
+                        if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                            record.set('fileModifiedLang', false);
+                            record.commit();
+                        }
+                    }, this);
+
+                // Browse storeFilesNeedReviewed
+                ui.cmp.PendingReviewGrid.getInstance().store.each(
+                    function(record)
+                    {
+                        if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                            record.set('fileModifiedLang', false);
+                            record.commit();
+                        }
+                    }, this);
+
+                // Browse storeNotInEn
+                ui.cmp.NotInENGrid.getInstance().store.each(
+                    function(record)
+                    {
+                        if ((PhDOE.user.lang+record.data.path) === fpath && record.data.name === fname ) {
+                            record.set('fileModified', false);
+                        }
+                    }, this);
+
+                Ext.getBody().unmask();
+            },
+
+            failure : function(r)
+            {
+                Ext.getBody().unmask();
+
+                var o = Ext.util.JSON.decode(r.responseText);
+                
+                if( o.err ) { 
+                    PhDOE.winForbidden(o.err);
+                }
             }
-        }, this
-    );
+        });
+    };
+    
+    if( Ext.isDefined(this.noConfirm) ) {
+        goClear();
+    } else {
+        Ext.MessageBox.confirm(
+            _('Confirm'),
+            _('This action will clear your local modification and take back this file from his original stats.<br/>You need confirm.'),
+            function(btn)
+            {
+                if (btn === 'yes') {
+                    goClear();
+                }
+            }, this
+        );
+    }
 };Ext.namespace('ui','ui.task');
 
 // config - { patchID }
@@ -5753,23 +5769,39 @@ ui.task.GetFileTask = function(config)
             if( o.fileModified && 
                 
                 (
-                    ( !PhDOE.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
-                    ( PhDOE.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
+                    ( !PhDOE.user.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
+                    ( PhDOE.user.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
                 )
                 
             ) {
 
                 // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
-                if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+                if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
-                } else {
+                }
+                //
+                else if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
+                    
+                    new ui.cmp.AnonymousPatchWin({
+                        fidDB: fileModifiedInfo.fidDB,
+                        fid: this.fid,
+                        prefix: this.prefix,
+                        ftype: fileModifiedInfo.ftype,
+                        fpath: this.fpath,
+                        fname: this.fname,
+                        curTab: Ext.getCmp(this.prefix + '-' + this.fid)
+                    });
+                    
+                }
+                
+                else {
                     if( !this.freadOnly ) {
-                        // We disable save group, undoRdeo group, and tools group from the toolBars
+                        // We disable save group, undoRedo group, and tools group from the toolBars
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
@@ -6952,6 +6984,146 @@ ui.cmp.About = Ext.extend(Ext.Window,
             }
         });
         ui.cmp.About.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.cmp','ui.cmp._AnonymousPatchWin');
+
+ui.cmp._AnonymousPatchWin.form = Ext.extend(Ext.FormPanel,
+{
+    frame:true,
+    labelWidth: 5,
+    bodyStyle:'padding:5px 5px 0',
+    defaultType: 'radio',
+
+    initComponent: function(config)
+    {
+        Ext.apply(this,
+        {
+            items: [{
+                xtype: 'displayfield',
+                value: _('File: ')+this.fpath+this.fname+'<br><br>'+_('You have opened a modified file from the "Patch for review" module.<br>This file has been modified by an anonymous user.<br><br>Please choose one of the following actions:')
+            },{
+                boxLabel: _('Continue to modify this file'),
+                name: 'choice',
+                inputValue: 'continue',
+                checked: true,
+                listeners: {
+                    afterrender: function()
+                    {
+                        new Ext.ToolTip({
+                            title       : _('Continue to modify this file'),
+                            target      : 'x-form-el-'+this.id,
+                            anchor      : 'right',
+                            html        : '<br>'+_('This action will open this file for modification. Once your modification finish, just save it and this file will be own by you.'),
+                            width       : 250,
+                            autoHide    : true
+                        });
+                    }
+                }
+            },{
+                boxLabel: _('Reject this patch'),
+                name: 'choice',
+                inputValue: 'reject',
+                listeners: {
+                    afterrender: function()
+                    {
+                        new Ext.ToolTip({
+                            title       : _('Reject this patch'),
+                            target      : 'x-form-el-'+this.id,
+                            anchor      : 'right',
+                            html        : '<br>'+_('This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server.'),
+                            width       : 250,
+                            autoHide    : true
+                        });
+                    }
+                }
+            },{
+                boxLabel: _('Validate this patch'),
+                name: 'choice',
+                inputValue: 'validate',
+                listeners: {
+                    afterrender: function()
+                    {
+                        new Ext.ToolTip({
+                            title       : _('Validate this patch'),
+                            target      : 'x-form-el-'+this.id,
+                            anchor      : 'right',
+                            html        : '<br>'+_('This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it.'),
+                            width       : 250,
+                            autoHide    : true
+                        });
+                    }
+                }
+            }]
+        });
+        ui.cmp._AnonymousPatchWin.form.superclass.initComponent.call(this);
+    }
+});
+
+ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
+{
+    id         : 'anonymous-patch-win',
+    title      : _('Anonymous patch manager'),
+    iconCls    : 'iconPatch',
+    width      : 450,
+    height     : 250,
+    layout     : 'fit',
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+    closable   : false,
+    closeAction: 'close',
+    buttons    : [{
+        text    : _('Next'),
+        iconCls : 'iconArrowRight',
+        handler : function()
+        {
+            var win = this.ownerCt.ownerCt,
+                choice = win.items.items[0].getForm().getValues().choice;
+            
+            switch(choice) {
+                
+                case 'continue':
+                    win.close();
+                    break;
+                    
+                case 'reject':
+                    //we clear local change for this file
+                    ui.task.ClearLocalChangeTask({
+                        ftype: win.ftype,
+                        fpath: win.fpath,
+                        fname: win.fname,
+                        noConfirm: true
+                    });
+                    
+                    break;
+                    
+                case 'validate':
+                    
+                    //We change the file owner
+                    ui.task.ChangeFileOwner({
+                        fileIdDB : win.fidDB,
+                        newOwner : PhDOE.user.login,
+                        from     : win,
+                        fromType : 'tab'
+                    });
+                    break;
+            }
+        }
+    }],
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [new ui.cmp._AnonymousPatchWin.form({
+                fpath: this.fpath,
+                fname: this.fname
+            })]
+        });
+        
+        ui.cmp.AnonymousPatchWin.superclass.initComponent.call(this);
+        
+        this.show();
     }
 });Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
 

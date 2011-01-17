@@ -33,6 +33,7 @@ var i18n = new Array();
   i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
   i18n["This action is available only to global administrator."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
   i18n["This action is available only to global administrator or to administrator for this lang."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
+  i18n["The file you want to clear local change isn't own by you.<br>You can only do this action for yours files."] = "Le fichier dont vous souhaitez effacer les modifications ne vous appartient pas.<br>Vous ne pouvez faire cette action que sur les fichiers vous appartenant.";
   
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
@@ -637,4 +638,13 @@ var i18n = new Array();
   i18n["Owner changed"] = "Propriétaire modifié";
   i18n["The owner for this file have been changed successfully !"] = "Le propriétaire de ce fichier a été modifié avec succès !";
   
-  
+// In file: ../../js/ui/cmp/AnonymousPatchWin.js
+  i18n["Next"] = "Suivant";
+  i18n["Anonymous patch manager"] = "Gestionnaire de patch anonyme";
+  i18n["You have opened a modified file from the \"Patch for review\" module.<br>This file has been modified by an anonymous user.<br><br>Please choose one of the following actions:"] = "Vous avez ouvert un fichier modifié depuis le module \"Patches en attente de relecture\".<br>Ce fichier a été modifié par un utilisateur anonyme.<br><br>Veuillez choisir une des actions suivantes :";
+  i18n["Continue to modify this file"] = "Continuer à modifier ce fichier";
+  i18n["This action will open this file for modification. Once your modification finish, just save it and this file will be own by you."] = "Cette action ouvrira ce fichier pour modification. Une fois la modification terminée, vous n'avez plus qu'à le sauvegarder pour en devenir le propriétaire.";
+  i18n["Reject this patch"] = "Rejeter ce patch";
+  i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Cette action fermera ce fichier, et supprimera la modification. Le fichier reviendra à sa version originale, telle qu'elle se trouve sur le serveur VCS.";
+  i18n["Validate this patch"] = "Valider ce patch";
+  i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Cette action fera que vous deviendrez le propriétaire de ce fichier. Il apparaîtra sous votre nom et vous pourrez commiter la modification.";
