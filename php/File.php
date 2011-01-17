@@ -304,8 +304,11 @@ class File
 
         $s = sprintf(
             'SELECT
+                `id` as fidDB,
                 `user`,
-                `anonymousIdent`
+                `anonymousIdent`,
+                `module` as fromModule,
+                `type` as ftype
              FROM
                 `work`
              WHERE
@@ -318,8 +321,6 @@ class File
             $this->path,
             $hereName
         );
-
-        //echo $s;
 
         $r = DBConnection::getInstance()->query($s);
 
