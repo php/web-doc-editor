@@ -1254,9 +1254,12 @@ class RepositoryManager
             // Either the user who made the modification, either a global admin for this project, either a lang admin
             if( $a->user != $am->vcsLogin || ( $am->isAnonymous && ($a->anonymousIdent != $am->anonymousIdent) ) ) {
                 // This file isn't own by the current user
+                
                 // Is the current user is a global admin or a lang admin ?
                 if( ! $am->isAdmin(true) ) {
-                    return 'file_isnt_owned_by_current_user';
+                    if( !(!$am->isAnonymous && $am->anonymous($a->user) ) ) {
+                        return 'file_isnt_owned_by_current_user';
+                    }
                 }
             }
             
