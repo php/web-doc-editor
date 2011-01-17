@@ -123,23 +123,39 @@ ui.task.GetFileTask = function(config)
             if( o.fileModified && 
                 
                 (
-                    ( !PhDOE.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
-                    ( PhDOE.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
+                    ( !PhDOE.user.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
+                    ( PhDOE.user.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
                 )
                 
             ) {
 
                 // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
-                if( fileModifiedInfo.isAnonymous  && !PhDOE.isAnonymous ) {
+                if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
-                } else {
+                }
+                //
+                else if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
+                    
+                    new ui.cmp.AnonymousPatchWin({
+                        fidDB: fileModifiedInfo.fidDB,
+                        fid: this.fid,
+                        prefix: this.prefix,
+                        ftype: fileModifiedInfo.ftype,
+                        fpath: this.fpath,
+                        fname: this.fname,
+                        curTab: Ext.getCmp(this.prefix + '-' + this.fid)
+                    });
+                    
+                }
+                
+                else {
                     if( !this.freadOnly ) {
-                        // We disable save group, undoRdeo group, and tools group from the toolBars
+                        // We disable save group, undoRedo group, and tools group from the toolBars
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disable();
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
