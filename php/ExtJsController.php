@@ -1154,14 +1154,19 @@ class ExtJsController
     public function setFileOwner()
     {
         $am = AccountManager::getInstance();
+        $rf = RepositoryFetcher::getInstance();
 
         $am->isLogged();
         
         $fileIdDB = $this->getRequestVariable('fileIdDB');
         $newOwner = $this->getRequestVariable('newOwner');
         
+        $fileInfo = $rf->getModifiesById($fileIdDB);
+        
         // This user must be a global admin or the admin for this lang
-        if( $am->isAdmin(true) )
+        // Or if the owner of this file is an anonymous and the current user is a valid user
+        
+        if( $am->isAdmin(true) || ( !$am->isAnonymous && $am->anonymous($fileInfo[0]['user']) ))
         {
             $am->setFileOwner($fileIdDB, $newOwner);
             
