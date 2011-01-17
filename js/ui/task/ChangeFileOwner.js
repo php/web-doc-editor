@@ -29,6 +29,10 @@ ui.task.ChangeFileOwner = function(config)
             // Remove wait msg
             msg.hide();
             
+            if( Ext.isDefined(this.fromType) && this.fromType === 'tab') {
+                Ext.getCmp('main-panel').remove(this.from.curTab);
+            }
+            
             this.from.close();
             
             // Notify
@@ -40,6 +44,10 @@ ui.task.ChangeFileOwner = function(config)
             // Remove wait msg
             msg.hide();
             PhDOE.winForbidden(o.type);
+            
+            if( Ext.isDefined(this.fromType) && this.fromType === 'tab') {
+                Ext.getCmp('main-panel').remove(this.from.curTab);
+            }
             
             this.from.close();
         }
