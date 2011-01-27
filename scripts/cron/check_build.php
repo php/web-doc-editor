@@ -17,6 +17,10 @@ $rm = RepositoryManager::getInstance();
 $pm = ProjectManager::getInstance();
 $availableProject = $pm->getAvailableProject();
 
+
+// Don't send email for this lang code: ar,bg,cs,nl,el,he,pt,sl,sv
+$dontSendEmail = array("ar","bg","cs","nl","el","he","pt","sl","sv");
+
 while( list($key, $project) = each($availableProject) ) {
 
     // Actually, only PHP project support to be automatically checked for the build. Skip all others projects
@@ -52,8 +56,10 @@ while( list($key, $project) = each($availableProject) ) {
 
             // What we must do when the build failed
             if( $return["state"] == "ko" ) {
+                
+                if( ! in_array($lang, $dontSendEmail) ) {
 
-                $msg = "Your documentation is broken. The build is done on Friday.
+                    $msg = "Your documentation is broken. The build is done on Friday.
 
         Please, try to fix it *quickly*.
 
@@ -67,17 +73,19 @@ while( list($key, $project) = each($availableProject) ) {
         This email is send automatically by the Php Docbook Online Editor.
         ";
         
-                //Usefull for language like pt_BR for example, because doc-pt_br don't exist, it's doc-pt-br
-                $emailLang = str_replace("_", "-", strtolower($lang));
+                    //Usefull for language like pt_BR for example, because doc-pt_br don't exist, it's doc-pt-br
+                    $emailLang = str_replace("_", "-", strtolower($lang));
 
-                $to = ( $lang === 'en' ) ? "phpdoc@lists.php.net" : "doc-$emailLang@lists.php.net";
+                    $to = ( $lang === 'en' ) ? "phpdoc@lists.php.net" : "doc-$emailLang@lists.php.net";
 
-                $subject = "[DOC-".strtoupper($emailLang)."] - Your documentation is broken";
+                    $subject = "[DOC-".strtoupper($emailLang)."] - Your documentation is broken";
 
-                // We send an email for this failed build
-                AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
+                    // We send an email for this failed build
+                    AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
 
-                echo "email send !\n";
+                    echo "email send !\n";
+                }
+
                 // We store it into DB
                 LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
 
