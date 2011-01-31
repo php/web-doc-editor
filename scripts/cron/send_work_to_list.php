@@ -57,7 +57,7 @@ Please review, then commit or delete these patches.
 
 ";
     
-    
+    /*
     if( $data['workInProgress']['nb'] != 0 ) {
         $msg .= "    Work in progress : \n    -----------------------\n";
         
@@ -66,7 +66,7 @@ Please review, then commit or delete these patches.
         }
         $msg .="\n\n";
     }
-    
+    */
     
     if( $data['PatchesForReview']['nb'] != 0 ) {
         $msg .= "    Patches for review : \n    -----------------------\n";
