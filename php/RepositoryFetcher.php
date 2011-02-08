@@ -843,7 +843,7 @@ class RepositoryFetcher
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
-                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,creationDate:'".$dataPatch["date"]."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
+                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
 
                     // We now walk into the folders for this patch
                     while( list($folder, $dataFiles) = each($dataPatch['folders'])) {
