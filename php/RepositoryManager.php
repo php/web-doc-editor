@@ -1970,6 +1970,26 @@ class RepositoryManager
             $db->query($s);
         }
     }
+    
+    public function applyStaticRevcheck()
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+        
+        $ExistingLanguage = $this->getExistingLanguage();
+        
+        foreach( $ExistingLanguage as $lang ) {
+
+            $lang = $lang["code"];
+            if( $lang == 'en' ) { continue; }
+            
+            $cmd = 'cd '.$appConf[$project]['vcs.path'].' && '
+                  .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/scripts/revcheck.php '.$lang.' > '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'revcheck/'.$lang.'.html';
+            
+            exec("$cmd 2>&1");
+        }
+    }
 }
 
 ?>

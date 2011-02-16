@@ -76,6 +76,12 @@ while( list($key, $project) = each($availableProject) ) {
         TranslationStatistic::getInstance()->computeSummary('all');
         TranslatorStatistic::getInstance()->computeSummary('all');    
 
+        // We start the revcheck's script to make a static page into data/revcheck/ directory
+        // Only for php project
+        if( $project['code'] == 'php' ) {
+            $rm->applyStaticRevcheck();
+        }
+
         // Store this info
         $info = array();
         $info['user']   = 'root';
