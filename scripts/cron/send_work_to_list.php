@@ -47,7 +47,8 @@ while( list($key, $project) = each($availableProject) ) {
 
 
         // What we must do when the build failed
-        if( $data["total"] != 0 ) {
+        //if( $data["total"] != 0 ) {
+        if( $data['PatchesForReview']['nb'] != 0 ) {
 
 
             $msg = "Hello PHP ".strtoupper($lang)." Documentation team,
