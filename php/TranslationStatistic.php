@@ -252,8 +252,8 @@ class TranslationStatistic
             $summary[2]['id']            = 3;
             $summary[2]['libel']         = 'Files available for translation';
             $summary[2]['nbFiles']       = ( isset($missFiles[$lang]['total']) ) ? $missFiles[$lang]['total'] : 0;
-            $summary[2]['percentFiles']  = round(($missFiles[$lang]['total']*100)/$nbFiles[$lang]['total'], 2);
-            $summary[2]['sizeFiles']     = ($missFiles[$lang]['total_size'] == '' ) ? 0 : $missFiles[$lang]['total_size'];
+            $summary[2]['percentFiles']  = ( isset($missFiles[$lang]['total']) ) ?  round(($missFiles[$lang]['total']*100)/$nbFiles[$lang]['total'], 2) : 0;
+            $summary[2]['sizeFiles']     = ( isset($missFiles[$lang]['total_size']) ) ? $missFiles[$lang]['total_size'] : 0;
             $summary[2]['percentSize']   = (!isset($missFiles[$lang]['total_size']) || $missFiles[$lang]['total_size'] == 0 || $nbFiles[$lang]['total_size'] == 0 ) ? 0 : round(($missFiles[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[3]['id']            = 4;
