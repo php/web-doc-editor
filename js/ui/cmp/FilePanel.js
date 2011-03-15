@@ -473,7 +473,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
                 iconCls      : 'iconSpellCheck',
-                pressed      : PhDOE.user.conf[this.spellCheckConf],
+                pressed      : PhDOE.user.conf[this.spellCheckConf.module][this.spellCheckConf.itemName],
                 handler      : function(btn)
                 {
                     Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setSpellcheck(btn.pressed);
