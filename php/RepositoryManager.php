@@ -48,7 +48,7 @@ class RepositoryManager
         22 => Array('code' => 'pt',    'iconCls' => 'flags flag-pt',    'name' => 'Portuguese'),
         23 => Array('code' => 'ro',    'iconCls' => 'flags flag-ro',    'name' => 'Romanian'),
         24 => Array('code' => 'ru',    'iconCls' => 'flags flag-ru',    'name' => 'Russian'),
-        25 => Array('code' => 'se',    'iconCls' => 'flags flag-se',    'name' => 'Serbian'),
+        25 => Array('code' => 'sr',    'iconCls' => 'flags flag-sr',    'name' => 'Serbian'),
         26 => Array('code' => 'sk',    'iconCls' => 'flags flag-sk',    'name' => 'Slovak'),
         27 => Array('code' => 'sl',    'iconCls' => 'flags flag-sl',    'name' => 'Slovenian'),
         28 => Array('code' => 'es',    'iconCls' => 'flags flag-es',    'name' => 'Spanish'),
