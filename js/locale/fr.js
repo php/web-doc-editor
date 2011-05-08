@@ -527,6 +527,7 @@ var i18n = new Array();
   i18n["Saving data..."] = "Enregistrement des données...";
   i18n["Document saved"] = "Document sauvegardé";
   i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Le document <br><br><b>{0}</b><br><br> a été sauvegardé avec succès !";
+  i18n["There is somes XML's errors.<br /><br />You must fix it before saving this file.<br /><br />Valid this window to show this errors."] = "Le document contient des erreurs Xml.<br /><br />Vous devez les corriger pour pouvoir sauvegarder ce fichier.<br /><br /> Validez cet écran pour afficher les erreurs.";
 
 
 // In file: ../../js/ui/task/GetGGTranslation.js

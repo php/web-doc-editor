@@ -53,11 +53,22 @@ ui.task.SaveTransFileTask = function(config){
             
             // Remove wait msg
             msg.hide();
+            
+            // If there is some Xml error, we display the Xml window
+            if( o.XmlError && o.XmlError != 'no_error' )
+            {
+                // Display a message to inform that a file cann't be saved with some XML errors
+                Ext.MessageBox.alert(_('XML Errors'), _('There is somes XML\'s errors.<br /><br />You must fix it before saving this file.<br /><br />Valid this window to show this errors.'), function() {
+                    
+                    new ui.cmp.CheckXmlWin({
+                        errors : o.XmlError
+                    });
+                    
+                });
+            }
+            
             if (o.type) {
                 PhDOE.winForbidden(o.type);
-            }
-            else {
-                PhDOE.winForbidden();
             }
         }
     });
