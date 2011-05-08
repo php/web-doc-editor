@@ -1,51 +1,7 @@
-Ext.namespace('ui','ui.cmp','ui.cmp._CheckXmlWin');
-
-ui.cmp._CheckXmlWin.store = new Ext.data.Store({
-    reader : new Ext.data.JsonReader({
-        root          : 'Items',
-        totalProperty : 'nbItems',
-        fields        : [
-            {name : 'line'},
-            {name : 'libel'}
-        ]
-    })
-});
-
-ui.cmp._CheckXmlWin.cm = new Ext.grid.ColumnModel([
-    {
-        header    : _('Line'),
-        dataIndex : 'line'
-    },
-    {
-        id        : 'libel_id',
-        header    : _('Libel'),
-        dataIndex : 'libel'
-    }
-]);
-
-
-ui.cmp._CheckXmlWin.sm = new Ext.grid.RowSelectionModel({
-    singleSelect: true
-});
-
-ui.cmp._CheckXmlWin.grid = Ext.extend(Ext.grid.GridPanel,
-{
-    loadMask         : true,
-    autoExpandColumn : 'libel_id',
-    cm               : ui.cmp._CheckXmlWin.cm,
-    sm               : ui.cmp._CheckXmlWin.sm,
-    store            : ui.cmp._CheckXmlWin.store,
-
-    initComponent: function(config)
-    {
-        ui.cmp._CheckXmlWin.grid.superclass.initComponent.call(this);
-        Ext.apply(this, config);
-    }
-});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
 {
-    id         : 'xml-errors-win',
     title      : _('XML Errors'),
     iconCls    : 'iconXml',
     width      : 650,
@@ -59,24 +15,56 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
         text    : _('Close'),
         handler : function()
         {
-            Ext.getCmp('xml-errors-win').close();
+            this.ownerCt.ownerCt.close();
         }
     }],
+    
+    store : new Ext.data.JsonStore({
+        root          : 'Items',
+        totalProperty : 'nbItems',
+        fields        : [
+            {name : 'line'},
+            {name : 'libel'}
+        ]
+    }),
     
     addErrorsInStore : function() {
         
         var record = Ext.data.Record.create({name: 'line'}, {name: 'libel'});
 
+        this.store.removeAll();
+        
         for( i=0; i < this.errors.length; i++ ) {
-            this.items.items[0].store.add( new record({'line': this.errors[i].line, 'libel' : this.errors[i].libel+"<br>"+Ext.util.Format.htmlEncode(this.errors[i].ctx1)}) );
+            this.store.add( new record({'line': this.errors[i].line, 'libel' : this.errors[i].libel+"<br>"+Ext.util.Format.htmlEncode(this.errors[i].ctx1)}) );
         }
+        
+        this.store.sort('line', 'desc');
     },
 
     initComponent : function()
     {
         Ext.apply(this,
         {
-            items : [new ui.cmp._CheckXmlWin.grid()]
+            items : [{
+                xtype:'grid',
+                store: this.store,
+                loadMask: true,
+                autoExpandColumn : 'libel_id',
+                colModel: new Ext.grid.ColumnModel(
+                    [{
+                        header : _('Line'),
+                        dataIndex : 'line',
+                        sortable: true
+                    },{
+                        id : 'libel_id',
+                        header : _('Libel'),
+                        dataIndex: 'libel'
+                    }]
+                ),
+                sm : new Ext.grid.RowSelectionModel({
+                    singleSelect: true
+                })
+            }]
         });
         
         ui.cmp.CheckXmlWin.superclass.initComponent.call(this);
