@@ -36,7 +36,7 @@ class ToolsXmllint
 
         $this->XmlFileResult = tempnam(sys_get_temp_dir(), 'PhDOE_'.mt_rand());
 
-        $cmd = $appConf['GLOBAL_CONFIGURATION']['xmllint.bin'].' ' . $this->XmlFileName . ' > ' . $this->XmlFileResult . ' 2>&1';
+        $cmd = $appConf['GLOBAL_CONFIGURATION']['xmllint.bin'].' --noout ' . $this->XmlFileName . ' > ' . $this->XmlFileResult . ' 2>&1';
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
