@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/LogManager.php';
 require_once dirname(__FILE__) . '/LockFile.php';
 require_once dirname(__FILE__) . '/NewsReader.php';
+require_once dirname(__FILE__) . '/PreviewFile.php';
 require_once dirname(__FILE__) . '/ProjectManager.php';
 require_once dirname(__FILE__) . '/RepositoryFetcher.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
@@ -2147,6 +2148,26 @@ class ExtJsController
         return JsonResponseBuilder::success(
             array(
                 'result' => $r
+            )
+        );
+
+    }
+
+    /**
+     * 
+     */
+    public function previewFile()
+    {
+        AccountManager::getInstance()->isLogged();
+
+        $path = $this->getRequestVariable('path');
+
+        $preview = new PreviewFile($path);
+
+        return JsonResponseBuilder::success(
+            array(
+                'url' => $preview->getPreviewUrl(),
+                'buildCmd' => $preview->getBuildCmd()
             )
         );
 
