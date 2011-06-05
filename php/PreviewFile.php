@@ -76,7 +76,7 @@ class PreviewFile
         $this->buildCmd = $cmd;
         
         // We move the result into preview.baseURI
-        $cmd = 'mv '.$this->outputDir.'php-web/* '.$this->inputDir;
+        $cmd = 'mv '.$this->outputDir.'php-web/*.php '.$this->inputDir;
         exec("$cmd");
         
         $this->getOutputFileName();
