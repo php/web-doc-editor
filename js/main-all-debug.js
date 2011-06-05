@@ -11978,10 +11978,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             },{
                 scope: this,
                 iconCls:'iconView',
-                hidden : (this.lang !== 'en'),
+                hidden : !(this.lang === 'en' && this.fname.substr(-3) === 'xml'),
                 tooltip: _('<b>Preview</b> in a popup'),
                 handler: function() {
-                    
                     Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
                         if (btn == 'ok'){
                             new ui.cmp.PreviewFile({
@@ -16247,7 +16246,6 @@ ui.cmp.PortletTranslator.getInstance = function(config)
     return ui.cmp._PortletTranslator.instance;
 };Ext.namespace('ui','ui.cmp');
 
-// config - { files: {fid, fpath, fname, fdbid} }
 ui.cmp.PreviewFile = Ext.extend(Ext.Window,
 {
     id         : 'winPreviewFile',
