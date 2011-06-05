@@ -66,7 +66,7 @@ class PreviewFile
         $this->checkDir();
         
         // We clean the input output directory
-        $cmd = 'rm -R '.$this->outputDir.'* ; rm -R '.$this->inputDir.'*';
+        $cmd = 'rm -R '.$this->outputDir.'* ;';
         exec("$cmd");
         
         // We start the build for this file
