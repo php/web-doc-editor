@@ -11927,6 +11927,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             }), {
                 scope: this,
                 iconCls:'iconZoom',
+                tooltip: _('<b>Expand</b> in a popup'),
                 handler: function(b) {
                     var winMax = new Ext.Window({
                         title: this.originTitle,
@@ -11973,6 +11974,23 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
                     });
                     winMax.show();
+                }
+            },{
+                scope: this,
+                iconCls:'iconView',
+                hidden : (this.lang !== 'en'),
+                tooltip: _('<b>Preview</b> in a popup'),
+                handler: function() {
+                    
+                    Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
+                        if (btn == 'ok'){
+                            new ui.cmp.PreviewFile({
+                                path: this.lang + this.fpath + this.fname
+                            });
+                        }
+                    }, this);
+                    
+                    
                 }
             },'->',
             new ui.cmp._FilePanel.tbar.items.usernotes({
@@ -16227,7 +16245,60 @@ ui.cmp.PortletTranslator.getInstance = function(config)
         ui.cmp._PortletTranslator.instance = new ui.cmp.PortletTranslator(config);
     }
     return ui.cmp._PortletTranslator.instance;
-};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
+};Ext.namespace('ui','ui.cmp');
+
+// config - { files: {fid, fpath, fname, fdbid} }
+ui.cmp.PreviewFile = Ext.extend(Ext.Window,
+{
+    id         : 'winPreviewFile',
+    layout     : 'fit',
+    title      : _('Preview'),
+    iconCls    : 'iconView',
+    closable   : true,
+    closeAction: 'close',
+    maximized  : true,
+    modal      : true,
+    buttons : [{
+        text    : _('Close'),
+        handler : function()
+        {
+            this.ownerCt.ownerCt.close();
+        }
+    }],
+
+    initComponent : function()
+    {
+        var win = this;
+        
+        ui.cmp.PreviewFile.superclass.initComponent.call(this);
+        
+        XHR({
+            params  : {
+                task : 'previewFile',
+                path : this.path
+            },
+            success : function(r)
+            {
+                var o = Ext.util.JSON.decode(r.responseText), frame;
+                
+                // We add a random string to the URL to not display the file cache
+                o.url = o.url + '?' + Math.random();
+                
+                frame = new Ext.ux.IFrameComponent({ id: 'frame-previewFile', url: o.url });
+                
+                win.add(
+                    frame
+                );
+                win.show();
+                
+            },
+            failure : function()
+            {
+            }
+        });
+        
+    }
+});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
 
 //------------------------------------------------------------------------------
 // RepositoryTree internals

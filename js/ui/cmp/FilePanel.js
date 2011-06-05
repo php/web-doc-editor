@@ -757,6 +757,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             }), {
                 scope: this,
                 iconCls:'iconZoom',
+                tooltip: _('<b>Expand</b> in a popup'),
                 handler: function(b) {
                     var winMax = new Ext.Window({
                         title: this.originTitle,
@@ -803,6 +804,23 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }
                     });
                     winMax.show();
+                }
+            },{
+                scope: this,
+                iconCls:'iconView',
+                hidden : (this.lang !== 'en'),
+                tooltip: _('<b>Preview</b> in a popup'),
+                handler: function() {
+                    
+                    Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
+                        if (btn == 'ok'){
+                            new ui.cmp.PreviewFile({
+                                path: this.lang + this.fpath + this.fname
+                            });
+                        }
+                    }, this);
+                    
+                    
                 }
             },'->',
             new ui.cmp._FilePanel.tbar.items.usernotes({

@@ -285,6 +285,9 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Sauvegarder sous</b> la forme d'un patch";
   i18n["modified"] = "modifié";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Vérification</b> XML avec XmlLint";
+  i18n["<b>Expand</b> in a popup"] = "<b>Agrandir</b> dans un popup";
+  i18n["<b>Preview</b> in a popup"] = "<b>Prévisualiser</b> dans un popup";
+  i18n["You must save your file in order to preview the result."] = "Vous devez sauvegarder le fichier afin de prévisualiser le résultat.";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -649,3 +652,6 @@ var i18n = new Array();
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Cette action fermera ce fichier, et supprimera la modification. Le fichier reviendra à sa version originale, telle qu'elle se trouve sur le serveur VCS.";
   i18n["Validate this patch"] = "Valider ce patch";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Cette action fera que vous deviendrez le propriétaire de ce fichier. Il apparaîtra sous votre nom et vous pourrez commiter la modification.";
+  
+// In file: ../../js/ui/cmp/PreviewFile.js
+  i18n["Preview"] = "Prévisualisation";
