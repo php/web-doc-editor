@@ -861,17 +861,18 @@ class ExtJsController
         // Replace &nbsp; by space
         $fileContent = str_replace("&nbsp;", "", $fileContent);
         
-        // We check the Xml consistence
-        $xmlError = $tx->checkForError($fileContent);
-        
-        if( $xmlError != 'no_error' ) {
-            return JsonResponseBuilder::failure(
-                    array(
-                        'XmlError' => $xmlError
-                    )
-            );
+        // We check the Xml consistence only for .xml file
+        if( substr($fileName, -3) == 'xml' ) {
+            $xmlError = $tx->checkForError($fileContent);
+            
+            if( $xmlError != 'no_error' ) {
+                return JsonResponseBuilder::failure(
+                        array(
+                            'XmlError' => $xmlError
+                        )
+                );
+            }
         }
-        
         
         // Get file object
         $file = new File($fileLang, $filePath.$fileName);
