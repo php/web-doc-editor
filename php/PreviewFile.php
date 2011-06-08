@@ -70,20 +70,24 @@ class PreviewFile
         exec("$cmd");
         
         // We start the build for this file
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php -d doc-base/.manual.xml --output '.$this->outputDir;
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
         exec("$cmd");
         
         $this->buildCmd = $cmd;
         
-        // We move the result into preview.baseURI
-        $cmd = 'mv '.$this->outputDir.'php-web/*.php '.$this->inputDir;
+        // Only move the specific file we are generating
+        $xmlID = $this->getOutputId();
+        $filename = 'phdoe-' . time() . '-' . $xmlID. '.php';
+        $cmd = 'mv '.$this->outputDir.'php-web/'.$xmlID.'.php '.$this->inputDir. $filename;
         exec("$cmd");
+        $this->moveCmd = $cmd;
         
-        $this->getOutputFileName();
+        
+        $this->previewUrl = $this->am->appConf[$this->am->project]['preview.baseURI'].'manual/en/' . $filename;
         
     }
     
-    private function getOutputFileName()
+    private function getOutputId()
     {
         // The output file name is the first ID of the file
         $file = explode('/', $this->path);
@@ -96,8 +100,7 @@ class PreviewFile
         
         $xmlIDs = explode('|',$info['xmlid']);
         $xmlID = $xmlIDs[0];
-        
-        $this->previewUrl = $this->am->appConf[$this->am->project]['preview.baseURI'].'manual/en/'.$xmlID.'.php';
+        return $xmlID;
     }
     
     public function getPreviewUrl() {
