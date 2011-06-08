@@ -65,7 +65,7 @@ class PreviewFile
         $cmd = 'rm -R '.$this->outputDir.'* ;';
         exec("$cmd", $output);
         $this->cleanCmd = $cmd;
-        $this->cleanOutput = $output;
+        $this->cleanLog = $output;
         
         $rename = 0;
         $t = time();
