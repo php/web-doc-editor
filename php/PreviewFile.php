@@ -34,10 +34,6 @@ class PreviewFile
         
         $fullPath = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'/'.$this->path;
         
-        if( file_exists($fullPath.'.new') ) {
-            $this->path = $this->path.'.new';
-        }
-        
     }
     
     private function checkDir()
@@ -69,9 +65,23 @@ class PreviewFile
         $cmd = 'rm -R '.$this->outputDir.'* ;';
         exec("$cmd");
         
+        $rename = 0;
+        $t = time();
+        // We are editing temporary file
+        if( file_exists($fullPath.'.new') ) {
+            $rename = 1;
+            rename($this->path, $this->path . $t);
+            rename($this->path .'.new', $this->path);
+        }
+        
         // We start the build for this file
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
         exec("$cmd");
+        // Rename it back
+        if ($rename) {
+            rename($this->path, $this->path . '.new');
+            rename($this->path . $t, $this->path);
+        }
         
         $this->buildCmd = $cmd;
         
