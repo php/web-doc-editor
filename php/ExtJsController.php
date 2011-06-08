@@ -2169,7 +2169,7 @@ class ExtJsController
             array(
                 'url' => $preview->getPreviewUrl(),
                 'log' => array(
-                    'buildCmd' => $preview->getBuildCmd()
+                    'buildCmd' => $preview->getBuildCmd(),
                     'buildLog' => $preview->buildLog,
                     'moveCmd'  => $preview->moveCmd,
                     'moveLog'  => $preview->moveLog,
