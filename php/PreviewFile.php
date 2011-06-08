@@ -32,7 +32,7 @@ class PreviewFile
         $appConf = $this->am->appConf;
         $project = $this->am->project;
         
-        $fullPath = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'/'.$this->path;
+        $this->fullPath = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'/'.$this->path;
         
     }
     
@@ -68,10 +68,10 @@ class PreviewFile
         $rename = 0;
         $t = time();
         // We are editing temporary file
-        if( file_exists($fullPath.'.new') ) {
+        if( file_exists($this->fullPath.'.new') ) {
             $rename = 1;
-            rename($this->path, $this->path . $t);
-            rename($this->path .'.new', $this->path);
+            rename($this->fullPath, $this->fullPath . $t);
+            rename($this->fullPath .'.new', $this->fullPath);
         }
         
         // We start the build for this file
@@ -79,8 +79,8 @@ class PreviewFile
         exec("$cmd");
         // Rename it back
         if ($rename) {
-            rename($this->path, $this->path . '.new');
-            rename($this->path . $t, $this->path);
+            rename($this->fullPath, $this->fullPath . '.new');
+            rename($this->fullPath . $t, $this->fullPath);
         }
         
         $this->buildCmd = $cmd;
