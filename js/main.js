@@ -520,7 +520,7 @@ var PhDOE = function()
                         }
                     }, {
                         id        : 'acc-work-in-progress',
-                        title     : _('Work in progress') + ' (<em id="acc-work-in-progress-nb">0</em>)',
+                        title     : _('Work in progress') + ' (<em id="acc-work-in-progress-nb" qtip="'+_('Total number of your files')+'">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconWorkInProgress',
@@ -540,7 +540,7 @@ var PhDOE = function()
                                 Ext.getCmp('commit-log-win').show('acc-patches');
                             }
                         }],
-                        title     : _('Patches for review') + ' (<em id="acc-patches-nb">0</em>)',
+                        title     : _('Patches for review') + ' (<em id="acc-patches-nb" qtip="'+_('Total number of your files')+'">0</em>)',
                         layout    : 'fit',
                         border    : false,
                         iconCls   : 'iconPatch',
