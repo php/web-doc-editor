@@ -1,4 +1,4 @@
-Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.2.0/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
 // Add ucFirst to string object
 String.prototype.ucFirst = function () {
@@ -8849,7 +8849,7 @@ ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
         ['themes/ExtJsThemes/black/css/xtheme-black.css',                     _('Black')],
         ['themes/empty.css',                                                  _('Default')],
         ['themes/ExtJsThemes/darkgray/css/xtheme-darkgray.css',               _('DarkGray')],
-        ['http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/css/xtheme-gray.css', _('Gray')],
+        ['js/ExtJs/resources/css/xtheme-gray.css',                            _('Gray')],
         ['themes/ExtJsThemes/gray-extend/css/xtheme-gray-extend.css',         _('Gray Extend')],
         ['themes/ExtJsThemes/indigo/css/xtheme-indigo.css',                   _('Indigo')],
         ['themes/ExtJsThemes/midnight/css/xtheme-midnight.css',               _('Midnight')],
@@ -15814,7 +15814,7 @@ ui.cmp._PortletTranslationGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
 {
     height        : 400,
-    url           : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
+    url           : 'js/ExtJs/resources/charts.swf',
     dataField     : 'total',
     categoryField : 'libel',
     store         : ui.cmp._PortletTranslationGraph.store,
@@ -15904,7 +15904,7 @@ ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 {
     height      : 400,
-    url         : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
+    url         : 'js/ExtJs/resources/charts.swf',
     xField      : 'libel',
     tipRenderer : function(chart, record){
         return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';

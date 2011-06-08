@@ -1,4 +1,4 @@
-Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.2.0/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
 // Add ucFirst to string object
 String.prototype.ucFirst = function () {
@@ -468,7 +468,7 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
 Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = function()
 {
     Ext.QuickTips.init();
-    Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.2.0/resources/images/default/s.gif';
+    Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
     return {
 

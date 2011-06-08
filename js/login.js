@@ -1,7 +1,7 @@
 var PhDOE_loginPage = function()
 {
     Ext.QuickTips.init();
-    Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.2.0/resources/images/default/s.gif';
+    Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
     return {
 

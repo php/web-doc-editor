@@ -21,7 +21,7 @@ ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
 ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
 {
     height      : 400,
-    url         : 'http://extjs.cachefly.net/ext-' + ExtJsVersion + '/resources/charts.swf',
+    url         : 'js/ExtJs/resources/charts.swf',
     xField      : 'libel',
     tipRenderer : function(chart, record){
         return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
