@@ -77,7 +77,7 @@ class PreviewFile
         }
         
         // We start the build for this file
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
+        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --with-php=' . $appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
         exec("$cmd", $output);
         $this->buildCmd = $cmd;
         $this->buildLog = $output;
