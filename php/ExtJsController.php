@@ -2168,7 +2168,14 @@ class ExtJsController
         return JsonResponseBuilder::success(
             array(
                 'url' => $preview->getPreviewUrl(),
-                'buildCmd' => $preview->getBuildCmd()
+                'log' => array(
+                    'buildCmd' => $preview->getBuildCmd()
+                    'buildLog' => $preview->buildLog,
+                    'moveCmd'  => $preview->moveCmd,
+                    'moveLog'  => $preview->moveLog,
+                    'cleanCmd' => $preview->cleanCmd,
+                    'cleanLog' => $preview->cleanLog,
+                ),
             )
         );
 

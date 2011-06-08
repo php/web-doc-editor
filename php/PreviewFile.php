@@ -63,7 +63,9 @@ class PreviewFile
         
         // We clean the input output directory
         $cmd = 'rm -R '.$this->outputDir.'* ;';
-        exec("$cmd");
+        exec("$cmd", $output);
+        $this->cleanCmd = $cmd;
+        $this->cleanOutput = $output;
         
         $rename = 0;
         $t = time();
@@ -76,21 +78,24 @@ class PreviewFile
         
         // We start the build for this file
         $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
-        exec("$cmd");
+        exec("$cmd", $output);
+        $this->buildCmd = $cmd;
+        $this->buildLog = $output;
+
         // Rename it back
         if ($rename) {
             rename($this->fullPath, $this->fullPath . '.new');
             rename($this->fullPath . $t, $this->fullPath);
         }
         
-        $this->buildCmd = $cmd;
         
         // Only move the specific file we are generating
         $xmlID = $this->getOutputId();
         $filename = 'phdoe-' . time() . '-' . $xmlID. '.php';
         $cmd = 'mv '.$this->outputDir.'php-web/'.$xmlID.'.php '.$this->inputDir. $filename;
-        exec("$cmd");
+        exec("$cmd", $output);
         $this->moveCmd = $cmd;
+        $this->moveLog = $output;
         
         
         $this->previewUrl = $this->am->appConf[$this->am->project]['preview.baseURI'].'manual/en/' . $filename;
