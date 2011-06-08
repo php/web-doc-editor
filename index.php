@@ -2,8 +2,6 @@
 
 session_start();
 
-$ExtJsVersion = "3.3.1";
-
 require_once './php/html.templates.php';
 
 // Perm link management
@@ -60,18 +58,16 @@ if (isset($_REQUEST['perm'])) {
     $jsVar = 'var directAccess = false;';
 }
 
-$jsVar .= " var ExtJsVersion = '$ExtJsVersion';";
-
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
     echo headerTemplate();
-    echo cssLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/resources/css/ext-all.css');
+    echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login-all.css');
     echo jsCallTemplate($jsVar);
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-    echo jsLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/adapter/ext/ext-base.js');
+    echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-    echo jsLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/ext-all.js');
+    echo jsLoadTemplate('js/ExtJs/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
     echo jsLoadTemplate('js/login-all.js');
     echo footerTemplate();
@@ -79,7 +75,7 @@ if (!isset($_SESSION['userID'])) {
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/resources/css/ext-all.css', 'extTheme');
+echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css', 'extTheme');
 echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/main-all.css');
 
@@ -87,9 +83,9 @@ echo jsCallTemplate($jsVar);
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-echo jsLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/adapter/ext/ext-base.js');
+echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-echo jsLoadTemplate('http://extjs.cachefly.net/ext-'.$ExtJsVersion.'/ext-all.js');
+echo jsLoadTemplate('js/ExtJs/ext-all.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
