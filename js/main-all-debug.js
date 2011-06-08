@@ -11981,15 +11981,21 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 hidden : !(this.lang === 'en' && this.fname.substr(-3) === 'xml'),
                 tooltip: _('<b>Preview</b> in a popup'),
                 handler: function() {
-                    Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
-                        if (btn == 'ok'){
+                    var needsave  = Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified;
+                    if (needsave) {
+                        Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
+                            if (btn == 'ok'){
+                                new ui.cmp.PreviewFile({
+                                    path: this.lang + this.fpath + this.fname
+                                });
+                            }
+                        }, this);
+                    }
+                    else {
                             new ui.cmp.PreviewFile({
                                 path: this.lang + this.fpath + this.fname
                             });
-                        }
-                    }, this);
-                    
-                    
+                    }
                 }
             },'->',
             new ui.cmp._FilePanel.tbar.items.usernotes({
@@ -12192,7 +12198,8 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         });
         ui.cmp.FilePanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 //------------------------------------------------------------------------------
 // GoogleTranslationPanel
@@ -18835,7 +18842,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 307036 $',
+            uiRevision: '$Revision: 311936 $',
             conf: ''
         },
 

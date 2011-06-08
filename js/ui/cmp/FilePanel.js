@@ -811,7 +811,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                 hidden : !(this.lang === 'en' && this.fname.substr(-3) === 'xml'),
                 tooltip: _('<b>Preview</b> in a popup'),
                 handler: function() {
-                    var needsave  = Ext.getCmp(id_prefix + '-FILE-' + this.fid).cmpFile.isModified;
+                    var needsave  = Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified;
                     if (needsave) {
                         Ext.Msg.alert(_('Information'), _('You must save your file in order to preview the result.'), function(btn){
                             if (btn == 'ok'){
@@ -822,11 +822,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         }, this);
                     }
                     else {
-                        if (btn == 'ok'){
-                            new ui.cmp.PreviewFile({
-                                path: this.lang + this.fpath + this.fname
-                            });
-                        }
+                        new ui.cmp.PreviewFile({
+                            path: this.lang + this.fpath + this.fname
+                        });
                     }
                 }
             },'->',
