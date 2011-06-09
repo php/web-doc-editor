@@ -43,10 +43,11 @@ ui.cmp.About = Ext.extend(Ext.Window,
                             '</div>'
                 }, {
                     title : _('Help and support'),
-                    html  : '<div id="phd-oe-support">' +
-                                _('Mailing list:') + ' <a href="mailto:phpdoc@lists.php.net">phpdoc@lists.php.net</a><br />' +
-                                _('IRC:') + ' <a href="irc://irc.efnet.org/#php.doc">EFnet: #php.doc</a> ' +
-                            '</div>'
+                    bodyStyle : 'padding:15px',
+                    html  : '<div id="phd-oe-support"><ul>' +
+                                '<li>' + _('Mailing list:') + '<a href="mailto:phpdoc@lists.php.net">phpdoc@lists.php.net</a></li>' +
+                                '<li>' + _('IRC:') + '<a href="irc://irc.efnet.org/#php.doc">EFnet: #php.doc</a></li>' +
+                            '</ul></div>'
                 }, {
                     title     : _('Credits'),
                     bodyStyle : 'padding:15px',
