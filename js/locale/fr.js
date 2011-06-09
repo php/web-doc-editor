@@ -485,6 +485,9 @@ var i18n = new Array();
   i18n["Code editor"] = "Éditeur de code";
   i18n["Icon pack"] = "Les icones";
   i18n["License"] = "Licence";
+  i18n["Help and support"] = "Aide et support";
+  i18n["Mailing list:"] = "Liste de diffusion :";
+  i18n["IRC:"] = "IRC : ";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
