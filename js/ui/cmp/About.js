@@ -42,6 +42,12 @@ ui.cmp.About = Ext.extend(Ext.Window,
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
                             '</div>'
                 }, {
+                    title : _('Help and support'),
+                    html  : '<div id="phd-oe-support">' +
+                                _('Mailing list:') + ' <a href="mailto:phpdoc@lists.php.net">phpdoc@lists.php.net</a><br />' +
+                                _('IRC:') + ' <a href="irc://irc.efnet.org/#php.doc">EFnet: #php.doc</a> ' +
+                            '</div>'
+                }, {
                     title     : _('Credits'),
                     bodyStyle : 'padding:15px',
                     html      : '<div id="phd-oe-credit"><ul>' +
