@@ -32,6 +32,6 @@
 == Other notes ==
 * Anonymous authentication : anonymous with blank password
 * Or use your own SVN credentials
-* After modifying any .js, run scripts/util/compress-js.sh, you need yui-compressor-2.4.2+
-  The script will look for scripts/util/yuicompressor.jar
+* After modifying any .js, run scripts/utils/compress.sh, you need yui-compressor-2.4.2+
+  The script will look for scripts/utils/yuicompressor.jar
 
