@@ -153,6 +153,7 @@ class SvnClient
 
         $host = $appConf[$project]['vcs.server.host'];
         $port = $appConf[$project]['vcs.server.port'];
+        $full_host = ($port == 443 ? 'ssl://' : '') . $host;
         $uri  = '/' . $appConf[$project]['vcs.server.repos'] . '!svn/act/'.$uuid;
 
         $ping = sprintf('MKACTIVITY %s HTTP/1.1
@@ -169,8 +170,8 @@ Accept-Encoding: gzip
 
 ', $uri, $host);
 
-        $h = @fsockopen($host, $port);
 
+        $h = @fsockopen($full_host, $port);
         if( !$h ) { return 'svn.php.net seems to be down !'; }
 
         $matches = array();
@@ -213,7 +214,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
 ', $uri, $host, $username, $data['realm'], $data['nonce'], $uri, $response, $data['cnonce'], $data['qop']);
 
-        $h = @fsockopen($host, $port);
+        $h = @fsockopen($full_host, $port);
         fwrite($h, $pong);
         $r = trim(fread($h, 2048));
         fclose($h);
@@ -243,9 +244,10 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $port   = $appConf[$project]['vcs.server.port'];
         $uri    = $appConf[$project]['vcs.server.path'];
         $module = $appConf[$project]['vcs.module'];
+        $scheme = ($port == 443 ? 'https' : 'http');
 
         $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; '
-              ."svn co http://$host:$port/$uri $module";
+              ."svn co $scheme://$host:$port/$uri $module";
 
         $err = 1;
         $trial_threshold = 3;
