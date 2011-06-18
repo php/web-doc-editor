@@ -415,6 +415,7 @@ var i18n = new Array();
   i18n["Report bugs"] = "Rapporter un bogue";
   i18n["Documentation"] = "Documentation";
   i18n["About"] = "À propos";
+  i18n["Chat with us on IRC !"] = "Chattez avec nous sur IRC !";
 
 
 // In file: ../../js/ui/component/VCSLogGrid.js

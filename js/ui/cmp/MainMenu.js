@@ -387,6 +387,19 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                         Ext.getCmp('main-panel').setActiveTab('tab-documentation');
                     }
                 }
+            }, {
+                id      : 'win-chat-btn',
+                text    : _('Chat with us on IRC !'),
+                iconCls : 'iconChat',
+                handler : function()
+                {
+                    if( ! Ext.getCmp('win-chat') ) {
+                        new ui.cmp.Chat();
+                    }
+                    Ext.getCmp('win-chat').show(Ext.get('mainMenu'));
+
+                    
+                }
             }, '-', {
                 id      : 'winabout-btn',
                 text    : _('About'),

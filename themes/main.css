@@ -90,6 +90,7 @@
 .iconBook              { background-image: url(./img/documentation.png)         !important;}
 .iconBugs              { background-image: url(./img/bug.png)                   !important;}
 .iconBuildStatus       { background-image: url(./img/run-build-install-root.png)!important;}
+.iconChat              { background-image: url(./img/konversation.png)          !important;}
 .iconCheckBuild        { background-image: url(./img/run-build.png)             !important;}
 .iconCheckDoc          { background-image: url(./img/utilities-terminal.png)    !important;}
 .iconCheckEntities     { background-image: url(./img/insert-link.png)           !important;}

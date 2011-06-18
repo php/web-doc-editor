@@ -7459,6 +7459,38 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
     }
 });Ext.namespace('ui','ui.cmp');
 
+ui.cmp.Chat = Ext.extend(Ext.Window,
+{
+    id        : 'win-chat',
+    iconCls   : 'iconChat',
+    layout    : 'fit',
+    width     : 800,
+    height    : 600,
+    modal     : true,
+    plain     : true,
+    bodyStyle : 'color:#000',
+    closeAction:'hide',
+
+    initComponent : function()
+    {
+        var chatLogin = PhDOE.user.login;
+        
+        if( PhDOE.user.isAnonymous ) {
+            chatLogin = 'anonymous_%3F%3F%3F';
+        }
+        
+        Ext.apply(this,
+        {
+            title : _('Chat with us on IRC !'),
+            items : [new Ext.ux.IFrameComponent({
+                id: 'frame-win-chat',
+                url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=phdoe_'+ chatLogin
+            })]
+        });
+        ui.cmp.Chat.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.cmp');
+
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Check build'),
@@ -12641,6 +12673,19 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                     } else {
                         Ext.getCmp('main-panel').setActiveTab('tab-documentation');
                     }
+                }
+            }, {
+                id      : 'win-chat-btn',
+                text    : _('Chat with us on IRC !'),
+                iconCls : 'iconChat',
+                handler : function()
+                {
+                    if( ! Ext.getCmp('win-chat') ) {
+                        new ui.cmp.Chat();
+                    }
+                    Ext.getCmp('win-chat').show(Ext.get('mainMenu'));
+
+                    
                 }
             }, '-', {
                 id      : 'winabout-btn',
