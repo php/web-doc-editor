@@ -317,7 +317,7 @@ class File
                 `lang`="%s" AND
                 `path`="%s" AND
                 `name`="%s"',
-            $project,
+            $db->real_escape_string($project),
             $db->real_escape_string($this->lang),
             $db->real_escape_string($this->path),
             $db->real_escape_string($hereName)
