@@ -667,7 +667,12 @@ class ExtJsController
      */
     public function getFile()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+        
+        $am->isLogged();
+        
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -690,6 +695,16 @@ class ExtJsController
         // Handle if we want to load a skeleton when we create a new file
         if( $skeleton )
         {
+            // Security fix
+            $skeleton = str_replace('..', '',  $skeleton);
+            // $skeleton is the ful path of the file
+            // It must start with this  : $appConf[$project]['skeletons.folder']
+            
+            if( substr($skeleton, 0, strlen($appConf[$project]['skeletons.folder']) ) !=  $appConf[$project]['skeletons.folder'] ) {
+                return false;
+            }
+            
+            
             $return['content'] = ( $skeleton == '-' ) ? '' : file_get_contents($skeleton);
             $return['warn_tab'] = false;
             $return['warn_encoding'] = false;
