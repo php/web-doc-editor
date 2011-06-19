@@ -398,7 +398,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                         var chatLogin = PhDOE.user.login;
                         
                         if( PhDOE.user.isAnonymous ) {
-                            chatLogin = 'anonymous_%3F%3F%3F';
+                            chatLogin = 'an%3F%3F%3F';
                         }
                         
                         Ext.getCmp('main-panel').add({
@@ -408,7 +408,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconChat',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=phdoe_'+chatLogin }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+chatLogin }) ]
                         });
                     }
 
