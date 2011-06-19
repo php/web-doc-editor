@@ -293,6 +293,7 @@ class File
     public function isModified()
     {
         $am      = AccountManager::getInstance();
+        $db      = DBConnection::getInstance();
         $project = $am->project;
 
         // If the current file is a .new file, we must escape the .new otherwise, we haven't any result from the database
@@ -317,12 +318,12 @@ class File
                 `path`="%s" AND
                 `name`="%s"',
             $project,
-            $this->lang,
-            $this->path,
-            $hereName
+            $db->real_escape_string($this->lang),
+            $db->real_escape_string($this->path),
+            $db->real_escape_string($hereName)
         );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         if( $r->num_rows == 0 ) {
             return false;
