@@ -1150,6 +1150,11 @@ TODO: Handle project here
 
         $m = $this->getModifies();
 
+        // Test if this dir exist
+        if( !is_dir($appConf[$project]['vcs.path'].$dir) ) {
+            return;
+        }
+
         $d = dir($appConf[$project]['vcs.path'].$dir);
 
         $files = array();

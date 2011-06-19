@@ -1554,15 +1554,18 @@ class ExtJsController
      */
     public function getAllFiles()
     {
-        AccountManager::getInstance()->isLogged();
+        $am = AccountManager::getInstance();
+        $rf = RepositoryFetcher::getInstance();
+        
+        $am->isLogged();
 
         $node   = $this->getRequestVariable('node');
         $search = $this->getRequestVariable('search');
 
         if ($this->hasRequestVariable('search')) {
-            $files = RepositoryFetcher::getInstance()->getFileByKeyword($search);
+            $files = $rf->getFileByKeyword($search);
         } else {
-            $files = RepositoryFetcher::getInstance()->getFilesByDirectory($node);
+            $files = $rf->getFilesByDirectory($node);
         }
 
         return JsonResponseBuilder::response($files);
