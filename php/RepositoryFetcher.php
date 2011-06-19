@@ -92,7 +92,7 @@ class RepositoryFetcher
              ORDER BY `date` DESC
              LIMIT %s, %s',
 
-            $am->project, $start, $limit
+            $am->project, (int)$start, (int)$limit
         );
         $r = DBConnection::getInstance()->query($s);
 
@@ -1100,15 +1100,19 @@ TODO: Handle project here
     public function getFileByKeyword($key)
     {
         $am      = AccountManager::getInstance();
+        $db      = DBConnection::getInstance();
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
         $s = sprintf(
             'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
              AND ( `name` LIKE \'%%%s%%\' OR `xmlid` LIKE \'%%%s%%\' ) ORDER BY `lang`, `path`, `name`',
-            $project, $vcsLang, $key, $key
+            $project,
+            $vcsLang,
+            $db->real_escape_string($key),
+            $db->real_escape_string($key)
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         $files = array();
         while ($a = $r->fetch_object()) {

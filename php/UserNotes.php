@@ -24,8 +24,8 @@ class UserNotes {
 
     public function getNotes($file)
     {
-
         $am = AccountManager::getInstance();
+        $db = DBConnection::getInstance();
         $project = $am->project;
 
         $s = sprintf(
@@ -36,10 +36,10 @@ class UserNotes {
              WHERE
                 `project` = "%s" AND `file`="%s"',
             $project,
-            $file // must be like this : fr/reference/cairo/cairocontext/appendpath.xml
+            $db->real_escape_string($file) // must be like this : fr/reference/cairo/cairocontext/appendpath.xml
         );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $db->query($s);
 
         $infos = array();
         while ($a = $r->fetch_assoc()) {
