@@ -388,16 +388,31 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                     }
                 }
             }, {
-                id      : 'win-chat-btn',
+                id      : 'tab-chat-btn',
                 text    : _('Chat with us on IRC !'),
                 iconCls : 'iconChat',
                 handler : function()
                 {
-                    if( ! Ext.getCmp('win-chat') ) {
-                        new ui.cmp.Chat();
-                    }
-                    Ext.getCmp('win-chat').show(Ext.get('mainMenu'));
+                    if (!Ext.getCmp('main-panel').findById('tab-chat')) {
 
+                        var chatLogin = PhDOE.user.login;
+                        
+                        if( PhDOE.user.isAnonymous ) {
+                            chatLogin = 'anonymous_%3F%3F%3F';
+                        }
+                        
+                        Ext.getCmp('main-panel').add({
+                            id         : 'tab-chat',
+                            xtype      : 'panel',
+                            title      : _('Chat'),
+                            iconCls    : 'iconChat',
+                            closable   : true,
+                            layout     : 'fit',
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=phdoe_'+chatLogin }) ]
+                        });
+                    }
+
+                    Ext.getCmp('main-panel').setActiveTab('tab-chat');
                     
                 }
             }, '-', {
