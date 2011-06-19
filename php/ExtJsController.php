@@ -700,6 +700,10 @@ class ExtJsController
             // $skeleton is the ful path of the file
             // It must start with this  : $appConf[$project]['skeletons.folder']
             
+            if( !isset($appConf[$project]['skeletons.folder']) ) {
+                return false;
+            }
+            
             if( substr($skeleton, 0, strlen($appConf[$project]['skeletons.folder']) ) !=  $appConf[$project]['skeletons.folder'] ) {
                 return false;
             }
