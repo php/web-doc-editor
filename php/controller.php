@@ -24,6 +24,8 @@ if (method_exists($controller, $method)) {
     );
 }
 
+header('Content-type: text/plain; charset=utf-8');
+header('X-Content-Type-Options: nosniff');
 header('Content-Length:' . strlen($response));
 echo $response;
 exit;
