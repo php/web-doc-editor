@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/SaferExec.php';
+
 class SvnClient
 {
     private static $instance;
@@ -246,15 +248,17 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $module = $appConf[$project]['vcs.module'];
         $scheme = ($port == 443 ? 'https' : 'http');
 
-        $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; '
-              ."svn co $scheme://$host:$port/$uri $module";
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf['GLOBAL_CONFIGURATION']['data.path'])),
+            new ExecStatement('svn co %s %s 2>&1', array("$scheme://$host:$port/$uri", $module)),
+        );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn co trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
@@ -273,14 +277,17 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .'.$path;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('svn up %s 2>&1', array($path)),
+        );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn up trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
@@ -304,14 +311,17 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up '.$file->full_path;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('svn up %s 2>&1', array($file->full_path))
+        );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn up trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
@@ -333,14 +343,17 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn up .';
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('svn up . 2>&1')
+        );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn up trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
@@ -365,12 +378,15 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn log '.$file;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$path)),
+            new ExecStatement('svn log %s', array($file))
+        );
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
             $output = array();
-            exec($cmd, $output);
+            SaferExec::execMulti($commands, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
@@ -416,12 +432,15 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; svn diff -r '.$rev1.':'.$rev2.' '.$file;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$path)),
+            new ExecStatement('svn diff -r %d:%d %s', array((int)$rev1, (int)$rev2, $file))
+        );
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
             $output = array();
-            exec($cmd, $output);
+            SaferExec::execMulti($commands, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
@@ -459,14 +478,18 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         {
             // We add this new folder into repository
 
-            $cmd = 'cd '.$appConf[$project]['vcs.path'].'; svn add --non-recursive '.$path.'; svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username '.$vcsLogin.' --password '.$vcsPasswd.' '.$path;
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+                new ExecStatement('svn add --non-recursive %s', array($path)),
+                new ExecStatement('svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username %s --password %s %s 2>&1', array($vcsLogin, $vcsPasswd, $path))
+            );
 
             $err = 1;
             $trial_threshold = 3;
             $output = array();
             for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
                 array_push($output, "svn ci trial #$trial\n");
-                exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+                SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
                 if ($err == 0) array_push($output, "Success.\n");
             }
             $commitLogMessage = array_merge($commitLogMessage, $output);
@@ -538,38 +561,41 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $info['nbFilesDelete'] = count($delete_stack);
         $info['nbFilesUpdate'] = count($update_stack);
 
-        // Linearization
-        $filesCreate = implode($create_stack, ' ');
-        $filesUpdate = implode($update_stack, ' ');
-        $filesDelete = implode($delete_stack, ' ');
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path']))
+        );
 
-        // Buil the command line
-
-        $cmdCreate = $cmdDelete = $cmdUpdate = '';
-
-        if (trim($filesCreate) != '') {
-            $cmdCreate = "svn add $filesCreate ; svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesCreate ; svn propset svn:eol-style \"native\" $filesCreate ; ";
+        if (!empty($delete_stack))
+        {
+            $commands[] = new ExecStatement('svn delete' . str_repeat(' %s', $info['nbFilesDelete']), $delete_stack);
         }
-        if (trim($filesDelete) != '') {
-            $cmdDelete = "svn delete $filesDelete ; ";
+        if (!empty($create_stack))
+        {
+            $commands[] = new ExecStatement('svn add' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
+            $commands[] = new ExecStatement('svn propset svn:keywords "Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL"' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
+            $commands[] = new ExecStatement('svn propset svn:eol-style "native"' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
         }
-        if (trim($filesUpdate) != '') {
-            $cmdUpdate = "svn propset svn:keywords \"Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL\" $filesUpdate ; svn propset svn:eol-style \"native\" $filesUpdate ; ";
+        if (!empty($update_stack))
+        {
+            $commands[] = new ExecStatement('svn propset svn:keywords "Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL"' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
+            $commands[] = new ExecStatement('svn propset svn:eol-style "native"' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
         }
 
-        $cmd = $cmdDelete.
-               $cmdCreate.
-               $cmdUpdate.
-               "svn ci --no-auth-cache --non-interactive -F $pathLogFile --username $vcsLogin --password $vcsPasswd $filesUpdate $filesDelete $filesCreate";
+        $args = array_mege(
+            array($pathLogFile, $vcsLogin, $vcsPasswd),
+            $update_stack,
+            $delete_stack,
+            $create_stack
+        );
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
+        $commands[] = new ExecStatement('svn ci --no-auth-cache --non-interactive -F %s --username %s --password %s' . str_repeat(' %s', $info['nbFilesCreate'] + $info['nbFilesUpdate'] + $info['nbFilesDelete']) . ' 2>&1', $args);
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn ci trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
@@ -620,20 +646,17 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $delete_stack[] = $delete[$i]->full_path;
         }
 
-        // Linearization
-        $filesCreate = implode($create_stack, ' ');
-        $filesUpdate = implode($update_stack, ' ');
-        $filesDelete = implode($delete_stack, ' ');
-
-        $cmd = "svn revert $filesCreate $filesUpdate $filesDelete";
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; ' .$cmd;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('svn revert' . str_repeat(' %s', count($create_stack) + count($update_stack) + count($delete_stack)) . ' 2>&1', array_merge($create_stack, $update_stack, $delete_stack))
+        );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
             array_push($output, "svn revert trial #$trial\n");
-            exec("$cmd 2>&1", $output, $err); // if no err, err = 0
+            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 

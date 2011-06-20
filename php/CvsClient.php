@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/SaferExec.php';
+
 class CvsClient
 {
     private static $instance;
@@ -99,9 +101,12 @@ class CvsClient
     {
         $appConf = AccountManager::getInstance()->appConf;
 
-        $cmd = 'cd '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'; cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login;'
-              .'cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all;';
-        exec($cmd);
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf['GLOBAL_CONFIGURATION']['data.path'])),
+            new ExecStatement('cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository login'),
+            new ExecStatement('cvs -d :pserver:cvsread:phpfi@cvs.php.net:/repository checkout phpdoc-all')
+        );
+        SaferExec::execMulti($commands);
     }
 
     /**
@@ -112,8 +117,11 @@ class CvsClient
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; cvs -f -q update -d -P .;';
-        exec($cmd);
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('cvs -f -q update -d -P .')
+        );
+        SaferExec::execMulti($commands);
     }
 
     /**
@@ -128,10 +136,13 @@ class CvsClient
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; cvs log '.$file;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $path)),
+            new ExecStatement('cvs log %s', array($file))
+        );
 
         $output = array();
-        exec($cmd, $output);
+        SaferExec::execMulti($commands, $output);
 
         $output = implode("\n", $output);
 
@@ -195,10 +206,13 @@ class CvsClient
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
 
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$path.'; cvs diff -kk -u -r '.$rev2.' -r '.$rev1.' '.$file;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $path)),
+            new ExecStatement('cvs diff -kk -u -r %d -r %d %s', array((int)$rev2, (int)$rev1, $file))
+        );
 
         $output = array();
-        exec($cmd, $output);
+        SaferExec::execMulti($commands, $output);
 
         return $output;
     }
@@ -236,35 +250,31 @@ class CvsClient
             $delete_stack[] = $delete[$i]->lang.'/'.$delete[$i]->path.'/'.$delete[$i]->name;
         }
 
-        // Linearization
-        $filesCreate = implode($create_stack, ' ');
-        $filesUpdate = implode($update_stack, ' ');
-        $filesDelete = implode($delete_stack, ' ');
-
         // Buil the command line
         $cvsLogin  = AccountManager::getInstance()->vcsLogin;
         $cvsPasswd = AccountManager::getInstance()->vcsPasswd;
 
-        $cmdCreate = $cmdDelete = '';
-        if (trim($filesCreate) != '') {
-            $cmdCreate = "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f add $filesCreate && ";
-        }
-        if (trim($filesDelete) != '') {
-            $cmdDelete = "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f remove -f $filesDelete && ";
+        $commands = array(
+            new ExecStatement('export CVS_PASSFILE=%s', array(realpath($appConf['GLOBAL_CONFIGURATION']['data.path']) . '/.cvspass')),
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement('cvs -d :pserver:' . $cvsLogin . ':' . $cvsPasswd . '@cvs.php.net:/repository login')
+        );
+
+        if (!empty($delete_stack))
+        {
+            $commands[] = new ExecStatement('cvs -d :pserver:' . $cvsLogin . ':' . $cvsPasswd . '@cvs.php.net:/repository -f remove -f' . str_repeat(' %s', count($delete_stack)), array($delete_stack));
         }
 
-        // Escape single quote
-        $log = str_replace("'", "\\'", $log);
-        $cmd = $cmdDelete.
-               $cmdCreate.
-               "cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository -f commit -l -m '$log' $filesUpdate $filesDelete $filesCreate";
+        if (!empty($create_stack))
+        {
+            $commands[] = new ExecStatement('cvs -d :pserver:' . $cvsLogin . ':' . $cvsPasswd . '@cvs.php.net:/repository -f add' . str_repeat(' %s', count($create_stack)), array($create_stack));
+        }
 
-        // First, login into Cvs
-        $fullCmd = 'export CVS_PASSFILE='.realpath($appConf['GLOBAL_CONFIGURATION']['data.path']).'/.cvspass && cd '.$appConf[$project]['vcs.path'].' && '
-                  ."cvs -d :pserver:$cvsLogin:$cvsPasswd@cvs.php.net:/repository login && $cmd";
+        $args = array_merge(array($log), $create_stack, $update_stack, $delete_stack);
+        $commands[] = new ExecStatement('cvs -d :pserver:' . $cvsLogin . ':' . $cvsPasswd . '@cvs.php.net:/repository -f commit -l -m %s' . str_repeat(' %s', count($create_stack) + count($update_stack) + count($delete_stack)), $args);
 
         $output  = array();
-        exec($fullCmd, $output);
+        SaferExec::execMulti($commands, $output);
 
         return $output;
     }

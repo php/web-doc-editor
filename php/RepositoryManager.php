@@ -4,6 +4,7 @@ require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/File.php';
 require_once dirname(__FILE__) . '/LockFile.php';
+require_once dirname(__FILE__) . '/SaferExec.php';
 require_once dirname(__FILE__) . '/ToolsCheckDoc.php';
 require_once dirname(__FILE__) . '/ToolsCheckEntities.php';
 require_once dirname(__FILE__) . '/ToolsError.php';
@@ -326,23 +327,26 @@ class RepositoryManager
             "logContent" => ""
         );
 
-        $cmd = 'cd '.realpath($appConf[$project]['vcs.configure.script.path']).' && '
-              .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' configure.php --with-php='
-              .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' '
-              .$appConf[$project]['vcs.configure.script.options'];
+        $appConf[$project]['vcs.configure.script.options'] = str_replace("{LangCode}", $lang, $appConf[$project]['vcs.configure.script.options']);
 
-        $cmd = str_replace("{LangCode}", $lang, $cmd).'';
-
-        if ( $enable_xml_details == "true" ) {
-            $cmd = str_replace("{XmlDetails}", "--enable-xml-details", $cmd);
-        } else {
-            $cmd = str_replace("{XmlDetails}", "", $cmd);
+        if ( $enable_xml_details == "true" )
+        {
+            $appConf[$project]['vcs.configure.script.options'] = str_replace("{XmlDetails}", "--enable-xml-details", $appConf[$project]['vcs.configure.script.options']);
         }
+        else
+        {
+            $appConf[$project]['vcs.configure.script.options'] = str_replace("{XmlDetails}", "", $appConf[$project]['vcs.configure.script.options']);
+        }
+
+        $commands = array(
+            new ExecStatement('cd %s', array(realpath($appConf[$project]['vcs.configure.script.path']))),
+            new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' configure.php --with-php=' . $appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' ' . $appConf[$project]['vcs.configure.script.options'])
+        );
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
             $output =array();
-            exec($cmd, $output);
+            SaferExec::exec($cmd, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
@@ -1984,10 +1988,11 @@ class RepositoryManager
             $lang = $lang["code"];
             if( $lang == 'en' ) { continue; }
             
-            $cmd = 'cd '.$appConf[$project]['vcs.path'].' && '
-                  .$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/scripts/revcheck.php '.$lang.' > '.$appConf['GLOBAL_CONFIGURATION']['data.path'].'revcheck/'.$lang.'.html';
-            
-            exec("$cmd 2>&1");
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+                new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' doc-base/scripts/revcheck.php %s > %s 2>&1', array($lang, $appConf['GLOBAL_CONFIGURATION']['data.path'].'revcheck/'.$lang.'.html'))
+            );
+            SaferExec::execMulti($commands);
         }
     }
 }

@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/DBConnection.php';
 require_once dirname(__FILE__) . '/GTranslate.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
+require_once dirname(__FILE__) . '/SaferExec.php';
 require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class File
@@ -426,11 +427,13 @@ class File
         $project = $am->project;
 
         $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
-              .'diff -u '.$this->name.' '.$this->name.$ext;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
+            new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
+        );
 
         $output = array();
-        exec($cmd, $output);
+        SaferExec::execMulti($commands, $output);
 
         return implode("\r\n", $output);
     }
@@ -466,13 +469,15 @@ class File
                return '<div style="size: 10px; text-align:center;margin-top:10px;">This is a new file.</div>'; 
             } else {
 
-                $cmd = 'cd '.$appConf[$project]['vcs.path'].$this->lang.$this->path.'; '
-                      .'diff -u '.$this->name.' '.$this->name.$ext;
+                $commands = array(
+                    new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
+                    new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
+                );
 
                 $trial_threshold = 3;
                 while ($trial_threshold-- > 0) {
                     $output = array();
-                    exec($cmd, $output);
+                    SaferExec::execMulti($commands, $output);
                     if (strlen(trim(implode('', $output))) != 0) break;
                 }
             }

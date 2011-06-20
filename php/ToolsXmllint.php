@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/SaferExec.php';
+
 class ToolsXmllint
 {
     public $xmlContent;
@@ -36,12 +38,12 @@ class ToolsXmllint
 
         $this->XmlFileResult = tempnam(sys_get_temp_dir(), 'PhDOE_'.mt_rand());
 
-        $cmd = $appConf['GLOBAL_CONFIGURATION']['xmllint.bin'].' --noout ' . $this->XmlFileName . ' > ' . $this->XmlFileResult . ' 2>&1';
+        $cmd = new ExecStatement($appConf['GLOBAL_CONFIGURATION']['xmllint.bin'] . ' --noout %s > %s 2>&1', array($this->XmlFileName, $this->XmlFileResult));
 
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
             $output = array();
-            exec($cmd, $output);
+            SaferExec::exec($cmd, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 

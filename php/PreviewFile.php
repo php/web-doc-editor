@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/SaferExec.php';
+
 class PreviewFile
 {
     public $path;
@@ -62,9 +64,12 @@ class PreviewFile
         $this->checkDir();
         
         // We clean the input output directory
-        $cmd = 'rm -R '.$this->outputDir.'* ;';
-        exec("$cmd", $output);
-        $this->cleanCmd = $cmd;
+        $commands = array(
+            new ExecStatement('cd %s', array($this->outputDir)),
+            new ExecStatement('rm -R *')
+        );
+        SaferExec::execMulti($cmd, $output);
+        $this->cleanCmd = implode('; ', $commands);
         $this->cleanLog = $output;
         
         $rename = 0;
@@ -77,9 +82,14 @@ class PreviewFile
         }
         
         // We start the build for this file
-        $cmd = 'cd '.$appConf[$project]['vcs.path'].'; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' doc-base/configure.php --with-php=' . $appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' --generate='.$this->path.' ; '.$appConf['GLOBAL_CONFIGURATION']['php.bin'].' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output '.$this->outputDir;
-        exec("$cmd", $output);
-        $this->buildCmd = $cmd;
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+            new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' doc-base/configure.php --with-php=%s --generate=%s', array($appConf['GLOBAL_CONFIGURATION']['php.bin'], $this->path)),
+            new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output %s', array($this->outputDir))
+        );
+
+        SaferExec::execMulti($commands, $output);
+        $this->buildCmd = implode('; ', $commands);
         $this->buildLog = $output;
 
         // Rename it back
@@ -92,9 +102,9 @@ class PreviewFile
         // Only move the specific file we are generating
         $xmlID = $this->getOutputId();
         $filename = 'phdoe-' . time() . '-' . $xmlID. '.php';
-        $cmd = 'mv '.$this->outputDir.'php-web/'.$xmlID.'.php '.$this->inputDir. $filename;
-        exec("$cmd", $output);
-        $this->moveCmd = $cmd;
+        $cmd = new ExecStatement('mv %s %s', array($this->outputDir . 'php-web/' . $xmlID . '.php', $this->inputDir . $filename));
+        SaferExec::exec($cmd, $output);
+        $this->moveCmd = $cmd->__toString();
         $this->moveLog = $output;
         
         
