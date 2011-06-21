@@ -23,7 +23,7 @@ ui.task.GetGGTranslation = function(config)
         {
             var o    = Ext.util.JSON.decode(response.responseText);
 
-            Ext.get('GGTranslate-result').dom.innerHTML = o.translation;
+            Ext.get('GGTranslate-result').dom.innerHTML = Ext.util.Format.htmlEncode(o.translation);
             Ext.getCmp('GGTranslate-btn').setText(_('Translate !'));
             Ext.getCmp('GGTranslate-btn').enable();
         }
