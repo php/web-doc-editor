@@ -25,7 +25,7 @@ ui.cmp.Chat = Ext.extend(Ext.Window,
             title : _('Chat with us on IRC !'),
             items : [new Ext.ux.IFrameComponent({
                 id: 'frame-win-chat',
-                url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
+                url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
             })]
         });
         ui.cmp.Chat.superclass.initComponent.call(this);

@@ -378,7 +378,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconBook',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'http://wiki.php.net/doc/editor/' }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'https://wiki.php.net/doc/editor/' }) ]
                         });
 
                         Ext.getCmp('main-panel').setActiveTab('tab-documentation');
@@ -408,7 +408,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconChat',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+chatLogin }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+chatLogin }) ]
                         });
                     }
 
