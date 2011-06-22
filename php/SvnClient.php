@@ -581,7 +581,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $commands[] = new ExecStatement('svn propset svn:eol-style "native"' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
         }
 
-        $args = array_mege(
+        $args = array_merge(
             array($pathLogFile, $vcsLogin, $vcsPasswd),
             $update_stack,
             $delete_stack,
