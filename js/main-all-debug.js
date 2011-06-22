@@ -5902,12 +5902,13 @@ ui.task.GetGGTranslation = function(config)
         {
             var o    = Ext.util.JSON.decode(response.responseText);
 
-            Ext.get('GGTranslate-result').dom.innerHTML = o.translation;
+            Ext.get('GGTranslate-result').dom.innerHTML = Ext.util.Format.htmlEncode(o.translation);
             Ext.getCmp('GGTranslate-btn').setText(_('Translate !'));
             Ext.getCmp('GGTranslate-btn').enable();
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 ui.task.LoadConfigTask = function(config)
 {
@@ -7007,6 +7008,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                                     '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">' + _('Javascript FrameWork') + '</div></li>' +
                                     '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">' + _('Code editor') + '</div></li>' +
                                     '<li><a href="http://www.oxygen-icons.org/" target="_blank">Oxygen project from KDE</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
+                                    '<li><a href="http://www.mibbit.com/" target="_blank">Mibbit for donating their Premium IRC widget</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
                                 '</ul></div>'
                 }, {
                     title    : _('License'),
@@ -12633,7 +12635,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconBook',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'http://wiki.php.net/doc/editor/' }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'https://wiki.php.net/doc/editor/' }) ]
                         });
 
                         Ext.getCmp('main-panel').setActiveTab('tab-documentation');
@@ -12663,7 +12665,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconChat',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+chatLogin }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-chat', url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+chatLogin }) ]
                         });
                     }
 
