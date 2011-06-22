@@ -11,6 +11,7 @@ require_once dirname(__FILE__) . '/ProjectManager.php';
 class AccountManager
 {
     private static $instance;
+    private $conn;
 
     public static function getInstance()
     {
@@ -100,6 +101,8 @@ class AccountManager
         );
 
         $this->appConf = Config::getInstance()->getConf();
+
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -116,11 +119,9 @@ class AccountManager
      */
     public function updateLastConnect()
     {
-        $s = sprintf(
-            'UPDATE `users` SET `last_connect`=now() WHERE `userID`="%s"',
-            $this->userID
-        );
-        DBConnection::getInstance()->query($s);
+        $s = 'UPDATE `users` SET `last_connect`=now() WHERE `userID`=%d';
+        $params = array($this->userID);
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -231,21 +232,10 @@ class AccountManager
            $this->vcsLang   = $lang;
            $this->email     = $email;
 
-	       $s = sprintf(
-	           'SELECT
-	              *
-	           FROM
-	              `users`
-	           WHERE
-	              `project`        = "%s" AND
-	              `vcs_login`      = "%s" AND
-	              `anonymousIdent` = "%s" ',
-	           $project,
-	           $this->vcsLogin,
-	           $this->anonymousIdent
-	       );
+           $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
+           $params = array($project, $this->vcsLogin, $this->anonymousIdent);
            
-           $r = DBConnection::getInstance()->query($s);
+           $r = $this->conn->query($s, $params);
 
            if ($r->num_rows == 1) {
 
@@ -373,21 +363,16 @@ class AccountManager
     
     public function updateEmail()
     {
-        $db = DBConnection::getInstance();
-        
-        $s = sprintf(
-            'UPDATE `users` SET `email`="%s" WHERE `userID`="%s"',
-            $this->email, $this->userID
-        );
-        $db->query($s);
+        $s = 'UPDATE `users` SET `email`="%s" WHERE `userID`=%d';
+        $params = array($this->email, $this->userID);
+        $this->conn->query($s, $params);
     }
     
     public function getVCSUsers()
     {
-        $db = DBConnection::getInstance();
-        
-        $s = 'SELECT DISTINCT(`vcs_login`) as userName FROM `users` WHERE project="'.$this->project.'" AND vcs_login != "anonymous"';
-        $r = $db->query($s);
+        $s = 'SELECT DISTINCT(`vcs_login`) as userName FROM `users` WHERE project="%s" AND vcs_login != "anonymous"';
+        $params = array($this->project);
+        $r = $this->conn->query($s, $params);
         
         $result = array();
         $i=0;
@@ -402,19 +387,10 @@ class AccountManager
     
     public function setFileOwner($fileIdDB, $newOwner)
     {
-        $db = DBConnection::getInstance();
-        
-        $s = sprintf(
-            'UPDATE
-                `work`
-             SET
-                `user` = "%s"
-             WHERE
-                `id` = "%s"',
-            $db->real_escape_string($newOwner),
-            $fileIdDB
-        );
-        $db->query($s);
+        $s = 'UPDATE `work` SET `user` = "%s" WHERE `id` = %d';
+        $params = array($newOwner, $fileIdDB);
+
+        $this->conn->query($s, $params);
     }
     
 
@@ -428,17 +404,10 @@ class AccountManager
         $am      = AccountManager::getInstance();
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT
-                `email`
-             FROM
-                `users`
-             WHERE
-                `project`   = "%s" AND
-                `vcs_login` = "%s"',
-            $project, $user
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $s = 'SELECT `email` FROM `users` WHERE `project` = "%s" AND `vcs_login` = "%s"';
+        $params = array($project, $user);
+
+        $r = $this->conn->query($s, $params);
         $nb = $r->num_rows;
 
         // We have found an email
@@ -458,14 +427,11 @@ class AccountManager
      */
     private function register()
     {
-        $db = DBConnection::getInstance();
+        $s = 'INSERT INTO `users` (`project`, `vcs_login`, `email`, `anonymousIdent`, `conf`) VALUES ("%s","%s","%s","%s","%s")';
+        $params = array($this->project, $this->vcsLogin, $this->email, $this->anonymousIdent, json_encode($this->defaultConf));
 
-        $s = sprintf(
-            'INSERT INTO `users` (`project`, `vcs_login`, `email`, `anonymousIdent`, `conf`) VALUES ("%s","%s","%s","%s","%s")',
-            $this->project, $this->vcsLogin, $this->email, $this->anonymousIdent, $db->real_escape_string(json_encode($this->defaultConf))
-        );
-        $db->query($s);
-        return $db->insert_id();
+        $this->conn->query($s, $params);
+        return $this->conn->insert_id();
     }
 
     /**
@@ -490,21 +456,15 @@ class AccountManager
         unset($_SESSION['userConf']->{$module}->{$itemName});
         $_SESSION['userConf']->{$module}->{$itemName} = ( is_numeric($value) ) ? (int) $value : $value;
         
-        $db = DBConnection::getInstance();
-
         // In DB
         if( $this->isAnonymous ) {
-            $s = sprintf(
-                'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s" AND `anonymousIdent`="%s"',
-                $db->real_escape_string(json_encode($this->userConf)), "anonymous", $this->anonymousIdent
-            );
+            $s = 'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="anonymous" AND `anonymousIdent`="%s"';
+            $params = array(json_encode($this->userConf), $this->anonymousIdent);
         } else {
-            $s = sprintf(
-                'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"',
-                $db->real_escape_string(json_encode($this->userConf)), $this->vcsLogin
-            );
+            $s = 'UPDATE `users` SET `conf`="%s" WHERE `vcs_login`="%s"';
+            $params = array(json_encode($this->userConf), $this->vcsLogin);
         }
-        $db->query($s);
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -513,19 +473,13 @@ class AccountManager
      */
     public function eraseData()
     {
-        $db = DBConnection::getInstance();
+        $s = 'DELETE FROM `commitMessage` WHERE `user`="%s"';
+        $params = array($this->vcsLogin);
+        $this->conn->query($s, $params);
 
-        $s = sprintf(
-            'DELETE FROM `commitMessage` WHERE `user`="%s"',
-            $this->vcsLogin
-        );
-        $db->query($s);
-
-        $s = sprintf(
-            'DELETE FROM `users` WHERE `userID`="%s"',
-            $this->userID
-        );
-        $db->query($s);
+        $s = 'DELETE FROM `users` WHERE `userID`=%d';
+        $params = array($this->userID);
+        $this->conn->query($s, $params);
     }
 
     /**

@@ -6,6 +6,8 @@ class LogManager
 {
     private static $instance;
 
+    private $conn;
+
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
@@ -17,6 +19,7 @@ class LogManager
 
     private function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -34,11 +37,9 @@ class LogManager
 
         $result = array();
 
-        $s = sprintf(
-            'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s"',
-            $project, $vcsLogin
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s"';
+        $params = array(project, $vcsLogin);
+        $r = $this->conn->query($s, $params);
         while ($a = $r->fetch_assoc()) {
             $result[] = $a;
         }
@@ -55,23 +56,17 @@ class LogManager
     public function addCommitLog($log)
     {
         $am       = AccountManager::getInstance();
-        $db       = DBConnection::getInstance();
-        $log      = $db->real_escape_string($log);
         $project  = $am->project;
         $vcsLogin = $am->vcsLogin;
 
-        $s = sprintf(
-            'SELECT id FROM `commitMessage` WHERE `project`="%s" AND `text`="%s" AND `user`="%s"',
-            $project, $log, $vcsLogin
-        );
-        $r = $db->query($s);
+        $s = 'SELECT id FROM `commitMessage` WHERE `project`="%s" AND `text`="%s" AND `user`="%s"';
+        $params = array($project, $log, $vcsLogin);
+        $r = $this->conn->query($s, $params);
 
         if ($r->num_rows == 0 ) {
-            $s = sprintf(
-                'INSERT INTO `commitMessage` (`project`, `text`,`user`) VALUES ("%s", "%s", "%s")',
-                $project, $log, $vcsLogin
-            );
-            $db->query($s);
+            $s = 'INSERT INTO `commitMessage` (`project`, `text`,`user`) VALUES ("%s", "%s", "%s")';
+            $params = array($project, $log, $vcsLogin);
+            $this->conn->query($s, $params);
         }
     }
 
@@ -83,12 +78,9 @@ class LogManager
      */
     public function updateCommitLog($logID, $log)
     {
-        $db= DBConnection::getInstance();
-        $s = sprintf(
-            'UPDATE `commitMessage` SET `text`="%s" WHERE `id`="%s"',
-            $db->real_escape_string($log), $logID
-        );
-        $db->query($s);
+        $s = 'UPDATE `commitMessage` SET `text`="%s" WHERE `id`=%d';
+        $params = array($log, $logID);
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -98,10 +90,9 @@ class LogManager
      */
     public function delCommitLog($logID)
     {
-        $s = sprintf(
-            'DELETE FROM `commitMessage` WHERE `id`="%s"', $logID
-        );
-        DBConnection::getInstance()->query($s);
+        $s = 'DELETE FROM `commitMessage` WHERE `id`=%d';
+        $params = array($logID);
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -145,15 +136,12 @@ class LogManager
      */
     public function saveFailedBuild($lang, $log)
     {
-        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
-        $s = sprintf(
-            'INSERT INTO `failedBuildLog` (`project`, `lang`, `log`, `date`)
-             VALUES ("%s","%s", "%s", now())',
-            $project, $lang, $db->real_escape_string(json_encode($log))
-        );
-        $db->query($s);
+        $s = 'INSERT INTO `failedBuildLog` (`project`, `lang`, `log`, `date`)
+             VALUES ("%s","%s", "%s", now())';
+        $params = array($project, $lang, json_encode($log));
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -203,8 +191,9 @@ class LogManager
     {
         $project = AccountManager::getInstance()->project;
 
-        $s = 'SELECT `id`, `lang`, `date` FROM `failedBuildLog` WHERE `project` = \''.$project.'\'';
-        $r  = DBConnection::getInstance()->query($s);
+        $s = 'SELECT `id`, `lang`, `date` FROM `failedBuildLog` WHERE `project` = "%s"';
+        $params = array($project);
+        $r  = $this->conn->query($s, $params);
 
         $node = array();
         while ($a = $r->fetch_assoc()) {
@@ -223,8 +212,9 @@ class LogManager
      */
     public function getFailedBuildData($id, $highlight=true)
     {
-        $s = 'SELECT `log` FROM `failedBuildLog` WHERE `id`=\''.$id.'\'';
-        $r  = DBConnection::getInstance()->query($s);
+        $s = 'SELECT `log` FROM `failedBuildLog` WHERE `id`=%d';
+        $params = array($id);
+        $r  = $this->conn->query($s, $params);
 
         $a = $r->fetch_object();
 

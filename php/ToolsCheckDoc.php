@@ -10,12 +10,15 @@ require_once dirname(__FILE__) . '/DBConnection.php';
  */
 class ToolsCheckDoc {
 
+    private $conn;
+
     /**
      * Initialise
      *
      */
     function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -27,8 +30,14 @@ class ToolsCheckDoc {
      */
     function getCheckDocFiles($path, $errorType)
     {
-        $s = sprintf('SELECT name FROM `files` WHERE `lang`="en" AND `path`="%s" AND `%s`=1', $path, $errorType);
-        $r = DBConnection::getInstance()->query($s);
+        $errorTypes = array('check_oldstyle', 'check_undoc', 'check_roleerror', 'check_badorder', 'check_noseealso', 'check_noreturnvalues', 'check_noparameters', 'check_noexamples', 'check_noerrors');
+
+        if (!in_array($errorType, $errorTypes))
+            return array();
+
+        $s = 'SELECT name FROM `files` WHERE `lang`="en" AND `path`="%s" AND `%s`=1';
+        $params = array($path, $errorType);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($row = $r->fetch_assoc()) {
@@ -69,7 +78,7 @@ class ToolsCheckDoc {
 
                   ORDER BY path';
 
-        $r  = DBConnection::getInstance()->query($s);
+        $r  = $this->conn->query($s, array());
         $nb = $r->num_rows;
         $i = 0;
         while ($a = $r->fetch_object()) {

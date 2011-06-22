@@ -38,9 +38,11 @@ class DBConnection
         }
     }
 
-    public function query($s)
-    {    
-        $r = $this->conn->query($s) or die('Error: '.$this->conn->error.'|'.$s);
+    public function query($s, array $params)
+    {
+        $params = array_map(array($this, 'real_escape_string'), $params);
+        $query = vsprintf($s, $params);
+        $r = $this->conn->query($query) or die('Error: '.$this->conn->error.'|'.$query);
         return $r;
     }
 

@@ -1,12 +1,12 @@
 <?php
-/* 
- * 
- * 
- */
+
+require_once dirname(__FILE__) . '/DBConnection.php';
 
 class UserNotes {
 
     private static $instance;
+
+    private $conn;
 
     public static function getInstance()
     {
@@ -19,27 +19,26 @@ class UserNotes {
 
     public function __construct()
     {
-
+        $this->conn = DBConnection::getInstance();
     }
 
     public function getNotes($file)
     {
         $am = AccountManager::getInstance();
-        $db = DBConnection::getInstance();
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `id`, `user`, `date`, `note`
              FROM
                 `userNotes`
              WHERE
-                `project` = "%s" AND `file`="%s"',
+                `project` = "%s" AND `file`="%s"';
+       $params = array(
             $project,
-            $db->real_escape_string($file) // must be like this : fr/reference/cairo/cairocontext/appendpath.xml
+            $file // must be like this : fr/reference/cairo/cairocontext/appendpath.xml
         );
 
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
         $infos = array();
         while ($a = $r->fetch_assoc()) {
@@ -53,52 +52,50 @@ class UserNotes {
     public function addNote($file, $note)
     {
         $am = AccountManager::getInstance();
-        $db = DBConnection::getInstance();
         $project  = $am->project;
         $vcsLogin = $am->vcsLogin;
 
-        $s = sprintf(
-            'INSERT INTO
+        $s = 'INSERT INTO
                 `userNotes`
                 (`project`, `file`, `user`, `date`, `note`)
              VALUES
-                ("%s", "%s", "%s", now(), "%s")',
+                ("%s", "%s", "%s", now(), "%s")';
+        $params = array(
             $project,
             $file,
             $vcsLogin,
-            $db->real_escape_string($note)
+            $note
         );
 
-        $db->query($s);
+        $this->conn->query($s, $params);
     }
 
     public function delNote($noteID)
     {
         $am = AccountManager::getInstance();
-        $db = DBConnection::getInstance();
         $vcsLogin = $am->vcsLogin;
 
         // A user can only delete his note. Not those of others users.
-        $s = sprintf(
-            'SELECT user FROM
+        $s = 'SELECT user FROM
                 `userNotes`
              WHERE
-                id = "%s"',
+                id = %d';
+        $params = array(
             $noteID
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
         
         if( $a->user == $vcsLogin ) {
             // We can delete it
-            $s = sprintf(
-                'DELETE FROM
+            $s = 'DELETE FROM
                     `userNotes`
                  WHERE
-                    id = "%s"',
+                    id = %d';
+            $params = array(
                 $noteID
             );
-            $db->query($s);
+            $this->conn->query($s, $params);
             return true;
         } else {
             return false;

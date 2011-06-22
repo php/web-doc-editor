@@ -59,14 +59,15 @@ class ToolsError
      */
     private $errorStack;
 
+    private $conn;
+
     /**
      * Initialise the check
-     *
-     * @param resource $db Database connexion
      */
     function __construct()
     {
         $this->errorStack = array();
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -108,9 +109,9 @@ class ToolsError
             $FileName = $nodes[$i]['name'];
 
             // Remove all row in errorfiles tables
-            $s = 'DELETE FROM errorfiles WHERE `project`=\''.$project.'\' AND lang=\''.$FileLang.'\' AND path=\''.$FilePath.'\' AND name=\''.$FileName.'\'';
-
-            DBConnection::getInstance()->query($s);
+            $s = 'DELETE FROM errorfiles WHERE `project`="%s" AND lang="%s" AND path="%s" AND name="%s"';
+            $params = array($project, $FileLang, $FilePath, $FileName);
+            $this->conn->query($s, $params);
 
             if( $FileLang != 'en' ) {
                 $this->setParams($nodes[$i]['en_content'], $nodes[$i]['lang_content'], $FileLang, $FilePath, $FileName, $nodes[$i]['maintainer']);
@@ -172,13 +173,18 @@ class ToolsError
                    `errorfiles`
                 WHERE
                    '.$type.'
-                   `project` = \''.$project.'\' AND
-                   `lang` = \''.$this->lang.'\' AND
-                   `path` = \''.$this->filePath.'\' AND
-                   `name` = \''.$this->fileName.'\'
+                   `project` = "%s" AND
+                   `lang` = "%s" AND
+                   `path` = "%s" AND
+                   `name` = "%s"
                ';
-
-        $r = DBConnection::getInstance()->query($s);
+        $params = array(
+            $project,
+            $this->lang,
+            $this->filePath,
+            $this->fileName
+        );
+        $r = $this->conn->query($s, $params);
 
         $return = array();
 
@@ -207,27 +213,27 @@ class ToolsError
         $project = $am->project;
 
         if ( $am->userConf->error->skipNbLiteralTag ) {
-            $type = ' type != \'nbLiteralTag\' AND ';
+            $type = 'type != "nbLiteralTag" AND ';
         } else {
             $type = '';
         }
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `errorfiles`
              WHERE
-                %s
+                ' . $type . '
                 `project`=  "%s" AND
                 `lang`   =  "%s" AND
-                `type`   != "-No error-"',
+                `type`   != "-No error-"';
+        $params = array(
             $type,
             $project,
             $this->lang
         );
         
-        $r    = DBConnection::getInstance()->query($s);
+        $r    = $this->conn->query($s, $params);
         $node = array();
 
         $alreadyNode = array();
@@ -296,21 +302,28 @@ class ToolsError
      */
     function saveError()
     {
-        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         if( count($this->errorStack) > 0 ) {
 
-            $sql = 'INSERT INTO errorfiles (`project`, `lang`, `path`, `name`, `maintainer`, `value_en`,`value_lang`,`type`) VALUES';
-            $pattern = ' ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"),';
+            $sql = 'INSERT INTO errorfiles (`project`, `lang`, `path`, `name`, `maintainer`, `value_en`,`value_lang`,`type`) VALUES ';
 
+            $errorSQL = array();
+            $params = array();
             foreach ($this->errorStack as $error) {
-                $sql .= sprintf($pattern, $project, $this->lang, $this->filePath, $this->fileName, trim($this->maintainer,"'"), $db->real_escape_string($error['value_en']),
-                $db->real_escape_string($error['value_lang']), $error['type']);
+                $errorSQL[] = '("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+
+                $params[] = $project;
+                $params[] = $this->lang;
+                $params[] = $this->filePath;
+                $params[] = $this->fileName;
+                $params[] = $this->maintainer;
+                $params[] = $error['value_en'];
+                $params[] = $error['value_lang'];
+                $params[] = $error['type'];
             }
 
-            $sql = substr($sql, 0, -1);
-            $db->query($sql);
+            $this->conn->query($sql . implode(', ', $error_sql), $params);
 
         }
 

@@ -9,6 +9,8 @@ class RepositoryFetcher
 {
     private static $instance;
 
+    private $conn;
+
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
@@ -20,6 +22,7 @@ class RepositoryFetcher
 
     private function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     
@@ -33,8 +36,7 @@ class RepositoryFetcher
         $am      = AccountManager::getInstance();
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `date`
              FROM
                 `staticValue`
@@ -42,11 +44,10 @@ class RepositoryFetcher
                 `project` = "%s" AND
                 `type`="info"
              ORDER BY `date` DESC
-             LIMIT 0, 1',
+             LIMIT 0, 1';
+        $params = array($am->project);
 
-            $am->project
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $a = $r->fetch_assoc();
 
@@ -65,24 +66,21 @@ class RepositoryFetcher
 
         $infos = array();
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 count(*) as total
              FROM
                 `staticValue`
              WHERE
                 `project` = "%s" AND
-                `type`="info"',
+                `type`="info"';
+        $params = array($am->project);
 
-            $am->project
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $a = $r->fetch_assoc();
         $infos['total'] = $a['total'];
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `field`, `value`, `date`
              FROM
                 `staticValue`
@@ -90,11 +88,10 @@ class RepositoryFetcher
                 `project` = "%s" AND
                 `type`="info"
              ORDER BY `date` DESC
-             LIMIT %s, %s',
+             LIMIT %d, %d';
+        $params = array($am->project, (int)$start, (int)$limit);
 
-            $am->project, (int)$start, (int)$limit
-        );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $i=0;
         while ($a = $r->fetch_assoc()) {
@@ -139,20 +136,19 @@ class RepositoryFetcher
     {
         $am = AccountManager::getInstance();
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `work`
              WHERE
                 `project` = "%s" AND
-                ( `lang`="%s" OR `lang`="en" ) ',
-
+                ( `lang`="%s" OR `lang`="en" ) ';
+        $params = array(
             $am->project,
             $am->vcsLang
         );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $infos = array();
         while ($a = $r->fetch_assoc()) {
@@ -173,27 +169,27 @@ class RepositoryFetcher
         $am = AccountManager::getInstance();
         $infos = array();
 
-        $ids = is_array($id) ? implode($id, ',') : $id;
+        $ids = is_array($id) ? implode(array_map('intval', $id), ',') : (int)$id;
 
         if( empty( $ids ) ) {
             return $infos;
         }
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `work`
              WHERE
                 `project` = "%s" AND
-               (`lang`="%s" OR `lang`="en" OR `lang`="doc-base") AND `id` IN (%s)',
-                
+               (`lang`="%s" OR `lang`="en" OR `lang`="doc-base") AND `id` IN (%s)';
+
+        $params = array(
             $am->project,
             $am->vcsLang,
             $ids
         );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         while ($a = $r->fetch_assoc()) {
             $infos[] = $a;
@@ -210,8 +206,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 count(*) as total
              FROM
                 `files`
@@ -219,11 +214,12 @@ class RepositoryFetcher
                 `project`   = "%s" AND
                 `lang`      = "%s"  AND
                 `revision` != `en_revision` AND
-                `status` is not null',
+                `status` is not null';
+        $params = array(
             $project,
             $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return ( $a->total > $am->userConf->needUpdate->nbDisplay && $am->userConf->needUpdate->nbDisplay != 0 ) ? $am->userConf->needUpdate->nbDisplay : $a->total;
@@ -241,12 +237,11 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->needUpdate->nbDisplay ) ? 'LIMIT '.$am->userConf->needUpdate->nbDisplay : '';
+        $limit = ( $am->userConf->needUpdate->nbDisplay ) ? 'LIMIT '.(int)$am->userConf->needUpdate->nbDisplay : '';
 
         $m = $this->getModifies();
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `files`
@@ -255,12 +250,13 @@ class RepositoryFetcher
                 `lang` = "%s" AND
                 `revision` != `en_revision` AND
                 `status` is not NULL
-                %s',
+                %s';
+        $params = array(
             $project,
             $vcsLang,
             $limit
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($a = $r->fetch_object()) {
@@ -322,19 +318,19 @@ class RepositoryFetcher
         $project = $am->project;
 
         $m = $this->getModifies();
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 count(*) as total
              FROM
                 `files`
              WHERE
                 `project`="%s" AND
                 `lang` = "%s" AND
-                reviewed != \'yes\'',
+                reviewed != \'yes\'';
+        $params = array(
             $project,
             $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return ( $a->total > $am->userConf->reviewed->nbDisplay && $am->userConf->reviewed->nbDisplay != 0 ) ? $am->userConf->reviewed->nbDisplay : $a->total;
@@ -351,11 +347,10 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->reviewed->nbDisplay ) ? 'LIMIT '.$am->userConf->reviewed->nbDisplay : '';
+        $limit = ( $am->userConf->reviewed->nbDisplay ) ? 'LIMIT '.(int)$am->userConf->reviewed->nbDisplay : '';
 
         $m = $this->getModifies();
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `files`
@@ -366,12 +361,13 @@ class RepositoryFetcher
              ORDER BY
                 `path`,
                 `name`
-                %s',
+                %s';
+        $params = array(
             $project,
             $vcsLang,
             $limit
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($a = $r->fetch_object()) {
@@ -418,19 +414,20 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf('
-            SELECT
+        $s = 'SELECT
                count(*) as total
             FROM
                `files`
             WHERE
                `project`="%s" AND
                `lang`="%s" AND
-               `status`="NotInEN"',
+               `status`="NotInEN"';
+        $params = array(
             $project,
-            $vcsLang);
+            $vcsLang
+        );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return $a->total;
@@ -448,8 +445,7 @@ class RepositoryFetcher
 
         $m = $this->getModifies();
 
-        $s = sprintf('
-            SELECT
+        $s = 'SELECT
                `id`,
                `path`,
                `name`
@@ -458,11 +454,13 @@ class RepositoryFetcher
             WHERE
                `project`="%s" AND
                `lang`="%s" AND
-               `status`="NotInEN"',
+               `status`="NotInEN"';
+        $params = array(
             $project,
-            $vcsLang);
+            $vcsLang
+        );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($a = $r->fetch_object()) {
@@ -486,8 +484,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf('
-            SELECT
+        $s = 'SELECT
                 count(*) as total
             FROM
                 `files`
@@ -495,12 +492,13 @@ class RepositoryFetcher
                 `project`="%s" AND
                 `lang`="%s" AND
                 `status` is NULL AND
-                `revision` is NULL',
+                `revision` is NULL';
+        $params = array(
             $project,
             $vcsLang
         );
         
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return ( $a->total > $am->userConf->newFile->nbDisplay && $am->userConf->newFile->nbDisplay != 0 ) ? $am->userConf->newFile->nbDisplay : $a->total;
@@ -518,11 +516,10 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $limit = ( $am->userConf->newFile->nbDisplay ) ? 'LIMIT '.$am->userConf->newFile->nbDisplay : '';
+        $limit = ( $am->userConf->newFile->nbDisplay ) ? 'LIMIT '.(int)$am->userConf->newFile->nbDisplay : '';
 
         $m = $this->getModifies();
-        $s = sprintf('
-            SELECT
+        $s = 'SELECT
                 `id`, `path`, `name`
             FROM
                 `files`
@@ -531,13 +528,15 @@ class RepositoryFetcher
                 `lang`="%s" AND
                 `status` is NULL AND
                 `revision` is NULL
-                %s',
+                %s';
+
+        $params = array(
             $project,
             $vcsLang,
             $limit
         );
 
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($a = $r->fetch_object()) {
@@ -563,18 +562,19 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 count(*) as total
              FROM
                 `pendingPatch`
              WHERE
                 `project`="%s" AND
-                (`lang`="%s" OR `lang`=\'en\')',
+                (`lang`="%s" OR `lang`=\'en\')';
+        $params = array(
             $project,
             $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return $a->total;
@@ -593,11 +593,12 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')',
-            $project, $vcsLang
+        $s = 'SELECT `id`, CONCAT(`lang`, `path`) AS `path`, `name`, `posted_by` AS \'by\', `uniqID`, `date` FROM `pendingPatch` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\')';
+        $params = array(
+            $project,
+            $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array();
         while ($row = $r->fetch_assoc()) {
@@ -619,11 +620,13 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT * FROM `work` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC',
-            $project, $vcsLang
+        $s = 'SELECT * FROM `work` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name`=\'-\' ORDER BY id ASC';
+        $params = array(
+            $project,
+            $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+
+        $r = $this->conn->query($s, $params);
 
         if( $r->num_rows == 0 ) {
             return false;
@@ -648,11 +651,13 @@ class RepositoryFetcher
         $project = $am->project;
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-        $s = sprintf(
-            'SELECT count(*) as total FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'',
-            $project, $vcsLang
+        $s = 'SELECT count(*) as total FROM `pendingCommit` WHERE `project`="%s" AND (`lang`="%s" OR `lang`=\'en\') AND `name` != \'-\'';
+        $params = array(
+            $project,
+            $vcsLang
         );
-        $r = DBConnection::getInstance()->query($s);
+
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         return $a->total;
@@ -673,8 +678,7 @@ class RepositoryFetcher
         /**** We start by the work in progress module ****/
         
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
                 `user`,
                 `date`,
@@ -686,11 +690,12 @@ class RepositoryFetcher
                 `lang` = "%s" AND
                 `project`  = "%s"
                 ORDER BY
-                type, date',
+                type, date';
+        $params = array(
             $lang,
             $project
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         
         $workInProgress = Array('nb'=>0,'data'=>Array());
 
@@ -705,8 +710,7 @@ class RepositoryFetcher
         /**** then, by the patches for review module ****/
         
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
                 `user`,
                 `date`,
@@ -718,11 +722,12 @@ class RepositoryFetcher
                 `lang` = "%s" AND
                 `project`  = "%s"
                 ORDER BY
-                type, date',
+                type, date';
+        $params = array(
             $lang,
             $project
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
         
         $PatchesForReview = Array('nb'=>0,'data'=>Array());
 
@@ -759,8 +764,7 @@ class RepositoryFetcher
         if( $module == 'PatchesForReview' ) {
 
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-            $s = sprintf(
-                'SELECT
+            $s = 'SELECT
                     `id`,
                     `name` as patchName,
                     `user`,
@@ -768,10 +772,11 @@ class RepositoryFetcher
                  FROM
                     `patches`
                  WHERE
-                    `project`  = "%s"',
+                    `project`  = "%s"';
+            $params = array(
                 $project
             );
-            $r = DBConnection::getInstance()->query($s);
+            $r = $this->conn->query($s, $params);
             
             $patches = Array();
 
@@ -786,6 +791,11 @@ class RepositoryFetcher
                 $node[$a->user][$a->patchName]['folders'] = array();
             }
 
+            // Bugfix: if we don't have any patches, the query below will fail.
+            // So we return immediately if that's the case.
+            if (empty($patches))
+                return '[]';
+
             // Do we need to display EN Work ?
             if( isset($am->userConf->main->displayENWork) && $am->userConf->main->displayENWork === true ) {
                 $langFilter = '(`lang` = "%s" OR `lang`="en")';
@@ -794,8 +804,7 @@ class RepositoryFetcher
             }
             
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-            $s = sprintf(
-                'SELECT
+            $s = 'SELECT
                     *
                  FROM
                     `work`
@@ -804,14 +813,15 @@ class RepositoryFetcher
                     '.$langFilter.' AND
                     `name`   != "-"  AND
                     `module`  = "%s" AND
-                    `patchID` IN (%s)',
+                    `patchID` IN (%s)';
+            $params = array(
                 $project,
                 $vcsLang,
                 $module,
-                implode(",", array_keys($patches))
+                implode(",", array_map('intval', array_keys($patches)))
             );
 
-            $r = DBConnection::getInstance()->query($s);
+            $r = $this->conn->query($s, $params);
 
             while ($a = $r->fetch_object()) {
 
@@ -905,8 +915,7 @@ class RepositoryFetcher
             
             
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-            $s = sprintf(
-                'SELECT
+            $s = 'SELECT
                     *
                  FROM
                     `work`
@@ -915,12 +924,13 @@ class RepositoryFetcher
                     '.$langFilter.' AND
                     `name`   != "-" AND
                     `module`  = "%s" AND
-                    `patchID` IS NULL',
+                    `patchID` IS NULL';
+            $params = array(
                 $project,
                 $vcsLang,
                 $module
             );
-            $r = DBConnection::getInstance()->query($s);
+            $r = $this->conn->query($s, $params);
 
             while ($a = $r->fetch_object()) {
 
@@ -1009,12 +1019,12 @@ TODO: Handle project here
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT `path`, `name` FROM `files` WHERE `path`
-             LIKE \'/reference/%s/%%\' AND `lang`="%s" AND `project`="%s" ORDER BY `path`, `name`',
+        $s = 'SELECT `path`, `name` FROM `files` WHERE `path`
+             LIKE \'/reference/%s/%%\' AND `lang`="%s" AND `project`="%s" ORDER BY `path`, `name`';
+        $params = array(
             $ext, $vcsLang, $project
         );
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $node = array(); $i=0;
         while ($a = $r->fetch_object()) {
@@ -1035,7 +1045,6 @@ TODO: Handle project here
      */
     public function getFileByXmlID($lang, $id)
     {
-        $db = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         // If user forget ".php" at this end of the permlink, this is "function" how is search into DB.
@@ -1045,20 +1054,20 @@ TODO: Handle project here
         }
         
         // We start by searching file witch only this ID
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `lang`, `path`, `name`
              FROM
                  `files`
              WHERE
                  `project`="%s" AND
                  `lang` = "%s" AND
-                 `xmlid` = "%s"',
+                 `xmlid` = "%s"';
+        $params = array(
             $project,
             $lang,
             $id
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         $nb = $r->num_rows;
         
         if( $nb >= 1 ) {
@@ -1066,20 +1075,20 @@ TODO: Handle project here
         } else {
             
             // We now search file which contain this ID
-            $s = sprintf(
-                'SELECT
+            $s = 'SELECT
                     `lang`, `path`, `name`
                 FROM
                     `files`
                 WHERE
                     `project`="%s" AND
                     `lang` = "%s" AND
-                    `xmlid` LIKE "%%%s%%"',
+                    `xmlid` LIKE "%%%s%%"';
+            $params = array(
                 $project,
                 $lang,
                 $id
             );
-            $r = $db->query($s);
+            $r = $this->conn->query($s, $params);
             $nb = $r->num_rows;
             
             if( $nb == 0 ) {
@@ -1100,19 +1109,18 @@ TODO: Handle project here
     public function getFileByKeyword($key)
     {
         $am      = AccountManager::getInstance();
-        $db      = DBConnection::getInstance();
         $vcsLang = $am->vcsLang;
         $project = $am->project;
 
-        $s = sprintf(
-            'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
-             AND ( `name` LIKE \'%%%s%%\' OR `xmlid` LIKE \'%%%s%%\' ) ORDER BY `lang`, `path`, `name`',
+        $s = 'SELECT `lang`, `path`, `name` FROM `files` WHERE `project`="%s" AND  (`lang`="%s" OR `lang`=\'en\')
+             AND ( `name` LIKE \'%%%s%%\' OR `xmlid` LIKE \'%%%s%%\' ) ORDER BY `lang`, `path`, `name`';
+        $params = array(
             $project,
             $vcsLang,
-            $db->real_escape_string($key),
-            $db->real_escape_string($key)
+            $key,
+            $key
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
         $files = array();
         while ($a = $r->fetch_object()) {
@@ -1235,12 +1243,16 @@ TODO: Handle project here
     {
 
         // Save in DB
-        $s = "SELECT id, value FROM staticValue WHERE
-             `project`='".AccountManager::getInstance()->project."' AND
-             `type`='".$type."' AND
-             `field`= '".$field."'
-             ";
-        $r = DBConnection::getInstance()->query($s);
+        $s = 'SELECT id, value FROM staticValue WHERE
+             `project` = "%s" AND
+             `type` = "%s" AND
+             `field`= "%s"';
+        $params = array(
+            AccountManager::getInstance()->project,
+            $type,
+            $field
+        );
+        $r = $this->conn->query($s, $params);
 
         if( $r->num_rows == 0 ) {
             return false;

@@ -4,11 +4,14 @@
  * 
  */
 
+require_once dirname(__FILE__) . '/DBConnection.php';
+
 class DictionaryManager {
 
     private static $instance;
     public $acronyms;
     public $entities;
+    private $conn;
 
     public static function getInstance()
     {
@@ -21,6 +24,7 @@ class DictionaryManager {
 
     public function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -30,16 +34,10 @@ class DictionaryManager {
      */
     public function delWord($wordId)
     {
-        $s = sprintf(
-            'DELETE FROM
-                `dictionary`
-             WHERE
-                `id` = "%s"',
+        $s = 'DELETE FROM `dictionary` WHERE `id`=%d';
+        $params = array($wordId);
 
-            $wordId
-        );
-
-        DBConnection::getInstance()->query($s);
+        $this->conn->query($s, $params);
     }
 
     /**
@@ -52,19 +50,10 @@ class DictionaryManager {
         $project = $am->project;
         $vcsLang = $am->vcsLang;
 
-        $s = sprintf(
-            'SELECT
-                `id`, `valueEn`, `valueLang`, `lastUser`, `lastDate`
-             FROM
-                `dictionary`
-             WHERE
-                `project` = "%s" AND `lang`="%s"',
+        $s = 'SELECT `id`, `valueEn`, `valueLang`, `lastUser`, `lastDate` FROM `dictionary` WHERE `project` = "%s" AND `lang`="%s"';
+        $params = array($project, $vcsLang);
 
-            $project,
-            $vcsLang
-        );
-
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $infos = array();
         while ($a = $r->fetch_assoc()) {
@@ -84,7 +73,6 @@ class DictionaryManager {
      */
     public function manageDictionaryWord($wordId, $valueEn, $valueLang)
     {
-        $db = DBConnection::getInstance();
         $am = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
@@ -93,43 +81,14 @@ class DictionaryManager {
         $time = @date("Y-m-d H:i:s");
 
         if( $wordId == 'new' ) {
-
-            $s = sprintf(
-                'INSERT INTO
-                    `dictionary`
-                 (`project`, `lang`, `valueEn`, `valueLang`, `lastUser`, `lastDate`)
-                 VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
-                $project,
-                $vcsLang,
-                $db->real_escape_string($valueEn),
-                $db->real_escape_string($valueLang),
-                $db->real_escape_string($vcsLogin),
-                $time
-            );
-
+            $s = 'INSERT INTO `dictionary` (`project`, `lang`, `valueEn`, `valueLang`, `lastUser`, `lastDate`) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")';
+            $params = array($project, $vcsLang, $valueEn, $valueLang, $vcsLogin, $time);
         } else {
-
-            $s = sprintf(
-                'UPDATE
-                    `dictionary`
-                 SET
-                    `valueEn`  = "%s",
-                    `valueLang`= "%s",
-                    `lastUser` = "%s",
-                    `lastDate` = "%s"
-                 WHERE
-                    `id` = %s',
-
-                $db->real_escape_string($valueEn),
-                $db->real_escape_string($valueLang),
-                $db->real_escape_string($vcsLogin),
-                $time,
-                $wordId
-            );
-
+            $s = 'UPDATE `dictionary` SET `valueEn` = "%s", `valueLang`= "%s", `lastUser` = "%s", `lastDate` = "%s" WHERE `id` = %d';
+            $params = array($valueEn, $valueLang, $vcsLogin, $time, $wordId);
         }
 
-        $db->query($s);
+        $this->conn->query($s, $params);
 
         return $time;
     }

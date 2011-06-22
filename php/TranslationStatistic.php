@@ -8,6 +8,8 @@ class TranslationStatistic
 {
     private static $instance;
 
+    private $conn;
+
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
@@ -19,6 +21,7 @@ class TranslationStatistic
 
     private function __construct()
     {
+       $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -32,26 +35,31 @@ class TranslationStatistic
         $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
-            $where = '';
-            $groupBy = 'GROUP BY `lang`';
-        } else {
-            $where = '`lang` = \''.$lang.'\' AND';
-            $groupBy = '';
-        }
-
-        $s = 'SELECT
+            $s = 'SELECT
                     COUNT(*) AS total,
                     SUM(`size`) AS total_size,
                     `lang`
-                FROM
+                  FROM
                     `files`
-                WHERE
-                    ' . $where . '
-                    ( `status` != "NotInEN" OR `status` IS NULL ) AND
-                    `project` = \''.$project.'\'
-                ' . $groupBy . '
-        ';
-        $res = DBConnection::getInstance()->query($s);
+                  WHERE
+                    (`status` != "NotInEN" OR `status` IS NULL ) AND
+                    `project` = "%s"
+                  GROUP BY `lang`';
+            $params = array($project);
+        } else {
+            $s = 'SELECT
+                    COUNT(*) AS total,
+                    SUM(`size`) AS total_size,
+                    `lang`
+                  FROM
+                    `files`
+                  WHERE
+                    `lang` = "%s" AND
+                    (`status` != "NotInEN" OR `status` IS NULL ) AND
+                    `project` = "%s"';
+            $params = array($lang, $project);
+        }
+        $res = $this->conn->query($s, $params);
 
         while( $r = $res->fetch_array() ) {
             $result[$r['lang']]['total']      = $r['total'];
@@ -73,27 +81,34 @@ class TranslationStatistic
         $result = array();
 
         if( $lang == 'all' ) {
-            $where = '';
-            $groupBy = 'GROUP BY `lang`';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    SUM(`size`)   AS total_size,
+                    `lang`
+                  FROM
+                    `files`
+                  WHERE
+                    `revision` = `en_revision` AND
+                    `revision` != 0 AND
+                    `project` = "%s"
+                  GROUP BY `lang`';
+            $params = array($project);
         } else {
-            $where = '`lang` = \''.$lang.'\' AND';
-            $groupBy = '';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    SUM(`size`) AS total_size,
+                    `lang`
+                  FROM
+                    `files`
+                  WHERE
+                    `lang` = "%s" AND
+                    `revision` = `en_revision` AND
+                    `revision` != 0 AND
+                    `project` = "%s"';
+            $params = array($lang, $project);
         }
 
-        $s = 'SELECT
-                COUNT(`name`) AS total,
-                SUM(`size`)   AS total_size,
-                `lang`
-            FROM
-                files
-            WHERE
-                ' . $where . '
-                `revision` = `en_revision` AND
-                `revision` != 0 AND
-                `project` = \''.$project.'\'
-            ' . $groupBy . '
-        ';
-        $res = DBConnection::getInstance()->query($s);
+        $res = $this->conn->query($s, $params);
 
         while( $r = $res->fetch_array() ) {
             $result[$r['lang']]['total']      = $r['total'];
@@ -115,29 +130,34 @@ class TranslationStatistic
         $result = array();
 
         if( $lang == 'all' ) {
-            $where = '';
-            $groupBy = 'GROUP BY `lang`';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    SUM(`size`)   AS total_size,
+                    `lang`
+                  FROM
+                    `files`
+                  WHERE
+                    `en_revision` != `revision` AND
+                    `size` is not NULL AND
+                    `project` = "%s"
+                  GROUP BY `lang`';
+            $params = array($project);
         } else {
-            $where = '`lang` = \''.$lang.'\' AND';
-            $groupBy = '';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    SUM(`size`) AS total_size,
+                    `lang`
+                  FROM
+                    `files`
+                  WHERE
+                    `lang` = "%s" AND
+                    `en_revision` != `revision` AND
+                    `size` is not NULL AND
+                    `project` = "%s"';
+            $params = array($lang, $project);
         }
 
-        $s = 'SELECT
-                COUNT(`name`) AS total,
-                SUM(`size`) AS total_size,
-                `lang`
-            FROM
-                `files`
-            WHERE
-                ' . $where . '
-                `en_revision` != `revision`
-            AND
-                `size` is not NULL
-            AND
-                `project` = \''.$project.'\'
-            ' . $groupBy . '
-        ';
-        $res = DBCOnnection::getInstance()->query($s);
+        $res = $this->conn->query($s, $params);
 
         while( $r = $res->fetch_array() ) {
             $result[$r['lang']]['total']      = $r['total'];
@@ -154,39 +174,48 @@ class TranslationStatistic
      */
     public function getNoTransFileCount($lang='all')
     {
-        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         $result = $summary = array();
 
-        if( $lang == 'all' ) {
-            $where = '`lang` != \'en\' AND';
-        } else {
-            $where = '`lang` = \''.$lang.'\' AND';
-        }
-
         // We get EN files
 
-       $s = 'SELECT * FROM files WHERE `lang`=\'en\' AND `project`=\''.$project.'\'';
-
-       $r = $db->query($s);
+       $s = 'SELECT * FROM files WHERE `lang`="en" AND `project`="$project"';
+       $params = array($project);
+       $r = $this->conn->query($s, $params);
 
        while( $a = $r->fetch_object() ) {
           $resultEN[$a->path.$a->name] = $a->size;
        }
 
-       $s = 'SELECT
-                 `path`, `name`, `lang`
-             FROM
-                 `files`
-             WHERE
-                 ' . $where . '
-                 `revision` is NULL AND
-                 `status` is NULL AND
-                 `project` = \''.$project.'\'
-       ';
+       if( $lang == 'all' ) {
+           $s = 'SELECT
+                     `path`, `name`, `lang`
+                 FROM
+                     `files`
+                 WHERE
+                     `lang` != "en" AND
+                     `revision` is NULL AND
+                     `status` is NULL AND
+                     `project` = "%s"
+           ';
+           $params = array($project);
+       }
+       else {
+           $s = 'SELECT
+                     `path`, `name`, `lang`
+                 FROM
+                     `files`
+                 WHERE
+                     `lang` = "%s" AND
+                     `revision` is NULL AND
+                     `status` is NULL AND
+                     `project` = "%s"
+           ';
+           $params = array($lang, $project);
+       }
 
-       $r = $db->query($s);
+       $r = $this->conn->query($s, $params);
 
        while( $a = $r->fetch_object() ) {
           $result[$a->lang][$a->path.$a->name] = 'exist';

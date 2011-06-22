@@ -8,6 +8,8 @@ class TranslatorStatistic
 {
     private static $instance;
 
+    private $conn;
+
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
@@ -19,6 +21,7 @@ class TranslatorStatistic
 
     private function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     /**
@@ -32,21 +35,27 @@ class TranslatorStatistic
         $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
-            $where = '';
+            $s =  'SELECT
+                     `id`, `nick`, `name`, `mail`, `vcs`, `lang`
+                   FROM
+                     `translators`
+                   WHERE
+                     `project` = "%s"                                               
+            ';
+            $params = array($project);
         } else {
-            $where = 'AND `lang`="'.$lang.'"';
+            $s =  'SELECT
+                     `id`, `nick`, `name`, `mail`, `vcs`, `lang`
+                   FROM
+                     `translators`
+                   WHERE
+                     `project` = "%s" AND
+                     `lang` = "%s"
+            ';
+            $params = array($project, $lang);
         }
 
-        $s =  'SELECT 
-                 `id`, `nick`, `name`, `mail`, `vcs`, `lang`
-               FROM
-                 `translators`
-               WHERE
-                 `project` = \''.$project.'\'
-               '.$where.'
-        ';
-
-        $result = DBConnection::getInstance()->query($s);
+        $result = $this->conn->query($s, $params);
 
         $persons = array();
 
@@ -72,27 +81,41 @@ class TranslatorStatistic
         $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
-            $where = '';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    `maintainer`,
+                    `lang`
+                FROM
+                    `files`
+                WHERE
+                    `revision` = `en_revision` AND
+                    `project` = "%s"
+                GROUP BY
+                    `maintainer`
+                ORDER BY
+                    `maintainer`
+            ';
+            $params = array($project);
         } else {
-            $where = '`lang`="'.$lang.'" AND';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    `maintainer`,
+                    `lang`
+                FROM
+                    `files`
+                WHERE
+                    `lang` = "%s"
+                    `revision` = `en_revision` AND
+                    `project` = "%s"
+                GROUP BY
+                    `maintainer`
+                ORDER BY
+                    `maintainer`
+            ';
+            $params = array($lang, $project);
         }
 
-        $s = 'SELECT
-                COUNT(`name`) AS total,
-                `maintainer`,
-                `lang`
-            FROM
-                `files`
-            WHERE
-                ' . $where . '
-                `revision` = `en_revision` AND
-                `project` = \''.$project.'\'
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`
-        ';
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $result = array();
         while ($a = $r->fetch_object()) {
@@ -112,30 +135,49 @@ class TranslatorStatistic
         $project = AccountManager::getInstance()->project;
 
         if( $lang == 'all' ) {
-            $where = '';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    `maintainer`,
+                    `lang`
+                FROM
+                    `files`
+                WHERE
+                    ' . $where . '
+                    `en_revision` != `revision`
+                AND
+                    `size` is not NULL
+                AND
+                    `project` = "%s"
+                GROUP BY
+                    `maintainer`
+                ORDER BY
+                    `maintainer`
+            ';
+            $params = array($project);
         } else {
-            $where = '`lang`="'.$lang.'" AND';
+            $s = 'SELECT
+                    COUNT(`name`) AS total,
+                    `maintainer`,
+                    `lang`
+                FROM
+                    `files`
+                WHERE
+                    `lang` = "%s"
+                AND
+                    `en_revision` != `revision`
+                AND 
+                    `size` is not NULL
+                AND
+                    `project` = "%s"
+                GROUP BY
+                    `maintainer`    
+                ORDER BY
+                    `maintainer`
+            ';
+            $params = array($lang, $project);
         }
 
-        $s = 'SELECT
-                COUNT(`name`) AS total,
-                `maintainer`,
-                `lang`
-            FROM
-                `files`
-            WHERE
-                ' . $where . '
-                `en_revision` != `revision`
-            AND
-                `size` is not NULL
-            AND
-                `project` = \''.$project.'\'
-            GROUP BY
-                `maintainer`
-            ORDER BY
-                `maintainer`
-        ';
-        $r = DBConnection::getInstance()->query($s);
+        $r = $this->conn->query($s, $params);
 
         $result = array();
         while ($a = $r->fetch_object()) {

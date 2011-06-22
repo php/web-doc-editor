@@ -25,6 +25,7 @@ class ToolsCheckEntities {
     private $entityNames;
     private $entityUrls;
 
+    private $conn;
 
     /**
      * Initialise
@@ -52,6 +53,7 @@ class ToolsCheckEntities {
             $this->supportedSchemes[] = 'ftp';
         }
 
+        $this->conn = DBConnection::getInstance();
     }
 
     public static function getInstance()
@@ -83,10 +85,10 @@ class ToolsCheckEntities {
               FROM
                   `checkEntities`
               WHERE
-                  `project` = \''.$project.'\'
+                  `project` = "%s"
              ';
-
-        $r  = DBConnection::getInstance()->query($s);
+        $params = array($project);
+        $r  = $this->conn->query($s, $params);
         $nb = $r->num_rows;
         $i = 0;
         while ($a = $r->fetch_array()) {
@@ -107,7 +109,7 @@ class ToolsCheckEntities {
     {
         $project = ProjectManager::getInstance()->project;
 
-        DBConnection::getInstance()->query('DELETE FROM `checkEntities` WHERE `project`="'.$project.'"');
+        $this->conn->query('DELETE FROM `checkEntities` WHERE `project`="%s"', array($project));
     }
 
 
@@ -169,15 +171,15 @@ class ToolsCheckEntities {
 
                         $r = $this->checkUrl($num, $url);
 
-                        $query = sprintf(
-                            'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
-                            VALUES ("%s", "%s", "%s", "%s", now())',
+                        $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                            VALUES ("%s", "%s", "%s", "%s", now())';
+                        $params = array(
                             $project,
                             $name,
                             $url,
                             $r[0]
                         );
-                        DBConnection::getInstance()->query($query);
+                        $this->conn->query($query, $params);
 
                         exit();
                     }
@@ -202,15 +204,15 @@ class ToolsCheckEntities {
 
                 $r = $this->checkUrl($num, $entityUrl);
 
-                $query = sprintf(
-                    'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
-                    VALUES ("%s", "%s", "%s", "%s", now())',
+                $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                    VALUES ("%s", "%s", "%s", "%s", now())';
+                $params = array(
                     $project,
                     $this->entityNames[$num],
                     $entityUrl,
                     $r[0]
                 );
-                DBConnection::getInstance()->query($query);
+                $this->conn->query($query, $params);
             }
             ++$num; // (for the count)
         }

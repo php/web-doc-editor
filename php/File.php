@@ -19,6 +19,8 @@ class File
     
     public $isDir;
     public $isFile;
+
+    private $conn;
     
     /**
      * Constructor will normalize the lang and the path as specified as parameters.
@@ -77,7 +79,7 @@ class File
             $this->full_path_dir = $appConf[$project]['vcs.path'].$lang.'/';
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$this->name;
         }
-        
+        $this->conn = DBConnection::getInstance();        
     }
 
     public function exist()
@@ -294,7 +296,6 @@ class File
     public function isModified()
     {
         $am      = AccountManager::getInstance();
-        $db      = DBConnection::getInstance();
         $project = $am->project;
 
         // If the current file is a .new file, we must escape the .new otherwise, we haven't any result from the database
@@ -304,8 +305,7 @@ class File
             $hereName = $this->name;
         }
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `id` as fidDB,
                 `user`,
                 `anonymousIdent`,
@@ -317,14 +317,15 @@ class File
                 `project` = "%s" AND
                 `lang`="%s" AND
                 `path`="%s" AND
-                `name`="%s"',
-            $db->real_escape_string($project),
-            $db->real_escape_string($this->lang),
-            $db->real_escape_string($this->path),
-            $db->real_escape_string($hereName)
+                `name`="%s"';
+        $params = array(
+            $project,
+            $this->lang,
+            $this->path,
+            $hereName
         );
 
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
         if( $r->num_rows == 0 ) {
             return false;

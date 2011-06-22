@@ -14,6 +14,8 @@ class RepositoryManager
 {
     private static $instance;
 
+    private $conn;
+
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
@@ -61,6 +63,7 @@ class RepositoryManager
 
     private function __construct()
     {
+        $this->conn = DBConnection::getInstance();
     }
 
     public function getAvailableLanguage()
@@ -143,13 +146,12 @@ class RepositoryManager
      */
     public function cleanUp()
     {
-        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         // We cleanUp the database before update vcs and apply again all tools
         foreach (array('files', 'translators', 'errorfiles') as $table) {
-            $db->query("DELETE FROM `$table` WHERE `project`='$project'");
-            $db->query("OPTIMIZE TABLE `$table` ");
+            $this->conn->query("DELETE FROM `$table` WHERE `project`='%s'", array($project));
+            $this->conn->query("OPTIMIZE TABLE `$table` ", array());
         }
     }
 
@@ -163,7 +165,7 @@ class RepositoryManager
     {
         $project = AccountManager::getInstance()->project;
 
-        DBConnection::getInstance()->query("DELETE FROM `failedBuildLog` WHERE `project`= '$project' AND `date` < date_sub(now(),interval 1 month)");
+        $this->conn->query("DELETE FROM `failedBuildLog` WHERE `project`= '%s' AND `date` < date_sub(now(),interval 1 month)", array($project));
     }
 
 
@@ -172,7 +174,6 @@ class RepositoryManager
      */
     public function updateFolder($path)
     {
-        $db      = DBConnection::getInstance();
         $rf      = RepositoryFetcher::getInstance();
         $am      = AccountManager::getInstance();
         $project = $am->project;
@@ -375,14 +376,12 @@ class RepositoryManager
      */
     public function addProgressWork($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $anonymousIdent = $am->anonymousIdent;
         $project  = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 id
              FROM
                 `work`
@@ -390,23 +389,24 @@ class RepositoryManager
                 `project`="%s" AND
                 `lang`="%s" AND
                 `path`="%s" AND
-                `name`="%s"',
+                `name`="%s"';
+        $params = array(
             $project,
             $file->lang,
             $file->path,
             $file->name
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
         // We insert or update the work table
         if ($r->num_rows == 0) {
 
-            $s = sprintf(
-                'INSERT into
+            $s = 'INSERT into
                     `work`
                     (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
                  VALUES
-                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")',
+                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")';
+            $params = array(
                 $project,
                 $file->lang,
                 $file->path,
@@ -419,15 +419,14 @@ class RepositoryManager
                 $anonymousIdent,
                 $type
             );
-            $db->query($s);
-            $fileID = $db->insert_id();
+            $this->conn->query($s, $params);
+            $fileID = $this->conn->insert_id();
 
         } else {
 
             $a = $r->fetch_object();
 
-            $s = sprintf(
-                'UPDATE
+            $s = 'UPDATE
                     `work`
                  SET
                     `revision`="%s",
@@ -440,7 +439,8 @@ class RepositoryManager
                     `module`="workInProgress",
                     `patchID` = NULL
                  WHERE
-                    `id`="%s"',
+                    `id`="%s"';
+            $params = array(
                 $revision,
                 $en_revision,
                 $reviewed,
@@ -449,7 +449,7 @@ class RepositoryManager
                 $am->anonymousIdent,
                 $a->id
             );
-            $db->query($s);
+            $this->conn->query($s, $params);
             $fileID = $a->id;
         }
 
@@ -463,22 +463,24 @@ class RepositoryManager
      */
     public function delWork($files)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $project  = $am->project;
 
         while( list($path, $data) = each($files))
         {
-            $query = sprintf('DELETE FROM `work`
+            $query = 'DELETE FROM `work`
                 WHERE
                     `project` = "%s" AND
                     `lang` = "%s" AND
                     `path` = "%s" AND
-                    `name` = "%s"',
+                    `name` = "%s"';
+            $params = array(
                 $project,
-                $data->lang, $data->path, $data->name
+                $data->lang,
+                $data->path,
+                $data->name
             );
-            $db->query($query);
+            $this->conn->query($query, $params);
         }
     }
     
@@ -491,32 +493,30 @@ class RepositoryManager
      */
     public function moveToPatch($patchID, $filesID)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $s = sprintf(
-             'SELECT
+        $s = 'SELECT
                  `name`
               FROM
                  `patches`
               WHERE
                  `project` = "%s" AND
                  `id`      = "%s" AND
-                 `user`    = "%s"',
+                 `user`    = "%s"';
+        $params = array(
              $project,
              $patchID,
              $vcsLogin
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
-        if( $db->affected_rows() == 0 ) {
+        if( $this->conn->affected_rows() == 0 ) {
             return 'Patches unknow for this project or for this user';
         }
 
-        $s = sprintf(
-            'UPDATE
+        $s = 'UPDATE
                 `work`
              SET
                 `patchID` = "%s",
@@ -524,16 +524,16 @@ class RepositoryManager
             WHERE
                 `project` = "%s" AND
                 `user`    = "%s" AND
-                `id` IN (%s)',
-
+                `id` IN (%s)';
+        $params = array(
             $patchID,
             $project,
             $vcsLogin,
-            $filesID
+            implode(',', array_map('intval', explode(',', $filesID)))
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         
-        if( $db->affected_rows() < 1 ) {
+        if( $this->conn->affected_rows() < 1 ) {
             return 'Error. Is this file(s) is(are) own by you ?';
         } else {
             return true;
@@ -549,13 +549,11 @@ class RepositoryManager
      */
     public function moveToWork($filesID)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $s = sprintf(
-            'UPDATE
+        $s = 'UPDATE
                 `work`
              SET
                 `patchID` = NULL,
@@ -563,15 +561,16 @@ class RepositoryManager
             WHERE
                 `project` = "%s" AND
                 `user`    = "%s" AND
-                `id` IN (%s)',
+                `id` IN (%s)';
 
+        $params = array(
             $project,
             $vcsLogin,
-            $filesID
+            implode(',', array_map('intval', explode(',', $filesID)))
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         
-        if( $db->affected_rows() < 1 ) {
+        if( $this->conn->affected_rows() < 1 ) {
             return 'Error. Is this file(s) is(are) own by you ?';
         } else {
             return true;
@@ -587,7 +586,6 @@ class RepositoryManager
      */
     public function deletePatch($patchID)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
@@ -609,31 +607,31 @@ class RepositoryManager
         }
         
         // We start by change files for this patch.
-        $s = sprintf(
-            'UPDATE
+        $s = 'UPDATE
                 `work`
             SET
                 `patchID` = NULL,
                 `module`  = "workInProgress"
             WHERE
                 `project` = "%s" AND
-                `patchID` =  %s',
+                `patchID` =  %d';
+        $params = array(
             $project,
             $patchID
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
         // We now delete this patch
-        $s = sprintf(
-            'DELETE FROM
+        $s = 'DELETE FROM
                 `patches`
             WHERE
                 `project` = "%s" AND
-                `id`      =  %s',
+                `id`      =  %d';
+        $params = array(
             $project,
             $patchID
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
         return true;
     }
@@ -646,21 +644,20 @@ class RepositoryManager
      */
     public function getPatchInfo($patchID)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 *
              FROM
                 `patches`
             WHERE
-                `id` = "%s"',
+                `id` = "%s"';
+        $params = array(
             $patchID
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         
         if( $r->num_rows == 0 ) {
             return false;
@@ -677,26 +674,24 @@ class RepositoryManager
      */
     public function createPatch($name)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $s = sprintf(
-            'INSERT INTO
+        $s = 'INSERT INTO
                 `patches`
                 (`project`, `name`, `user`, `anonymousIdent`, `date`)
             VALUES
-                ("%s", "%s", "%s", "%s", %s)',
+                ("%s", "%s", "%s", "%s", now())';
+        $params = array(
             $project,
             $name,
             $vcsLogin,
-            $am->anonymousIdent,
-            "now()"
+            $am->anonymousIdent
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
-        return $db->insert_id();
+        return $this->conn->insert_id();
 
     }
 
@@ -708,28 +703,27 @@ class RepositoryManager
      */
     public function modPatch($patchID, $name)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
-        $s = sprintf(
-            'UPDATE
+        $s = 'UPDATE
                 `patches`
              SET
                 `name` = "%s"
              WHERE
                 `project` = "%s" AND
                 `user`    = "%s" AND
-                `id`      = %s',
+                `id`      = %d';
+        $params = array(
             $name,
             $project,
             $vcsLogin,
             $patchID
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
-        if( $db->affected_rows() != 1 ) {
+        if( $this->conn->affected_rows() != 1 ) {
             return 'Error';
         } else {
             return true;
@@ -744,7 +738,6 @@ class RepositoryManager
      */
     public function addPendingDelete($file)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
@@ -752,12 +745,12 @@ class RepositoryManager
 
         $date = @date("Y-m-d H:i:s");
 
-        $s = sprintf(
-            'INSERT INTO
+        $s = 'INSERT INTO
                 `work`
                 (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
             VALUES
-                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "%s", "delete")',
+                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "%s", "delete")';
+        $params = array(
             $project,
             $file->lang,
             $file->path,
@@ -766,10 +759,10 @@ class RepositoryManager
             $anonymousIdent,
             $date
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
         return array(
-            'id'   => $db->insert_id(),
+            'id'   => $this->conn->insert_id(),
             'by'   => Array("user"=> $vcsLogin, "anonymousIdent" => $anonymousIdent),
             'date' => $date
         );
@@ -1144,26 +1137,25 @@ class RepositoryManager
      */
     public function SetFileProgress($idDB, $progress)
     {
-        $db       = DBConnection::getInstance();
         $am       = AccountManager::getInstance();
         $project  = $am->project;
         $vcsLogin = $am->vcsLogin;
         $anonymousIdent = $am->anonymousIdent;
 
         // We start by get the current row
-        $s = sprintf(
-            'SELECT
+        $s = 'SELECT
                 `user`,
                 `anonymousIdent`
              FROM
                 `work`
              WHERE
                 `project` = "%s" AND
-                `id`      = %s',
+                `id`      = %d';
+        $params = array(
             $project,
             $idDB
         );
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
 
         if( $r->num_rows == 0 ) {
             return 'file_dont_exist_in_workInProgress';
@@ -1176,23 +1168,23 @@ class RepositoryManager
             }
         }
 
-        $s = sprintf(
-            'UPDATE
+        $s = 'UPDATE
                 `work`
              SET
-                `progress` = %s
+                `progress` = "%s"
              WHERE
                 `project`        = "%s" AND
                 `user`           = "%s" AND
                 `anonymousIdent` = "%s" AND
-                `id`             = %s',
+                `id`             = %d';
+        $params = array(
             $progress,
             $project,
             $vcsLogin,
             $anonymousIdent,
             $idDB
         );
-        $db->query($s);
+        $this->conn->query($s, $params);
 
         return true;
     }
@@ -1206,7 +1198,6 @@ class RepositoryManager
      */
     public function clearLocalChange($type, $file)
     {
-        $db      = DBConnection::getInstance();
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
@@ -1227,8 +1218,7 @@ class RepositoryManager
         $return['errorFirst'] = 0;
 
         // We need select row from work table
-        $s = sprintf("
-              SELECT
+        $s = "SELECT
                  `id`,
                  `user`,
                  `anonymousIdent`
@@ -1238,14 +1228,15 @@ class RepositoryManager
                  `project`        = '%s' AND
                  `lang`           = '%s' AND
                  `path`           = '%s' AND
-                 `name`           = '%s'",
+                 `name`           = '%s'";
+        $params = array(
               $project,
               $lang,
               $path,
               $name
         );
         
-        $r = $db->query($s);
+        $r = $this->conn->query($s, $params);
         
         if( $r->num_rows == 0 ) {
 
@@ -1272,9 +1263,9 @@ class RepositoryManager
         $return['oldIdDB'] = $a->id;
 
         // We need delete row from work table
-        $s = 'DELETE FROM `work` WHERE `id`="' .$a->id. '"';
-
-        $db->query($s);
+        $s = 'DELETE FROM `work` WHERE `id`=%d';
+        $params = array($a->id);
+        $this->conn->query($s, $params);
 
         // If type == delete, we stop here and return
         if ($type == 'delete') {
@@ -1309,8 +1300,9 @@ class RepositoryManager
 
         // We need reload original information
         $s = "SELECT `revision`, `en_revision`, `maintainer`, `reviewed` FROM `files`
-              WHERE `project`='$project' AND `lang`='$lang' AND `path`='$path' AND `name`='$name'";
-        $r = $db->query($s);
+              WHERE `project`='%s' AND `lang`='%s' AND `path`='%s' AND `name`='%s'";
+        $params = array($project, $lang, $path, $name);
+        $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
         $return['rev']        = $a->revision;
@@ -1358,7 +1350,6 @@ class RepositoryManager
     public function updateFileInfo($files)
     {
 
-        $db = DBConnection::getInstance();
         $am = AccountManager::getInstance();
 
         foreach ($files as $file) {
@@ -1369,8 +1360,7 @@ class RepositoryManager
 
             if ($file->lang == 'en') { // en file
                 // update EN file info
-                $s = sprintf(
-                    'UPDATE `files`
+                $s = 'UPDATE `files`
                         SET
                             `xmlid`    = "%s",
                             `revision` = "%s",
@@ -1380,24 +1370,25 @@ class RepositoryManager
                             `project` = "%s" AND
                             `lang` = "%s" AND
                             `path` = "%s" AND
-                            `name` = "%s"',
+                            `name` = "%s"';
+                $params = array(
                     $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
                 );
-                $db->query($s);
+                $this->conn->query($s, $params);
 
                 // update LANG file info
-                $s = sprintf(
-                    'UPDATE `files`
+                $s = 'UPDATE `files`
                         SET
                             `en_revision` = "%s"
                         WHERE
                             `project` = "%s" AND
                             `lang` != "%s" AND
                             `path`  = "%s" AND
-                            `name`  = "%s"',
+                            `name`  = "%s"';
+                $params = array(
                     $info['rev'], $am->project, $file->lang, $file->path, $file->name
                 );
-                $db->query($s);
+                $this->conn->query($s, $params);
 
             } else { // lang file
 
@@ -1416,8 +1407,7 @@ class RepositoryManager
                                - (intval((time() - $date)   / 86400));
 
                     // update LANG file info
-                    $s = sprintf(
-                        'UPDATE `files`
+                    $s = 'UPDATE `files`
                             SET
                                 `xmlid`      = "%s",
                                 `revision`   = "%s",
@@ -1433,12 +1423,13 @@ class RepositoryManager
                                 `project` = "%s" AND
                                 `lang` = "%s" AND
                                 `path` = "%s" AND
-                                `name` = "%s"',
+                                `name` = "%s"';
+                    $params = array(
                         $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
                         trim($info['maintainer']), trim($info['status']),   $size_diff,
                         $date_diff, $am->project, $file->lang, $file->path, $file->name
                     );
-                    $db->query($s);
+                    $this->conn->query($s, $params);
 
                     // Run the errorTools under this file
                     $tmpFile[0]['en_content']   = $en->read(true);
@@ -1455,8 +1446,7 @@ class RepositoryManager
                 {
 
                     // update LANG file info
-                    $s = sprintf(
-                        'UPDATE `files`
+                    $s = 'UPDATE `files`
                             SET
                                 `xmlid`      = "%s",
                                 `revision`   = "%s",
@@ -1472,12 +1462,13 @@ class RepositoryManager
                                 `project` = "%s" AND
                                 `lang` = "%s" AND
                                 `path` = "%s" AND
-                                `name` = "%s"',
+                                `name` = "%s"';
+                    $params = array(
                         $info['xmlid'], $info['en-rev'], 0, trim($info['reviewed']), $size, $date,
                         trim($info['maintainer']), trim($info['status']),   0,
                         0, $am->project, $file->lang, $file->path, $file->name
                     );
-                    $db->query($s);
+                    $this->conn->query($s, $params);
 
                     // Run the errorTools under this file
                         // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
@@ -1504,7 +1495,6 @@ class RepositoryManager
     public function updateTranslatorInfo()
     {
         $ExistingLanguage = $this->getExistingLanguage();
-        $db = DBConnection::getInstance();
         $am = AccountManager::getInstance();
 
         foreach ($ExistingLanguage as $lang) {
@@ -1547,26 +1537,26 @@ class RepositoryManager
                         $person = array_merge($default, $person);
 
                         // We try to remove this record if it exist
-                        $query = sprintf(
-                            'DELETE FROM `translators` WHERE `project`="%s" AND `lang`="%s" AND `nick`="%s"',
+                        $query = 'DELETE FROM `translators` WHERE `project`="%s" AND `lang`="%s" AND `nick`="%s"';
+                        $params = array(
                             $am->project,
                             $lang,
-                            $db->real_escape_string($person['nick'])
+                            $person['nick']
                         );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
 
-                        $query = sprintf(
-                            'INSERT INTO `translators` (`project`, `lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
-                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")',
+                        $query = 'INSERT INTO `translators` (`project`, `lang`, `nick`, `name`, `mail`, `vcs`, `editor`)
+                             VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+                         $params = array(
                             $am->project,
                             $lang,
-                            $db->real_escape_string($person['nick']),
-                            $db->real_escape_string($name),
-                            $db->real_escape_string($person['email']),
-                            $db->real_escape_string($person['vcs']),
-                            $db->real_escape_string($person['editor'])
+                            $person['nick'],
+                            $name,
+                            $person['email'],
+                            $person['vcs'],
+                            $person['editor']
                         );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
 
                     }
                 }
@@ -1678,13 +1668,13 @@ class RepositoryManager
                 $lang_file = $appConf[$project]['vcs.path'] .$lang .$f->path .$f->name;
 
                 if (!@is_file($en_file)) {
-                    $query = sprintf(
-                        'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `status`)
-                         VALUES ("%s", "%s", "%s", "%s", "%s")',
+                    $query = 'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `status`)
+                         VALUES ("%s", "%s", "%s", "%s", "%s")';
+                    $params = array(
                         $project,
                         $lang, $f->path, $f->name, 'NotInEN'
                     );
-                    DBConnection::getInstance()->query($query);
+                    $this->conn->query($query, $params);
                 }
             }
 
@@ -1704,7 +1694,6 @@ class RepositoryManager
      */
     public function applyRevCheck($path = '/', $revType='new', $revLang='all')
     {
-        $db      = DBConnection::getInstance();
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
@@ -1764,34 +1753,34 @@ class RepositoryManager
                 if( $revType == 'update' )
                 {
                     //... table `files`
-                    $query = sprintf(
-                            'DELETE FROM `files`
+                    $query = 'DELETE FROM `files`
                              WHERE `project`="%s" AND
-                                   `lang`="%s" AND
+                                   `lang`="en" AND
                                    `path`="%s" AND
-                                   `name`="%s"',
-                            $am->project, 'en', $f->path, $f->name
+                                   `name`="%s"';
+                    $params = array(
+                            $am->project, $f->path, $f->name
                             );
-                    $db->query($query);
+                    $this->conn->query($query, $params);
 
                     //... table `errorfiles`
-                    $query = sprintf(
-                            'DELETE FROM `errorfiles`
+                    $query = 'DELETE FROM `errorfiles`
                              WHERE `project`="%s" AND
-                                   `lang`="%s" AND
+                                   `lang`="en" AND
                                    `path`="%s" AND
-                                   `name`="%s"',
-                            $am->project, 'en', $f->path, $f->name
+                                   `name`="%s"';
+                    $params = array(
+                            $am->project, $f->path, $f->name
                             );
-                    $db->query($query);
+                    $this->conn->query($query, $params);
                 }
 
                 // Sql insert.
-                $query = sprintf(
-                    'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
-                        VALUES ("%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                $query = 'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
+                        VALUES ("%s", "en", "%s", "%s", "%s", "%s", "%s", "%s", NULL, NUL, "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+                $params = array(
                     $am->project,
-                    'en', $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date, 'NULL', 'NULL',
+                    $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date,
                     $ToolsCheckDocResult['check_oldstyle'],
                     $ToolsCheckDocResult['check_undoc'],
                     $ToolsCheckDocResult['check_roleerror'],
@@ -1802,7 +1791,7 @@ class RepositoryManager
                     $ToolsCheckDocResult['check_noexamples'],
                     $ToolsCheckDocResult['check_noerrors']
                 );
-                $db->query($query);
+                $this->conn->query($query, $params);
 
                 $error = new ToolsError();
                 $error->setParams($infoEN['content'], '', 'en', $f->path, $f->name, '');
@@ -1841,26 +1830,26 @@ class RepositoryManager
                     if( $revType == 'update' )
                     {
                         // ... `file`
-                        $query = sprintf(
-                                'DELETE FROM `files`
+                        $query = 'DELETE FROM `files`
                                  WHERE `project`="%s" AND
                                        `lang`="%s" AND
                                        `path`="%s" AND
-                                       `name`="%s"',
+                                       `name`="%s"';
+                        $params = array(
                                 $project, $lang, $lang_file->path, $lang_file->name
                                 );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
 
                         //... table `errorfiles`
-                        $query = sprintf(
-                                'DELETE FROM `errorfiles`
+                        $query = 'DELETE FROM `errorfiles`
                                  WHERE `project`="%s" AND
                                        `lang`="%s" AND
                                        `path`="%s" AND
-                                       `name`="%s"',
+                                       `name`="%s"';
+                        $params = array(
                                 $project, $lang, $lang_file->path, $lang_file->name
                                 );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
                     }
 
                     if ( $lang_file->exist() ) {
@@ -1879,16 +1868,16 @@ class RepositoryManager
                         $xmlid      = ($infoLANG['xmlid']      == 'NULL') ? 'NULL' : $infoLANG['xmlid'];
                         $reviewed   = ($infoLANG['reviewed']   == 'NULL') ? 'NULL' : $infoLANG['reviewed'];
 
-                        $query = sprintf(
-                            'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
-                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, "%s", "%s")',
+                        $query = 'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
+                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+                         $params = array(
                             $project,
                             $lang, $xmlid, $lang_file->path, $lang_file->name,
                             $revision, $en_revision, $reviewed,
                             $size, $size_diff, $date, $date_diff,
                             $maintainer, $status
                         );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
 
                         // Check for error in this file ONLY if this file is uptodate
                         if ($revision == $en_revision &&  $revision != 0 ) {
@@ -1901,16 +1890,16 @@ class RepositoryManager
                             $error->saveError();
                         }
                     } else {
-                        $query = sprintf(
-                            'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
-                                VALUES ("%s", "%s", "%s", "%s", %s)',
+                        $query = 'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
+                                VALUES ("%s", "%s", "%s", "%s", "%s")';
+                        $params = array(
                             $project,
                             $lang,
                             $lang_file->path,
                             $lang_file->name,
                             $en_size
                         );
-                        $db->query($query);
+                        $this->conn->query($query, $params);
                     }
                 }
             }
@@ -1931,16 +1920,17 @@ class RepositoryManager
     {
 
         for ($i = 0; $i < count($files); $i++) {
-            $query = sprintf('DELETE FROM files
+            $query = 'DELETE FROM files
                 WHERE
                     `project` = "%s" AND
                     `lang` = "%s" AND
                     `path` = "%s" AND
-                    `name` = "%s"',
+                    `name` = "%s"';
+            $params = array(
                 AccountManager::getInstance()->project,
                 $files[$i]->lang, $files[$i]->path, $files[$i]->name
             );
-            DBConnection::getInstance()->query($query);
+            $this->conn->query($query, $params);
         }
     }
 
@@ -1955,23 +1945,29 @@ class RepositoryManager
      */
     public function setStaticValue($type, $field, $value, $forceNew=false)
     {
-        $db      = DBConnection::getInstance();
         $project = AccountManager::getInstance()->project;
 
         $s = "SELECT id FROM staticValue WHERE
-              `project` = '".$project."' AND
-              `type`    = '".$type."' AND
-              `field`   = '".$field."'
+              `project` = '%s' AND
+              `type`    = '%s' AND
+              `field`   = '%s'
              ";
-        $r = $db->query($s);
+        $params = array(
+            $project,
+            $type,
+            $field
+        );
+        $r = $this->conn->query($s, $params);
 
         if( $r->num_rows == 0 || $forceNew) {
-            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`, `date`) VALUES ('".$project."' , '".$type."' , '".$field."', '".$db->real_escape_string($value)."', now())";
-            $db->query($s);
+            $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`, `date`) VALUES ('%s', '%s', '%s', '%s', now())";
+            $params = array($project, $type, $field, $value);
+            $this->conn->query($s, $params);
         } else {
             $a = $r->fetch_object();
-            $s = "UPDATE staticValue SET `value`= '".$db->real_escape_string($value)."', `date`=now() WHERE `id`='".$a->id."'";
-            $db->query($s);
+            $s = "UPDATE staticValue SET `value`= '%s', `date`=now() WHERE `id`=%d";
+            $params = array($value, $a->id);
+            $this->conn->query($s, $params);
         }
     }
     
