@@ -1943,7 +1943,7 @@ class RepositoryManager
      * @param $forceNew TRUE to indicate that this value must be added e.g. not updated. By default, the value is updated.
      * @return Nothing.
      */
-    public function setStaticValue($type, $field, $value, $forceNew=false)
+    public static function setStaticValue($type, $field, $value, $forceNew=false)
     {
         $project = AccountManager::getInstance()->project;
 
@@ -1957,17 +1957,17 @@ class RepositoryManager
             $type,
             $field
         );
-        $r = $this->conn->query($s, $params);
+        $r = DBConnection::getInstance()->query($s, $params);
 
         if( $r->num_rows == 0 || $forceNew) {
             $s = "INSERT INTO staticValue (`project`, `type`, `field`, `value`, `date`) VALUES ('%s', '%s', '%s', '%s', now())";
             $params = array($project, $type, $field, $value);
-            $this->conn->query($s, $params);
+            DBConnection::getInstance()->query($s, $params);
         } else {
             $a = $r->fetch_object();
             $s = "UPDATE staticValue SET `value`= '%s', `date`=now() WHERE `id`=%d";
             $params = array($value, $a->id);
-            $this->conn->query($s, $params);
+            DBConnection::getInstance()->query($s, $params);
         }
     }
     

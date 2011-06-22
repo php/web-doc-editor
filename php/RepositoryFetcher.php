@@ -1239,7 +1239,7 @@ TODO: Handle project here
      * @param $field The name of the field for this value
      * @return The value.
      */
-    public function getStaticValue($type, $field)
+    public static function getStaticValue($type, $field)
     {
 
         // Save in DB
@@ -1252,7 +1252,8 @@ TODO: Handle project here
             $type,
             $field
         );
-        $r = $this->conn->query($s, $params);
+
+        $r = DBConnection::getInstance()->query($s, $params);
 
         if( $r->num_rows == 0 ) {
             return false;
