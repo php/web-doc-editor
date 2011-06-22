@@ -84,7 +84,7 @@ ui.task._VCSCommitTask.commit = function(files)
     for (i = 0; i < files.length; i = i + 1)
     {
         node = Ext.getCmp('commit-grid-panel').store.getById(files[i].id);
-        nodes.push(node.data.FileDBID);
+        nodes.push(parseInt(node.data.FileDBID, 10));
     }
 
     // We must choose at least one file
