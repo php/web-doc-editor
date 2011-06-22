@@ -55,7 +55,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                                     '<li><a href="http://extjs.com" target="_blank">ExtJs Team</a><div class="phd-oe-credit-info">' + _('Javascript FrameWork') + '</div></li>' +
                                     '<li><a href="http://marijn.haverbeke.nl/codemirror/" target="_blank">CodeMirror</a><div class="phd-oe-credit-info">' + _('Code editor') + '</div></li>' +
                                     '<li><a href="http://www.oxygen-icons.org/" target="_blank">Oxygen project from KDE</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
-                                    '<li><a href="http://www.mibbit.com/" target="_blank">Mibbit for donating their Premium IRC widget</a><div class="phd-oe-credit-info">' + _('Icon pack') + '</div></li>' +
+                                    '<li><a href="http://www.mibbit.com/" target="_blank">Mibbit for donating their Premium IRC widget</a><div class="phd-oe-credit-info">' + _('Web IRC Chat') + '</div></li>' +
                                 '</ul></div>'
                 }, {
                     title    : _('License'),
