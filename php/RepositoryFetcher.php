@@ -186,7 +186,7 @@ class RepositoryFetcher
                 `work`
              WHERE
                 `project` = "%s" AND
-               (`lang`="%s" OR `lang`="en") AND `id` IN (%s)',
+               (`lang`="%s" OR `lang`="en" OR `lang`="doc-base") AND `id` IN (%s)',
                 
             $am->project,
             $am->vcsLang,
