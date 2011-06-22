@@ -489,6 +489,7 @@ var i18n = new Array();
   i18n["Help and support"] = "Aide et support";
   i18n["Mailing list:"] = "Liste de diffusion :";
   i18n["IRC:"] = "IRC : ";
+  i18n["Web IRC Chat"] = "Web IRC Chat";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
