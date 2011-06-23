@@ -37,6 +37,10 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
                         String.format(_('Email sent to {0} with success!'), win.name.ucFirst()),
                         Ext.emptyFn
                     );
+                },
+                failure : function()
+                {
+                    PhDOE.winForbidden();
                 }
             });
 

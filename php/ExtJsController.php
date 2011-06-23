@@ -1622,6 +1622,10 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
+        if (AccountManager::getInstance()->isAnonymous) {
+            return JsonResponseBuilder::failure();
+        }
+
         $to      = $this->getRequestVariable('to');
         $subject = $this->getRequestVariable('subject');
         $msg     = $this->getRequestVariable('msg');
