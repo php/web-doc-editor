@@ -22,7 +22,7 @@ class PreviewFile
             return false;
         }
         
-        $this->path = $path;
+        $this->path = str_replace('..', '', $path);
         
         $this->checkPath();
         $this->makePreview();

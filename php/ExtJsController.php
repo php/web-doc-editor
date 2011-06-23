@@ -313,6 +313,14 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
+        if ( !$am->isGlobalAdmin() ) {
+            return JsonResponseBuilder::failure(
+                array(
+                    'type' => 'action_only_global_admin'                                      
+                )
+            );
+        }
+
         $rm = RepositoryManager::getInstance();
 
         $project = $am->project;

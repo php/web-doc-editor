@@ -114,6 +114,10 @@ class RepositoryFetcher
 
         $return = array();
 
+        if( !isset($appConf[$project]['skeletons.folder']) ) {
+            return $return;
+        }
+
         $dir = realpath($appConf[$project]['skeletons.folder']);
         $d = dir($dir);
         while (false !== ($entry = $d->read())) {

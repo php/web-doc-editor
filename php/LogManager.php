@@ -108,7 +108,7 @@ class LogManager
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $fp = fopen($appConf[$project]['vcs.path'] . '../.' . $file, 'w');
+        $fp = fopen($appConf[$project]['vcs.path'] . '../.' . basename($file), 'w');
         fwrite($fp, implode("<br>",$output));
         fclose($fp);
     }
@@ -125,7 +125,7 @@ class LogManager
         $appConf = $am->appConf;
         $project = $am->project;
         
-        return $this->highlightBuildLog(file_get_contents($appConf[$project]['vcs.path'] . '../.' . $file));
+        return $this->highlightBuildLog(file_get_contents($appConf[$project]['vcs.path'] . '../.' . basename($file)));
     }
 
     /**

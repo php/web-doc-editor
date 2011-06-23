@@ -23,6 +23,9 @@ class lockFile
         $am = AccountManager::getInstance();
         $appConf = $am->appConf;
 
+        // For security, we don't want to have IDs that can traverse directories.
+        $id = basename($id);
+
         $this->id   = $id;
         $this->path = $appConf['GLOBAL_CONFIGURATION']['data.path'] . '.' . $this->id;
     }
