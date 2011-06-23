@@ -1383,7 +1383,7 @@ class ExtJsController
     {
         $ac = AccountManager::getInstance();
 
-        if (!$am->isLogged()) {
+        if (!$ac->isLogged()) {
             return JsonResponseBuilder::failure();
         }
 
