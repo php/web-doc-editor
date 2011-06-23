@@ -52,7 +52,7 @@ if (isset($_REQUEST['perm'])) {
     $fileName = $_patch[count($_patch)-1];
     $filePath = substr($patch, 0, (strlen($patch)-strlen($fileName)));
     
-    $jsVar = 'var directAccess = {"link":"patch", "lang":"en", "path":"'.$filePath.'", "name":"'.$fileName.'", "project":"'.$_project.'"};';
+    $jsVar = 'var directAccess = {"link":"patch", "lang":"en", "path":"'.htmlspecialchars($filePath).'", "name":"'.htmlspecialchars($fileName).'", "project":"'.htmlspecialchars($_project).'"};';
 
 } else {
     $jsVar = 'var directAccess = false;';
