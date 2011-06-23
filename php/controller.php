@@ -10,7 +10,7 @@ set_time_limit(0);
 require_once "./ExtJsController.php";
 require_once "./JsonResponseBuilder.php";
 
-$controller = new ExtJsController($_REQUEST);
+$controller = new ExtJsController(array_merge($_GET, $_POST));
 
 $method     = str_replace('-', '_', $controller->getRequestVariable('task'));
 
