@@ -118,7 +118,10 @@ class ExtJsController
     public function updateRepository()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if ( !$am->isGlobalAdmin() ) {
             return JsonResponseBuilder::failure(
@@ -139,7 +142,11 @@ class ExtJsController
     public function addNewFolder()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $project = $am->project;
         $appConf = $am->appConf;
 
@@ -186,7 +193,9 @@ class ExtJsController
      */
     public function checkLockFile()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $lockFile  = $this->getRequestVariable('lockFile');
         $lockFiles = $this->getRequestVariable('lockFiles');
@@ -227,6 +236,9 @@ class ExtJsController
      */
     public function switchLang()
     {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $lang = $this->getRequestVariable('lang');
 
@@ -241,7 +253,6 @@ class ExtJsController
      */
     public function getAvailableProject()
     {
-
         $r = ProjectManager::getInstance()->getAvailableProject();
 
         return JsonResponseBuilder::success(
@@ -257,7 +268,6 @@ class ExtJsController
      */
     public function getAvailableLanguage()
     {
-
         $r = RepositoryManager::getInstance()->getAvailableLanguage();
 
         return JsonResponseBuilder::success(
@@ -272,7 +282,9 @@ class ExtJsController
     public function getSkeletonsNames()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $rf = RepositoryFetcher::getInstance();
 
@@ -297,7 +309,9 @@ class ExtJsController
     public function applyTools()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $rm = RepositoryManager::getInstance();
 
@@ -387,7 +401,10 @@ class ExtJsController
      */
     public function getFilesNeedUpdate()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $r = RepositoryFetcher::getInstance()->getPendingUpdate();
 
         return JsonResponseBuilder::success(
@@ -403,7 +420,10 @@ class ExtJsController
      */
     public function getFilesNeedTranslate()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $r = RepositoryFetcher::getInstance()->getPendingTranslate();
 
         return JsonResponseBuilder::success(
@@ -419,7 +439,10 @@ class ExtJsController
      */
     public function getFilesNotInEn()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $r = RepositoryFetcher::getInstance()->getNotInEn();
 
         return JsonResponseBuilder::success(
@@ -435,7 +458,10 @@ class ExtJsController
      */
     public function getFilesNeedReviewed()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $r = RepositoryFetcher::getInstance()->getPendingReview();
 
         return JsonResponseBuilder::success(
@@ -451,7 +477,9 @@ class ExtJsController
      */
     public function getFilesError()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $errorTools = new ToolsError();
         $errorTools->setParams('', '', AccountManager::getInstance()->vcsLang, '', '', '');
@@ -470,7 +498,9 @@ class ExtJsController
      */
     public function getWork()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $module = $this->getRequestVariable('module');
 
@@ -484,7 +514,9 @@ class ExtJsController
      */
     public function getFilesPendingPatch()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = RepositoryFetcher::getInstance()->getPendingPatch();
 
@@ -501,7 +533,9 @@ class ExtJsController
      */
     public function getTranslatorInfo()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $translators = RepositoryFetcher::getInstance()->getStaticValue('translator_summary', AccountManager::getInstance()->vcsLang);
 
@@ -518,7 +552,9 @@ class ExtJsController
      */
     public function getInfos()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $start = $this->getRequestVariable('start');
         $limit = $this->getRequestVariable('limit');
@@ -538,7 +574,9 @@ class ExtJsController
      */
     public function getSummaryInfo()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', AccountManager::getInstance()->vcsLang);
 
@@ -555,7 +593,9 @@ class ExtJsController
      */
     public function getLastNews()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $nr = new NewsReader(AccountManager::getInstance()->vcsLang);
         $r  = $nr->getLastNews();
@@ -578,7 +618,9 @@ class ExtJsController
      */
     public function getOpenBugs()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $bugs = new BugReader(AccountManager::getInstance()->vcsLang);
         $r = $bugs->getOpenBugs();
@@ -600,7 +642,9 @@ class ExtJsController
      */
     public function getGGTranslation()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $str = $this->getRequestVariable('str');
 
@@ -640,7 +684,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         $lang = $am->vcsLang;
 
         $xmlID = $this->getRequestVariable('xmlID');
@@ -669,7 +715,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
         
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         
         $appConf = $am->appConf;
         $project = $am->project;
@@ -771,7 +819,9 @@ class ExtJsController
      */
     public function checkFileError()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
         $FileLang = $this->getRequestVariable('FileLang');
@@ -825,7 +875,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
         $tx = new ToolsXmllint();
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $fileContent = $this->getRequestVariable('fileContent');
 
@@ -849,7 +901,9 @@ class ExtJsController
         $am = AccountManager::getInstance();
         $tx = new ToolsXmllint();
         
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $filePath   = $this->getRequestVariable('filePath');
         $fileName   = $this->getRequestVariable('fileName');
@@ -1012,7 +1066,9 @@ class ExtJsController
      */
     public function getLog()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         $Path = $this->getRequestVariable('Path');
         $File = $this->getRequestVariable('File');
 
@@ -1031,7 +1087,9 @@ class ExtJsController
      */
     public function getAcronyms()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = EntitiesAcronymsFetcher::getInstance()->getAcronyms();
 
@@ -1049,7 +1107,9 @@ class ExtJsController
     public function updateFolder()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $rm = RepositoryManager::getInstance();
         $path = $this->getRequestVariable('path');
@@ -1068,6 +1128,10 @@ class ExtJsController
      */
     function getUpdateFolderResponse()
     {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         return JsonResponseBuilder::success(
             array(
                 'result' => json_encode($_SESSION['updateFolder'])
@@ -1080,7 +1144,9 @@ class ExtJsController
      */
     public function getEntities()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $path = $this->getRequestVariable('path');
 
@@ -1099,7 +1165,10 @@ class ExtJsController
      */
     public function getDiff()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
         $DiffType = $this->getRequestVariable('DiffType');
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -1153,7 +1222,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if ( $am->isAnonymous ) {
             return JsonResponseBuilder::failure();
@@ -1171,7 +1242,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $users = $am->getVCSUsers();
 
@@ -1191,7 +1264,9 @@ class ExtJsController
         $am = AccountManager::getInstance();
         $rf = RepositoryFetcher::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         
         $fileIdDB = $this->getRequestVariable('fileIdDB');
         $newOwner = $this->getRequestVariable('newOwner');
@@ -1224,7 +1299,9 @@ class ExtJsController
      */
     public function getCommitLogMessage()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
         $r = LogManager::getInstance()->getCommitLog();
 
         return JsonResponseBuilder::success(
@@ -1240,7 +1317,9 @@ class ExtJsController
      */
     public function clearLocalChange()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $FileType = $this->getRequestVariable('FileType');
         $FilePath = $this->getRequestVariable('FilePath');
@@ -1282,7 +1361,9 @@ class ExtJsController
      */
     public function getLogFile()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $file = $this->getRequestVariable('file');
 
@@ -1302,7 +1383,9 @@ class ExtJsController
     {
         $ac = AccountManager::getInstance();
 
-        $ac->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if ($ac->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -1332,7 +1415,9 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if ( !$am->isGlobalAdmin() && !$am->isLangAdmin() ) {
             return JsonResponseBuilder::failure(
@@ -1375,6 +1460,9 @@ class ExtJsController
      */
     public function getCommitResponse()
     {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         return JsonResponseBuilder::success(
             array(
@@ -1392,7 +1480,9 @@ class ExtJsController
         $am = AccountManager::getInstance();
         $rm = RepositoryManager::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if ( $am->isAnonymous ) {
             return JsonResponseBuilder::failure();
@@ -1498,7 +1588,9 @@ class ExtJsController
         $am = AccountManager::getInstance();
         $rf = RepositoryFetcher::getInstance();
 
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = array();
         $r['project']   = $am->project;
@@ -1526,7 +1618,9 @@ class ExtJsController
      */
     public function sendEmail()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $to      = $this->getRequestVariable('to');
         $subject = $this->getRequestVariable('subject');
@@ -1542,7 +1636,9 @@ class ExtJsController
      */
     public function confUpdate()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $module   = $this->getRequestVariable('module');
         $itemName = $this->getRequestVariable('itemName');
@@ -1561,7 +1657,9 @@ class ExtJsController
         $am = AccountManager::getInstance();
         $rf = RepositoryFetcher::getInstance();
         
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $node   = $this->getRequestVariable('node');
         $search = $this->getRequestVariable('search');
@@ -1580,7 +1678,9 @@ class ExtJsController
      */
     public function saveLogMessage()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -1599,7 +1699,9 @@ class ExtJsController
      */
     public function deleteLogMessage()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -1617,7 +1719,9 @@ class ExtJsController
      */
     public function getAllFilesAboutExtension()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $ExtName = $this->getRequestVariable('ExtName');
 
@@ -1635,7 +1739,9 @@ class ExtJsController
      */
     public function getCheckEntitiesData()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $ToolsCheckEntities = new ToolsCheckEntities();
         $r = $ToolsCheckEntities->getData();
@@ -1653,7 +1759,9 @@ class ExtJsController
      */
     public function getCheckDocData()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $ToolsCheckDoc = new ToolsCheckDoc();
         $r = $ToolsCheckDoc->getCheckDocData();
@@ -1671,7 +1779,9 @@ class ExtJsController
      */
     public function downloadFailedBuildLog()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $idFailedBuild = $this->getRequestVariable('idFailedBuild');
 
@@ -1697,7 +1807,9 @@ class ExtJsController
      */
     public function getFailedBuildData()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $idFailedBuild = $this->getRequestVariable('idFailedBuild');
 
@@ -1722,7 +1834,9 @@ class ExtJsController
      */
     public function getFailedBuild()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = LogManager::getInstance()->getFailedBuild();
 
@@ -1739,7 +1853,9 @@ class ExtJsController
      */
     public function getCheckDocFiles()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $path      = $this->getRequestVariable('path');
         $errorType = $this->getRequestVariable('errorType');
@@ -1760,7 +1876,9 @@ class ExtJsController
      */
     public function deletePatch()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $patchID = $this->getRequestVariable('patchID');
 
@@ -1783,7 +1901,9 @@ class ExtJsController
      */
     public function managePatch()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $name    = $this->getRequestVariable('name');
         $patchID = $this->getRequestVariable('patchID');
@@ -1818,7 +1938,9 @@ class ExtJsController
      */
     public function moveToWork()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $filesID = $this->getRequestVariable('filesID');
 
@@ -1840,7 +1962,9 @@ class ExtJsController
      */
     public function moveToPatch()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $patchID = $this->getRequestVariable('patchID');
         $filesID = $this->getRequestVariable('filesID');
@@ -1864,7 +1988,9 @@ class ExtJsController
      */
     public function SetFileProgress()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $idDB     = $this->getRequestVariable('idDB');
         $progress = $this->getRequestVariable('progress');
@@ -1887,7 +2013,9 @@ class ExtJsController
      */
     public function downloadPatch()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -1919,7 +2047,9 @@ class ExtJsController
     public function logout()
     {
         $am = AccountManager::getInstance();
-        $am->isLogged();
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $value = array();
         $value['user'] = $am->vcsLogin;
@@ -1937,8 +2067,10 @@ class ExtJsController
      */
     public function getGraphLang()
     {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
-        AccountManager::getInstance()->isLogged();
         $lang = AccountManager::getInstance()->vcsLang;
 
         $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
@@ -1969,8 +2101,9 @@ class ExtJsController
      */
     public function getGraphLangs()
     {
-
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $return = array();
 
@@ -2011,7 +2144,9 @@ class ExtJsController
      */
     public function markAsNeedDelete()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
@@ -2034,7 +2169,9 @@ class ExtJsController
     }
 
     public function getImageContent() {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $FileLang = $this->getRequestVariable('FileLang');
         $FilePath = $this->getRequestVariable('FilePath');
@@ -2057,7 +2194,9 @@ class ExtJsController
      */
     public function manageDictionaryWord()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -2082,7 +2221,9 @@ class ExtJsController
      */
     public function getDictionaryWords()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $r = DictionaryManager::getInstance()->getWords();
 
@@ -2100,7 +2241,9 @@ class ExtJsController
      */
     public function delDictionaryWord()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -2119,7 +2262,9 @@ class ExtJsController
      */
     public function getUserNotes()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $file = $this->getRequestVariable('file');
 
@@ -2139,7 +2284,9 @@ class ExtJsController
      */
     public function addUserNote()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -2158,7 +2305,9 @@ class ExtJsController
      */
     public function delUserNote()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         if (AccountManager::getInstance()->isAnonymous) {
             return JsonResponseBuilder::failure();
@@ -2181,7 +2330,9 @@ class ExtJsController
      */
     public function previewFile()
     {
-        AccountManager::getInstance()->isLogged();
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
 
         $path = $this->getRequestVariable('path');
 
