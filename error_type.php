@@ -288,7 +288,7 @@ for( $i=0; $i < count($type); $i++ ) {
 
 // Display title
 if( $fileLibel ) {
-    echo '<h1 class="error-type-title">Check for errors in '.$fileLibel.'</h1>';
+    echo '<h1 class="error-type-title">Check for errors in '.htmlspecialchars($fileLibel).'</h1>';
 }
 
 ksort($to_display);
