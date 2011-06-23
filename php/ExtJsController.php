@@ -147,6 +147,10 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
+        if ( !$am->isGlobalAdmin() && !$am->isLangAdmin() ) {
+            return JsonResponseBuilder::failure();
+        }
+
         $project = $am->project;
         $appConf = $am->appConf;
 
