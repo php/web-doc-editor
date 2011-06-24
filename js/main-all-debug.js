@@ -65,6 +65,7 @@ function XHR(config)
 
     config.url = './do/' + config.params.task;
     delete config.params.task;
+    config.params = Ext.applyIf({csrfToken: csrfToken}, config.params);
     config.failure  = config.success = Ext.emptyFn;
     config.callback = function(options, success, response)
     {
@@ -91,20 +92,8 @@ function XHR(config)
     };
 
     Ext.Ajax.request(config);
-}/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
-Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
-    layout : 'anchor',
-    //autoEl : 'div',//already defined by Ext.Component
-    defaultType : 'portlet',
-    cls : 'x-portal-column'
-});
-
-Ext.reg('portalcolumn', Ext.ux.PortalColumn);/*!
+}
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -310,6 +299,19 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
     }
 });
 /*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
+    layout : 'anchor',
+    //autoEl : 'div',//already defined by Ext.Component
+    defaultType : 'portlet',
+    cls : 'x-portal-column'
+});
+
+Ext.reg('portalcolumn', Ext.ux.PortalColumn);/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -860,68 +862,6 @@ Ext.preg('roweditor', Ext.ux.grid.RowEditor);
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
-Ext.ns('Ext.ux.form');
-
-/**
- * @class Ext.ux.form.SpinnerField
- * @extends Ext.form.NumberField
- * Creates a field utilizing Ext.ux.Spinner
- * @xtype spinnerfield
- */
-Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
-    actionMode: 'wrap',
-    deferHeight: true,
-    autoSize: Ext.emptyFn,
-    onBlur: Ext.emptyFn,
-    adjustSize: Ext.BoxComponent.prototype.adjustSize,
-
-	constructor: function(config) {
-		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
-
-		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
-
-		var plugins = config.plugins
-			? (Ext.isArray(config.plugins)
-				? config.plugins.push(spl)
-				: [config.plugins, spl])
-			: spl;
-
-		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
-	},
-
-    // private
-    getResizeEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    getPositionEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    alignErrorIcon: function(){
-        if (this.wrap) {
-            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
-        }
-    },
-
-    validateBlur: function(){
-        return true;
-    }
-});
-
-Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
-
-//backwards compat
-Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
-
-/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
 /**
  * @class Ext.ux.Spinner
  * @extends Ext.util.Observable
@@ -1354,6 +1294,68 @@ Ext.ux.Spinner = Ext.extend(Ext.util.Observable, {
 
 //backwards compat
 Ext.form.Spinner = Ext.ux.Spinner;/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ns('Ext.ux.form');
+
+/**
+ * @class Ext.ux.form.SpinnerField
+ * @extends Ext.form.NumberField
+ * Creates a field utilizing Ext.ux.Spinner
+ * @xtype spinnerfield
+ */
+Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
+    actionMode: 'wrap',
+    deferHeight: true,
+    autoSize: Ext.emptyFn,
+    onBlur: Ext.emptyFn,
+    adjustSize: Ext.BoxComponent.prototype.adjustSize,
+
+	constructor: function(config) {
+		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
+
+		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
+
+		var plugins = config.plugins
+			? (Ext.isArray(config.plugins)
+				? config.plugins.push(spl)
+				: [config.plugins, spl])
+			: spl;
+
+		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
+	},
+
+    // private
+    getResizeEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    getPositionEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    alignErrorIcon: function(){
+        if (this.wrap) {
+            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        }
+    },
+
+    validateBlur: function(){
+        return true;
+    }
+});
+
+Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
+
+//backwards compat
+Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -3262,233 +3264,7 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     }
 
 });
-Ext.reg('codemirror', Ext.ux.CodeMirror);Ext.ns('Ext.ux.grid');
-
-Ext.ux.grid.GridSummary = function(config) {
-        Ext.apply(this, config);
-};
-
-Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
-    init : function(grid) {
-        this.grid = grid;
-        this.cm = grid.getColumnModel();
-        this.view = grid.getView();
-
-        var v = this.view;
-
-        // override GridView's onLayout() method
-        v.onLayout = this.onLayout;
-
-        v.afterMethod('render', this.refreshSummary, this);
-        v.afterMethod('refresh', this.refreshSummary, this);
-        v.afterMethod('syncScroll', this.syncSummaryScroll, this);
-        v.afterMethod('onColumnWidthUpdated', this.doWidth, this);
-        v.afterMethod('onAllColumnWidthsUpdated', this.doAllWidths, this);
-        v.afterMethod('onColumnHiddenUpdated', this.doHidden, this);
-
-        // update summary row on store's add/remove/clear/update events
-        grid.store.on({
-            add: this.refreshSummary,
-            remove: this.refreshSummary,
-            clear: this.refreshSummary,
-            update: this.refreshSummary,
-            scope: this
-        });
-
-        if (!this.rowTpl) {
-            this.rowTpl = new Ext.Template(
-                '<div class="x-grid3-summary-row x-grid3-gridsummary-row-offset">',
-                    '<table class="x-grid3-summary-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
-                        '<tbody><tr>{cells}</tr></tbody>',
-                    '</table>',
-                '</div>'
-            );
-            this.rowTpl.disableFormats = true;
-        }
-        this.rowTpl.compile();
-
-        if (!this.cellTpl) {
-            this.cellTpl = new Ext.Template(
-                '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
-                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
-                "</td>"
-            );
-            this.cellTpl.disableFormats = true;
-        }
-        this.cellTpl.compile();
-    },
-
-    calculate : function(rs, cm) {
-        var data = {},
-            cfg  = cm.config,
-            i, cf, cname, j, r, len, jlen;
-
-        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
-            cf = cfg[i]; // get column's configuration
-            cname = cf.dataIndex; // get column dataIndex
-
-            // initialise grid summary row data for
-            // the current column being worked on
-            data[cname] = 0;
-
-            if (cf.summaryType) {
-                for (j = 0, jlen = rs.length; j < jlen; j++) {
-                    r = rs[j]; // get a single Record
-                    data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
-                }
-            }
-        }
-
-        return data;
-    },
-
-    onLayout : function(vw, vh) {
-        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
-            return;
-        }
-        // note: this method is scoped to the GridView
-        if (!this.grid.getGridEl().hasClass('x-grid-hide-gridsummary')) {
-            // readjust gridview's height only if grid summary row is visible
-            this.scroller.setHeight(vh - this.summary.getHeight());
-        }
-    },
-
-    syncSummaryScroll : function() {
-        var mb = this.view.scroller.dom;
-
-        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft;
-        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
-    },
-
-    doWidth : function(col, w, tw) {
-        var s = this.view.summary.dom;
-
-        s.firstChild.style.width = tw;
-        s.firstChild.rows[0].childNodes[col].style.width = w;
-    },
-
-    doAllWidths : function(ws, tw) {
-        var s    = this.view.summary.dom,
-            wlen = ws.length,
-            cells, j;
-
-        s.firstChild.style.width = tw;
-        cells = s.firstChild.rows[0].childNodes;
-
-        for (j = 0; j < wlen; j++) {
-            cells[j].style.width = ws[j];
-        }
-    },
-
-    doHidden : function(col, hidden, tw) {
-        var s = this.view.summary.dom,
-            display = hidden ? 'none' : '';
-
-        s.firstChild.style.width = tw;
-        s.firstChild.rows[0].childNodes[col].style.display = display;
-    },
-
-    renderSummary : function(o, cs, cm) {
-        cs = cs || this.view.getColumnData();
-        var cfg = cm.config,
-            buf = [],
-            last = cs.length - 1,
-            c, cf, p, i, len;
-
-        for (i = 0, len = cs.length; i < len; i++) {
-            c = cs[i];
-            cf = cfg[i];
-            p = {};
-
-            p.id = c.id;
-            p.style = c.style;
-            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
-
-            if (cf.summaryType || cf.summaryRenderer) {
-                p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
-            } else {
-                p.value = '';
-            }
-            if (p.value === undefined || p.value === "") {
-                p.value = "&#160;";
-            }
-            buf[buf.length] = this.cellTpl.apply(p);
-        }
-
-        return this.rowTpl.apply({
-            tstyle: 'width:' + this.view.getTotalWidth() + ';',
-            cells: buf.join('')
-        });
-    },
-
-    refreshSummary : function() {
-        var g = this.grid, ds = g.store,
-            cs = this.view.getColumnData(),
-            cm = this.cm,
-            rs = ds.getRange(),
-            data = this.calculate(rs, cm),
-            buf = this.renderSummary({data: data}, cs, cm);
-
-        if (!this.view.summaryWrap) {
-            this.view.summaryWrap = Ext.DomHelper.insertAfter(this.view.scroller, {
-                tag: 'div',
-                cls: 'x-grid3-gridsummary-row-inner'
-            }, true);
-        }
-        this.view.summary = this.view.summaryWrap.update(buf).first();
-    },
-
-    toggleSummary : function(visible) { // true to display summary row
-        var el = this.grid.getGridEl();
-
-        if (el) {
-            if (visible === undefined) {
-                visible = el.hasClass('x-grid-hide-gridsummary');
-            }
-            el[visible ? 'removeClass' : 'addClass']('x-grid-hide-gridsummary');
-
-            this.view.layout(); // readjust gridview height
-        }
-    },
-
-    getSummaryNode : function() {
-        return this.view.summary;
-    }
-});
-Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
-
-/*
- * all Calculation methods are called on each Record in the Store
- * with the following 5 parameters:
- *
- * v - cell value
- * record - reference to the current Record
- * colName - column name (i.e. the ColumnModel's dataIndex)
- * data - the cumulative data for the current column + summaryType up to the current Record
- * rowIdx - current row index
- */
-Ext.ux.grid.GridSummary.Calculations = {
-    sum : function(v, record, colName, data, rowIdx) {
-        return data[colName] + Ext.num(v, 0);
-    },
-
-    count : function(v, record, colName, data, rowIdx) {
-        return rowIdx + 1;
-    },
-
-    max : function(v, record, colName, data, rowIdx) {
-        return Math.max(Ext.num(v, 0), data[colName]);
-    },
-
-    min : function(v, record, colName, data, rowIdx) {
-        return Math.min(Ext.num(v, 0), data[colName]);
-    },
-
-    average : function(v, record, colName, data, rowIdx) {
-        var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
-        return rowIdx === count - 1 ? (t / count) : t;
-    }
-};Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+Ext.reg('codemirror', Ext.ux.CodeMirror);Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
     onRender : function(ct, position){
 
         ct.mask(
@@ -5069,7 +4845,233 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 });
 
 Ext.reg('usernotes', Ext.ux.UserNotes);
-Ext.namespace('ui', 'ui.task');
+Ext.ns('Ext.ux.grid');
+
+Ext.ux.grid.GridSummary = function(config) {
+        Ext.apply(this, config);
+};
+
+Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
+    init : function(grid) {
+        this.grid = grid;
+        this.cm = grid.getColumnModel();
+        this.view = grid.getView();
+
+        var v = this.view;
+
+        // override GridView's onLayout() method
+        v.onLayout = this.onLayout;
+
+        v.afterMethod('render', this.refreshSummary, this);
+        v.afterMethod('refresh', this.refreshSummary, this);
+        v.afterMethod('syncScroll', this.syncSummaryScroll, this);
+        v.afterMethod('onColumnWidthUpdated', this.doWidth, this);
+        v.afterMethod('onAllColumnWidthsUpdated', this.doAllWidths, this);
+        v.afterMethod('onColumnHiddenUpdated', this.doHidden, this);
+
+        // update summary row on store's add/remove/clear/update events
+        grid.store.on({
+            add: this.refreshSummary,
+            remove: this.refreshSummary,
+            clear: this.refreshSummary,
+            update: this.refreshSummary,
+            scope: this
+        });
+
+        if (!this.rowTpl) {
+            this.rowTpl = new Ext.Template(
+                '<div class="x-grid3-summary-row x-grid3-gridsummary-row-offset">',
+                    '<table class="x-grid3-summary-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
+                        '<tbody><tr>{cells}</tr></tbody>',
+                    '</table>',
+                '</div>'
+            );
+            this.rowTpl.disableFormats = true;
+        }
+        this.rowTpl.compile();
+
+        if (!this.cellTpl) {
+            this.cellTpl = new Ext.Template(
+                '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
+                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
+                "</td>"
+            );
+            this.cellTpl.disableFormats = true;
+        }
+        this.cellTpl.compile();
+    },
+
+    calculate : function(rs, cm) {
+        var data = {},
+            cfg  = cm.config,
+            i, cf, cname, j, r, len, jlen;
+
+        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
+            cf = cfg[i]; // get column's configuration
+            cname = cf.dataIndex; // get column dataIndex
+
+            // initialise grid summary row data for
+            // the current column being worked on
+            data[cname] = 0;
+
+            if (cf.summaryType) {
+                for (j = 0, jlen = rs.length; j < jlen; j++) {
+                    r = rs[j]; // get a single Record
+                    data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
+                }
+            }
+        }
+
+        return data;
+    },
+
+    onLayout : function(vw, vh) {
+        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
+            return;
+        }
+        // note: this method is scoped to the GridView
+        if (!this.grid.getGridEl().hasClass('x-grid-hide-gridsummary')) {
+            // readjust gridview's height only if grid summary row is visible
+            this.scroller.setHeight(vh - this.summary.getHeight());
+        }
+    },
+
+    syncSummaryScroll : function() {
+        var mb = this.view.scroller.dom;
+
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft;
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
+    },
+
+    doWidth : function(col, w, tw) {
+        var s = this.view.summary.dom;
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.width = w;
+    },
+
+    doAllWidths : function(ws, tw) {
+        var s    = this.view.summary.dom,
+            wlen = ws.length,
+            cells, j;
+
+        s.firstChild.style.width = tw;
+        cells = s.firstChild.rows[0].childNodes;
+
+        for (j = 0; j < wlen; j++) {
+            cells[j].style.width = ws[j];
+        }
+    },
+
+    doHidden : function(col, hidden, tw) {
+        var s = this.view.summary.dom,
+            display = hidden ? 'none' : '';
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.display = display;
+    },
+
+    renderSummary : function(o, cs, cm) {
+        cs = cs || this.view.getColumnData();
+        var cfg = cm.config,
+            buf = [],
+            last = cs.length - 1,
+            c, cf, p, i, len;
+
+        for (i = 0, len = cs.length; i < len; i++) {
+            c = cs[i];
+            cf = cfg[i];
+            p = {};
+
+            p.id = c.id;
+            p.style = c.style;
+            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
+
+            if (cf.summaryType || cf.summaryRenderer) {
+                p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
+            } else {
+                p.value = '';
+            }
+            if (p.value === undefined || p.value === "") {
+                p.value = "&#160;";
+            }
+            buf[buf.length] = this.cellTpl.apply(p);
+        }
+
+        return this.rowTpl.apply({
+            tstyle: 'width:' + this.view.getTotalWidth() + ';',
+            cells: buf.join('')
+        });
+    },
+
+    refreshSummary : function() {
+        var g = this.grid, ds = g.store,
+            cs = this.view.getColumnData(),
+            cm = this.cm,
+            rs = ds.getRange(),
+            data = this.calculate(rs, cm),
+            buf = this.renderSummary({data: data}, cs, cm);
+
+        if (!this.view.summaryWrap) {
+            this.view.summaryWrap = Ext.DomHelper.insertAfter(this.view.scroller, {
+                tag: 'div',
+                cls: 'x-grid3-gridsummary-row-inner'
+            }, true);
+        }
+        this.view.summary = this.view.summaryWrap.update(buf).first();
+    },
+
+    toggleSummary : function(visible) { // true to display summary row
+        var el = this.grid.getGridEl();
+
+        if (el) {
+            if (visible === undefined) {
+                visible = el.hasClass('x-grid-hide-gridsummary');
+            }
+            el[visible ? 'removeClass' : 'addClass']('x-grid-hide-gridsummary');
+
+            this.view.layout(); // readjust gridview height
+        }
+    },
+
+    getSummaryNode : function() {
+        return this.view.summary;
+    }
+});
+Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
+
+/*
+ * all Calculation methods are called on each Record in the Store
+ * with the following 5 parameters:
+ *
+ * v - cell value
+ * record - reference to the current Record
+ * colName - column name (i.e. the ColumnModel's dataIndex)
+ * data - the cumulative data for the current column + summaryType up to the current Record
+ * rowIdx - current row index
+ */
+Ext.ux.grid.GridSummary.Calculations = {
+    sum : function(v, record, colName, data, rowIdx) {
+        return data[colName] + Ext.num(v, 0);
+    },
+
+    count : function(v, record, colName, data, rowIdx) {
+        return rowIdx + 1;
+    },
+
+    max : function(v, record, colName, data, rowIdx) {
+        return Math.max(Ext.num(v, 0), data[colName]);
+    },
+
+    min : function(v, record, colName, data, rowIdx) {
+        return Math.min(Ext.num(v, 0), data[colName]);
+    },
+
+    average : function(v, record, colName, data, rowIdx) {
+        var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
+        return rowIdx === count - 1 ? (t / count) : t;
+    }
+};Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.ChangeFileOwner = function(config)
@@ -6792,7 +6794,7 @@ ui.task._VCSCommitTask.commit = function(files)
     for (i = 0; i < files.length; i = i + 1)
     {
         node = Ext.getCmp('commit-grid-panel').store.getById(files[i].id);
-        nodes.push(node.data.FileDBID);
+        nodes.push(parseInt(node.data.FileDBID, 10));
     }
 
     // We must choose at least one file
@@ -6951,7 +6953,8 @@ ui.task.VCSCommitTask = function()
     } else {
         ui.task._VCSCommitTask.commit(files);
     }
-};Ext.namespace('ui','ui.cmp');
+};
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.About = Ext.extend(Ext.Window,
 {
@@ -7458,6 +7461,38 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         ui.cmp.ChangeFileOwner.superclass.initComponent.call(this);
         
         this.show();
+    }
+});Ext.namespace('ui','ui.cmp');
+
+ui.cmp.Chat = Ext.extend(Ext.Window,
+{
+    id        : 'win-chat',
+    iconCls   : 'iconChat',
+    layout    : 'fit',
+    width     : 800,
+    height    : 600,
+    modal     : true,
+    plain     : true,
+    bodyStyle : 'color:#000',
+    closeAction:'hide',
+
+    initComponent : function()
+    {
+        var chatLogin = PhDOE.user.login;
+        
+        if( PhDOE.user.isAnonymous ) {
+            chatLogin = 'an%3F%3F%3F';
+        }
+        
+        Ext.apply(this,
+        {
+            title : _('Chat with us on IRC !'),
+            items : [new Ext.ux.IFrameComponent({
+                id: 'frame-win-chat',
+                url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
+            })]
+        });
+        ui.cmp.Chat.superclass.initComponent.call(this);
     }
 });Ext.namespace('ui','ui.cmp');
 
@@ -10307,6 +10342,10 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
                         String.format(_('Email sent to {0} with success!'), win.name.ucFirst()),
                         Ext.emptyFn
                     );
+                },
+                failure : function()
+                {
+                    PhDOE.winForbidden();
                 }
             });
 
@@ -10356,7 +10395,8 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.EmailPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._EntitiesAcronymsPanel');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._EntitiesAcronymsPanel');
 
 //------------------------------------------------------------------------------
 // EntitiesAcronymsGrid internals
@@ -13279,7 +13319,68 @@ ui.cmp.NotInENGrid.getInstance = function(config)
         ui.cmp._NotInENGrid.instance = new ui.cmp.NotInENGrid(config);
     }
     return ui.cmp._NotInENGrid.instance;
-};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
+};Ext.namespace('ui','ui.cmp');
+
+// config - {defaultEmail, prefix, ftype, fid, fpath, fname, lang}
+ui.cmp.PatchPrompt = Ext.extend(Ext.Window,
+{
+    title      : _('Do you want to be alerted ?'),
+    iconCls    : 'iconPatchAlert',
+    layout     : 'form',
+    bodyStyle  : 'padding: 5px;',
+    labelWidth : 50,
+    width      : 350,
+    height     : 150,
+    resizable  : false,
+    modal      : true,
+    autoScroll : true,
+
+    initComponent : function()
+    {
+        Ext.apply(this,
+        {
+            items : [{
+                xtype     : 'panel',
+                baseCls   : 'x-plain',
+                bodyStyle : 'padding-bottom: 10px;',
+                html      : _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
+            }, {
+                id         : 'patch-email-alert',
+                xtype      : 'textfield',
+                name       : 'patch-email-alert',
+                fieldLabel : _('Email'),
+                anchor     : '100%',
+                value      : this.defaultEmail
+            }],
+            buttons : [{
+                scope   : this,
+                text    : _('Save'),
+                handler : function()
+                {
+                    new ui.task.SavePatchTask({
+                        prefix : this.prefix,
+                        fid    : this.fid,
+                        ftype  : this.ftype,
+                        lang   : this.lang,
+                        fpath  : this.fpath,
+                        fname  : this.fname,
+                        email  : Ext.getCmp('patch-email-alert').getValue()
+                    });
+
+                    this.close();
+                }
+            }, {
+                scope   : this,
+                text    : _('Cancel'),
+                handler : function()
+                {
+                    this.close();
+                }
+            }]
+        });
+        ui.cmp.PatchPrompt.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
 
 //------------------------------------------------------------------------------
 // PatchesTreeGrid internals
@@ -14027,68 +14128,7 @@ ui.cmp.PatchesTreeGrid.getInstance = function(config){
     }
     return ui.cmp._PatchesTreeGrid.instance;
 };
-Ext.namespace('ui','ui.cmp');
-
-// config - {defaultEmail, prefix, ftype, fid, fpath, fname, lang}
-ui.cmp.PatchPrompt = Ext.extend(Ext.Window,
-{
-    title      : _('Do you want to be alerted ?'),
-    iconCls    : 'iconPatchAlert',
-    layout     : 'form',
-    bodyStyle  : 'padding: 5px;',
-    labelWidth : 50,
-    width      : 350,
-    height     : 150,
-    resizable  : false,
-    modal      : true,
-    autoScroll : true,
-
-    initComponent : function()
-    {
-        Ext.apply(this,
-        {
-            items : [{
-                xtype     : 'panel',
-                baseCls   : 'x-plain',
-                bodyStyle : 'padding-bottom: 10px;',
-                html      : _('If you want to be notified when your patch will be dealt with, thank you to leave an email address below.')
-            }, {
-                id         : 'patch-email-alert',
-                xtype      : 'textfield',
-                name       : 'patch-email-alert',
-                fieldLabel : _('Email'),
-                anchor     : '100%',
-                value      : this.defaultEmail
-            }],
-            buttons : [{
-                scope   : this,
-                text    : _('Save'),
-                handler : function()
-                {
-                    new ui.task.SavePatchTask({
-                        prefix : this.prefix,
-                        fid    : this.fid,
-                        ftype  : this.ftype,
-                        lang   : this.lang,
-                        fpath  : this.fpath,
-                        fname  : this.fname,
-                        email  : Ext.getCmp('patch-email-alert').getValue()
-                    });
-
-                    this.close();
-                }
-            }, {
-                scope   : this,
-                text    : _('Cancel'),
-                handler : function()
-                {
-                    this.close();
-                }
-            }]
-        });
-        ui.cmp.PatchPrompt.superclass.initComponent.call(this);
-    }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingReviewGrid');
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingReviewGrid');
 
 //------------------------------------------------------------------------------
 // PendingReviewGrid internals
@@ -18879,7 +18919,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 311936 $',
+            uiRevision: '$Revision: 312427 $',
             conf: ''
         },
 
@@ -18899,6 +18939,11 @@ var PhDOE = function()
         {
             // We load the configuration for this user
             new ui.task.LoadConfigTask();
+
+            // Set up automatic CSRF token appending for most requests
+            Ext.Ajax.extraParams = { csrfToken: csrfToken };
+            Ext.data.Connection.prototype.extraParams = { csrfToken: csrfToken };
+            Ext.data.ScriptTagProxy.prototype.extraParams = { csrfToken: csrfToken };
         },
 
         notify : function (type, title, message) {
