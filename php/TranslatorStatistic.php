@@ -104,7 +104,7 @@ class TranslatorStatistic
                 FROM
                     `files`
                 WHERE
-                    `lang` = "%s"
+                    `lang` = "%s" AND 
                     `revision` = `en_revision` AND
                     `project` = "%s"
                 GROUP BY
@@ -142,7 +142,6 @@ class TranslatorStatistic
                 FROM
                     `files`
                 WHERE
-                    ' . $where . '
                     `en_revision` != `revision`
                 AND
                     `size` is not NULL
