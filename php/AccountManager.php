@@ -301,7 +301,12 @@ class AccountManager
            } else {
             $cookieLogin = $_SESSION['vcsLogin'];
            }
-           
+
+           // We set up the CSRF token
+           $_SESSION['csrfToken'] = sha1(uniqid(rand(), true));
+
+           // Store some user info in cookies: we can use this to pre-fill the
+           // login page if the user's session expires.           
            setcookie("loginApp", $cookieLogin, time() + 3600*24*365, "/"); // One year ;)
            setcookie("email", $email, time() + 3600*24*365, "/");
            setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");

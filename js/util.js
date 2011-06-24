@@ -65,6 +65,7 @@ function XHR(config)
 
     config.url = './do/' + config.params.task;
     delete config.params.task;
+    config.params = Ext.applyIf({csrfToken: csrfToken}, config.params);
     config.failure  = config.success = Ext.emptyFn;
     config.callback = function(options, success, response)
     {

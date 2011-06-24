@@ -14,7 +14,14 @@ $controller = new ExtJsController(array_merge($_GET, $_POST));
 
 $method     = str_replace('-', '_', $controller->getRequestVariable('task'));
 
-if (method_exists($controller, $method)) {
+if (isset($_SESSION['csrfToken']) && (!isset($_POST['csrfToken']) || $_POST['csrfToken'] !== $_SESSION['csrfToken'])) {
+    $response = JsonResponseBuilder::failure(
+        array(
+            'msg' => 'CSRF token missing or invalid'
+        )
+    );
+}
+else if (method_exists($controller, $method)) {
     $response = $controller->$method();
 } else {
     $response = JsonResponseBuilder::failure(

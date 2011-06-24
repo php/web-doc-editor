@@ -44,6 +44,11 @@ var PhDOE = function()
         {
             // We load the configuration for this user
             new ui.task.LoadConfigTask();
+
+            // Set up automatic CSRF token appending for most requests
+            Ext.Ajax.extraParams = { csrfToken: csrfToken };
+            Ext.data.Connection.prototype.extraParams = { csrfToken: csrfToken };
+            Ext.data.ScriptTagProxy.prototype.extraParams = { csrfToken: csrfToken };
         },
 
         notify : function (type, title, message) {

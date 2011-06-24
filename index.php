@@ -80,6 +80,7 @@ echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/main-all.css');
 
 echo jsCallTemplate($jsVar);
+echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
