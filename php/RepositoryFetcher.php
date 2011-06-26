@@ -802,9 +802,9 @@ class RepositoryFetcher
 
             // Do we need to display EN Work ?
             if( isset($am->userConf->main->displayENWork) && $am->userConf->main->displayENWork === true ) {
-                $langFilter = '(`lang` = "%s" OR `lang`="en")';
+                $langFilter = '(`lang` = "%s" OR `lang`="en" OR `lang`="doc-base")';
             } else {
-                $langFilter = '(`lang` = "%s")';
+                $langFilter = '(`lang` = "%s" OR `lang`="doc-base")';
             }
             
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
@@ -912,9 +912,9 @@ class RepositoryFetcher
 
             // Do we need to display EN Work ?
             if( $am->userConf->main->displayENWork ) {
-                $langFilter = '(`lang` = "%s" OR `lang`="en")';
+                $langFilter = '(`lang` = "%s" OR `lang`="en" OR `lang`="doc-base")';
             } else {
-                $langFilter = '(`lang` = "%s")';
+                $langFilter = '(`lang` = "%s" OR `lang`="doc-base")';
             }
             
             
