@@ -33,12 +33,12 @@ class EntitiesAcronymsFetcher {
 
         $files = explode("|", $appConf[$project]['acronym.usedbyeditor.location']);
 
-        unset($this->acronyms);
+        $this->acronyms = array();
 
         $count = 0;
         while( list($k, $file) = each($files))
         {
-            if( !$content = file_get_contents($file) ) {
+            if( empty($file) || !$content = file_get_contents($file) ) {
                 continue;
             }
             
@@ -67,12 +67,12 @@ class EntitiesAcronymsFetcher {
 
         $files = explode("|", $appConf[$project]['entities.usedbyeditor.location']);
 
-        unset($this->entities);
+        $this->entities = array();
             
         $count = 0;
         while( list($k, $file) = each($files))
         {        
-            if( !$content = file_get_contents($file) ) {
+            if( empty($file) || !$content = file_get_contents($file) ) {
                 continue;
             }
             
