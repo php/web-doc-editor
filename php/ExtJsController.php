@@ -2091,6 +2091,13 @@ class ExtJsController
 
         $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
 
+        // If we don't have a summary, compute one and try again
+        if ($summary === false)
+        {
+            TranslationStatistic::getInstance()->computeSummary($lang);
+            $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
+        }
+
         $return[0]['id'] = $summary[0]->id;
         $return[0]['libel'] = $summary[0]->libel;
         $return[0]['total'] = $summary[0]->nbFiles;
