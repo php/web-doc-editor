@@ -68,7 +68,7 @@ class PreviewFile
             new ExecStatement('cd %s', array($this->outputDir)),
             new ExecStatement('rm -R *')
         );
-        SaferExec::execMulti($cmd, $output);
+        SaferExec::execMulti($commands, $output);
         $this->cleanCmd = implode('; ', $commands);
         $this->cleanLog = $output;
         
