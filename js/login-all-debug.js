@@ -781,10 +781,10 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                         }
                                                     });
                                                 }
-                                                if (o.msg == 'unknow from vcs') {
+                                                if (o.msg == 'unknown from vcs') {
                                                     Ext.Msg.show({
                                                         title   : 'Error',
-                                                        msg     : 'This user is unknow from Php vcs server.<br>Please, try again.',
+                                                        msg     : 'This user is unknown to the PHP VCS server.<br>Please, try again.',
                                                         buttons : Ext.Msg.OK,
                                                         icon    : Ext.MessageBox.ERROR,
                                                         fn      : function()

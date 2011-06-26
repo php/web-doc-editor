@@ -12607,7 +12607,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                                             buttons : Ext.MessageBox.OK,
                                             fn      : function()
                                             {
-                                                window.location.href = './do/logout';
+                                                window.location.href = './do/logout?csrfToken=' + csrfToken;
                                             }
                                         });
                                     },
@@ -12631,7 +12631,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                         function(btn)
                         {
                             if (btn === 'yes') {
-                                window.location.href = './do/logout';
+                                window.location.href = './do/logout?csrfToken=' + csrfToken;
                             }
                         }
                     );
@@ -12723,7 +12723,8 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
             }]
         });
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp.MainPanel');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp.MainPanel');
 
 ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     activeTab       : 0,
