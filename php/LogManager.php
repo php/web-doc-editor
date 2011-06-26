@@ -38,7 +38,7 @@ class LogManager
         $result = array();
 
         $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s"';
-        $params = array(project, $vcsLogin);
+        $params = array($project, $vcsLogin);
         $r = $this->conn->query($s, $params);
         while ($a = $r->fetch_assoc()) {
             $result[] = $a;
