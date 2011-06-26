@@ -1777,7 +1777,7 @@ class RepositoryManager
 
                 // Sql insert.
                 $query = 'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `size`, `mdate`, `maintainer`, `status`, `check_oldstyle`,  `check_undoc`, `check_roleerror`, `check_badorder`, `check_noseealso`, `check_noreturnvalues`, `check_noparameters`, `check_noexamples`, `check_noerrors`)
-                        VALUES ("%s", "en", "%s", "%s", "%s", "%s", "%s", "%s", NULL, NUL, "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+                        VALUES ("%s", "en", "%s", "%s", "%s", "%s", "%s", "%s", NULL, NULL, "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
                 $params = array(
                     $am->project,
                     $xmlid, $f->path, $f->name, $en_revision, $en_size, $en_date,
