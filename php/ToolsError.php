@@ -323,7 +323,7 @@ class ToolsError
                 $params[] = $error['type'];
             }
 
-            $this->conn->query($sql . implode(', ', $error_sql), $params);
+            $this->conn->query($sql . implode(', ', $errorSQL), $params);
 
         }
 
