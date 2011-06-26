@@ -2098,21 +2098,25 @@ class ExtJsController
             $summary = RepositoryFetcher::getInstance()->getStaticValue('translation_summary', $lang);
         }
 
-        $return[0]['id'] = $summary[0]->id;
-        $return[0]['libel'] = $summary[0]->libel;
-        $return[0]['total'] = $summary[0]->nbFiles;
+        $return = array();
+        if ($lang !== 'en')
+        {
+            $return[0]['id'] = $summary[0]->id;
+            $return[0]['libel'] = $summary[0]->libel;
+            $return[0]['total'] = $summary[0]->nbFiles;
 
-        $return[1]['id'] = $summary[1]->id;
-        $return[1]['libel'] = $summary[1]->libel;
-        $return[1]['total'] = $summary[1]->nbFiles;
+            $return[1]['id'] = $summary[1]->id;
+            $return[1]['libel'] = $summary[1]->libel;
+            $return[1]['total'] = $summary[1]->nbFiles;
 
-        $return[2]['id'] = $summary[2]->id;
-        $return[2]['libel'] = $summary[2]->libel;
-        $return[2]['total'] = $summary[2]->nbFiles;
+            $return[2]['id'] = $summary[2]->id;
+            $return[2]['libel'] = $summary[2]->libel;
+            $return[2]['total'] = $summary[2]->nbFiles;
+        }
 
         return JsonResponseBuilder::success(
             array(
-                'nbItems' => 3,
+                'nbItems' => count($return),
                 'Items'   => $return
             )
         );
