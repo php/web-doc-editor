@@ -321,7 +321,7 @@ class AccountManager
 
             //Authentication failed from the VCS server : others errors
             $return['state'] = false;
-            $return['msg']   = 'unknow from vcs';
+            $return['msg']   = 'unknown from vcs';
         }
 
         return $return;
