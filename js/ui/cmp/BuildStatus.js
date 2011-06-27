@@ -50,7 +50,7 @@ ui.cmp._BuildStatus.display = function(config)
                     handler : function()
                     {
                         window.location.href = './do/downloadFailedBuildLog' +
-                                               '?idFailedBuild=' + this.idFailedBuild;
+                                               '?idFailedBuild=' + this.idFailedBuild + '&csrfToken=' + csrfToken;
                     }
 
                 });

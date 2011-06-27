@@ -249,7 +249,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                     '?FilePath=' +
                     FilePath +
                     '&FileName=' +
-                    FileName;
+                    FileName +
+                    '&csrfToken=' +
+                    csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',

@@ -512,7 +512,9 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                     '?FilePath=' +
                     FilePath +
                     '&FileName=' +
-                    FileName;
+                    FileName +
+                    '&csrfToken=' +
+                    csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',

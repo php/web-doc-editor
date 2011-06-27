@@ -7213,7 +7213,7 @@ ui.cmp._BuildStatus.display = function(config)
                     handler : function()
                     {
                         window.location.href = './do/downloadFailedBuildLog' +
-                                               '?idFailedBuild=' + this.idFailedBuild;
+                                               '?idFailedBuild=' + this.idFailedBuild + '&csrfToken=' + csrfToken;
                     }
 
                 });
@@ -13632,7 +13632,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                     '?FilePath=' +
                     FilePath +
                     '&FileName=' +
-                    FileName;
+                    FileName +
+                    '&csrfToken=' +
+                    csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',
@@ -18377,7 +18379,9 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                     '?FilePath=' +
                     FilePath +
                     '&FileName=' +
-                    FileName;
+                    FileName +
+                    '&csrfToken=' +
+                    csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',
