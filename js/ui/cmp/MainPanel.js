@@ -229,10 +229,21 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     openDiffTab: function(DiffOption)
     {
         var DiffType = DiffOption.DiffType,
-            FileName = DiffOption.FileName,
-            FilePath = DiffOption.FilePath,
-            FileMD5  = Ext.util.md5(FilePath+FileName);
+            FileName = DiffOption.FileName || '',
+            FilePath = DiffOption.FilePath || '',
+            patchID  = DiffOption.patchID || '',
+            patchName  = DiffOption.patchName || '',
+            FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
+            tabTIP;
         
+            
+        // tabTIP
+        if( patchID != '' ) {
+            tabTIP = String.format(_('Diff for patch: {0}'), patchName);
+        } else {
+            tabTIP = String.format(_('Diff for file: {0}'), FilePath + FileName);
+        }
+            
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('diff_panel_' + FileMD5)) {
         
@@ -241,7 +252,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 xtype: 'panel',
                 id: 'diff_panel_' + FileMD5,
                 title: _('Diff'),
-                tabTip: String.format(_('Diff for file: {0}'), FilePath + FileName),
+                tabTip: tabTIP,
                 closable: true,
                 autoScroll: true,
                 iconCls: 'iconTabLink',
@@ -261,13 +272,27 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     task: 'getDiff',
                     DiffType: DiffType,
                     FilePath: FilePath,
-                    FileName: FileName
+                    FileName: FileName,
+                    patchID: patchID
                 },
                 success: function(r){
-                    var o = Ext.util.JSON.decode(r.responseText);
+                    var o = Ext.util.JSON.decode(r.responseText),
+                        patchPermLink='';
+                    
+                    if( patchID == '' ) {
+                        patchPermLink = '<a href="http://' + window.location.host + ':' +
+                                 window.location.port + window.location.pathname +
+                                 '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
+                                 _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
+                    } else {
+                        patchPermLink = '<a href="http://' + window.location.host + ':' +
+                                 window.location.port + window.location.pathname +
+                                 '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
+                                 _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
+                    }
                     
                     // We add the perm link into the content
-                    o.content = '<a href="http://' + window.location.host + ':' + window.location.port + window.location.pathname + '?patch='+FilePath+FileName+'&project='+PhDOE.project+'"><h2>'+_('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>' + o.content;
+                    o.content = patchPermLink + o.content;
                     
                     // We display in diff div
                     Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;

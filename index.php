@@ -54,6 +54,21 @@ if (isset($_REQUEST['perm'])) {
     
     $jsVar = 'var directAccess = {"link":"patch", "lang":"en", "path":"'.htmlspecialchars($filePath).'", "name":"'.htmlspecialchars($fileName).'", "project":"'.htmlspecialchars($_project).'"};';
 
+} else if (isset($_REQUEST['patchID'])) {
+
+    $patchID = trim($_REQUEST['patchID'], '/ ');
+    $_project = $_REQUEST['project'];
+
+    require_once dirname(__FILE__) . '/php/ProjectManager.php';
+    require_once dirname(__FILE__) . '/php/RepositoryManager.php';
+
+    // Set the project
+    ProjectManager::getInstance()->setProject($_project);
+    
+    $patchInfo = RepositoryManager::getInstance()->getPatchInfo($patchID);
+    
+    $jsVar = 'var directAccess = {"link":"patchID", "lang":"en", "patchID":"'.htmlspecialchars($patchID).'", "patchName":"'.htmlspecialchars($patchInfo->name).'", "project":"'.htmlspecialchars($_project).'"};';
+
 } else {
     $jsVar = 'var directAccess = false;';
 }

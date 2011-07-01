@@ -1207,6 +1207,7 @@ class ExtJsController
 
         } elseif( $DiffType == 'file' ) {
 
+            $opt['patchID'] = $this->getRequestVariable('patchID');
             $opt['type'] = 'file';
 
         } elseif( $DiffType == 'patch' ) {
@@ -2035,13 +2036,14 @@ class ExtJsController
 
         $FilePath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
+        $patchID = $this->getRequestVariable('patchID');
 
         $t = explode('/', $FilePath);
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
         $file  = new File($FileLang, $FilePath.$FileName);
-        $patch = $file->rawDiff(false);
+        $patch = $file->rawDiff($patchID);
 
         $name = 'patch-' . time() . '.patch';
 

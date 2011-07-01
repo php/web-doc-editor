@@ -120,8 +120,29 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     });
                 }
             }, {
-                xtype: 'menuseparator',
-                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
+                xtype: 'menuseparator'
+            },{
+                text: _('View unified diff'),
+                iconCls: 'iconViewDiff',
+                handler: function(){
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        patchID: node.attributes.idDB,
+                        patchName: node.attributes.task
+                    });
+                }
+            }, {
+                text: _('Download the unified diff as a patch'),
+                iconCls: 'iconDownloadDiff',
+                handler: function(){
+                    window.location.href = './do/downloadPatch' +
+                    '?patchID=' +
+                    node.attributes.idDB +
+                    '&csrfToken=' +
+                    csrfToken;
+                }
+            }, {
+                xtype: 'menuseparator'
             },
             ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
                 new ui.cmp._WorkTreeGrid.menu.commit({

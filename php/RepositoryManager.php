@@ -665,6 +665,43 @@ class RepositoryManager
             return $r->fetch_object();
         }
     }
+
+    /**
+     * Get all files from a patch by his ID.
+     *
+     * @param $patchID The ID of this patch
+     * @return An associative array containing files about this patch, or false if no patch exist for this ID
+     */
+    public function getPatchFilesByID($patchID)
+    {
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        $project  = $am->project;
+
+        $s = 'SELECT
+                *
+             FROM
+                `work`
+            WHERE
+                `module` = \'PatchesForReview\' AND
+                `patchID` = "%s"';
+        
+        $params = array(
+            $patchID
+        );
+        $r = $this->conn->query($s, $params);
+        
+        if( $r->num_rows == 0 ) {
+            return false;
+        } else {
+            $return = array();
+            while( $a = $r->fetch_object() ) {
+                $return[] = $a;
+            }
+            
+            return $return;
+        }
+    }
     
     /**
      * Create a new patch for the current user.

@@ -415,28 +415,55 @@ class File
     }
 
     /**
-     * Get a raw diff between a file and its modified file / patch.
+     * Get a raw diff between a file and its modified file.
      *
-     * @param $isPatch Indicate whether diff with patch (default=false)
-     * @param $uniqID Patch unique ID (to be provided if isPatch=true)
-     * @return The diff of the file with its modified/patched version.
+     * @param $patchID If set, indicate the ID of the patch from witch we have to retrieve all files diff
+     * @return The diff of the file with its modified version.
      */
-    public function rawDiff($isPatch=false, $uniqID='')
+    public function rawDiff($patchID=false)
     {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $ext = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $commands = array(
-            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
-            new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
-        );
+        if( $patchID ) {
+            
+            $return='';
+            $output = array();
+            
+            $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($patchID);
+            for( $i=0; $i < count($patchFiles); $i++ )
+            {
+                $commands = array(
+                    new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path)),
+                    new ExecStatement('diff -u %s %s', array($patchFiles[$i]->name, $patchFiles[$i]->name . '.new'))
+                );
+                
+                $trial_threshold = 3;
+                while ($trial_threshold-- > 0)
+                {
+                    $_output = array();
+                    SaferExec::execMulti($commands, $_output);
+                    if (strlen(trim(implode('', $_output))) != 0) break;
+                }
+                
+                $output = array_merge($output, $_output);
+            }
+            
+            return implode("\r\n", $output);
+            
+        } else {
+            
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
+                new ExecStatement('diff -u %s %s', array($this->name, $this->name . '.new'))
+            );
 
-        $output = array();
-        SaferExec::execMulti($commands, $output);
+            $output = array();
+            SaferExec::execMulti($commands, $output);
 
-        return implode("\r\n", $output);
+            return implode("\r\n", $output);
+        }
     }
 
     /**
@@ -451,7 +478,7 @@ class File
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
-
+        $return = '';
         $output = array();
 
         if( $type == 'vcs' ) {
@@ -470,23 +497,61 @@ class File
                return '<div style="size: 10px; text-align:center;margin-top:10px;">This is a new file.</div>'; 
             } else {
 
-                $commands = array(
-                    new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
-                    new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
-                );
-
-                $trial_threshold = 3;
-                while ($trial_threshold-- > 0) {
-                    $output = array();
-                    SaferExec::execMulti($commands, $output);
-                    if (strlen(trim(implode('', $output))) != 0) break;
+                if( $options['patchID'] == '' )
+                {
+                    $commands = array(
+                        new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
+                        new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
+                    );
+                    
+                    $trial_threshold = 3;
+                    while ($trial_threshold-- > 0) {
+                        $output = array();
+                        SaferExec::execMulti($commands, $output);
+                        if (strlen(trim(implode('', $output))) != 0) break;
+                    }
+                    
+                    $return = $this->DiffGenHTMLOutput($output);
+                    
+                }
+                else
+                {
+                    // We get all files from this patch
+                    $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($options['patchID']);
+                    
+                    for( $i=0; $i < count($patchFiles); $i++ )
+                    {
+                        $commands = array(
+                            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path)),
+                            new ExecStatement('diff -u %s %s', array($patchFiles[$i]->name, $patchFiles[$i]->name . '.new'))
+                        );
+                        
+                        $trial_threshold = 3;
+                        while ($trial_threshold-- > 0)
+                        {
+                            $output = array();
+                            SaferExec::execMulti($commands, $output);
+                            if (strlen(trim(implode('', $_output))) != 0) break;
+                        }
+                        
+                        $return .= $this->DiffGenHTMLOutput($output);
+                    }
                 }
             }
-
         }
-        $output = htmlentities(join("\n", $output), ENT_QUOTES, 'UTF-8');
+
+        return $return;
+    }
+
+    public function DiffGenHTMLOutput($content) {
+        
+        $header = $content[0]."<br>".$content[1];
+        
+        $content = htmlentities(join("\n", $content), ENT_QUOTES, 'UTF-8');
         $match = array();
-        preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $output, $match);
+        preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $content, $match);
+
+        
 
         $diff = array();
         for ($i = 0; $i < count($match[1]); $i++) {
@@ -495,11 +560,17 @@ class File
             $diff[$i]['content'] =  $match[2][$i];
         }
 
-        $return = '<table class="code">';
+        $return = '<table class="code">
+        <tr>
+         <td class="header">'.$header.'</td>
+        </tr>
+        ';
+        
+        
         for ($i = 0; $i < count($diff); $i++) {
 
             // Line
-            $return .= '<tr><td class="line">'.$diff[$i]['line'].'</td></tr>';
+            $return .= '<tr><td class="line">@@ '.$diff[$i]['line'].' @@</td></tr>';
 
             // Content
             $tmp = explode("\n", trim($diff[$i]['content']));
@@ -526,7 +597,7 @@ class File
             $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
         }
         $return .= '<table>';
-
+        
         return $return;
     }
 

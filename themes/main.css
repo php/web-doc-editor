@@ -214,8 +214,9 @@
     margin: 5px;
     padding-left: 20px;
 }
+
+
 .diff-content table.code {
-    border: 1px solid #ddd;
     border-spacing: 0;
     border-top: 0;
     empty-cells: show;
@@ -225,6 +226,12 @@
     margin: 0;
     width: 100%;
 }
+
+.diff-content table.code td.header {
+    background-color: #9999cc;
+    color: #FFF;
+}
+
 .diff-content table.code th {
     background: #eed;
     color: #886;
@@ -245,8 +252,6 @@
 .diff-content table.code td.del {
     color: black;
     background-color: #FDD;
-    border-left: 1px solid #C00;
-    border-right: 1px solid #C00;
 }
 .diff-content table.code td.del.first {
     border-top: 1px solid #C00;
@@ -254,8 +259,6 @@
 .diff-content table.code td.ins {
     color: black;
     background-color: #DFD;
-    border-left: 1px solid #0A0;
-    border-right: 1px solid #0A0;
 }
 .diff-content table.code td.ins.first {
     border-top: 1px solid #0A0;
@@ -268,10 +271,8 @@
 }
 
 .diff-content table.code td.line {
-    background: #eed url(./img/help-browser.png) no-repeat 0 0;
-    padding-left: 20px;
+    background-color: #eed;
     color: #886;
-    border: 1px solid #d7d7d7;
 }
 .check-build-content {
     margin: 5px 5px;

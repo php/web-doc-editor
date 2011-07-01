@@ -158,6 +158,13 @@ var PhDOE = function()
                         FileName: directAccess.name
                     });
                 }
+                if( directAccess.link == 'patchID' ) {
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        patchID: directAccess.patchID,
+                        patchName: directAccess.patchName
+                    });
+                }
             }
         },
 
