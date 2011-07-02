@@ -739,14 +739,14 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     countFiles: function(){
         var rootNode = this.getRootNode(), nbFiles = 0, user, folder, files, i, j, h, g;
         
-		rootNode.cascade(function(node){
-			if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
-				if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
-					nbFiles++;
-				}
-			}
-		}, this);
-		
+        rootNode.cascade(function(node){
+                if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
+                        if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+                                nbFiles++;
+                        }
+                }
+        }, this);
+        
         return nbFiles;
     },
     
