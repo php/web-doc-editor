@@ -454,7 +454,6 @@ class AccountManager
         if( $value == "true" ) {
             $value = true;
         }
-        unset($this->userConf->{$module}->{$itemName});
         $this->userConf->{$module}->{$itemName} = ( is_numeric($value) ) ? (int) $value : $value;
         
         // In session
