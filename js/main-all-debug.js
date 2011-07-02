@@ -14054,14 +14054,14 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     countFiles: function(){
         var rootNode = this.getRootNode(), nbFiles = 0, user, folder, files, i, j, h, g;
         
-		rootNode.cascade(function(node){
-			if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
-				if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
-					nbFiles++;
-				}
-			}
-		}, this);
-		
+        rootNode.cascade(function(node){
+                if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
+                        if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+                                nbFiles++;
+                        }
+                }
+        }, this);
+        
         return nbFiles;
     },
     
@@ -18442,15 +18442,70 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
 ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     onContextMenu: function(node, e){
         e.stopEvent();
+        var selectedNodes, NBselectedNodes, type, contextMenu;
         
-        var type = node.attributes.type, contextMenu;
+        selectedNodes = this.getSelectionModel().getSelectedNodes();
+        NBselectedNodes = selectedNodes.length;
+        
+        // We clean up the multi-selection and keep only files own by the current user
+        if( NBselectedNodes > 1 ) {
+            
+            for( var i=0; i < NBselectedNodes; i++ ) {
+                
+                if( selectedNodes[i].attributes.type == 'folder' || selectedNodes[i].attributes.type == 'user') {
+                    selectedNodes[i].unselect(true);
+                }
+                
+                if( selectedNodes[i].attributes.type != 'folder' && selectedNodes[i].attributes.type != 'user') {
+                    
+                    var fileOwner = selectedNodes[i].parentNode.parentNode.attributes.task;
+                    
+                    if( fileOwner != PhDOE.user.login ) {
+                        selectedNodes[i].unselect(true);
+                    }
+                }
+            }
+            selectedNodes = this.getSelectionModel().getSelectedNodes();
+            NBselectedNodes = selectedNodes.length;
+        }
+        
+        // Now we have only owns files selected
+        if( NBselectedNodes > 1 ) {
+            
+            contextMenu = new Ext.menu.Menu({
+                
+                listeners: {
+                    show: function() {
+                        ui.cmp._WorkTreeGrid.menu.usersPatch({
+                            menuID: 'globalPatchesMenu'
+                        });
+                    }
+                },
+                items: [{
+                    text: _('Submit all this files for review in patch:'),
+                    iconCls: 'iconPendingPatch',
+                    handler: function(){
+                        return false;
+                    },
+                    menu: new Ext.menu.Menu({
+                        id: 'globalPatchesMenu',
+                        itemRendered: false,
+                        nodesToAdd: selectedNodes
+                    })
+                }]
+            });
+            contextMenu.showAt(e.getXY());
+            
+            return;
+        }
+        
+        type = node.attributes.type;
         
         switch (type) {
         
             case "user":
                 // We only select this row/ If there is multi-selection, this clear the selection and select only the current one.
                 node.select();
-                
                 contextMenu = new ui.cmp._WorkTreeGrid.menu.users({
                     node: node
                 });
@@ -18938,7 +18993,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 312427 $',
+            uiRevision: '$Revision: 312784 $',
             conf: ''
         },
 
