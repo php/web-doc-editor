@@ -454,6 +454,12 @@ class AccountManager
         if( $value == "true" ) {
             $value = true;
         }
+
+        // @todo determine why this is called when these are empty
+        if (empty($module) || empty($itemName)) {
+            return false;
+        }
+
         $this->userConf->{$module}->{$itemName} = ( is_numeric($value) ) ? (int) $value : $value;
         
         // In session
