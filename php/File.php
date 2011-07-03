@@ -487,6 +487,8 @@ class File
                 $this->lang.$this->path,
                 $this->name, $options['rev1'], $options['rev2']
             );
+            
+            $return = $this->DiffGenHTMLOutput($output);
 
         } elseif( $type == 'file' || $type == 'patch' ) {
 
