@@ -19036,7 +19036,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 312784 $',
+            uiRevision: '$Revision: 312883 $',
             conf: ''
         },
 

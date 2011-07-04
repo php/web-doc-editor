@@ -356,20 +356,20 @@
     padding-top: 5px;
 }
 
-.res-block h3, .topic-connected h3, .topic-info h3 {
+.topic-connected h3, .topic-info h3 {
     background: transparent url(./img/user.png) no-repeat 0 1px;
     padding-left: 20px;
     padding-top: 3px;
     -x-system-font: none;
     color: #555555;
     font-family: tahoma, arial, sans-serif;
-    font-size: 12px;
+    font-size: 12px !important;
     font-size-adjust: none;
     font-stretch: normal;
     font-style: normal;
     font-variant: normal;
     line-height: normal;
-    font-weight: normal;
+    font-weight: normal !important;
     margin-bottom: 8px;
 }
 .topic-info h3 {
