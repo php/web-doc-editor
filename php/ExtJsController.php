@@ -395,6 +395,8 @@ class ExtJsController
         // TODO : find a way to detect modification into Work & patches modules
         //$data['NbPendingCommit'] = $rf->getNbPendingCommit();
         //$data['NbPendingPatch']  = $rf->getNbPendingPatch();
+        
+        $data['topicInfo'] = $rf->getStaticValue('main_topic', '');
 
         $data['lastInfoDate'] = $rf->getLastInfoDate();
 

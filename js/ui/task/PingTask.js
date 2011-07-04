@@ -69,6 +69,22 @@ ui.task.PingTask = function()
                     if( o.totalData.lastInfoDate !== PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();
                     }
+                    
+                    // Update the topic if necessary
+                    if( o.totalData.topicInfo ) {
+                        
+                        o.totalData.topicInfo.topicDate = Date.parseDate(o.totalData.topicInfo.topicDate, 'Y-m-d H:i:s');
+                        o.totalData.topicInfo.topicDate = o.totalData.topicInfo.topicDate.format(_('Y-m-d, H:i'));
+                        
+                        if( o.totalData.topicInfo.topicDate != PhDOE.topic.topicDate ) {
+                            PhDOE.topic.author = o.totalData.topicInfo.author;
+                            PhDOE.topic.content = o.totalData.topicInfo.content;
+                            PhDOE.topic.topicDate = o.totalData.topicInfo.topicDate;
+                            
+                            PhDOE.setTopic();
+                            
+                        }
+                    }
 
                 }
             },
