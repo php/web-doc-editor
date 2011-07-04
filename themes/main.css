@@ -349,19 +349,14 @@
     color: #1A4D8F;
     font-weight: bold;
 }
-.res-block {
-    background: transparent url(./img/block-top.png) no-repeat scroll 0 0;
+
+
+.topic-connected, .topic-info {
     margin: 10px 0 0 5px;
     padding-top: 5px;
-    width: 550px;
-    display: inline;
-    float: left;
 }
-.res-block-inner {
-    background: transparent url(./img/block-bottom.png) no-repeat scroll left bottom;
-    padding: 3px 11px;
-}
-.res-block h3 {
+
+.res-block h3, .topic-connected h3, .topic-info h3 {
     background: transparent url(./img/user.png) no-repeat 0 1px;
     padding-left: 20px;
     padding-top: 3px;
@@ -377,27 +372,23 @@
     font-weight: normal;
     margin-bottom: 8px;
 }
-.res-block p {
-    padding-left: 3px;
-    padding-top: 3px;
-    -x-system-font: none;
-    color: #555555;
-    font-family: tahoma, arial, sans-serif;
-    font-size: 12px;
-    font-size-adjust: none;
-    font-stretch: normal;
-    font-style: normal;
-    font-variant: normal;
-    line-height: normal;
-    font-weight: normal;
-    margin-bottom: 8px;
+.topic-info h3 {
+    background: transparent url(./img/page.png) no-repeat 0 1px;
 }
-.res-block em {
+
+#topic-info-user {
+    color: #555555;
+    font-size: 10px;
+    text-align: right;
+}
+.topic-connected em, .topic-info em {
     font-weight: bold;
 }
-.res-block em.userAdmin {
+
+.topic-connected em.userAdmin {
     color: red;
 }
+
 
 .ux-grid3-row-action-cell .x-grid3-cell-inner {
     padding: 1px 0 0 0;

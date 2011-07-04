@@ -5932,6 +5932,13 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
 
+            if( o.mess.topicInfo ) {
+                PhDOE.topic.author = o.mess.topicInfo.author;
+                PhDOE.topic.content = o.mess.topicInfo.content;
+                PhDOE.topic.topicDate = Date.parseDate(o.mess.topicInfo.topicDate, 'Y-m-d H:i:s');
+                PhDOE.topic.topicDate = PhDOE.topic.topicDate.format(_('Y-m-d, H:i'));
+            }
+            
             //For the theme, we apply it.
             Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 
@@ -6411,6 +6418,35 @@ ui.task.SetFileProgressTask = function(config)
             if( mess ) {
                 PhDOE.notify('error', _('Error'), mess);
             }
+        }
+    });
+};Ext.namespace('ui','ui.task');
+
+// config - { item, value, [notify=true] }
+ui.task.setTopicTask = function(config)
+{
+    Ext.apply(this, config);
+    
+    // Apply modification in DB
+    XHR({
+        scope   : this,
+        params  : {
+            task    : 'setTopic',
+            content : this.content
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText);
+            
+            // We update the topic information
+            PhDOE.topic.author = o.author;
+            PhDOE.topic.content = o.content;
+            PhDOE.topic.topicDate = Date.parseDate(o.topicDate, 'Y-m-d H:i:s');
+            PhDOE.topic.topicDate = PhDOE.topic.topicDate.format(_('Y-m-d, H:i'));
+            
+            // We set the topic
+            PhDOE.setTopic();
+            
         }
     });
 };Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
@@ -18986,6 +19022,13 @@ var PhDOE = function()
             email: ''
         },
         
+        topic : {
+            author: '',
+            content: '',
+            topicDate: ''
+        },
+        
+        
         /**
          * Hold application's variable such as name, version or configuration
          */
@@ -19154,6 +19197,9 @@ var PhDOE = function()
             if( this.user.conf.main.loadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
+            
+            // We set the Topic
+            PhDOE.setTopic();
         },
 
         loadAllStore : function()
@@ -19324,6 +19370,20 @@ var PhDOE = function()
             }
         },
 
+        saveTopic: function(content) {
+            
+            ui.task.setTopicTask({
+                content: content
+            });
+        },
+        
+        setTopic: function() {
+            
+            Ext.get('topic-info-content').dom.innerHTML = PhDOE.topic.content;
+            Ext.get('topic-info-user').dom.innerHTML = String.format(_('Defined by {0}, {1}'), PhDOE.topic.author, PhDOE.topic.topicDate);
+            
+        },
+        
         drawInterface: function()
         {
             var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
@@ -19550,16 +19610,67 @@ var PhDOE = function()
                         autoScroll : true,
                         plain      : true,
                         items      : [{
-                            xtype  : 'panel',
+                            xtype  : 'container',
+                            layout: 'column',
                             border : false,
-                            html   : '<div class="res-block">' +
-                                        '<div class="res-block-inner">' +
-                                            '<h3>' +
-                                                String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
-                                                ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
-                                            '</h3>' +
-                                        '</div>' +
-                                     '</div>'
+                            items: [{
+                                xtype:'container',
+                                columnWidth: .5,
+                                html   : '<div class="topic-connected"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
+                                        '<h3>' +
+                                            String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+                                            ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
+                                        '</h3>' +
+                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>'
+                            },{
+                                xtype:'container',
+                                columnWidth: .5,
+                                html   : '<div class="topic-info"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
+                                            '<h3>'+_('Topic:')+'</h3>' +
+                                            '<p id="topic-info-content">-</p>' +
+                                            '<div id="topic-info-user">-</div>' +
+                                        '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
+                                listeners: {
+                                    afterrender: function(c) {
+                                        c.el.on('dblclick', function() {
+                                            
+                                            // Don't allow anonymous to modify the topic
+                                            if( PhDOE.user.isAnonymous ) {
+                                                return;
+                                            }
+                                            
+                                            
+                                            var topicContent = Ext.get('topic-info-content').dom.innerHTML;
+                                            
+                                            Ext.get('topic-info-content').dom.innerHTML = '';
+                                            
+                                            new Ext.FormPanel({
+                                                renderTo: 'topic-info-content',
+                                                layout:'anchor',
+                                                border: false,
+                                                items:[{
+                                                    xtype:'htmleditor',
+                                                    value:topicContent,
+                                                    anchor: '100%'
+                                                }],
+                                                buttonAlign:'center',
+                                                buttons:[{
+                                                    text:_('Save'),
+                                                    handler: function() {
+                                                        PhDOE.saveTopic(this.ownerCt.ownerCt.items.items[0].getValue());
+                                                    }
+                                                },{
+                                                    text:_('Cancel'),
+                                                    handler: function() {
+                                                        PhDOE.setTopic();
+                                                    }
+                                                }]
+                                            });
+                                        });
+                                    }
+                                }
+                            }]
+                            
 
                         }, {
                             xtype  : 'portal',

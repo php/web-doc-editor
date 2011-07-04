@@ -20,6 +20,13 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
 
+            if( o.mess.topicInfo ) {
+                PhDOE.topic.author = o.mess.topicInfo.author;
+                PhDOE.topic.content = o.mess.topicInfo.content;
+                PhDOE.topic.topicDate = Date.parseDate(o.mess.topicInfo.topicDate, 'Y-m-d H:i:s');
+                PhDOE.topic.topicDate = PhDOE.topic.topicDate.format(_('Y-m-d, H:i'));
+            }
+            
             //For the theme, we apply it.
             Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 

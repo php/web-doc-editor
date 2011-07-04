@@ -1614,6 +1614,7 @@ class ExtJsController
         $r['userIsLangAdmin']  = $am->isLangAdmin();
         $r['userConf']  = $am->userConf;
         $r['userEmail'] = $am->email;
+        $r['topicInfo'] = $rf->getStaticValue('main_topic', '');
         $r['appConf']   = Array(
             "projectMailList" => $am->appConf[$am->project]['project.mail.list'],
             "viewVcUrl"       => $am->appConf[$am->project]['viewVc.url']
@@ -1626,6 +1627,34 @@ class ExtJsController
         );
     }
 
+    /**
+     * Set the topic.
+     */
+    public function setTopic()
+    {
+        $am = AccountManager::getInstance();
+        
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        if ($am->isAnonymous) {
+            return JsonResponseBuilder::failure();
+        }
+        
+        $content = $this->getRequestVariable('content');
+        
+        $params = Array(
+            'content' => $content,
+            'author' => $am->vcsLogin,
+            'topicDate' => @date('Y-m-d H:i:s')
+        );
+        
+        RepositoryManager::getInstance()->setStaticValue('main_topic', '', json_encode($params));
+        
+        return JsonResponseBuilder::success($params);
+        
+    }
     /**
      * Send an email.
      */
