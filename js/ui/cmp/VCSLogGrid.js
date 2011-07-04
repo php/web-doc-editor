@@ -13,7 +13,7 @@ ui.cmp._VCSLogGrid.store = Ext.extend(Ext.data.Store,
         fields        : [
             {name : 'id'},
             {name : 'revision'},
-            {name : 'date', type : 'date',dateFormat : 'Y-m-d H:i:s' },
+            {name : 'date', type : 'date',dateFormat : 'Y/m/d H:i:s' },
             {name : 'author'},
             {name : 'content'}
         ]
