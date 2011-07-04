@@ -409,6 +409,11 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $o['revision'] = str_replace('r', '', $infos[0]);
             $o['author']   = $infos[1];
             $o['date']     = str_replace('-', '/', array_shift(explode(' +', $infos[2])));
+            
+            if( $tmp = strstr($o['date'], " /", true) ) {
+                $o['date'] = $tmp;
+            }
+            
             $o['content']  = str_replace("\n", '<br/>', trim(implode('<br/>', $contents)));
 
             $final[] = $o;
