@@ -6932,7 +6932,7 @@ ui.task._VCSCommitTask.commit = function(files, patchID)
 
     XHR({
         params  : {
-            task       : 'vcsCommitXX',
+            task       : 'vcsCommit',
             nodes      : Ext.util.JSON.encode(nodes),
             logMessage : LogMessage,
             patchID    : patchID
@@ -13812,10 +13812,8 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         
     },
     
-    modPatchName: function(a){
-        
-        console.log(a);
-        
+    modPatchName: function(a)
+    {
         var rootNode  = this.getRootNode(),
             patchNode = rootNode.findChild('idDB', a.patchID, true);
             
@@ -13823,10 +13821,6 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         patchNode.attributes.patchDescription = a.newPatchDescription;
         patchNode.attributes.patchEmail = a.newPatchEmail;
         patchNode.attributes.task = a.newPatchName;
-        
-        
-        console.log(patchNode);
-        
     },
     
     initComponent: function(){
@@ -18192,8 +18186,6 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                         // We build the default commit message for a commit issue from an anonymous patch
                         if( this.from === 'anonymousPatch' ) {
                             defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by "+this.patchNode.parentNode.attributes.task+' ('+this.patchNode.attributes.patchEmail+')';
-                            
-                            console.log(this.patchNode);
                             
                             patchID = this.patchNode.attributes.idDB;
                             
