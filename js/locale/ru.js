@@ -26,8 +26,15 @@ var i18n = new Array();
   i18n["Administrator"] = "Администратор";
   i18n["Project: "] = "Проект: ";
   i18n["Language: "] = "Язык: ";
+  i18n["Total number of your files"] = "Общее количество ваших файлов";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Вы использовали символы, которым необходима кодировка UTF-8, вопреки указанному XML заголовку.<br>Пожалуйста, удалите эти символы или поменяйте кодировку в заголовке XML файла на UTF-8 ; например, так:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Кажется вы добавили несколько символов табуляции в этот файл. Пожалуйста, замените каждый из них одним пробелом.<br>Совет: Вы можете использовать кнопку \"Переформатировать этот файл\" для замены всех символов табуляции пробелами.";
+  i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "У вас нет прав для изменения этого файла, т.к. он был изменен другим пользователем. Свяжитесь с администратором, если хотите изменить его.";
+  i18n["The patch you want to delete didn't exist."] = "Патч, который вы хотели удалить, не существует.";
+  i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "Патч, который вы хотите удалить вам не принадлежит. Только администратор или создатель патча могут его удалить.";
+  i18n["This action is available only to global administrator."] = "Это действие доступно только главному администратору.";
+  i18n["This action is available only to global administrator or to administrator for this lang."] = "Это действие доступно только главному администратору или администратору языка.";
+  i18n["The file you want to clear local change isn't own by you.<br>You can only do this action for yours files."] = "Файл, в котором вы хотите очистить локальные изменения, вам не принадлежит.<br>Это действие доступно только для ваших файлов.";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Чтобы открыть выбранные файлы, кликните по ячейке два раза";
@@ -70,7 +77,8 @@ var i18n = new Array();
   i18n["...all files modified by me"] = "...всех файлов, измененных мной";
   i18n["You have no patch currently. You must create one."] = "У вас пока нет патчей. Создайте какой-нибудь.";
   i18n["Diff for file: {0}"] = "Различия для файла: {0}";
-  
+  i18n["Administrator menu"] = "Меню администратора";
+
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the name of this patch"] = "Редактировать имя этого файла";
@@ -79,6 +87,7 @@ var i18n = new Array();
   i18n["Back all this patch to work in progress module"] = "Переместить этот патч в модуль 'Работа в прогрессе'";
   i18n["Back all this folder to work in progress module"] = "Переместить эту папку в модуль 'Работа в прогрессе'";
   i18n["Back this file to work in progress module"] = "Переместить этот файл в модуль 'Работа в прогрессе'";
+  i18n["Creation date: "] = "Дата создания: ";
 
 
 // In file: ../../js/ui/component/ManagePatchPrompt.js
@@ -98,6 +107,7 @@ var i18n = new Array();
   i18n["Submit"] = "Отправить";
   i18n["Close"] = "Закрыть";
   i18n["Older messages"] = "Старые сообщения";
+  i18n["No log message currently"] = "В данный момент в журнале нет сообщений";
   i18n["Log message"] = "Сообщение";
 
 
@@ -116,12 +126,14 @@ var i18n = new Array();
   i18n["{0} hour(s)"] = "{0} часов";
   i18n["{0} minute(s)"] = "{0} минут";
   i18n["{0} second(s)"] = "{0} секунд";
+  i18n["Less than one second"] = "Меньше секунды назад";
   i18n["{0} check all entitites"] = "{0} проверить все сущности";
   i18n["{0} updated app's data"] = "{0} обновил данные приложения";
   i18n["{0} logged out"] = "{0} вышел из системы";
   i18n["{0} is logged in using the {1} language"] = "{0} зашел в систему, используя язык {1}";
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} закоммитил {1} новых папок в языке {2}";
   i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} закоммитил {1} файлов (создано: {2}, обновлено: {3}, удалено: {4}) в языке {5}";
+  i18n["{0} changed file\'s owner"] = "{0} поменял владельца файла";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -240,6 +252,8 @@ var i18n = new Array();
 // In file: ../../js/ui/component/MainPanel.js
   i18n["Confirm"] = "Подтвердить";
   i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Этот измененный файл не был сохранен.<br/>Вы правда хотите его закрыть?";
+  i18n["File: "] = "Файл: ";
+  i18n["Direct link to this patch"] = "Прямая ссылка на этот патч";
 
 
 // In file: ../../js/ui/component/FilePanel.js
@@ -272,6 +286,9 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Сохранить как</b> патч";
   i18n["modified"] = "изменен";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Проверить</b> XML с помощью XmlLint";
+  i18n["<b>Expand</b> in a popup"] = "<b>Расширить</b> во всплывающем окне";
+  i18n["<b>Preview</b> in a popup"] = "<b>Предпросмотр</b> во всплывающем окне";
+  i18n["You must save your file in order to preview the result."] = "Для предпросмотра результата необходимо сохранить файл.";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -330,6 +347,7 @@ var i18n = new Array();
   i18n["Automatically load entities data when displaying the file"] = "Автоматически загружать данные сущностей при отображении файла";
   i18n["Google translate Panel"] = "Панель Google translate";
   i18n["Display the Google Translation Panel"] = "Отображать панель Google Translation";
+  i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Отображать работу над англ. версией в модулях \"Патчи на проверку\" и \"Работа в прогрессе\"";
 
 
 // In file: ../../js/ui/component/CheckEntities.js
@@ -376,6 +394,7 @@ var i18n = new Array();
   i18n["Check build"] = "Проверить билд";
   i18n["Verify if there is a check in progress. Please, wait..."] = "Проверяем на уже запущенную проверку. Пожалуйста, ждите...";
   i18n["Show last failed build"] = "Показать последний сломанный билд.";
+  i18n["Last failed build"] = "Последний сломанный билд";
   i18n["EN tools"] = "Инструменты английского языка";
   i18n["Script check entities"] = "Скрипт проверки сущностей";
   i18n["View the last result"] = "Просмотреть последние результаты";
@@ -395,7 +414,8 @@ var i18n = new Array();
   i18n["Are you sure you want to logout?"] = "Вы правда хотите выйти из системы?";
   i18n["Report bugs"] = "Сообщить об ошибках";
   i18n["Documentation"] = "Документация";
-  i18n["About"] = "О";
+  i18n["About"] = "О программе";
+  i18n["Chat with us on IRC !"] = "Заходите к нам в IRC-чат!";
 
 
 // In file: ../../js/ui/component/VCSLogGrid.js
@@ -466,9 +486,14 @@ var i18n = new Array();
   i18n["Code editor"] = "Редактор кода";
   i18n["Icon pack"] = "Набор иконок";
   i18n["License"] = "Лицензия";
+  i18n["Help and support"] = "Поддержка";
+  i18n["Mailing list:"] = "Список рассылки:";
+  i18n["IRC:"] = "IRC : ";
+  i18n["Web IRC Chat"] = "Web IRC чат";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
+  i18n["View in a new tab"] = "Просмотреть в новом табе";
   i18n["Remove this file"] = "Удалить этот файл";
   i18n["File removed by me"] = "Файл был удален мной";
   i18n["File removed by {0}"] = "Файл был удален {0}";
@@ -511,6 +536,7 @@ var i18n = new Array();
   i18n["Saving data..."] = "Сохранение данных...";
   i18n["Document saved"] = "Документ сохранен";
   i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "Документ <br><br><b>{0}</b><br><br> был успешно сохранен!";
+  i18n["There is somes XML's errors.<br /><br />You must fix it before saving this file.<br /><br />Valid this window to show this errors."] = "Документ содержит ошибки XML.<br /><br />Необходимо их исправить до сохранения файла.<br /><br />Для отображения ошибок закройте это окно.";
 
 
 // In file: ../../js/ui/task/GetGGTranslation.js
@@ -534,6 +560,8 @@ var i18n = new Array();
   i18n["Please, wait until commit..."] = "Пожалуйста, подождите окончания коммита...";
   i18n["The log message is required."] = "Необходимо сообщение о коммите.";
   i18n["You must choose at least one file."] = "Необходимо выбрать хотя бы один файл.";
+  i18n["There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?"] = "Необходимо закрыть {0} файлов перед коммитом.<br><br>{1}<br/><br/>Закрыть их?";
+  i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?"] = "Необходимо закрыть {0} файл перед коммитом.<br><br>{1}<br/><br/>Закрыть его?";
 
 
 // In file: ../../js/ui/task/MarkDeleteTask.js
@@ -610,3 +638,26 @@ var i18n = new Array();
   i18n["Libel"] = "Слово";
   i18n["XML Errors"] = "Ошибки XML";
 
+// In file: ../../js/ui/cmp/ChangeFileOwner.js
+  i18n["Current owner"] = "Текущий владелец";
+  i18n["Action"] = "Действие";
+  i18n["New owner"] = "Новый владелец";
+  i18n["Change file's owner"] = "Сменить владельца файла";
+
+// In file: ../../js/ui/task/ChangeFileOwner.js
+  i18n["Owner changed"] = "Владелец изменен";
+  i18n["The owner for this file have been changed successfully !"] = "Владелец данного файла был успешно изменен!";
+
+// In file: ../../js/ui/cmp/AnonymousPatchWin.js
+  i18n["Next"] = "Далее";
+  i18n["Anonymous patch manager"] = "Менеджер анонимных патчей";
+  i18n["You have opened a modified file from the \"Patch for review\" module.<br>This file has been modified by an anonymous user.<br><br>Please choose one of the following actions:"] = "Вы открыли модифицированный файл из модуля \"Патчи на проверку\".<br>Этот файл был изменен анонимным пользователем.<br><br>Выберите одно из следующих действий:";
+  i18n["Continue to modify this file"] = "Продолжить работу над файлом";
+  i18n["This action will open this file for modification. Once your modification finish, just save it and this file will be own by you."] = "Это действие откроет файл для изменений. Как только вы закончите правки, просто сохраните его и вы станете владельцем этого файла.";
+  i18n["Reject this patch"] = "Отклонить патч";
+  i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Это действие закроет файл и удалит локальные изменения. Файл будет возвращен в свое оригинальное состояние, такое, каким оно было на VCS-сервере.";
+  i18n["Validate this patch"] = "Проверить патч";
+  i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Это действие сменит владельца изменений и зарегистрирует их под вашим именем. Файл появится под вашим именем и вы сможете закоммитить его.";
+
+// In file: ../../js/ui/cmp/PreviewFile.js
+  i18n["Preview"] = "Предпросмотр";
