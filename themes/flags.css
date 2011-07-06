@@ -4,14 +4,14 @@
 */
 
 .x-form-field-wrap .flags, .mainMenuLang {
-    top: 5px;
-    left: 5px;
+    top: 1px !important;
+    left: 5px !important;
 }
 
 .flags {
     background: url(./img/flags/flags.png) no-repeat top left;
-    width: 16px;
-    height: 11px;
+    width: 16px !important;
+    height: 11px !important;
 }
 
 .flag-ad { background-position: 0 0 !important; } 
