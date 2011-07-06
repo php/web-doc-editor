@@ -71,7 +71,7 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
 
 };
 
-ui.task._VCSCommitTask.commit = function(files)
+ui.task._VCSCommitTask.commit = function(files, patchID)
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -133,7 +133,8 @@ ui.task._VCSCommitTask.commit = function(files)
         params  : {
             task       : 'vcsCommit',
             nodes      : Ext.util.JSON.encode(nodes),
-            logMessage : LogMessage
+            logMessage : LogMessage,
+            patchID    : patchID
         },
         success : function(r)
         {
@@ -159,7 +160,7 @@ ui.task._VCSCommitTask.commit = function(files)
     });
 };
 
-ui.task.VCSCommitTask = function()
+ui.task.VCSCommitTask = function(config)
 {
     // If the user is anonymous, we don't commit anything
     if (PhDOE.user.isAnonymous) {
@@ -241,6 +242,6 @@ ui.task.VCSCommitTask = function()
             }
         });
     } else {
-        ui.task._VCSCommitTask.commit(files);
+        ui.task._VCSCommitTask.commit(files, config.patchID);
     }
 };

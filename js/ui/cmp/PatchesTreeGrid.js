@@ -69,7 +69,8 @@ ui.cmp._PatchesTreeGrid.menu.patches = function(config){
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
         var node = this.node, allFiles = [],
-        currentUser = this.node.parentNode.attributes.task;
+        currentUser = node.parentNode.attributes.task,
+        currentUserisAnonymous = node.parentNode.attributes.isAnonymous;
         
         // We don't display all of this menu if the current user isn't the owner
         if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ) {
@@ -86,14 +87,16 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
         
         Ext.apply(this, {
             items: [{
-                text: _('Edit the name of this patch'),
+                text: _('Edit the description of this patch'),
                 iconCls: 'iconPendingPatch',
                 hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     var win = new ui.cmp.ManagePatchPrompt({
-                        title: _('Modify this patch name'),
-                        defaultValue: node.attributes.task,
-                        patchID: node.attributes.idDB
+                        title: _('Modify this patch description'),
+                        patchName : node.attributes.task,
+                        patchDescription : node.attributes.patchDescription,
+                        patchEmail : node.attributes.patchEmail,
+                        patchID   : node.attributes.idDB
                     });
                     win.show(this.el);
                 }
@@ -101,7 +104,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 text: _('Delete this patch'),
                 iconCls: 'iconTrash',
                 hidden: (currentUser !== PhDOE.user.login),
-                handler: function(){
+                handler: function() {
                     ui.task.DeletePatchTask({
                         patchID: node.attributes.idDB
                     });
@@ -120,7 +123,8 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     });
                 }
             }, {
-                xtype: 'menuseparator'
+                xtype: 'menuseparator',
+                hidden: (currentUser !== PhDOE.user.login),
             },{
                 text: _('View unified diff'),
                 iconCls: 'iconViewDiff',
@@ -144,6 +148,20 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             }, {
                 xtype: 'menuseparator'
             },
+            
+            // Commit iten only when this patch belong to an anonymous user and the current user is a valid VCS user
+            
+            ((currentUserisAnonymous && !PhDOE.user.isAnonymous) ?
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    module: 'patches',
+                    from: 'anonymousPatch',
+                    node: false,
+                    folderNode: false,
+                    patchNode: this.node,
+                    userNode: this.node.parentNode
+                }) : ''
+            ),
+            
             ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
                 new ui.cmp._WorkTreeGrid.menu.commit({
                     module: 'patches',
@@ -154,7 +172,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     userNode: this.node.parentNode
                 }) : ''
             ),
-            (( PhDOE.user.isGlobalAdmin ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+            (( PhDOE.user.isGlobalAdmin && currentUser !== PhDOE.user.login ) ? new ui.cmp._WorkTreeGrid.menu.admin({
                 from: 'patch',
                 node: this.node
             }) : '')
@@ -359,10 +377,15 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         
     },
     
-    modPatchName: function(a){
+    modPatchName: function(a)
+    {
         var rootNode  = this.getRootNode(),
             patchNode = rootNode.findChild('idDB', a.patchID, true);
+            
         patchNode.setText(a.newPatchName);
+        patchNode.attributes.patchDescription = a.newPatchDescription;
+        patchNode.attributes.patchEmail = a.newPatchEmail;
+        patchNode.attributes.task = a.newPatchName;
     },
     
     initComponent: function(){
@@ -560,7 +583,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         }
     },
     
-    addToPatch: function(PatchID, PatchName, nodesToAdd){
+    addToPatch: function(PatchID, PatchName, nodesToAdd, PatchDescription, PatchEmail){
         var rootNode, userNode, PatchNode, folderNode, type, iconCls, fileNode, nowDate, i;
         
         rootNode = this.getRootNode();
@@ -591,6 +614,8 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         
             PatchNode = new Ext.tree.TreeNode({
                 task: PatchName,
+                patchDescription:PatchDescription,
+                patchEmail:PatchEmail,
                 type: 'patch',
                 iconCls: 'iconPatch',
                 expanded: true,

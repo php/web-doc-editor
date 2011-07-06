@@ -770,7 +770,9 @@ class RepositoryFetcher
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
             $s = 'SELECT
                     `id`,
-                    `name` as patchName,
+                    `name`        as patchName,
+                    `description` as patchDescription,
+                    `email`       as patchEmail,
                     `user`,
                     `date`
                  FROM
@@ -785,9 +787,20 @@ class RepositoryFetcher
             $patches = Array();
 
             while ($a = $r->fetch_object()) {
+                
+                $desc = $a->patchDescription;
+                $desc = str_replace("\n", '\n', $desc);
+                $desc = str_replace("\r", '\r', $desc);
+                $desc = str_replace("\t", '\t', $desc);
+                $desc = str_replace("'", "\'", $desc);
+                
+                $a->patchName = str_replace("'", "\'", $a->patchName);
+                
                 $patches[$a->id] = Array(
-                    "user"      => $a->user,
-                    "patchName" => $a->patchName
+                    "user"             => $a->user,
+                    "patchName"        => $a->patchName,
+                    "patchDescription" => $desc,
+                    "patchEmail"       => $a->patchEmail
                 );
 
                 $node[$a->user][$a->patchName]['idDB'] = $a->id;
@@ -840,6 +853,7 @@ class RepositoryFetcher
             }
             
             $result = '[';
+            
             // We format the result node to pass to ExtJs TreeGrid component
             while( list($user, $patchs) = each($node)) {
 
@@ -857,7 +871,8 @@ class RepositoryFetcher
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
-                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
+                    
+                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',patchDescription:'".((isset($patches[$dataPatch["idDB"]]["patchDescription"])) ? $patches[$dataPatch["idDB"]]["patchDescription"] : ''  )."',patchEmail:'".((isset($patches[$dataPatch["idDB"]]["patchEmail"])) ? $patches[$dataPatch["idDB"]]["patchEmail"] : ''  )."',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
 
                     // We now walk into the folders for this patch
                     while( list($folder, $dataFiles) = each($dataPatch['folders'])) {
@@ -887,16 +902,17 @@ class RepositoryFetcher
                                     }
 
                                     $result .= "{task:'".$data["name"]."',type:'".$data["type"]."',last_modified:'".$data["last_modified"]."',leaf:true,iconCls:'".$iconCls."', idDB:".$data["idDB"]."},";
+                                    
                                 }
 
                         $result .= ']},';
+                        
                     }
 
                     $result .= ']},';
                 }
 
                 $result .= ']},';
-
             }
             $result .= ']';
 

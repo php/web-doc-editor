@@ -93,6 +93,45 @@ function XHR(config)
 
     Ext.Ajax.request(config);
 }
+
+Ext.override(Ext.form.Field, {
+
+    afterRender: function() {  
+     
+        var findLabel = function(field) {
+            var wrapDiv = null;
+            var label = null
+
+            //find form-item and label
+            wrapDiv = field.getEl().up("div.x-form-item");
+            
+            if (wrapDiv) label = wrapDiv.child("label");
+            if (label) return label;
+        };
+
+        if (this.tooltipText) {
+            var label = findLabel(this);
+            
+            if (label) {                       
+                        
+                label.addClass(this.tooltipClass || "x-textfield-tooltip");
+                           
+                new Ext.ToolTip({
+                    target:  label,                   
+                    html: this.tooltipText,
+                    //enabled: true,
+                    trackMouse:true
+                    //dismissDelay: 60000 * 30
+                });
+            }
+        }
+        
+        Ext.form.Field.superclass.afterRender.call(this);    
+        this.initEvents();  
+        this.initValue();
+    }
+      
+});
 // create namespace for plugins
 Ext.namespace('Ext.ux.plugins');
 

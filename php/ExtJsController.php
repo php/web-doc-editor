@@ -1503,6 +1503,7 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
+        $patchID = $this->getRequestVariable('patchID');
         $nodes = $this->getRequestVariable('nodes');
         $logMessage = stripslashes($this->getRequestVariable('logMessage'));
 
@@ -1584,6 +1585,12 @@ class ExtJsController
 
         // Manage log message (add new or ignore it if this message already exist for this user)
         LogManager::getInstance()->addCommitLog($logMessage);
+
+        
+        // We send an email only if this commit is from a patch
+        if( $patchID ) {
+            $rm->postPatchCommit($patchID);
+        }
 
         // Remove the lock File
         $lock->release();
@@ -1949,15 +1956,19 @@ class ExtJsController
      */
     public function managePatch()
     {
+        $rm = RepositoryManager::getInstance();
+        
         if (!AccountManager::getInstance()->isLogged()) {
             return JsonResponseBuilder::failure();
         }
 
-        $name    = $this->getRequestVariable('name');
-        $patchID = $this->getRequestVariable('patchID');
+        $name        = $this->getRequestVariable('name');
+        $description = $this->getRequestVariable('description');
+        $email       = $this->getRequestVariable('email');
+        $patchID     = $this->getRequestVariable('patchID');
 
         if( $patchID != "false" ) {
-            $r = RepositoryManager::getInstance()->modPatch($patchID, $name);
+            $r = $rm->modPatch($patchID, $name, $description, $email);
 
             if( $r != true ) {
 
@@ -1971,7 +1982,7 @@ class ExtJsController
             }
 
         } else {
-            $r = RepositoryManager::getInstance()->createPatch($name);
+            $r = $rm->createPatch($name, $description, $email);
             return JsonResponseBuilder::success(
                 array(
                     'patchID' => $r

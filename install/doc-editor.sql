@@ -220,6 +220,8 @@ CREATE TABLE IF NOT EXISTS `patches` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `description` text,
+  `email` varchar(255) DEFAULT NULL,
   `user` varchar(255) NOT NULL,
   `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,

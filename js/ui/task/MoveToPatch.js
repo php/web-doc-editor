@@ -28,7 +28,7 @@ ui.task.MoveToPatch = function(config)
                 Ext.getBody().unmask();
 
                 // We add this new patch, and nodesToAdd into Patches for review component
-                ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd);
+                ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
 
                 // We get all idDB from this nodes to delete record from Work in progress
                 if( this.nodesToAdd ) {

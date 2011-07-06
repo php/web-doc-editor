@@ -104,7 +104,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                 items: [{
                     scope: this,
                     text: _('...this file'),
-                    hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch'),
+                    hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch' || this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         
@@ -125,7 +125,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                 }, {
                     scope: this,
                     text: _('...all files from this folder'),
-                    hidden: (this.from === 'user' || this.from === 'patch'),
+                    hidden: (this.from === 'user' || this.from === 'patch' || this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];
@@ -155,7 +155,15 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     hidden: (this.module !== 'patches' || this.from === 'user'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
-                        var files = [];
+                        var files = [], defaultCommitMessage = '', patchID = false;
+                        
+                        // We build the default commit message for a commit issue from an anonymous patch
+                        if( this.from === 'anonymousPatch' ) {
+                            defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by "+this.patchNode.parentNode.attributes.task+' ('+this.patchNode.attributes.patchEmail+')';
+                            
+                            patchID = this.patchNode.attributes.idDB;
+                            
+                        }
                         
                         this.patchNode.cascade(function(node){
                             if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
@@ -172,13 +180,16 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                         }, this);
                         
                         new ui.cmp.CommitPrompt({
-                            files: files
+                            files: files,
+                            defaultMessage: defaultCommitMessage,
+                            patchID: patchID
                         }).show();
                         
                     }
                 }, {
                     scope: this,
                     text: _('...all files modified by me'),
+                    hidden: (this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];

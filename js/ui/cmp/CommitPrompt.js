@@ -96,6 +96,8 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelAlign : 'top',
+    patchID    : false,
+    defaultMessage : false,
     tools      : [{
         id      : 'gear',
         qtip    : _('Configure this tools'),
@@ -106,21 +108,6 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 new ui.cmp.CommitLogManager();
             }
             Ext.getCmp('commit-log-win').show(this.id);
-        }
-    }],
-    buttons : [{
-        id      : 'win-commit-btn-submit',
-        text    : _('Submit'),
-        handler : function()
-        {
-            new ui.task.VCSCommitTask();
-        }
-    }, {
-        id      : 'win-commit-btn-close',
-        text    : _('Close'),
-        handler : function()
-        {
-            Ext.getCmp('winVCSCommit').close();
         }
     }],
     listeners: {
@@ -159,6 +146,24 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
 
         Ext.apply(this,
         {
+            buttons : [{
+                scope   : this,
+                id      : 'win-commit-btn-submit',
+                text    : _('Submit'),
+                handler : function()
+                {
+                    new ui.task.VCSCommitTask({
+                        patchID: this.patchID
+                    });
+                }
+            }, {
+                id      : 'win-commit-btn-close',
+                text    : _('Close'),
+                handler : function()
+                {
+                    Ext.getCmp('winVCSCommit').close();
+                }
+            }],
             items : [new ui.cmp._CommitPrompt.grid(), {
                 xtype         : 'combo',
                 name          : 'first2',
@@ -184,7 +189,7 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 fieldLabel : _('Log message'),
                 anchor     : '100%',
                 height     : 150,
-                value      : ''
+                value      : (this.defaultMessage) ? this.defaultMessage : ''
             }]
         });
         ui.cmp.CommitPrompt.superclass.initComponent.call(this);

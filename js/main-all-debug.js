@@ -93,6 +93,45 @@ function XHR(config)
 
     Ext.Ajax.request(config);
 }
+
+Ext.override(Ext.form.Field, {
+
+    afterRender: function() {  
+     
+        var findLabel = function(field) {
+            var wrapDiv = null;
+            var label = null
+
+            //find form-item and label
+            wrapDiv = field.getEl().up("div.x-form-item");
+            
+            if (wrapDiv) label = wrapDiv.child("label");
+            if (label) return label;
+        };
+
+        if (this.tooltipText) {
+            var label = findLabel(this);
+            
+            if (label) {                       
+                        
+                label.addClass(this.tooltipClass || "x-textfield-tooltip");
+                           
+                new Ext.ToolTip({
+                    target:  label,                   
+                    html: this.tooltipText,
+                    //enabled: true,
+                    trackMouse:true
+                    //dismissDelay: 60000 * 30
+                });
+            }
+        }
+        
+        Ext.form.Field.superclass.afterRender.call(this);    
+        this.initEvents();  
+        this.initValue();
+    }
+      
+});
 /*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -6015,7 +6054,7 @@ ui.task.MoveToPatch = function(config)
                 Ext.getBody().unmask();
 
                 // We add this new patch, and nodesToAdd into Patches for review component
-                ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd);
+                ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
 
                 // We get all idDB from this nodes to delete record from Work in progress
                 if( this.nodesToAdd ) {
@@ -6833,7 +6872,7 @@ ui.task._VCSCommitTask.afterCommit = function(mess)
 
 };
 
-ui.task._VCSCommitTask.commit = function(files)
+ui.task._VCSCommitTask.commit = function(files, patchID)
 {
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -6893,9 +6932,10 @@ ui.task._VCSCommitTask.commit = function(files)
 
     XHR({
         params  : {
-            task       : 'vcsCommit',
+            task       : 'vcsCommitXX',
             nodes      : Ext.util.JSON.encode(nodes),
-            logMessage : LogMessage
+            logMessage : LogMessage,
+            patchID    : patchID
         },
         success : function(r)
         {
@@ -6921,7 +6961,7 @@ ui.task._VCSCommitTask.commit = function(files)
     });
 };
 
-ui.task.VCSCommitTask = function()
+ui.task.VCSCommitTask = function(config)
 {
     // If the user is anonymous, we don't commit anything
     if (PhDOE.user.isAnonymous) {
@@ -7003,7 +7043,7 @@ ui.task.VCSCommitTask = function()
             }
         });
     } else {
-        ui.task._VCSCommitTask.commit(files);
+        ui.task._VCSCommitTask.commit(files, config.patchID);
     }
 };
 Ext.namespace('ui','ui.cmp');
@@ -8468,6 +8508,8 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
     modal      : true,
     bodyStyle  : 'padding:5px 5px 0',
     labelAlign : 'top',
+    patchID    : false,
+    defaultMessage : false,
     tools      : [{
         id      : 'gear',
         qtip    : _('Configure this tools'),
@@ -8478,21 +8520,6 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 new ui.cmp.CommitLogManager();
             }
             Ext.getCmp('commit-log-win').show(this.id);
-        }
-    }],
-    buttons : [{
-        id      : 'win-commit-btn-submit',
-        text    : _('Submit'),
-        handler : function()
-        {
-            new ui.task.VCSCommitTask();
-        }
-    }, {
-        id      : 'win-commit-btn-close',
-        text    : _('Close'),
-        handler : function()
-        {
-            Ext.getCmp('winVCSCommit').close();
         }
     }],
     listeners: {
@@ -8531,6 +8558,24 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
 
         Ext.apply(this,
         {
+            buttons : [{
+                scope   : this,
+                id      : 'win-commit-btn-submit',
+                text    : _('Submit'),
+                handler : function()
+                {
+                    new ui.task.VCSCommitTask({
+                        patchID: this.patchID
+                    });
+                }
+            }, {
+                id      : 'win-commit-btn-close',
+                text    : _('Close'),
+                handler : function()
+                {
+                    Ext.getCmp('winVCSCommit').close();
+                }
+            }],
             items : [new ui.cmp._CommitPrompt.grid(), {
                 xtype         : 'combo',
                 name          : 'first2',
@@ -8556,7 +8601,7 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
                 fieldLabel : _('Log message'),
                 anchor     : '100%',
                 height     : 150,
-                value      : ''
+                value      : (this.defaultMessage) ? this.defaultMessage : ''
             }]
         });
         ui.cmp.CommitPrompt.superclass.initComponent.call(this);
@@ -13057,10 +13102,10 @@ Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp');
 ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
 {
     title       : '',
-    width       : 250,
-    height      : 100,
-    minWidth    : 250,
-    minHeight   : 100,
+    width       : 450,
+    height      : 260,
+    minWidth    : 450,
+    minHeight   : 300,
     layout      : 'fit',
     plain       : true,
     bodyStyle   : 'padding:5px;',
@@ -13069,69 +13114,92 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
     closeAction : 'hide',
 
     nodesToAdd  : false,
-    defaultValue: '',
+    patchName   : '',
+    patchDescription   : '',
+    patchEmail   : '',
     patchID     : false,
-
-    buttons     : [{
-        text   : _('Create'),
-        handler: function()
-        {
-            var win    = this.ownerCt.ownerCt,
-                values = win.findByType('form').shift().getForm().getValues();
-
-            XHR({
-                params  : {
-                    task    : 'managePatch',
-                    name    : values.name,
-                    patchID : win.patchID
-                },
-                success : function(r)
-                {
-                    var o = Ext.util.JSON.decode(r.responseText);
-
-                    win.hide();
-
-                    // If we want to modify the path name
-                    if( win.patchID ) {
-                        ui.cmp.PatchesTreeGrid.getInstance().modPatchName({
-                            newPatchName : values.name,
-                            patchID      : win.patchID
-                        });
-                    }
-					
-					// If there is some node to Add, we call this.
-					if (win.nodesToAdd) {
-						ui.task.MoveToPatch({
-							patchID: o.patchID,
-							patchName: values.name,
-							nodesToAdd: win.nodesToAdd
-						});
-					}
-                }
-            });
-        }
-    }, {
-        text    : _('Cancel'),
-        handler : function()
-        {
-            this.ownerCt.ownerCt.hide();
-        }
-    }],
 
     initComponent : function()
     {
         Ext.apply(this, {
-            items : new Ext.form.FormPanel({
+
+            buttons : [{
+                text   : (this.patchID) ? _('Save') : _('Create'),
+                handler: function()
+                {
+                    var win    = this.ownerCt.ownerCt,
+                        values = win.findByType('form').shift().getForm().getValues();
+
+                    XHR({
+                        params  : {
+                            task        : 'managePatch',
+                            name        : values.name,
+                            description : values.description,
+                            email       : values.email,
+                            patchID     : win.patchID
+                        },
+                        success : function(r)
+                        {
+                            var o = Ext.util.JSON.decode(r.responseText);
+
+                            win.hide();
+
+                            // If we want to modify the path name
+                            if( win.patchID ) {
+                                ui.cmp.PatchesTreeGrid.getInstance().modPatchName({
+                                    newPatchName : values.name,
+                                    newPatchDescription : values.description,
+                                    newPatchEmail : values.email,
+                                    patchID      : win.patchID
+                                });
+                            }
+                            
+                            // If there is some node to Add, we call this.
+                            if (win.nodesToAdd) {
+                                    ui.task.MoveToPatch({
+                                            patchID: o.patchID,
+                                            patchName: values.name,
+                                            patchDescription: values.description,
+                                            patchEmail: values.email,
+                                            nodesToAdd: win.nodesToAdd
+                                    });
+                            }
+                        }
+                    });
+                }
+            }, {
+                text    : _('Cancel'),
+                handler : function()
+                {
+                    this.ownerCt.ownerCt.hide();
+                }
+            }],
+            items : [{
+                xtype       : 'form',
                 baseCls     : 'x-plain',
-                labelWidth  : 55,
+                labelWidth  : 110,
                 defaultType : 'textfield',
+                labelAlign  : 'top',
                 items : [{
                     name       : 'name',
-                    fieldLabel : _('Name'),
+                    fieldLabel : _('Patch name'),
                     anchor     : '100%',
-                    value      : this.defaultValue
+                    value      : this.patchName
+                },{
+                    name       : 'description',
+                    xtype      : 'textarea',
+                    fieldLabel : _('Patch description'),
+                   tooltipText : _('This description will be the default during the validation of the patch by a valid user.'),
+                    anchor     : '100%',
+                    value      : this.patchDescription
+                },{
+                    name       : 'email',
+                    fieldLabel : _('Email'),
+                   tooltipText : _('If provided, an email will be send to you to inform that the patch is commited.'),
+                    anchor     : '100%',
+                    value      : this.patchEmail
                 }]
-            })
+            }]
         });
         ui.cmp.ManagePatchPrompt.superclass.initComponent.call(this);
     }
@@ -13436,7 +13504,8 @@ ui.cmp._PatchesTreeGrid.menu.patches = function(config){
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
         var node = this.node, allFiles = [],
-        currentUser = this.node.parentNode.attributes.task;
+        currentUser = node.parentNode.attributes.task,
+        currentUserisAnonymous = node.parentNode.attributes.isAnonymous;
         
         // We don't display all of this menu if the current user isn't the owner
         if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ) {
@@ -13453,14 +13522,16 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
         
         Ext.apply(this, {
             items: [{
-                text: _('Edit the name of this patch'),
+                text: _('Edit the description of this patch'),
                 iconCls: 'iconPendingPatch',
                 hidden: (currentUser !== PhDOE.user.login),
                 handler: function(){
                     var win = new ui.cmp.ManagePatchPrompt({
-                        title: _('Modify this patch name'),
-                        defaultValue: node.attributes.task,
-                        patchID: node.attributes.idDB
+                        title: _('Modify this patch description'),
+                        patchName : node.attributes.task,
+                        patchDescription : node.attributes.patchDescription,
+                        patchEmail : node.attributes.patchEmail,
+                        patchID   : node.attributes.idDB
                     });
                     win.show(this.el);
                 }
@@ -13468,7 +13539,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 text: _('Delete this patch'),
                 iconCls: 'iconTrash',
                 hidden: (currentUser !== PhDOE.user.login),
-                handler: function(){
+                handler: function() {
                     ui.task.DeletePatchTask({
                         patchID: node.attributes.idDB
                     });
@@ -13487,7 +13558,8 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     });
                 }
             }, {
-                xtype: 'menuseparator'
+                xtype: 'menuseparator',
+                hidden: (currentUser !== PhDOE.user.login),
             },{
                 text: _('View unified diff'),
                 iconCls: 'iconViewDiff',
@@ -13511,6 +13583,20 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
             }, {
                 xtype: 'menuseparator'
             },
+            
+            // Commit iten only when this patch belong to an anonymous user and the current user is a valid VCS user
+            
+            ((currentUserisAnonymous && !PhDOE.user.isAnonymous) ?
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    module: 'patches',
+                    from: 'anonymousPatch',
+                    node: false,
+                    folderNode: false,
+                    patchNode: this.node,
+                    userNode: this.node.parentNode
+                }) : ''
+            ),
+            
             ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
                 new ui.cmp._WorkTreeGrid.menu.commit({
                     module: 'patches',
@@ -13521,7 +13607,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     userNode: this.node.parentNode
                 }) : ''
             ),
-            (( PhDOE.user.isGlobalAdmin ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+            (( PhDOE.user.isGlobalAdmin && currentUser !== PhDOE.user.login ) ? new ui.cmp._WorkTreeGrid.menu.admin({
                 from: 'patch',
                 node: this.node
             }) : '')
@@ -13727,9 +13813,20 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     },
     
     modPatchName: function(a){
+        
+        console.log(a);
+        
         var rootNode  = this.getRootNode(),
             patchNode = rootNode.findChild('idDB', a.patchID, true);
+            
         patchNode.setText(a.newPatchName);
+        patchNode.attributes.patchDescription = a.newPatchDescription;
+        patchNode.attributes.patchEmail = a.newPatchEmail;
+        patchNode.attributes.task = a.newPatchName;
+        
+        
+        console.log(patchNode);
+        
     },
     
     initComponent: function(){
@@ -13927,7 +14024,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         }
     },
     
-    addToPatch: function(PatchID, PatchName, nodesToAdd){
+    addToPatch: function(PatchID, PatchName, nodesToAdd, PatchDescription, PatchEmail){
         var rootNode, userNode, PatchNode, folderNode, type, iconCls, fileNode, nowDate, i;
         
         rootNode = this.getRootNode();
@@ -13958,6 +14055,8 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         
             PatchNode = new Ext.tree.TreeNode({
                 task: PatchName,
+                patchDescription:PatchDescription,
+                patchEmail:PatchEmail,
                 type: 'patch',
                 iconCls: 'iconPatch',
                 expanded: true,
@@ -18037,7 +18136,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                 items: [{
                     scope: this,
                     text: _('...this file'),
-                    hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch'),
+                    hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch' || this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         
@@ -18058,7 +18157,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                 }, {
                     scope: this,
                     text: _('...all files from this folder'),
-                    hidden: (this.from === 'user' || this.from === 'patch'),
+                    hidden: (this.from === 'user' || this.from === 'patch' || this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];
@@ -18088,7 +18187,17 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     hidden: (this.module !== 'patches' || this.from === 'user'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
-                        var files = [];
+                        var files = [], defaultCommitMessage = '', patchID = false;
+                        
+                        // We build the default commit message for a commit issue from an anonymous patch
+                        if( this.from === 'anonymousPatch' ) {
+                            defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by "+this.patchNode.parentNode.attributes.task+' ('+this.patchNode.attributes.patchEmail+')';
+                            
+                            console.log(this.patchNode);
+                            
+                            patchID = this.patchNode.attributes.idDB;
+                            
+                        }
                         
                         this.patchNode.cascade(function(node){
                             if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
@@ -18105,13 +18214,16 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                         }, this);
                         
                         new ui.cmp.CommitPrompt({
-                            files: files
+                            files: files,
+                            defaultMessage: defaultCommitMessage,
+                            patchID: patchID
                         }).show();
                         
                     }
                 }, {
                     scope: this,
                     text: _('...all files modified by me'),
+                    hidden: (this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];

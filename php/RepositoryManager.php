@@ -707,9 +707,11 @@ class RepositoryManager
      * Create a new patch for the current user.
      *
      * @param $name The name for this new patch
+     * @param $description The description for this patch
+     * @param $email Email to be warn when the patch is commited
      * @return true
      */
-    public function createPatch($name)
+    public function createPatch($name, $description, $email)
     {
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
@@ -717,12 +719,14 @@ class RepositoryManager
 
         $s = 'INSERT INTO
                 `patches`
-                (`project`, `name`, `user`, `anonymousIdent`, `date`)
+                (`project`, `name`, `description`, `email`, `user`, `anonymousIdent`, `date`)
             VALUES
-                ("%s", "%s", "%s", "%s", now())';
+                ("%s", "%s", "%s", "%s", "%s", "%s", now())';
         $params = array(
             $project,
             $name,
+            $description,
+            $email,
             $vcsLogin,
             $am->anonymousIdent
         );
@@ -736,9 +740,11 @@ class RepositoryManager
      * Modify the patch name for the current user.
      * @param $patchID The ID of the patch we want to modify
      * @param $name The new name for this patch
+     * @param $description The description for this patch
+     * @param $email Email to be warn when the patch is commited
      * @return true
      */
-    public function modPatch($patchID, $name)
+    public function modPatch($patchID, $name, $description, $email)
     {
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
@@ -747,13 +753,17 @@ class RepositoryManager
         $s = 'UPDATE
                 `patches`
              SET
-                `name` = "%s"
+                `name`        = "%s",
+                `description` = "%s",
+                `email`       = "%s"
              WHERE
                 `project` = "%s" AND
                 `user`    = "%s" AND
                 `id`      = %d';
         $params = array(
             $name,
+            $description,
+            $email,
             $project,
             $vcsLogin,
             $patchID
@@ -2028,6 +2038,46 @@ class RepositoryManager
             SaferExec::execMulti($commands);
         }
     }
+    
+    /**
+     * All we must do after a patch have been commited.
+     *
+     * @param $patchID ID of the patch.
+     */
+    public function postPatchCommit($patchID)
+    {
+        $am       = AccountManager::getInstance();
+        $vcsLogin = $am->vcsLogin;
+        
+        // We get patch Information
+        $patchInfo = $this->getPatchInfo($patchID);
+        
+        // We silently return if the patch didn't exist
+        if( !$patchInfo ) return;
+        
+        $to      = trim($patchInfo->email);
+        $subject = '['.$patchInfo->project.'-DOC] - Patch named "'.$patchInfo->name.'" accepted';
+        $msg     = <<<EOD
+Your patch was accepted and applied to the $project Manual.
+
+Since the online and downloadable versions of the documentation need some
+time to get updated, we would like to ask you to be a bit patient.
+
+Thank you for your submission, and for helping us make our documentation better.
+
+-- 
+{$vcsLogin}@php.net
+EOD;
+
+        // 2 conditions to send this email :
+        // 1) the email must exist
+        // 2) patch user != current user
+
+        if( !empty($patchInfo->email) && $patchInfo->user != $vcsLogin ) {
+            $am->email($to, $subject, $msg);
+        }
+    }
+    
 }
 
 ?>

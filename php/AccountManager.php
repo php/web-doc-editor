@@ -252,8 +252,10 @@ class AccountManager
               $_SESSION['project'] = $this->project;
               if($this->vcsLogin=='anonymous'){
                   $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$a->userID;
+                  $this->isAnonymous = true;
               } else {
-              	  $_SESSION['vcsLogin'] = $this->vcsLogin;
+                  $_SESSION['vcsLogin'] = $this->vcsLogin;
+                  $this->isAnonymous = false;
               }
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
               $_SESSION['isAnonymous'] = $this->isAnonymous;
@@ -279,8 +281,10 @@ class AccountManager
               $_SESSION['userID']    = $userID;
               if($this->vcsLogin=='anonymous'){
                   $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$userID;
+                  $this->isAnonymous = true;
               } else {
                   $_SESSION['vcsLogin'] = $this->vcsLogin;
+                  $this->isAnonymous = false;
               }
               $_SESSION['project'] = $this->project;
               $_SESSION['vcsPasswd'] = $this->vcsPasswd;
@@ -297,9 +301,9 @@ class AccountManager
 
            // We put this username into a cookie after a valid login
            if( $this->isAnonymous ) {
-           	$cookieLogin = 'anonymous';
+               $cookieLogin = 'anonymous';
            } else {
-            $cookieLogin = $_SESSION['vcsLogin'];
+               $cookieLogin = $_SESSION['vcsLogin'];
            }
 
            // We set up the CSRF token
