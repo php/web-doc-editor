@@ -24,11 +24,12 @@ class SvnClient
         // If this data is older than 1 day, we update it
         $data = RepositoryFetcher::getStaticValue('karma_list', '');
 
-        if( $data === false || ($data["update_time"] + (24*60*60)) > time() ) {
+        if( $data === false || ($data->update_time + (24*60*60)) > time() ) {
             $this->updateKarmaList();
             $data = RepositoryFetcher::getStaticValue('karma_list', '');
         }
-        return $data["data"];
+        
+        return $data->data;
     }
 
     private function updateKarmaList()
@@ -82,7 +83,11 @@ class SvnClient
     {
         $userList = $this->getKarmaList();
 
+        $userList = (array) $userList;
+
         if( isset($userList[$user]) ) {
+
+            $userList[$user] = (array) $userList[$user];
 
             $karma = $userList[$user]['karma'];
 
