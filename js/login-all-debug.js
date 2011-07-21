@@ -765,7 +765,9 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
 
                                         }
                                     }
-                                },{
+                                },
+                                /*
+                                {
                                     title: 'Twitter',
                                     collapsed: false,
                                     hidden: true,
@@ -818,7 +820,9 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                             });
                                         }
                                     }
-                                }]
+                                }
+                                */
+                                ]
                             }]
                         })
                     ],
