@@ -5,6 +5,16 @@
     background-image: url(./img/help-browser.png) !important;
 }
 
+.iconGoogle {
+    background-image: url(./img/google.png) !important;
+}
+.iconFacebook {
+    background-image: url(./img/icon_facebook.png) !important;
+}
+.iconTwitter {
+    background-image: url(./img/icon_twitter.png) !important;
+}
+
 .x-form-field-wrap .project-php, .x-form-field-wrap .project-pear {
     top: 5px;
     left: 5px;
