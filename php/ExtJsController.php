@@ -85,8 +85,10 @@ class ExtJsController
         $lang      = $this->getRequestVariable('lang');
         $project   = $this->getRequestVariable('project');
         $email   = $this->getRequestVariable('email');
+        $authService   = $this->getRequestVariable('authService');
+        $authServiceID   = $this->getRequestVariable('authServiceID');
 
-        $response = $am->login($project, $vcsLogin, $vcsPasswd, $email, $lang);
+        $response = $am->login($project, $vcsLogin, $vcsPasswd, $email, $lang, $authService, $authServiceID);
 
         if ($response['state'] === true) {
             // This user is already know as a valid user
@@ -977,7 +979,7 @@ class ExtJsController
         		// We can modify it, it's mine ;)
         	} else {
         		// If he is an anonymous and current user, an authenticated user, the current one can modify it.
-        		if( $am->anonymous($infoModified->user) && !$am->anonymous($am->vcsLogin) ) {
+        		if( $am->anonymous($infoModified->user, $infoModified->anonymousIdent) && !$am->anonymous($am->vcsLogin, $am->anonymousIdent) ) {
         			// The current user can modify it
         		} else {
         			// We must trow an error. We can't modify it.
@@ -1284,16 +1286,16 @@ class ExtJsController
         }
         
         $fileIdDB = $this->getRequestVariable('fileIdDB');
-        $newOwner = $this->getRequestVariable('newOwner');
+        $newOwnerID = $this->getRequestVariable('newOwnerID');
         
         $fileInfo = $rf->getModifiesById($fileIdDB);
         
         // This user must be a global admin or the admin for this lang
         // Or if the owner of this file is an anonymous and the current user is a valid user
         
-        if( $am->isAdmin(true) || ( !$am->isAnonymous && $am->anonymous($fileInfo[0]['user']) ))
+        if( $am->isAdmin(true) || ( !$am->isAnonymous && $am->anonymous($fileInfo[0]['user'], $fileInfo[0]['anonymousIdent']) ))
         {
-            $am->setFileOwner($fileIdDB, $newOwner);
+            $am->setFileOwner($fileIdDB, $newOwnerID);
             
             $value = array();
             $value['user'] = $am->vcsLogin;
@@ -1617,7 +1619,10 @@ class ExtJsController
         $r = array();
         $r['project']   = $am->project;
         $r['userLang']  = $am->vcsLang;
+        $r['authService']  = $am->authService;
+        $r['authServiceID']  = $am->authServiceID;
         $r['userLogin'] = $am->vcsLogin;
+        $r['userAnonymousIdent']  = $am->anonymousIdent;
         $r['userIsAnonymous']  = $am->isAnonymous;
         $r['userIsGlobalAdmin']  = $am->isGlobalAdmin();
         $r['userIsLangAdmin']  = $am->isLangAdmin();
