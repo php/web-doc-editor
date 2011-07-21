@@ -15418,7 +15418,7 @@ ui.cmp._PortletInfo.store.setDefaultSort('date', 'desc');
 // PortletInfo cell renderer for type column
 ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 {
-    var user, lang, nbFolders, nbFilesCreate, nbFilesDelete, nbFilesUpdate, nbFiles;
+    var user, lang, nbFolders, nbFilesCreate, nbFilesDelete, nbFilesUpdate, nbFiles, img;
 
     switch (value) {
 
@@ -15460,8 +15460,16 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
         case 'login' :
             user = record.data.value.user;
             lang = record.data.value.lang;
-
-            return String.format(
+            authService = record.data.value.authService;
+            img = '';
+            
+            if( authService == 'google' ) {
+                img = '<img src="themes/img/google.png"> ';
+            } else if( authService == 'facebook' ) {
+                img = '<img src="themes/img/icon_facebook.png"> ';
+            }
+            
+            return img + String.format(
                     _('{0} is logged in using the {1} language'),
                     user.ucFirst(),
                     lang.ucFirst());
@@ -15632,7 +15640,8 @@ ui.cmp.PortletInfo.getInstance = function(config)
         ui.cmp._PortletInfo.instance = new ui.cmp.PortletInfo(config);
     }
     return ui.cmp._PortletInfo.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletLocalMail');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletLocalMail');
 
 //------------------------------------------------------------------------------
 // PortletLocalMail internals
