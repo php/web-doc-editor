@@ -12,7 +12,7 @@ ui.task.ChangeFileOwner = function(config)
         params : {
             task        : 'setFileOwner',
             fileIdDB    : this.fileIdDB,
-            newOwner    : this.newOwner
+            newOwnerID  : this.newOwnerID
         },
         success : function(r)
         {
