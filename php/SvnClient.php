@@ -229,7 +229,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         if (preg_match('/HTTP\/1.[01] 201 Created/', $r)) {
             return true;
         } else {
-            return 'Invalid Credentail';
+            return 'Invalid Credential';
         }
     }
 
