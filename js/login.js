@@ -257,7 +257,9 @@ var PhDOE_loginPage = function()
 
                                         }
                                     }
-                                },{
+                                },
+                                /*
+                                {
                                     title: 'Twitter',
                                     collapsed: false,
                                     hidden: true,
@@ -310,7 +312,9 @@ var PhDOE_loginPage = function()
                                             });
                                         }
                                     }
-                                }]
+                                }
+                                */
+                                ]
                             }]
                         })
                     ],
