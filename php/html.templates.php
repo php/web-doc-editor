@@ -19,7 +19,7 @@ function headerTemplate($title = 'Php Docbook Online Editor', $depth = 0)
   <title>$title</title>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   <meta name="description" content="" />
-  <link rel="shortcut icon" href="{$prefix}themes/img/favicon.ico" />
+  <link rel="shortcut icon" href="{$prefix}themes/img/icon_php.png" />
   <link type="text/css" rel="stylesheet" href="{$prefix}themes/loading-min.css" />
  </head>
  <body>
