@@ -47,3 +47,8 @@
 #app-logo {
     float: left;
 }
+
+#fb-use-credentials {
+    cursor: pointer;
+    text-decoration:underline; 
+}
