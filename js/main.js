@@ -9,8 +9,10 @@ var PhDOE = function()
          */
         user : {
             login: null,
-            anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
+            anonymousIdent: null,
             isAnonymous: null,
+            authService: null,
+            authServiceID: null,
             isAdmin: false,
             lang: null,
             conf: '',
@@ -612,11 +614,46 @@ var PhDOE = function()
                                 xtype:'container',
                                 columnWidth: .5,
                                 html   : '<div class="topic-connected"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
-                                        '<h3>' +
-                                            String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+                                        '<h3>'+
+                                        _('Connected as')+
+                                        ' <em id="loginLibel"></em>' +
                                             ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                         '</h3>' +
-                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>'
+                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
+                                 listeners: {
+                                    afterrender: function(cmp) {
+                                    
+                                        var ttContent='', libelContent='', loginLibelEl;
+                                        
+                                        // Build libel content
+                                        loginLibelEl = Ext.get('loginLibel');
+                                        
+                                        if( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) {
+                                            loginLibelEl.addClass('userAdmin');
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'VCS' ) {
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'google' ) {
+                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'facebook' ) {
+                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        }
+                                        loginLibelEl.dom.innerHTML = libelContent;
+                                        
+                                        // Build tooltip content
+                                        
+                                        content = _('Connected using') +' '+ PhDOE.user.authService + '<br>';
+                                        
+                                        content += (PhDOE.user.isGlobalAdmin) ? _('You are a global Administrator')+'<br>' : '';
+                                        content += (PhDOE.user.isLangAdmin) ? _('You are an administrator for this language')+'<br>' : '';
+                                        
+                                        new Ext.ToolTip({
+                                            target: 'loginLibel',
+                                            anchor: 'top',
+                                            html: content
+                                        }); 
+                                    }
+                                 }
                             },{
                                 xtype:'container',
                                 columnWidth: .5,
