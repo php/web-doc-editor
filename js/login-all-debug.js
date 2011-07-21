@@ -674,7 +674,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                 var image = Ext.get('fb-image').dom,
                                                     name = Ext.get('fb-name').dom;
 
-                                                image.src = 'http://graph.facebook.com/' + user.id + '/picture';
+                                                image.src = 'https://graph.facebook.com/' + user.id + '/picture';
                                                 name.innerHTML = user.name;
                                                 
                                                 Ext.get('fb-use-credentials').on('click', function() {
