@@ -15464,9 +15464,9 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             img = '';
             
             if( authService == 'google' ) {
-                img = '<img src="themes/img/google.png"> ';
+                img = '<img src="themes/img/google.png" style="vertical-align: middle;"> ';
             } else if( authService == 'facebook' ) {
-                img = '<img src="themes/img/icon_facebook.png"> ';
+                img = '<img src="themes/img/icon_facebook.png" style="vertical-align: middle;"> ';
             }
             
             return img + String.format(
