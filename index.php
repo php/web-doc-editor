@@ -86,7 +86,7 @@ if (!isset($_SESSION['userID'])) {
     echo jsLoadTemplate('http://connect.facebook.net/en_US/all.js');
     
     // Twitter
-    echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
+    //echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
     
     //Google
     echo jsLoadTemplate('http://www.google.com/jsapi');
