@@ -762,6 +762,7 @@ class RepositoryFetcher
         $vcsLang = $am->vcsLang;
         $project = $am->project;
         $vcsLogin = $am->vcsLogin;
+        $anonymousIdent = $am->anonymousIdent;
 
         $node = array();
 
@@ -774,6 +775,7 @@ class RepositoryFetcher
                     `description` as patchDescription,
                     `email`       as patchEmail,
                     `user`,
+                    `anonymousIdent`,
                     `date`
                  FROM
                     `patches`
@@ -803,9 +805,9 @@ class RepositoryFetcher
                     "patchEmail"       => $a->patchEmail
                 );
 
-                $node[$a->user][$a->patchName]['idDB'] = $a->id;
-                $node[$a->user][$a->patchName]['date'] = $a->date;
-                $node[$a->user][$a->patchName]['folders'] = array();
+                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['idDB'] = $a->id;
+                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['date'] = $a->date;
+                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['folders'] = array();
             }
 
             // Bugfix: if we don't have any patches, the query below will fail.
@@ -842,8 +844,8 @@ class RepositoryFetcher
 
             while ($a = $r->fetch_object()) {
 
-                $node[$a->user][$patches[$a->patchID]["patchName"]]['idDB'] = $a->patchID;
-                $node[$a->user][$patches[$a->patchID]["patchName"]]['folders'][$a->lang.$a->path][] = Array(
+                $node[$a->user.'@|@'.$a->anonymousIdent][$patches[$a->patchID]["patchName"]]['idDB'] = $a->patchID;
+                $node[$a->user.'@|@'.$a->anonymousIdent][$patches[$a->patchID]["patchName"]]['folders'][$a->lang.$a->path][] = Array(
                     "name"          => $a->name,
                     "last_modified" => $a->date,
                     "type"          => $a->type,
@@ -857,17 +859,22 @@ class RepositoryFetcher
             // We format the result node to pass to ExtJs TreeGrid component
             while( list($user, $patchs) = each($node)) {
 
-                if( $user == $vcsLogin ) {
+                // $userInfo[0] => login
+                // $userInfo[1] => anonymousIdent
+                $userInfo = explode('@|@',$user);
+                
+
+                if( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) {
                     $expanded  = 'true';
                 } else {
                     $expanded  = 'false';
                 }
 
-                $email = $am->getUserEmail($user);
+                $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
                 $email = ($email) ? $email : 'false';
 
                 // We start by users
-                $result .= "{task:'".$user."',type:'user',isAnonymous:".(($am->anonymous($user)) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
@@ -954,7 +961,7 @@ class RepositoryFetcher
 
             while ($a = $r->fetch_object()) {
 
-                $node[$a->user][$a->lang.$a->path][] = Array(
+                $node[$a->user.'@|@'.$a->anonymousIdent][$a->lang.$a->path][] = Array(
                     "name"          => $a->name,
                     "last_modified" => $a->date,
                     "progress"      => $a->progress,
@@ -967,17 +974,21 @@ class RepositoryFetcher
             // We format the result node to pass to ExtJs TreeGrid component
             while( list($user, $dataFolders) = each($node)) {
             
-                if( $user == $vcsLogin ) {
+                // $userInfo[0] => login
+                // $userInfo[1] => anonymousIdent
+                $userInfo = explode('@|@',$user);
+                
+                if( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) {
                     $expanded  = 'true';
                 } else {
                     $expanded  = 'false';
                 }
                 
-                $email = $am->getUserEmail($user);
+                $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
                 $email = ($email) ? $email : 'false';
 
                 // We put nbFiles into user's nodes to not have to count it by the client
-                $result .= "{task:'".$user."',type:'user',isAnonymous:".(($am->anonymous($user)) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
 
                     // We now walk into the folders for this users
                     while( list($folder, $dataFiles) = each($dataFolders)) {
