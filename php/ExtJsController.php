@@ -97,6 +97,8 @@ class ExtJsController
             $value = array();
             $value['user'] = $am->vcsLogin;
             $value['lang'] = $lang;
+            $value['authService'] = $am->authService;
+            
             RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
             return JsonResponseBuilder::success();
