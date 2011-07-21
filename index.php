@@ -75,11 +75,24 @@ if (isset($_REQUEST['perm'])) {
 
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
+
     echo headerTemplate();
     echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login-all.css');
     echo jsCallTemplate($jsVar);
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
+    
+    // Facebook
+    echo jsLoadTemplate('http://connect.facebook.net/en_US/all.js');
+    
+    // Twitter
+    echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
+    
+    //Google
+    echo jsLoadTemplate('http://www.google.com/jsapi');
+    echo jsCallTemplate("google.load('friendconnect', '0.8');");
+    
+    
     echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
     echo jsLoadTemplate('js/ExtJs/ext-all.js');
