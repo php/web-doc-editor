@@ -460,7 +460,7 @@ class AccountManager
             
             // Store some user info in cookies: we can use this to pre-fill the
             // login page if the user's session expires.
-            setcookie("loginApp", $this->vcsLogin, time() + 3600*24*365, "/"); // One year ;)
+            setcookie("loginApp", utf8_encode($this->vcsLogin), time() + 3600*24*365, "/"); // One year ;)
             setcookie("email", $this->email, time() + 3600*24*365, "/");
             setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
             
