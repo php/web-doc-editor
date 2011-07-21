@@ -86,18 +86,24 @@ var i18n = new Array();
   
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
-  i18n["Edit the name of this patch"] = "Éditer le nom de ce patch";
+  i18n["Edit the description of this patch"] = "Éditer la description de ce patch";
   i18n["Delete this patch"] = "Effacer ce patch";
   i18n["Back all files to work in progress module"] = "Re-placer tous les fichiers dans le module \"Travaux en cours\"";
   i18n["Back all this patch to work in progress module"] = "Re-placer le contenu complet de ce patch dans le module \"Travaux en cours\"";
   i18n["Back all this folder to work in progress module"] = "Re-placer tous les fichiers de ce dossier dans le module \"Travaux en cours\"";
   i18n["Back this file to work in progress module"] = "Re-placer ce fichier dans le module \"Travaux en cours\"";
   i18n["Creation date: "] = "Date de création : ";
+  i18n["View unified diff"] = "Voir la différence unifiée";
+  i18n["Download the unified diff as a patch"] = "Télécharger la différence unifiée sous la forme d'un patch";
 
 
 // In file: ../../js/ui/component/ManagePatchPrompt.js
   i18n["Create"] = "Créer";
-  i18n["Modify this patch name"] = "Modification du nom du patch";
+  i18n["Modify this patch description"] = "Modification de la description du patch";
+  i18n["Patch name"] = "Nom du patch";
+  i18n["Patch description"] = "Description du patch";
+  i18n["This description will be the default during the validation of the patch by a valid user."] = "Cette description sera celle par défaut lors de la validation du patch par un utilisateur autorisé.";
+  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Si fourni, un email vous sera envoyé afin de vous informer que le patch a été validé.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "Patch effacé";
@@ -259,6 +265,8 @@ var i18n = new Array();
   i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Ce fichier a été modifié sans être sauvegardé.<br/>Voulez-vous vraiment fermer cet onglet ?";
   i18n["File: "] = "Fichier : ";
   i18n["Direct link to this patch"] = "Lien direct vers ce patch";
+  i18n["Diff for patch: {0}"] = "Différence pour le patch : {0}";
+  i18n["Patch Name: "] = "Nom du patch : ";
 
 
 // In file: ../../js/ui/component/FilePanel.js
