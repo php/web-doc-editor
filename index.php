@@ -83,13 +83,13 @@ if (!isset($_SESSION['userID'])) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
     
     // Facebook
-    echo jsLoadTemplate('http://connect.facebook.net/en_US/all.js');
+    echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
     
     // Twitter
     //echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
     
     //Google
-    echo jsLoadTemplate('http://www.google.com/jsapi');
+    echo jsLoadTemplate('https://www.google.com/jsapi');
     echo jsCallTemplate("google.load('friendconnect', '0.8');");
     
     
