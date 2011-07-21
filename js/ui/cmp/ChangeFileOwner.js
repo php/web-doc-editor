@@ -8,12 +8,13 @@ ui.cmp._ChangeFileOwner.store = new Ext.data.Store({
         root          : 'Items',
         totalProperty : 'nbItems',
         fields        : [
-            {name : 'id'},
+            {name : 'userID'},
+            {name : 'authService'},
             {name : 'userName'}
         ]
     }),
     sortInfo: {
-        field: 'userName',
+        field: 'authService',
         direction: 'ASC'
     }
 });
@@ -37,11 +38,11 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         handler : function()
         {
             var win = this.ownerCt.ownerCt,
-                newOwner = win.items.items[1].items.items[0].getValue();
+                newOwnerID = win.items.items[1].items.items[0].getValue();
             
             new ui.task.ChangeFileOwner({
                 fileIdDB : win.fileIdDB,
-                newOwner : newOwner,
+                newOwnerID : newOwnerID,
                 from     : win
             });
             
@@ -90,7 +91,12 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     editable      : false,
                     store         : ui.cmp._ChangeFileOwner.store,
                     triggerAction : 'all',
-                    valueField    : 'userName',
+                    valueField    : 'userID',
+                    tpl: new Ext.XTemplate(
+                        '<tpl for="."><div class="x-combo-list-item">',
+                            '{authService} - {userName}',
+                        '</div></tpl>'
+                    ),
                     displayField  : 'userName',
                     listeners     : {
                         afterrender : function()
