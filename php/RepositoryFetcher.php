@@ -990,6 +990,19 @@ class RepositoryFetcher
                 // $userInfo[1] => anonymousIdent
                 $userInfo = explode('@|@',$user);
                 
+                // Get authService from anonymousIdent
+                $tmp = explode('-', $userInfo[1]);
+                if( isset($tmp[1]) ) $authService = $tmp[0];
+                else $authService = false;
+
+                if( $authService == 'google' ) {
+                    $iconUser = 'iconGoogle';
+                } else if( $authService == 'facebook' ) {
+                    $iconUser = 'iconFacebook';
+                } else {
+                    $iconUser = 'iconUser';
+                }
+                
                 if( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) {
                     $expanded  = 'true';
                 } else {
@@ -1000,7 +1013,7 @@ class RepositoryFetcher
                 $email = ($email) ? $email : 'false';
 
                 // We put nbFiles into user's nodes to not have to count it by the client
-                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'iconUser',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
 
                     // We now walk into the folders for this users
                     while( list($folder, $dataFiles) = each($dataFolders)) {
