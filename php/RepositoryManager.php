@@ -1299,7 +1299,7 @@ class RepositoryManager
                 
                 // Is the current user is a global admin or a lang admin ?
                 if( ! $am->isAdmin(true) ) {
-                    if( !(!$am->isAnonymous && $am->anonymous($a->user) ) ) {
+                    if( !(!$am->isAnonymous && $am->anonymous($a->user, $a->anonymousIdent) ) ) {
                         return 'file_isnt_owned_by_current_user';
                     }
                 }
