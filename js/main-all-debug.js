@@ -5124,7 +5124,7 @@ ui.task.ChangeFileOwner = function(config)
         params : {
             task        : 'setFileOwner',
             fileIdDB    : this.fileIdDB,
-            newOwner    : this.newOwner
+            newOwnerID  : this.newOwnerID
         },
         success : function(r)
         {
@@ -5164,7 +5164,8 @@ ui.task.ChangeFileOwner = function(config)
             this.from.close();
         }
     });
-};Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
+};
+Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
 
 ui.task._CheckBuildTask.display = function()
 {
@@ -5963,10 +5964,13 @@ ui.task.LoadConfigTask = function(config)
 
             PhDOE.user.login = o.mess.userLogin;
             PhDOE.user.lang  = o.mess.userLang;
+            PhDOE.user.authService  = o.mess.authService;
+            PhDOE.user.authServiceID  = o.mess.authServiceID;
             PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
             PhDOE.user.isGlobalAdmin = o.mess.userIsGlobalAdmin;
             PhDOE.user.isLangAdmin = o.mess.userIsLangAdmin;
             PhDOE.user.conf = o.mess.userConf;
+            PhDOE.user.anonymousIdent = o.mess.userAnonymousIdent;
 
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
@@ -5985,7 +5989,8 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.drawInterface();
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { fpath, fname, storeRecord }
 ui.task.MarkDeleteTask = function(config)
@@ -7452,12 +7457,13 @@ ui.cmp._ChangeFileOwner.store = new Ext.data.Store({
         root          : 'Items',
         totalProperty : 'nbItems',
         fields        : [
-            {name : 'id'},
+            {name : 'userID'},
+            {name : 'authService'},
             {name : 'userName'}
         ]
     }),
     sortInfo: {
-        field: 'userName',
+        field: 'authService',
         direction: 'ASC'
     }
 });
@@ -7481,11 +7487,11 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         handler : function()
         {
             var win = this.ownerCt.ownerCt,
-                newOwner = win.items.items[1].items.items[0].getValue();
+                newOwnerID = win.items.items[1].items.items[0].getValue();
             
             new ui.task.ChangeFileOwner({
                 fileIdDB : win.fileIdDB,
-                newOwner : newOwner,
+                newOwnerID : newOwnerID,
                 from     : win
             });
             
@@ -7534,7 +7540,12 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     editable      : false,
                     store         : ui.cmp._ChangeFileOwner.store,
                     triggerAction : 'all',
-                    valueField    : 'userName',
+                    valueField    : 'userID',
+                    tpl: new Ext.XTemplate(
+                        '<tpl for="."><div class="x-combo-list-item">',
+                            '{authService} - {userName}',
+                        '</div></tpl>'
+                    ),
                     displayField  : 'userName',
                     listeners     : {
                         afterrender : function()
@@ -7554,7 +7565,8 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         
         this.show();
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
@@ -19134,8 +19146,10 @@ var PhDOE = function()
          */
         user : {
             login: null,
-            anonymousIdent: Ext.util.Cookies.get("anonymousIdent"),
+            anonymousIdent: null,
             isAnonymous: null,
+            authService: null,
+            authServiceID: null,
             isAdmin: false,
             lang: null,
             conf: '',
@@ -19737,11 +19751,46 @@ var PhDOE = function()
                                 xtype:'container',
                                 columnWidth: .5,
                                 html   : '<div class="topic-connected"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
-                                        '<h3>' +
-                                            String.format(_('Connected as {0}'), (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ? "<em class='userAdmin' ext:qtip='"+_('Administrator')+"'>"+PhDOE.user.login.ucFirst()+"</em>" : "<em>"+PhDOE.user.login.ucFirst()+"</em>")) +
+                                        '<h3>'+
+                                        _('Connected as')+
+                                        ' <em id="loginLibel"></em>' +
                                             ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                         '</h3>' +
-                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>'
+                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
+                                 listeners: {
+                                    afterrender: function(cmp) {
+                                    
+                                        var ttContent='', libelContent='', loginLibelEl;
+                                        
+                                        // Build libel content
+                                        loginLibelEl = Ext.get('loginLibel');
+                                        
+                                        if( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) {
+                                            loginLibelEl.addClass('userAdmin');
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'VCS' ) {
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'google' ) {
+                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        } else if( PhDOE.user.authService == 'facebook' ) {
+                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                        }
+                                        loginLibelEl.dom.innerHTML = libelContent;
+                                        
+                                        // Build tooltip content
+                                        
+                                        content = _('Connected using') +' '+ PhDOE.user.authService + '<br>';
+                                        
+                                        content += (PhDOE.user.isGlobalAdmin) ? _('You are a global Administrator')+'<br>' : '';
+                                        content += (PhDOE.user.isLangAdmin) ? _('You are an administrator for this language')+'<br>' : '';
+                                        
+                                        new Ext.ToolTip({
+                                            target: 'loginLibel',
+                                            anchor: 'top',
+                                            html: content
+                                        }); 
+                                    }
+                                 }
                             },{
                                 xtype:'container',
                                 columnWidth: .5,
