@@ -81,7 +81,6 @@
 }
 
 /* Icons */
-
 .iconAllFiles          { background-image: url(./img/view-list-tree.png)        !important;}
 .iconAdmin             { background-image: url(./img/face-wink.png)             !important;}
 .iconAdd               { background-image: url(./img/list-add.png)              !important;}
@@ -104,6 +103,7 @@
 .iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
 .iconExternalData      { background-image: url(./img/svn-update.png)            !important;}
+.iconFacebook          { background-image: url(./img/icon_facebook.png)         !important;}
 .iconFiles             { background-image: url(./img/page.png)                  !important;} 
 .iconFilesError        { background-image: url(./img/security-medium.png)       !important;}
 .iconFilesNeedReviewed { background-image: url(./img/document-edit.png)         !important;}
