@@ -331,7 +331,7 @@ class File
             return false;
         } else {
             $a = $r->fetch_assoc();
-            $a['isAnonymous'] = $am->anonymous($a['user']);
+            $a['isAnonymous'] = $am->anonymous($a['user'], $a['anonymousIdent']);
             return json_encode($a);
         }
     }
