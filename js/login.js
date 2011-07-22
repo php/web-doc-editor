@@ -231,17 +231,18 @@ var PhDOE_loginPage = function()
                                             });
 
                                             function GGinitAllData() {
-                                                var params = {};
+                                                var params = {},
+                                                    req = opensocial.newDataRequest();
+                                                
                                                 params[opensocial.DataRequest.PeopleRequestFields.PROFILE_DETAILS] =
                                                     [opensocial.Person.Field.ID,opensocial.Person.Field.NAME,opensocial.Person.Field.THUMBNAIL_URL];
-                                                var req = opensocial.newDataRequest();
+                                                
                                                 req.add(req.newFetchPersonRequest('VIEWER', params), 'viewer');
                                                 req.send(GGsetupData);
-                                            };
+                                            }
 
                                             function GGsetupData(data) {
-
-                                                viewer = data.get('viewer').getData();
+                                                var viewer = data.get('viewer').getData();
 
                                                 if (viewer) {
                                                     document.getElementById('google-box').innerHTML = 
@@ -253,67 +254,11 @@ var PhDOE_loginPage = function()
                                                     google.friendconnect.renderSignInButton({ 'id': 'google-box',style:'long' });
                                                 }
 
-                                            };
+                                            }
 
-                                        }
-                                    }
-                                },
-                                /*
-                                {
-                                    title: 'Twitter',
-                                    collapsed: false,
-                                    hidden: true,
-                                    iconCls:'iconTwitter',
-                                    html: '<div id="twitter-box">'+
-                                             '<div id="twitter-info"></div>'+
-                                             '<div id="twitter-login"></div>'+
-                                          '</div>',
-                                    displayInfo: function(user) {
-
-                                        Ext.get('twitter-info').setVisible(true);
-
-                                        var html = '<img style="margin-right:5px" align="left" src="'+user.data('profile_image_url')+'" /> <span>'+user.data('name')+'</<span><br><a href="#" onclick="">Use this credentials</a><br><br><a href="#" onclick="twttr.anywhere.signOut(); return false;">Sign out</a><br>';
-
-                                        Ext.get('twitter-info').dom.innerHTML = html;
-
-                                        // We hide the connect button
-                                        Ext.get('twitter-login').setVisible(false);
-
-                                    },
-                                    listeners: {
-                                        resize: function(c) {
-                                            c.setHeight(100);
-                                        },
-                                        afterrender: function(cmp) {
-
-                                            Ext.get('twitter-info').setVisibilityMode(Ext.Element.DISPLAY);
-                                            Ext.get('twitter-login').setVisibilityMode(Ext.Element.DISPLAY);
-
-                                            twttr.anywhere(function (T)
-                                            {
-                                                T.bind("authComplete", function (e, user) {
-                                                    cmp.displayInfo(user);
-                                                });
-
-                                                T.bind("signOut", function (e) {
-                                                    Ext.get('twitter-login').setVisible(true);
-
-                                                    // Hide info
-                                                    Ext.get('twitter-info').setVisible(false);
-                                                });
-
-                                                if (T.isConnected())
-                                                {
-                                                    cmp.displayInfo(T.currentUser);
-
-                                                } else {
-                                                    T("#twitter-login").connectButton({ size: "large" });
-                                                }
-                                            });
                                         }
                                     }
                                 }
-                                */
                                 ]
                             }]
                         })
