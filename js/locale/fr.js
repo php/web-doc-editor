@@ -5,6 +5,7 @@
 var i18n = new Array();
 
 // In file: ../../js/main.js
+  i18n["Refresh"] = "Rafraîchir";
   i18n["Forbidden"] = "Interdit";
   i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
   i18n["Error"] = "Erreur";

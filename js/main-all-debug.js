@@ -19709,10 +19709,25 @@ var PhDOE = function()
                         border    : false,
                         iconCls   : 'iconWorkInProgress',
                         items     : [ ui.cmp.WorkTreeGrid.getInstance() ],
-                        collapsed : true
+                        collapsed : true,
+                        tools     : [{
+                            id      : 'refresh',
+                            qtip    : _('Refresh'),
+                            handler : function() {
+                                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload();
+                            }
+                            
+                        }]
                     }, {
                         id        : 'acc-patches',
                         tools     : [{
+                            id      : 'refresh',
+                            qtip    : _('Refresh'),
+                            handler : function() {
+                                ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
+                            }
+                            
+                        },{
                             id      : 'gear',
                             hidden  : (this.user.isAnonymous ),
                             qtip    : _('Open the Log Message Manager'),
