@@ -491,6 +491,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $commands = array(
                 new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
                 new ExecStatement('svn add --non-recursive %s', array($path)),
+                new ExecStatement('svn propset svn:ignore "entities.*.xml" %s', array($path));
                 new ExecStatement('svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username %s --password %s %s 2>&1', array($vcsLogin, $vcsPasswd, $path))
             );
 
