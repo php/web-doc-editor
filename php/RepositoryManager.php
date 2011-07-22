@@ -347,7 +347,7 @@ class RepositoryManager
         $trial_threshold = 3;
         while ($trial_threshold-- > 0) {
             $output =array();
-            SaferExec::exec($cmd, $output);
+            SaferExec::execMulti($commands, $output);
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
