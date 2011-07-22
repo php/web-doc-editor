@@ -27,6 +27,8 @@ class ToolsCheckEntities {
 
     private $conn;
 
+    private $EntitiesNotChecked;
+
     /**
      * Initialise
      *
@@ -36,6 +38,11 @@ class ToolsCheckEntities {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
+
+        // This entities will not be checked as there are always wrong. We use it into the manual like this : "&url.foo;bar"
+        $this->EntitiesNotChecked = Array(
+            "url.pecl.package.get" // without & and ;
+        );
 
         $this->urlConnectTimeout = 10;
 
@@ -169,18 +176,22 @@ class ToolsCheckEntities {
                     } else {
                         // child
 
-                        $r = $this->checkUrl($num, $url);
+                        if( !in_array($name, $this->EntitiesNotChecked) )
+                        {
 
-                        $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
-                            VALUES ("%s", "%s", "%s", "%s", now())';
-                        $params = array(
-                            $project,
-                            $name,
-                            $url,
-                            $r[0]
-                        );
-                        $this->conn->query($query, $params);
+                            $r = $this->checkUrl($num, $url);
 
+                            $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                                VALUES ("%s", "%s", "%s", "%s", now())';
+                            $params = array(
+                                $project,
+                                $name,
+                                $url,
+                                $r[0]
+                            );
+                            $this->conn->query($query, $params);
+
+                        }
                         exit();
                     }
                 } else {
@@ -202,17 +213,21 @@ class ToolsCheckEntities {
             // walk through entities found
             foreach ($this->entityUrls as $num => $entityUrl) {
 
-                $r = $this->checkUrl($num, $entityUrl);
+                if( !in_array($this->entityNames[$num], $this->EntitiesNotChecked) )
+                {
+                    $r = $this->checkUrl($num, $entityUrl);
 
-                $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
-                    VALUES ("%s", "%s", "%s", "%s", now())';
-                $params = array(
-                    $project,
-                    $this->entityNames[$num],
-                    $entityUrl,
-                    $r[0]
-                );
-                $this->conn->query($query, $params);
+                    $query = 'INSERT INTO `checkEntities` (`project`, `entities`, `url`, `result`, `date`)
+                        VALUES ("%s", "%s", "%s", "%s", now())';
+                    $params = array(
+                        $project,
+                        $this->entityNames[$num],
+                        $entityUrl,
+                        $r[0]
+                    );
+                    $this->conn->query($query, $params);
+                }
+
             }
             ++$num; // (for the count)
         }
