@@ -491,10 +491,12 @@ class AccountManager
         $params = array($this->project, $userLogin, $anonymousIdent);
         $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
-
-        // We have a warn in production here
-        debug("In AccountManager ; In anonymous() method ; userLogin=".$userLogin."; anonymousIdent=".$anonymousIdent.";");
         
+        // An anonymous have is #xxx at the end of his login. So, the sql "failed"
+        if( !is_object($a) ) {
+            return true;
+        }
+
         return ( $a->authService == 'VCS' && $a->anonymousIdent == '' ) ? false : true;
     }
 
