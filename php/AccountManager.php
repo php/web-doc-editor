@@ -146,8 +146,8 @@ class AccountManager
         $this->isAnonymous = $_SESSION['isAnonymous'];
         $this->email = $_SESSION['email'];
         
-        $this->authService = $_SESSION['authService'];
-        $this->authServiceID = $_SESSION['authServiceID'];
+        $this->authService = ( isset($_SESSION['authService']) ) ? $_SESSION['authService'] : false;
+        $this->authServiceID = ( isset($_SESSION['authServiceID']) ) ? $_SESSION['authServiceID'] : false;
 
         ProjectManager::getInstance()->setProject($this->project);
 
