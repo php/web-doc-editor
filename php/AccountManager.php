@@ -491,6 +491,9 @@ class AccountManager
         $params = array($this->project, $userLogin, $anonymousIdent);
         $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
+
+        // We have a warn in production here
+        debug("In AccountManager ; In anonymous() method ; userLogin=".$userLogin."; anonymousIdent=".$anonymousIdent.";");
         
         return ( $a->authService == 'VCS' && $a->anonymousIdent == '' ) ? false : true;
     }
