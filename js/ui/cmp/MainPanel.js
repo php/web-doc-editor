@@ -27,11 +27,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
         // FNT panel
         if( prefix === 'FNT' ) {
-            if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
+            if( cmp.panTRANSLoaded && cmp.panTRANSSecondLoaded ) {
 
                 cmp.tabLoaded = true;
 
-                cmp.panTRANSLoaded = cmp.panGGTRANSLoaded = false;
+                cmp.panTRANSLoaded = cmp.panTRANSSecondLoaded = false;
 
                 if (PhDOE.FNTfilePendingOpen[0]) {
                     ui.cmp.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
@@ -257,6 +257,14 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 autoScroll: true,
                 iconCls: 'iconTabLink',
                 html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>'
+                /* Preview for Philip's request
+                ,
+                tbar: [{
+                    xtype: 'button',
+                    text: 'Commit this patch',
+                    iconCls: 'iconCommitFileVcs'
+                }]
+                */
             });
             
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)

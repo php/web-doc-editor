@@ -5871,8 +5871,8 @@ ui.task.GetFileTask = function(config)
                 if( this.ftype === 'TRANS' ) {
                     tab.panTRANSLoaded = true;
                 }
-                if( this.ftype === 'GGTRANS' ) {
-                    tab.panGGTRANSLoaded = true;
+                if( this.ftype === 'GGTRANS' || this.ftype === 'EN') {
+                    tab.panTRANSSecondLoaded = true;
                 }
             }
 
@@ -9348,22 +9348,59 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype       : 'fieldset',
-                    title       : _('Google translate Panel'),
-                    iconCls     : 'iconGoogle',
+                    title       : _('Right panel'),
+                    iconCls     : 'iconUI',
                     defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
+                    defaultType : 'radio',
                     items       : [{
-                        name        : 'PhDOE.user.conf.newFile.googlePanelDisplay',
-                        checked     : PhDOE.user.conf.newFile.googlePanelDisplay,
-                        boxLabel    : _('Display the Google Translation Panel'),
+                        name: 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel: _('Display the Google Translation Panel'),
+                        inputValue: 'google',
+                        checked: (PhDOE.user.conf.newFile.secondPanel === 'google') ? true : false,
+                        listeners: {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    },{
+                        name     : 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel : _('Display the original file'),
+                        inputValue: 'originalFile',
+                        checked: (PhDOE.user.conf.newFile.secondPanel === 'originalFile') ? true : false,
                         listeners   : {
                             check : function(field)
                             {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'newFile',
-                                    itemName : 'googlePanelDisplay',
-                                    value : field.getValue()
-                                });
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    },{
+                        name     : 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel : _('Do not display a right panel'),
+                        inputValue: 'none',
+                        checked: (!Ext.isDefined(PhDOE.user.conf.newFile.secondPanel) || PhDOE.user.conf.newFile.secondPanel === 'none') ? true : false,
+                        listeners   : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
                             }
                         }
                     }]
@@ -12289,17 +12326,30 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         {
                             switch (this.ftype) {
                                 case 'EN':
-                                    opp_prefix = this.prefix + '-LANG';
+                                    if( this.prefix == 'FNT' ) {
+                                        opp_prefix = this.prefix + '-TRANS';
+                                    } else {
+                                        opp_prefix = this.prefix + '-LANG';
+                                    }
                                     break;
+                                    
                                 case 'LANG':
                                     opp_prefix = this.prefix + '-EN';
                                     break;
+                                    
                                 case 'TRANS':
-                                    opp_prefix = this.prefix + '-GGTRANS';
+                                    if( PhDOE.user.conf.newFile.secondPanel == 'google' ) {
+                                        opp_prefix = this.prefix + '-GGTRANS';
+                                    }
+                                    if( PhDOE.user.conf.newFile.secondPanel == 'originalFile' ) {
+                                        opp_prefix = this.prefix + '-EN';
+                                    }
                                     break;
+                                    
                                 case 'GGTRANS':
                                     opp_prefix = this.prefix + '-TRANS';
                                     break;
+                                    
                             }
 
                             opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid);
@@ -12830,11 +12880,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
         // FNT panel
         if( prefix === 'FNT' ) {
-            if( cmp.panTRANSLoaded && cmp.panGGTRANSLoaded ) {
+            if( cmp.panTRANSLoaded && cmp.panTRANSSecondLoaded ) {
 
                 cmp.tabLoaded = true;
 
-                cmp.panTRANSLoaded = cmp.panGGTRANSLoaded = false;
+                cmp.panTRANSLoaded = cmp.panTRANSSecondLoaded = false;
 
                 if (PhDOE.FNTfilePendingOpen[0]) {
                     ui.cmp.PendingTranslateGrid.getInstance().openFile(PhDOE.FNTfilePendingOpen[0].id);
@@ -13060,6 +13110,14 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 autoScroll: true,
                 iconCls: 'iconTabLink',
                 html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>'
+                /* Preview for Philip's request
+                ,
+                tbar: [{
+                    xtype: 'button',
+                    text: 'Commit this patch',
+                    iconCls: 'iconCommitFileVcs'
+                }]
+                */
             });
             
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
@@ -14856,11 +14914,17 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
     },
     
     openFile: function(rowId){
-        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName);
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName), isSecondPanel;
         
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
         
+            if( PhDOE.user.conf.newFile.secondPanel == 'google' || PhDOE.user.conf.newFile.secondPanel == 'originalFile' ) {
+                isSecondPanel = true;
+            } else {
+                isSecondPanel = false;
+            }
+            
             Ext.getCmp('main-panel').add({
                 id: 'FNT-' + FileID,
                 layout: 'border',
@@ -14870,15 +14934,18 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 closable: true,
                 tabLoaded: false,
                 panTRANSLoaded: false,
-                panGGTRANSLoaded: !PhDOE.user.conf.newFile.googlePanelDisplay,
+                panTRANSSecondLoaded: !isSecondPanel,
                 defaults: {
                     split: true
                 },
                 tabTip: String.format(_('Need translate: in {0}'), FilePath),
                 listeners: {
                     resize: function(panel){
-                        if (PhDOE.user.conf.newFile.googlePanelDisplay) {
+                        if (PhDOE.user.conf.newFile.secondPanel == 'google') {
                             Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
+                        }
+                        if (PhDOE.user.conf.newFile.secondPanel == 'originalFile') {
+                            Ext.getCmp('FNT-EN-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                         }
                     }
                 },
@@ -14955,11 +15022,12 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     lang: PhDOE.user.lang,
                     parser: 'xml',
                     storeRecord: storeRecord,
-                    syncScrollCB: PhDOE.user.conf.newFile.googlePanelDisplay,
-                    syncScroll: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScrollCB: isSecondPanel,
+                    syncScroll: isSecondPanel,
                     syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
-                }), ((PhDOE.user.conf.newFile.googlePanelDisplay) ? new ui.cmp.FilePanel({
+                }), ((PhDOE.user.conf.newFile.secondPanel == 'google') ? new ui.cmp.FilePanel({
                     id: 'FNT-GGTRANS-PANEL-' + FileID,
+                    // FNT-GGTRANS-PANEL-
                     region: 'east',
                     title: _('Automatic translation: ') + PhDOE.user.lang + FilePath + FileName,
                     isTrans: true,
@@ -14970,6 +15038,22 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     fname: FileName,
                     readOnly: true,
                     lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScroll: true,
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
+                }) : false),
+                ((PhDOE.user.conf.newFile.secondPanel == 'originalFile') ? new ui.cmp.FilePanel({
+                    id: 'FNT-EN-PANEL-' + FileID,
+                    region: 'east',
+                    title: _('File: ') + 'en' + FilePath + FileName,
+                    prefix: 'FNT',
+                    ftype: 'EN',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    readOnly: true,
+                    lang: 'en',
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,

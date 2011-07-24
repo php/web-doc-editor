@@ -136,11 +136,17 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
     },
     
     openFile: function(rowId){
-        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName);
+        var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName), isSecondPanel;
         
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
         
+            if( PhDOE.user.conf.newFile.secondPanel == 'google' || PhDOE.user.conf.newFile.secondPanel == 'originalFile' ) {
+                isSecondPanel = true;
+            } else {
+                isSecondPanel = false;
+            }
+            
             Ext.getCmp('main-panel').add({
                 id: 'FNT-' + FileID,
                 layout: 'border',
@@ -150,15 +156,18 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 closable: true,
                 tabLoaded: false,
                 panTRANSLoaded: false,
-                panGGTRANSLoaded: !PhDOE.user.conf.newFile.googlePanelDisplay,
+                panTRANSSecondLoaded: !isSecondPanel,
                 defaults: {
                     split: true
                 },
                 tabTip: String.format(_('Need translate: in {0}'), FilePath),
                 listeners: {
                     resize: function(panel){
-                        if (PhDOE.user.conf.newFile.googlePanelDisplay) {
+                        if (PhDOE.user.conf.newFile.secondPanel == 'google') {
                             Ext.getCmp('FNT-GGTRANS-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
+                        }
+                        if (PhDOE.user.conf.newFile.secondPanel == 'originalFile') {
+                            Ext.getCmp('FNT-EN-PANEL-' + FileID).setWidth(panel.getWidth() / 2);
                         }
                     }
                 },
@@ -235,11 +244,12 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     lang: PhDOE.user.lang,
                     parser: 'xml',
                     storeRecord: storeRecord,
-                    syncScrollCB: PhDOE.user.conf.newFile.googlePanelDisplay,
-                    syncScroll: PhDOE.user.conf.newFile.googlePanelDisplay,
+                    syncScrollCB: isSecondPanel,
+                    syncScroll: isSecondPanel,
                     syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
-                }), ((PhDOE.user.conf.newFile.googlePanelDisplay) ? new ui.cmp.FilePanel({
+                }), ((PhDOE.user.conf.newFile.secondPanel == 'google') ? new ui.cmp.FilePanel({
                     id: 'FNT-GGTRANS-PANEL-' + FileID,
+                    // FNT-GGTRANS-PANEL-
                     region: 'east',
                     title: _('Automatic translation: ') + PhDOE.user.lang + FilePath + FileName,
                     isTrans: true,
@@ -250,6 +260,22 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     fname: FileName,
                     readOnly: true,
                     lang: PhDOE.user.lang,
+                    parser: 'xml',
+                    storeRecord: storeRecord,
+                    syncScroll: true,
+                    syncScrollConf: { module : 'newFile', itemName : 'syncScrollbars' }
+                }) : false),
+                ((PhDOE.user.conf.newFile.secondPanel == 'originalFile') ? new ui.cmp.FilePanel({
+                    id: 'FNT-EN-PANEL-' + FileID,
+                    region: 'east',
+                    title: _('File: ') + 'en' + FilePath + FileName,
+                    prefix: 'FNT',
+                    ftype: 'EN',
+                    fid: FileID,
+                    fpath: FilePath,
+                    fname: FileName,
+                    readOnly: true,
+                    lang: 'en',
                     parser: 'xml',
                     storeRecord: storeRecord,
                     syncScroll: true,

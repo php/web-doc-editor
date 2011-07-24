@@ -993,17 +993,30 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         {
                             switch (this.ftype) {
                                 case 'EN':
-                                    opp_prefix = this.prefix + '-LANG';
+                                    if( this.prefix == 'FNT' ) {
+                                        opp_prefix = this.prefix + '-TRANS';
+                                    } else {
+                                        opp_prefix = this.prefix + '-LANG';
+                                    }
                                     break;
+                                    
                                 case 'LANG':
                                     opp_prefix = this.prefix + '-EN';
                                     break;
+                                    
                                 case 'TRANS':
-                                    opp_prefix = this.prefix + '-GGTRANS';
+                                    if( PhDOE.user.conf.newFile.secondPanel == 'google' ) {
+                                        opp_prefix = this.prefix + '-GGTRANS';
+                                    }
+                                    if( PhDOE.user.conf.newFile.secondPanel == 'originalFile' ) {
+                                        opp_prefix = this.prefix + '-EN';
+                                    }
                                     break;
+                                    
                                 case 'GGTRANS':
                                     opp_prefix = this.prefix + '-TRANS';
                                     break;
+                                    
                             }
 
                             opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid);

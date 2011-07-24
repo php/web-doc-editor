@@ -183,8 +183,8 @@ ui.task.GetFileTask = function(config)
                 if( this.ftype === 'TRANS' ) {
                     tab.panTRANSLoaded = true;
                 }
-                if( this.ftype === 'GGTRANS' ) {
-                    tab.panGGTRANSLoaded = true;
+                if( this.ftype === 'GGTRANS' || this.ftype === 'EN') {
+                    tab.panTRANSSecondLoaded = true;
                 }
             }
 

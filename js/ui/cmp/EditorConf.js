@@ -447,22 +447,59 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     }]
                 }, {
                     xtype       : 'fieldset',
-                    title       : _('Google translate Panel'),
-                    iconCls     : 'iconGoogle',
+                    title       : _('Right panel'),
+                    iconCls     : 'iconUI',
                     defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
+                    defaultType : 'radio',
                     items       : [{
-                        name        : 'PhDOE.user.conf.newFile.googlePanelDisplay',
-                        checked     : PhDOE.user.conf.newFile.googlePanelDisplay,
-                        boxLabel    : _('Display the Google Translation Panel'),
+                        name: 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel: _('Display the Google Translation Panel'),
+                        inputValue: 'google',
+                        checked: (PhDOE.user.conf.newFile.secondPanel === 'google') ? true : false,
+                        listeners: {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    },{
+                        name     : 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel : _('Display the original file'),
+                        inputValue: 'originalFile',
+                        checked: (PhDOE.user.conf.newFile.secondPanel === 'originalFile') ? true : false,
                         listeners   : {
                             check : function(field)
                             {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'newFile',
-                                    itemName : 'googlePanelDisplay',
-                                    value : field.getValue()
-                                });
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
+                            }
+                        }
+                    },{
+                        name     : 'PhDOE.user.conf.newFile.secondPanel',
+                        boxLabel : _('Do not display a right panel'),
+                        inputValue: 'none',
+                        checked: (!Ext.isDefined(PhDOE.user.conf.newFile.secondPanel) || PhDOE.user.conf.newFile.secondPanel === 'none') ? true : false,
+                        listeners   : {
+                            check : function(field)
+                            {
+                                if (field.checked) {
+                                    new ui.task.UpdateConfTask({
+                                        module   : 'newFile',
+                                        itemName : 'secondPanel',
+                                        value : field.getRawValue()
+                                    });
+                                }
                             }
                         }
                     }]
