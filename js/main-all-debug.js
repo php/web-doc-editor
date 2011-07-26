@@ -13578,7 +13578,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
         currentUserisAnonymous = node.parentNode.attributes.isAnonymous;
         
         // We don't display all of this menu if the current user isn't the owner
-        if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin ) {
+        if (currentUser !== PhDOE.user.login && !PhDOE.user.isGlobalAdmin && !PhDOE.user.isLangAdmin) {
             return false;
         }
         
