@@ -80,6 +80,21 @@ ui.cmp._EditorConf.themeStore = new Ext.data.SimpleStore({
     ]
 });
 
+// doc-editor UI Lang datastore
+ui.cmp._EditorConf.uiLangStore = new Ext.data.SimpleStore({
+    fields : ['uiLang', {
+        name : 'uiLangName',
+        type : 'string'
+    }],
+    data : [
+        ['default', _('Default language, if available')],
+        ['en',      _('English')],
+        ['fr',      _('French')],
+        ['ru',      _('Russian')],
+        ['es',      _('Spanish')]
+    ]
+});
+
 ui.cmp._EditorConf.CommitChange = new Ext.util.DelayedTask(function()
 {
     new ui.task.UpdateConfTask({
@@ -104,6 +119,8 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
             items : [{
                 title   : _('User Interface'),
                 iconCls : 'iconUI',
+                labelAlign: 'top',
+                layout:'form',
                 items   : [{
                     xtype   : 'fieldset',
                     title   : _('Main menu'),
@@ -174,6 +191,30 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                                     module   : 'main',
                                     itemName : 'theme',
                                     value    : hrefTheme
+                                });
+                            }
+                        }
+                    },{
+                        xtype          : 'combo',
+                        fieldLabel     : _('Force an UI language'),
+                        id             : 'conf-combo-ui-lang',
+                        valueField     : 'uiLang',
+                        displayField   : 'uiLangName',
+                        triggerAction  : 'all',
+                        mode           : 'local',
+                        forceSelection : true,
+                        editable       : false,
+                        value          : PhDOE.user.conf.main.uiLang || 'default',
+                        store          : ui.cmp._EditorConf.uiLangStore,
+                        listeners      : {
+                            select : function(c)
+                            {
+                                var uiLang = c.getValue();
+
+                                new ui.task.UpdateConfTask({
+                                    module   : 'main',
+                                    itemName : 'uiLang',
+                                    value    : uiLang
                                 });
                             }
                         }

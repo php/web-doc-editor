@@ -67,17 +67,39 @@ function jsLoadi18nTemplate()
     global $ExtJsVersion;
     $return='';
 
-    //i18n for ExtJs library
-    if( @file_get_contents('js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') )
-    {
-        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
+    // We check the configuration for this user.
+    // If $_SESSION['userConf']['main']['uiLang'] is set to 'default', we don't change anythings as the old beaviours
+
+    if ( !isset($_SESSION['userConf']->main->uiLang) || $_SESSION['userConf']->main->uiLang == 'default' ) {
+
+        //i18n for ExtJs library
+        if( @file_get_contents('js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') )
+        {
+            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
+        }
+
+        //i18n for the UI
+        if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
+        {
+            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
+        }
+
+    } else {
+
+        //i18n for ExtJs library
+        if( @file_get_contents('js/ExtJs/src/locale/ext-lang-'.$_SESSION['userConf']->main->uiLang.'.js') )
+        {
+            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/ExtJs/src/locale/ext-lang-'.$_SESSION['userConf']->main->uiLang.'.js') . "\n";
+        }
+
+        //i18n for the UI
+        if( is_file('js/locale/'.strtolower($_SESSION['userConf']->main->uiLang).'.js') )
+        {
+            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['userConf']->main->uiLang).'.js') . "\n";
+        }
+
     }
 
-    //i18n for the UI
-    if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
-    {
-        $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
-    }
 
     return $return;
 }

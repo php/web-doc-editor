@@ -67,6 +67,7 @@ class AccountManager
                 'mainMenuWidth' => 300,
                 'onSaveFile' => 'ask-me',
                 'theme' => 'themes/empty.css',
+                'uiLang' => 'default',
                 'portalSortEN'=> '{"col1":["portletLocalMail","portletBugs"],"col2":["portletInfo","portletTranslationsGraph"]}',
                 'portalSortLANG'=> '{"col1":["portletSummary","portletTranslator","portletLocalMail","portletBugs"],"col2":["portletInfo","portletTranslationGraph","portletTranslationsGraph"]}',
                 'displayENWork'=>true
