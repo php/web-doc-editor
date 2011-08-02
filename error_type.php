@@ -270,7 +270,7 @@ $error['documentNotUTF8']['head'] = 'Document encoding is not UTF-8';
 $error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 encoding.';
 
 $error['SgmlDefaultDTDFile']['head'] = 'Wrong Sgml default dtd file';
-$error['SgmlDefaultDTDFile']['desc'] = 'You must set is like this : <br><br><b>sgml-default-dtd-file:"~/.phpdoc/manual.ced"</b>';
+$error['SgmlDefaultDTDFile']['desc'] = 'You must set it like this : <br><br><b>sgml-default-dtd-file:"~/.phpdoc/manual.ced"</b>';
 
 $to_display = array();
 
