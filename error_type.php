@@ -269,6 +269,9 @@ $error['missingInitializer']['desc'] = 'An &lt;initializer&gt; tag is missing.';
 $error['documentNotUTF8']['head'] = 'Document encoding is not UTF-8';
 $error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 encoding.';
 
+$error['SgmlDefaultDTDFile']['head'] = 'Wrong Sgml default dtd file';
+$error['SgmlDefaultDTDFile']['desc'] = 'You must set is like this : <br><br><b>sgml-default-dtd-file:"~/.phpdoc/manual.ced"</b>';
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)

@@ -361,6 +361,7 @@ class ToolsError
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
+            $this->SgmlDefaultDTDFile($this->lang);
         }
 
         // Check Error specific to LANG files
@@ -388,9 +389,37 @@ class ToolsError
             $this->spaceOrPeriodRefpurposeTag($this->lang);
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
+            $this->SgmlDefaultDTDFile($this->lang);
         }
 
     }
+
+    /**
+     * Check SgmlDefaultDTDFile
+     * Add an entry into the error's stack if the default's sgml dtd file isn't "~/.phpdoc/manual.ced"
+     *
+     */
+    function SgmlDefaultDTDFile($lang)
+    {
+        if( $lang == 'en' ) {
+            $content = $this->en_content;
+        } else {
+            $content = $this->lang_content;
+        }
+
+        $matches = array();
+        preg_match_all('@sgml-default-dtd-file:"(.*)"@', $content, $matches);
+
+        if ( !empty($matches) && $matches[1][0] != '~/.phpdoc/manual.ced')
+        {
+            $this->addError(array(
+                'value_en'   => 'N/A',
+                'value_lang' => 'N/A',
+                'type'       => 'SgmlDefaultDTDFile'
+            ));
+        }
+    }
+
 
     /**
      * Check all acronyms
