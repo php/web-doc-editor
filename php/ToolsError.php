@@ -223,12 +223,12 @@ class ToolsError
              FROM
                 `errorfiles`
              WHERE
-                ' . $type . '
+                '.$type.'
                 `project`=  "%s" AND
                 `lang`   =  "%s" AND
                 `type`   != "-No error-"';
+
         $params = array(
-            $type,
             $project,
             $this->lang
         );
