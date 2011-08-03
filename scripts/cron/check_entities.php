@@ -19,6 +19,10 @@ $availableProject = $pm->getAvailableProject();
 
 while( list($key, $project) = each($availableProject) ) {
 
+    if( $project['code'] != "php" ) {
+        continue;
+    }
+
     // Define it as a project
     $pm->setProject($project['code']);
 
