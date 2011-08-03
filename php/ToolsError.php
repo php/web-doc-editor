@@ -11,21 +11,34 @@ class ToolsError
 {
 
     /**
-     * EN content of the file.
+     * EN content of the file without any comment.
      *
      * @var string
      */
     private $en_content;
 
     /**
-     * LANG content of the file.
+     * EN content of the file with comments.
+     *
+     * @var string
+     */
+    private $en_content_with_comment;
+
+    /**
+     * LANG content of the file without any comment.
      *
      * @var string
      */
     private $lang_content;
+    /**
+     * LANG content of the file with comments.
+     *
+     * @var string
+     */
+    private $lang_content_with_comment;
 
     /**
-     * LANG of the checked file .
+     * LANG of the checked file.
      *
      * @var string
      */
@@ -82,6 +95,8 @@ class ToolsError
      */
     function setParams($en_content, $lang_content, $lang, $filePath, $fileName, $maintainer)
     {
+        $this->lang_content_with_comment = $lang_content;
+        $this->en_content_with_comment = $en_content;
 
         $this->lang_content = preg_replace('/<!--(.*?)?-->/s', '', $lang_content);
         $this->en_content   = preg_replace('/<!--(.*?)?-->/s', '', $en_content);
@@ -402,15 +417,15 @@ class ToolsError
     function SgmlDefaultDTDFile($lang)
     {
         if( $lang == 'en' ) {
-            $content = $this->en_content;
+            $content = $this->en_content_with_comment;
         } else {
-            $content = $this->lang_content;
+            $content = $this->lang_content_with_comment;
         }
 
         $matches = array();
         preg_match_all('@sgml-default-dtd-file:"(.*)"@', $content, $matches);
 
-        if ( !empty($matches) && $matches[1][0] != '~/.phpdoc/manual.ced')
+        if ( !empty($matches) && isset($matches[1][0]) && $matches[1][0] != '~/.phpdoc/manual.ced')
         {
             $this->addError(array(
                 'value_en'   => 'N/A',
