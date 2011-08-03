@@ -8,6 +8,7 @@ var PhDOE = function()
          * Hold user's variable such as login, configuration or email
          */
         user : {
+            userID: null,
             login: null,
             anonymousIdent: null,
             isAnonymous: null,

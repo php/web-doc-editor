@@ -5963,6 +5963,7 @@ ui.task.LoadConfigTask = function(config)
             var o = Ext.decode(r.responseText);
 
             PhDOE.user.login = o.mess.userLogin;
+            PhDOE.user.userID = o.mess.userID;
             PhDOE.user.lang  = o.mess.userLang;
             PhDOE.user.authService  = o.mess.authService;
             PhDOE.user.authServiceID  = o.mess.authServiceID;
@@ -7235,7 +7236,7 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
                     //We change the file owner
                     ui.task.ChangeFileOwner({
                         fileIdDB : win.fidDB,
-                        newOwner : PhDOE.user.login,
+                        newOwnerID : PhDOE.user.userID,
                         from     : win,
                         fromType : 'tab'
                     });
@@ -19213,6 +19214,7 @@ var PhDOE = function()
          * Hold user's variable such as login, configuration or email
          */
         user : {
+            userID: null,
             login: null,
             anonymousIdent: null,
             isAnonymous: null,

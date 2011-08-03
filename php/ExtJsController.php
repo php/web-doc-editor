@@ -1623,6 +1623,7 @@ class ExtJsController
         $r['userLang']  = $am->vcsLang;
         $r['authService']  = $am->authService;
         $r['authServiceID']  = $am->authServiceID;
+        $r['userID'] = $am->userID;
         $r['userLogin'] = $am->vcsLogin;
         $r['userAnonymousIdent']  = $am->anonymousIdent;
         $r['userIsAnonymous']  = $am->isAnonymous;

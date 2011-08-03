@@ -11,6 +11,7 @@ ui.task.LoadConfigTask = function(config)
             var o = Ext.decode(r.responseText);
 
             PhDOE.user.login = o.mess.userLogin;
+            PhDOE.user.userID = o.mess.userID;
             PhDOE.user.lang  = o.mess.userLang;
             PhDOE.user.authService  = o.mess.authService;
             PhDOE.user.authServiceID  = o.mess.authServiceID;

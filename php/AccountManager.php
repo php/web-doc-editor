@@ -574,7 +574,7 @@ class AccountManager
         $userInfo = $r->fetch_object();
         
         // We update the file
-        $s = 'UPDATE `work` SET `user` = "%s", `anonymousIdent` = "%s" WHERE `id` = %d';
+        $s = 'UPDATE `work` SET `user` = "%s", `anonymousIdent` = "%s", `module`="workInProgress", patchID=NULL WHERE `id` = %d';
         $params = array($userInfo->vcs_login, $userInfo->anonymousIdent, $fileIdDB);
 
         $this->conn->query($s, $params);

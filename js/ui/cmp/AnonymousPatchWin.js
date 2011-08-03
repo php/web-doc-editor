@@ -115,7 +115,7 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
                     //We change the file owner
                     ui.task.ChangeFileOwner({
                         fileIdDB : win.fidDB,
-                        newOwner : PhDOE.user.login,
+                        newOwnerID : PhDOE.user.userID,
                         from     : win,
                         fromType : 'tab'
                     });
