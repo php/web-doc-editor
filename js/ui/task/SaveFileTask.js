@@ -67,8 +67,8 @@ ui.task.SaveFileTask = function(config)
 
             // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
             ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
-			ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
-			
+            ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
+
             ui.cmp.WorkTreeGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );

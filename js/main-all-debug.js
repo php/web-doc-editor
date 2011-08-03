@@ -6311,8 +6311,8 @@ ui.task.SaveFileTask = function(config)
 
             // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
             ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
-			ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
-			
+            ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
+
             ui.cmp.WorkTreeGrid.getInstance().addRecord(
                 o.id, this.lang + this.fpath, this.fname, 'update'
             );
@@ -14069,8 +14069,9 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
                         
-                        if (file.attributes.idDB === fid) {
-                        
+                        // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                        if (file.attributes.idDB == fid) {
+                            
                             file.remove(true);
                             
                             // Is Folder contains some others child ?
@@ -19240,7 +19241,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 313610 $',
+            uiRevision: '$Revision: 314204 $',
             conf: ''
         },
 
