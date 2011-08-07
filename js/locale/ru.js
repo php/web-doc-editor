@@ -656,7 +656,7 @@ var i18n = new Array();
   i18n["This action will open this file for modification. Once your modification finish, just save it and this file will be own by you."] = "Это действие откроет файл для изменений. Как только вы закончите правки, просто сохраните его и вы станете владельцем этого файла.";
   i18n["Reject this patch"] = "Отклонить патч";
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Это действие закроет файл и удалит локальные изменения. Файл будет возвращен в свое оригинальное состояние, такое, каким оно было на VCS-сервере.";
-  i18n["Validate this patch"] = "Проверить патч";
+  i18n["Validate this patch"] = "Взять патч себе на проверку";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Это действие сменит владельца изменений и зарегистрирует их под вашим именем. Файл появится под вашим именем и вы сможете закоммитить его.";
 
 // In file: ../../js/ui/cmp/PreviewFile.js
