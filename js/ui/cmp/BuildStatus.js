@@ -86,7 +86,8 @@ ui.cmp._BuildStatus.ds.setDefaultSort('date', 'desc');
 // BuildStatus Grid language cell renderer
 ui.cmp._BuildStatus.rendererLanguage = function(value)
 {
-    return '<div><div class="flags flag-' + value + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
+    var countries = { cs: 'cz', sr: 'rs', sv: 'se' };
+    return '<div><div class="flags flag-' + (countries[value] || value) + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
 };
 
 // BuildStatus Grid columns definition

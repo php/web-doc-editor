@@ -7347,7 +7347,8 @@ ui.cmp._BuildStatus.ds.setDefaultSort('date', 'desc');
 // BuildStatus Grid language cell renderer
 ui.cmp._BuildStatus.rendererLanguage = function(value)
 {
-    return '<div><div class="flags flag-' + value + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
+    var countries = { cs: 'cz', sr: 'rs', sv: 'se' };
+    return '<div><div class="flags flag-' + (countries[value] || value) + '" style="float: left;"></div><div style="padding-left: 24px">' + value + '</div></div>';
 };
 
 // BuildStatus Grid columns definition
@@ -16089,12 +16090,13 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
     afterRender : function()
     {
         ui.cmp.PortletSummary.superclass.afterRender.call(this);
+        var countries = { cs: 'cz', sr: 'rs', sv: 'se' }; // copied from ui.cmp._BuildStatus.rendererLanguage
 
         this.header.insertFirst({
             tag   : 'div',
             id    : Ext.id(),
             style : 'float: left; margin-right: 2px;',
-            cls   : 'flags flag-'+this.lang
+            cls   : 'flags flag-'+(countries[this.lang] || this.lang)
         }, 'first');
 
         if( PhDOE.user.conf.portletSummaryCollapsed ) {
