@@ -131,6 +131,7 @@ var PhDOE_loginPage = function()
                                 items: [{
                                     title: 'Facebook',
                                     layout:'fit',
+                                    hidden: (!FB),
                                     collapsed : true,
                                     iconCls:'iconFacebook',
                                     html: '<div id="facebook-box">'+
@@ -150,6 +151,11 @@ var PhDOE_loginPage = function()
                                             c.setHeight(100);
                                         },
                                         afterrender: function(c) {
+                                            
+                                            if ( !FB ) {
+                                                return;
+                                            }
+                                            
                                             FB.init({ 
                                                 appId:'128417830579090', cookie:true, 
                                                 status:true, xfbml:true 

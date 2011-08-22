@@ -73,6 +73,9 @@ if (isset($_REQUEST['perm'])) {
     $jsVar = 'var directAccess = false;';
 }
 
+// Init FB var
+$jsVar .= ' var FB = false;';
+
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
 

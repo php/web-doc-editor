@@ -639,6 +639,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 items: [{
                                     title: 'Facebook',
                                     layout:'fit',
+                                    hidden: (!FB),
                                     collapsed : true,
                                     iconCls:'iconFacebook',
                                     html: '<div id="facebook-box">'+
@@ -658,6 +659,11 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                             c.setHeight(100);
                                         },
                                         afterrender: function(c) {
+                                            
+                                            if ( !FB ) {
+                                                return;
+                                            }
+                                            
                                             FB.init({ 
                                                 appId:'128417830579090', cookie:true, 
                                                 status:true, xfbml:true 
