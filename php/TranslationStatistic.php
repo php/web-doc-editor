@@ -180,7 +180,7 @@ class TranslationStatistic
 
         // We get EN files
 
-       $s = 'SELECT * FROM files WHERE `lang`="en" AND `project`="$project"';
+       $s = 'SELECT * FROM files WHERE `lang`="en" AND `project`="%s"';
        $params = array($project);
        $r = $this->conn->query($s, $params);
 
