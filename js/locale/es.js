@@ -300,9 +300,9 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Guardar como</b> parche";
   i18n["modified"] = "modificado";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Verificar</b> XML con XmlLint";
- i18n["<b>Expand</b> in a popup"] = "<b>Agrandir</b> dans un popup";
-  i18n["<b>Preview</b> in a popup"] = "<b>Prévisualiser</b> dans un popup";
-  i18n["You must save your file in order to preview the result."] = "Vous devez sauvegarder le fichier afin de prévisualiser le résultat.";
+ i18n["<b>Expand</b> in a popup"] = "<b>Expandir</b> dentro de una ventana";
+  i18n["<b>Preview</b> in a popup"] = "<b>Previsualizar</b> dentro de una ventana";
+  i18n["You must save your file in order to preview the result."] = "Ud. debe guardar el fichero para poder ver la vista previa.";
 
 
 // In file: ../../js/ui/component/EditorConf.js
