@@ -1,15 +1,18 @@
 /*
-* This file must be encoded in UTF-8 --- Rev. transalted: 306463
+* This file must be encoded in UTF-8 --- Rev. transalted: 314118
 */
 
 var i18n = new Array();
 
 // In file: ../../js/main.js
+  i18n["Refresh"] = "Refrescar";
   i18n["Forbidden"] = "Prohibido";
   i18n["You can't do this action as anonymous user."] = "No puede realizar esta acción como usuario anónimo";
   i18n["Error"] = "Error";
   i18n["File system error. Check read/write permission under data folder."] = "Error en el sistema de ficheros. Compruebe los permisos lectura/escritura en el directorio data.";
   i18n["Main menu"] = "Menú principal";
+  i18n["Topic:"] = "Asunto";
+  i18n["Defined by {0}, {1}"] = "Definido por {0} y {1}";
   i18n["Files need translate"] = "Ficheros a traducir";
   i18n["Files need update"] = "Ficheros a actualizar";
   i18n["Error in current translation"] = "Ficheros con errores";
@@ -21,15 +24,23 @@ var i18n = new Array();
   i18n["Patches for review"] = "Patches (only EN)";
   i18n["Google translation"] = "Traducir con Google";
   i18n["Home"] = "Inicio";
-  i18n["Connected as {0}"] = "Conectado como {0}";
+  i18n["Connected as"] = "Conectado como";
+  i18n["Connected using"] = "Conectando usando";
   i18n["anonymous"] = "Usar anónimo";
   i18n["Administrator"] = "Administrador";
+  i18n["You are a global Administrator"] = "Ud. es un administrador global";
+  i18n["You are an administrator for this language"] = "Ud. es un administrador para este idioma";
   i18n["Project: "] = "Proyecto: ";
   i18n["Language: "] = "Idioma: ";
+  i18n["Total number of your files"] = "Número total de tus ficheros";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ha usado caracteres que requieren el uso de UTF-8 en el encabezado del XML.<br> Por favor elimine estos caracteres o cambie el encabezado del fichero XML a UTF-8 p.e.j:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
   i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Parece ser que ha introducido algunos caracteres de tabulación en este fichero. Por favor reemplacelos por espacios.<br>Pista: puede usar el botón \"re-formatear todo el fichero\" para reemplazar todas las tabulaciones por espacios.";
-
- i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "No puede editar este fichero ya que fue modificado por otro usuario. Contacte con el administrador si deasea poder anular esta restricción";
+  i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "No puede editar este fichero ya que fue modificado por otro usuario. Contacte con el administrador si deasea poder anular esta restricción";
+  i18n["The patch you want to delete didn't exist."] = "El parche que quiere eliminar no existe";
+  i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "El parche que quiere eliminar no está creado por ud. Solamente lo puede eliminar el usuario que creó el parche o un administrador global.";
+  i18n["This action is available only to global administrator."] = "Esta acción solamente está disponible por el administrador global.";
+  i18n["This action is available only to global administrator or to administrator for this lang."] = "Esta acción está solamente disponible por el administrador global o el administrador de este idioma.";
+  i18n["The file you want to clear local change isn't own by you.<br>You can only do this action for yours files."] = "El fichero el que quiere deshacer las modificaciones no fue creado por ud.<br>Solamente puede realizar esta acción si el fichero es suyo.";  
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Doble clic en la celda para abrir la selección de ficheros";
@@ -72,19 +83,29 @@ var i18n = new Array();
   i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";  
   i18n["You have no patch currently. You must create one."] = "Actualmente no tiene ningún parche. Debe crear uno.";
   i18n["Diff for file: {0}"] = "Diferencia para el fichero : {0}";
-  i18n["Administrator menu"] = "Menú de Administrador";    
+  i18n["Administrator menu"] = "Menú de Administrador"; 
+  
+  
 // In file: ../../js/ui/component/PatchesTreeGrid.js
-  i18n["Edit the name of this patch"] = "Editar el nombre del parche";
+  i18n["Edit the description of this patch"] = "Editar la descripción de este parche";
   i18n["Delete this patch"] = "Eliminar este parche";
   i18n["Back all files to work in progress module"] = "Reemplazar todos los ficheros dentro del módulo \"Trabajo en curso\"";
   i18n["Back all this patch to work in progress module"] = "Reemplazar el contenido de este parche en el módulo \"Trabajo en curso\"";
   i18n["Back all this folder to work in progress module"] = "Reemplazar todos los ficheros de este directorio dentro del módulo \"Trabajo en curso\"";
   i18n["Back this file to work in progress module"] = "Reemplezar este fichero en el módulo \"Trabajo en curso\"";
+  i18n["Creation date: "] = "Fecha de creación : ";
+  i18n["View unified diff"] = "Ver la diferencia unificada";
+  i18n["Download the unified diff as a patch"] = "Descargar la diferencia unificada como parche";
+
 
 
 // In file: ../../js/ui/component/ManagePatchPrompt.js
   i18n["Create"] = "Crear";
-  i18n["Modify this patch name"] = "Modificar el nombre del parche";
+  i18n["Modify this patch description"] = "Modificar la descripción del parche";
+  i18n["Patch name"] = "Nombre del parche";
+  i18n["Patch description"] = "Descripción del parche";
+  i18n["This description will be the default during the validation of the patch by a valid user."] = "Esta descripción será la predeterminada durante la validación del parche por un usuario autorizado.";
+  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Si se proporciona, se enviará un E-Mail para informar que el parche ha sido validado.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "Parche eliminado";
@@ -99,6 +120,7 @@ var i18n = new Array();
   i18n["Submit"] = "Enviar";
   i18n["Close"] = "Cerrar";
   i18n["Older messages"] = "Comentarios anteriores";
+  i18n["No log message currently"] = "Actualmente no existe ningún comentario";
   i18n["Log message"] = "Comentarios del histórico de cambios";
 
 
@@ -243,7 +265,10 @@ var i18n = new Array();
 // In file: ../../js/ui/component/MainPanel.js
   i18n["Confirm"] = "Confirmación";
   i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Este fichero ha sido modificado sin ser guardado.<br>¿Seguro que quiere cerrarlo?";
-
+  i18n["File: "] = "Fichero : ";
+  i18n["Direct link to this patch"] = "Enlace directo a este parche";
+  i18n["Diff for patch: {0}"] = "Diferencia del parche: {0}";
+  i18n["Patch Name: "] = "Nombre del parche: ";
 
 // In file: ../../js/ui/component/FilePanel.js
   i18n["<b>Undo</b>"] = "<b>Deshacer</b>";
@@ -275,6 +300,10 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Guardar como</b> parche";
   i18n["modified"] = "modificado";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Verificar</b> XML con XmlLint";
+ i18n["<b>Expand</b> in a popup"] = "<b>Agrandir</b> dans un popup";
+  i18n["<b>Preview</b> in a popup"] = "<b>Prévisualiser</b> dans un popup";
+  i18n["You must save your file in order to preview the result."] = "Vous devez sauvegarder le fichier afin de prévisualiser le résultat.";
+
 
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
@@ -283,6 +312,12 @@ var i18n = new Array();
   i18n["Module \"Files need update\""] = "Módulo \"Ficheros a actualizar\"";
   i18n["Module \"Files with error\""] = "Módulo \"Ficheros con errores\"";
   i18n["Module \"Files need reviewed\""] = "Módulo \"Ficheros a revisar\"";
+  i18n["Force an UI language"] = "Forzar el uso de este idioma para el interfaz";
+  i18n["Default language, if available"] = "Langage par défaut, si disponible";
+  i18n["English"] = "Inglés";
+  i18n["French"] = "Francés";
+  i18n["Russian"] = "Ruso";
+  i18n["Spanish"] = "Español"
   i18n["Black"] = "Negro";
   i18n["Default"] = "Por defecto";
   i18n["DarkGray"] = "Carbón";
@@ -330,9 +365,12 @@ var i18n = new Array();
   i18n["All changes take effect immediately"] = "Todos los cambios tienen efecto inmediatamente";
   i18n["Automatically load acronyms data when displaying the file"] = "Cargar automáticamente los acrónimos cuando se edita un fichero";
   i18n["Automatically load entities data when displaying the file"] = "Cargar automáticamente las entidades cuando se carga un fichero";
-  i18n["Google translate Panel"] = "Panel de traducción automática de Google";
+  i18n["Right panel"] = "Panel derecho";
+  i18n["Display the original file"] = "Muestra el fichero original";
+  i18n["Do not display a right panel"] = "No mostrar panel derecho";
   i18n["Display the Google Translation Panel"] = "Mostrar el panel de traducción de Google";
   i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Mostrar trabajo de EN dentro de los módulos \"Trabajo en curso\" & \"Patches (only EN)\"";
+
 // In file: ../../js/ui/component/CheckEntities.js
   i18n["Entities"] = "Entidades";
   i18n["Url"] = "Url";
@@ -344,7 +382,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/PendingTranslateGrid.js
   i18n["Need translate: in {0}"] = "Nuevo fichero a traducir: dentro de {0}";
   i18n["Need file: in {0}"] = "Nuevo fichero: dentro {0}";
-  i18n["New File: "] = "Nuevo fichero: ";
+  i18n["New file: "] = "Nuevo fichero: ";
   i18n["Automatic translation: "] = "Traducción automática: ";
   i18n["Dictionary"] = "Diccionario";
   i18n["File modified by me"] = "Fichero modificado por mi";
@@ -398,7 +436,7 @@ var i18n = new Array();
   i18n["Report bugs"] = "Reportar bug";
   i18n["Documentation"] = "Documentación";
   i18n["About"] = "Acerca de";
-
+  i18n["Chat with us on IRC !"] = "Chatea con nostros en IRC!";
 
 // In file: ../../js/ui/component/VCSLogGrid.js
   i18n["Rev."] = "Rev.";
@@ -467,9 +505,14 @@ var i18n = new Array();
   i18n["Code editor"] = "Editor de código";
   i18n["Icon pack"] = "Paquete de iconos";
   i18n["License"] = "Licencia";
+  i18n["Help and support"] = "Ayuda y soporte";
+  i18n["Mailing list:"] = "Lista de correo:";
+  i18n["IRC:"] = "IRC : ";
+  i18n["Web IRC Chat"] = "Web IRC Chat";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
+  i18n["View in a new tab"] = "Abrir en una nueva pestaña";
   i18n["Remove this file"] = "Eliminar este fichero";
   i18n["File removed by me"] = "Fichero eliminado por mi";
   i18n["File removed by {0}"] = "Fichero eliminado por {0}";
@@ -510,7 +553,7 @@ var i18n = new Array();
   i18n["Saving data..."] = "Guardando datos...";
   i18n["Document saved"] = "Documento guardado";
   i18n["Document <br><br><b>{0}</b><br><br> was saved successfully !"] = "¡El documento <br><br><b>{0}</b><br><br> ha sido guardado satisfactoriamente!";
-
+  i18n["There is somes XML's errors.<br /><br />You must fix it before saving this file.<br /><br />Valid this window to show this errors."] = "El documento contiene errores XML.<br /><br />Debe corregirlos antes de guardar el fichero.<br /><br /> Valide esta ventana para mostrar los errores.";
 
 // In file: ../../js/ui/task/GetGGTranslation.js
 
