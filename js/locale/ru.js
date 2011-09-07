@@ -11,8 +11,8 @@ var i18n = new Array();
   i18n["Error"] = "Ошибка";
   i18n["File system error. Check read/write permission under data folder."] = "Ошибка файловой системы. Проверьте права на чтение/запись на папку data.";
   i18n["Main menu"] = "Основное меню";
-  i18n["Topic:"] = "Тема :";
-  i18n["Defined by {0}, {1}"] = "Написал {0}, {1}";
+  i18n["Topic:"] = "Тема:";
+  i18n["Defined by {0}, {1}"] = "Установил {0}, {1}";
   i18n["Files need translate"] = "Непереведенные файлы";
   i18n["Files need update"] = "Необновленные файлы";
   i18n["Error in current translation"] = "Ошибки в текущих переводах";
@@ -24,8 +24,8 @@ var i18n = new Array();
   i18n["Patches for review"] = "Патчи на проверку";
   i18n["Google translation"] = "Переводчик Google";
   i18n["Home"] = "Домой";
-  i18n["Connected as"] = "Залогинен как";
-  i18n["Connected using"] = "Залогинен с помощью";
+  i18n["Connected as"] = "Авторизован как";
+  i18n["Connected using"] = "Авторизован через";
   i18n["anonymous"] = "Аноним";
   i18n["Administrator"] = "Администратор";
   i18n["You are a global Administrator"] = "Вы являетесь глобальным администратором";
@@ -103,8 +103,8 @@ var i18n = new Array();
   i18n["Modify this patch description"] = "Изменить описание этого патча";
   i18n["Patch name"] = "Имя патча";
   i18n["Patch description"] = "Описание патча";
-  i18n["This description will be the default during the validation of the patch by a valid user."] = "Это описание будет высталвено по умолчанию при проверке патча пользователем с соответствующими правами.";
-  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Если указано, то при успешной проверке патча, вам будет выслано email уведомление.";
+  i18n["This description will be the default during the validation of the patch by a valid user."] = "Это описание будет выставлено по умолчанию при проверке патча пользователем с соответствующими правами.";
+  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Если указано, то при успешной проверке патча вам будет выслано письмо с уведомлением.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "Патч удален";
@@ -161,7 +161,7 @@ var i18n = new Array();
   i18n["Error description"] = "Описание ошибки";
   i18n["VCS Log"] = "История VCS";
   i18n["Tools"] = "Инструменты";
-  i18n["{0} File: "] = "Файл {0} : ";
+  i18n["{0} File: "] = "Файл {0}: ";
   i18n["en File: "] = "Английский файл: ";
   i18n["Filter: "] = "Фильтр: ";
   i18n["Your filter must contain at least 3 characters"] = "Ваш фильтр должен содержать больше 3 символов";
@@ -203,7 +203,7 @@ var i18n = new Array();
   i18n["Name for the new folder"] = "Название новой папки";
   i18n["Folder created"] = "Папка создана";
   i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Информация: Эта новая папка не будет закоммичен, пока в ней не будет закоммичен новый файл. Если вы закоммитите какой-нибудь файл в ней в течение 8 дней, она будет автоматически удалена";
-  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Папка <br><br><b>{0}</b><br><br> была успешно создана в {1} !";
+  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Папка <br><br><b>{0}</b><br><br> была успешно создана в {1}!";
   i18n["This folder already exist in the current folder."] = "Эта папка уже существует в текущей директории.";
 
   i18n["Add a new file"] = "Добавить новый файл";
@@ -214,7 +214,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
   i18n["Check entities"] = "Проверка сущностей";
-  i18n["Go !"] = "Поехали !";
+  i18n["Go !"] = "Поехали!";
   i18n["You're about to check all entities.<br><br>This action takes time."] = "Вы собираете проверь все сущности.<br><br> Это действие займет некоторое время.";
 
 
@@ -252,11 +252,11 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletBugs.js
-  i18n["You must manually load this data.<br>Use the refresh button !"] = "Вы должны вручную загрузить эти данные.<br>Используйте кнопку обновления !";
+  i18n["You must manually load this data.<br>Use the refresh button !"] = "Вы должны вручную загрузить эти данные.<br>Используйте кнопку обновления!";
   i18n["Open in a new Tab"] = "Открыть в новом табе";
   i18n["Open the related file"] = "Открыть соответствующий файл";
   i18n["Summary"] = "Резюме";
-  i18n["Error when loading open bugs from Php.net !"] = "Произошла ошибка при загрузке открытых багов с Php.net !";
+  i18n["Error when loading open bugs from Php.net !"] = "Произошла ошибка при загрузке открытых багов с Php.net!";
   i18n["No open bugs"] = "Нет открытых багов";
   i18n["Open bugs for {0}"] = "Открытые баги для {0}";
 
@@ -267,7 +267,7 @@ var i18n = new Array();
   i18n["File: "] = "Файл: ";
   i18n["Direct link to this patch"] = "Прямая ссылка на этот патч";
   i18n["Diff for patch: {0}"] = "Различия (diff) для патча: {0}";
-  i18n["Patch Name: "] = "Имя патча : ";
+  i18n["Patch Name: "] = "Имя патча: ";
 
 
 // In file: ../../js/ui/component/FilePanel.js
@@ -291,7 +291,7 @@ var i18n = new Array();
   i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Включить / Выключить</b>  проверку орфографии";
   i18n["<b>Re-indent</b> all this file"] = "<b>Переформатировать</b> этот файл";
   i18n["Synchronize scroll bars"] = "Синхронизировать полосы прокрутки";
-  i18n["Line: "] = "Строка : ";
+  i18n["Line: "] = "Строка: ";
   i18n["Col: "] = "Столбец: ";
   i18n["<b>Accept</b> this patch and <b>Save</b> the file (CTRL+s)"] = "<b>Принять</b> этот патч и <b>Сохранить</b> файл (CTRL+s)";
   i18n["<b>Reject</b> this patch"] = "<b>Отклонить</b> этот патч";
@@ -313,7 +313,7 @@ var i18n = new Array();
   i18n["Module \"Files with error\""] = "Модуль \"Файлы с ошибками\"";
   i18n["Module \"Files need reviewed\""] = "Модуль \"Непросмотренные файлы\"";
   i18n["Force an UI language"] = "Переключить язык интерфейса ";
-  i18n["Default language, if available"] = "Язык по умолчанию, если доступно";
+  i18n["Default language, if available"] = "Язык по умолчанию, если доступен";
   i18n["English"] = "Английский";
   i18n["French"] = "Французский";
   i18n["Russian"] = "Русский";
@@ -367,7 +367,7 @@ var i18n = new Array();
   i18n["Automatically load entities data when displaying the file"] = "Автоматически загружать данные сущностей при отображении файла";
   i18n["Right panel"] = "Правая панель";
   i18n["Display the original file"] = "Отобразить оригинальный файл";
-  i18n["Do not display a right panel"] = "не отображать правую панель";
+  i18n["Do not display a right panel"] = "Не отображать правую панель";
   i18n["Display the Google Translation Panel"] = "Отображать панель Google Translation";
   i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Отображать работу над англ. версией в модулях \"Патчи на проверку\" и \"Работа в прогрессе\"";
 
@@ -495,13 +495,13 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/CheckBuildPrompt.js
   i18n["You're about to check the build via this command:"] = "Вы собираетесь проверить билд с помощью команды:";
-  i18n["<b>WARNING !</b><br/> This option use a lot of server ressource. If you don't know what are the consequence, please, don't use it."] = "<b>ВНИМАНИЕ !</b><br/> Эта опция использует много ресурсов сервера. Если вы не представляете последствия, пожалуйста, не используйте ее.";
+  i18n["<b>WARNING !</b><br/> This option use a lot of server ressource. If you don't know what are the consequence, please, don't use it."] = "<b>ВНИМАНИЕ!</b><br/> Эта опция использует много ресурсов сервера. Если вы не представляете последствия, пожалуйста, не используйте ее.";
   i18n["Enable detailed XML error messages"] = "Включить подробные сообщения об XML ошибках";
 
 
 // In file: ../../js/ui/component/About.js
   i18n["About {0}"] = "О {0}";
-  i18n["Author:"] = "Автор :";
+  i18n["Author:"] = "Автор:";
   i18n["and <a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">others</a>"] = "и <a href=\"http://svn.php.net/viewvc/web/doc-editor/\" target=\"_blank\">остальные</a>";
   i18n["Credits"] = "Благодарности";
   i18n["Javascript FrameWork"] = "Javascript Фреймворк";
@@ -510,7 +510,7 @@ var i18n = new Array();
   i18n["License"] = "Лицензия";
   i18n["Help and support"] = "Поддержка";
   i18n["Mailing list:"] = "Список рассылки:";
-  i18n["IRC:"] = "IRC : ";
+  i18n["IRC:"] = "IRC: ";
   i18n["Web IRC Chat"] = "Web IRC чат";
 
 
@@ -519,7 +519,7 @@ var i18n = new Array();
   i18n["Remove this file"] = "Удалить этот файл";
   i18n["File removed by me"] = "Файл был удален мной";
   i18n["File removed by {0}"] = "Файл был удален {0}";
-  i18n["Not In EN: in {0}"] = "Не существует в EN : в {0}";
+  i18n["Not In EN: in {0}"] = "Не существует в EN: в {0}";
 
 
 // In file: ../../js/ui/component/CommitLogManager.js
