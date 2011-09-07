@@ -5,11 +5,14 @@
 var i18n = new Array();
 
 // In file: ../../js/main.js
+  i18n["Refresh"] = "Обновление";
   i18n["Forbidden"] = "Запрещено";
   i18n["You can't do this action as anonymous user."] = "Данное действие не может быть выполнено анонимным пользователем.";
   i18n["Error"] = "Ошибка";
   i18n["File system error. Check read/write permission under data folder."] = "Ошибка файловой системы. Проверьте права на чтение/запись на папку data.";
   i18n["Main menu"] = "Основное меню";
+  i18n["Topic:"] = "Тема :";
+  i18n["Defined by {0}, {1}"] = "Написал {0}, {1}";
   i18n["Files need translate"] = "Непереведенные файлы";
   i18n["Files need update"] = "Необновленные файлы";
   i18n["Error in current translation"] = "Ошибки в текущих переводах";
@@ -21,9 +24,12 @@ var i18n = new Array();
   i18n["Patches for review"] = "Патчи на проверку";
   i18n["Google translation"] = "Переводчик Google";
   i18n["Home"] = "Домой";
-  i18n["Connected as {0}"] = "Соединен как {0}";
-  i18n["anonymous"] = "анонимный";
+  i18n["Connected as"] = "Залогинен как";
+  i18n["Connected using"] = "Залогинен с помощью";
+  i18n["anonymous"] = "Аноним";
   i18n["Administrator"] = "Администратор";
+  i18n["You are a global Administrator"] = "Вы являетесь глобальным администратором";
+  i18n["You are an administrator for this language"] = "Вы являетесь администратором данного языка";
   i18n["Project: "] = "Проект: ";
   i18n["Language: "] = "Язык: ";
   i18n["Total number of your files"] = "Общее количество ваших файлов";
@@ -81,18 +87,24 @@ var i18n = new Array();
 
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
-  i18n["Edit the name of this patch"] = "Редактировать имя этого файла";
+  i18n["Edit the description of this patch"] = "Редактировать описание этого патча";
   i18n["Delete this patch"] = "Удалить этот патч";
   i18n["Back all files to work in progress module"] = "Переместить все файлы в модуль 'Работа в прогрессе'";
   i18n["Back all this patch to work in progress module"] = "Переместить этот патч в модуль 'Работа в прогрессе'";
   i18n["Back all this folder to work in progress module"] = "Переместить эту папку в модуль 'Работа в прогрессе'";
   i18n["Back this file to work in progress module"] = "Переместить этот файл в модуль 'Работа в прогрессе'";
   i18n["Creation date: "] = "Дата создания: ";
+  i18n["View unified diff"] = "Просмотреть различия (unified diff)";
+  i18n["Download the unified diff as a patch"] = "Скачать различия (unified diff) в виде патча";
 
 
 // In file: ../../js/ui/component/ManagePatchPrompt.js
   i18n["Create"] = "Создать";
-  i18n["Modify this patch name"] = "Изменить имя этого патча";
+  i18n["Modify this patch description"] = "Изменить описание этого патча";
+  i18n["Patch name"] = "Имя патча";
+  i18n["Patch description"] = "Описание патча";
+  i18n["This description will be the default during the validation of the patch by a valid user."] = "Это описание будет высталвено по умолчанию при проверке патча пользователем с соответствующими правами.";
+  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Если указано, то при успешной проверке патча, вам будет выслано email уведомление.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "Патч удален";
@@ -149,7 +161,7 @@ var i18n = new Array();
   i18n["Error description"] = "Описание ошибки";
   i18n["VCS Log"] = "История VCS";
   i18n["Tools"] = "Инструменты";
-  i18n["{0} File: "] = "Файл {0}: ";
+  i18n["{0} File: "] = "Файл {0} : ";
   i18n["en File: "] = "Английский файл: ";
   i18n["Filter: "] = "Фильтр: ";
   i18n["Your filter must contain at least 3 characters"] = "Ваш фильтр должен содержать больше 3 символов";
@@ -202,7 +214,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
   i18n["Check entities"] = "Проверка сущностей";
-  i18n["Go !"] = "Пошел !";
+  i18n["Go !"] = "Поехали !";
   i18n["You're about to check all entities.<br><br>This action takes time."] = "Вы собираете проверь все сущности.<br><br> Это действие займет некоторое время.";
 
 
@@ -254,6 +266,8 @@ var i18n = new Array();
   i18n["This file has been modified without being saved.<br/>Do you really want to close?"] = "Этот измененный файл не был сохранен.<br/>Вы правда хотите его закрыть?";
   i18n["File: "] = "Файл: ";
   i18n["Direct link to this patch"] = "Прямая ссылка на этот патч";
+  i18n["Diff for patch: {0}"] = "Различия (diff) для патча: {0}";
+  i18n["Patch Name: "] = "Имя патча : ";
 
 
 // In file: ../../js/ui/component/FilePanel.js
@@ -298,6 +312,12 @@ var i18n = new Array();
   i18n["Module \"Files need update\""] = "Модуль \"Необновленные файлы\"";
   i18n["Module \"Files with error\""] = "Модуль \"Файлы с ошибками\"";
   i18n["Module \"Files need reviewed\""] = "Модуль \"Непросмотренные файлы\"";
+  i18n["Force an UI language"] = "Переключить язык интерфейса ";
+  i18n["Default language, if available"] = "Язык по умолчанию, если доступно";
+  i18n["English"] = "Английский";
+  i18n["French"] = "Французский";
+  i18n["Russian"] = "Русский";
+  i18n["Spanish"] = "Испанский";
   i18n["Black"] = "Черный";
   i18n["Default"] = "По умолчанию";
   i18n["DarkGray"] = "Темносерый";
@@ -345,7 +365,9 @@ var i18n = new Array();
   i18n["All changes take effect immediately"] = "Все изменения вступают в силу немедленно";
   i18n["Automatically load acronyms data when displaying the file"] = "Автоматически загружать данные акронимов при отображении файла";
   i18n["Automatically load entities data when displaying the file"] = "Автоматически загружать данные сущностей при отображении файла";
-  i18n["Google translate Panel"] = "Панель Google translate";
+  i18n["Right panel"] = "Правая панель";
+  i18n["Display the original file"] = "Отобразить оригинальный файл";
+  i18n["Do not display a right panel"] = "не отображать правую панель";
   i18n["Display the Google Translation Panel"] = "Отображать панель Google Translation";
   i18n["Display EN work in \"Work in progress\" & \"Patches for review\" modules"] = "Отображать работу над англ. версией в модулях \"Патчи на проверку\" и \"Работа в прогрессе\"";
 
