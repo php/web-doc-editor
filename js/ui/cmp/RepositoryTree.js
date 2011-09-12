@@ -471,6 +471,9 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         '&' +
                         'FileName=' +
                         FileName +
+                        '&' +
+                        'csrfToken=' +
+                        csrfToken +
                         '" />'
                     };
                     
