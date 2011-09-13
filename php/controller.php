@@ -31,6 +31,14 @@ else if (method_exists($controller, $method)) {
     );
 }
 
+// Place here all method who already send hers headers
+if ($method == 'getImageContent') {
+
+    echo $response;
+    exit;
+
+}
+
 header('Content-type: text/plain; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Content-Length:' . strlen($response));

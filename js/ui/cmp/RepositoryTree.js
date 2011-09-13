@@ -453,7 +453,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                     parser = 'xml';
                 }
                 
-                if (extension === 'gif' || extension === 'png') {
+                if (extension === 'gif' || extension === 'png' || extension === 'jpg') {
                     panelWest = {};
                     
                     panelCenter = {
