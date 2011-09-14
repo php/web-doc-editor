@@ -829,6 +829,9 @@ class ExtJsController
         // We must check if this file isn't own by the current user
         $return['fileModified'] = $file->isModified();
 
+        // We return the rev number too
+        $return['originalRev'] = $info['rev'];
+
         return JsonResponseBuilder::success($return);
     }
 

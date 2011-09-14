@@ -5860,6 +5860,20 @@ ui.task.GetFileTask = function(config)
                     mess.getDialog().mask.resize(pEl.getSize().width, pEl.getSize().height);
                     mess.getDialog().mask.alignTo(pEl.dom, "tl");
                 }
+            } else {
+                
+                // Thisfile haven't been modified by another user
+                if (id_prefix == 'FNT-TRANS') {
+                    
+                    f.insertIntoLine(3,0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->\r\n');
+                    f.insertIntoLine(4,0, '<!-- Reviewed: no -->\r\n');
+                    
+                    
+                    // Mark as dirty this editor now
+                    f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                    
+                }
+                
             }
         },
         callback : function()
