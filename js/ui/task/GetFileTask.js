@@ -177,12 +177,17 @@ ui.task.GetFileTask = function(config)
                 // Thisfile haven't been modified by another user
                 if (id_prefix == 'FNT-TRANS') {
                     
-                    f.insertIntoLine(3,0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->\r\n');
-                    f.insertIntoLine(4,0, '<!-- Reviewed: no -->\r\n');
+                    // We check if this tag isn't already into the document
+                    var re = new RegExp('<!-- EN-Revision:'),
+                        m = re.exec(o.content);
                     
-                    
-                    // Mark as dirty this editor now
-                    f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                    if( m == null ) {
+                        f.insertIntoLine(3,0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->\r\n');
+                        f.insertIntoLine(4,0, '<!-- Reviewed: no -->\r\n');
+                        
+                        // Mark as dirty this editor now
+                        f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                    }
                     
                 }
                 
