@@ -5688,13 +5688,13 @@ ui.task.GetFileInfoByXmlID = function(config)
     });
 };Ext.namespace('ui','ui.task');
 
-// config - { prefix, ftype, fid, fpath, fname }
+// config - { prefix, original, ftype, fid, fpath, fname }
 ui.task.GetFileTask = function(config)
 {
     Ext.apply(this, config);
 
     var id_prefix    = this.prefix + '-' + this.ftype,
-        readOriginal = ( this.ftype === 'NotInEN')    ? true : false,
+        readOriginal = ( this.original ) ? true : false,
         ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false,
         skeleton     = ( this.ftype === 'NEW' ) ? this.skeleton : false;
 
@@ -7588,6 +7588,38 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
     }
 });
 Ext.namespace('ui','ui.cmp');
+
+ui.cmp.Chat = Ext.extend(Ext.Window,
+{
+    id        : 'win-chat',
+    iconCls   : 'iconChat',
+    layout    : 'fit',
+    width     : 800,
+    height    : 600,
+    modal     : true,
+    plain     : true,
+    bodyStyle : 'color:#000',
+    closeAction:'hide',
+
+    initComponent : function()
+    {
+        var chatLogin = PhDOE.user.login;
+        
+        if( PhDOE.user.isAnonymous ) {
+            chatLogin = 'an%3F%3F%3F';
+        }
+        
+        Ext.apply(this,
+        {
+            title : _('Chat with us on IRC !'),
+            items : [new Ext.ux.IFrameComponent({
+                id: 'frame-win-chat',
+                url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
+            })]
+        });
+        ui.cmp.Chat.superclass.initComponent.call(this);
+    }
+});Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
@@ -11094,8 +11126,8 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 title: _('en File: ') + FilePath + FileName,
                 prefix: 'FE',
                 ftype: 'EN',
-                spellCheck: PhDOE.user.conf.error.enableSpellCheckEn,
-                spellCheckConf: { module : 'error', itemName : 'enableSpellCheckEn' },
+                original: true,
+                readOnly: true,
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -11903,7 +11935,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //------------------------------------------------------------------------------
 // FilePanel
 // config - {
-//    id, title, prefix, ftype {'EN' | 'LANG'},
+//    id, title, prefix, original,  ftype {'EN' | 'LANG'},
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
@@ -12281,6 +12313,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         new ui.task.GetFileTask({
                             prefix   : this.prefix,
                             ftype    : this.ftype,
+                            original : this.original,
                             fid      : this.fid,
                             fpath    : herePath,
                             freadOnly: this.readOnly,
@@ -13529,6 +13562,7 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
                         fid            : FileID,
                         fpath          : FilePath,
                         fname          : FileName,
+                        original       : true,
                         readOnly       : true,
                         lang           : PhDOE.user.lang,
                         parser         : 'xml',
@@ -14746,8 +14780,8 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNR',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.reviewed.enableSpellCheckEn,
-                    spellCheckConf: { module : 'reviewed', itemName : 'enableSpellCheckEn' },
+                    original: true,
+                    readOnly: true,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -15110,6 +15144,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
+                    original: true,
                     readOnly: true,
                     lang: 'en',
                     parser: 'xml',
@@ -17719,8 +17754,8 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     title: _('en File: ') + FilePath + FileName,
                     prefix: 'FNU',
                     ftype: 'EN',
-                    spellCheck: PhDOE.user.conf.needUpdate.enableSpellCheckEn,
-                    spellCheckConf: { module : 'needUpdate', itemName : 'enableSpellCheckEn' },
+                    original: true,
+                    readOnly: true,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,

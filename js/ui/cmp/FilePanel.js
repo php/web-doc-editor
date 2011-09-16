@@ -508,7 +508,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //------------------------------------------------------------------------------
 // FilePanel
 // config - {
-//    id, title, prefix, ftype {'EN' | 'LANG'},
+//    id, title, prefix, original,  ftype {'EN' | 'LANG'},
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
 //    isTrans                      pendingTranslate file config
@@ -886,6 +886,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         new ui.task.GetFileTask({
                             prefix   : this.prefix,
                             ftype    : this.ftype,
+                            original : this.original,
                             fid      : this.fid,
                             fpath    : herePath,
                             freadOnly: this.readOnly,

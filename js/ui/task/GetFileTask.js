@@ -1,12 +1,12 @@
 Ext.namespace('ui','ui.task');
 
-// config - { prefix, ftype, fid, fpath, fname }
+// config - { prefix, original, ftype, fid, fpath, fname }
 ui.task.GetFileTask = function(config)
 {
     Ext.apply(this, config);
 
     var id_prefix    = this.prefix + '-' + this.ftype,
-        readOriginal = ( this.ftype === 'NotInEN')    ? true : false,
+        readOriginal = ( this.original ) ? true : false,
         ggTranslate  = ( this.ftype === 'GGTRANS' ) ? true : false,
         skeleton     = ( this.ftype === 'NEW' ) ? this.skeleton : false;
 

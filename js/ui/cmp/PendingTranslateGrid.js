@@ -274,6 +274,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
+                    original: true,
                     readOnly: true,
                     lang: 'en',
                     parser: 'xml',
