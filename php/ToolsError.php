@@ -257,18 +257,11 @@ class ToolsError
 
             if (!isset($alreadyNode[$a->path.$a->name])) {
 
-                $isModifiedEN   = ( isset($ModifiedFiles['en'.$a->path.$a->name]) )        ? $ModifiedFiles['en'.$a->path.$a->name]        : false ;
                 $isModifiedLang = ( isset($ModifiedFiles[$this->lang.$a->path.$a->name]) ) ? $ModifiedFiles[$this->lang.$a->path.$a->name] : false ;
 
-                if ( $isModifiedEN || $isModifiedLang ) {
+                if ( $isModifiedLang ) {
 
-                    if ( $isModifiedEN ) {
-                        $new_maintainer   = $a->maintainer;
-                    }
-
-                    if ( $isModifiedLang ) {
-                        $new_maintainer   = $isModifiedLang['maintainer'];
-                    }
+                    $new_maintainer = $isModifiedLang['maintainer'];
 
                     $node[] = array(
                     "id"                => $a->id,

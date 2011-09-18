@@ -266,18 +266,9 @@ class RepositoryFetcher
         while ($a = $r->fetch_object()) {
 
             if (   isset($m[$vcsLang.$a->path.$a->name])
-                || isset($m['en'    .$a->path.$a->name])
             ) {
 
-                $isModifiedEN   = ( isset($m['en'.$a->path.$a->name]) )     ? $m['en'.$a->path.$a->name]     : false ;
                 $isModifiedLang = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
-
-                if ( $isModifiedEN ) {
-                    $new_en_revision   = $isModifiedEN['revision'];
-                    $new_revision      = $a->revision;
-                    $original_revision = $a->revision;
-                    $new_maintainer    = $a->maintainer;
-                }
 
                 if ( $isModifiedLang ) {
                     $new_en_revision   = $a->en_revision;
@@ -376,7 +367,7 @@ class RepositoryFetcher
         $node = array();
         while ($a = $r->fetch_object()) {
 
-            $isModifiedEN   = ( isset($m['en'.$a->path.$a->name]) )     ? $m['en'.$a->path.$a->name]     : false ;
+            
             $isModifiedLang = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
 
             $temp = array(
@@ -385,17 +376,10 @@ class RepositoryFetcher
                 "name" => $a->name,
             );
 
-            if ( $isModifiedLang || $isModifiedEN )
+            if ( $isModifiedLang )
             {
-                if ( $isModifiedEN ) {
-                    $new_reviewed   = $a->reviewed;
-                    $new_maintainer = $a->maintainer;
-                }
-
-                if ($isModifiedLang) {
-                    $new_reviewed   = $isModifiedLang['reviewed'];
-                    $new_maintainer = $isModifiedLang['maintainer'];
-                }
+                $new_reviewed   = $isModifiedLang['reviewed'];
+                $new_maintainer = $isModifiedLang['maintainer'];
 
                 $temp['reviewed']          = $new_reviewed;
                 $temp['maintainer']        = $new_maintainer;

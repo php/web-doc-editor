@@ -103,7 +103,9 @@ ui.task.GetFileTask = function(config)
 
 
             // We ensure that this file have been marked as modified into the store
-            if( o.fileModified && this.prefix !== 'AF' ) {
+            // We exclude this check if we want to view an original file
+            
+            if( o.fileModified && this.prefix !== 'AF' && !readOriginal ) {
                 this.storeRecord.set(dataModified, o.fileModified);
                 this.storeRecord.commit();
             }
@@ -120,7 +122,8 @@ ui.task.GetFileTask = function(config)
             }
 
             // This file have been modified by a different user than the current one.
-            if( o.fileModified && 
+            // If we ask for the original content, we don't display this message
+            if( o.fileModified && !readOriginal  && 
                 
                 (
                     ( !PhDOE.user.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
@@ -174,7 +177,7 @@ ui.task.GetFileTask = function(config)
                 }
             } else {
                 
-                // Thisfile haven't been modified by another user
+                // This file haven't been modified by another user
                 if (id_prefix == 'FNT-TRANS') {
                     
                     // We check if this tag isn't already into the document
