@@ -185,6 +185,9 @@ ui.task.GetFileTask = function(config)
                         m = re.exec(o.content);
                     
                     if( m == null ) {
+                        
+                        f.setLineContent(2, '<!-- $Revision: $ -->');
+                        
                         f.insertIntoLine(3,0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->\r\n');
                         f.insertIntoLine(4,0, '<!-- Reviewed: no -->\r\n');
                         
