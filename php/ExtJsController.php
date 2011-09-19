@@ -865,7 +865,8 @@ class ExtJsController
 
         // Get EN content to check error with
         $en_file    = new File('en', $FilePath.$FileName);
-        $en_content = $en_file->read();
+        $readOriginal = true;
+        $en_content = $en_file->read($readOriginal);
 
         // Update DB with this new Error (if any)
         $info = $file->getInfo($FileContent);
