@@ -319,6 +319,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 ftype: 'EN',
                 original: true,
                 readOnly: true,
+                openInNewTabBtn: true,
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,

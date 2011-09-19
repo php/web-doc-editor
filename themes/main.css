@@ -100,6 +100,7 @@
 .iconDiffView          { background-image: url(./img/code-class.png)            !important;}
 .iconDownloadDiff      { background-image: url(./img/download-later.png)        !important;}
 .iconEditor, .iconEdit            { background-image: url(./img/document-edit.png)         !important;} /*@TODO: Remove the alias .iconEditor later */
+.iconEditInNewTab      { background-image: url(./img/tab-new.png)               !important;}
 .iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
 .iconExternalData      { background-image: url(./img/svn-update.png)            !important;}

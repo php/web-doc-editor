@@ -397,6 +397,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     ftype: 'EN',
                     original: true,
                     readOnly: true,
+                    openInNewTabBtn: true,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,

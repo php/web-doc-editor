@@ -11103,6 +11103,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 ftype: 'EN',
                 original: true,
                 readOnly: true,
+                openInNewTabBtn: true,
                 fid: FileID,
                 fpath: FilePath,
                 fname: FileName,
@@ -11913,6 +11914,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 //    id, title, prefix, original,  ftype {'EN' | 'LANG'},
 //    fid, fpath, fname, lang,
 //    readOnly,                    indicate this file is readonly
+//    openInNewTabBtn,             add a button into the toolsBar to open this file into a new tab
 //    isTrans                      pendingTranslate file config
 //    isPatch, fuid,               pending patch file config // TODO: obsolète. Inutile de fournir une interface spécifique pour les patchs
 //    parser, storeRecord,
@@ -12243,7 +12245,23 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                     ftype           : this.ftype,
                     goToPreviousTab : this.goToPreviousTab,
                     goToNextTab     : this.goToNextTab
-                }), '->', (( this.ftype !== 'GGTRANS' ) ?
+                }), {
+                    xtype: 'buttongroup',
+                    hidden: ( this.openInNewTabBtn !== true ),
+                    scope: this,
+                    items:[{
+                        tooltip: _('Open for editing in a new Tab'),
+                        iconCls: 'iconEditInNewTab',
+                        scope: this,
+                        handler: function() {
+                            ui.cmp.RepositoryTree.getInstance().openFile(
+                                'byPath',
+                                this.lang + this.fpath,
+                                this.fname
+                            );
+                        }
+                    }]
+                }, '->', (( this.ftype !== 'GGTRANS' ) ?
                             new ui.cmp._FilePanel.tbar.items.usernotes({
                                 fid : this.fid,
                                 file: this.lang + this.fpath + this.fname
@@ -14757,6 +14775,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     ftype: 'EN',
                     original: true,
                     readOnly: true,
+                    openInNewTabBtn: true,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,
@@ -17731,6 +17750,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     ftype: 'EN',
                     original: true,
                     readOnly: true,
+                    openInNewTabBtn: true,
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,

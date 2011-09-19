@@ -303,6 +303,7 @@ var i18n = new Array();
   i18n["<b>Expand</b> in a popup"] = "<b>Agrandir</b> dans un popup";
   i18n["<b>Preview</b> in a popup"] = "<b>Prévisualiser</b> dans un popup";
   i18n["You must save your file in order to preview the result."] = "Vous devez sauvegarder le fichier afin de prévisualiser le résultat.";
+  i18n["Open for editing in a new Tab"] = "Ouvrir pour édition dans un nouvel onglet";
 
 
 // In file: ../../js/ui/component/EditorConf.js
