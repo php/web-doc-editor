@@ -9,13 +9,17 @@ require_once dirname(__FILE__) . '/VCSFactory.php';
 class File
 {
     public $lang;
-    public $path;
     public $name;
 
+    public $path;
+
     public $full_path;
+    public $full_new_path;
+
     public $full_path_fallback;
     
     public $full_path_dir;
+    public $full_new_path_dir;
     
     public $isDir;
     public $isFile;
@@ -48,7 +52,7 @@ class File
         $path_parts = pathinfo($path);
         
         if( !isset($path_parts['extension']) ) {
-        	$this->isDir = true;
+            $this->isDir = true;
             $this->isFile = false;
             $this->name = '';
             $path_parts['dirname'] = isset($path_parts['dirname']) ? $path_parts['dirname'] : '';
@@ -68,7 +72,10 @@ class File
             $this->path = "/$path/";
 
             $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/'.$this->name;
+            $this->full_new_path = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$lang.'/'.$path.'/'.$this->name;
+
             $this->full_path_dir = $appConf[$project]['vcs.path'].$lang.'/'.$path.'/';
+            $this->full_new_path_dir = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$lang.'/'.$path.'/';
 
             // The fallback file : if the file don't exist, we fallback to the EN file witch should always exist
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$path.'/'.$this->name;
@@ -76,9 +83,14 @@ class File
             $this->path = '/';
 
             $this->full_path = $appConf[$project]['vcs.path'].$lang.'/'.$this->name;
+            $this->full_new_path = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$lang.'/'.$this->name;
+
             $this->full_path_dir = $appConf[$project]['vcs.path'].$lang.'/';
+            $this->full_new_path_dir = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$lang.'/';
+
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$this->name;
         }
+
         $this->conn = DBConnection::getInstance();        
     }
 
@@ -97,7 +109,7 @@ class File
     public function translate()
     {
         // We must check if the file exist.
-        // For example, when we start a translation, save it, and then open it from work in progress module, the path (without .new) don't exist and we must use the fallback path for translation
+        // For example, when we start a translation, save it, and then open it from work in progress module, the path don't exist and we must use the fallback path for translation
         
         $originalContent = ( is_file($this->full_path) ) ? file_get_contents($this->full_path) : file_get_contents($this->full_path_fallback);
 
@@ -155,7 +167,7 @@ class File
 
         $path = ($readOriginal || !$isModified)
                 ? $this->full_path
-                : $this->full_path . '.new';
+                : $this->full_new_path;
 
         if( is_file($path) ) {
             return file_get_contents($path);
@@ -172,21 +184,22 @@ class File
      * Save a file after modification.
      *
      * @param $content The new content.
-     * @param $isPatch Indicate whether saving file as patch (default=false)
-     * @param $uniqID Patch unique ID (provided if isPatch=true)
      * @return The path to the new file successfully created.
      */
-    public function save($content, $isPatch, $uniqID=false)
+    public function save($content)
     {
-        $ext  = ($isPatch) ? '.' . $uniqID . '.patch' : '.new';
-        $path = $this->full_path . $ext;
+
+        // Ensure the folder exist.
+        if( ! is_dir($this->full_new_path_dir) ) {
+            mkdir( $this->full_new_path_dir, 0777, true );
+        }
 
         // Open in w+ mode
-        $h = @fopen($path, 'w+');
+        $h = @fopen($this->full_new_path, 'w+');
         if( $h ) {
             fwrite($h, $content);
             fclose($h);
-            return $path;
+            return $this->full_new_path;
         } else {
             return array(
              'state' => false
@@ -212,7 +225,7 @@ class File
        }
 
        // We create this folder localy
-       if( ! @mkdir($appConf[$project]['vcs.path'].$this->lang.'/'.$path) ) {
+       if( ! @mkdir($appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$this->lang.'/'.$path, 0777, true) ) {
            return false;
        }
 
@@ -225,7 +238,7 @@ class File
     }
 
     /**
-     * Check if the path of this $file exist or not. If not, try to create it recursively with createFolder's method
+     * Check if the path of this $file exist or not. If not, try to create it
      *
      * @return true
      */
@@ -235,28 +248,10 @@ class File
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $folders = array();
-        $_folders = explode("/", $this->path);
-
-        //Skip empty value
-        for( $i=0; $i < count($_folders); $i++) {
-           if( $_folders[$i] != "" ) {
-              $folders[] = $_folders[$i];
-           }
+        if( !is_dir($this->full_new_path_dir) ) {
+            $this->createFolder();
         }
 
-        $path = '';
-
-        for( $i=0; $i < count($folders); $i++ ) {
-
-           $herePath = $path.'/'.$folders[$i];
-
-           if( !is_dir($appConf[$project]['vcs.path'].$this->lang.$herePath) ) {
-              $this->createFolder($herePath);
-           }
-
-           $path = $herePath;
-        }
         return true;
     }
 
@@ -298,13 +293,6 @@ class File
         $am      = AccountManager::getInstance();
         $project = $am->project;
 
-        // If the current file is a .new file, we must escape the .new otherwise, we haven't any result from the database
-        if( substr($this->name, -4) == ".new" ) {
-            $hereName = substr($this->name, 0, (strlen($this->name) - 4));
-        } else {
-            $hereName = $this->name;
-        }
-
         $s = 'SELECT
                 `id` as fidDB,
                 `user`,
@@ -322,7 +310,7 @@ class File
             $project,
             $this->lang,
             $this->path,
-            $hereName
+            $this->name
         );
 
         $r = $this->conn->query($s, $params);
@@ -434,9 +422,12 @@ class File
             $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($patchID);
             for( $i=0; $i < count($patchFiles); $i++ )
             {
+
+                $pathFileOrigin = $appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
+                $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
+
                 $commands = array(
-                    new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path)),
-                    new ExecStatement('diff -u %s %s', array($patchFiles[$i]->name, $patchFiles[$i]->name . '.new'))
+                    new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
                 );
                 
                 $trial_threshold = 3;
@@ -454,9 +445,11 @@ class File
             
         } else {
             
+            $pathFileOrigin = $appConf[$project]['vcs.path'] . $this->lang . $this->path . $this->name;
+            $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
+
             $commands = array(
-                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
-                new ExecStatement('diff -u %s %s', array($this->name, $this->name . '.new'))
+                new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
             );
 
             $output = array();
@@ -492,7 +485,7 @@ class File
 
         } elseif( $type == 'file' || $type == 'patch' ) {
 
-            $ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
+            //$ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
             
             // If this patch is for new file, we only display "This is a new file."
             if( $type == 'patch' && !is_file($appConf[$project]['vcs.path'].$this->lang.$this->path.$this->name) ) {
@@ -501,9 +494,12 @@ class File
 
                 if( $options['patchID'] == '' )
                 {
+
+                    $pathFileOrigin = $appConf[$project]['vcs.path'] . $this->lang . $this->path . $this->name;
+                    $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
+
                     $commands = array(
-                        new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $this->lang . $this->path)),
-                        new ExecStatement('diff -u %s %s', array($this->name, $this->name . $ext))
+                        new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
                     );
                     
                     $trial_threshold = 3;
@@ -523,9 +519,12 @@ class File
                     
                     for( $i=0; $i < count($patchFiles); $i++ )
                     {
+
+                        $pathFileOrigin = $appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
+                        $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
+
                         $commands = array(
-                            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path)),
-                            new ExecStatement('diff -u %s %s', array($patchFiles[$i]->name, $patchFiles[$i]->name . '.new'))
+                            new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
                         );
                         
                         $trial_threshold = 3;

@@ -917,6 +917,10 @@ class ExtJsController
     }
     /**
      * Save a file. The new file have an extension like ".new", and is saved in the same folder as the original.
+     * 
+     * @HERE : The new file no more have an extension '.new'. Now, it's saved into 'module-name-'new folder, with the same folder's hierarchie
+     *
+     *
      */
     public function saveFile()
     {
@@ -974,29 +978,29 @@ class ExtJsController
         
         // Rules to allow this file to be saved or not.
         if( $infoModified = $file->isModified() ) {
-        	
-        	$infoModified = json_decode($infoModified);
-        	
-        	// If the user who have modified this file isn't the current one
-        	if( 
-                    ( !$am->isAnonymous && ( $infoModified->user ==  $am->vcsLogin ) ) ||
-                    (  $am->isAnonymous && ( $infoModified->anonymousIdent == $am->anonymousIdent ) )
-                ) {
-        		// We can modify it, it's mine ;)
-        	} else {
-        		// If he is an anonymous and current user, an authenticated user, the current one can modify it.
-        		if( $am->anonymous($infoModified->user, $infoModified->anonymousIdent) && !$am->anonymous($am->vcsLogin, $am->anonymousIdent) ) {
-        			// The current user can modify it
-        		} else {
-        			// We must trow an error. We can't modify it.
-        			
-		            return JsonResponseBuilder::failure(
-			            array(
-			              'type' => 'save_you_cant_modify_it'
-			            )
-		            );
-        		}
-        	}
+
+            $infoModified = json_decode($infoModified);
+            
+            // If the user who have modified this file isn't the current one
+            if( 
+                ( !$am->isAnonymous && ( $infoModified->user ==  $am->vcsLogin ) ) ||
+                (  $am->isAnonymous && ( $infoModified->anonymousIdent == $am->anonymousIdent ) )
+            ) {
+                    // We can modify it, it's mine ;)
+            } else {
+                    // If he is an anonymous and current user, an authenticated user, the current one can modify it.
+                    if( $am->anonymous($infoModified->user, $infoModified->anonymousIdent) && !$am->anonymous($am->vcsLogin, $am->anonymousIdent) ) {
+                            // The current user can modify it
+                    } else {
+                            // We must trow an error. We can't modify it.
+                            
+                        return JsonResponseBuilder::failure(
+                                array(
+                                    'type' => 'save_you_cant_modify_it'
+                                )
+                        );
+                    }
+            }
         }
         
         // Detect encoding
@@ -1021,7 +1025,7 @@ class ExtJsController
 
         if ($type == 'file') {
 
-            $er = $file->save($fileContent, false);
+            $er = $file->save($fileContent);
 
             if( $er['state'] ) {
 
@@ -1051,7 +1055,7 @@ class ExtJsController
             // We must ensure that this folder exist localy
             if( $file->folderExist() ) {
 
-               $er = $file->save($fileContent, false);
+               $er = $file->save($fileContent);
 
                if( $er['state'] ) {
                	

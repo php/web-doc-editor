@@ -228,8 +228,9 @@ class CvsClient
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
-        $appConf = AccountManager::getInstance()->appConf;
-        $project = AccountManager::getInstance()->project;
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
 
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
@@ -241,8 +242,9 @@ class CvsClient
             $p = $update[$i]->lang.'/'.$update[$i]->path.'/'.$update[$i]->name;
             $update_stack[] = $p;
 
-            @copy(  $appConf[$project]['vcs.path'].$p.'.new', $appConf[$project]['vcs.path'].$p);
-            @unlink($appConf[$project]['vcs.path'].$p.'.new');
+            @copy(  $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$p, $appConf[$project]['vcs.path'].$p);
+
+            @unlink( $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$p );
         }
 
         $delete_stack = array();

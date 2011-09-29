@@ -910,7 +910,7 @@ class RepositoryManager
                         // We delete our .new, and remove all reference for it from the DB
 
                         // Delete this new file from the fileSystem
-                        @unlink($files[$i]->full_path.'.new');
+                        @unlink($files[$i]->full_new_path);
 
                         // Delete from work table
                         $this->delWork(array($files[$i]));
@@ -959,6 +959,23 @@ class RepositoryManager
         return $stack;
 
     }
+
+    public function ensureFoldersExists($folders)
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        while( list($folderPath, $data) = each($folders) ) {
+
+            if( ! is_dir($appConf[$project]['vcs.path'].$folderPath) ) {
+
+                mkdir( $appConf[$project]['vcs.path'].$folderPath, 0777, true );
+
+            }
+        }
+    }
+
 
     /**
      * Get only Folders we need to commit according to chosen files
@@ -1050,15 +1067,15 @@ class RepositoryManager
     {
         switch ($type) {
             case 'new':
-                // remove .new file
+                // remove file in -new folder
                 for ($i=0; $i < count($files); $i++) {
-                    @unlink($files[$i]->full_path.'.new');
+                    @unlink($files[$i]->full_new_path);
                 }
                 break;
             case 'update':
-                // remove .new file
+                // remove file in -new folder
                 for ($i=0; $i < count($files); $i++) {
-                    @unlink($files[$i]->full_path.'.new');
+                    @unlink($files[$i]->full_new_path);
                     @unlink($files[$i]->full_path.'.bak');
                 }
                 break;
@@ -1088,6 +1105,10 @@ class RepositoryManager
         $foldersInfos = $this->getOnlyFoldersForFiles($foldersInfos, $fileInfos);
 
         if( $foldersInfos ) {
+
+            // We must create this folder before commit it
+            $this->ensureFoldersExists($foldersInfos);
+
             $c = VCSFactory::getInstance()->commitFolders($foldersInfos);
             $commitLog = array_merge($commitLog, $c);
             $this->delWork($foldersInfos);
@@ -1320,8 +1341,7 @@ class RepositoryManager
         }
 
         // We need delete file on filesystem (for new & update)
-        $doc = $file->full_path.'.new';
-        @unlink($doc);
+        @unlink($file->full_new_path);
 
         // If type == new, we stop here and return
         if ($type == 'new') {
@@ -1623,7 +1643,7 @@ class RepositoryManager
         $path = $file->path;
         
         if( substr($name, -4) === '.new' ) {
-        	$toDisplay = true;
+            $toDisplay = true;
         } else {
             $toDisplay = false;
         }
@@ -2078,6 +2098,28 @@ EOD;
         }
     }
     
+    /**
+     * Create the folder how hold all modified files for this project.
+     *
+     */
+    public function initCreateFolderForModifiedFiles()
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        $folderPath = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new';
+
+        if( is_dir($folderPath) ) {
+            return false; // already exist
+        } else {
+            if( mkdir($folderPath) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }
 
 ?>

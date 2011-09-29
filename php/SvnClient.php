@@ -547,20 +547,22 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $create_stack = array();
         for ($i = 0; $create && $i < count($create); $i++) {
-            $p = $create[$i]->full_path;
-            $create_stack[] = $p;
+            $p_to = $create[$i]->full_path;
+            $p_from = $create[$i]->full_new_path;
+            $create_stack[] = $p_to;
 
-            // Pre-commit : rename .new to actual file
-            @copy($p.'.new', $p);
+            // Pre-commit : rename *-new/foo.xml to actual file
+            @copy($p_from, $p_to);
         }
 
         $update_stack = array();
         for ($i = 0; $update && $i < count($update); $i++) {
-            $p = $update[$i]->full_path;
-            $update_stack[] = $p;
+            $p_to = $update[$i]->full_path;
+            $p_from = $update[$i]->full_new_path;
+            $update_stack[] = $p_to;
 
-            // Pre-commit : rename .new to actual file
-            @copy($p.'.new', $p);
+            // Pre-commit : rename *-new/foo.xml to actual file
+            @copy($p_from, $p_to);
         }
 
         $delete_stack = array();
