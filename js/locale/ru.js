@@ -303,6 +303,7 @@ var i18n = new Array();
   i18n["<b>Expand</b> in a popup"] = "<b>Расширить</b> во всплывающем окне";
   i18n["<b>Preview</b> in a popup"] = "<b>Предпросмотр</b> во всплывающем окне";
   i18n["You must save your file in order to preview the result."] = "Для предпросмотра результата необходимо сохранить файл.";
+  i18n["Open for editing in a new Tab"] = "Редактировать в новой вкладке";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -544,6 +545,7 @@ var i18n = new Array();
 
   i18n["File {0} modified by me"] = "Файл {0}, измененный мной";
   i18n["File {0} modified by {1}"] = "Файл {0}, измененный {1}";
+  i18n["{0} mine"] = " - {0} из них ваши";
 
 
 // In file: ../../js/ui/task/PingTask.js
