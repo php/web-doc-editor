@@ -545,6 +545,7 @@ var i18n = new Array();
 
   i18n["File {0} modified by me"] = "Fichier {0} modifié par moi";
   i18n["File {0} modified by {1}"] = "Fichier {0} modifié par {1}";
+  i18n["{0} mine"] = " dont {0} à moi";
 
 
 // In file: ../../js/ui/task/PingTask.js

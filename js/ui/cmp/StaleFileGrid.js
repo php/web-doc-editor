@@ -38,7 +38,29 @@ ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore({
     groupField: 'path',
     listeners: {
         datachanged: function(ds){
-            Ext.getDom('acc-need-update-nb').innerHTML = ds.getCount();
+            
+            var nbItems = ds.getCount(),
+                nbItemsForCurrentUser = false;
+            
+            if( ! PhDOE.user.isAnonymous )
+            {
+                ds.each(function(record) {
+                    
+                    if( record.data.maintainer == PhDOE.user.login ) {
+                        nbItemsForCurrentUser ++;
+                    }
+                    
+                }, this);
+                
+            }
+            
+            if( nbItemsForCurrentUser )
+            {
+                Ext.getDom('acc-need-update-nb').innerHTML = nbItems + ' - '+ String.format(_('{0} mine'), nbItemsForCurrentUser);
+            } else {
+                Ext.getDom('acc-need-update-nb').innerHTML = nbItems;
+            }
+            
         }
     }
 });
