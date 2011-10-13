@@ -545,7 +545,7 @@ var i18n = new Array();
 
   i18n["File {0} modified by me"] = "Файл {0}, измененный мной";
   i18n["File {0} modified by {1}"] = "Файл {0}, измененный {1}";
-  i18n["{0} mine"] = " - {0} из них ваши";
+  i18n["{0} mine"] = " {0} из них ваши";
 
 
 // In file: ../../js/ui/task/PingTask.js
