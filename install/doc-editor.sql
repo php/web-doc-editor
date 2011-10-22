@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `checkEntities` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Structure of table `staticValue`
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `staticValue` (
   `value` LONGTEXT NOT NULL,
   `date` datetime NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `commitMessage` (
   `text` text NOT NULL,
   `user` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `errorfiles` (
   `value_lang` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `check_noexamples` int(11) DEFAULT NULL,
   `check_noerrors` int(11) DEFAULT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -119,24 +119,28 @@ CREATE TABLE IF NOT EXISTS `translators` (
   `vcs` varchar(255) NOT NULL,
   `editor` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
 -- Structure of table `users`
 --
+    -> | authService    | varchar(255)     | NO   |     | VCS     |                |
+    -> | authServiceID  | text             | NO   |     | NULL    |                |
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
+  `authService` varchar(255) NOT NULL DEFAULT 'VCS',
+  `authServiceID` text NOT NULL,
   `vcs_login` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `anonymousIdent` varchar(255) NOT NULL,
   `conf` text NOT NULL,
   `last_connect` datetime NOT NULL,
   KEY `userID` (`userID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -150,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `failedBuildLog` (
   `log` mediumtext NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -167,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `dictionary` (
   `lastUser` varchar(255) NOT NULL,
   `lastDate` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -183,7 +187,7 @@ CREATE TABLE IF NOT EXISTS `userNotes` (
   `user` varchar(50) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
 -- --------------------------------------------------------
@@ -210,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `work` (
   `module` enum('workInProgress','PatchesForReview') NOT NULL,
   `patchID` int(11) DEFAULT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Structure of table `patches`
@@ -226,4 +230,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
