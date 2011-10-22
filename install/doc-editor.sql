@@ -126,8 +126,6 @@ CREATE TABLE IF NOT EXISTS `translators` (
 --
 -- Structure of table `users`
 --
-    -> | authService    | varchar(255)     | NO   |     | VCS     |                |
-    -> | authServiceID  | text             | NO   |     | NULL    |                |
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
