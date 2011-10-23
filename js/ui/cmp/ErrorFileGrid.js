@@ -39,7 +39,24 @@ ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore({
     groupField: 'path',
     listeners: {
         datachanged: function(ds){
-            Ext.getDom('acc-error-nb').innerHTML = ds.getCount();
+
+            var nbItems = ds.getCount(),
+                nbItemsForCurrentUser = false;
+
+            if( !PhDOE.user.isAnonymous )
+            {
+                ds.each(function(record) {
+
+                    if( record.data.maintainer == PhDOE.user.login ) {
+                        nbItemsForCurrentUser ++;
+                    }
+
+                }, this);
+
+            }
+
+            Ext.getDom('acc-error-nb').innerHTML = nbItems + (nbItemsForCurrentUser ? (' - '+ String.format(_('{0} mine'), nbItemsForCurrentUser)) : '');
+
         }
     }
 });
