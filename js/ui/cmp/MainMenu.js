@@ -28,8 +28,8 @@ ui.cmp._MainMenu.store = new Ext.data.Store({
 
 ui.cmp._MainMenu.store.on('load', function(store)
 {
-    // We put the lang libel into Info-Language
-    Ext.getDom('Info-Language').innerHTML = store.getById(PhDOE.user.lang).data.name;
+    // We put the lang libel into Info-Language and Topic-Language
+    Ext.getDom('Info-Language').innerHTML = Ext.getDom('Topic-Language').innerHTML = store.getById(PhDOE.user.lang).data.name;
 
     store.each(function(record) {
 

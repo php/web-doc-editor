@@ -1639,7 +1639,8 @@ class ExtJsController
         $r['userIsLangAdmin']  = $am->isLangAdmin();
         $r['userConf']  = $am->userConf;
         $r['userEmail'] = $am->email;
-        $r['topicInfo'] = $rf->getStaticValue('main_topic', '');
+        $r['topicInfo']['global'] = $rf->getStaticValue('main_topic', '');
+        $r['topicInfo']['lang'] = $rf->getStaticValue('main_topic', $am->vcsLang);
         $r['appConf']   = Array(
             "projectMailList" => $am->appConf[$am->project]['project.mail.list'],
             "viewVcUrl"       => $am->appConf[$am->project]['viewVc.url']
@@ -1668,6 +1669,7 @@ class ExtJsController
         }
         
         $content = $this->getRequestVariable('content');
+        $isLang = (bool) ($this->getRequestVariable('lang') == 'lang');
         
         $params = Array(
             'content' => $content,
@@ -1675,7 +1677,7 @@ class ExtJsController
             'topicDate' => @date('Y-m-d H:i:s')
         );
         
-        RepositoryManager::getInstance()->setStaticValue('main_topic', '', json_encode($params));
+        RepositoryManager::getInstance()->setStaticValue('main_topic', $isLang ? $am->vcsLang : '', json_encode($params));
         
         return JsonResponseBuilder::success($params);
         

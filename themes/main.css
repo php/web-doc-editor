@@ -377,7 +377,7 @@
     background: transparent url(./img/page.png) no-repeat 0 1px;
 }
 
-#topic-info-user {
+#topic-info-user, #topic-info-user-lang {
     color: #555555;
     font-size: 10px;
     text-align: right;

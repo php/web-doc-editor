@@ -21,9 +21,16 @@ var PhDOE = function()
         },
         
         topic : {
-            author: '',
-            content: '',
-            topicDate: ''
+            global: {
+                author: '',
+                content: '',
+                topicDate: ''
+            },
+            lang: {
+                author: '',
+                content: '',
+                topicDate: ''
+            }
         },
         
         
@@ -198,6 +205,7 @@ var PhDOE = function()
             
             // We set the Topic
             PhDOE.setTopic();
+            PhDOE.setTopic(true);
         },
 
         loadAllStore : function()
@@ -205,180 +213,121 @@ var PhDOE = function()
             var progressBar = new Ext.ProgressBar({
                     width:300,
                     renderTo:'loading-progressBar'
-                });
-            progressBar.show();
+                }),
+                items = [],
+                cascadeCallback;
 
             // Store to load for LANG project
-            if (PhDOE.userLang !== 'en') {
-
+            if (PhDOE.user.lang !== 'en') {
                 // We load all stores, one after the others
-                document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/11, '1 of 11...');
-                ui.cmp._MainMenu.store.load({
-                    callback: function() {
-                        progressBar.updateProgress(2/11, '2 of 11...');
-                        ui.cmp.StaleFileGrid.getInstance().store.load({
-                            callback: function() {
-                                progressBar.updateProgress(3/11, '3 of 11...');
-                                ui.cmp.ErrorFileGrid.getInstance().store.load({
-                                    callback: function() {
-                                        progressBar.updateProgress(4/11, '4 of 11...');
-                                        ui.cmp.PendingReviewGrid.getInstance().store.load({
-                                            callback: function() {
-                                                progressBar.updateProgress(5/11, '5 of 11...');
-                                                ui.cmp.NotInENGrid.getInstance().store.load({
-                                                    callback: function() {
-	                                                    progressBar.updateProgress(6/11, '6 of 11...');
-	                                                    ui.cmp.PortletSummary.getInstance().store.load({
-	                                                        callback: function() {
-	                                                            progressBar.updateProgress(7/11, '7 of 11...');
-	                                                            ui.cmp.PortletTranslationGraph.getInstance().store.load({
-	                                                                callback: function() {
-	                                                                    progressBar.updateProgress(8/11, '8 of 11...');
-	                                                                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-	                                                                        callback: function() {
-	                                                                            progressBar.updateProgress(9/11, '9 of 11...');
-	                                                                            ui.cmp.PortletTranslator.getInstance().store.load({
-	                                                                                callback: function() {
-	                                                                                    progressBar.updateProgress(10/11, '10 of 11...');
-	                                                                                    ui.cmp.PendingTranslateGrid.getInstance().store.load({
-	                                                                                        callback: function() {
-	                                                                                            progressBar.updateProgress(11/11, '11 of 11...');
-	                                                                                            ui.cmp.PortletInfo.getInstance().store.load({
-	                                                                                                callback: function() {
-	                                                                                                    // Now, we can to remove the global mask
-	                                                                                                    Ext.get('loading').remove();
-	                                                                                                    Ext.fly('loading-mask').fadeOut({ remove : true });
-	                                                                                                    progressBar.destroy();
-	                                                                                                    PhDOE.afterLoadAllStore();
-	                                                                                                }
-	                                                                                            });
-	                                                                                        }
-	                                                                                    });
-	                                                                                }
-	                                                                            });
-	                                                                        }
-	                                                                    });
-	                                                                }
-	                                                            });
-	                                                        }
-	                                                    });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+                items = [
+                    ui.cmp._MainMenu.store,
+                    ui.cmp.StaleFileGrid.getInstance().store,
+                    ui.cmp.ErrorFileGrid.getInstance().store,
+                    ui.cmp.PendingReviewGrid.getInstance().store,
+                    ui.cmp.NotInENGrid.getInstance().store,
+                    ui.cmp.PortletSummary.getInstance().store,
+                    ui.cmp.PortletTranslationGraph.getInstance().store,
+                    ui.cmp.PortletTranslationsGraph.getInstance().store,
+                    ui.cmp.PortletTranslator.getInstance().store,
+                    ui.cmp.PendingTranslateGrid.getInstance().store,
+                    ui.cmp.PortletInfo.getInstance().store
+                ];
             } else {
                 // Store to load only for EN project
-                document.getElementById("loading-msg").innerHTML = "Loading data...";
-                progressBar.updateProgress(1/4, '1 of 4...');
-                ui.cmp._MainMenu.store.load({
+                items = [
+                    ui.cmp._MainMenu.store,
+                    ui.cmp.PortletTranslationsGraph.getInstance().store,
+                    ui.cmp.ErrorFileGrid.getInstance().store,
+                    ui.cmp.PortletInfo.getInstance().store
+                ];
+
+
+            }
+
+            // after i iteration call i+1 iteration, while i < items.length
+            cascadeCallback = function(i) {
+                progressBar.updateProgress((i+1)/items.length, (i+1) + ' of ' + items.length + '...');
+                items[i].load({
                     callback: function() {
-	                    progressBar.updateProgress(2/4, '2 of 4...');
-	                    ui.cmp.PortletTranslationsGraph.getInstance().store.load({
-	                        callback: function() {
-	                            progressBar.updateProgress(3/4, '3 of 4...');
-	                            ui.cmp.ErrorFileGrid.getInstance().store.load({
-	                                callback: function() {
-	                                    progressBar.updateProgress(4/4, '4 of 4...');
-	                                    ui.cmp.PortletInfo.getInstance().store.load({
-	                                        callback: function() {
-	                                            // Now, we can to remove the global mask
-	                                            Ext.get('loading').remove();
-	                                            Ext.fly('loading-mask').fadeOut({ remove : true });
-	                                            progressBar.destroy();
-	                                            PhDOE.afterLoadAllStore();
-	                                        }
-	                                    });
-	                                }
-	                            });
-	                        }
-	                    });
+                        i++;
+                        if (i < items.length) {
+                            cascadeCallback(i);
+                        } else {
+                            // Now, we can to remove the global mask
+                            Ext.get('loading').remove();
+                            Ext.fly('loading-mask').fadeOut({ remove : true });
+                            progressBar.destroy();
+                            PhDOE.afterLoadAllStore();
+                        }
                     }
                 });
             }
+
+            progressBar.show();
+            document.getElementById("loading-msg").innerHTML = "Loading data...";
+            cascadeCallback(0);
+
         },
 
         reloadAllStore: function() {
 
+            var items = [], cascadeCallback;
+
             // Store to reload for LANG project
-            if (PhDOE.userLang !== 'en') {
+            if (PhDOE.user.lang !== 'en') {
                 // We reload all stores, one after the others
-                ui.cmp.PendingTranslateGrid.getInstance().store.reload({
-                    callback: function() {
-                        ui.cmp.StaleFileGrid.getInstance().store.reload({
-                            callback: function() {
-                                ui.cmp.ErrorFileGrid.getInstance().store.reload({
-                                    callback: function() {
-                                        ui.cmp.PendingReviewGrid.getInstance().store.reload({
-                                            callback: function() {
-                                                ui.cmp.NotInENGrid.getInstance().store.reload({
-                                                    callback: function() {
-                                                        ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
-                                                            function() {
-                                                                ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload(
-                                                                    function() {
-                                                                        ui.cmp.PortletSummary.getInstance().store.reload({
-                                                                            callback: function() {
-                                                                                ui.cmp.PortletTranslator.getInstance().store.reload({
-                                                                                    callback: function() {
-                                                                                        ui.cmp.PortletTranslationGraph.getInstance().store.reload({
-                                                                                            callback: function() {
-                                                                                                ui.cmp.PortletTranslationsGraph.getInstance().store.reload({
-                                                                                                    callback: function() {
-                                                                                                        ui.cmp.PortletInfo.getInstance().store.reload();
-                                                                                                    }
-                                                                                                });
-                                                                                            }
-                                                                                        });
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                );
-                                                            }
-                                                        );
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+
+                items = [
+                    ui.cmp.PendingTranslateGrid.getInstance().store,
+                    ui.cmp.StaleFileGrid.getInstance().store,
+                    ui.cmp.ErrorFileGrid.getInstance().store,
+                    ui.cmp.PendingReviewGrid.getInstance().store,
+                    ui.cmp.NotInENGrid.getInstance().store,
+                    ui.cmp.WorkTreeGrid.getInstance().getRootNode(),
+                    ui.cmp.PatchesTreeGrid.getInstance().getRootNode(),
+                    ui.cmp.PortletSummary.getInstance().store,
+                    ui.cmp.PortletTranslator.getInstance().store,
+                    ui.cmp.PortletTranslationGraph.getInstance().store,
+                    ui.cmp.PortletTranslationsGraph.getInstance().store,
+                    ui.cmp.PortletInfo.getInstance().store
+                ];
+
             } else {
                 // Store to reload only for EN project
-                ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(
-                    function() {
-                        ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload(
-                            function() {
-                                ui.cmp.PortletInfo.getInstance().store.reload();
-                            }
-                        );
-                    }
-                );
+                items = [
+                    ui.cmp.WorkTreeGrid.getInstance().getRootNode(),
+                    ui.cmp.PatchesTreeGrid.getInstance().getRootNode(),
+                    ui.cmp.PortletInfo.getInstance().store
+                ];
             }
+
+            // after i iteration call i+1 iteration, while i < items.length
+            cascadeCallback = function(i) {
+                items[i].reload(function() {
+                        i++;
+                        if (i < items.length) {
+                            cascadeCallback(i);
+                        }
+                });
+            }
+
+            cascadeCallback(0);
+
+
         },
 
-        saveTopic: function(content) {
-            
+        saveTopic: function(content, isLang) {
             ui.task.setTopicTask({
-                content: content
+                content: content,
+                isLang: isLang
             });
         },
         
-        setTopic: function() {
-            
-            Ext.get('topic-info-content').dom.innerHTML = PhDOE.topic.content;
-            Ext.get('topic-info-user').dom.innerHTML = String.format(_('Defined by {0}, {1}'), PhDOE.topic.author, PhDOE.topic.topicDate);
+        setTopic: function(isLang) {
+            var topic = PhDOE.topic[isLang ? 'lang' : 'global'];
+            Ext.get('topic-info-content' + (isLang ? '-lang' : '')).dom.innerHTML = topic.content;
+            Ext.get('topic-info-user' + (isLang ? '-lang' : '')).dom.innerHTML = String.format(_('Defined by {0}, {1}'), topic.author,topic.topicDate);
             
         },
         
@@ -674,26 +623,33 @@ var PhDOE = function()
                                 xtype:'container',
                                 columnWidth: .5,
                                 html   : '<div class="topic-info"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
-                                            '<h3>'+_('Topic:')+'</h3>' +
-                                            '<p id="topic-info-content">-</p>' +
-                                            '<div id="topic-info-user">-</div>' +
+                                            '<div id="topic-info-container">' +
+                                                '<h3>'+_('Topic:')+'</h3>' +
+                                                '<p id="topic-info-content">-</p>' +
+                                                '<div id="topic-info-user">-</div>' +
+                                            '</div>' +
+                                            '<div id="topic-info-container-lang">' +
+                                                '<h3><em id="Topic-Language">-</em>' +_('Topic:')+'</h3>' +
+                                                '<p id="topic-info-content-lang">-</p>' +
+                                                '<div id="topic-info-user-lang">-</div>' +
+                                            '</div>' +
                                         '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
                                 listeners: {
                                     afterrender: function(c) {
-                                        c.el.on('dblclick', function() {
-                                            
-                                            // Don't allow anonymous to modify the topic
-                                            if( PhDOE.user.isAnonymous ) {
-                                                return;
-                                            }
-                                            
-                                            
-                                            var topicContent = Ext.get('topic-info-content').dom.innerHTML;
-                                            
-                                            Ext.get('topic-info-content').dom.innerHTML = '';
-                                            
+                                        // Don't allow anonymous to modify the topic
+                                        if( PhDOE.user.isAnonymous ) {
+                                            return;
+                                        }
+
+                                        var editTopic = function(isLang) {
+
+                                            var contentElName = 'topic-info-content' + (isLang ? '-lang' : ''),
+                                                topicContent = Ext.get(contentElName).dom.innerHTML;
+
+                                            Ext.get(contentElName).dom.innerHTML = '';
+
                                             new Ext.FormPanel({
-                                                renderTo: 'topic-info-content',
+                                                renderTo: contentElName,
                                                 layout:'anchor',
                                                 border: false,
                                                 items:[{
@@ -705,15 +661,22 @@ var PhDOE = function()
                                                 buttons:[{
                                                     text:_('Save'),
                                                     handler: function() {
-                                                        PhDOE.saveTopic(this.ownerCt.ownerCt.items.items[0].getValue());
+                                                        PhDOE.saveTopic(this.ownerCt.ownerCt.items.items[0].getValue(), isLang);
                                                     }
                                                 },{
                                                     text:_('Cancel'),
                                                     handler: function() {
-                                                        PhDOE.setTopic();
+                                                        PhDOE.setTopic(isLang);
                                                     }
                                                 }]
                                             });
+                                        };
+
+                                        Ext.get('topic-info-container').on('dblclick', function() {
+                                            editTopic();
+                                        });
+                                        Ext.get('topic-info-container-lang').on('dblclick', function() {
+                                            editTopic(true);
                                         });
                                     }
                                 }
@@ -757,7 +720,7 @@ var PhDOE = function()
 
                                     new ui.task.UpdateConfTask({
                                         module:'main',
-                                        itemName  : (PhDOE.userLang === 'en') ? 'portalSortEN' : 'portalSortLANG',
+                                        itemName  : (PhDOE.user.lang === 'en') ? 'portalSortEN' : 'portalSortLANG',
                                         value : Ext.util.JSON.encode(portal),
                                         notify: false
                                     });

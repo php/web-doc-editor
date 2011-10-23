@@ -24,11 +24,17 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.project   = o.mess.project;
             PhDOE.app.conf   = o.mess.appConf;
 
-            if( o.mess.topicInfo ) {
-                PhDOE.topic.author = o.mess.topicInfo.author;
-                PhDOE.topic.content = o.mess.topicInfo.content;
-                PhDOE.topic.topicDate = Date.parseDate(o.mess.topicInfo.topicDate, 'Y-m-d H:i:s');
-                PhDOE.topic.topicDate = PhDOE.topic.topicDate.format(_('Y-m-d, H:i'));
+            if( o.mess.topicInfo && o.mess.topicInfo.lang ) {
+                PhDOE.topic.lang.author = o.mess.topicInfo.lang.author;
+                PhDOE.topic.lang.content = o.mess.topicInfo.lang.content;
+                PhDOE.topic.lang.topicDate = Date.parseDate(o.mess.topicInfo.lang.topicDate, 'Y-m-d H:i:s');
+                PhDOE.topic.lang.topicDate = PhDOE.topic.lang.topicDate.format(_('Y-m-d, H:i'));
+            }
+            if( o.mess.topicInfo && o.mess.topicInfo.global ) {
+                PhDOE.topic.global.author = o.mess.topicInfo.global.author;
+                PhDOE.topic.global.content = o.mess.topicInfo.global.content;
+                PhDOE.topic.global.topicDate = Date.parseDate(o.mess.topicInfo.global.topicDate, 'Y-m-d H:i:s');
+                PhDOE.topic.global.topicDate = PhDOE.topic.global.topicDate.format(_('Y-m-d, H:i'));
             }
             
             //For the theme, we apply it.
