@@ -19,7 +19,7 @@ $availableProject = $pm->getAvailableProject();
 
 
 // Don't send email for this lang code: ar,bg,cs,nl,el,he,pt,sl,sv
-$dontSendEmail = array("ar","bg","cs","nl","el","he","pt","sl","sv");
+$dontSendEmail = array("ar","bg","cs","nl","no","el","he","pt","sl","sv");
 
 while( list($key, $project) = each($availableProject) ) {
 
