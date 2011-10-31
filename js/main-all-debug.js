@@ -7604,38 +7604,6 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
 });
 Ext.namespace('ui','ui.cmp');
 
-ui.cmp.Chat = Ext.extend(Ext.Window,
-{
-    id        : 'win-chat',
-    iconCls   : 'iconChat',
-    layout    : 'fit',
-    width     : 800,
-    height    : 600,
-    modal     : true,
-    plain     : true,
-    bodyStyle : 'color:#000',
-    closeAction:'hide',
-
-    initComponent : function()
-    {
-        var chatLogin = PhDOE.user.login;
-        
-        if( PhDOE.user.isAnonymous ) {
-            chatLogin = 'an%3F%3F%3F';
-        }
-        
-        Ext.apply(this,
-        {
-            title : _('Chat with us on IRC !'),
-            items : [new Ext.ux.IFrameComponent({
-                id: 'frame-win-chat',
-                url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
-            })]
-        });
-        ui.cmp.Chat.superclass.initComponent.call(this);
-    }
-});Ext.namespace('ui','ui.cmp');
-
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
     title      : _('Check build'),
@@ -9060,7 +9028,8 @@ ui.cmp._EditorConf.uiLangStore = new Ext.data.SimpleStore({
         ['en',      _('English')],
         ['fr',      _('French')],
         ['ru',      _('Russian')],
-        ['es',      _('Spanish')]
+        ['es',      _('Spanish')],
+	    ['ar',      _('Arabic')]
     ]
 });
 
@@ -10526,7 +10495,8 @@ ui.cmp.EditorConf = Ext.extend(Ext.Window,
         });
         ui.cmp.EditorConf.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._EmailPrompt');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._EmailPrompt');
 
 // config - { name, email }
 ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
