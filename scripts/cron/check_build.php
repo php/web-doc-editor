@@ -18,8 +18,8 @@ $pm = ProjectManager::getInstance();
 $availableProject = $pm->getAvailableProject();
 
 
-// Don't send email for this lang code: ar,bg,cs,nl,el,he,pt,sl,sv
-$dontSendEmail = array("ar","bg","cs","nl","no","el","he","pt","sl","sv");
+// Don't build for this lang code: ar,bg,cs,nl,el,he,pt,sl,sv
+$dontBuild = array("ar","bg","cs","nl","no","el","he","pt","sl","sv");
 
 while( list($key, $project) = each($availableProject) ) {
 
@@ -44,7 +44,7 @@ while( list($key, $project) = each($availableProject) ) {
     // For all language, we check the build
     foreach ($existingLanguage as $lang) {
 
-        if( in_array($lang, $dontSendEmail) ) {
+        if( in_array($lang["code"], $dontBuild) ) {
             echo "Exclude build for this language\n";
             continue;
         }
@@ -55,8 +55,7 @@ while( list($key, $project) = each($availableProject) ) {
 
         $lock = new LockFile('project_'.$pm->project.'_lock_check_build_'.$lang);
         if ($lock->lock()) {
-
-
+            
             $return = $rm->checkBuild($lang);
 
             // What we must do when the build failed
