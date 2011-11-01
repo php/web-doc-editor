@@ -624,6 +624,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/CheckFileTask.js
   i18n["Checking for error. Please, wait..."] = "Vérification du fichier. Veuillez patienter...";
+  i18n["An error occured while checking this file for errors. Please, try again."] = "Une erreur est survenue lors de la vérification des erreurs. Veuillez ré-essayer.";
   i18n["Check for errors"] = "Vérification du fichier";
   i18n["There is no error."] = "Il n'y a aucune erreur.";
 
