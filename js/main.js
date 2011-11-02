@@ -275,9 +275,10 @@ var PhDOE = function()
             var items = [], cascadeCallback;
 
             // Store to reload for LANG project
+            // NOTE: For items differ from Ext.data.GroupingStore.Ext.extend.constructor and Ext.tree.AsyncTreeNode should
+            // change condition in cascadeCallback, if reload method require differing parameters
             if (PhDOE.user.lang !== 'en') {
                 // We reload all stores, one after the others
-
                 items = [
                     ui.cmp.PendingTranslateGrid.getInstance().store,
                     ui.cmp.StaleFileGrid.getInstance().store,
@@ -292,7 +293,6 @@ var PhDOE = function()
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store
                 ];
-
             } else {
                 // Store to reload only for EN project
                 items = [
@@ -302,18 +302,26 @@ var PhDOE = function()
                 ];
             }
 
+
+
             // after i iteration call i+1 iteration, while i < items.length
             cascadeCallback = function(i) {
-                items[i].reload(function() {
-                        i++;
-                        if (i < items.length) {
-                            cascadeCallback(i);
-                        }
-                });
+                // accessorial callback
+                var cascadeSubCallback = function() {
+                    i++;
+                    if (i < items.length) {
+                        cascadeCallback(i);
+                    }
+                };
+
+                items[i].reload(
+                    items[i] instanceof Ext.tree.AsyncTreeNode
+                        ? cascadeSubCallback                // Ext.tree.AsyncTreeNode
+                        : {callback: cascadeSubCallback}   // Ext.data.GroupingStore.Ext.extend.constructor
+                );
             }
 
             cascadeCallback(0);
-
 
         },
 
