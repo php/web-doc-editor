@@ -93,7 +93,16 @@ if (!isset($_SESSION['userID'])) {
     
     //Google
     echo jsLoadTemplate('https://www.google.com/jsapi');
-    echo jsCallTemplate("google.load('friendconnect', '0.8');");
+
+    echo jsCallTemplate("
+
+if(typeof google == 'undefined' ) {
+    var google = false;
+} else {
+    google.load('friendconnect', '0.8');
+}
+
+");
     
     
     echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');

@@ -130,8 +130,9 @@ var PhDOE_loginPage = function()
                                 },
                                 items: [{
                                     title: 'Facebook',
+                                    id:'accordion-fb',
                                     layout:'fit',
-                                    hidden: (!FB),
+                                    disabled: (!FB),
                                     collapsed : true,
                                     iconCls:'iconFacebook',
                                     html: '<div id="facebook-box">'+
@@ -153,6 +154,17 @@ var PhDOE_loginPage = function()
                                         afterrender: function(c) {
                                             
                                             if ( !FB ) {
+                                                
+                                                new Ext.ToolTip({
+                                                    target: Ext.getCmp('accordion-fb').id,
+                                                    anchor: 'bottom',
+                                                    autoShow: true,
+                                                    autoHide: false,
+                                                    closable: true,
+                                                    title: 'Error',
+                                                    html: 'Error while loading Facebook API'
+                                                });
+                                                
                                                 return;
                                             }
                                             
@@ -220,6 +232,8 @@ var PhDOE_loginPage = function()
                                 },{
                                     title: 'Google Friend Connect',
                                     iconCls:'iconGoogle',
+                                    id:'accordion-google',
+                                    disabled: (!google),
                                     collapsed : true,
                                     html: '<div id="google-box"></div>',
                                     listeners: {
@@ -228,6 +242,21 @@ var PhDOE_loginPage = function()
                                         },
                                         afterrender: function(cmp) {
 
+                                            
+                                            if ( !google ) {
+                                                
+                                                new Ext.ToolTip({
+                                                    target: Ext.getCmp('accordion-google').id,
+                                                    anchor: 'left',
+                                                    autoHide: false,
+                                                    closable: true,
+                                                    title: 'Error',
+                                                    html: 'Error while loading Google Connect API'
+                                                });
+                                                
+                                                return;
+                                            }
+                                            
                                             google.friendconnect.container.loadOpenSocialApi({ 
                                                 site: '05056619882644935463',
                                                 onload: function() {
