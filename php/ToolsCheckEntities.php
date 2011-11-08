@@ -40,8 +40,10 @@ class ToolsCheckEntities {
         $project = $am->project;
 
         // This entities will not be checked as there are always wrong. We use it into the manual like this : "&url.foo;bar"
+        // Entries should not include the & and ;
         $this->EntitiesNotChecked = Array(
-            "url.pecl.package.get" // without & and ;
+            "url.pecl.package.get",
+            "url.pecl.package",
         );
 
         $this->urlConnectTimeout = 10;
