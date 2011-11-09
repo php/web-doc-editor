@@ -233,7 +233,7 @@ var PhDOE_loginPage = function()
                                     title: 'Google Friend Connect',
                                     iconCls:'iconGoogle',
                                     id:'accordion-google',
-                                    disabled: (!google),
+                                    disabled: ( !google || !google.friendconnect || !google.friendconnect.container ),
                                     collapsed : true,
                                     html: '<div id="google-box"></div>',
                                     listeners: {
@@ -243,7 +243,7 @@ var PhDOE_loginPage = function()
                                         afterrender: function(cmp) {
 
                                             
-                                            if ( !google ) {
+                                            if ( !google || !google.friendconnect || !google.friendconnect.container ) {
                                                 
                                                 new Ext.ToolTip({
                                                     target: Ext.getCmp('accordion-google').id,
@@ -257,7 +257,7 @@ var PhDOE_loginPage = function()
                                                 return;
                                             }
                                             
-                                            google.friendconnect.container.loadOpenSocialApi({ 
+                                            google.friendconnect.container.loadOpenSocialApi({
                                                 site: '05056619882644935463',
                                                 onload: function() {
                                                     GGinitAllData();
