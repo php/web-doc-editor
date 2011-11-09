@@ -102,6 +102,20 @@ if(typeof google == 'undefined' ) {
     google.load('friendconnect', '0.8');
 }
 
+// Fix for IE9
+if (typeof Range.prototype.createContextualFragment == \"undefined\") {
+    Range.prototype.createContextualFragment = function(html) {
+        var doc = this.startContainer.ownerDocument;
+        var container = doc.createElement(\"div\");
+        container.innerHTML = html;
+        var frag = doc.createDocumentFragment(), n;
+        while ( (n = container.firstChild) ) {
+            frag.appendChild(n);
+        }
+        return frag;
+    };
+}  
+
 ");
     
     
