@@ -7,6 +7,10 @@ class DBConnection
 {
     private static $instance;
 
+    /**
+     * @static
+     * @return DBConnection
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

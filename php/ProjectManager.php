@@ -7,6 +7,10 @@ class ProjectManager
 {
     private static $instance;
 
+    /**
+     * @static
+     * @return ProjectManager
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

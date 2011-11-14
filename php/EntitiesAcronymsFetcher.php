@@ -10,6 +10,10 @@ class EntitiesAcronymsFetcher {
     public $acronyms;
     public $entities;
 
+    /**
+     * @static
+     * @return EntitiesAcronymsFetcher
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

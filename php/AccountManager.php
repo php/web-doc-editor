@@ -13,6 +13,10 @@ class AccountManager
     private static $instance;
     private $conn;
 
+    /**
+     * @static
+     * @return AccountManager
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

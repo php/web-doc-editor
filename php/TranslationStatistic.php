@@ -10,6 +10,10 @@ class TranslationStatistic
 
     private $conn;
 
+    /**
+     * @static
+     * @return TranslationStatistic
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

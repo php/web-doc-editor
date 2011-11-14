@@ -13,6 +13,10 @@ class DictionaryManager {
     public $entities;
     private $conn;
 
+    /**
+     * @static
+     * @return DictionaryManager
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

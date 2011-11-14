@@ -11,6 +11,10 @@ class RepositoryFetcher
 
     private $conn;
 
+    /**
+     * @static
+     * @return RepositoryFetcher
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

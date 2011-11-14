@@ -5,6 +5,10 @@ class VCSFactory
 
     private static $instance;
 
+    /**
+     * @static
+     * @return VCSFactory
+     */
     public static function getInstance()
     {
         $appConf = AccountManager::getInstance()->appConf;

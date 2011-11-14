@@ -6,6 +6,10 @@ class Config
 
     public $conf = array();
 
+    /**
+     * @static
+     * @return Config
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

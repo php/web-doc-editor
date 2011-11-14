@@ -16,6 +16,10 @@ class RepositoryManager
 
     private $conn;
 
+    /**
+     * @static
+     * @return RepositoryManager
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

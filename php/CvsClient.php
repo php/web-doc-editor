@@ -6,6 +6,10 @@ class CvsClient
 {
     private static $instance;
 
+    /**
+     * @static
+     * @return CvsClient
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

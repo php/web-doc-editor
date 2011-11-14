@@ -8,6 +8,10 @@ class LogManager
 
     private $conn;
 
+    /**
+     * @static
+     * @return LogManager
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

@@ -65,6 +65,10 @@ class ToolsCheckEntities {
         $this->conn = DBConnection::getInstance();
     }
 
+    /**
+     * @static
+     * @return ToolsCheckEntities
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

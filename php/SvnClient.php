@@ -6,6 +6,10 @@ class SvnClient
 {
     private static $instance;
 
+    /**
+     * @static
+     * @return SvnClient
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {

@@ -8,6 +8,10 @@ class UserNotes {
 
     private $conn;
 
+    /**
+     * @static
+     * @return UserNotes
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
