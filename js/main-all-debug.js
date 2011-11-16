@@ -4396,12 +4396,11 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
             cls: 'x-notification',
             width: 250,
             autoHeight: true,
-            //plain: false,
             draggable: false,
             bodyStyle: 'text-align:center; padding: 10px;'
         });
         if(this.autoDestroy) {
-            this.task = new Ext.util.DelayedTask(this.hide, this);
+            this.task = new Ext.util.DelayedTask(this.close, this);
         } else {
             this.closable = true;
         }
@@ -6287,42 +6286,32 @@ ui.task.PingTask.prototype.cancel = function()
 
 ui.task.PingTask.prototype.onPingFailed = function()
 {
-    // On failure, we must do multi-things :
-    // 1 - desable the ping() task
-    // 2 - display a window to choose from "Reload this window" or "try again"
-
     this.cancel();
-
-    var win = new Ext.Window({
-        title: _('Error'),
-        iconCls: 'iconError',
-        buttonAlign: 'left',
-        closable: false,
-        padding:10, 
-        bodyBorder: false,
-        modal: true,
-        width:350,
-        height:220,
-        closeAction:'close',
-        plain: true,
-        html: _('<b>The server seems to be unreachable</b>.<br><br>You can choose to:<br><br>- <b>ping again</b> (your current work will not be deleted)<br>or<br>- <b>reload</b> the application (all current work will be lost).'),
-        buttons: [{
-            scope: this,
-            text: _('Ping again'),
-            handler: function() {
-                win.close();
-                this.delay(30000);
-            }
-        },'->',{
-            text: _('Reload the editor'),
-            handler: function(){
-                win.close();
-                window.location.href = './';
-            }
-        }]
+    
+    var winNotify = new Ext.ux.Notification({
+        iconCls     : 'iconError',
+        title       : _('Connection lost'),
+        html        : String.format(_('Retrying in {0} second(s).'), '30'),
+        autoDestroy : false
     });
-    win.show(this);
-                
+
+    winNotify.show(document);
+    
+    this.delay(30000);
+    
+    // Timer for the notification
+    var timer = 29;
+    
+    var task = new Ext.util.DelayedTask(function(){
+        if( timer > 0 ) {
+            winNotify.setMessage(String.format(_('Retrying in {0} second(s).'), timer));
+            timer -= 1;
+            task.delay(1000);
+        } else if( timer == 0 ) {
+            winNotify.animHide();
+        }
+    });
+    task.delay(1000);
 };
 
 // singleton

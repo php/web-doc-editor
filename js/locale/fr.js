@@ -550,9 +550,8 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/PingTask.js
   i18n["check in progress..."] = "Vérification en cours...";
-  i18n["Ping again"] = "Pinger à nouveau";
-  i18n["Reload the editor"] = "Recharger l'éditeur'";
-  i18n["<b>The server seems to be unreachable</b>.<br><br>You can choose to:<br><br>- <b>ping again</b> (your current work will not be deleted)<br>or<br>- <b>reload</b> the application (all current work will be lost)."] = "<b>Le serveur semble ne plus être accessible.</b>.<br><br>Vous pouvez choisir entre :<br><br>- <b>pinger à nouveau</b> (vos travaux en cours ne seront pas supprimés)<br>ou<br>- <b>recharger l'éditeur</b> (tous vos travaux courants non sauvegardés seront perdus).";
+  i18n["Connection lost"] = "Connexion perdue";
+  i18n["Retrying in {0} second(s)."] = "Nouvelle tentative de connexion dans {0} seconde(s).";
 
 
 // In file: ../../js/ui/task/UpdateSingleFolderTask.js

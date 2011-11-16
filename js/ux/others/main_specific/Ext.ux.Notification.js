@@ -22,12 +22,11 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
             cls: 'x-notification',
             width: 250,
             autoHeight: true,
-            //plain: false,
             draggable: false,
             bodyStyle: 'text-align:center; padding: 10px;'
         });
         if(this.autoDestroy) {
-            this.task = new Ext.util.DelayedTask(this.hide, this);
+            this.task = new Ext.util.DelayedTask(this.close, this);
         } else {
             this.closable = true;
         }
