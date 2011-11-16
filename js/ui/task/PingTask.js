@@ -5,6 +5,7 @@ ui.task.PingTask = function()
     this.task = new Ext.util.DelayedTask(function()
     {
         XHR({
+            scope: this,
             params  : {
                 task : 'ping'
             },
@@ -13,7 +14,7 @@ ui.task.PingTask = function()
                 var o = Ext.util.JSON.decode(r.responseText), needReloadSummary;
 
                 if (o.ping !== 'pong') {
-                    window.location.href = './';
+                    this.onPingFailed();
                 } else {
 
                     // We look if there is a modification of the count for all modules. If so, we reload the corresponding module
@@ -90,7 +91,7 @@ ui.task.PingTask = function()
             },
             failure: function()
             {
-                window.location.href = './';
+                this.onPingFailed();
             }
         });
         this.task.delay(30000);
@@ -105,6 +106,46 @@ ui.task.PingTask.prototype.delay = function(delay, newFn, newScope, newArgs)
 ui.task.PingTask.prototype.cancel = function()
 {
     this.task.cancel();
+};
+
+ui.task.PingTask.prototype.onPingFailed = function()
+{
+    // On failure, we must do multi-things :
+    // 1 - desable the ping() task
+    // 2 - display a window to choose from "Reload this window" or "try again"
+
+    this.cancel();
+
+    var win = new Ext.Window({
+        title: _('Error'),
+        iconCls: 'iconError',
+        buttonAlign: 'left',
+        closable: false,
+        padding:10, 
+        bodyBorder: false,
+        modal: true,
+        width:350,
+        height:220,
+        closeAction:'close',
+        plain: true,
+        html: _('<b>The server seems to be unreachable</b>.<br><br>You can choose to:<br><br>- <b>ping again</b> (your current work will not be deleted)<br>or<br>- <b>reload</b> the application (all current work will be lost).'),
+        buttons: [{
+            scope: this,
+            text: _('Ping again'),
+            handler: function() {
+                win.close();
+                this.delay(30000);
+            }
+        },'->',{
+            text: _('Reload the editor'),
+            handler: function(){
+                win.close();
+                window.location.href = './';
+            }
+        }]
+    });
+    win.show(this);
+                
 };
 
 // singleton
