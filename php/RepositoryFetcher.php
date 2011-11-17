@@ -740,6 +740,28 @@ class RepositoryFetcher
     }
     
     /**
+     * Check is a patch don't contain any files
+     * 
+     *
+     * @return TRUE if this patch is empty, FALSE either.
+     * @see RepositoryFetcher::getWork
+     */
+    private function _isEmptyPatch($patchs)
+    {
+        $isEmpty = true;
+
+        while( list($patch, $dataPatch) = each($patchs))
+        {
+             while( list($folder, $dataFiles) = each($dataPatch['folders']))
+            {
+                $isEmpty = false;
+            }
+        }
+        return $isEmpty;
+    }
+
+
+    /**
      * Get all files in Work module (progress work or patches for review).
      *
      * @return An associated array containing informations about files in work
@@ -850,6 +872,9 @@ class RepositoryFetcher
                 // $userInfo[0] => login
                 // $userInfo[1] => anonymousIdent
                 $userInfo = explode('@|@',$user);
+
+                // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
+                if( $this->_isEmptyPatch($patchs) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) ) { continue; }
                 
                 // Get authService from anonymousIdent
                 $tmp = explode('-', $userInfo[1]);
@@ -878,6 +903,9 @@ class RepositoryFetcher
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
+
+                    // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
+                    if( empty($dataPatch['folders']) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent )) { continue; }
                     
                     $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',patchDescription:'".((isset($patches[$dataPatch["idDB"]]["patchDescription"])) ? $patches[$dataPatch["idDB"]]["patchDescription"] : ''  )."',patchEmail:'".((isset($patches[$dataPatch["idDB"]]["patchEmail"])) ? $patches[$dataPatch["idDB"]]["patchEmail"] : ''  )."',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
 
