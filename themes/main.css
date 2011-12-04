@@ -121,6 +121,7 @@
 .iconIndent            { background-image: url(./img/format-indent-more.png)    !important;}
 .iconInfo              { background-image: url(./img/help-about.png)            !important;}
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
+.iconLineWrapping      { background-image: url(./img/line-wrapping.png)         !important;}
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
 .iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
@@ -489,4 +490,9 @@
 .x-textfield-tooltip {
     background: transparent url(./img/help.png) no-repeat 0 1px;
     padding-left: 17px !important;
+}
+
+/* Highlight the current line into code mirror */
+.cm2-activeline {
+    background: #f8f7f6 !important;
 }

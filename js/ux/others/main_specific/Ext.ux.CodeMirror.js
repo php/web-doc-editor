@@ -1,121 +1,163 @@
 Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
-
-    readOnly         : (this.readOnly) ? this.readOnly : false,
-    width            : 'auto',
-    height           : 'auto',
-    autoResize       : true,
-    initialised      : false,
-    documentDurty    : false,
-    spellCheck       : ( this.spellCheck ) ? this.spellCheck : false,
-    parser           : (this.parser) ? this.parser : "xml",
-    parserFile       : "parsexml.js",
-    parserStylesheet : "js/ux/codemirror/css/xmlcolors.css",
-
+    
+    lineWrapping: false,
+    previousLine: false,
+    readOnly: false,
+    originalContent: false,
+    documentDurty: false,
+    mode: (this.parser || 'xml'),
+    theme: (this.theme === 'undefined') ? 'default' : this.theme,
+    
     initComponent : function()
     {
-        Ext.ux.CodeMirror.superclass.initComponent.apply(this);
+        this.initialized = false;
+        Ext.ux.CodeMirror.superclass.initComponent.apply(this, arguments);
 
-        this.addEvents({
-            initialize   : true,
-            codemodified : true,
-            coderestored : true,
-            cursormove   : true,
-            scroll       : true
-        });
-
-        //For the parser
-        if( this.parser === 'xml' ) {
-            this.parserFile = "parsexml.js";
-            this.parserStylesheet = "js/ux/codemirror/css/xmlcolors.css";
-        }
-
-        if( this.parser === 'html' ) {
-            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"];
-            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css"];
-        }
-
-        if( this.parser === 'php' ) {
-            this.parserFile = ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js",
-                             "../contrib/php/js/tokenizephp.js", "../contrib/php/js/parsephp.js",
-                             "../contrib/php/js/parsephphtmlmixed.js"];
-            this.parserStylesheet = ["js/ux/codemirror/css/xmlcolors.css", "js/ux/codemirror/css/jscolors.css", "js/ux/codemirror/css/csscolors.css", "js/ux/codemirror/contrib/php/css/phpcolors.css"];
-        }
-    },
-    onRender : function(ct, position)
-    {
-        Ext.ux.CodeMirror.superclass.onRender.apply(this, [ct, position]);
-    },
-
-    resize: function(width, height)
-    {
-        var _width  = ( width )  ? width  +"px" : this.ownerCt.lastSize.width  - 35 +"px",
-            _height = ( height ) ? height +"px" : this.ownerCt.lastSize.height - 89 +"px";
-        
-        this.mirror.frame.style.height = _height;
-        this.mirror.frame.style.width  = _width;
-    },
-
-    onInit: function(t, cmId)
-    {
-        var cmp    = Ext.getCmp(cmId),
-            mirror = cmp.mirror;
-
-        cmp.ownerCt.fireEvent('resize');
-
-        // Fire the initialize event
-        cmp.fireEvent('initialize');
-        cmp.initialised = true;
-
-        // Value used to monitor the state of this document (changed or not)
-        cmp.documentDurty = false;
-
-        // Attach some others events
-        mirror.editor.keyUp = function(e) {
-
-            // On envoie cursormove
-            var r        = mirror.cursorPosition(),
-                line     = mirror.lineNumber(r.line),
-                caracter = r.character;
-            cmp.fireEvent('cursormove', line, caracter);
-
-            if( Ext.getCmp(cmId).documentDurty === true && e.keyCode !== 8 && e.keyCode !== 46 ) {
-
-                // Don't need to check if the code has changed
-
-            } else {
-
-                // We check if the code has changed or not
-                cmp.manageCodeChange(cmId);
-            }
+        this.theme = (this.theme === 'undefined') ? 'default' : this.theme;
+                            
+        // Handle the parser
+        // In cm2, parser is the "mode" config.
+        switch( this.mode ) {
+            case 'html' :
+            case 'htm' :
+                this.mode = 'text/html';
+                break;
+                
+            case 'css' :
+                this.mode = 'text/css';
+                break;
+                
+            case 'php' :
+                this.mode = 'application/x-httpd-php';
+                break;
+                
+            case 'xml' :
+            case 'ent' :
+                this.mode = {name: 'xmlpure'};
+                break;
+                
+            case 'bat' :
+                this.mode = 'text/x-clojure';
+                break;
+                
+            case 'README' :
+                this.mode = 'text/x-rst';
+                break;
+                
+            default : this.mode = {name: 'xmlpure'};
+                break;
         };
+        
+        // Add some events
+        this.addEvents('initialize');
+        this.addEvents('codemodified');
+        this.addEvents('coderestored');
+        this.addEvents('cursormove');
+        this.addEvents('scroll');
 
-        Ext.EventManager.addListener(mirror.frame.contentWindow, "scroll", function(e){ cmp.monitorScroll(e, cmp); }, this);
+        // Call a fireEvent on the parent container to take care of the size of the editor
+        this.ownerCt.on('resize', function(c, width, height) {
+            this.fireEvent('resize', this, width, height);
+        }, this);
+        
+        this.on({
+            resize: function(cmp, width, height)
+            {
+                this.resize(width, height);
+            },
+
+            afterrender: function() {
+                var me = this;
+
+                me.codeEditor = new CodeMirror(Ext.get(me.id), {
+                        theme: me.theme,
+                        readOnly: me.readOnly,
+                        mode: me.mode,
+                        lineNumbers: true,
+                        matchBrackets: true,
+                        lineWrapping: me.lineWrapping,
+                        indentUnit: 1,
+                        tabMode: 'indent',
+                        value:'',
+                        onScroll: function()
+                        {
+                            me.fireEvent('scroll', me.el.child('.CodeMirror-scroll').dom.scrollTop);
+                        },
+                        onKeyEvent: function(c,e)
+                        {
+                            var cursor = c.getCursor();
+                            me.fireEvent('cursormove', cursor.line, cursor.ch);
+                        },
+                        onCursorActivity: function(c)
+                        {
+                            var cursor = c.getCursor();
+                            
+                            // We highlight the current line
+                            if( me.previousLine !== false ) {
+                                c.setLineClass(me.previousLine, null);
+                            }
+                            me.previousLine = c.setLineClass(cursor.line, "cm2-activeline");
+
+                            me.fireEvent('cursormove', cursor.line, cursor.ch);
+                        },
+                        onChange: function(c) {
+                            me.fireEvent('codemodified');
+                            me.manageCodeChange();
+                        }
+                });
+
+                me.initialized = true;
+                me.fireEvent('initialize', true);
+
+            }
+        });
+        
+        
+        
     },
 
-    onCursorActivity: function(cmId)
-    {
-        var cmp      = Ext.getCmp(cmId),
-            mirror   = cmp.mirror,
-            r        = mirror.cursorPosition(),
-            line     = mirror.lineNumber(r.line),
-            caracter = r.character;
-            cmp.fireEvent('cursormove', line, caracter);
+    focus: function() {
+        if (this.initialized) {
+                return this.codeEditor.focus();
+        }
+        return this.initialConfig.value;
     },
 
-    manageCodeChange: function(cmId, force)
+    getCursor : function()
     {
-        var cmp             = Ext.getCmp(cmId),
-            mirror          = cmp.mirror,
-            originalContent = mirror.originalContent,
-            currentContent  = mirror.getCode(),
-            btnUndo         = Ext.getCmp(cmId + '-btn-undo');
+        return this.codeEditor.getCursor();
+    },
+
+    getLine : function(line)
+    {
+        return this.codeEditor.getLine(line);
+    },
+
+    getValue: function() {
+        if (this.initialized) {
+                return this.codeEditor.getValue();
+        }
+        return this.initialConfig.value;
+    },
+
+    insertLine : function(line, text)
+    {
+        var curLine = this.codeEditor.getLine(line);
+        this.codeEditor.setLine(line, curLine+"\n"+text);
+    },
+    
+    manageCodeChange: function()
+    {
+        var originalContent = this.originalContent,
+            currentContent  = this.getValue();
+            btnUndo         = Ext.getCmp(this.id + '-btn-undo');
 
         // If originalContent is false, the editor is not ready
         if( originalContent ) {
             if( originalContent === currentContent ) {
-                if( cmp.documentDurty === true ) {
-                    cmp.fireEvent('coderestored');
-                    cmp.documentDurty = false;
+                if( this.documentDurty === true ) {
+                    this.fireEvent('coderestored');
+                    this.documentDurty = false;
                 }
                 
             } else {
@@ -125,151 +167,97 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                     btnUndo.enable(); // undo
                 }
 
-                if( cmp.documentDurty === false ) {
-                    cmp.fireEvent('codemodified');
-                    cmp.documentDurty = true;
+                if( this.documentDurty === false ) {
+                    this.fireEvent('codemodified');
+                    this.documentDurty = true;
                 }
             }
         }
     },
 
-    saveFunction: function(cmId)
+    redo : function(id_prefix, fid)
     {
-        var saveBtn = Ext.getCmp(cmId + '-btn-save');
+        this.codeEditor.redo();
 
-        if( ! saveBtn.disabled ) {
-            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
+        // Enable the undo btn
+        Ext.getCmp(this.id + '-btn-undo').enable();
+
+        // Is there more redo history ? If not, we disable this btn
+        if( this.codeEditor.historySize().redo == 0 ) {
+            Ext.getCmp(this.id + '-btn-redo').disable();
         }
     },
 
-    monitorScroll: function(e, cmp)
+    resize : function(width, height)
     {
-        cmp.fireEvent('scroll',e.target.body.scrollTop, this);
+        var cmpEl = this.el, EditorEl = cmpEl.child('.CodeMirror-scroll');
+
+        EditorEl.setHeight(height-89);
     },
 
-    afterRender: function()
+    removeLine : function(line)
     {
-        this.mirror = new CodeMirror(CodeMirror.replace(Ext.get(this.id).dom), {
-            textWrapping       : false,
-            saveFunction       : this.saveFunction,
-            width              : '100%',
-            height             : this.ownerCt.lastSize.height,
-            readOnly           : this.readOnly,
-            content            : this.value,
-            originalContent    : false,
-            parserfile         : this.parserFile,
-            parserConfig       : {alignCDATA: true, useHTMLKludges: false},
-            indentUnit         : 1,
-            cmId               : this.id,
-            lineNumbers        : true,
-            continuousScanning : (this.readOnly) ? false : 500,
-            stylesheet         : this.parserStylesheet,
-            path               : "js/ux/codemirror/js/",
-            initCallback       : this.onInit,
-            autoMatchParens    : true,
-            disableSpellcheck  : !this.spellCheck,
-            onChange           : this.manageCodeChange,
-            cursorActivity     : this.onCursorActivity
-        });
-
-        this.ownerCt.on('resize', function(ct, adjW, adjH, rawW, rawH) {
-           this.resize();
-        }, this);
-    },
-
-    getCode : function()
-    {
-        return this.mirror.getCode();
-    },
-
-    setCode : function(code)
-    {
-        if( !this.initialised ) {
-            var wait = new Ext.util.DelayedTask(function() { this.setCode(code); }, this );
-            wait.delay(500);
-        } else {
-            this.mirror.setCode(code);
-            this.mirror.originalContent = code;
-        }
+        return this.codeEditor.removeLine(line);
     },
 
     reIndentAll : function()
     {
-        this.mirror.reindent();
+        var nbLine = this.codeEditor.lineCount(), i;
+
+        for( i=0; i < nbLine; i++ ) {
+            this.codeEditor.indentLine(i);
+        }
+        this.codeEditor.focus();
     },
 
-    undo : function(id_prefix, fid)
+    scrollTo: function(position) {
+        // Ok !
+        var EditorEl = this.el.child('.CodeMirror-scroll');
+        EditorEl.dom.scrollTop = position;
+        
+    },
+
+    setOriginalContent : function(content)
     {
-        this.mirror.undo();
+        this.originalContent = content;
+    },
+
+    setLine : function(line, content)
+    {
+        this.codeEditor.setLine(line, content);
+    },
+
+    setOption: function(optionName, optionValue) {
+        if (this.initialized) {
+                this.codeEditor.setOption(optionName, optionValue);
+        }
+    },
+
+    setValue: function(v) {
+        if (this.initialized) {
+                this.codeEditor.setValue(v);
+                this.originalContent = v;
+                this.codeEditor.clearHistory();
+        }
+    },
+
+    switchTheme: function(theme)
+    {
+        this.codeEditor.setOption("theme", theme);
+    },
+
+    undo : function()
+    {
+        this.codeEditor.undo();
 
         // Enable the Redo btn
-        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').enable();
-
+        Ext.getCmp(this.id + '-btn-redo').enable();
+        
         // Is there more undo history ? If not, we disable this btn
-        if( ! this.mirror.editor.history.history.length ) {
-            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').disable();
+        if( this.codeEditor.historySize().undo == 0 ) {
+            Ext.getCmp(this.id + '-btn-undo').disable();
         }
-    },
-
-    redo : function(id_prefix, fid)
-    {
-        this.mirror.redo();
-
-        // Enable the undo btn
-        Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-undo').enable();
-
-        // Is there more redo history ? If not, we disable this btn
-        if( ! this.mirror.editor.history.redoHistory.length ) {
-            Ext.getCmp(id_prefix + '-FILE-' + fid + '-btn-redo').disable();
-        }
-    },
-
-    setLineContent : function(line, content)
-    {
-        var lineObj = this.mirror.nthLine(line);
-        this.mirror.setLineContent(lineObj, content);
-    },
-
-    insertIntoLine : function(line, position, text)
-    {
-        var lineObj = this.mirror.nthLine(line);
-        this.mirror.insertIntoLine(lineObj, position, text);
-    },
-
-    scrollTo : function(scrollY)
-    {
-        this.mirror.frame.contentWindow.document.body.scrollTop = scrollY;
-    },
-
-    focus : function()
-    {
-        this.mirror.focus();
-    },
-
-    setOriginalCode : function()
-    {
-        this.mirror.originalContent = this.getCode();
-        this.documentDurty = false;
-    },
-
-    getCursorPosition : function()
-    {
-        var r        = this.mirror.cursorPosition(),
-            line     = this.mirror.lineNumber(r.line),
-            caracter = r.character;
-
-        return '{line:'+line+', caracter:'+caracter+'}';
-    },
-
-    nthLine : function(number)
-    {
-        return this.mirror.nthLine(number);
-    },
-
-    setSpellcheck : function(choice)
-    {
-        return this.mirror.setSpellcheck(choice);
     }
-
+    
 });
 Ext.reg('codemirror', Ext.ux.CodeMirror);

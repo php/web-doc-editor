@@ -12,7 +12,7 @@ ui.task.CheckXml = function(config)
         scope  : this,
         params : {
             task        : 'checkXml',
-            fileContent : Ext.getCmp(this.idPrefix + '-FILE-' + this.fid).getCode()
+            fileContent : Ext.getCmp(this.idPrefix + '-FILE-' + this.fid).getValue()
         },
         success : function(r)
         {

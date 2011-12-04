@@ -23,7 +23,17 @@ cat themes/flags.css \
 
 
 # Js Files for Main page
-cat js/util.js \
+cat js/ux/codemirror2/lib/codemirror.js \
+    js/ux/codemirror2/mode/clojure/clojure.js \
+    js/ux/codemirror2/mode/xml/xml.js \
+    js/ux/codemirror2/mode/javascript/javascript.js \
+    js/ux/codemirror2/mode/clike/clike.js \
+    js/ux/codemirror2/mode/xmlpure/xmlpure.js \
+    js/ux/codemirror2/mode/css/css.js \
+    js/ux/codemirror2/mode/php/php.js \
+    js/ux/codemirror2/mode/htmlmixed/htmlmixed.js \
+    js/ux/codemirror2/mode/rst/rst.js \
+    js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/extjsPowered/treegrid/TreeGridSorter.js \
     js/ux/extjsPowered/treegrid/TreeGridColumnResizer.js \
@@ -38,7 +48,17 @@ cat js/util.js \
     | java -jar scripts/utils/yuicompressor.jar --type js --verbose -o js/main-all.js
 
 # Js Files for Main page - debug
-cat js/util.js \
+cat js/ux/codemirror2/lib/codemirror.js \
+    js/ux/codemirror2/mode/clojure/clojure.js \
+    js/ux/codemirror2/mode/xml/xml.js \
+    js/ux/codemirror2/mode/javascript/javascript.js \
+    js/ux/codemirror2/mode/clike/clike.js \
+    js/ux/codemirror2/mode/xmlpure/xmlpure.js \
+    js/ux/codemirror2/mode/css/css.js \
+    js/ux/codemirror2/mode/php/php.js \
+    js/ux/codemirror2/mode/htmlmixed/htmlmixed.js \
+    js/ux/codemirror2/mode/rst/rst.js \
+    js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/extjsPowered/treegrid/TreeGridSorter.js \
     js/ux/extjsPowered/treegrid/TreeGridColumnResizer.js \
@@ -58,6 +78,8 @@ cat themes/flags.css \
     js/ux/extjsPowered/treegrid/*.css \
     js/ux/others/main_specific/*.css \
     themes/main.css \
+    js/ux/codemirror2/lib/codemirror.css \
+    js/ux/codemirror2/theme/*.css \
     | java -jar scripts/utils/yuicompressor.jar --type css --verbose -o themes/main-all.css
 
 popd

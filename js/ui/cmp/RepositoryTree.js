@@ -95,8 +95,6 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
                     isTrans: true,
                     prefix: 'FNT',
                     ftype: 'NEW',
-                    spellCheck: PhDOE.user.conf.newFile.enableSpellCheck,
-                    spellCheckConf: { module : 'newFile', itemName : 'enableSpellCheck' },
                     fid: FileID,
                     fpath: FilePath,
                     fname: FileName,

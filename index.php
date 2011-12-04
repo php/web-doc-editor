@@ -132,7 +132,6 @@ echo headerTemplate();
 echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css', 'extTheme');
 echo cssLoadTemplate('themes/empty.css', 'appTheme');
 echo cssLoadTemplate('themes/main-all.css');
-
 echo jsCallTemplate($jsVar);
 echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 
@@ -145,8 +144,8 @@ echo jsLoadTemplate('js/ExtJs/ext-all.js');
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadi18nTemplate();
-echo jsLoadTemplate('js/ux/codemirror/js/codemirror.js');
-echo jsLoadTemplate('js/main-all.js');
+
+echo jsLoadTemplate('js/main-all-debug.js');
 echo footerTemplate();
 
 ?>

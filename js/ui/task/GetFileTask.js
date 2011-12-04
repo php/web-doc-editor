@@ -40,6 +40,10 @@ ui.task.GetFileTask = function(config)
                 fileModifiedInfo = (o.fileModified) ? Ext.util.JSON.decode(o.fileModified) : false,
                 dataModified, mess;
 
+            // Remove the mask from the editor
+            pEl.unmask();
+            
+                
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
                 this.ftype  === 'TRANS' ||
@@ -56,15 +60,13 @@ ui.task.GetFileTask = function(config)
             }
 
             // We define the content into the editor
-            f.setCode(o.content);
+            f.setValue(o.content);
 
             // If this is and automatic translation from Google API, we reint the file now.
             if( this.ftype  === 'GGTRANS' ) {
                 f.reIndentAll();
             }
 
-            // Remove the mask from the editor
-            pEl.unmask();
 
             if( o.warn_tab && !this.freadOnly  ) {
 
@@ -77,7 +79,7 @@ ui.task.GetFileTask = function(config)
                 });
 
                 // Mark as dirty this editor now
-                f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                f.manageCodeChange();
             }
 
             if( o.warn_encoding && !this.freadOnly ) {
@@ -90,7 +92,7 @@ ui.task.GetFileTask = function(config)
                     icon    : Ext.MessageBox.WARNING
                 });
 
-                f.setLineContent(1, '<?xml version="1.0" encoding="utf-8"?>');
+                f.setLine(1, '<?xml version="1.0" encoding="utf-8"?>');
 
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
@@ -186,13 +188,23 @@ ui.task.GetFileTask = function(config)
                     
                     if( m == null ) {
                         
-                        f.setLineContent(2, '<!-- $Revision: $ -->');
+                        // If the line n°1 is empty, we delete it.
+                        if( Ext.isEmpty(f.getLine(1)) ) {
+                            f.removeLine(1);
+                        }
                         
-                        f.insertIntoLine(3,0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->\r\n');
-                        f.insertIntoLine(4,0, '<!-- Reviewed: no -->\r\n');
+                        f.setLine(1, '<!-- $Revision: $ -->');
+                        
+                        f.insertLine(1, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->');
+                        f.insertLine(2, '<!-- Reviewed: no -->');
+                        
+                        // Ensure the next line is an empty line
+                        if( !Ext.isEmpty(f.getLine(4)) ) {
+                            f.insertLine(3,'');
+                        }
                         
                         // Mark as dirty this editor now
-                        f.manageCodeChange(id_prefix + '-FILE-' + this.fid);
+                        f.manageCodeChange();
                     }
                     
                 }

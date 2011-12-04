@@ -29,7 +29,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
                 iconCls : 'iconUndo',
                 handler : function()
                 {
-                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo(this.id_prefix, this.fid);
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).undo();
                 }
             },{
                 id      : this.id_prefix + '-FILE-' + this.fid + '-btn-redo',
@@ -39,7 +39,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.undoRedo, Ext.ButtonGroup,
                 iconCls : 'iconRedo',
                 handler : function()
                 {
-                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo(this.id_prefix, this.fid);
+                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).redo();
                 }
             }]
         });
@@ -133,8 +133,8 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                     text    : _('Reviewed tag'),
                     handler : function()
                     {
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            2, 'end', "\n<!-- Reviewed: no -->"
+                        Ext.getCmp(this.comp_id).insertLine(
+                            2, "<!-- Reviewed: no -->"
                             );
                         Ext.getCmp(this.comp_id).focus();
                     }
@@ -143,9 +143,9 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                     text    : _('Revcheck tag'),
                     handler : function()
                     {
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            2, "end",
-                            "\n<!-- EN-Revision: XX Maintainer: " +
+                        Ext.getCmp(this.comp_id).insertLine(
+                            1,
+                            "<!-- EN-Revision: XX Maintainer: " +
                             PhDOE.user.login + " Status: ready -->"
                             );
                         Ext.getCmp(this.comp_id).focus();
@@ -178,10 +178,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Description section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             " <refsect1 role=\"description\"><!-- {{{ -->\r\n  ",
                             "&reftitle.description;\r\n  ",
@@ -208,10 +208,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Parameters section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"parameters\"><!-- {{{ -->\r\n",
                             "&reftitle.parameters;\r\n",
@@ -247,10 +247,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Return section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"returnvalues\"><!-- {{{ -->\r\n",
                             "&reftitle.returnvalues;\r\n",
@@ -268,10 +268,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Error section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"errors\"><!-- {{{ -->\r\n",
                             "&reftitle.errors;\r\n",
@@ -288,10 +288,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Unicode section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"unicode\"><!-- {{{ -->\r\n",
                             "&reftitle.unicode;\r\n",
@@ -308,10 +308,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Changelog section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"changelog\"><!-- {{{ -->\r\n",
                             "&reftitle.changelog;\r\n",
@@ -345,10 +345,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Examples section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"examples\"><!-- {{{ -->\r\n",
                             "&reftitle.examples;\r\n",
@@ -390,10 +390,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('Notes section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"notes\"><!-- {{{ -->\r\n",
                             "&reftitle.notes;\r\n",
@@ -417,10 +417,10 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.en, Ext.Toolbar.Button,
                     text    : _('SeeAlso section'),
                     handler : function()
                     {
-                        var position = Ext.util.JSON.decode(Ext.getCmp(this.comp_id).getCursorPosition());
+                        var cursorPosition = Ext.getCmp(this.comp_id).getCursor();
 
-                        Ext.getCmp(this.comp_id).insertIntoLine(
-                            position.line, 0,
+                        Ext.getCmp(this.comp_id).insertLine(
+                            cursorPosition.line,
                             [
                             "\r\n<refsect1 role=\"seealso\"><!-- {{{ -->\r\n",
                             "&reftitle.seealso;\r\n",
@@ -468,7 +468,11 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                         fid      : this.fid
                     });
                 }
-            },{
+            }
+            
+            /* Actually, codemirror2 don't support this. Desactivate it.
+            
+            {
                 scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
                 enableToggle : true,
@@ -485,21 +489,147 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                         notify    : false
                     });
                     
-                }
-            },{
-                scope   : this,
-                tooltip : _('<b>Re-indent</b> all this file'),
-                iconCls : 'iconIndent',
-                handler : function()
-                {
-                    Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
-                }
-            },(this.lang === 'en') ? new ui.cmp._FilePanel.tbar.menu.en({
+                } editorTheme
+            },
+            */
+            ,(this.lang === 'en') ? new ui.cmp._FilePanel.tbar.menu.en({
                 comp_id : this.id_prefix + '-FILE-' + this.fid
             }) :
             new ui.cmp._FilePanel.tbar.menu.lang({
                 comp_id : this.id_prefix + '-FILE-' + this.fid
-            })
+            }),
+            {
+                scope: this,
+                text: _('Editor option'),
+                iconCls: 'iconConf',
+                menu:[{
+                    scope: this,
+                    text: _('Re-indent all this file'),
+                    iconCls : 'iconIndent',
+                    handler : function()
+                    {
+                        Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).reIndentAll();
+                    }
+                },{
+                    scope: this,
+                    text: _('Enable line wrapping'),
+                    checked: PhDOE.user.conf.main.lineWrapping,
+                    checkHandler: function(item, checked)
+                    {
+                        var wrappingValue = ( checked ) ? true : false;
+                        
+                        Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setOption('lineWrapping', wrappingValue);
+
+                        new ui.task.UpdateConfTask({
+                            module    : 'main',
+                            itemName  : 'lineWrapping',
+                            value     : checked,
+                            notify    : false
+                        });
+                        
+                    }
+                },{
+                    scope: this,
+                    text: _('Choose a Theme'),
+                    iconCls: 'iconThemes',
+                    onThemeChange: function()
+                    {
+                        var editorCmp = Ext.getCmp(this.ownerCt.ownerCt.ownerCt.id_prefix + '-FILE-' + this.ownerCt.ownerCt.ownerCt.fid);
+                        
+                        Ext.each(this.menu.items.items, function(item)
+                        {
+                            if( item.checked === true )
+                            {
+                                editorCmp.switchTheme(item.themeName);
+                                
+                                new ui.task.UpdateConfTask({
+                                    module    : 'main',
+                                    itemName  : 'editorTheme',
+                                    value     : item.themeName,
+                                    notify    : false
+                                });
+                            }
+                        });
+                        
+                    },
+                    menu: {
+                        items: [{
+                            text: _('No theme'),
+                            themeName: false,
+                            checked: (PhDOE.user.conf.main.editorTheme === false),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Default theme'),
+                            themeName: 'default',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'default' || PhDOE.user.conf.main.editorTheme === 'undefined'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Cobalt'),
+                            themeName: 'cobalt',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'cobalt'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Eclipse'),
+                            themeName: 'eclipse',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'eclipse'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Elegant'),
+                            themeName: 'elegant',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'elegant'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Monokai'),
+                            themeName: 'monokai',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'monokai'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Neat'),
+                            themeName: 'neat',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'neat'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('Night'),
+                            themeName: 'night',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'night'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        },{
+                            text: _('RubyBlue'),
+                            themeName: 'rubyblue',
+                            checked: (PhDOE.user.conf.main.editorTheme === 'rubyblue'),
+                            group: 'cmd2-theme',
+                            checkHandler: function() {
+                                this.ownerCt.ownerCt.onThemeChange();
+                            }
+                        }]
+                    }
+                }]
+                
+            }
             ]
         });
     }
@@ -654,7 +784,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 lang        : this.lang,
                                 storeRecord : this.storeRecord
                             });
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                             return;
                         }
                         if (this.prefix === 'FNT' ) {
@@ -667,7 +796,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 lang        : this.lang,
                                 storeRecord : this.storeRecord
                             });
-                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                             return;
                         }
 
@@ -688,7 +816,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 }); // include SaveFileTask when no err
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                 break;
 
                             case 'never':
@@ -701,7 +828,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                     lang        : this.lang,
                                     storeRecord : this.storeRecord
                                 });
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                 break;
 
                             case 'ask-me':
@@ -724,7 +850,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                                 lang        : this.lang,
                                                 storeRecord : this.storeRecord
                                             });
-                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
 
                                         } else if (btn === 'yes') {
 
@@ -737,7 +862,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                                 lang        : this.lang,
                                                 storeRecord : this.storeRecord
                                             }); // include SaveFileTask when no err
-                                            Ext.getCmp(id_prefix + '-FILE-' + this.fid).setOriginalCode();
                                         }
                                     }
                                 });
@@ -752,9 +876,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             new ui.cmp._FilePanel.tbar.items.reindentTags({
                 id_prefix      : id_prefix,
                 fid            : this.fid,
-                lang           : this.lang,
-                spellCheck     : this.spellCheck,
-                spellCheckConf : this.spellCheckConf
+                lang           : this.lang
             }), {
                 scope: this,
                 iconCls:'iconZoom',
@@ -769,24 +891,25 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             xtype      : 'codemirror',
                             id         : id_prefix + '-FILE-' + this.fid + 'maximized',
                             readOnly   : false,
-                            parser     : 'xml',
-                            spellCheck : false,
+                            lineWrapping: PhDOE.user.conf.main.lineWrapping,
+                            theme: PhDOE.user.conf.main.editorTheme,
+                            parser     : this.parser,
                             isModified : false,
                             listeners  : {
                                 scope: this,
-                                initialize : function() {
-                                    
+                                initialize : function()
+                                {
                                     var codeMirrorMax =Ext.getCmp(id_prefix + '-FILE-' + this.fid + 'maximized'),
-                                        currentCode = Ext.getCmp(id_prefix + '-FILE-' + this.fid).getCode();
+                                        currentCode = Ext.getCmp(id_prefix + '-FILE-' + this.fid).getValue();
                                         
                                     // We set the current code into the maximized window editor
-                                    codeMirrorMax.setCode(currentCode);
+                                    codeMirrorMax.setValue(currentCode);
                                     
                                     // We must wait until the winMax is rendered to rize the editor
                                     var waitTask = new Ext.util.DelayedTask(function(){
                                         
                                         if( winMax.rendered ) {
-                                            codeMirrorMax.resize(false, winMax.getInnerHeight());
+                                            codeMirrorMax.resize(false, winMax.getInnerHeight()+89);
                                         } else {
                                             waitTask.delay(500);
                                         }
@@ -799,8 +922,8 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         listeners : {
                             scope: this,
                             beforeclose : function(p) {
-                                var newCode = p.items.items[0].mirror.getCode();
-                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setCode(newCode);
+                                var newCode = p.items.items[0].getValue();
+                                Ext.getCmp(id_prefix + '-FILE-' + this.fid).setValue(newCode);
                             }
                         }
                     });
@@ -873,13 +996,14 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
             cls         : 'code-mirror-panel',
             originTitle : this.title,
             items       : [{
-                xtype      : 'codemirror',
-                id         : id_prefix + '-FILE-' + this.fid,
-                readOnly   : this.readOnly,
-                parser     : this.parser,
-                spellCheck : this.spellCheck,
-                isModified : false,
-                listeners  : {
+                xtype       : 'codemirror',
+                id          : id_prefix + '-FILE-' + this.fid,
+                readOnly    : this.readOnly,
+                lineWrapping: PhDOE.user.conf.main.lineWrapping,
+                theme       : PhDOE.user.conf.main.editorTheme,
+                parser      : this.parser,
+                isModified  : false,
+                listeners   : {
                     scope      : this,
                     initialize : function()
                     {
@@ -961,13 +1085,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if( this.readOnly ) {
                             return;
                         }
-						
-						// We follow the same rules as defined in GetFileTask.js.
-						// So, if the toolsBar is disabled here, we just skeep this function and return asap.
-						if( Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disabled ) {
-							return;
-						}
-						
+                        
+                        // We follow the same rules as defined in GetFileTask.js.
+                        // So, if the toolsBar is disabled here, we just skeep this function and return asap.
+                        if( Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disabled ) {
+                                return;
+                        }
+                        
                         var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
                             cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 

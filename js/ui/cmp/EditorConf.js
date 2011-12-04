@@ -1,4 +1,4 @@
-Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf');
+Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf','ui.cmp._EditorCmd2Conf');
 
 //------------------------------------------------------------------------------
 // EditorConf Win internals
@@ -57,6 +57,25 @@ ui.cmp._EditorConf.viewMenu = Ext.extend(Ext.DataView,
             Ext.getCmp('confCard').layout.setActiveItem('conf-card-' + r[0].data.id);
         }
     }
+});
+
+// CodeMirror2 Theme datastore
+ui.cmp._EditorCmd2Conf.themeStore = new Ext.data.SimpleStore({
+    fields : ['themeFile', {
+        name : 'themeName',
+        type : 'string'
+    }],
+    data : [
+        [false,       _('No theme')],
+        ['default',   _('Default theme')],
+        ['cobalt',    _('Cobalt')],
+        ['eclipse',   _('Eclipse')],
+        ['elegant',   _('Elegant')],
+        ['monokai',   _('Monokai')],
+        ['neat',      _('Neat')],
+        ['night',     _('Night')],
+        ['rubyblue',  _('RubyBlue')]
+    ]
 });
 
 // doc-editor Theme datastore
@@ -352,6 +371,39 @@ ui.cmp._EditorConf.card1 = Ext.extend(Ext.TabPanel,
                         }
                     }]
                 }]
+             }, {
+                title   : _('Editor'),
+                iconCls : 'iconEditor',
+                items   : [{
+                    xtype       : 'fieldset',
+                    title       : _('Editor theme'),
+                    iconCls     : 'iconThemes',
+                    items       : [{
+                        xtype          : 'combo',
+                        fieldLabel     : _('Choose a theme'),
+                        id             : 'conf-combo-cm2-theme',
+                        valueField     : 'themeFile',
+                        displayField   : 'themeName',
+                        triggerAction  : 'all',
+                        mode           : 'local',
+                        forceSelection : true,
+                        editable       : false,
+                        value          : (PhDOE.user.conf.main.editorTheme || 'default'),
+                        store          : ui.cmp._EditorCmd2Conf.themeStore,
+                        listeners      : {
+                            select : function(c)
+                            {
+                                var themeValue = c.getValue();
+
+                                new ui.task.UpdateConfTask({
+                                    module   : 'main',
+                                    itemName : 'editorTheme',
+                                    value    : themeValue
+                                });
+                            }
+                        }
+                    }]
+                }]
              }]
         });
         ui.cmp._EditorConf.card1.superclass.initComponent.call(this);
@@ -542,32 +594,6 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                                         value : field.getRawValue()
                                     });
                                 }
-                            }
-                        }
-                    }]
-                }]
-            }, {
-                title   : _('Editor'),
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        autoHeight  : true,
-                        name        : 'PhDOE.user.conf.newFile.enableSpellCheck',
-                        checked     : PhDOE.user.conf.newFile.enableSpellCheck,
-                        boxLabel    : _('Enable spell checking'),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'newFile',
-                                    itemName : 'enableSpellCheck',
-                                    value : field.getValue()
-                                });
                             }
                         }
                     }]
@@ -806,45 +832,6 @@ ui.cmp._EditorConf.card3 = Ext.extend(Ext.TabPanel,
                                         value : field.getRawValue()
                                     });
                                 }
-                            }
-                        }
-                    }]
-                }]
-            }, {
-                title   : _('Editor'),
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name      : 'needUpdate.enableSpellCheckEn',
-                        checked   : PhDOE.user.conf.needUpdate.enableSpellCheckEn,
-                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
-                        listeners : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'needUpdate',
-                                    itemName : 'enableSpellCheckEn',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    },{
-                        name      : 'needUpdate.enableSpellCheckLang',
-                        checked   : PhDOE.user.conf.needUpdate.enableSpellCheckLang,
-                        boxLabel  : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
-                        listeners : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'needUpdate',
-                                    itemName : 'enableSpellCheckLang',
-                                    value : field.getValue()
-                                });
                             }
                         }
                     }]
@@ -1103,46 +1090,6 @@ ui.cmp._EditorConf.card4 = Ext.extend(Ext.TabPanel,
                         }]
                     }]
                 }]
-            }, {
-                title   : _('Editor'),
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        hidden      : ( PhDOE.user.lang === 'en' ),
-                        name        : 'error.enableSpellCheckEn',
-                        checked     : PhDOE.user.conf.error.enableSpellCheckEn,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'error',
-                                    itemName : 'enableSpellCheckEn',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }, {
-                        name        : 'error.enableSpellCheckLang',
-                        checked     : PhDOE.user.conf.error.enableSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'error',
-                                    itemName : 'enableSpellCheckLang',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }]
-                }]
             }]
         });
         ui.cmp._EditorConf.card4.superclass.initComponent.call(this);
@@ -1203,7 +1150,7 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                     }]
                 }]
             }, {
-                title   : 'User Interface',
+                title   : _('User Interface'),
                 iconCls : 'iconUI',
                 items   : [{
                     xtype       : 'fieldset',
@@ -1292,45 +1239,6 @@ ui.cmp._EditorConf.card5 = Ext.extend(Ext.TabPanel,
                                 }
                             }
                         }]
-                    }]
-                }]
-            }, {
-                title   : 'Editor',
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name        : 'reviewed.enableSpellCheckEn',
-                        checked     : PhDOE.user.conf.reviewed.enableSpellCheckEn,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), 'EN'),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'reviewed',
-                                    itemName : 'enableSpellCheckEn',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
-                    }, {
-                        name        : 'reviewed.enableSpellCheckLang',
-                        checked     : PhDOE.user.conf.reviewed.enableSpellCheckLang,
-                        boxLabel    : String.format(_('Enable spell checking for the <b>{0}</b> file'), Ext.util.Format.uppercase(PhDOE.user.lang)),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'reviewed',
-                                    itemName : 'enableSpellCheckLang',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
                     }]
                 }]
             }]
@@ -1452,31 +1360,6 @@ ui.cmp._EditorConf.card6 = Ext.extend(Ext.TabPanel,
                                 }
                             }
                         }]
-                    }]
-                }]
-            }, {
-                title   : _('Editor'),
-                iconCls : 'iconEditor',
-                items   : [{
-                    xtype       : 'fieldset',
-                    title       : _('SpellChecking'),
-                    iconCls     : 'iconSpellCheck',
-                    defaults    : { hideLabel: true },
-                    defaultType : 'checkbox',
-                    items       : [{
-                        name        : 'allFiles.enableSpellCheck',
-                        checked     : PhDOE.user.conf.allFiles.enableSpellCheck,
-                        boxLabel    : _('Enable spell checking'),
-                        listeners   : {
-                            check : function(field)
-                            {
-                                new ui.task.UpdateConfTask({
-                                    module   : 'allFiles',
-                                    itemName : 'enableSpellCheck',
-                                    value : field.getValue()
-                                });
-                            }
-                        }
                     }]
                 }]
             }]

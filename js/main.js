@@ -42,7 +42,9 @@ var PhDOE = function()
             ver : 'X.XX',
             loaded: false,
             uiRevision: '$Revision$',
-            conf: ''
+            conf: '',
+            extJsVersion: '3.3.1',
+            codeMirror: '2.18'
         },
 
         lastInfoDate : null,

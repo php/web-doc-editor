@@ -6,7 +6,8 @@ ui.task.SaveFileTask = function(config)
     Ext.apply(this, config);
 
     var id_prefix = this.prefix + '-' + this.ftype,
-        msg       = Ext.MessageBox.wait(_('Saving data...'));
+        msg       = Ext.MessageBox.wait(_('Saving data...')),
+        codeContent = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid).getValue();
 
     XHR({
         scope  : this,
@@ -15,8 +16,7 @@ ui.task.SaveFileTask = function(config)
             filePath    : this.fpath,
             fileName    : this.fname,
             fileLang    : this.lang,
-            fileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
-                                        '-FILE-' + this.fid).getCode()
+            fileContent : codeContent
         },
         success : function(r)
         {
@@ -65,6 +65,9 @@ ui.task.SaveFileTask = function(config)
                 this.storeRecord.getUI().addClass('fileModifiedByMe'); // tree node
             }
 
+            // As the content have been modified, we need to change the originalContent to handle the "codemodified" action
+            Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid).setOriginalContent(codeContent);
+            
             // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
             ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
             ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);

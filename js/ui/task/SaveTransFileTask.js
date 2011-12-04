@@ -4,7 +4,8 @@ Ext.namespace('ui', 'ui.task');
 ui.task.SaveTransFileTask = function(config){
     Ext.apply(this, config);
     
-    var id_prefix = this.prefix + '-' + this.ftype, msg = Ext.MessageBox.wait(_('Saving data...'));
+    var id_prefix = this.prefix + '-' + this.ftype, msg = Ext.MessageBox.wait(_('Saving data...')),
+        codeContent = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid).getValue();;
     
     XHR({
         scope: this,
@@ -14,9 +15,7 @@ ui.task.SaveTransFileTask = function(config){
             filePath: this.fpath,
             fileName: this.fname,
             fileLang: this.lang,
-            fileContent: Ext.getCmp(this.prefix + '-' + this.ftype +
-            '-FILE-' +
-            this.fid).getCode()
+            fileContent: codeContent
         },
         
         success: function(r){
@@ -29,6 +28,9 @@ ui.task.SaveTransFileTask = function(config){
             else {
                 this.storeRecord.data.node.reload();
             }
+
+            // As the content have been modified, we need to change the originalContent to handle the "codemodified" action
+            Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid).setOriginalContent(codeContent);
             
             // Add this files into WorkTreeGrid
             ui.cmp.WorkTreeGrid.getInstance().addRecord(o.id, this.lang + this.fpath, this.fname, 'new');

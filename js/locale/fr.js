@@ -288,8 +288,8 @@ var i18n = new Array();
   i18n["Examples section"] = "Section \"Examples\"";
   i18n["Notes section"] = "Section \"Notes\"";
   i18n["SeeAlso section"] = "Section \"SeeAlso\"";
-  i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Activer / Désactiver</b> la vérification orthographique";
-  i18n["<b>Re-indent</b> all this file"] = "<b>Ré-indenter</b> tout le fichier";
+  i18n["Enable line wrapping"] = "Activer le retour à ligne automatique";
+  i18n["Re-indent all this file"] = "Ré-indenter tout le fichier";
   i18n["Synchronize scroll bars"] = "Synchroniser les barres de défilement";
   i18n["Line: "] = "Ligne : ";
   i18n["Col: "] = "Col. : ";
@@ -304,6 +304,17 @@ var i18n = new Array();
   i18n["<b>Preview</b> in a popup"] = "<b>Prévisualiser</b> dans un popup";
   i18n["You must save your file in order to preview the result."] = "Vous devez sauvegarder le fichier afin de prévisualiser le résultat.";
   i18n["Open for editing in a new Tab"] = "Ouvrir pour édition dans un nouvel onglet";
+  i18n["Editor option"] = "Option de l'éditeur";
+  i18n["Choose a Theme"] = "Choisir un thème";
+  i18n["No theme"] = "Aucun thème";
+  i18n["Default theme"] = "Thème par défaut";
+  i18n["Cobalt"] = "Cobalt";
+  i18n["Eclipse"] = "Eclipse";
+  i18n["Elegant"] = "Elegant";
+  i18n["Monokai"] = "Monokai";
+  i18n["Neat"] = "Neat";
+  i18n["Night"] = "Night";
+  i18n["RubyBlue"] = "RubyBlue";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -349,8 +360,7 @@ var i18n = new Array();
   i18n["0 means no limit"] = "La valeur 0 signifie 'Aucune limite'";
   i18n["ScrollBars"] = "Barres de défilement";
   i18n["Editor"] = "Éditeur";
-  i18n["SpellChecking"] = "Vérification orthographique";
-  i18n["Enable spell checking"] = "Activer la vérification orthographique";
+  i18n["Editor theme"] = "Thème pour l'éditeur";
   i18n["Automatically load the log when displaying the file"] = "Charger automatiquement l'historique lors de l'édition d'un fichier";
   i18n["Start with the panel open"] = "Commencer avec le panneau ouvert";
   i18n["Panel width"] = "Largeur du panneau";
@@ -358,7 +368,6 @@ var i18n = new Array();
   i18n["Panel height"] = "Hauteur du panneau";
   i18n["Using ViewVc from php web site"] = "Utilisation de viewVc depuis le site web de Php";
   i18n["Using diff -u command line"] = "Utilisation de la ligne de commande \"$ diff -u\"";
-  i18n["Enable spell checking for the <b>{0}</b> file"] = "Activer la vérification orthographique pour le fichier <b>{0}</b>";
   i18n["Error type"] = "Type d'erreurs";
   i18n["Skip nbLiteralTag error"] = "Ignorer les erreurs de type \"nbLiteralTag\"";
   i18n["Patch content"] = "Contenu du patch";
@@ -512,7 +521,9 @@ var i18n = new Array();
   i18n["Help and support"] = "Aide et support";
   i18n["Mailing list:"] = "Liste de diffusion :";
   i18n["IRC:"] = "IRC : ";
+  i18n["Mode Xmlpure by Dror Ben-Gai"] = "Mode Xmlpure par Dror Ben-Gai";
   i18n["Web IRC Chat"] = "Web IRC Chat";
+  i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit pour leur don de leur widget IRC Premium";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
