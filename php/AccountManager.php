@@ -586,6 +586,32 @@ class AccountManager
         $this->conn->query($s, $params);
     }
     
+    /**
+     * Get user's details
+     *
+     * @return An object containing all details for this user
+     */
+    public function getUserDetails($user, $anonymousIdent)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $s = 'SELECT `userID`, `authService`, `email` FROM `users` WHERE `project` = "%s" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
+        $params = array($project, $user, $anonymousIdent);
+
+        $r = $this->conn->query($s, $params);
+        $nb = $r->num_rows;
+
+        // We have found the user
+        if( $nb != 0 ) {
+            $a = $r->fetch_object();
+            return $a;
+        } else {
+            return false;
+        }
+
+    }
+    
 
     /**
      * Get the email for a user

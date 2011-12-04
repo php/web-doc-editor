@@ -19094,6 +19094,10 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     formatUserName: function(v, data){
                         
                         if( data.type === 'user' ) {
+                            
+                            if( data.userID ) {
+                                data.qtip= _('userID: ') + data.userID;
+                            }
                             return v;
                         }
                         
@@ -23961,7 +23965,11 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 header: _('Users'),
                 dataIndex: 'task',
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
-                    formatUserName: function(v, data){
+                    formatUserName: function(v, data)
+                    {
+                        if( data.userID ) {
+                            data.qtip= _('userID: ') + data.userID;
+                        }
                         return v;
                     }
                     

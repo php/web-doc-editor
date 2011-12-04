@@ -872,6 +872,7 @@ class RepositoryFetcher
                 // $userInfo[0] => login
                 // $userInfo[1] => anonymousIdent
                 $userInfo = explode('@|@',$user);
+                $userDetails = $am->getUserDetails($userInfo[0], $userInfo[1]);
 
                 // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
                 if( $this->_isEmptyPatch($patchs) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) ) { continue; }
@@ -899,7 +900,7 @@ class RepositoryFetcher
                 $email = ($email) ? $email : 'false';
 
                 // We start by users
-                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
@@ -1005,6 +1006,7 @@ class RepositoryFetcher
                 // $userInfo[0] => login
                 // $userInfo[1] => anonymousIdent
                 $userInfo = explode('@|@',$user);
+                $userDetails = $am->getUserDetails($userInfo[0], $userInfo[1]);
                 
                 // Get authService from anonymousIdent
                 $tmp = explode('-', $userInfo[1]);
@@ -1029,7 +1031,7 @@ class RepositoryFetcher
                 $email = ($email) ? $email : 'false';
 
                 // We put nbFiles into user's nodes to not have to count it by the client
-                $result .= "{task:'".$userInfo[0]."',type:'user',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
 
                     // We now walk into the folders for this users
                     while( list($folder, $dataFiles) = each($dataFolders)) {

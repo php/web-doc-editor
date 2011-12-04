@@ -405,6 +405,10 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     formatUserName: function(v, data){
                         
                         if( data.type === 'user' ) {
+                            
+                            if( data.userID ) {
+                                data.qtip= _('userID: ') + data.userID;
+                            }
                             return v;
                         }
                         
