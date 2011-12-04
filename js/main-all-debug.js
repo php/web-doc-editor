@@ -8108,7 +8108,6 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
                             me.fireEvent('cursormove', cursor.line, cursor.ch);
                         },
                         onChange: function(c) {
-                            me.fireEvent('codemodified');
                             me.manageCodeChange();
                         }
                 });
@@ -10848,7 +10847,6 @@ ui.task.GetFileTask = function(config)
                     mess.getDialog().mask.alignTo(pEl.dom, "tl");
                 }
             } else {
-                
                 // This file haven't been modified by another user
                 if (id_prefix == 'FNT-TRANS') {
                     
@@ -17455,6 +17453,8 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                     codemodified : function()
                     {
+                        console.log('in codemodified');
+                        
                         // This should never occurs on readOnly file
                         if( this.readOnly ) {
                             return;
@@ -24424,7 +24424,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 320360 $',
+            uiRevision: '$Revision: 320387 $',
             conf: '',
             extJsVersion: '3.3.1',
             codeMirror: '2.18'

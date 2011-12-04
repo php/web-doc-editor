@@ -101,7 +101,6 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                             me.fireEvent('cursormove', cursor.line, cursor.ch);
                         },
                         onChange: function(c) {
-                            me.fireEvent('codemodified');
                             me.manageCodeChange();
                         }
                 });
