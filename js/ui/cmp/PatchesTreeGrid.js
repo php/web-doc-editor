@@ -25,7 +25,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.users, Ext.menu.Menu, {
         
             items: [{
                 scope: this,
-                text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
+                text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task + "</b>"),
                 iconCls: 'iconSendEmail',
                 hidden: (this.node.attributes.task === PhDOE.user.login || this.node.attributes.email === 'false'),
                 handler: function(){
@@ -403,9 +403,9 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 },
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
                     formatUserName: function(v, data){
-                        // Only ucFirst user's name
+                        
                         if( data.type === 'user' ) {
-                            return v.ucFirst();
+                            return v;
                         }
                         
                         if( data.type === 'patch' ) {

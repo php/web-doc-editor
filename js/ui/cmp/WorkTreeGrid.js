@@ -332,7 +332,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
         )
         ] : [{
             scope: this,
-            text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task.ucFirst() + "</b>"),
+            text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task + "</b>"),
             iconCls: 'iconSendEmail',
             hidden: (this.node.attributes.email === 'false'),
             handler: function(){
@@ -685,8 +685,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 dataIndex: 'task',
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
                     formatUserName: function(v, data){
-                        // Only ucFirst user's name
-                        return (data.type === 'user') ? v.ucFirst() : v;
+                        return v;
                     }
                     
                 })
