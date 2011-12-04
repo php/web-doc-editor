@@ -47,7 +47,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} updated app\'s data'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'changeFilesOwner' :
@@ -55,7 +55,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} changed file\'s owner'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'checkEntities' :
@@ -63,7 +63,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} check all entitites'),
-                    user.ucFirst());
+                    user);
 
         break;
 
@@ -73,7 +73,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} logged out'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'login' :
@@ -90,7 +90,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             
             return img + String.format(
                     _('{0} is logged in using the {1} language'),
-                    user.ucFirst(),
+                    user,
                     lang.ucFirst());
 
         break;
@@ -103,7 +103,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} committed {1} new folder(s) in the {2} language'),
-                    user.ucFirst(),
+                    user,
                     nbFolders,
                     lang.ucFirst());
 
@@ -118,7 +118,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}'),
-                    user.ucFirst(),
+                    user,
                     nbFiles,
                     nbFilesCreate,
                     nbFilesUpdate,

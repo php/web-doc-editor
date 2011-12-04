@@ -109,7 +109,7 @@ ui.cmp._StaleFileGrid.columns = [{
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
             }
         }
         
@@ -121,7 +121,7 @@ ui.cmp._StaleFileGrid.columns = [{
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
-                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
         

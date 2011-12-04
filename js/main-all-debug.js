@@ -10808,7 +10808,7 @@ ui.task.GetFileTask = function(config)
                 if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
+                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
@@ -10840,7 +10840,7 @@ ui.task.GetFileTask = function(config)
                     
                     mess = Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
+                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
@@ -15816,7 +15816,7 @@ ui.cmp._ErrorFileGrid.columns = [{
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
             }
         }
         
@@ -15828,7 +15828,7 @@ ui.cmp._ErrorFileGrid.columns = [{
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
-                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
         
@@ -18506,7 +18506,7 @@ ui.cmp._NotInENGrid.columns = [{
             if(info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File removed by me') + "'>" + v + "</span>";
             } else {
-                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user) + "'>" + v + "</span>";
             }
         } else {
             return v;
@@ -19542,7 +19542,7 @@ ui.cmp._PendingReviewGrid.columns = [{
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
             }
         }
         
@@ -19554,7 +19554,7 @@ ui.cmp._PendingReviewGrid.columns = [{
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
-                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
         
@@ -20035,7 +20035,7 @@ ui.cmp._PendingTranslateGrid.columns = [{
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {
-                return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+                return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user) + "'>" + v + "</span>";
             }
             
         }
@@ -20637,7 +20637,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} updated app\'s data'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'changeFilesOwner' :
@@ -20645,7 +20645,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} changed file\'s owner'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'checkEntities' :
@@ -20653,7 +20653,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} check all entitites'),
-                    user.ucFirst());
+                    user);
 
         break;
 
@@ -20663,7 +20663,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} logged out'),
-                    user.ucFirst());
+                    user);
 
         break;
         case 'login' :
@@ -20680,7 +20680,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             
             return img + String.format(
                     _('{0} is logged in using the {1} language'),
-                    user.ucFirst(),
+                    user,
                     lang.ucFirst());
 
         break;
@@ -20693,7 +20693,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} committed {1} new folder(s) in the {2} language'),
-                    user.ucFirst(),
+                    user,
                     nbFolders,
                     lang.ucFirst());
 
@@ -20708,7 +20708,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 
             return String.format(
                     _('{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}'),
-                    user.ucFirst(),
+                    user,
                     nbFiles,
                     nbFilesCreate,
                     nbFilesUpdate,
@@ -22559,7 +22559,7 @@ ui.cmp._StaleFileGrid.columns = [{
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user.ucFirst()) + "<br>";
+                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
             }
         }
         
@@ -22571,7 +22571,7 @@ ui.cmp._StaleFileGrid.columns = [{
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
-                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user.ucFirst());
+                mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
         
@@ -24988,13 +24988,13 @@ var PhDOE = function()
                                         
                                         if( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) {
                                             loginLibelEl.addClass('userAdmin');
-                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'VCS' ) {
-                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                            libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'google' ) {
-                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'facebook' ) {
-                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login.ucFirst();
+                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         }
                                         loginLibelEl.dom.innerHTML = libelContent;
                                         

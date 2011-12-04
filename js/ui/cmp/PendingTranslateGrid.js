@@ -72,7 +72,7 @@ ui.cmp._PendingTranslateGrid.columns = [{
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {
-                return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+                return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user) + "'>" + v + "</span>";
             }
             
         }

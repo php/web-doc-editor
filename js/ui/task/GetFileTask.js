@@ -138,7 +138,7 @@ ui.task.GetFileTask = function(config)
                 if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user.ucFirst()),
+                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });
@@ -170,7 +170,7 @@ ui.task.GetFileTask = function(config)
                     
                     mess = Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user.ucFirst()),
+                        msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });

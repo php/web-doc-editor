@@ -48,7 +48,7 @@ ui.cmp._NotInENGrid.columns = [{
             if(info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File removed by me') + "'>" + v + "</span>";
             } else {
-                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user.ucFirst()) + "'>" + v + "</span>";
+                return "<span ext:qtip='" + String.format(_('File removed by {0}'), info.user) + "'>" + v + "</span>";
             }
         } else {
             return v;
