@@ -145,7 +145,7 @@ echo jsLoadTemplate('js/ExtJs/ext-all.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadi18nTemplate();
 
-echo jsLoadTemplate('js/main-all-debug.js');
+echo jsLoadTemplate('js/main-all.js');
 echo footerTemplate();
 
 ?>
