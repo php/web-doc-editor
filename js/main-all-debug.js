@@ -16887,7 +16887,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                 },{
                     scope: this,
                     text: _('Enable line wrapping'),
-                    checked: PhDOE.user.conf.main.lineWrapping,
+                    checked: ((PhDOE.user.conf.main.lineWrapping === true) ? true : false),
                     checkHandler: function(item, checked)
                     {
                         var wrappingValue = ( checked ) ? true : false;
