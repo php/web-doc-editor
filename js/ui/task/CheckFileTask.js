@@ -21,7 +21,7 @@ ui.task.CheckFileTask = function(config)
             FileName    : this.fname,
             FileLang    : this.lang,
             FileContent : Ext.getCmp(this.prefix + '-' + this.ftype +
-                                        '-FILE-' + this.fid).getCode()
+                                        '-FILE-' + this.fid).getValue()
         },
         failure: function()
         {
