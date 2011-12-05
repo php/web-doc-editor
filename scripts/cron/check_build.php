@@ -83,9 +83,9 @@ while( list($key, $project) = each($availableProject) ) {
                 $subject = "[DOC-".strtoupper($emailLang)."] - Your documentation is broken";
 
                 // We send an email for this failed build
-                // AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
+                AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
 
-                // echo "email send !\n";
+                echo "email send !\n";
 
                 // We store it into DB
                 LogManager::getInstance()->saveFailedBuild($lang, $return["logContent"]);
