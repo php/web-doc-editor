@@ -144,7 +144,6 @@ echo jsLoadTemplate('js/ExtJs/ext-all.js');
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
 echo jsLoadi18nTemplate();
-echo jsLoadTemplate('https://translate.google.com/translate_a/element.js?cb=googleSectionalElementInit&ug=section&hl='.$_SESSION['lang']);
 echo jsLoadTemplate('js/main-all.js');
 echo footerTemplate();
 ?>
