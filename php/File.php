@@ -224,6 +224,11 @@ class File
            $path = $this->path;
        }
 
+       $parentFolder = dirname($path);
+       if(!is_dir($parentFolder)) {
+           $this->createFolder($parentFolder);
+       }
+
        // We create this folder localy
        if( ! @mkdir($appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$this->lang.'/'.$path, 0777, true) ) {
            return false;
