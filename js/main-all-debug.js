@@ -12547,7 +12547,6 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
     padding    : 10,
     buttons    : [{
         text    : _('Save'),
-        disabled: true,
         handler : function()
         {
             var win = this.ownerCt.ownerCt,
@@ -12605,7 +12604,6 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     store         : ui.cmp._ChangeFileOwner.store,
                     triggerAction : 'all',
                     valueField    : 'userID',
-                    value         : PhDOE.user.login,
                     tpl: new Ext.XTemplate(
                         '<tpl for="."><div class="x-combo-list-item">',
                             '{authService} - {userName}',
@@ -12613,13 +12611,13 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     ),
                     displayField  : 'userName',
                     listeners     : {
-                        afterrender : function()
+                        afterrender : function(cmp)
                         {
-                            this.store.load();
-                        },
-                        select : function()
-                        {
-                            win.fbar.items.items[0].enable();
+                            cmp.store.load({
+                                callback: function() {
+                                    cmp.setValue(PhDOE.user.userID);
+                                }
+                            });
                         }
                     }
                 }]
