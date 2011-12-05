@@ -92,6 +92,7 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     store         : ui.cmp._ChangeFileOwner.store,
                     triggerAction : 'all',
                     valueField    : 'userID',
+                    value         : PhDOE.user.login,
                     tpl: new Ext.XTemplate(
                         '<tpl for="."><div class="x-combo-list-item">',
                             '{authService} - {userName}',

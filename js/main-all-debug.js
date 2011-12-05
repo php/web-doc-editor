@@ -10847,6 +10847,7 @@ ui.task.GetFileTask = function(config)
                     mess.getDialog().mask.alignTo(pEl.dom, "tl");
                 }
             } else {
+                
                 // This file haven't been modified by another user
                 if (id_prefix == 'FNT-TRANS') {
                     
@@ -12604,6 +12605,7 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                     store         : ui.cmp._ChangeFileOwner.store,
                     triggerAction : 'all',
                     valueField    : 'userID',
+                    value         : PhDOE.user.login,
                     tpl: new Ext.XTemplate(
                         '<tpl for="."><div class="x-combo-list-item">',
                             '{authService} - {userName}',
@@ -17453,8 +17455,6 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 
                     codemodified : function()
                     {
-                        console.log('in codemodified');
-                        
                         // This should never occurs on readOnly file
                         if( this.readOnly ) {
                             return;
