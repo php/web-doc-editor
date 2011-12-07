@@ -219,6 +219,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     setOriginalContent : function(content)
     {
         this.originalContent = content;
+        this.documentDurty = false;
     },
 
     setLine : function(line, content)

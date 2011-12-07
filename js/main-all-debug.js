@@ -8226,6 +8226,7 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     setOriginalContent : function(content)
     {
         this.originalContent = content;
+        this.documentDurty = false;
     },
 
     setLine : function(line, content)
