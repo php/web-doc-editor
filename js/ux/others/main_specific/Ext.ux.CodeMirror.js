@@ -85,6 +85,14 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                         },
                         onKeyEvent: function(c,e)
                         {
+                            // Handle crtl+s to save the document
+                            if( e.ctrlKey && e.keyCode == 83)
+                            {
+                                e.preventDefault();
+                                me.onSave();
+                            }
+                                
+                            
                             var cursor = c.getCursor();
                             me.fireEvent('cursormove', cursor.line, cursor.ch);
                         },
@@ -111,10 +119,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             }
         });
         
-        
-        
     },
-
+    
     focus: function() {
         if (this.initialized) {
                 return this.codeEditor.focus();
@@ -174,6 +180,14 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         }
     },
 
+    onSave: function()
+    {
+        var saveBtn = Ext.getCmp(this.id + '-btn-save');
+        if( ! saveBtn.disabled ) {
+            saveBtn.handler.call(saveBtn.scope || saveBtn, saveBtn);
+        }
+    },
+
     redo : function(id_prefix, fid)
     {
         this.codeEditor.redo();
@@ -209,8 +223,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.codeEditor.focus();
     },
 
-    scrollTo: function(position) {
-        // Ok !
+    scrollTo: function(position)
+    {
         var EditorEl = this.el.child('.CodeMirror-scroll');
         EditorEl.dom.scrollTop = position;
         
