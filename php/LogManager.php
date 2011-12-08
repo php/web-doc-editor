@@ -41,7 +41,7 @@ class LogManager
 
         $result = array();
 
-        $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s" ORDER BY use DESC';
+        $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s" ORDER BY used DESC';
         $params = array($project, $vcsLogin);
         $r = $this->conn->query($s, $params);
         while ($a = $r->fetch_assoc()) {
