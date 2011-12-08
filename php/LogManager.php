@@ -41,7 +41,7 @@ class LogManager
 
         $result = array();
 
-        $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s"';
+        $s = 'SELECT `id`, `text` FROM `commitMessage` WHERE `project`="%s" AND `user`="%s" ORDER BY use DESC';
         $params = array($project, $vcsLogin);
         $r = $this->conn->query($s, $params);
         while ($a = $r->fetch_assoc()) {
@@ -63,13 +63,19 @@ class LogManager
         $project  = $am->project;
         $vcsLogin = $am->vcsLogin;
 
-        $s = 'SELECT id FROM `commitMessage` WHERE `project`="%s" AND `text`="%s" AND `user`="%s"';
+        $s = 'SELECT id, used FROM `commitMessage` WHERE `project`="%s" AND `text`="%s" AND `user`="%s"';
         $params = array($project, $log, $vcsLogin);
         $r = $this->conn->query($s, $params);
 
         if ($r->num_rows == 0 ) {
             $s = 'INSERT INTO `commitMessage` (`project`, `text`,`user`) VALUES ("%s", "%s", "%s")';
             $params = array($project, $log, $vcsLogin);
+            $this->conn->query($s, $params);
+        } else {
+            $a = $r->fetch_object();
+            $s = 'UPDATE `commitMessage` SET `used` = %d WHERE id=%d';
+            $newUsed = $a->used + 1;
+            $params = array($newUsed, $a->id);
             $this->conn->query($s, $params);
         }
     }

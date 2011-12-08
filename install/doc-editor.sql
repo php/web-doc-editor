@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `commitMessage` (
   `project` varchar(255) NOT NULL,
   `text` text NOT NULL,
   `user` varchar(255) NOT NULL,
+  `used` int(11) NOT NULL DEFAULT '0',
   KEY `id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
