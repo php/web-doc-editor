@@ -343,6 +343,11 @@ var PhDOE_loginPage = function()
                                         c.setValue(directAccess.project);
                                         c.collapse();
                                         c.disable();
+                                        
+                                        // Get the URI for svn account request
+                                        var url = c.store.getById(directAccess.project.toLowerCase()).data.request_account_uri;
+                                        Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                                        
                                     } else {
                                         c.setValue('php');
 
