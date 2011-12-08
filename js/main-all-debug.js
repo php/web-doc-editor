@@ -1119,8 +1119,8 @@ var CodeMirror = (function() {
     function selectWordAt(pos) {
       var line = getLine(pos.line).text;
       var start = pos.ch, end = pos.ch;
-      while (start > 0 && /\S/.test(line.charAt(start - 1))) --start;
-      while (end < line.length && /\S/.test(line.charAt(end))) ++end;
+      while (start > 0 && /[0-9\u0041-\u007A\u00BF-\u02B8]/.test(line.charAt(start - 1))) --start;
+      while (end < line.length && /[0-9\u0041-\u007A\u00BF-\u02B8]/.test(line.charAt(end))) ++end;
       setSelectionUser({line: pos.line, ch: start}, {line: pos.line, ch: end});
     }
     function selectLine(line) {
