@@ -271,7 +271,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
                         FileName: FileName,
-                        FilePath: FilePath
+                        FilePath: FilePath,
+                        currentOwner: owner,
+                        fileIdDB: node.attributes.idDB
                     });
                 }
             }, {

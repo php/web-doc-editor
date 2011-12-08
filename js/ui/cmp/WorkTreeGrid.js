@@ -32,7 +32,6 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                     {
                         new ui.cmp.ChangeFileOwner({
                             fileIdDB: this.node.attributes.idDB,
-                            fileLang: this.fileLang,
                             fileFolder: this.folderNode.attributes.task,
                             fileName: this.node.attributes.task,
                             currentOwner: this.userNode.attributes.task
@@ -507,11 +506,14 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
                 hidden: (FileType === 'delete' || FileType === 'new'),
-                handler: function(){
+                handler: function()
+                {
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
                         FileName: FileName,
-                        FilePath: FilePath
+                        FilePath: FilePath,
+                        currentOwner: owner,
+                        fileIdDB: node.attributes.idDB
                     });
                 }
             }, {

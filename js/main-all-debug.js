@@ -18283,12 +18283,14 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     openDiffTab: function(DiffOption)
     {
         var DiffType = DiffOption.DiffType,
+            currentOwner = DiffOption.currentOwner || '',
+            fileIdDB = DiffOption.fileIdDB || '',
             FileName = DiffOption.FileName || '',
             FilePath = DiffOption.FilePath || '',
             patchID  = DiffOption.patchID || '',
             patchName  = DiffOption.patchName || '',
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP;
+            tabTIP, tBar;
         
             
         // tabTIP
@@ -18301,6 +18303,79 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('diff_panel_' + FileMD5)) {
         
+            // Prepare the tbar
+            tBar = [{
+                xtype : 'buttongroup',
+                items: [{
+                    xtype:'button',
+                    iconCls: 'iconEdit',
+                    tooltip: _('Edit in a new tab'),
+                    handler: function()
+                    {
+                        console.log(FileName);
+                        console.log(FilePath);
+                        ui.cmp.RepositoryTree.getInstance().openFile('byPath',
+                            FilePath, FileName
+                        );
+                    }
+                },{
+                    xtype:'button',
+                    iconCls: 'iconDownloadDiff',
+                    tooltip: _('Download the diff as a patch'),
+                    handler: function(){
+                        window.location.href = './do/downloadPatch' +
+                        '?FilePath=' +
+                        FilePath +
+                        '&FileName=' +
+                        FileName +
+                        '&csrfToken=' +
+                        csrfToken;
+                    }
+                }]
+                
+            },
+            
+            (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ?
+            
+            {
+                xtype : 'buttongroup',
+                items: [{
+                    xtype:'button',
+                    iconCls: 'iconPageDelete',
+                    tooltip: _('Clear this change'),
+                    handler: function()
+                    {
+                        // We clear local change
+                        new ui.task.ClearLocalChangeTask({
+                            ftype: 'update',
+                            fpath: FilePath,
+                            fname: FileName
+                        });
+                        
+                        // We close this window
+                        Ext.getCmp('main-panel').remove('diff_panel_' + FileMD5);
+                        
+                    }
+                },{
+                    xtype:'button',
+                    iconCls: 'iconSwitchLang',
+                    tooltip: _('Change file\'s owner'),
+                    handler: function() {
+                        new ui.cmp.ChangeFileOwner({
+                            fileIdDB: fileIdDB,
+                            fileFolder: FilePath,
+                            fileName: FileName,
+                            currentOwner: currentOwner
+                        });
+                    }
+                }]
+                
+            } : '' )
+                
+                
+                
+            ];
+            
             // Add tab for the diff
             Ext.getCmp('main-panel').add({
                 xtype: 'panel',
@@ -18310,15 +18385,8 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 closable: true,
                 autoScroll: true,
                 iconCls: 'iconTabLink',
-                html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>'
-                /* Preview for Philip's request
-                ,
-                tbar: [{
-                    xtype: 'button',
-                    text: 'Commit this patch',
-                    iconCls: 'iconCommitFileVcs'
-                }]
-                */
+                html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>',
+                tbar: tBar
             });
             
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
@@ -18978,7 +19046,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
                         FileName: FileName,
-                        FilePath: FilePath
+                        FilePath: FilePath,
+                        currentOwner: owner,
+                        fileIdDB: node.attributes.idDB
                     });
                 }
             }, {
@@ -23331,7 +23401,6 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                     {
                         new ui.cmp.ChangeFileOwner({
                             fileIdDB: this.node.attributes.idDB,
-                            fileLang: this.fileLang,
                             fileFolder: this.folderNode.attributes.task,
                             fileName: this.node.attributes.task,
                             currentOwner: this.userNode.attributes.task
@@ -23806,11 +23875,14 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
                 hidden: (FileType === 'delete' || FileType === 'new'),
-                handler: function(){
+                handler: function()
+                {
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
                         FileName: FileName,
-                        FilePath: FilePath
+                        FilePath: FilePath,
+                        currentOwner: owner,
+                        fileIdDB: node.attributes.idDB
                     });
                 }
             }, {
