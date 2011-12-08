@@ -8045,7 +8045,7 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
                 
             case 'xml' :
             case 'ent' :
-                this.mode = {name: 'xmlpure'};
+                this.mode = {name: 'xml'};
                 break;
                 
             case 'bat' :
