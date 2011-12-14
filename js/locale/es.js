@@ -1,5 +1,5 @@
 /*
-* This file must be encoded in UTF-8 --- Rev. transalted: 314118
+* This file must be encoded in UTF-8
 */
 
 var i18n = new Array();
@@ -300,10 +300,21 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Guardar como</b> parche";
   i18n["modified"] = "modificado";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Verificar</b> XML con XmlLint";
- i18n["<b>Expand</b> in a popup"] = "<b>Expandir</b> dentro de una ventana";
+  i18n["<b>Expand</b> in a popup"] = "<b>Expandir</b> dentro de una ventana";
   i18n["<b>Preview</b> in a popup"] = "<b>Previsualizar</b> dentro de una ventana";
   i18n["You must save your file in order to preview the result."] = "Ud. debe guardar el fichero para poder ver la vista previa.";
-
+  i18n["Open for editing in a new Tab"] = "Abrir en una nueva pestaña";
+  i18n["Editor option"] = "Opción del editor";
+  i18n["Choose a Theme"] = "Seleccione un estilo";
+  i18n["No theme"] = "Sin estilo";
+  i18n["Default theme"] = "Estilo predeterminado";
+  i18n["Cobalt"] = "Cobalto";
+  i18n["Eclipse"] = "Eclipse";
+  i18n["Elegant"] = "Elegante";
+  i18n["Monokai"] = "Monokai";
+  i18n["Neat"] = "Guapo";
+  i18n["Night"] = "Nocturno";
+  i18n["RubyBlue"] = "Rubí Azul";
 
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
@@ -348,8 +359,7 @@ var i18n = new Array();
   i18n["0 means no limit"] = "0 significa 'sin límite'";
   i18n["ScrollBars"] = "Barras de desplazamiento";
   i18n["Editor"] = "Editor";
-  i18n["SpellChecking"] = "Corrector ortográfico";
-  i18n["Enable spell checking"] = "Activar corrector ortográfico";
+  i18n["Editor theme"] = "Estilo de editor";
   i18n["Automatically load the log when displaying the file"] = "Carcar automáticamente el log cuando se muestra un fichero";
   i18n["Start with the panel open"] = "Empezar con el panel abierto";
   i18n["Panel width"] = "Ancho del panel";
@@ -357,7 +367,6 @@ var i18n = new Array();
   i18n["Panel height"] = "Alto del panel";
   i18n["Using ViewVc from php web site"] = "Utilizar viewVc de la página web de Php";
   i18n["Using diff -u command line"] = "Uso de la línea de comandos \"$ diff -u\"";
-  i18n["Enable spell checking for the <b>{0}</b> file"] = "Activar el corrector ortográfico para el fichero <b>{0}</b>";
   i18n["Error type"] = "Tipo de errores";
   i18n["Skip nbLiteralTag error"] = "Ignorar los errores del tipo \"nbLiteralTag\"";
   i18n["Patch content"] = "Contenido del parche";
@@ -508,7 +517,9 @@ var i18n = new Array();
   i18n["Help and support"] = "Ayuda y soporte";
   i18n["Mailing list:"] = "Lista de correo:";
   i18n["IRC:"] = "IRC : ";
+  i18n["Mode Xmlpure by Dror Ben-Gai"] = "Modo Xmlpure por Dror Ben-Gai";
   i18n["Web IRC Chat"] = "Web IRC Chat";
+  i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit por la donación del widget IRC Premium";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
@@ -534,16 +545,18 @@ var i18n = new Array();
   i18n["... of the {0} file"] = "... del fichero {0}";
   i18n["Need Update: in {0}"] = "Fichero que necesita actualización: en {0}";
   i18n["{0} revision"] = "Revisión {0}";
-
+  
   i18n["File EN modified by me"] = "Fichero EN modificado por mi";
   i18n["File EN modified by {0}"] = "Fichero EN modificado por {0}";
 
   i18n["File {0} modified by me"] = "Fichero {0} modificado por mi";
   i18n["File {0} modified by {1}"] = "Fichero {0} modificado por {1}";
+  i18n["{0} mine"] = "{0} son mios";
 
 // In file: ../../js/ui/task/PingTask.js
   i18n["check in progress..."] = "Verificación en curso...";
-
+  i18n["Connection lost"] = "Se perdió la conexión";
+  i18n["Retrying in {0} second(s)."] = "Se intentará restablecer la conexión en {0} segundo(s).";
 
 // In file: ../../js/ui/task/UpdateSingleFolderTask.js
   i18n["Please, wait until update this folder..."] = "Por favor, espere hasta que se actualice esta carpeta...";
@@ -614,6 +627,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/CheckFileTask.js
   i18n["Checking for error. Please, wait..."] = "Comprobando errores. Por favor espere...";
+  i18n["An error occured while checking this file for errors. Please, try again."] = "Ocurrió un error mientras se buscaban errores en este fichero. Por favor, inténtelo de nuevo.";
   i18n["Check for errors"] = "Comprobación del fichero";
   i18n["There is no error."] = "No se han encontrado errores.";
 
@@ -640,3 +654,38 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "¡La nota fue añadida satisfactoriamente!";
   i18n["Note deleted"] = "Nota eliminada";
   i18n["The note was deleted successfully !"] = "¡La nota fue eliminada satisfactoriamente!";
+    
+  
+// In file: ../../js/ui/task/CheckXml.js
+  i18n["XML check. Please, wait..."] = "Comprobando XML. Por favor espere...";
+  i18n["XML check"] = "Comprobar XML";
+  
+  
+// In file: ../../js/ui/cmp/CheckXmlWin.js
+  i18n["Line"] = "Línea";
+  i18n["Libel"] = "Libelo";
+  i18n["XML Errors"] = "Errores XML";
+  
+// In file: ../../js/ui/cmp/ChangeFileOwner.js
+  i18n["Current owner"] = "Propietario actual";
+  i18n["Action"] = "Acción";
+  i18n["New owner"] = "Nuevo propietario";
+  i18n["Change file's owner"] = "Cambiar el propietario del fichero";
+  
+// In file: ../../js/ui/task/ChangeFileOwner.js
+  i18n["Owner changed"] = "Propietario modificado";
+  i18n["The owner for this file have been changed successfully !"] = "¡El propietario de este ficheros se ha cambiado satisfactoriamente!";
+  
+// In file: ../../js/ui/cmp/AnonymousPatchWin.js
+  i18n["Next"] = "Siguiente";
+  i18n["Anonymous patch manager"] = "Gestor de parches anónimos";
+  i18n["You have opened a modified file from the \"Patch for review\" module.<br>This file has been modified by an anonymous user.<br><br>Please choose one of the following actions:"] = "Ud ha abierto un fichero modificado desde el módulo de \"Parches para revisar\".<br>Este fichero ha sido modificado por un usuario anónimo.<br><br>Por favor realice una de las siguientes acciones:";
+  i18n["Continue to modify this file"] = "Continuar modificando este fichero";
+  i18n["This action will open this file for modification. Once your modification finish, just save it and this file will be own by you."] = "Esta acción abrirá este fichero para poder ser modificado. Una vez lo haya modificado, gúardelo y ya será suyo.";
+  i18n["Reject this patch"] = "Rechazar este parche";
+  i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Esta acción cerrará este fichero y borrará el cambio en local. Este fichero volverá a su versión original tal y como es en el servidor VCS.";
+  i18n["Validate this patch"] = "Validar este parche";
+  i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Esta acción cambia el propietario de la modificación y lo registra bajo tu nombre. El fichero aparecerá bajo tu nombre y lo podrás cometer.";
+
+// In file: ../../js/ui/cmp/PreviewFile.js
+  i18n["Preview"] = "Prévisualisation";
