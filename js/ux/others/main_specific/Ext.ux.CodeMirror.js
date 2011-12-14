@@ -33,7 +33,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                 
             case 'xml' :
             case 'ent' :
-                this.mode = {name: 'xml'};
+                this.mode = {name: 'xml',alignCDATA:true};
                 break;
                 
             case 'bat' :

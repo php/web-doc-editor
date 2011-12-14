@@ -5,13 +5,12 @@
     <link rel="stylesheet" href="../lib/codemirror.css">
     <script src="../lib/codemirror.js"></script>
     <script src="../lib/util/foldcode.js"></script>
-    <link rel="stylesheet" href="../theme/default.css">
     <script src="../mode/javascript/javascript.js"></script>
-    <link rel="stylesheet" href="../css/docs.css">
+    <link rel="stylesheet" href="../doc/docs.css">
 
     <style type="text/css">
       .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
-      .CodeMirror-gutter {min-width: 3em; cursor: pointer;}
+      .CodeMirror-gutter {min-width: 2.6em; cursor: pointer;}
     </style>
   </head>
   <body>
@@ -41,7 +40,7 @@ window.onload = function() {
     lineNumbers: true,
     lineWrapping: true,
     onGutterClick: foldFunc,
-    onKeyEvent: keyEvent
+    extraKeys: {"Ctrl-Q": function(cm){foldFunc(cm, cm.getCursor().line);}}
   });
 
   foldFunc(editor, 6);

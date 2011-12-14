@@ -3,7 +3,7 @@
   <head>
     <title>CodeMirror</title>
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans:bold"/>
-    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+    <link rel="stylesheet" type="text/css" href="doc/docs.css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="alternate" href="http://twitter.com/statuses/user_timeline/242283288.rss" type="application/rss+xml"/>
   </head>
@@ -12,7 +12,7 @@
 <h1><span class="logo-braces">{ }</span> <a href="http://codemirror.net/">CodeMirror</a></h1>
 
 <pre class="grey">
-<img src="css/baboon.png" class="logo" alt="logo"/>/* In-browser code editing
+<img src="doc/baboon.png" class="logo" alt="logo"/>/* In-browser code editing
    made bearable */
 </pre>
 
@@ -42,6 +42,7 @@
       <li><a href="mode/diff/index.html">diff</a></li>
       <li><a href="mode/groovy/index.html">Groovy</a></li>
       <li><a href="mode/haskell/index.html">Haskell</a></li>
+      <li><a href="mode/htmlembedded/index.html">HTML embedded scripts</a></li>
       <li><a href="mode/htmlmixed/index.html">HTML mixed-mode</a></li>
       <li><a href="mode/javascript/index.html">JavaScript</a></li>
       <li><a href="mode/jinja2/index.html">Jinja2</a></li>
@@ -85,7 +86,25 @@
       <li><a href="demo/runmode.html">Stand-alone highlighting</a></li>
       <li><a href="demo/fullscreen.html">Full-screen editing</a></li>
       <li><a href="demo/changemode.html">Mode auto-changing</a></li>
+      <li><a href="demo/visibletabs.html">Visible tabs</a></li>
+      <li><a href="demo/emacs.html">Emacs keybindings</a></li>
+      <li><a href="demo/vim.html">Vim keybindings</a></li>
     </ul>
+
+    <h2>Real-world uses:</h2>
+
+    <ul>
+      <li><a href="http://jsbin.com">jsbin.com</a> (JS playground)</li>
+      <li><a href="http://buzzard.ups.edu/">Sage demo</a> (math system)</li>
+      <li><a href="http://www.sourcelair.com/">sourceLair</a> (online IDE)</li>
+      <li><a href="http://eloquentjavascript.net/chapter1.html">Eloquent JavaScript</a> (book)</a></li>
+      <li><a href="http://www.mergely.com/">Mergely</a> (interactive diffing)</li>
+      <li><a href="http://paperjs.org/">Paper.js</a> (graphics scripting)</li>
+      <li><a href="http://www.wescheme.org/">WeScheme</a> (learning tool)</li>
+      <li><a href="http://webglplayground.net/">WebGL playground</a></li>
+      <li><a href="http://ql.io/">ql.io</a> (http API query helper)</li>
+      <li><a href="http://elm-lang.org/Examples.elm">Elm language examples</a></li>
+     </ul>
 
   </div></div>
 
@@ -113,8 +132,7 @@
 
   <p>The <a href="manual.html">manual</a> is your first stop for
   learning how to use this library. It starts with a quick explanation
-  of how to use the editor, and then describes all of the (many)
-  options and methods that CodeMirror exposes.</p>
+  of how to use the editor, and then describes the API in detail.</p>
 
   <p>For those who want to learn more about the code, there is
   an <a href="internals.html">overview of the internals</a> available.
@@ -150,17 +168,39 @@
   See <a href="#support">here</a> for information on how to contact
   me.</p>
 
+  <h2 id="commercial">Commercial support</h2>
+
+  <p>CodeMirror is developed and maintained by me, Marijn Haverbeke,
+  in my own time. If your company is getting value out of CodeMirror,
+  please consider purchasing a support contract.</p>
+
+  <ul>
+    <li>You'll be funding further work on CodeMirror.</li>
+    <li>You ensure that you get a quick response when you have a
+    problem, even when I am otherwise busy.</li>
+  </ul>
+
+  <p>CodeMirror support contracts exist in two
+  forms—<strong>basic</strong> at €100 per month,
+  and <strong>premium</strong> at €500 per
+  month. <a href="mailto:marijnh@gmail.com">Contact me</a> for further
+  information.</p>
+
 </div>
 
 <div class="right blk">
 
   <a href="http://codemirror.net/codemirror.zip" class="download">Download the latest release</a>
 
-  <h2>Make a donation</h2>
+  <h2>Support CodeMirror</h2>
 
   <ul>
-    <li><span onclick="document.getElementById('paypal').submit();" class="quasilink">Paypal</span></li>
-    <li><span onclick="document.getElementById('bankinfo').style.display = 'block';" class="quasilink">Bank</span></li>
+    <li><strong>Donate</strong>
+    (<span onclick="document.getElementById('paypal').submit();"
+    class="quasilink">Paypal</span>
+    or <span onclick="document.getElementById('bankinfo').style.display = 'block';"
+             class="quasilink">bank</span>)</li>
+    <li>Purchase <strong><a href="#commercial">commercial support</a></strong></li>
   </ul>
 
   <p id="bankinfo" style="display: none;">
@@ -173,6 +213,8 @@
   </p>
 
   <h2>Releases:</h2>
+
+  <p class="rel"><strong>Note:</strong> <a href="doc/upgrade_v2.2.html">incompatible changes</a> in HEAD</p>
 
   <p class="rel">21-11-2011: <a href="http://codemirror.net/codemirror-2.18.zip">Version 2.18</a>:</p>
   <p class="rel-note">Fixes <code>TextMarker.clear</code>, which is broken in 2.17.</p>
