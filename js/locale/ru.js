@@ -304,6 +304,17 @@ var i18n = new Array();
   i18n["<b>Preview</b> in a popup"] = "<b>Предпросмотр</b> во всплывающем окне";
   i18n["You must save your file in order to preview the result."] = "Для предпросмотра результата необходимо сохранить файл.";
   i18n["Open for editing in a new Tab"] = "Редактировать в новой вкладке";
+  i18n["Editor option"] = "Опции редактора";
+  i18n["Choose a Theme"] = "Выберите тему";
+  i18n["No theme"] = "Без темы";
+  i18n["Default theme"] = "Тема по умолчанию";
+  i18n["Cobalt"] = "Cobalt";
+  i18n["Eclipse"] = "Eclipse";
+  i18n["Elegant"] = "Elegant";
+  i18n["Monokai"] = "Monokai";
+  i18n["Neat"] = "Neat";
+  i18n["Night"] = "Night";
+  i18n["RubyBlue"] = "RubyBlue";
 
 
 // In file: ../../js/ui/component/EditorConf.js
@@ -349,8 +360,7 @@ var i18n = new Array();
   i18n["0 means no limit"] = "0 означает 'без лимита'";
   i18n["ScrollBars"] = "Полосы прокрутки";
   i18n["Editor"] = "Редактор";
-  i18n["SpellChecking"] = "Проверка орфографии";
-  i18n["Enable spell checking"] = "Включить проверку орфографии";
+  i18n["Editor theme"] = "Тема редактора";
   i18n["Automatically load the log when displaying the file"] = "Автоматически загружать лог при отображении файла";
   i18n["Start with the panel open"] = "Стартовать с открытой панелью";
   i18n["Panel width"] = "Ширина панели";
@@ -358,7 +368,6 @@ var i18n = new Array();
   i18n["Panel height"] = "Высота панели";
   i18n["Using ViewVc from php web site"] = "С помощью ViewVc с веб-сайта php";
   i18n["Using diff -u command line"] = "С помощью команды diff -u";
-  i18n["Enable spell checking for the <b>{0}</b> file"] = "Включить проверку орфографии для файла <b>{0}</b>";
   i18n["Error type"] = "Тип ошибки";
   i18n["Skip nbLiteralTag error"] = "Пропускать ошибку nbLiteralTag";
   i18n["Patch content"] = "Содержимое патча";
@@ -512,7 +521,9 @@ var i18n = new Array();
   i18n["Help and support"] = "Поддержка";
   i18n["Mailing list:"] = "Список рассылки:";
   i18n["IRC:"] = "IRC: ";
+  i18n["Mode Xmlpure by Dror Ben-Gai"] = "Режим Xmlpure от Dror Ben-Gai";
   i18n["Web IRC Chat"] = "Web IRC чат";
+  i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit за предоставление их IRC Premium виджета";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
@@ -550,6 +561,8 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/PingTask.js
   i18n["check in progress..."] = "Идет проверка...";
+  i18n["Connection lost"] = "Соединение потеряно";
+  i18n["Retrying in {0} second(s)."] = "Повторное подключение через {0} секунд.";
 
 
 // In file: ../../js/ui/task/UpdateSingleFolderTask.js
