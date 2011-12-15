@@ -521,7 +521,7 @@ var i18n = new Array();
   i18n["Help and support"] = "Поддержка";
   i18n["Mailing list:"] = "Список рассылки:";
   i18n["IRC:"] = "IRC: ";
-  i18n["Mode Xmlpure by Dror Ben-Gai"] = "Режим Xmlpure от Dror Ben-Gai";
+  i18n["Mode Xmlpure by Dror Ben-Gai"] = "Модификация Xmlpure от Dror Ben-Gai";
   i18n["Web IRC Chat"] = "Web IRC чат";
   i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit за предоставление их IRC Premium виджета";
 
