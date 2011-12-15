@@ -663,7 +663,7 @@ var i18n = new Array();
   
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Línea";
-  i18n["Libel"] = "Libelo";
+  i18n["Libel"] = "Descripción";
   i18n["XML Errors"] = "Errores XML";
   
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
