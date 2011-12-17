@@ -13,8 +13,8 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.initialized = false;
         Ext.ux.CodeMirror.superclass.initComponent.apply(this, arguments);
 
-        this.theme = (this.theme === 'undefined') ? 'default' : this.theme;
-                            
+        this.theme = ( Ext.isDefined(this.theme) ) ? this.theme  :'default';
+        
         // Handle the parser
         // In cm2, parser is the "mode" config.
         switch( this.mode ) {
@@ -242,6 +242,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     setOption: function(optionName, optionValue) {
+        
         if (this.initialized) {
                 this.codeEditor.setOption(optionName, optionValue);
         }

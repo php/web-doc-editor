@@ -7999,8 +7999,8 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
         this.initialized = false;
         Ext.ux.CodeMirror.superclass.initComponent.apply(this, arguments);
 
-        this.theme = (this.theme === 'undefined') ? 'default' : this.theme;
-                            
+        this.theme = ( Ext.isDefined(this.theme) ) ? this.theme  :'default';
+        
         // Handle the parser
         // In cm2, parser is the "mode" config.
         switch( this.mode ) {
@@ -8228,6 +8228,7 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     },
 
     setOption: function(optionName, optionValue) {
+        
         if (this.initialized) {
                 this.codeEditor.setOption(optionName, optionValue);
         }
@@ -24488,7 +24489,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 320387 $',
+            uiRevision: '$Revision: 321026 $',
             conf: '',
             extJsVersion: '3.3.1',
             codeMirror: '2.18+'
