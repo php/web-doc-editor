@@ -12148,7 +12148,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                             '</div>' +
                             '<div id="phd-oe-about-info">' + PhDOE.app.name + ' ver ' + PhDOE.app.ver + '<br/>' +
                                 'UI: ' + PhDOE.app.uiRevision + '<br/>' +
-                                ' Copyright &copy; 2008-2010 The PHP Group<br/>' +
+                                ' Copyright &copy; 2008-2012 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
                             '</div>'
@@ -12651,7 +12651,7 @@ ui.cmp.Chat = Ext.extend(Ext.Window,
             title : _('Chat with us on IRC !'),
             items : [new Ext.ux.IFrameComponent({
                 id: 'frame-win-chat',
-                url: 'http://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
+                url: 'https://widget.mibbit.com/?settings=8eec4034df2eb666b0600bdfe151529a&server=irc.umich.edu&channel=%23php.doc&nick=poe_'+ chatLogin
             })]
         });
         ui.cmp.Chat.superclass.initComponent.call(this);
@@ -18264,15 +18264,20 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             FilePath = DiffOption.FilePath || '',
             patchID  = DiffOption.patchID || '',
             patchName  = DiffOption.patchName || '',
+            patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP, tBar;
+            tabTIP, toolTip, tBar;
         
             
         // tabTIP
         if( patchID != '' ) {
             tabTIP = String.format(_('Diff for patch: {0}'), patchName);
+            patchURI = './do/downloadPatch?patchID=' + patchID + '&csrfToken=' + csrfToken;
+            toolTip = _('Download the unified diff as a patch');
         } else {
             tabTIP = String.format(_('Diff for file: {0}'), FilePath + FileName);
+            patchURI = './do/downloadPatch?FilePath=' + FilePath + '&FileName=' + FileName + '&csrfToken=' + csrfToken;
+            toolTip = _('Download the diff as a patch');
         }
             
         // Render only if this tab don't exist yet
@@ -18287,8 +18292,6 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     tooltip: _('Edit in a new tab'),
                     handler: function()
                     {
-                        console.log(FileName);
-                        console.log(FilePath);
                         ui.cmp.RepositoryTree.getInstance().openFile('byPath',
                             FilePath, FileName
                         );
@@ -18296,15 +18299,9 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 },{
                     xtype:'button',
                     iconCls: 'iconDownloadDiff',
-                    tooltip: _('Download the diff as a patch'),
+                    tooltip: toolTip,
                     handler: function(){
-                        window.location.href = './do/downloadPatch' +
-                        '?FilePath=' +
-                        FilePath +
-                        '&FileName=' +
-                        FileName +
-                        '&csrfToken=' +
-                        csrfToken;
+                        window.location.href = patchURI;
                     }
                 }]
                 

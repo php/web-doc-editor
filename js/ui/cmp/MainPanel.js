@@ -235,15 +235,20 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             FilePath = DiffOption.FilePath || '',
             patchID  = DiffOption.patchID || '',
             patchName  = DiffOption.patchName || '',
+            patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP, tBar;
+            tabTIP, toolTip, tBar;
         
             
         // tabTIP
         if( patchID != '' ) {
             tabTIP = String.format(_('Diff for patch: {0}'), patchName);
+            patchURI = './do/downloadPatch?patchID=' + patchID + '&csrfToken=' + csrfToken;
+            toolTip = _('Download the unified diff as a patch');
         } else {
             tabTIP = String.format(_('Diff for file: {0}'), FilePath + FileName);
+            patchURI = './do/downloadPatch?FilePath=' + FilePath + '&FileName=' + FileName + '&csrfToken=' + csrfToken;
+            toolTip = _('Download the diff as a patch');
         }
             
         // Render only if this tab don't exist yet
@@ -258,8 +263,6 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     tooltip: _('Edit in a new tab'),
                     handler: function()
                     {
-                        console.log(FileName);
-                        console.log(FilePath);
                         ui.cmp.RepositoryTree.getInstance().openFile('byPath',
                             FilePath, FileName
                         );
@@ -267,15 +270,9 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 },{
                     xtype:'button',
                     iconCls: 'iconDownloadDiff',
-                    tooltip: _('Download the diff as a patch'),
+                    tooltip: toolTip,
                     handler: function(){
-                        window.location.href = './do/downloadPatch' +
-                        '?FilePath=' +
-                        FilePath +
-                        '&FileName=' +
-                        FileName +
-                        '&csrfToken=' +
-                        csrfToken;
+                        window.location.href = patchURI;
                     }
                 }]
                 
