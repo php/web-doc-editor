@@ -291,7 +291,8 @@ var PhDOE = function()
                     ui.cmp.WorkTreeGrid.getInstance().getRootNode(),
                     ui.cmp.PatchesTreeGrid.getInstance().getRootNode(),
                     ui.cmp.PortletSummary.getInstance().store,
-                    ui.cmp.PortletTranslator.getInstance().store,
+                    ui.cmp.PortletTranslator.getInstance().storeTranslator,
+                    ui.cmp.PortletTranslator.getInstance().storeReviewer,
                     ui.cmp.PortletTranslationGraph.getInstance().store,
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store

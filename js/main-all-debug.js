@@ -24715,7 +24715,7 @@ var PhDOE = function()
             name: 'Php Docbook Online Editor',
             ver : 'X.XX',
             loaded: false,
-            uiRevision: '$Revision: 321026 $',
+            uiRevision: '$Revision: 321286 $',
             conf: '',
             extJsVersion: '3.3.1',
             codeMirror: '2.18+'
@@ -24965,7 +24965,8 @@ var PhDOE = function()
                     ui.cmp.WorkTreeGrid.getInstance().getRootNode(),
                     ui.cmp.PatchesTreeGrid.getInstance().getRootNode(),
                     ui.cmp.PortletSummary.getInstance().store,
-                    ui.cmp.PortletTranslator.getInstance().store,
+                    ui.cmp.PortletTranslator.getInstance().storeTranslator,
+                    ui.cmp.PortletTranslator.getInstance().storeReviewer,
                     ui.cmp.PortletTranslationGraph.getInstance().store,
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store
