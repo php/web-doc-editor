@@ -374,11 +374,12 @@ class RepositoryManager
      * @param $revision    The revision of this file.
      * @param $en_revision The EN revision of this file.
      * @param $reviewed    The stats of the reviewed tag.
+     * @param $reviewed_maintainer    The maintainer of this reviewed work.
      * @param $maintainer  The maintainer.
      * @param $type        The type of work. Can be 'new' for new file, 'update' for an uptaded file, 'delete' for a file marked as delete.
      * @return fileID of the file
      */
-    public function addProgressWork($file, $revision, $en_revision, $reviewed, $maintainer, $type='update')
+    public function addProgressWork($file, $revision, $en_revision, $reviewed, $reviewed_maintainer, $maintainer, $type='update')
     {
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
@@ -407,9 +408,9 @@ class RepositoryManager
 
             $s = 'INSERT into
                     `work`
-                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
+                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `reviewed_maintainer`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
                  VALUES
-                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")';
+                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")';
             $params = array(
                 $project,
                 $file->lang,
@@ -418,6 +419,7 @@ class RepositoryManager
                 $revision,
                 $en_revision,
                 $reviewed,
+                $reviewed_maintainer,
                 $maintainer,
                 $vcsLogin,
                 $anonymousIdent,
@@ -436,6 +438,7 @@ class RepositoryManager
                     `revision`="%s",
                     `en_revision`="%s",
                     `reviewed`="%s",
+                    `reviewed_maintainer`="%s",
                     `maintainer`="%s",
                     `user`="%s",
                     `anonymousIdent`="%s",
@@ -448,6 +451,7 @@ class RepositoryManager
                 $revision,
                 $en_revision,
                 $reviewed,
+                $reviewed_maintainer,
                 $maintainer,
                 $am->vcsLogin,
                 $am->anonymousIdent,
@@ -1484,6 +1488,7 @@ class RepositoryManager
                                 `revision`   = "%s",
                                 `en_revision`= "%s",
                                 `reviewed`   = "%s",
+                                `reviewed_maintainer` = "%s",
                                 `size`       = "%s",
                                 `mdate`      = "%s",
                                 `maintainer` = "%s",
@@ -1496,9 +1501,21 @@ class RepositoryManager
                                 `path` = "%s" AND
                                 `name` = "%s"';
                     $params = array(
-                        $info['xmlid'], $info['en-rev'], $enInfo['rev'], trim($info['reviewed']), $size, $date,
-                        trim($info['maintainer']), trim($info['status']),   $size_diff,
-                        $date_diff, $am->project, $file->lang, $file->path, $file->name
+                        $info['xmlid'],
+                        $info['en-rev'],
+                        $enInfo['rev'],
+                        trim($info['reviewed']),
+                        trim($info['reviewed_maintainer']),
+                        $size,
+                        $date,
+                        trim($info['maintainer']),
+                        trim($info['status']),
+                        $size_diff,
+                        $date_diff,
+                        $am->project,
+                        $file->lang,
+                        $file->path,
+                        $file->name
                     );
                     $this->conn->query($s, $params);
 
@@ -1523,6 +1540,7 @@ class RepositoryManager
                                 `revision`   = "%s",
                                 `en_revision`= "%s",
                                 `reviewed`   = "%s",
+                                `reviewed_maintainer` = "%s",
                                 `size`       = "%s",
                                 `mdate`      = "%s",
                                 `maintainer` = "%s",
@@ -1535,9 +1553,21 @@ class RepositoryManager
                                 `path` = "%s" AND
                                 `name` = "%s"';
                     $params = array(
-                        $info['xmlid'], $info['en-rev'], 0, trim($info['reviewed']), $size, $date,
-                        trim($info['maintainer']), trim($info['status']),   0,
-                        0, $am->project, $file->lang, $file->path, $file->name
+                        $info['xmlid'],
+                        $info['en-rev'],
+                        0,
+                        trim($info['reviewed']),
+                        trim($info['reviewed_maintainer']),
+                        $size,
+                        $date,
+                        trim($info['maintainer']),
+                        trim($info['status']),
+                        0,
+                        0,
+                        $am->project,
+                        $file->lang,
+                        $file->path,
+                        $file->name
                     );
                     $this->conn->query($s, $params);
 
@@ -1938,15 +1968,26 @@ class RepositoryManager
                         $status     = ($infoLANG['status']     == 'NULL') ? 'NULL' : $infoLANG['status'];
                         $xmlid      = ($infoLANG['xmlid']      == 'NULL') ? 'NULL' : $infoLANG['xmlid'];
                         $reviewed   = ($infoLANG['reviewed']   == 'NULL') ? 'NULL' : $infoLANG['reviewed'];
+                        $reviewed_maintainer   = ($infoLANG['reviewed_maintainer']   == 'NULL') ? 'NULL' : $infoLANG['reviewed_maintainer'];
 
-                        $query = 'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
-                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+                        $query = 'INSERT INTO `files` (`project`, `lang`, `xmlid`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `reviewed_maintainer`, `size`, `size_diff`, `mdate`, `mdate_diff`, `maintainer`, `status`)
+                                VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
                          $params = array(
                             $project,
-                            $lang, $xmlid, $lang_file->path, $lang_file->name,
-                            $revision, $en_revision, $reviewed,
-                            $size, $size_diff, $date, $date_diff,
-                            $maintainer, $status
+                            $lang,
+                            $xmlid,
+                            $lang_file->path,
+                            $lang_file->name,
+                            $revision,
+                            $en_revision,
+                            $reviewed,
+                            $reviewed_maintainer,
+                            $size,
+                            $size_diff,
+                            $date,
+                            $date_diff,
+                            $maintainer,
+                            $status
                         );
                         $this->conn->query($query, $params);
 

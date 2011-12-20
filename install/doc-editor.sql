@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `revision` int(11) unsigned DEFAULT NULL,
   `en_revision` int(11) unsigned DEFAULT NULL,
   `reviewed` varchar(20) DEFAULT NULL,
+  `reviewed_maintainer` text,
   `size` int(11) unsigned DEFAULT NULL,
   `size_diff` int(11) DEFAULT NULL,
   `mdate` bigint(20) unsigned DEFAULT NULL,

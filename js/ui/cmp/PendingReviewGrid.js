@@ -86,7 +86,7 @@ ui.cmp._PendingReviewGrid.columns = [{
     sortable: true,
     dataIndex: 'reviewed'
 }, {
-    header: _('Maintainer'),
+    header: _('Reviewer'),
     width: 45,
     sortable: true,
     dataIndex: 'maintainer'

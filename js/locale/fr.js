@@ -220,6 +220,8 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletTranslator.js
   i18n["{0} Translators"] = "{0} Traducteurs";
+  i18n["{0} Reviewers"] = "{0} Relecteurs";
+  i18n["No reviewer"] = "Aucun relecteur";
   i18n["Name"] = "Nom";
   i18n["Email"] = "Email";
   i18n["Nick"] = "Nick";
@@ -230,6 +232,9 @@ var i18n = new Array();
   i18n["Send an email to the {0}"] = "Envoyer un email à la liste {0}";
   i18n["Send an email to {0}"] = "Envoyer un email à {0}";
   i18n["Translators"] = "Traducteurs";
+  i18n["Reviewers"] = "Relecteurs";
+  i18n["Must be reviewed"] = "À relire";
+  i18n["Translators & Reviewer"] = "Traducteurs & Relecteurs";
   i18n["Refresh this grid"] = "Rafraîchir ces données";
 
 
@@ -475,6 +480,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PendingReviewGrid.js
+  i18n["Reviewer"] = "Relecteur";
   i18n["Reviewed"] = "Relu";
   i18n["Open all files about {0} extension"] = "Ouvrir tous les fichiers à propos de l'extension <b>{0}</b>";
   i18n["Need Reviewed in: {0}"] = "À relire dans : {0}";

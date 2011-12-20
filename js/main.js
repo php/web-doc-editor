@@ -231,7 +231,8 @@ var PhDOE = function()
                     ui.cmp.PortletSummary.getInstance().store,
                     ui.cmp.PortletTranslationGraph.getInstance().store,
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
-                    ui.cmp.PortletTranslator.getInstance().store,
+                    ui.cmp.PortletTranslator.getInstance().storeTranslator,
+                    ui.cmp.PortletTranslator.getInstance().storeReviewer,
                     ui.cmp.PendingTranslateGrid.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store
                 ];

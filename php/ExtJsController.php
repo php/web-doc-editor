@@ -555,7 +555,48 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
-        $translators = RepositoryFetcher::getInstance()->getStaticValue('translator_summary', AccountManager::getInstance()->vcsLang);
+        $allTranslators = RepositoryFetcher::getInstance()->getStaticValue('translator_summary', AccountManager::getInstance()->vcsLang);
+
+        //var_dump($allTranslators);
+
+        // We don't display translator who haven't any files
+        $translators = array();
+        for( $i=0; $i < count($allTranslators); $i++ )
+        {
+            if( $allTranslators[$i]->sum > 0 )
+            {
+                $translators[] = $allTranslators[$i];
+            }
+        }
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($translators),
+                'Items'   => $translators
+            )
+        );
+    }
+
+    /**
+     * Get some statistics from reviewers
+     */
+    public function getReviewerInfo()
+    {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $allTranslators = RepositoryFetcher::getInstance()->getStaticValue('translator_summary', AccountManager::getInstance()->vcsLang);
+
+        // We don't display translator who haven't any reviewed files
+        $translators = array();
+        for( $i=0; $i < count($allTranslators); $i++ )
+        {
+            if( $allTranslators[$i]->reviewedSum > 0 )
+            {
+                $translators[] = $allTranslators[$i];
+            }
+        }
 
         return JsonResponseBuilder::success(
             array(
@@ -1030,7 +1071,7 @@ class ExtJsController
             if( $er['state'] ) {
 
                 $r = RepositoryManager::getInstance()->addProgressWork(
-                    $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer']
+                    $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['reviewed_maintainer'], $info['maintainer']
                 );
 
                 return JsonResponseBuilder::success(
@@ -1040,7 +1081,8 @@ class ExtJsController
                         'revision'     => $info['rev'],
                         'en_revision'  => $info['en-rev'],
                         'maintainer'   => $info['maintainer'],
-                        'reviewed'     => $info['reviewed']
+                        'reviewed'     => $info['reviewed'],
+                        'reviewed_maintainer' => $info['reviewed_maintainer']
                     )
                 );
             } else {
@@ -1060,7 +1102,7 @@ class ExtJsController
                if( $er['state'] ) {
                	
                    $r = RepositoryManager::getInstance()->addProgressWork(
-                       $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['maintainer'], 'new'
+                       $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['reviewed_maintainer'], $info['maintainer'], 'new'
                    );
 
                    return JsonResponseBuilder::success(
@@ -1070,7 +1112,8 @@ class ExtJsController
                            'revision'     => $info['rev'],
                            'en_revision'  => $info['en-rev'],
                            'maintainer'   => $info['maintainer'],
-                           'reviewed'     => $info['reviewed']
+                           'reviewed'     => $info['reviewed'],
+                           'reviewed_maintainer' => $info['reviewed_maintainer']
                        )
                    );
 

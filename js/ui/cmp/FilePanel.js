@@ -134,7 +134,8 @@ Ext.extend(ui.cmp._FilePanel.tbar.menu.lang, Ext.Toolbar.Button,
                     handler : function()
                     {
                         Ext.getCmp(this.comp_id).insertLine(
-                            2, "<!-- Reviewed: no -->"
+                            2, "<!-- Reviewed: no Maintainer: " +
+                            PhDOE.user.login + " -->"
                             );
                         Ext.getCmp(this.comp_id).focus();
                     }

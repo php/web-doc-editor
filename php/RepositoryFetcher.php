@@ -383,7 +383,7 @@ class RepositoryFetcher
             if ( $isModifiedLang )
             {
                 $new_reviewed   = $isModifiedLang['reviewed'];
-                $new_maintainer = $isModifiedLang['maintainer'];
+                $new_maintainer = $isModifiedLang['reviewed_maintainer'];
 
                 $temp['reviewed']          = $new_reviewed;
                 $temp['maintainer']        = $new_maintainer;
@@ -391,7 +391,7 @@ class RepositoryFetcher
                 $temp['fileModifiedLang']  = ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false;
             } else {
                 $temp['reviewed']          = $a->reviewed;
-                $temp['maintainer']        = $a->maintainer;
+                $temp['maintainer']        = $a->reviewed_maintainer;
                 $temp['fileModifiedEN']    = false;
                 $temp['fileModifiedLang']  = false;
             }

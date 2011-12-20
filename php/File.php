@@ -236,7 +236,7 @@ class File
 
        // We register this new folder to be committed
        $obj = (object) array('lang' => $this->lang, 'path' => $path, 'name' => '-');
-       RepositoryManager::getInstance()->addProgressWork($obj, '-', '-', '-', '-', 'new');
+       RepositoryManager::getInstance()->addProgressWork($obj, '-', '-', '-', '-', '-', 'new');
 
        return true;
 
@@ -371,6 +371,7 @@ class File
             'en-rev'     => 0,
             'maintainer' => 'NULL',
             'reviewed'   => 'NULL',
+            'reviewed_maintainer' => 'NULL',
             'status'     => '-',
             'xmlid'      => 'NULL',
             'content'    => $content
@@ -394,8 +395,9 @@ class File
 
         // Reviewed tag
         $match = array();
-        if (preg_match('/<!--\s*Reviewed:\s*(.*?)\s*-->/', $content, $match)) {
-            $info['reviewed'] = trim($match[1]);
+        if (preg_match('/<!--\s*Reviewed:\s*(.*?)\s*(Maintainer:\s*(\\S*)\s*)?-->/i', $content, $match)) {
+            $info['reviewed'] = ( isset($match[1]) ) ? trim($match[1]) : NULL;
+            $info['reviewed_maintainer'] = ( isset($match[3]) ) ? trim($match[3]) : NULL;
         }
 
         // All xmlid
