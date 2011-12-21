@@ -231,6 +231,9 @@ var i18n = new Array();
   i18n["Send an email to the {0}"] = "Enviar E-Mail a la lista de correo {0}";
   i18n["Send an email to {0}"] = "Enviar un E-Mail a {0}";
   i18n["Translators"] = "Traductores";
+  i18n["Reviewers"] = "Correctores";
+  i18n["Must be reviewed"] = "A corregir";
+  i18n["Translators & Reviewer"] = "Traductores y correctores";
   i18n["Refresh this grid"] = "Actualizar datos";
 
 
