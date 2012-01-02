@@ -11,7 +11,7 @@ var i18n = new Array();
   i18n["Error"] = "Error";
   i18n["File system error. Check read/write permission under data folder."] = "Error en el sistema de ficheros. Compruebe los permisos lectura/escritura en el directorio data.";
   i18n["Main menu"] = "Menú principal";
-  i18n["Topic:"] = "Asunto";
+  i18n["Topic:"] = "Tema:";
   i18n["Defined by {0}, {1}"] = "Definido por {0} y {1}";
   i18n["Files need translate"] = "Ficheros a traducir";
   i18n["Files need update"] = "Ficheros a actualizar";
@@ -232,7 +232,7 @@ var i18n = new Array();
   i18n["Send an email to {0}"] = "Enviar un E-Mail a {0}";
   i18n["Translators"] = "Traductores";
   i18n["Reviewers"] = "Correctores";
-  i18n["Must be reviewed"] = "A corregir";
+  i18n["Must be reviewed"] = "A revisar";
   i18n["Translators & Reviewer"] = "Traductores y correctores";
   i18n["Refresh this grid"] = "Actualizar datos";
 
