@@ -1,10 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/GTranslate.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
-require_once dirname(__FILE__) . '/SaferExec.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class File
 {
@@ -379,14 +374,14 @@ class File
 
         // revision tag
         $match = array();
-        preg_match('/<!-- .Revision: (\d+) . -->/', $content, $match);
+        preg_match('/<!-- .Revision: ([0-9a-f]+) . -->/', $content, $match);
         if (!empty($match)) {
             $info['rev'] = $match[1];
         }
 
         // Rev tag
         $match = array();
-        preg_match('/<!--\s*EN-Revision:\s*((\d+)|(n\/a))\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
+        preg_match('/<!--\s*EN-Revision:\s*(([0-9a-f]+)|(n\/a))\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
         if (!empty($match)) {
             $info['en-rev']     = ($match[1] == 'n/a') ? 0 : $match[1];
             $info['maintainer'] = $match[4];

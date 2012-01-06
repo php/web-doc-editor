@@ -1,8 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
 
 class TranslatorStatistic
 {

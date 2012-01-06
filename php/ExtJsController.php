@@ -5,25 +5,6 @@
  * @todo Add inline documentation for each controller task
  */
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/BugReader.php';
-require_once dirname(__FILE__) . '/DictionaryManager.php';
-require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
-require_once dirname(__FILE__) . '/File.php';
-require_once dirname(__FILE__) . '/GTranslate.php';
-require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
-require_once dirname(__FILE__) . '/LogManager.php';
-require_once dirname(__FILE__) . '/LockFile.php';
-require_once dirname(__FILE__) . '/NewsReader.php';
-require_once dirname(__FILE__) . '/PreviewFile.php';
-require_once dirname(__FILE__) . '/ProjectManager.php';
-require_once dirname(__FILE__) . '/RepositoryFetcher.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
-require_once dirname(__FILE__) . '/ToolsXmllint.php';
-require_once dirname(__FILE__) . '/TranslationStatistic.php';
-require_once dirname(__FILE__) . '/TranslatorStatistic.php';
-require_once dirname(__FILE__) . '/UserNotes.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
 
 /**
  * Ext JS controller class
@@ -1170,43 +1151,6 @@ class ExtJsController
         );
     }
 
-    /**
-     * Update a single folder recursively
-     */
-    public function updateFolder()
-    {
-        $am = AccountManager::getInstance();
-        if (!$am->isLogged()) {
-            return JsonResponseBuilder::failure();
-        }
-
-        $rm = RepositoryManager::getInstance();
-        $path = $this->getRequestVariable('path');
-
-        $r = $rm->updateFolder($path);
-
-        return JsonResponseBuilder::success(
-            array(
-                'result' => $r
-            )
-        );
-    }
-
-    /**
-     * Get the response after an update single folder
-     */
-    function getUpdateFolderResponse()
-    {
-        if (!AccountManager::getInstance()->isLogged()) {
-            return JsonResponseBuilder::failure();
-        }
-
-        return JsonResponseBuilder::success(
-            array(
-                'result' => json_encode($_SESSION['updateFolder'])
-            )
-        );
-    }
 
     /**
      * Get Entities to be display into a grid into the "All files modules"
@@ -1252,13 +1196,13 @@ class ExtJsController
             $Rev1 = $this->getRequestVariable('Rev1');
             $Rev2 = $this->getRequestVariable('Rev2');
 
-            // Ensure Rev2 is always a value greater than Rev1
-            if( $Rev2 < $Rev1 )
-            {
-                $tmp  = $Rev2;
-                $Rev2 = $Rev1;
-                $Rev1 = $tmp;
-            }
+//            // Ensure Rev2 is always a value greater than Rev1
+//            if( $Rev2 < $Rev1 )
+//            {
+//                $tmp  = $Rev2;
+//                $Rev2 = $Rev1;
+//                $Rev1 = $tmp;
+//            }
 
             $opt = Array('rev1'=>$Rev1, 'rev2' => $Rev2);
 

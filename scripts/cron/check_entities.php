@@ -7,11 +7,7 @@
 * 00 01 * * 4 /path/php/binary /path/to/your/vcs/dir/doc-editor/scripts/cron/check_entities.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/Conf.php';
-require_once dirname(__FILE__) . '/../../php/LockFile.php';
-require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
-require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
-require_once dirname(__FILE__) . '/../../php/ToolsCheckEntities.php';
+require_once __DIR__.'/../../php/loader.php';
 
 $rm = RepositoryManager::getInstance();
 $pm = ProjectManager::getInstance();

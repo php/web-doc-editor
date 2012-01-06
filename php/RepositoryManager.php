@@ -1,14 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/File.php';
-require_once dirname(__FILE__) . '/LockFile.php';
-require_once dirname(__FILE__) . '/SaferExec.php';
-require_once dirname(__FILE__) . '/ToolsCheckDoc.php';
-require_once dirname(__FILE__) . '/ToolsCheckEntities.php';
-require_once dirname(__FILE__) . '/ToolsError.php';
-require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class RepositoryManager
 {
@@ -133,6 +124,7 @@ class RepositoryManager
 
         $lock = new LockFile('project_' . $project . '_lock_checkout_repository');
 
+        $rtn = false;
         if ($lock->lock()) {
             // exec the checkout
             $rtn = VCSFactory::getInstance()->checkout();
@@ -173,126 +165,7 @@ class RepositoryManager
     }
 
 
-    /**
-     * Update a single folder of the repository to sync our local copy.
-     */
-    public function updateFolder($path)
-    {
-        $rf      = RepositoryFetcher::getInstance();
-        $am      = AccountManager::getInstance();
-        $project = $am->project;
 
-        // We reset the session var
-        unset($_SESSION['updateFolder']['newFolders']);
-        unset($_SESSION['updateFolder']['newFiles']);
-
-        // We search for the first folder ; can be en/ LANG/ or doc-base/ for example
-        $t = explode("/", $path);
-        $firstFolder = $t[1];
-
-        array_shift($t);
-        array_shift($t);
-
-        $pathWithoutLang = '/' . implode("/", $t).'/';
-
-        // If we are in the root folder, we have //. We must consider this case.
-        if( $pathWithoutLang == '//' ) { $pathWithoutLang = '/'; }
-
-        if( $firstFolder == "" ) {
-            $firstFolder = 'root';
-        }
-
-        $lock = new LockFile('project_' . $project . '_' . $firstFolder . '_lock_update_folder');
-
-        if ($lock->lock()) {
-
-            if( $this->isValidLanguage($firstFolder) ) {
-
-                // This is only for EN and LANG. For others, we don't make any version's comparaison.
-                // We start be get files & folders in this folder to compare it after the update
-                $actual = $rf->getFilesByDirectory($path);
-                $actualFiles = $actualFolders = array();
-
-                for( $i=0; $i < count($actual); $i++ ) {
-                    // We get files and folders
-                    if( $actual[$i]['type'] === 'folder' ) {
-                        $actualFolders[$actual[$i]['text']] = array( "name"=> $actual[$i]['text'] );
-                    } else {
-                        $actualFiles[$actual[$i]['text']] = array( "name"=> $actual[$i]['text'], "version"=> "" );
-                    }
-                }
-
-                // We get versions for this files
-                while( list($k, $v) = each($actualFiles) ) {
-
-                    $file = new File($firstFolder, $pathWithoutLang.$k);
-                    $info = $file->getInfo();
-                    $actualFiles[$k]['version'] = $info['rev'];
-
-                }
-
-            }
-
-            // We update the repository recursively
-            VCSFactory::getInstance()->updateSingleFolder($path);
-
-            if( $this->isValidLanguage($firstFolder) ) {
-                // We throw the revCheck on this folder only if the langue is valide
-                $this->applyRevCheck($pathWithoutLang, 'update', $firstFolder);
-
-                // We get files under this folder to make comparaison after the update
-                $now = $rf->getFilesByDirectory($path);
-                $nowFiles = $nowFolders = array();
-
-                for( $i=0; $i < count($now); $i++ ) {
-                    // We get all folders & files
-                    if( $now[$i]['type'] === 'folder' ) {
-                        $nowFolders[$now[$i]['text']] = array( "name"=> $now[$i]['text'] );
-                    } else {
-                        $nowFiles[$now[$i]['text']] = array( "name"=> $now[$i]['text'], "version"=> "" );
-                    }
-                }
-
-                // We get versions of this files
-                while( list($k, $v) = each($nowFiles) )
-                {
-                    $file = new File($firstFolder, $pathWithoutLang.$k);
-                    $info = $file->getInfo();
-                    $nowFiles[$k]['version'] = $info['rev'];
-                }
-
-                //~ debug(json_encode($nowFiles));
-                //~ debug(json_encode($actualFiles));
-
-                // We search for differences
-                reset($nowFiles); reset($nowFolders);
-                while( list($k, $v) = each($nowFiles) ) {
-                    // If the file exist before, and at the same version, we delete it from $nowFiles
-                    if( isset($actualFiles[$k] ) && $actualFiles[$k]['version'] == $v['version'] ) {
-                        unset($nowFiles[$k]);
-                    }
-                }
-                while( list($k, $v) = each($nowFolders) ) {
-                    // If the folder exist before, we delete it from $nowFolders
-                    if( isset($actualFolders[$k] ) ) {
-                        unset($nowFolders[$k]);
-                    }
-                }
-
-                // $nowFolders contains only new folders who don't exist before the update
-                // and $nowFiles, new files who don't exist before the update or who the version have changed
-
-                // We store this result in session to allow get it if this processus take more than 30 seconds (max execution time)
-                $_SESSION['updateFolder']['newFolders'] = $nowFolders;
-                $_SESSION['updateFolder']['newFiles']   = $nowFiles;
-            }
-
-        }
-
-        $lock->release();
-
-        return json_encode($_SESSION['updateFolder']);
-    }
 
 
     /**
@@ -823,6 +696,46 @@ class RepositoryManager
         );
     }
 
+    // not tested
+    public function fastUpdate()
+    {
+        if ($changed_files = VCSFactory::getInstance()->fastUpdate()) {
+
+            foreach (array_merge($changed_files['create'], $changed_files['update']) as $path) {
+                $path = explode('/', $path, 2);
+                $file = new File($path[0], $path[1]);
+
+
+                $tmp = Array($file);
+                $this->delWork($tmp);
+
+                // We must now insert information into the app for this file
+                $this->addFileInfo($tmp);
+            }
+            foreach ($changed_files['update'] as $path) {
+                $path = explode('/', $path, 2);
+                $file = new File($path[0], $path[1]);
+
+                // Delete from work table
+                $tmp = Array($file);
+                $this->delWork($tmp);
+
+                // We must now update information into the app for this file
+                $this->updateFileInfo($tmp);
+            }
+            foreach ($changed_files['delete'] as $path) {
+                $path = explode('/', $path, 2);
+                $file = new File($path[0], $path[1]);
+
+                // Delete this new file from the fileSystem
+                @unlink($file->full_new_path);
+
+                // Delete from work table
+                $this->delWork(array($file));
+            }
+        }
+    }
+
     /**
      * Update the VCS for each file we try to commit before start the commit processus.
      * As it, we ensure all VCS conflict.
@@ -833,135 +746,59 @@ class RepositoryManager
      */
     public function beforeCommitChanges($files, $type)
     {
-        $am      = AccountManager::getInstance();
-        $appConf = $am->appConf;
-        $project = $am->project;
-
         $stack = Array();
 
-        switch($type) {
+        if ($files) {
+            switch($type) {
 
-            case 'new' :
+                case 'new' :
 
-                // For new files, we must ensure that this file is steel non exist into the repository before commit it.
-                for( $i=0; $i < count($files); $i++ ) {
-
-                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
-
-                    if( $files[$i]->exist() ) {
-
-                        // This file exist in the repository ! We can't commit it as a new file now.
-                        // We must update this file into the app, and suppress it from this commit process
-
-                        // Delete this new file from the fileSystem
-//~                        @unlink($files[$i]->full_path.'.new');
-
-                        // Delete from work table
-                        $tmp = Array($files[$i]);
-
-                        // exclude from commit
-                        $this->delWork($tmp);
-
-                        // We must now update information into the app for this new file
-                        $this->updateFileInfo($tmp);
-
-                    } else {
-                        // This file still not exist in current respository, we can commit it
-                        $stack[] = $files[$i];
+                    // For new files, we must ensure that this file is steel non exist into the repository before commit it.
+                    for( $i=0; $i < count($files); $i++ ) {
+                        if( !$files[$i]->exist() ) {
+                            // This file still not exist in current respository, we can commit it
+                            $stack[] = $files[$i];
+                        }
                     }
 
-                }
+                    break;
 
-                break;
+                case 'update' :
 
-            case 'update' :
+                    // For update files, we must ensure that this file haven't been modified since last big update
+                    for( $i=0; $i < count($files); $i++ ) {
 
-                // For update files, we must ensure that this file haven't been modified since last big update
-                for( $i=0; $i < count($files); $i++ ) {
-
-                    // We get the filemtime for this file to compare with the filemtime after the update.
-                    $oldTime = filemtime($files[$i]->full_path);
-
-                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
-
-                    if( $files[$i]->exist() ) {
-
-                        // If this file haven't been deleted since last update
-                        $newTime = filemtime($files[$i]->full_path);
-
-
-                        if( $newTime != $oldTime ) {
-
-                            // This file have been modified since last update.
-                            // We can't commit our change, otherwise this file will be marked as conflict
-                            // We just update the info for this file and skip it from this commit
-
-                            $tmp = array($files[$i]);
-
-                            // exclude from commit
-                            $this->delWork($tmp);
-
-                            // We must now update information into the app for this file
-                            $this->updateFileInfo($tmp);
-
-                        } else {
-
-                            // This file haven't been modified since last update.
-                            // We can continue the commit processus for it
-                            $stack[] = $files[$i];
+                        // We get the filemtime for this file to compare with the filemtime after the update.
+                        $oldTime = filemtime($files[$i]->full_path);
+                        if( $files[$i]->exist() ) {
+                            // If this file haven't been deleted since last update
+                            $newTime = filemtime($files[$i]->full_path);
+                            if( $newTime == $oldTime ) {
+                                // This file haven't been modified since last update.
+                                // We can continue the commit processus for it
+                                $stack[] = $files[$i];
+                            }
 
                         }
 
-                    } else {
+                    }
 
-                        // Here, we try to update a file which have been deleted since last update
-                        // We delete our .new, and remove all reference for it from the DB
+                    break;
 
-                        // Delete this new file from the fileSystem
-                        @unlink($files[$i]->full_new_path);
+                case 'delete' :
 
-                        // Delete from work table
-                        $this->delWork(array($files[$i]));
+                    // For deleted files, we must ensure that this file is steel exist into the repository before commit it.
+                    for( $i=0; $i < count($files); $i++ ) {
+
+                        if( $files[$i]->exist() ) {
+                            // This file still exists in current respository, we can commit it for delete
+                            $stack[] = $files[$i];
+                        }
 
                     }
 
-                }
-
-                break;
-
-            case 'delete' :
-
-                // For deleted files, we must ensure that this file is steel exist into the repository before commit it.
-                for( $i=0; $i < count($files); $i++ ) {
-
-                    VCSFactory::getInstance()->updateSingleFile($files[$i]);
-
-                    if( $files[$i]->exist() ) {
-
-                        // This file still exists in current respository, we can commit it for delete
-                        $stack[] = $files[$i];
-
-
-                    } else {
-
-                        // This file don't exist in the repository ! We can't commit it as a deleted file now.
-                        // We must update this file into the app, and suppress it from this commit process
-
-                        // Delete from work table
-                        $tmp = array($files[$i]);
-
-                        // exclude from commit
-                        $this->delWork($tmp);
-
-                        // Remove this files from db
-                        $this->delFiles($tmp);
-
-                    }
-
-                }
-
-                break;
-
+                    break;
+            }
         }
 
         return $stack;
@@ -1140,7 +977,8 @@ class RepositoryManager
             }
         }
 
-        // Before commit, we need to update this file to find if there haven't been modified since last update process
+        // Before commit, we need to update all files and find if there haven't been modified since last update process
+        $this->fastUpdate();
         $create_stack = $this->beforeCommitChanges($create_stack, 'new');
         $update_stack = $this->beforeCommitChanges($update_stack, 'update');
         $delete_stack = $this->beforeCommitChanges($delete_stack, 'delete');
@@ -1277,8 +1115,6 @@ class RepositoryManager
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
-        $vcsLogin = $am->vcsLogin;
-        $anonymousIdent = $am->anonymousIdent;
 
         $lang = $file->lang;
         $path = $file->path;
@@ -1588,7 +1424,169 @@ class RepositoryManager
             }
         }
     }
+    public function addFileInfo($files)
+        {
 
+            $am = AccountManager::getInstance();
+
+            foreach ($files as $file) {
+
+                $info    = $file->getInfo();
+                $size    = intval(filesize($file->full_path) / 1024);
+                $date    = filemtime($file->full_path);
+
+                if ($file->lang == 'en') { // en file
+                    // update EN file info
+                    $s = 'INSERT INTO `files`
+                            SET
+                                `xmlid`    = "%s",
+                                `revision` = "%s",
+                                `size`     = "%s",
+                                `mdate`    = "%s",
+                                `project`  = "%s",
+                                `lang`     = "%s",
+                                `path`     = "%s",
+                                `name`     = "%s"';
+                    $params = array(
+                        $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
+                    );
+                    $this->conn->query($s, $params);
+
+                    // update LANG file info
+                    $s = 'UPDATE `files`
+                            SET
+                                `en_revision` = "%s"
+                            WHERE
+                                `project` = "%s" AND
+                                `lang` != "%s" AND
+                                `path`  = "%s" AND
+                                `name`  = "%s"';
+                    $params = array(
+                        $info['rev'], $am->project, $file->lang, $file->path, $file->name
+                    );
+                    $this->conn->query($s, $params);
+
+                } else { // lang file
+
+                    // If this file don't exist in EN, we should skip all this proces
+                    $en = new File('en', $file->path.$file->name);
+
+                    if( $en->exist() ) {
+
+                        $enInfo    = $en->getInfo();
+
+                        $sizeEN    = intval(filesize($en->full_path) / 1024);
+                        $dateEN    = filemtime($en->full_path);
+
+                        $size_diff = $sizeEN - $size;
+                        $date_diff = (intval((time() - $dateEN) / 86400))
+                                   - (intval((time() - $date)   / 86400));
+
+                        // update LANG file info
+                        $s = 'INSERT INTO `files`
+                                SET
+                                    `xmlid`      = "%s",
+                                    `revision`   = "%s",
+                                    `en_revision`= "%s",
+                                    `reviewed`   = "%s",
+                                    `reviewed_maintainer` = "%s",
+                                    `size`       = "%s",
+                                    `mdate`      = "%s",
+                                    `maintainer` = "%s",
+                                    `status`     = "%s",
+                                    `size_diff`  = "%s",
+                                    `mdate_diff` = "%s",
+                                    `project`    = "%s",
+                                    `lang`       = "%s",
+                                    `path`       = "%s",
+                                    `name`       = "%s"';
+                        $params = array(
+                            $info['xmlid'],
+                            $info['en-rev'],
+                            $enInfo['rev'],
+                            trim($info['reviewed']),
+                            trim($info['reviewed_maintainer']),
+                            $size,
+                            $date,
+                            trim($info['maintainer']),
+                            trim($info['status']),
+                            $size_diff,
+                            $date_diff,
+                            $am->project,
+                            $file->lang,
+                            $file->path,
+                            $file->name
+                        );
+                        $this->conn->query($s, $params);
+
+                        // Run the errorTools under this file
+                        $tmpFile[0]['en_content']   = $en->read(true);
+                        $tmpFile[0]['lang_content'] = $file->read(true);
+                        $tmpFile[0]['lang']         = $file->lang;
+                        $tmpFile[0]['path']         = $file->path;
+                        $tmpFile[0]['name']         = $file->name;
+                        $tmpFile[0]['maintainer']   = $info['maintainer'];
+
+                        $errorTools = new ToolsError();
+                        $errorTools->updateFilesError($tmpFile);
+
+                    } else // This file exist only in LANG version, like translation.xml, for example
+                    {
+
+                        // update LANG file info
+                        $s = 'INSERT INTO `files`
+                                SET
+                                    `xmlid`      = "%s",
+                                    `revision`   = "%s",
+                                    `en_revision`= "%s",
+                                    `reviewed`   = "%s",
+                                    `reviewed_maintainer` = "%s",
+                                    `size`       = "%s",
+                                    `mdate`      = "%s",
+                                    `maintainer` = "%s",
+                                    `status`     = "%s",
+                                    `size_diff`  = "%s",
+                                    `mdate_diff` = "%s",
+                                    `project` = "%s",
+                                    `lang` = "%s",
+                                    `path` = "%s",
+                                    `name` = "%s"';
+                        $params = array(
+                            $info['xmlid'],
+                            $info['en-rev'],
+                            0,
+                            trim($info['reviewed']),
+                            trim($info['reviewed_maintainer']),
+                            $size,
+                            $date,
+                            trim($info['maintainer']),
+                            trim($info['status']),
+                            0,
+                            0,
+                            $am->project,
+                            $file->lang,
+                            $file->path,
+                            $file->name
+                        );
+                        $this->conn->query($s, $params);
+
+                        // Run the errorTools under this file
+                            // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
+                            // We fake the EN with the LANG content to fake the errorTools ;)
+                        $tmpFile[0]['en_content']   = $file->read(true);
+                        $tmpFile[0]['lang_content'] = $file->read(true);
+                        $tmpFile[0]['lang']         = $file->lang;
+                        $tmpFile[0]['path']         = $file->path;
+                        $tmpFile[0]['name']         = $file->name;
+                        $tmpFile[0]['maintainer']   = $info['maintainer'];
+
+                        $errorTools = new ToolsError();
+                        $errorTools->updateFilesError($tmpFile);
+
+                    }
+                }
+            }
+        }
     /**
      * Read the translation's file which hold informations about all translators
      * and put it into database.

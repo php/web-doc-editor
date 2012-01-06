@@ -3,9 +3,6 @@
  * Class file for checking errors
  */
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
 
 class ToolsError
 {

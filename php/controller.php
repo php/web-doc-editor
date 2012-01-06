@@ -7,8 +7,7 @@ session_start();
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once "./ExtJsController.php";
-require_once "./JsonResponseBuilder.php";
+require_once __DIR__.'/loader.php';
 
 $controller = new ExtJsController(array_merge($_GET, $_POST));
 

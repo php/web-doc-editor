@@ -2,8 +2,7 @@
 session_start();
 error_reporting(E_ALL);
 
-require_once "./php/AccountManager.php";
-require_once "./php/ToolsError.php";
+require_once __DIR__.'/php/loader.php';
 
 $am = AccountManager::getInstance();
 $am->isLogged();

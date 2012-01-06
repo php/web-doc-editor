@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/ProjectManager.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
 
 /**
  * A class to check the entities

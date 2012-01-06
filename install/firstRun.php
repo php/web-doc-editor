@@ -2,11 +2,12 @@
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once '../php/html.templates.php';
-require_once '../php/ProjectManager.php';
-require_once '../php/RepositoryManager.php';
-require_once '../php/TranslationStatistic.php';
-require_once '../php/TranslatorStatistic.php';
+
+chdir(dirname(__FILE__));
+
+require_once __DIR__.'/../php/loader.php';
+require_once __DIR__.'/../php/html.templates.php';
+
 
 $isCLI = (PHP_SAPI == 'cli');
 

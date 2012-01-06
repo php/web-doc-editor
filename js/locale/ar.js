@@ -553,10 +553,6 @@ var i18n = new Array();
   i18n["check in progress..."] = "جاري الفحص...";
 
 
-// In file: ../../js/ui/task/UpdateSingleFolderTask.js
-  i18n["Please, wait until update this folder..."] = "يرجى الانتظار حتى يتم تحديث المجلد...";
-
-
 // In file: ../../js/ui/task/SaveTransFileTask.js
   i18n["Saving data..."] = "حفظ البيانات...";
   i18n["Document saved"] = "تم حفظ الوثيقة";

@@ -7,11 +7,8 @@
 * 00 00 * * * /path/php/binary /path/to/your/vcs/dir/doc-editor/scripts/cron/update_data.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/Conf.php';
-require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
-require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
-require_once dirname(__FILE__) . '/../../php/TranslationStatistic.php';
-require_once dirname(__FILE__) . '/../../php/TranslatorStatistic.php';
+require_once __DIR__.'/../../php/loader.php';
+
 
 $isCLI = (PHP_SAPI == 'cli');
 

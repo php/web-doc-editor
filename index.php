@@ -1,8 +1,9 @@
 <?php
-
+error_reporting(E_ALL);
 session_start();
 
-require_once './php/html.templates.php';
+require_once __DIR__.'/php/loader.php';
+require_once __DIR__.'/php/html.templates.php';
 
 // Perm link management
 if (isset($_REQUEST['perm'])) {
@@ -11,8 +12,6 @@ if (isset($_REQUEST['perm'])) {
     
     if( substr($perm, -4) == '.php' )
     {
-        require_once dirname(__FILE__) . '/php/ProjectManager.php';
-        require_once dirname(__FILE__) . '/php/RepositoryFetcher.php';
 
         $_project = $_REQUEST['project'];
 
@@ -43,8 +42,6 @@ if (isset($_REQUEST['perm'])) {
     $patch = trim($_REQUEST['patch'], '/ ');
     $_project = $_REQUEST['project'];
 
-    require_once dirname(__FILE__) . '/php/ProjectManager.php';
-
     // Set the project
     ProjectManager::getInstance()->setProject($_project);
     
@@ -58,9 +55,6 @@ if (isset($_REQUEST['perm'])) {
 
     $patchID = trim($_REQUEST['patchID'], '/ ');
     $_project = $_REQUEST['project'];
-
-    require_once dirname(__FILE__) . '/php/ProjectManager.php';
-    require_once dirname(__FILE__) . '/php/RepositoryManager.php';
 
     // Set the project
     ProjectManager::getInstance()->setProject($_project);

@@ -1,8 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/LockFile.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/utility.php';
 
 class RepositoryFetcher
@@ -236,7 +233,7 @@ class RepositoryFetcher
     /**
      * Get all files witch need to be updated.
      *
-     * @return An associated array containing informations about files which need to be updated.
+     * @return An associated array containing information about files which need to be updated.
      */
     public function getPendingUpdate()
     {
@@ -289,7 +286,7 @@ class RepositoryFetcher
                     "original_revision" => $original_revision,
                     "en_revision"       => $new_en_revision,
                     "maintainer"        => $new_maintainer,
-                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedEN"    => false,
                     "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                 );
             } else {
@@ -387,7 +384,7 @@ class RepositoryFetcher
 
                 $temp['reviewed']          = $new_reviewed;
                 $temp['maintainer']        = $new_maintainer;
-                $temp['fileModifiedEN']    = ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false;
+                $temp['fileModifiedEN']    = false;
                 $temp['fileModifiedLang']  = ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false;
             } else {
                 $temp['reviewed']          = $a->reviewed;

@@ -1,9 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/RepositoryManager.php';
-
 class TranslationStatistic
 {
     private static $instance;
@@ -64,7 +60,7 @@ class TranslationStatistic
             $params = array($lang, $project);
         }
         $res = $this->conn->query($s, $params);
-
+        $result = array();
         while( $r = $res->fetch_array() ) {
             $result[$r['lang']]['total']      = $r['total'];
             $result[$r['lang']]['total_size'] = $r['total_size'];
@@ -93,7 +89,7 @@ class TranslationStatistic
                     `files`
                   WHERE
                     `revision` = `en_revision` AND
-                    `revision` != 0 AND
+                    `revision` != "0" AND
                     `project` = "%s"
                   GROUP BY `lang`';
             $params = array($project);
@@ -107,7 +103,7 @@ class TranslationStatistic
                   WHERE
                     `lang` = "%s" AND
                     `revision` = `en_revision` AND
-                    `revision` != 0 AND
+                    `revision` != "0" AND
                     `project` = "%s"';
             $params = array($lang, $project);
         }
@@ -273,7 +269,7 @@ class TranslationStatistic
             $summary[0]['nbFiles']       = ( isset($uptodate[$lang]['total']) )       ? $uptodate[$lang]['total'] : 0;
             $summary[0]['percentFiles']  = ( isset($uptodate[$lang]['total']) )       ? round(($uptodate[$lang]['total']*100)/$nbFiles[$lang]['total'], 2) : 0;
             $summary[0]['sizeFiles']     = ( !isset($uptodate[$lang]['total_size']) ) ? 0 : $uptodate[$lang]['total_size'];
-            $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size']))   ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
+            $summary[0]['percentSize']   = (!isset($uptodate[$lang]['total_size']) || $uptodate[$lang]['total_size'] == 0 )   ? 0 : round(($uptodate[$lang]['total_size']*100)/$nbFiles[$lang]['total_size'], 2);
 
             $summary[1]['id']            = 2;
             $summary[1]['libel']         = 'Stale files';

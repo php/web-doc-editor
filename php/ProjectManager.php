@@ -1,8 +1,6 @@
 <?php
 
 
-require_once dirname(__FILE__) . '/AccountManager.php';
-
 class ProjectManager
 {
     private static $instance;

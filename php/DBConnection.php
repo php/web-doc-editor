@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) .'/Conf.php';
+
 require_once dirname(__FILE__) .'/utility.php';
 
 class DBConnection

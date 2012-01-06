@@ -571,8 +571,6 @@ var i18n = new Array();
   i18n["Retrying in {0} second(s)."] = "Nouvelle tentative de connexion dans {0} seconde(s).";
 
 
-// In file: ../../js/ui/task/UpdateSingleFolderTask.js
-  i18n["Please, wait until update this folder..."] = "Merci de patienter pendant la mise à jour de ce dossier...";
 
 
 // In file: ../../js/ui/task/SaveTransFileTask.js

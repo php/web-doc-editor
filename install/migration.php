@@ -2,10 +2,7 @@
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once '../php/ProjectManager.php';
-require_once '../php/DBConnection.php';
-require_once '../php/RepositoryManager.php';
-require_once '../php/AccountManager.php';
+require_once __DIR__.'/../php/loader.php';
 
 $am = AccountManager::getInstance();
 $rm = RepositoryManager::getInstance();

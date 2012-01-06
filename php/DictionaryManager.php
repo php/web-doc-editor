@@ -4,7 +4,6 @@
  * 
  */
 
-require_once dirname(__FILE__) . '/DBConnection.php';
 
 class DictionaryManager {
 

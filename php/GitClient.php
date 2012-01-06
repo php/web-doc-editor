@@ -1,13 +1,13 @@
 <?php
 
 
-class SvnClient
+class GitClient
 {
     private static $instance;
 
     /**
      * @static
-     * @return SvnClient
+     * @return GitClient
      */
     public static function getInstance()
     {
@@ -129,10 +129,10 @@ class SvnClient
 
         $a = @unserialize($s);
         if (!is_array($a)) {
-                return 'svn.php.net seems to be down !';
+                return 'master.php.net seems to be down !';
         }
         if (isset($a["errno"])) {
-                if( $a["errno"] == 0 ) { return 'svn login failed'; }
+                if( $a["errno"] == 0 ) { return 'git login failed'; }
                 if( $a["errno"] == 1 ) { return 'Bad login'; }
                 if( $a["errno"] == 2 ) { return 'Bad password'; }
         }
@@ -141,108 +141,10 @@ class SvnClient
     }
 
     /**
-     * Test the SVN credentials against the server
-     * ref - http://www.php.net/manual/en/features.http-auth.php
+
      *
-     * @param $username svn login name.
-     * @param $password svn login password.
-     * @return TRUE if the loggin success, error message otherwise.
-     */
-    public function svnAuthenticate($username, $password)
-    {
-        $am      = AccountManager::getInstance();
-        $appConf = $am->appConf;
-        $project = $am->project;
-
-        $uuid = md5(uniqid(rand(), true));
-        $uuid =   substr($uuid, 0, 8)  . '-'
-                . substr($uuid, 8, 4)  . '-'
-                . substr($uuid, 12, 4) . '-'
-                . substr($uuid, 16, 4) . '-'
-                . substr($uuid, 20);
-
-        $host = $appConf[$project]['vcs.server.host'];
-        $port = $appConf[$project]['vcs.server.port'];
-        $full_host = ($port == 443 ? 'ssl://' : '') . $host;
-        $uri  = '/' . $appConf[$project]['vcs.server.repos'] . '!svn/act/'.$uuid;
-
-        $ping = sprintf('MKACTIVITY %s HTTP/1.1
-Host: %s
-User-Agent: PhpDocumentation Online Editor
-Connection: TE
-TE: trailers
-Accept-Encoding: gzip
-DAV: http://subversion.tigris.org/xmlns/dav/svn/depth
-DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo
-DAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops
-Content-Length: 0
-Accept-Encoding: gzip
-
-', $uri, $host);
-
-
-        $h = @fsockopen($full_host, $port);
-        if( !$h ) { return 'svn.php.net seems to be down !'; }
-
-        $matches = array();
-        $trial_count = 0;
-        do {
-            if ($trial_count++ == 3) return 'svn login failed';
-            fwrite($h, $ping);
-            $r = trim(fread($h, 2048));
-
-            // connection may be closed, need retry
-            $m = preg_match('/realm="(.+)", nonce="(.+)", .+ qop="(.+)"/', $r, $matches);
-        } while (0 == $m);
-        fclose($h);
-
-        $data = array(
-            'request' => 'MKACTIVITY',
-            'realm'   => $matches[1],
-            'nonce'   => $matches[2],
-            'nc'      => '00000001',
-            'cnonce'  => md5(uniqid(rand(), true)),
-            'qop'     => $matches[3],
-        );
-
-        $A1 = md5($username . ':' . $data['realm'] . ':' . $password);
-        $A2 = md5($data['request'].':'.$uri);
-        $response = md5($A1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$A2);
-
-        $pong = sprintf('MKACTIVITY %s HTTP/1.1
-Host: %s
-User-Agent: PhpDocumentation Online Editor
-Connection: TE
-TE: trailers
-Accept-Encoding: gzip
-DAV: http://subversion.tigris.org/xmlns/dav/svn/depth
-DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo
-DAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops
-Content-Length: 0
-Accept-Encoding: gzip
-Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response="%s", algorithm="MD5", cnonce="%s", nc=00000001, qop="%s"
-
-', $uri, $host, $username, $data['realm'], $data['nonce'], $uri, $response, $data['cnonce'], $data['qop']);
-
-        $h = @fsockopen($full_host, $port);
-        fwrite($h, $pong);
-        $r = trim(fread($h, 2048));
-        fclose($h);
-
-        if (preg_match('/HTTP\/1.[01] 201 Created/', $r)) {
-            return true;
-        } else {
-            return 'Invalid Credential';
-        }
-    }
-
-    /**
-     *  cd DOC_EDITOR_DATA_PATH
-     *  svn co http://DOC_EDITOR_VCS_SERVER_HOST:DOC_EDITOR_VCS_SERVER_PORT/DOC_EDITOR_VCS_SERVER_PATH DOC_EDITOR_VCS_MODULE
+     * @return An associative array{ 'err': git clone return code, 'output': git clone output contained in an array }
      *
-     * @return An associative array{ 'err': svn co return code, 'output': svn co output contained in an array }
-     *
-     *  see http://wiki.php.net/doc/scratchpad/howto/checkout
      */
     public function checkout()
     {
@@ -250,22 +152,29 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $appConf = $am->appConf;
         $project = $am->project;
 
-        $host   = $appConf[$project]['vcs.server.host'];
-        $port   = $appConf[$project]['vcs.server.port'];
-        $uri    = $appConf[$project]['vcs.server.path'];
+        $server  = $appConf[$project]['vcs.server'];
         $module = $appConf[$project]['vcs.module'];
-        $scheme = ($port == 443 ? 'https' : 'http');
+
 
         $commands = array(
-            new ExecStatement('cd %s', array($appConf['GLOBAL_CONFIGURATION']['data.path'])),
-            new ExecStatement('svn co %s %s 2>&1', array("$scheme://$host:$port/$uri", $module)),
+            new ExecStatement('mkdir %s', array($appConf['GLOBAL_CONFIGURATION']['data.path'].$module)),
+            new ExecStatement('cd %s', array($appConf['GLOBAL_CONFIGURATION']['data.path'].$module)),
+            new ExecStatement('git init'),
+            new ExecStatement('git remote add origin %s', array($server)),
+            new ExecStatement('git config branch.master.remote origin'),
+            new ExecStatement('git config branch.master.merge refs/heads/master'),
+            new ExecStatement('git config user.name %s', array('Online Doc')),
+            new ExecStatement('git config user.email %s', array('phd@php.net')),
+            new ExecStatement('git config filter.rcs-keywords.clean %s', array('.git_filters/rcs-keywords.php.clean')),
+            new ExecStatement('git config filter.rcs-keywords.smudge %s', array('.git_filters/rcs-keywords.php.smudge %f')),
+            new ExecStatement('git pull 2>&1')
         );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn co trial #$trial\n");
+            array_push($output, "git clone trial #$trial\n");
             SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
@@ -273,13 +182,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         return array('err' => $err, 'output' => $output);
     }
 
-    /**
-     *  "svn up" on a single folder
-     *
-     * @param $path The path.
-     * @return True if svn up does not report any error, false otherwise.
-     */
-    public function updateSingleFolder($path)
+    public function fastUpdate()
     {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
@@ -287,63 +190,75 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
-            new ExecStatement('svn up %s 2>&1', array($path)),
+            // we separate pull on fetch and merge, because rcs-keywords work wrong with pull
+            new ExecStatement('git fetch'),
+            new ExecStatement('git merge origin/master 2>&1')
         );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn up trial #$trial\n");
             SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
-            if ($err == 0) array_push($output, "Success.\n");
         }
 
         if ($err == 0) {
-            return true;
+            $revisions = '';
+            foreach ($output as $string) {
+                //Updating eccb880..aafe899
+                if (preg_match('/^Updating\s([a-f0-9]+\.\.[a-f0-9]+)$/', $string, $matches)) {
+                    $revisions = $matches[1];
+                    break;
+                }
+            }
+            if (!$revisions) return false;
+
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+                new ExecStatement('git whatchanged %s 2>&1', array($revisions))
+            );
+            $err = 1;
+            $trial_threshold = 3;
+            $output = array();
+            for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+                SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
+            }
+            if ($err == 0) {
+
+                $delete_stack = $update_stack = $create_stack = array();
+                // :100755 000000 e64f1c9... 0000000... D  PHPDoE_git_test/en/test.xml
+                foreach ($output as $string) {
+                    if (preg_match('/^:\d+\s+\d+\s+[a-f0-9]+\.\.\.\s+[a-f0-9]+\.\.\.\s+([DMA])\s+(.*)$/', $string, $matches)) {
+                        if ($matches[1] == 'A') {
+                            $create_stack[] = $matches[2];
+                        } else if ($matches[1] == 'M') {
+                            $update_stack[] = $matches[2];
+                        } else {
+                            $delete_stack[] = $matches[2];
+                        }
+                    }
+                }
+
+                return array(
+                    'create' => $create_stack,
+                    'update' => $update_stack,
+                    'delete' => $delete_stack
+                );
+            } else {
+                errlog(json_encode($output));
+                return false;
+            }
         } else {
             errlog(json_encode($output));
             return false;
         }
+
+
     }
 
     /**
-     *  "svn up" on a single File
-     *
-     * @param $file The file object.
-     * @return True if svn up does not report any error, false otherwise.
-     */
-    public function updateSingleFile($file)
-    {
-        $am      = AccountManager::getInstance();
-        $appConf = $am->appConf;
-        $project = $am->project;
-
-        $commands = array(
-            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
-            new ExecStatement('svn up %s 2>&1', array($file->full_path))
-        );
-
-        $err = 1;
-        $trial_threshold = 3;
-        $output = array();
-        for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn up trial #$trial\n");
-            SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
-            if ($err == 0) array_push($output, "Success.\n");
-        }
-
-        if ($err == 0) {
-            return true;
-        } else {
-            errlog(json_encode($output));
-            return false;
-        }
-    }
-
-    /**
-     *  svn up . under DOC_EDITOR_VCS_PATH
-     * @return True if svn up does not report any error, false otherwise.
+     *  pull . under DOC_EDITOR_VCS_PATH
+     * @return True if it does not report any error, false otherwise.
      */
     public function update()
     {
@@ -353,14 +268,16 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
-            new ExecStatement('svn up . 2>&1')
+            // we separate pull on fetch and merge, because rcs-keywords work wrong with pull
+            new ExecStatement('git fetch'),
+            new ExecStatement('git merge origin/master 2>&1')
         );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn up trial #$trial\n");
+            array_push($output, "git pull trial #$trial\n");
             SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
@@ -374,11 +291,11 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     }
 
     /**
-     * Get Svn log of a specified file.
+     * Get git log of a specified file.
      *
      * @param $path The path of the file.
      * @param $file The name of the file.
-     * @return An array containing all Svn log information.
+     * @return An array containing all git log information.
      */
     public function log($path, $file)
     {
@@ -388,7 +305,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$path)),
-            new ExecStatement('svn log %s', array($file))
+            new ExecStatement('git log --format="%%H | %%at | %%an | %%s" -- %s', array($file))
         );
 
         $trial_threshold = 3;
@@ -398,9 +315,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             if (strlen(trim(implode('', $output))) != 0) break;
         }
 
-        $output = implode("\n", $output)."\n";
-
-        $part = explode('------------------------------------------------------------------------'."\n", $output);
+        $part = $output;
 
         $final = array();
         for ($i=1; $i < count($part)-1; $i++ ) {
@@ -410,19 +325,14 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $o['id']  = $i;
             $o['raw'] = $part[$i];
 
-            $contents = explode("\n", trim($part[$i]));
-            $infos    = explode(' | ', array_shift($contents));
-            array_shift($contents);
+            $contents = trim($part[$i]);
+            $info = explode(' | ', $contents, 4);
 
-            $o['revision'] = str_replace('r', '', $infos[0]);
-            $o['author']   = $infos[1];
-            $o['date']     = str_replace('-', '/', array_shift(explode(' +', $infos[2])));
+            $o['revision'] = $info[0];
+            $o['author']   = $info[2];
+            $o['date']     = date('Y/m/d',$info[1]);
             
-            if( $tmp = strstr($o['date'], " /", true) ) {
-                $o['date'] = $tmp;
-            }
-            
-            $o['content']  = str_replace("\n", '<br/>', trim(implode('<br/>', $contents)));
+            $o['content']  = $info[3];
 
             $final[] = $o;
         }
@@ -431,23 +341,24 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
     }
 
     /**
-     * Execute svn diff on specific file
+     * Execute git diff on specific file
      *
      * @param $path Path to file
      * @param $file Filename
      * @param $rev1 Diff revision 1
      * @param $rev2 Diff revision 2
-     * @return Array of stdout of svn diff
+     * @return Array of stdout of git diff
      */
     public function diff($path, $file, $rev1, $rev2)
     {
+        if ($rev1 == 0) return '';
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
 
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$path)),
-            new ExecStatement('svn diff -r %d:%d %s', array((int)$rev1, (int)$rev2, $file))
+            new ExecStatement('git diff %s %s -- %s', array($rev1, $rev2, $file))
         );
 
         $trial_threshold = 3;
@@ -478,60 +389,18 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
     public function commitFolders($foldersPath)
     {
-        $am        = AccountManager::getInstance();
-        $appConf   = $am->appConf;
-        $project   = $am->project;
-        $vcsLang   = $am->vcsLang;
-        $vcsLogin  = $am->vcsLogin;
-        $vcsPasswd = $am->vcsPasswd;
 
-        $commitLogMessage = Array();
-
-        while( list($path, $data) = each($foldersPath))
-        {
-            // We add this new folder into repository
-
-            $commands = array(
-                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
-                new ExecStatement('svn add --non-recursive %s', array($path)),
-                new ExecStatement('svn propset svn:ignore "entities.*.xml" %s', array($path)),
-                new ExecStatement('svn ci --no-auth-cache --non-interactive -m "Add new folder from Php Docbook Online Editor" --username %s --password %s %s 2>&1', array($vcsLogin, $vcsPasswd, $path))
-            );
-
-            $err = 1;
-            $trial_threshold = 3;
-            $output = array();
-            for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-                array_push($output, "svn ci trial #$trial\n");
-                SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
-                if ($err == 0) array_push($output, "Success.\n");
-            }
-            $commitLogMessage = array_merge($commitLogMessage, $output);
-            if ($err != 0) break;
-        }
-
-        if ($err == 0) {
-        // We stock this info into DB
-            $value = array();
-            $value['user'] = $vcsLogin;
-            $value['lang'] = $vcsLang;
-            $value['nbFolders'] = count($foldersPath);
-            RepositoryManager::getInstance()->setStaticValue('info', 'commitFolders', json_encode($value), true);
-        } else {
-            errlog(json_encode($commitLogMessage));
-        }
-
-        return $commitLogMessage;
+        return Array();
     }
 
     /**
-     * Executes svn commit
+     * Executes git commit
      *
      * @param $log Commit log
      * @param $create Array of files to be created
      * @param $update Array of files to be updated
      * @param $delete Array of files to be deleted
-     * @return Associative array{ 'err': svn ci return code, 'output': svn ci output contained in an array }
+     * @return Associative array{ 'err': git ci return code, 'output': git ci output contained in an array }
      */
     public function commit($log, $create=false, $update=false, $delete=false)
     {
@@ -541,8 +410,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
         $project   = $am->project;
         $vcsLang   = $am->vcsLang;
         $vcsLogin  = $am->vcsLogin;
-        $vcsPasswd = $am->vcsPasswd;
-
+        $vcsEmail  = $am->email;
         // Info we must store into DB
         $info = array();
 
@@ -581,44 +449,82 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path']))
         );
 
-        if (!empty($delete_stack))
+        if ($info['nbFilesDelete'])
         {
-            $commands[] = new ExecStatement('svn delete' . str_repeat(' %s', $info['nbFilesDelete']), $delete_stack);
+            $commands[] = new ExecStatement('git rm' . str_repeat(' %s', $info['nbFilesDelete']), $delete_stack);
         }
-        if (!empty($create_stack))
+        if ( $info['nbFilesCreate'])
         {
-            $commands[] = new ExecStatement('svn add' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
-            $commands[] = new ExecStatement('svn propset svn:keywords "Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL"' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
-            $commands[] = new ExecStatement('svn propset svn:eol-style "native"' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
+            $commands[] = new ExecStatement('git add' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
         }
-        if (!empty($update_stack))
+        if ($info['nbFilesUpdate'])
         {
-            $commands[] = new ExecStatement('svn propset svn:keywords "Id Rev Revision Date LastChangedDate LastChangedRevision Author LastChangedBy HeadURL URL"' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
-            $commands[] = new ExecStatement('svn propset svn:eol-style "native"' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
+            $commands[] = new ExecStatement('git add' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
         }
 
         $args = array_merge(
-            array($pathLogFile, $vcsLogin, $vcsPasswd),
+            array($pathLogFile, $vcsLogin.( $vcsEmail ? ' <'.$vcsEmail.'>' : '')),
             $update_stack,
             $delete_stack,
             $create_stack
         );
 
-        $commands[] = new ExecStatement('svn ci --no-auth-cache --non-interactive -F %s --username %s --password %s' . str_repeat(' %s', $info['nbFilesCreate'] + $info['nbFilesUpdate'] + $info['nbFilesDelete']) . ' 2>&1', $args);
+        $commands[] = new ExecStatement('git commit -F %s --author=%s --' . str_repeat(' %s', $info['nbFilesCreate'] + $info['nbFilesUpdate'] + $info['nbFilesDelete']).' 2>&1', $args);
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn ci trial #$trial\n");
+            array_push($output, "git commit trial #$trial\n");
             SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }
 
+
         // Delete tmp logMessage file
         $this->deleteCommitLogFile($pathLogFile);
 
+
+
         if ($err == 0) {
+
+            // push changes to server
+            $err = 1;
+            $trial_threshold = 3;
+            $temp_output = array();
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
+                new ExecStatement('git push 2>&1')
+            );
+            for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+                array_push($output, "git push trial #$trial\n");
+                SaferExec::execMulti($commands, $temp_output, $err); // if no err, err = 0
+                if ($err == 0) array_push($output, "Success.\n");
+            }
+
+
+
+            // adding revision
+            $err = 1;
+            $trial_threshold = 3;
+            $temp_output = array();
+            $commands = array(
+                new ExecStatement('cd %s', array($appConf[$project]['vcs.path']))
+            );
+            if ( $info['nbFilesCreate'])
+            {
+                $commands[] = new ExecStatement('rm' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
+                $commands[] = new ExecStatement('git checkout --' . str_repeat(' %s', $info['nbFilesCreate']), $create_stack);
+            }
+            if ($info['nbFilesUpdate'])
+            {
+                $commands[] = new ExecStatement('rm' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
+                $commands[] = new ExecStatement('git checkout --' . str_repeat(' %s', $info['nbFilesUpdate']), $update_stack);
+            }
+            for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
+                SaferExec::execMulti($commands, $temp_output, $err); // if no err, err = 0
+            }
+
             // We stock this info into DB
             $info['user'] = $vcsLogin;
             $info['lang'] = $vcsLang;
@@ -628,16 +534,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             errlog(json_encode($output));
         }
 
-        // Walk throw the output to filter some text
-        $cleanOutput = array();
-
-        for( $i=0; $i < count($output); $i++ ) {
-            if( $output[$i] != "svn: warning: Can't open file '/root/.subversion/servers': Permission denied" ) {
-                array_push($cleanOutput, $output[$i]);
-            }
-        }
-
-        return array('err' => $err, 'output' => $cleanOutput);
+        return array('err' => $err, 'output' => $output);
     }
 
     public function revert($create=false, $update=false, $delete=false)
@@ -664,14 +561,14 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
-            new ExecStatement('svn revert' . str_repeat(' %s', count($create_stack) + count($update_stack) + count($delete_stack)) . ' 2>&1', array_merge($create_stack, $update_stack, $delete_stack))
+            new ExecStatement('git checkout --' . str_repeat(' %s', count($create_stack) + count($update_stack) + count($delete_stack)) . ' 2>&1', array_merge($create_stack, $update_stack, $delete_stack))
         );
 
         $err = 1;
         $trial_threshold = 3;
         $output = array();
         for ($trial = 0; $err != 0 && $trial < $trial_threshold; ++$trial) {
-            array_push($output, "svn revert trial #$trial\n");
+            array_push($output, "git revert trial #$trial\n");
             SaferExec::execMulti($commands, $output, $err); // if no err, err = 0
             if ($err == 0) array_push($output, "Success.\n");
         }

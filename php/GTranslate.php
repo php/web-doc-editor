@@ -1,6 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 
 /**
 * GTranslate - A class to comunicate with Google Translate(TM) Service

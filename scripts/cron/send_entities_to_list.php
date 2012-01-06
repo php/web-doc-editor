@@ -7,11 +7,7 @@
 * 00 08 * * 1 /path/php/binary /path/to/your/vcs/dir/doc-editor/scripts/cron/send_work_to_list.php
 ****/
 
-require_once dirname(__FILE__) . '/../../php/Conf.php';
-require_once dirname(__FILE__) . '/../../php/AccountManager.php';
-require_once dirname(__FILE__) . '/../../php/LogManager.php';
-require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
-require_once dirname(__FILE__) . '/../../php/ToolsCheckEntities.php';
+require_once __DIR__.'/../../php/loader.php';
 
 
 $pm = ProjectManager::getInstance();

@@ -1,6 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/AccountManager.php';
 
 /**
  * Print debug information into a file (.debug) into data folder.

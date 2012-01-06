@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../php/DBConnection.php';
+require_once __DIR__.'/../../php/loader.php';
 
 
 $year = ( isset($_GET['d']) ) ? $_GET['d'] : '2010';

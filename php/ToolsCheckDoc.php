@@ -1,6 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/DBConnection.php';
 
 /**
  * A class for the check doc tools

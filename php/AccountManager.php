@@ -4,10 +4,6 @@
  *
  */
 
-require_once dirname(__FILE__) . '/VCSFactory.php';
-require_once dirname(__FILE__) . '/DBConnection.php';
-require_once dirname(__FILE__) . '/ProjectManager.php';
-
 class AccountManager
 {
     private static $instance;
@@ -178,13 +174,10 @@ class AccountManager
      * @param $lang      The language we want to access.
      * @return An associated array.
      */
-    public function login($project, $vcsLogin, $vcsPasswd, $email, $lang='en', $authService='VCS', $authServiceID)
+    public function login($project, $vcsLogin, $vcsPasswd, $email, $lang='en', $authService='VCS', $authServiceID = null)
     {
         // Var to return into ExtJs
         $return = array();
-
-        // Var return from VCS auth system
-        $AuthReturn = false;
 
         // We manage the project
         if( ProjectManager::getInstance()->setProject($project) ) {
@@ -310,10 +303,6 @@ class AccountManager
                     // We try to authenticate this user to master php server.
                     $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
                     $return['authMethod'] = 'masterPhp';
-                } else {
-                    // We try to authenticate this user to VCS server.
-                    $AuthReturn = VCSFactory::getInstance()->svnAuthenticate($vcsLogin, $vcsPasswd);
-                    $return['authMethod'] = 'svnServer';
                 }
                 
                 

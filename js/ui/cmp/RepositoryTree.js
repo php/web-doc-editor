@@ -266,17 +266,6 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                     }
                 }
             }, '-', {
-                text: _('Update this folder'),
-                iconCls: 'iconFilesNeedUpdate',
-                scope: this,
-                handler: function(){
-                    // We start by expand this node.
-                    this.node.expand();
-                    
-                    //... and fire the update processus
-                    new ui.task.UpdateSingleFolderTask(this.node);
-                }
-            }, {
                 text: _('Add a new folder'),
                 iconCls: 'iconFolderNew',
                 hidden: (this.node.id === '/' ||
