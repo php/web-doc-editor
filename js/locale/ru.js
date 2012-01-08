@@ -220,6 +220,8 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletTranslator.js
   i18n["{0} Translators"] = "{0} Переводчиков";
+  i18n["{0} Reviewers"] = "{0} Вычитывающих";
+  i18n["No reviewer"] = "Нет вычитывающих";
   i18n["Name"] = "Имя";
   i18n["Email"] = "Email";
   i18n["Nick"] = "Ник";
@@ -230,6 +232,9 @@ var i18n = new Array();
   i18n["Send an email to the {0}"] = "Послать email {0}";
   i18n["Send an email to {0}"] = "Послать email {0}";
   i18n["Translators"] = "Переводчики";
+  i18n["Reviewers"] = "Вычитывающие";
+  i18n["Must be reviewed"] = "Необходима вычитка";
+  i18n["Translators & Reviewer"] = "Переводчики & Вычитывающие";
   i18n["Refresh this grid"] = "Обновить таблицу";
 
 
@@ -475,6 +480,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PendingReviewGrid.js
+  i18n["Reviewer"] = "Вычитывающий";
   i18n["Reviewed"] = "Просмотрено";
   i18n["Open all files about {0} extension"] = "Открыть все файлы из расширения {0}";
   i18n["Need Reviewed in: {0}"] = "Необходимо просмотреть в: {0}";
