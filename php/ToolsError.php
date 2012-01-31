@@ -271,8 +271,8 @@ class ToolsError
                     "value_en"          => $a->value_en,
                     "value_lang"        => $a->value_lang,
                     "type"              => $a->type,
-                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModifiedEN"    => ( isset($isModifiedEN) )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( isset($isModifiedLang) ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 } else {
@@ -285,8 +285,8 @@ class ToolsError
                     "value_en"          => $a->value_en,
                     "value_lang"        => $a->value_lang,
                     "type"              => $a->type,
-                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModifiedEN"    => ( isset($isModifiedEN) )  ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( isset($isModifiedLang) ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 }
