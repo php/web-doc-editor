@@ -71,7 +71,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
                 me.codeEditor = new CodeMirror(Ext.get(me.id), {
                         theme: me.theme,
-                        readOnly: false, //me.readOnly, - We put always false here. Stay for a good solution for readOnly mode and Ctrl+c to copy into the clipboard.
+                        readOnly: me.readOnly,
                         mode: me.mode,
                         lineNumbers: true,
                         matchBrackets: true,
