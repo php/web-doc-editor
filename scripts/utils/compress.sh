@@ -1,4 +1,5 @@
-pushd ../..
+DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
+pushd $DIR
 # Css loading indicator specific
 cat themes/loading.css \
     | java -jar scripts/utils/yuicompressor.jar --type css --verbose -o themes/loading-min.css

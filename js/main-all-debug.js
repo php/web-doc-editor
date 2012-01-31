@@ -12090,11 +12090,11 @@ ui.cmp.About = Ext.extend(Ext.Window,
                     html  : '<div id="phd-oe-about">' +
                                 '<img src="themes/img/php.png" class="loading-php-logo" alt="PHP" />' + PhDOE.app.name +
                             '</div>' +
-                            '<div id="phd-oe-about-info">' + PhDOE.app.name + ' ver ' + PhDOE.app.ver + '<br/>' +
-                                'UI: ' + PhDOE.app.uiRevision + '<br/>' +
+                            '<div id="phd-oe-about-info">' + PhDOE.app.name + //' ver ' + PhDOE.app.ver + '<br/>' +
+                                //'UI: ' + PhDOE.app.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-2012 The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
-                                _('and <a href="http://svn.php.net/viewvc/web/doc-editor/" target="_blank">others</a>') +
+                                _('and <a href="http://git.php.net/?p=web/doc-editor.git;a=summary" target="_blank">others</a>') +
                             '</div>'
                 }, {
                     title : _('Help and support'),

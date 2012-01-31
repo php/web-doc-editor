@@ -13,8 +13,9 @@
 * Configuration is set in php/conf/
 
 == File structure ==
-* A checkout of the SVN copy named doc-editor
-  - svn co http://svn.php.net/repository/web/doc-editor/trunk doc-editor
+* Clone of the GIT repository copy named doc-editor.git
+  - git clone https://git.php.net/repository/web/doc-editor.git doc-editor
+  (or push url for write access)
 * Make sure the data directory has read/write permissions for the web server user
   - Default data directory location: doc-editor/data
 
