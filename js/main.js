@@ -44,7 +44,7 @@ var PhDOE = function()
             uiRevision: '$Revision$',
             conf: '',
             extJsVersion: '3.3.1',
-            codeMirror: '2.2'
+            codeMirror: '2.21'
         },
 
         lastInfoDate : null,
