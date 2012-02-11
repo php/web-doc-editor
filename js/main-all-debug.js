@@ -14480,7 +14480,8 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     iconCls     : 'iconUI',
                     defaults    : { hideLabel: true },
                     defaultType : 'radio',
-                    items       : [{
+                    items       : [
+                    /*{
                         name: 'PhDOE.user.conf.newFile.secondPanel',
                         boxLabel: _('Display the Google Translation Panel'),
                         inputValue: 'google',
@@ -14497,7 +14498,8 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                                 }
                             }
                         }
-                    },{
+                    },*/
+                    {
                         name     : 'PhDOE.user.conf.newFile.secondPanel',
                         boxLabel : _('Display the original file'),
                         inputValue: 'originalFile',
@@ -25163,7 +25165,8 @@ var PhDOE = function()
                         iconCls   : 'iconPatch',
                         items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
                         collapsed : true
-                    }, {
+                    }
+                    /*, {
                         id        : 'acc-google-translate',
                         title     : _('Google translation'),
                         layout    : 'fit',
@@ -25172,7 +25175,8 @@ var PhDOE = function()
                         hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
-                    }]
+                    }*/
+                    ]
                 }, {
                     // main panel
                     xtype  : 'mainpanel',

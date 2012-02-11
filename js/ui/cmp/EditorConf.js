@@ -545,7 +545,8 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                     iconCls     : 'iconUI',
                     defaults    : { hideLabel: true },
                     defaultType : 'radio',
-                    items       : [{
+                    items       : [
+                    /*{
                         name: 'PhDOE.user.conf.newFile.secondPanel',
                         boxLabel: _('Display the Google Translation Panel'),
                         inputValue: 'google',
@@ -562,7 +563,8 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                                 }
                             }
                         }
-                    },{
+                    },*/
+                    {
                         name     : 'PhDOE.user.conf.newFile.secondPanel',
                         boxLabel : _('Display the original file'),
                         inputValue: 'originalFile',
