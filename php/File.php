@@ -429,7 +429,7 @@ class File
                 $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
 
                 $commands = array(
-                    new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
+                    new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
                 );
                 
                 $trial_threshold = 3;
@@ -451,7 +451,7 @@ class File
             $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
 
             $commands = array(
-                new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
+                new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
             );
 
             $output = array();
@@ -501,7 +501,7 @@ class File
                     $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
 
                     $commands = array(
-                        new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
+                        new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
                     );
                     
                     $trial_threshold = 3;
@@ -510,9 +510,9 @@ class File
                         SaferExec::execMulti($commands, $output);
                         if (strlen(trim(implode('', $output))) != 0) break;
                     }
-                    
+
                     $return = $this->DiffGenHTMLOutput($output);
-                    
+
                 }
                 else
                 {
@@ -526,7 +526,7 @@ class File
                         $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
 
                         $commands = array(
-                            new ExecStatement('diff -u %s %s', array($pathFileOrigin, $pathFileModified))
+                            new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
                         );
                         
                         $trial_threshold = 3;
@@ -534,7 +534,7 @@ class File
                         {
                             $output = array();
                             SaferExec::execMulti($commands, $output);
-                            if (strlen(trim(implode('', $_output))) != 0) break;
+                            if (strlen(trim(implode('', $output))) != 0) break;
                         }
                         
                         $return .= $this->DiffGenHTMLOutput($output);
@@ -547,58 +547,27 @@ class File
     }
 
     public function DiffGenHTMLOutput($content) {
-        
-        $header = $content[0]."<br>".$content[1];
-        
-        $content = htmlentities(join("\n", $content), ENT_QUOTES, 'UTF-8');
-        $match = array();
-        preg_match_all('/@@([^@]+)@@(.*?)(?=@@|\z)/si', $content, $match);
 
-        
-
-        $diff = array();
-        for ($i = 0; $i < count($match[1]); $i++) {
-
-            $diff[$i]['line']    = $match[1][$i];
-            $diff[$i]['content'] =  $match[2][$i];
-        }
-
+        $header = array_shift($content)."<br>".array_shift($content);
         $return = '<table class="code">
         <tr>
          <td class="header">'.$header.'</td>
         </tr>
         ';
-        
-        
-        for ($i = 0; $i < count($diff); $i++) {
 
-            // Line
-            $return .= '<tr><td class="line">@@ '.$diff[$i]['line'].' @@</td></tr>';
-
-            // Content
-            $tmp = explode("\n", trim($diff[$i]['content']));
-
-            for ($j=0; $j < count($tmp); $j++) {
-                $tmp[$j] = str_replace(" ", "&nbsp;", $tmp[$j]);
-
-                switch (substr($tmp[$j], 0, 1)) {
-                    case '+':
-                        $class = 'ins';
-                        break;
-                    case '-':
-                        $class = 'del';
-                        break;
-                    default:
-                        $class = '';
-                        break;
-                }
-
-                $return .= '<tr><td class="'.$class.'">'.$tmp[$j].'</td></tr>';
-            }
-
-            // Separator
-            $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
+        $classes = array(
+            '+' => 'ins',
+            '-' => 'del',
+            ' ' => '',
+            '@' => 'line'
+        );
+        $first = true;
+        foreach ($content as $string) {
+            if ($string[0] == '@' && !$first) $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
+            $first = false;
+            $return .= '<tr><td class="'.$classes[$string[0]].'">'.str_replace(' ', '&nbsp;', htmlentities($string, ENT_QUOTES, 'UTF-8')).'</td></tr>';
         }
+        $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
         $return .= '<table>';
         
         return $return;
