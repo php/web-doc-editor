@@ -561,7 +561,8 @@ var PhDOE = function()
                         iconCls   : 'iconPatch',
                         items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
                         collapsed : true
-                    }, {
+                    }
+                    /*, {
                         id        : 'acc-google-translate',
                         title     : _('Google translation'),
                         layout    : 'fit',
@@ -570,7 +571,8 @@ var PhDOE = function()
                         hidden    : (PhDOE.user.lang === 'en'),
                         items     : [ new ui.cmp.GoogleTranslationPanel() ],
                         collapsed : true
-                    }]
+                    }*/
+                    ]
                 }, {
                     // main panel
                     xtype  : 'mainpanel',
