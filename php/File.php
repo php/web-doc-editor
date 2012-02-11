@@ -417,8 +417,7 @@ class File
         $project = $am->project;
 
         if( $patchID ) {
-            
-            $return='';
+
             $output = array();
             
             $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($patchID);
