@@ -32,7 +32,7 @@ else if (method_exists($controller, $method)) {
 }
 
 // Place here all method who already send hers headers
-if ($method == 'getImageContent') {
+if (in_array($method, array('getImageContent', 'downloadPatch'))) {
 
     echo $response;
     exit;

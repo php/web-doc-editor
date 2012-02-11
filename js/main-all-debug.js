@@ -18935,7 +18935,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (currentUser !== PhDOE.user.login),
+                hidden: (currentUser !== PhDOE.user.login)
             },{
                 text: _('View unified diff'),
                 iconCls: 'iconViewDiff',
@@ -19082,7 +19082,6 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, '-', {
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     Ext.getCmp('main-panel').openDiffTab({
                         DiffType: 'file',
@@ -19095,7 +19094,6 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Download the diff as a patch'),
                 iconCls: 'iconDownloadDiff',
-                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
                     '?FilePath=' +
@@ -24142,7 +24140,6 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 scope: this,
                 text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function()
                 {
                     Ext.getCmp('main-panel').openDiffTab({
@@ -24156,7 +24153,6 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Download the diff as a patch'),
                 iconCls: 'iconDownloadDiff',
-                hidden: (FileType === 'delete' || FileType === 'new'),
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
                     '?FilePath=' +
