@@ -206,6 +206,7 @@ CREATE TABLE IF NOT EXISTS `work` (
   `en_revision` int(11) NOT NULL,
   `reviewed` varchar(50) NOT NULL,
   `maintainer` varchar(255) NOT NULL,
+  `reviewed_maintainer` varchar(255) NOT NULL,
   `user` varchar(255) NOT NULL,
   `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime NOT NULL,
