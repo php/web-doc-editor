@@ -268,8 +268,8 @@ class ToolsError
                     "value_en"          => $a->value_en,
                     "value_lang"        => $a->value_lang,
                     "type"              => $a->type,
-                    "fileModifiedEN"    => ( isset($isModifiedEN) )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( isset($isModifiedLang) ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModifiedEN"    => ( isset($isModifiedEN) && $isModifiedEN != false )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( isset($isModifiedLang) && $isModifiedLang != false ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 } else {
@@ -282,8 +282,8 @@ class ToolsError
                     "value_en"          => $a->value_en,
                     "value_lang"        => $a->value_lang,
                     "type"              => $a->type,
-                    "fileModifiedEN"    => ( isset($isModifiedEN) )  ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( isset($isModifiedLang) ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModifiedEN"    => ( isset($isModifiedEN) && $isModifiedEN != false )  ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
+                    "fileModifiedLang"  => ( isset($isModifiedLang) && $isModifiedLang != false ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 }
@@ -1317,7 +1317,7 @@ class ToolsError
 
         $reg1 = '/<classsynopsis>(\s.*?)<\/classsynopsis>/s';
         $reg2 = '/<ooclass><classname>(.*?)<\/classname><\/ooclass>/s';
-        $reg3 = '/<fieldsynopsis>\s*?<modifier>(.*?)<\/modifier>\s*?<type>(.*?)<\/type>\s*?<varname(.*?)>(.*?)<\/varname>\s*?<initializer>(.*?)<\/initializer>\s*?<\/fieldsynopsis>/s';
+        $reg3 = '/<fieldsynopsis>\s*?<modifier>(.*?)<\/modifier>\s*?<type>(.*?)<\/type>\s*?<varname(.*?)>(.*?)<\/varname>\s*?(<initializer>(.*?)<\/initializer>\s*?)?<\/fieldsynopsis>/s';
 
         $match = $en_classsynopsis = array();
         preg_match_all($reg1, $this->en_content, $match);
@@ -1335,7 +1335,7 @@ class ToolsError
             $en_classsynopsis[$i]['fieldsynopsis']['type']                = $match2[2];
             $en_classsynopsis[$i]['fieldsynopsis']['varname']['attr']     = $match2[3];
             $en_classsynopsis[$i]['fieldsynopsis']['varname']['value']    = $match2[4];
-            $en_classsynopsis[$i]['fieldsynopsis']['initializer']         = $match2[5];
+            $en_classsynopsis[$i]['fieldsynopsis']['initializer']         = $match2[6];
 
         }
 
@@ -1356,7 +1356,7 @@ class ToolsError
             $lang_classsynopsis[$i]['fieldsynopsis']['type']                = $match2[2];
             $lang_classsynopsis[$i]['fieldsynopsis']['varname']['attr']     = $match2[3];
             $lang_classsynopsis[$i]['fieldsynopsis']['varname']['value']    = $match2[4];
-            $lang_classsynopsis[$i]['fieldsynopsis']['initializer']         = $match2[5];
+            $lang_classsynopsis[$i]['fieldsynopsis']['initializer']         = $match2[6];
 
         }
 

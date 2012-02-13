@@ -14,8 +14,9 @@
 
 == File structure ==
 * Clone of the GIT repository copy named doc-editor.git
-  - git clone https://git.php.net/repository/web/doc-editor.git doc-editor
-  (or push url for write access)
+  - git clone https://git.php.net/repository/web/doc-editor.git doc-editor (for readonly access)
+  - git clone git@git.php.net:/web/doc-editor.git doc-editor (for write access)
+
 * Make sure the data directory has read/write permissions for the web server user
   - Default data directory location: doc-editor/data
 
