@@ -68,4 +68,38 @@ function elapsedTime($startDate, $endDate) {
 
     }
 }
+
+function DiffGenHTMLOutput($content) {
+
+    $return = '<table class="code">';
+    $classes = array(
+        '+' => 'ins',
+        '-' => 'del',
+        ' ' => '',
+        ''  => '',
+        '@' => 'line'
+    );
+    $header = true;
+    foreach ($content as $string) {
+        if ($string[0] == '@' && !$header) $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
+        if ($header && $string[0] == '@') {
+            $header = false; //headers ended
+        } elseif (!$header && !in_array($string[0], array('+','-',' ','@',''))) { // Index: path/to/file or diff -uN bla bla or other headers
+            $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
+            $header = true; //headers of new file started
+        }
+
+        $return .= '<tr>
+                        <td class="'.($header ? 'header' : $classes[$string[0]]).'">
+                            '.str_replace(' ', '&nbsp;', htmlentities($string, ENT_QUOTES, 'UTF-8')).'
+                        </td>
+                    </tr>';
+
+
+    }
+    $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
+    $return .= '<table>';
+
+    return $return;
+}
 ?>

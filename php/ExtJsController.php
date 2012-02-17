@@ -1239,12 +1239,12 @@ class ExtJsController
         }
 
         $DiffType = $this->getRequestVariable('DiffType');
-        $FilePath = $this->getRequestVariable('FilePath');
+        $FileFullPath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
 
-        $t = explode('/', $FilePath);
-        $FileLang = array_shift($t);
-        $FilePath = implode('/', $t);
+        $t = explode('/', $FileFullPath, 2);
+        $FileLang = $t[0];
+        $FilePath = $t[1];
 
         $opt = null;
 
@@ -1259,25 +1259,26 @@ class ExtJsController
                 $Rev2 = $Rev1;
                 $Rev1 = $tmp;
             }
+            $r = VCSFactory::getInstance()->diff(
+                $FileFullPath,
+                $FileName,
+                $Rev1,
+                $Rev2
+            );
 
-            $opt = Array('rev1'=>$Rev1, 'rev2' => $Rev2);
+        } elseif( $DiffType == 'file') {
 
-        } elseif( $DiffType == 'file' ) {
-
-            $opt['patchID'] = $this->getRequestVariable('patchID');
-            $opt['type'] = 'file';
-
-        } elseif( $DiffType == 'patch' ) {
-
-            $uniqID = $this->getRequestVariable('uniqID');
-            $opt['type'] = 'patch';
-            $opt['uniqID'] = $uniqID;
+            $patchID = $this->getRequestVariable('patchID');
+            if ($patchID) {
+                $r = File::patchDiff($patchID);
+            } else {
+                $file = new File($FileLang, $FilePath.$FileName);
+                $r = $file->diff();
+            }
 
         }
 
-        $file = new File($FileLang, $FilePath.$FileName);
-        $r = $file->Diff($DiffType, $opt);
-
+        $r = DiffGenHTMLOutput($r);
         return JsonResponseBuilder::success(
             array(
                  'content' => $r
@@ -2137,20 +2138,22 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
-        $FilePath = $this->getRequestVariable('FilePath');
+        $FileFullPath = $this->getRequestVariable('FilePath');
         $FileName = $this->getRequestVariable('FileName');
         $patchID = $this->getRequestVariable('patchID');
 
-        $t = explode('/', $FilePath);
-        $FileLang = array_shift($t);
-        $FilePath = implode('/', $t);
+        $t = explode('/', $FileFullPath, 2);
+        $FileLang = $t[0];
+        $FilePath = $t[1];
 
-        $file  = new File($FileLang, $FilePath.$FileName);
-        $patch = $file->rawDiff($patchID);
+        if ($patchID) {
+            $patch = File::patchDiff($patchID);
+        } else {
+            $file  = new File($FileLang, $FilePath.$FileName);
+            $patch = $file->diff();
+        }
 
         $name = 'patch-' . time() . '.patch';
-
-        $size = strlen($patch);
 
         header("Content-Type: application/force-download; name=\"$name\"");
         header("Content-Transfer-Encoding: binary");
@@ -2159,7 +2162,7 @@ class ExtJsController
         header("Cache-Control: no-cache, must-revalidate");
         header("Pragma: no-cache");
 
-        return $patch;
+        return implode("\n", $patch);
     }
 
     /**
