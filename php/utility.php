@@ -76,15 +76,15 @@ function DiffGenHTMLOutput($content) {
         '+' => 'ins',
         '-' => 'del',
         ' ' => '',
-        ''  => '',
         '@' => 'line'
     );
     $header = true;
     foreach ($content as $string) {
+        if ($string=='') $string = ' '; // temp fix for empty string
         if ($string[0] == '@' && !$header) $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
         if ($header && $string[0] == '@') {
             $header = false; //headers ended
-        } elseif (!$header && !in_array($string[0], array('+','-',' ','@',''))) { // Index: path/to/file or diff -uN bla bla or other headers
+        } elseif (!$header && !in_array($string[0], array('+','-',' ','@'))) { // Index: path/to/file or diff -uN bla bla or other headers
             $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
             $header = true; //headers of new file started
         }
