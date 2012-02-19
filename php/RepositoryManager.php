@@ -1425,168 +1425,168 @@ class RepositoryManager
         }
     }
     public function addFileInfo($files)
-        {
+    {
 
-            $am = AccountManager::getInstance();
+        $am = AccountManager::getInstance();
 
-            foreach ($files as $file) {
+        foreach ($files as $file) {
 
-                $info    = $file->getInfo();
-                $size    = intval(filesize($file->full_path) / 1024);
-                $date    = filemtime($file->full_path);
+            $info    = $file->getInfo();
+            $size    = intval(filesize($file->full_path) / 1024);
+            $date    = filemtime($file->full_path);
 
-                if ($file->lang == 'en') { // en file
-                    // update EN file info
-                    $s = 'INSERT INTO `files`
-                            SET
-                                `xmlid`    = "%s",
-                                `revision` = "%s",
-                                `size`     = "%s",
-                                `mdate`    = "%s",
-                                `project`  = "%s",
-                                `lang`     = "%s",
-                                `path`     = "%s",
-                                `name`     = "%s"';
-                    $params = array(
-                        $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
-                    );
-                    $this->conn->query($s, $params);
+            if ($file->lang == 'en') { // en file
+                // update EN file info
+                $s = 'INSERT INTO `files`
+                        SET
+                            `xmlid`    = "%s",
+                            `revision` = "%s",
+                            `size`     = "%s",
+                            `mdate`    = "%s",
+                            `project`  = "%s",
+                            `lang`     = "%s",
+                            `path`     = "%s",
+                            `name`     = "%s"';
+                $params = array(
+                    $info['xmlid'], $info['rev'], $size, $date, $am->project, $file->lang, $file->path, $file->name
+                );
+                $this->conn->query($s, $params);
+
+                // update LANG file info
+                $s = 'UPDATE `files`
+                        SET
+                            `en_revision` = "%s"
+                        WHERE
+                            `project` = "%s" AND
+                            `lang` != "%s" AND
+                            `path`  = "%s" AND
+                            `name`  = "%s"';
+                $params = array(
+                    $info['rev'], $am->project, $file->lang, $file->path, $file->name
+                );
+                $this->conn->query($s, $params);
+
+            } else { // lang file
+
+                // If this file don't exist in EN, we should skip all this proces
+                $en = new File('en', $file->path.$file->name);
+
+                if( $en->exist() ) {
+
+                    $enInfo    = $en->getInfo();
+
+                    $sizeEN    = intval(filesize($en->full_path) / 1024);
+                    $dateEN    = filemtime($en->full_path);
+
+                    $size_diff = $sizeEN - $size;
+                    $date_diff = (intval((time() - $dateEN) / 86400))
+                               - (intval((time() - $date)   / 86400));
 
                     // update LANG file info
-                    $s = 'UPDATE `files`
+                    $s = 'INSERT INTO `files`
                             SET
-                                `en_revision` = "%s"
-                            WHERE
-                                `project` = "%s" AND
-                                `lang` != "%s" AND
-                                `path`  = "%s" AND
-                                `name`  = "%s"';
+                                `xmlid`      = "%s",
+                                `revision`   = "%s",
+                                `en_revision`= "%s",
+                                `reviewed`   = "%s",
+                                `reviewed_maintainer` = "%s",
+                                `size`       = "%s",
+                                `mdate`      = "%s",
+                                `maintainer` = "%s",
+                                `status`     = "%s",
+                                `size_diff`  = "%s",
+                                `mdate_diff` = "%s",
+                                `project`    = "%s",
+                                `lang`       = "%s",
+                                `path`       = "%s",
+                                `name`       = "%s"';
                     $params = array(
-                        $info['rev'], $am->project, $file->lang, $file->path, $file->name
+                        $info['xmlid'],
+                        $info['en-rev'],
+                        $enInfo['rev'],
+                        trim($info['reviewed']),
+                        trim($info['reviewed_maintainer']),
+                        $size,
+                        $date,
+                        trim($info['maintainer']),
+                        trim($info['status']),
+                        $size_diff,
+                        $date_diff,
+                        $am->project,
+                        $file->lang,
+                        $file->path,
+                        $file->name
                     );
                     $this->conn->query($s, $params);
 
-                } else { // lang file
+                    // Run the errorTools under this file
+                    $tmpFile[0]['en_content']   = $en->read(true);
+                    $tmpFile[0]['lang_content'] = $file->read(true);
+                    $tmpFile[0]['lang']         = $file->lang;
+                    $tmpFile[0]['path']         = $file->path;
+                    $tmpFile[0]['name']         = $file->name;
+                    $tmpFile[0]['maintainer']   = $info['maintainer'];
 
-                    // If this file don't exist in EN, we should skip all this proces
-                    $en = new File('en', $file->path.$file->name);
+                    $errorTools = new ToolsError();
+                    $errorTools->updateFilesError($tmpFile);
 
-                    if( $en->exist() ) {
+                } else // This file exist only in LANG version, like translation.xml, for example
+                {
 
-                        $enInfo    = $en->getInfo();
+                    // update LANG file info
+                    $s = 'INSERT INTO `files`
+                            SET
+                                `xmlid`      = "%s",
+                                `revision`   = "%s",
+                                `en_revision`= "%s",
+                                `reviewed`   = "%s",
+                                `reviewed_maintainer` = "%s",
+                                `size`       = "%s",
+                                `mdate`      = "%s",
+                                `maintainer` = "%s",
+                                `status`     = "%s",
+                                `size_diff`  = "%s",
+                                `mdate_diff` = "%s",
+                                `project` = "%s",
+                                `lang` = "%s",
+                                `path` = "%s",
+                                `name` = "%s"';
+                    $params = array(
+                        $info['xmlid'],
+                        $info['en-rev'],
+                        0,
+                        trim($info['reviewed']),
+                        trim($info['reviewed_maintainer']),
+                        $size,
+                        $date,
+                        trim($info['maintainer']),
+                        trim($info['status']),
+                        0,
+                        0,
+                        $am->project,
+                        $file->lang,
+                        $file->path,
+                        $file->name
+                    );
+                    $this->conn->query($s, $params);
 
-                        $sizeEN    = intval(filesize($en->full_path) / 1024);
-                        $dateEN    = filemtime($en->full_path);
+                    // Run the errorTools under this file
+                        // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
+                        // We fake the EN with the LANG content to fake the errorTools ;)
+                    $tmpFile[0]['en_content']   = $file->read(true);
+                    $tmpFile[0]['lang_content'] = $file->read(true);
+                    $tmpFile[0]['lang']         = $file->lang;
+                    $tmpFile[0]['path']         = $file->path;
+                    $tmpFile[0]['name']         = $file->name;
+                    $tmpFile[0]['maintainer']   = $info['maintainer'];
 
-                        $size_diff = $sizeEN - $size;
-                        $date_diff = (intval((time() - $dateEN) / 86400))
-                                   - (intval((time() - $date)   / 86400));
+                    $errorTools = new ToolsError();
+                    $errorTools->updateFilesError($tmpFile);
 
-                        // update LANG file info
-                        $s = 'INSERT INTO `files`
-                                SET
-                                    `xmlid`      = "%s",
-                                    `revision`   = "%s",
-                                    `en_revision`= "%s",
-                                    `reviewed`   = "%s",
-                                    `reviewed_maintainer` = "%s",
-                                    `size`       = "%s",
-                                    `mdate`      = "%s",
-                                    `maintainer` = "%s",
-                                    `status`     = "%s",
-                                    `size_diff`  = "%s",
-                                    `mdate_diff` = "%s",
-                                    `project`    = "%s",
-                                    `lang`       = "%s",
-                                    `path`       = "%s",
-                                    `name`       = "%s"';
-                        $params = array(
-                            $info['xmlid'],
-                            $info['en-rev'],
-                            $enInfo['rev'],
-                            trim($info['reviewed']),
-                            trim($info['reviewed_maintainer']),
-                            $size,
-                            $date,
-                            trim($info['maintainer']),
-                            trim($info['status']),
-                            $size_diff,
-                            $date_diff,
-                            $am->project,
-                            $file->lang,
-                            $file->path,
-                            $file->name
-                        );
-                        $this->conn->query($s, $params);
-
-                        // Run the errorTools under this file
-                        $tmpFile[0]['en_content']   = $en->read(true);
-                        $tmpFile[0]['lang_content'] = $file->read(true);
-                        $tmpFile[0]['lang']         = $file->lang;
-                        $tmpFile[0]['path']         = $file->path;
-                        $tmpFile[0]['name']         = $file->name;
-                        $tmpFile[0]['maintainer']   = $info['maintainer'];
-
-                        $errorTools = new ToolsError();
-                        $errorTools->updateFilesError($tmpFile);
-
-                    } else // This file exist only in LANG version, like translation.xml, for example
-                    {
-
-                        // update LANG file info
-                        $s = 'INSERT INTO `files`
-                                SET
-                                    `xmlid`      = "%s",
-                                    `revision`   = "%s",
-                                    `en_revision`= "%s",
-                                    `reviewed`   = "%s",
-                                    `reviewed_maintainer` = "%s",
-                                    `size`       = "%s",
-                                    `mdate`      = "%s",
-                                    `maintainer` = "%s",
-                                    `status`     = "%s",
-                                    `size_diff`  = "%s",
-                                    `mdate_diff` = "%s",
-                                    `project` = "%s",
-                                    `lang` = "%s",
-                                    `path` = "%s",
-                                    `name` = "%s"';
-                        $params = array(
-                            $info['xmlid'],
-                            $info['en-rev'],
-                            0,
-                            trim($info['reviewed']),
-                            trim($info['reviewed_maintainer']),
-                            $size,
-                            $date,
-                            trim($info['maintainer']),
-                            trim($info['status']),
-                            0,
-                            0,
-                            $am->project,
-                            $file->lang,
-                            $file->path,
-                            $file->name
-                        );
-                        $this->conn->query($s, $params);
-
-                        // Run the errorTools under this file
-                            // If the EN file don't exist, it's because we have a file witch only exist into LANG, for example, translator.xml
-                            // We fake the EN with the LANG content to fake the errorTools ;)
-                        $tmpFile[0]['en_content']   = $file->read(true);
-                        $tmpFile[0]['lang_content'] = $file->read(true);
-                        $tmpFile[0]['lang']         = $file->lang;
-                        $tmpFile[0]['path']         = $file->path;
-                        $tmpFile[0]['name']         = $file->name;
-                        $tmpFile[0]['maintainer']   = $info['maintainer'];
-
-                        $errorTools = new ToolsError();
-                        $errorTools->updateFilesError($tmpFile);
-
-                    }
                 }
             }
         }
+    }
     /**
      * Read the translation's file which hold informations about all translators
      * and put it into database.

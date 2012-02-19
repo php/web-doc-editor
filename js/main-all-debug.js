@@ -3079,7 +3079,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
           ok = stream.eatWhile(/[\d]/) && stream.eat(";");
         }
       } else {
-        ok = stream.eatWhile(/[\w]/) && stream.eat(";");
+        ok = stream.eatWhile(/[\w\.\-:]/) && stream.eat(";");
       }
       return ok ? "atom" : "error";
     }

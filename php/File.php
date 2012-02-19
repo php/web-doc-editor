@@ -33,7 +33,7 @@ class File
     {
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
-        
+
         // Security
         $path = str_replace('..', '',  $path);
         $path = str_replace('//', '/', $path);
@@ -404,172 +404,43 @@ class File
         return $info;
     }
 
-    /**
-     * Get a raw diff between a file and its modified file.
-     *
-     * @param $patchID If set, indicate the ID of the patch from witch we have to retrieve all files diff
-     * @return The diff of the file with its modified version.
-     */
-    public function rawDiff($patchID=false)
+
+    public function diff()
     {
-        $am      = AccountManager::getInstance();
-        $appConf = $am->appConf;
-        $project = $am->project;
+        $commands = array(
+            new ExecStatement(
+                'diff -uN --label %s --label %s %s %s',
+                array(
+                    $this->lang.$this->path.$this->name,
+                    $this->lang.$this->path.$this->name,
+                    $this->full_path,
+                    $this->full_new_path
+                )
+            )
+        );
 
-        if( $patchID ) {
-
-            $output = array();
-            
-            $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($patchID);
-            for( $i=0; $i < count($patchFiles); $i++ )
-            {
-
-                $pathFileOrigin = $appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
-                $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
-
-                $commands = array(
-                    new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
-                );
-                
-                $trial_threshold = 3;
-                while ($trial_threshold-- > 0)
-                {
-                    $_output = array();
-                    SaferExec::execMulti($commands, $_output);
-                    if (strlen(trim(implode('', $_output))) != 0) break;
-                }
-                
-                $output = array_merge($output, $_output);
-            }
-            
-            return implode("\r\n", $output);
-            
-        } else {
-            
-            $pathFileOrigin = $appConf[$project]['vcs.path'] . $this->lang . $this->path . $this->name;
-            $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
-
-            $commands = array(
-                new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
-            );
-
+        $trial_threshold = 3;
+        while ($trial_threshold-- > 0)
+        {
             $output = array();
             SaferExec::execMulti($commands, $output);
-
-            return implode("\r\n", $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
         }
+
+        return $output;
     }
 
-    /**
-     * Get the diff of a file with his modified version.
-     *
-     * @param $rev1 First revison.
-     * @param $rev2 Second revision.
-     * @return The diff a the file with his modified version, as HTML, ready to be display.
-     */
-    public function Diff($type, $options)
+    public static function patchDiff($patchId)
     {
-        $am      = AccountManager::getInstance();
-        $appConf = $am->appConf;
-        $project = $am->project;
-        $return = '';
         $output = array();
-
-        if( $type == 'vcs' ) {
-
-            $output = VCSFactory::getInstance()->diff(
-                $this->lang.$this->path,
-                $this->name, $options['rev1'], $options['rev2']
-            );
-            
-            $return = $this->DiffGenHTMLOutput($output);
-
-        } elseif( $type == 'file' || $type == 'patch' ) {
-
-            //$ext = ( $options['type'] == 'patch' ) ? '.' . $options['uniqID'] . '.patch' : '.new';
-            
-            // If this patch is for new file, we only display "This is a new file."
-            if( $type == 'patch' && !is_file($appConf[$project]['vcs.path'].$this->lang.$this->path.$this->name) ) {
-               return '<div style="size: 10px; text-align:center;margin-top:10px;">This is a new file.</div>'; 
-            } else {
-
-                if( $options['patchID'] == '' )
-                {
-
-                    $pathFileOrigin = $appConf[$project]['vcs.path'] . $this->lang . $this->path . $this->name;
-                    $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $this->lang . $this->path . $this->name;
-
-                    $commands = array(
-                        new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
-                    );
-                    
-                    $trial_threshold = 3;
-                    while ($trial_threshold-- > 0) {
-                        $output = array();
-                        SaferExec::execMulti($commands, $output);
-                        if (strlen(trim(implode('', $output))) != 0) break;
-                    }
-
-                    $return = $this->DiffGenHTMLOutput($output);
-
-                }
-                else
-                {
-                    // We get all files from this patch
-                    $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($options['patchID']);
-                    
-                    for( $i=0; $i < count($patchFiles); $i++ )
-                    {
-
-                        $pathFileOrigin = $appConf[$project]['vcs.path'] . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
-                        $pathFileModified = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/' . $patchFiles[$i]->lang . $patchFiles[$i]->path . $patchFiles[$i]->name;
-
-                        $commands = array(
-                            new ExecStatement('diff -uN %s %s', array($pathFileOrigin, $pathFileModified))
-                        );
-                        
-                        $trial_threshold = 3;
-                        while ($trial_threshold-- > 0)
-                        {
-                            $output = array();
-                            SaferExec::execMulti($commands, $output);
-                            if (strlen(trim(implode('', $output))) != 0) break;
-                        }
-                        
-                        $return .= $this->DiffGenHTMLOutput($output);
-                    }
-                }
-            }
+        $patchFiles = RepositoryManager::getInstance()->getPatchFilesByID($patchId);
+        foreach ($patchFiles as $patchFile) {
+            $patchFile = new File($patchFile->lang, $patchFile->path.$patchFile->name);
+            // file delimeter
+            $output[] = 'Index: '.$patchFile->lang.$patchFile->path.$patchFile->name;
+            $output = array_merge($output, $patchFile->diff());
         }
-
-        return $return;
-    }
-
-    public function DiffGenHTMLOutput($content) {
-
-        $header = array_shift($content)."<br>".array_shift($content);
-        $return = '<table class="code">
-        <tr>
-         <td class="header">'.$header.'</td>
-        </tr>
-        ';
-
-        $classes = array(
-            '+' => 'ins',
-            '-' => 'del',
-            ' ' => '',
-            '@' => 'line'
-        );
-        $first = true;
-        foreach ($content as $string) {
-            if ($string[0] == '@' && !$first) $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
-            $first = false;
-            $return .= '<tr><td class="'.$classes[$string[0]].'">'.str_replace(' ', '&nbsp;', htmlentities($string, ENT_QUOTES, 'UTF-8')).'</td></tr>';
-        }
-        $return .= '<tr><td class="truncated">&nbsp;</td></tr>';
-        $return .= '<table>';
-        
-        return $return;
+        return $output;
     }
 
     /**
