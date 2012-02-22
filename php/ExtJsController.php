@@ -1555,7 +1555,7 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
-        if ( $am->isAnonymous ) {
+        if ( !$am->haveKarma ) {
             return JsonResponseBuilder::failure();
         }
 
@@ -1679,6 +1679,7 @@ class ExtJsController
         $r['userLogin'] = $am->vcsLogin;
         $r['userAnonymousIdent']  = $am->anonymousIdent;
         $r['userIsAnonymous']  = $am->isAnonymous;
+        $r['userHaveKarma'] = $am->haveKarma;
         $r['userIsGlobalAdmin']  = $am->isGlobalAdmin();
         $r['userIsLangAdmin']  = $am->isLangAdmin();
         $r['userConf']  = $am->userConf;
@@ -1708,7 +1709,7 @@ class ExtJsController
             return JsonResponseBuilder::failure();
         }
 
-        if ($am->isAnonymous) {
+        if (!$am->haveKarma) {
             return JsonResponseBuilder::failure();
         }
         

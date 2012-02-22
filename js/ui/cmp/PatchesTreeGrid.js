@@ -46,15 +46,16 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.users, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (this.node.attributes.task !== PhDOE.user.login || PhDOE.user.isAnonymous)
-            }, ((this.node.attributes.task === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !(PhDOE.user.haveKarma && this.node.attributes.task == PhDOE.user.login)
+            }, new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !(PhDOE.user.haveKarma && this.node.attributes.task == PhDOE.user.login),
                 module: 'patches',
                 from: 'user',
                 node: false,
                 folderNode: false,
                 patchNode: false,
                 userNode: this.node
-            }) : '')]
+            })]
         });
     }
 });
@@ -70,7 +71,8 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
         var node = this.node, allFiles = [],
         currentUser = node.parentNode.attributes.task,
-        currentUserisAnonymous = node.parentNode.attributes.isAnonymous;
+        currentUserIsAnonymous = node.parentNode.attributes.isAnonymous,
+        currentUserHaveKarma = node.parentNode.attributes.haveKarma;
         
         // We search for files to pass to patch
         this.node.cascade(function(node){
@@ -106,11 +108,11 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: !((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) || !PhDOE.user.isGlobalAdmin)
+                hidden: !(currentUser == PhDOE.user.login)
             }, {
                 text: _('Back all this patch to work in progress module'),
                 iconCls: 'iconWorkInProgress',
-                hidden: (currentUser !== PhDOE.user.login),
+                hidden: !(currentUser == PhDOE.user.login),
                 disabled: Ext.isEmpty(allFiles),
                 handler: function(){
                     ui.task.MoveToWork({
@@ -118,8 +120,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     });
                 }
             }, {
-                xtype: 'menuseparator',
-                hidden: (currentUser !== PhDOE.user.login)
+                xtype: 'menuseparator'
             },{
                 text: _('View unified diff'),
                 iconCls: 'iconViewDiff',
@@ -141,36 +142,30 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     csrfToken;
                 }
             }, {
-                xtype: 'menuseparator'
+                xtype: 'menuseparator',
+                hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma))
             },
             
-            // Commit iten only when this patch belong to an anonymous user and the current user is a valid VCS user
+            // Commit item only when this patch belong to an anonymous user or user without karma and the current user is a valid VCS user with karma
             
-            ((currentUserisAnonymous && !PhDOE.user.isAnonymous) ?
-                new ui.cmp._WorkTreeGrid.menu.commit({
-                    module: 'patches',
-                    from: 'anonymousPatch',
-                    node: false,
-                    folderNode: false,
-                    patchNode: this.node,
-                    userNode: this.node.parentNode
-                }) : ''
-            ),
-            
-            ((!PhDOE.user.isAnonymous && currentUser === PhDOE.user.login) ?
-                new ui.cmp._WorkTreeGrid.menu.commit({
-                    module: 'patches',
-                    from: 'patch',
-                    node: false,
-                    folderNode: false,
-                    patchNode: this.node,
-                    userNode: this.node.parentNode
-                }) : ''
-            ),
-            (( PhDOE.user.isGlobalAdmin && currentUser !== PhDOE.user.login ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+            new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma)),
+                module: 'patches',
+                from: currentUserIsAnonymous ? 'anonymousPatch' : 'patch',
+                node: false,
+                folderNode: false,
+                patchNode: this.node,
+                userNode: this.node.parentNode
+            }),
+            {
+                xtype: 'menuseparator',
+                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
+            },
+            new ui.cmp._WorkTreeGrid.menu.admin({
+                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
                 from: 'patch',
                 node: this.node
-            }) : '')
+            })
             ]
         });
     }
@@ -210,18 +205,18 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous)
+                hidden: !PhDOE.user.haveKarma
             }, 
-            ((!PhDOE.user.isAnonymous) ?
-                new ui.cmp._WorkTreeGrid.menu.commit({
-                    module: 'patches',
-                    from: 'folder',
-                    node: false,
-                    folderNode: this.node,
-                    patchNode: this.node.parentNode,
-                    userNode: this.node.parentNode.parentNode
-                }) : ''
-            )]
+            new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !PhDOE.user.haveKarma,
+                module: 'patches',
+                from: 'folder',
+                node: false,
+                folderNode: this.node,
+                patchNode: this.node.parentNode,
+                userNode: this.node.parentNode.parentNode
+            })
+            ]
         });
     }
 });
@@ -235,7 +230,16 @@ ui.cmp._PatchesTreeGrid.menu.files = function(config){
 };
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, FileID = node.attributes.idDB, allFiles = [], owner = this.node.parentNode.parentNode.parentNode.attributes.task, tmp;
+        var node = this.node,
+            FileType = node.attributes.type,
+            FileLang,
+            FilePath = node.parentNode.attributes.task,
+            FileName = node.attributes.task, treeGrid = node.ownerTree,
+            FileID = node.attributes.idDB,
+            allFiles = [],
+            owner = this.node.parentNode.parentNode.parentNode.attributes.task,
+            ownerHaveKarma = this.node.parentNode.parentNode.parentNode.attributes.haveKarma,
+            tmp;
         
         tmp = node.parentNode.attributes.task.split('/');
         FileLang = tmp[0];
@@ -289,10 +293,10 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (FileType === 'delete' || FileType === 'new' || owner !== PhDOE.user.login)
+                hidden: !(owner == PhDOE.user.login)
             }, {
                 text: ((FileType === 'delete') ? _('Cancel this deletion') : _('Clear this change')),
-                hidden: (owner !== PhDOE.user.login),
+                hidden: !(owner == PhDOE.user.login),
                 iconCls: 'iconPageDelete',
                 handler: function(){
                     new ui.task.ClearLocalChangeTask({
@@ -303,26 +307,28 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous || owner !== PhDOE.user.login)
-            }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !(PhDOE.user.haveKarma && (owner === PhDOE.user.login || !ownerHaveKarma))
+            },
+                new ui.cmp._WorkTreeGrid.menu.commit({
                 module: 'patches',
+                hidden: !(PhDOE.user.haveKarma && (owner === PhDOE.user.login || !ownerHaveKarma)),
                 from: 'file',
                 node: this.node,
                 folderNode: this.node.parentNode,
                 patchNode: this.node.parentNode.parentNode,
                 userNode: this.node.parentNode.parentNode.parentNode
-            }) : ''),
-            {
+            }), {
                 xtype: 'menuseparator',
-                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) )
+                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
             },
-                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                new ui.cmp._WorkTreeGrid.menu.admin({
+                    hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
                     fileLang: FileLang,
                     from: 'file',
                     node: this.node,
                     folderNode: this.node.parentNode,
                     userNode: this.node.parentNode.parentNode.parentNode
-                }) : '')
+                })
             ]
         });
     }

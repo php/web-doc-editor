@@ -35,6 +35,7 @@ class AccountManager
     public $email;
     public $anonymousIdent;
     public $isAnonymous;
+    public $haveKarma;
     public $defaultConf;
     public $appConf;
     public $authService;
@@ -122,6 +123,8 @@ class AccountManager
     public function switchLang($lang) {
         $_SESSION['lang'] = $lang;
         $this->vcsLang    = $lang;
+        $_SESSION['haveKarma'] = VCSFactory::getInstance()->checkKarma($_SESSION['vcsLogin'], $lang) === true;
+        $this->haveKarma = $_SESSION['haveKarma'];
     }
 
     /**
@@ -152,6 +155,7 @@ class AccountManager
         $this->project   = $_SESSION['project'];
         $this->anonymousIdent = $_SESSION['anonymousIdent'];
         $this->isAnonymous = $_SESSION['isAnonymous'];
+        $this->haveKarma = $_SESSION['haveKarma'];
         $this->email = $_SESSION['email'];
         
         $this->authService = ( isset($_SESSION['authService']) ) ? $_SESSION['authService'] : false;
@@ -182,9 +186,6 @@ class AccountManager
     {
         // Var to return into ExtJs
         $return = array();
-
-        // Var return from VCS auth system
-        $AuthReturn = false;
 
         // We manage the project
         if( ProjectManager::getInstance()->setProject($project) ) {
@@ -217,6 +218,7 @@ class AccountManager
              || ($vcsLogin == ""          && $vcsPasswd == "") ) {
                
                $this->isAnonymous = true;
+               $this->haveKarma = false;
 
                // Even if the user provide an empty login, we force it to be 'anonymous'
                $vcsLogin  = 'anonymous';
@@ -271,6 +273,7 @@ class AccountManager
                 $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$this->userID;
                 $_SESSION['vcsPasswd'] = $this->vcsPasswd;
                 $_SESSION['isAnonymous'] = $this->isAnonymous;
+                $_SESSION['haveKarma'] = $this->haveKarma;
                 $_SESSION['anonymousIdent'] = $this->anonymousIdent;
                 $_SESSION['lang']      = $this->vcsLang;
                 $_SESSION['email']  = $this->email;
@@ -325,13 +328,8 @@ class AccountManager
                 
                     // Check the karma
                     $karma = VCSFactory::getInstance()->checkKarma($vcsLogin, $lang);
-                    
-                    if( $karma !== true ) {
-                        $return['state'] = false;
-                        $return['msg']   = $karma;
-                        return $return;
-                    }
-                    
+                    $this->haveKarma = ($karma === true);
+
                     // Register var
                     $this->vcsLogin  = $vcsLogin;
                     $this->vcsPasswd = $vcsPasswd;
@@ -377,6 +375,7 @@ class AccountManager
                     $_SESSION['vcsLogin'] = $this->vcsLogin;
                     $_SESSION['vcsPasswd'] = $this->vcsPasswd;
                     $_SESSION['isAnonymous'] = $this->isAnonymous;
+                    $_SESSION['haveKarma'] = $this->haveKarma;
                     $_SESSION['anonymousIdent'] = $this->anonymousIdent;
                     $_SESSION['lang']      = $this->vcsLang;
                     $_SESSION['email']  = $this->email;
@@ -411,6 +410,7 @@ class AccountManager
         else if( $this->authService == 'google' || $this->authService == 'facebook' ) {
         
             $this->isAnonymous = true;
+            $this->haveKarma = false;
             $this->anonymousIdent = $this->authService.'-'.$this->authServiceID;
             
             // Register var
@@ -457,6 +457,7 @@ class AccountManager
             $_SESSION['vcsLogin'] = $this->vcsLogin;
             $_SESSION['vcsPasswd'] = $this->vcsPasswd;
             $_SESSION['isAnonymous'] = $this->isAnonymous;
+            $_SESSION['haveKarma'] = $this->haveKarma;
             $_SESSION['anonymousIdent'] = $this->anonymousIdent;
             $_SESSION['lang']      = $this->vcsLang;
             $_SESSION['email']  = $this->email;

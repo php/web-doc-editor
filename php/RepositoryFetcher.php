@@ -899,15 +899,17 @@ class RepositoryFetcher
                 $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
                 $email = ($email) ? $email : 'false';
 
+                $isAnonymous = $am->anonymous($userInfo[0], $userInfo[1]);
+                $haveKarma = $isAnonymous ? false : (VCSFactory::getInstance()->checkKarma($userInfo[0], $vcsLang) === true);
                 // We start by users
-                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($isAnonymous) ? 'true' : 'false').",haveKarma:".(($haveKarma) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
 
                 // We now walk into patches for this users.
                 while( list($patch, $dataPatch) = each($patchs)) {
 
                     // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
                     if( empty($dataPatch['folders']) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent )) { continue; }
-                    
+
                     $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',patchDescription:'".((isset($patches[$dataPatch["idDB"]]["patchDescription"])) ? $patches[$dataPatch["idDB"]]["patchDescription"] : ''  )."',patchEmail:'".((isset($patches[$dataPatch["idDB"]]["patchEmail"])) ? $patches[$dataPatch["idDB"]]["patchEmail"] : ''  )."',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
 
                     // We now walk into the folders for this patch
@@ -1030,8 +1032,10 @@ class RepositoryFetcher
                 $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
                 $email = ($email) ? $email : 'false';
 
+                $isAnonymous = $am->anonymous($userInfo[0], $userInfo[1]);
+                $haveKarma = $isAnonymous ? false : (VCSFactory::getInstance()->checkKarma($userInfo[0], $vcsLang) === true);
                 // We put nbFiles into user's nodes to not have to count it by the client
-                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($am->anonymous($userInfo[0], $userInfo[1])) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
+                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".($isAnonymous ? 'true' : 'false').",haveKarma:".($haveKarma ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
 
                     // We now walk into the folders for this users
                     while( list($folder, $dataFiles) = each($dataFolders)) {
@@ -1255,7 +1259,6 @@ TODO: Handle project here
             if (   $f == '.'
                 || $f == '..'
                 || substr($f, 0, 1) == '.'      // skip hidden files
-                || substr($f, -4)   == '.new'   // skip work files
                 || $f == 'CVS'
             ) continue;
 

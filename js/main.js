@@ -12,9 +12,11 @@ var PhDOE = function()
             login: null,
             anonymousIdent: null,
             isAnonymous: null,
+            haveKarma: false,
             authService: null,
             authServiceID: null,
-            isAdmin: false,
+            isGlobalAdmin: false,
+            isLangAdmin: false,
             lang: null,
             conf: '',
             email: ''
@@ -650,8 +652,8 @@ var PhDOE = function()
                                         '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
                                 listeners: {
                                     afterrender: function(c) {
-                                        // Don't allow anonymous to modify the topic
-                                        if( PhDOE.user.isAnonymous ) {
+                                        // Don't allow modify the topic without karma
+                                        if( !PhDOE.user.haveKarma ) {
                                             return;
                                         }
 

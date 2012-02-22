@@ -16,6 +16,7 @@ ui.task.LoadConfigTask = function(config)
             PhDOE.user.authService  = o.mess.authService;
             PhDOE.user.authServiceID  = o.mess.authServiceID;
             PhDOE.user.isAnonymous = o.mess.userIsAnonymous;
+            PhDOE.user.haveKarma = o.mess.userHaveKarma;
             PhDOE.user.isGlobalAdmin = o.mess.userIsGlobalAdmin;
             PhDOE.user.isLangAdmin = o.mess.userIsLangAdmin;
             PhDOE.user.conf = o.mess.userConf;

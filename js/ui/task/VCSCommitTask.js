@@ -163,7 +163,7 @@ ui.task._VCSCommitTask.commit = function(files, patchID)
 ui.task.VCSCommitTask = function(config)
 {
     // If the user is anonymous, we don't commit anything
-    if (PhDOE.user.isAnonymous) {
+    if (!PhDOE.user.haveKarma) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
 

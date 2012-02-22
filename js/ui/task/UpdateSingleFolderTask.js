@@ -115,8 +115,8 @@ ui.task._UpdateSingleFolderTask.update = function(node)
 
 ui.task.UpdateSingleFolderTask = function(node)
 {
-    // If the user is anonymous, we don't update anything
-    if (PhDOE.user.isAnonymous) {
+    // If the user don't have karma, we don't update anything
+    if (!PhDOE.user.haveKarma) {
         Ext.getCmp('winVCSCommit').close();
         PhDOE.winForbidden();
         return;

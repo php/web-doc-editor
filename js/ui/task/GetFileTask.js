@@ -134,8 +134,8 @@ ui.task.GetFileTask = function(config)
                 
             ) {
 
-                // If the current user is an authenticate user & the user who have modified this file is an anonymous, we allow to modify this file
-                if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'workInProgress' ) {
+                // If the current user is an authenticate user with karma & the user who have modified this file is an anonymous, we allow to modify this file
+                if( fileModifiedInfo.isAnonymous  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
@@ -144,7 +144,7 @@ ui.task.GetFileTask = function(config)
                     });
                 }
                 //
-                else if( fileModifiedInfo.isAnonymous  && !PhDOE.user.isAnonymous && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
+                else if( fileModifiedInfo.isAnonymous  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
                     
                     new ui.cmp.AnonymousPatchWin({
                         fidDB: fileModifiedInfo.fidDB,

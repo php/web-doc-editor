@@ -7,7 +7,7 @@ class VCSFactory
 
     /**
      * @static
-     * @return VCSFactory
+     * @return CvsClient|SvnClient
      */
     public static function getInstance()
     {

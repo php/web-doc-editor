@@ -95,7 +95,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
         Ext.apply(this, {
             text: _('Commit...'),
             iconCls: 'iconCommitFileVcs',
-            disabled: (PhDOE.user.isAnonymous),
+            disabled: (!PhDOE.user.haveKarma),
             handler: function(){
                 return false;
             },
@@ -318,17 +318,17 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             })
         }, {
             xtype: 'menuseparator',
-            hidden: (PhDOE.user.isAnonymous)
+            hidden: !PhDOE.user.haveKarma
         }, 
 
-        (( !PhDOE.user.isAnonymous ) ?
-            new ui.cmp._WorkTreeGrid.menu.commit({
-                from: 'user',
-                node: false,
-                folderNode: false,
-                userNode: this.node
-            }) : ''
-        )
+
+        new ui.cmp._WorkTreeGrid.menu.commit({
+            hidden: !PhDOE.user.haveKarma,
+            from: 'user',
+            node: false,
+            folderNode: false,
+            userNode: this.node
+        })
         ] : [{
             scope: this,
             text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task + "</b>"),
@@ -397,16 +397,15 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
                 })
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous)
+                hidden: !PhDOE.user.haveKarma
             },
-            ((!PhDOE.user.isAnonymous) ?
-                new ui.cmp._WorkTreeGrid.menu.commit({
-                    from: 'folder',
-                    node: false,
-                    folderNode: this.node,
-                    userNode: this.node.parentNode
-                }) : ''
-            )]
+            new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !PhDOE.user.haveKarma,
+                from: 'folder',
+                node: false,
+                folderNode: this.node,
+                userNode: this.node.parentNode
+            })]
         });
     }
 });
@@ -432,7 +431,15 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
     },
     
     init: function(){
-        var node = this.node, FileType = node.attributes.type, FileLang, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, treeGrid = node.ownerTree, owner = node.parentNode.parentNode.attributes.task, allFiles = [], tmp;
+        var node = this.node,
+            FileType = node.attributes.type,
+            FileLang,
+            FilePath = node.parentNode.attributes.task,
+            FileName = node.attributes.task,
+            treeGrid = node.ownerTree,
+            owner = node.parentNode.parentNode.attributes.task,
+            allFiles = [],
+            tmp;
         
         // Get the lang of this file
         tmp = node.parentNode.attributes.task.split('/');
@@ -544,24 +551,26 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 }
             }, {
                 xtype: 'menuseparator',
-                hidden: (PhDOE.user.isAnonymous || owner !== PhDOE.user.login)
-            }, ((owner === PhDOE.user.login && !PhDOE.user.isAnonymous) ? new ui.cmp._WorkTreeGrid.menu.commit({
+                hidden: !(PhDOE.user.haveKarma && owner === PhDOE.user.login)
+            }, new ui.cmp._WorkTreeGrid.menu.commit({
                 from: 'file',
+                hidden: !(PhDOE.user.haveKarma && owner === PhDOE.user.login),
                 node: this.node,
                 folderNode: this.node.parentNode,
                 userNode: this.node.parentNode.parentNode
-            }) : ''),
+            }),
             {
                 xtype: 'menuseparator',
-                hidden: ( !PhDOE.user.isGlobalAdmin && !(PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) )
+                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
             },
-                (( PhDOE.user.isGlobalAdmin || (PhDOE.user.lang === FileLang && PhDOE.user.isLangAdmin) ) ? new ui.cmp._WorkTreeGrid.menu.admin({
+                new ui.cmp._WorkTreeGrid.menu.admin({
                     fileLang: FileLang,
                     from: 'file',
+                    hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
                     node: this.node,
                     folderNode: this.node.parentNode,
                     userNode: this.node.parentNode.parentNode
-                }) : '')
+                })
             ]
         });
     }
