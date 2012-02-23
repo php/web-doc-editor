@@ -16,7 +16,7 @@ $r = $conn->query('SELECT `id`,`user`,`anonymousIdent`,`project` FROM `work`', a
 $count = 0;
 while ($a = $r->fetch_assoc()) {
     if (preg_match('/^anonymous\s\#(\d+)$/', $a['user'], $matches)) {
-        $id = $matches[0];
+        $id = $matches[1];
     } else {
         $s = 'SELECT `userID` FROM `users` WHERE `project` = "%s" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
         $params = array($a['project'], $a['user'], $a['anonymousIdent']);
@@ -37,7 +37,7 @@ $r = $conn->query('SELECT `id`,`user`,`anonymousIdent`,`project` FROM `patches`'
 $count = 0;
 while ($a = $r->fetch_assoc()) {
     if (preg_match('/^anonymous\s\#(\d+)$/', $a['user'], $matches)) {
-        $id = $matches[0];
+        $id = $matches[1];
     } else {
         $s = 'SELECT `userID` FROM `users` WHERE `project` = "%s" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
         $params = array($a['project'], $a['user'], $a['anonymousIdent']);
