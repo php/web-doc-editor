@@ -849,10 +849,12 @@ class RepositoryFetcher
                     `users`
                  WHERE
                     `patches`.`userID` = `users`.`userID` AND
-                    `patches`.`project` = "%s"
+                    `patches`.`project` = "%s" AND
+                    `patches`.`userID` = %d
                     ' . (count($patchIds) ?  'AND `id` NOT IN (%s)' : '');
             $params = array(
                 $project,
+                $am->userID,
                 implode(',' ,array_keys($patchIds))
             );
             $r = $this->conn->query($s, $params);
