@@ -547,7 +547,7 @@ var PhDOE = function()
                             
                         },{
                             id      : 'gear',
-                            hidden  : (this.user.isAnonymous ),
+                            hidden  : PhDOE.user.haveKarma,
                             qtip    : _('Open the Log Message Manager'),
                             handler : function() {
                                 if( ! Ext.getCmp('commit-log-win') )

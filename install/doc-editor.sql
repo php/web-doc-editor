@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS `userNotes` (
 
 CREATE TABLE IF NOT EXISTS `work` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userID` int(10) unsigned NOT NULL,
   `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
   `path` varchar(255) NOT NULL,
@@ -207,8 +208,6 @@ CREATE TABLE IF NOT EXISTS `work` (
   `reviewed` varchar(50) NOT NULL,
   `maintainer` varchar(255) NOT NULL,
   `reviewed_maintainer` varchar(255) NOT NULL,
-  `user` varchar(255) NOT NULL,
-  `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime NOT NULL,
   `type` enum('new','delete','update','patch') NOT NULL,
   `progress` smallint(6) unsigned DEFAULT '100',
@@ -223,12 +222,11 @@ CREATE TABLE IF NOT EXISTS `work` (
 
 CREATE TABLE IF NOT EXISTS `patches` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userID` int(10) unsigned NOT NULL,
   `project` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text,
   `email` varchar(255) DEFAULT NULL,
-  `user` varchar(255) NOT NULL,
-  `anonymousIdent` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

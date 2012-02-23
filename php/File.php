@@ -300,14 +300,16 @@ class File
 
         $s = 'SELECT
                 `id` as fidDB,
-                `user`,
-                `anonymousIdent`,
+                `users`.`vcs_login`,
+                `users`.`authService`,
                 `module` as fromModule,
-                `type` as ftype
+                `type` as ftype,
+                `work`.`userID`
              FROM
-                `work`
+                `work`,
+                `users`
              WHERE
-                `project` = "%s" AND
+                `work`.`project` = "%s" AND
                 `lang`="%s" AND
                 `path`="%s" AND
                 `name`="%s"';
@@ -324,7 +326,7 @@ class File
             return false;
         } else {
             $a = $r->fetch_assoc();
-            $a['isAnonymous'] = $am->anonymous($a['user'], $a['anonymousIdent']);
+            $a['haveKarma'] = (($a['authService'] == 'VCS') && ($am->checkKarma($a['vcs_login'], $this->lang) === true));
             return json_encode($a);
         }
     }

@@ -672,15 +672,17 @@ class RepositoryFetcher
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
-                `user`,
+                `vcs_login` as `user`,
                 `date`,
                 `type`
                 FROM
-                `work`
+                `work`,
+                `users`
                 WHERE
+                `work`.`userID` = `users`.`userID` AND
                 `module` = "workInProgress" AND
                 `lang` = "%s" AND
-                `project`  = "%s"
+                `work`.`project`  = "%s"
                 ORDER BY
                 type, date';
         $params = array(
@@ -704,15 +706,17 @@ class RepositoryFetcher
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
-                `user`,
+                `vcs_login` as `user`,
                 `date`,
                 `type`
                 FROM
-                `work`
+                `work`,
+                `users`
                 WHERE
+                `work`.`userID` = `users`.`userID` AND
                 `module` = "PatchesForReview" AND
                 `lang` = "%s" AND
-                `project`  = "%s"
+                `work`.`project`  = "%s"
                 ORDER BY
                 type, date';
         $params = array(
@@ -776,213 +780,31 @@ class RepositoryFetcher
 
         $node = array();
 
+        // Do we need to display EN Work ?
+        if( isset($am->userConf->main->displayENWork) && $am->userConf->main->displayENWork === true ) {
+            $langFilter = '(`lang` = "%s" OR `lang`="en" OR `lang`="doc-base")';
+        } else {
+            $langFilter = '(`lang` = "%s" OR `lang`="doc-base")';
+        }
+
         if( $module == 'PatchesForReview' ) {
-
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
             $s = 'SELECT
-                    `id`,
-                    `name`        as patchName,
-                    `description` as patchDescription,
-                    `email`       as patchEmail,
-                    `user`,
-                    `anonymousIdent`,
-                    `date`
+                    `patches`.`name` as `patch_name`, `patches`.`description`, `patches`.`email` as `patch_email`, `patches`.`date`, `patches`.`id` as `patch_id`,
+                    `work`.`lang`, `work`.`path`, `work`.`name`, `work`.`date`, `work`.`progress`, `work`.`type`, `work`.`id`,
+                    `users`.`userID`, `users`.`authService`, `users`.`email`, `users`.`anonymousIdent`, `users`.`vcs_login`
                  FROM
-                    `patches`
+                    `work`,
+                    `patches`,
+                    `users`
                  WHERE
-                    `project`  = "%s"';
-            $params = array(
-                $project
-            );
-            $r = $this->conn->query($s, $params);
-            
-            $patches = Array();
-
-            while ($a = $r->fetch_object()) {
-                
-                $desc = $a->patchDescription;
-                $desc = str_replace("\n", '\n', $desc);
-                $desc = str_replace("\r", '\r', $desc);
-                $desc = str_replace("\t", '\t', $desc);
-                $desc = str_replace("'", "\'", $desc);
-                
-                $a->patchName = str_replace("'", "\'", $a->patchName);
-                
-                $patches[$a->id] = Array(
-                    "user"             => $a->user,
-                    "patchName"        => $a->patchName,
-                    "patchDescription" => $desc,
-                    "patchEmail"       => $a->patchEmail
-                );
-
-                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['idDB'] = $a->id;
-                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['date'] = $a->date;
-                $node[$a->user.'@|@'.$a->anonymousIdent][$a->patchName]['folders'] = array();
-            }
-
-            // Bugfix: if we don't have any patches, the query below will fail.
-            // So we return immediately if that's the case.
-            if (empty($patches))
-                return '[]';
-
-            // Do we need to display EN Work ?
-            if( isset($am->userConf->main->displayENWork) && $am->userConf->main->displayENWork === true ) {
-                $langFilter = '(`lang` = "%s" OR `lang`="en" OR `lang`="doc-base")';
-            } else {
-                $langFilter = '(`lang` = "%s" OR `lang`="doc-base")';
-            }
-            
-            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-            $s = 'SELECT
-                    *
-                 FROM
-                    `work`
-                 WHERE
-                    `project` = "%s" AND
+                    `work`.`patchID` = `patches`.`id` AND
+                    `work`.`userID` = `users`.`userID` AND
+                    `work`.`project` = "%s" AND
                     '.$langFilter.' AND
-                    `name`   != "-"  AND
-                    `module`  = "%s" AND
-                    `patchID` IN (%s)';
-            $params = array(
-                $project,
-                $vcsLang,
-                $module,
-                implode(",", array_map('intval', array_keys($patches)))
-            );
+                    `work`.`name`   != "-" AND
+                    `module`  = "%s"';
 
-            $r = $this->conn->query($s, $params);
-
-            while ($a = $r->fetch_object()) {
-
-                $node[$a->user.'@|@'.$a->anonymousIdent][$patches[$a->patchID]["patchName"]]['idDB'] = $a->patchID;
-                $node[$a->user.'@|@'.$a->anonymousIdent][$patches[$a->patchID]["patchName"]]['folders'][$a->lang.$a->path][] = Array(
-                    "name"          => $a->name,
-                    "last_modified" => $a->date,
-                    "type"          => $a->type,
-                    "idDB"          => $a->id
-                );
-
-            }
-            
-            $result = '[';
-            
-            // We format the result node to pass to ExtJs TreeGrid component
-            while( list($user, $patchs) = each($node)) {
-
-                // $userInfo[0] => login
-                // $userInfo[1] => anonymousIdent
-                $userInfo = explode('@|@',$user);
-                $userDetails = $am->getUserDetails($userInfo[0], $userInfo[1]);
-
-                // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
-                if( $this->_isEmptyPatch($patchs) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) ) { continue; }
-                
-                // Get authService from anonymousIdent
-                $tmp = explode('-', $userInfo[1]);
-                if( isset($tmp[1]) ) $authService = $tmp[0];
-                else $authService = false;
-
-                if( $authService == 'google' ) {
-                    $iconUser = 'iconGoogle';
-                } else if( $authService == 'facebook' ) {
-                    $iconUser = 'iconFacebook';
-                } else {
-                    $iconUser = 'iconUser';
-                }
-
-                if( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) {
-                    $expanded  = 'true';
-                } else {
-                    $expanded  = 'false';
-                }
-
-                $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
-                $email = ($email) ? $email : 'false';
-
-                $isAnonymous = $am->anonymous($userInfo[0], $userInfo[1]);
-                $haveKarma = $isAnonymous ? false : (VCSFactory::getInstance()->checkKarma($userInfo[0], $vcsLang) === true);
-                // We start by users
-                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".(($isAnonymous) ? 'true' : 'false').",haveKarma:".(($haveKarma) ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
-
-                // We now walk into patches for this users.
-                while( list($patch, $dataPatch) = each($patchs)) {
-
-                    // If the current user is not me and if all of his patch are empty, we don't send it - feature request ##60299
-                    if( empty($dataPatch['folders']) && !( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent )) { continue; }
-
-                    $result .= "{task:'".$patch."',type:'patch',iconCls:'iconPatch',patchDescription:'".((isset($patches[$dataPatch["idDB"]]["patchDescription"])) ? $patches[$dataPatch["idDB"]]["patchDescription"] : ''  )."',patchEmail:'".((isset($patches[$dataPatch["idDB"]]["patchEmail"])) ? $patches[$dataPatch["idDB"]]["patchEmail"] : ''  )."',expanded:true,creationDate:'".( (isset($dataPatch["date"])) ? $dataPatch["date"] : ''  )."',draggable: false, idDB:".$dataPatch["idDB"].", children:[";
-
-                    // We now walk into the folders for this patch
-                    while( list($folder, $dataFiles) = each($dataPatch['folders'])) {
-                        $result .= "{task:'".$folder."',type:'folder',iconCls:'iconFolderOpen',expanded:true,children:[";
-
-                                // We now walk into the files for this folder
-                                while( list($file, $data) = each($dataFiles)) {
-
-                                    // Witch iconCls do we need to use ?
-                                    switch ($data["type"]) {
-                                        case 'delete':
-                                            $iconCls = 'iconTrash';
-
-                                            break;
-                                        case 'new':
-                                            $iconCls = 'iconNewFiles';
-
-                                            break;
-                                        case 'update':
-                                            $iconCls = 'iconRefresh';
-
-                                            break;
-
-                                        default:
-                                            $iconCls = 'task';
-                                            break;
-                                    }
-
-                                    $result .= "{task:'".$data["name"]."',type:'".$data["type"]."',last_modified:'".$data["last_modified"]."',leaf:true,iconCls:'".$iconCls."', idDB:".$data["idDB"]."},";
-                                    
-                                }
-
-                        $result .= ']},';
-                        
-                    }
-
-                    $result .= ']},';
-                }
-
-                $result .= ']},';
-            }
-            $result .= ']';
-
-            // We skip trailing comma
-            $result = str_replace("},]", "}]", $result);
-
-            return $result;
-
-        } // End if module == PatchesForReview
-
-
-        if( $module == 'workInProgress' ) {
-
-            // Do we need to display EN Work ?
-            if( $am->userConf->main->displayENWork ) {
-                $langFilter = '(`lang` = "%s" OR `lang`="en" OR `lang`="doc-base")';
-            } else {
-                $langFilter = '(`lang` = "%s" OR `lang`="doc-base")';
-            }
-            
-            
-            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
-            $s = 'SELECT
-                    *
-                 FROM
-                    `work`
-                 WHERE
-                    `project` = "%s" AND
-                    '.$langFilter.' AND
-                    `name`   != "-" AND
-                    `module`  = "%s" AND
-                    `patchID` IS NULL';
             $params = array(
                 $project,
                 $vcsLang,
@@ -990,9 +812,23 @@ class RepositoryFetcher
             );
             $r = $this->conn->query($s, $params);
 
+            $nodes = array();
             while ($a = $r->fetch_object()) {
+                $nodes[$a->userID]['data'] = Array(
+                    "authService" => $a->authService,
+                    "email" => $a->email,
+                    "anonymousIdent" => $a->anonymousIdent,
+                    "vcs_login" => $a->vcs_login
+                );
 
-                $node[$a->user.'@|@'.$a->anonymousIdent][$a->lang.$a->path][] = Array(
+                $nodes[$a->userID]['patches'][$a->patch_id]['data'] = Array(
+                    "name" => $a->patch_name,
+                    "description" => $a->description,
+                    "email" => $a->patch_email,
+                    "date" => $a->date
+                );
+
+                $nodes[$a->userID]['patches'][$a->patch_id]['folders'][$a->lang.$a->path][] = Array(
                     "name"          => $a->name,
                     "last_modified" => $a->date,
                     "progress"      => $a->progress,
@@ -1001,85 +837,207 @@ class RepositoryFetcher
                 );
             }
 
-            $result = '[';
-            // We format the result node to pass to ExtJs TreeGrid component
-            while( list($user, $dataFolders) = each($node)) {
-            
-                // $userInfo[0] => login
-                // $userInfo[1] => anonymousIdent
-                $userInfo = explode('@|@',$user);
-                $userDetails = $am->getUserDetails($userInfo[0], $userInfo[1]);
-                
-                // Get authService from anonymousIdent
-                $tmp = explode('-', $userInfo[1]);
-                if( isset($tmp[1]) ) $authService = $tmp[0];
-                else $authService = false;
 
-                if( $authService == 'google' ) {
+            $result = array();
+            foreach ($nodes as $userId => $userData) {
+
+                $children = array();
+
+                foreach ($userData['patches'] as $patchId => $patchData) {
+
+                    $childrenFolders = array();
+
+                    foreach ($patchData['folders'] as $folder => $files) {
+
+                        $childrenFiles = array();
+
+                        foreach ($files as $file) {
+                            // Witch iconCls do we need to use ?
+                            switch ($file["type"]) {
+                                case 'delete':
+                                    $iconCls = 'iconTrash';
+                                    break;
+                                case 'new':
+                                    $iconCls = 'iconNewFiles';
+                                    break;
+                                case 'update':
+                                    $iconCls = 'iconRefresh';
+                                    break;
+                                default:
+                                    $iconCls = 'task';
+                                    break;
+                            }
+
+                            $childrenFiles[] = array(
+                                'task' => $file["name"],
+                                'type' => $file["type"],
+                                'last_modified' => $file["last_modified"],
+                                'leaf' => true,
+                                'iconCls' => $iconCls,
+                                'progress' => (int)$file["progress"],
+                                'idDB' => $file["idDB"]
+                            );
+                        }
+                        $childrenFolders[] = array(
+                            'task' => $folder,
+                            'type' => 'folder',
+                            'iconCls' => 'iconFolderOpen',
+                            'expanded' => true,
+                            'children' => $childrenFiles
+                        );
+                    }
+
+                    $children[] = array(
+                        'task' => $patchData['data']['name'],
+                        'type' => 'patch',
+                        'iconCls' => 'iconPatch',
+                        'patchDescription' => $patchData['data']['description'],
+                        'patchEmail' => $patchData['data']['email'],
+                        'expanded' => true,
+                        'creationDate' => $patchData['data']['date'],
+                        'draggable' => false,
+                        'idDB' => $patchId,
+                        'children' => $childrenFolders
+                    );
+
+                }
+
+                if( $userData['data']['authService'] == 'google' ) {
                     $iconUser = 'iconGoogle';
-                } else if( $authService == 'facebook' ) {
+                } else if( $userData['data']['authService'] == 'facebook' ) {
                     $iconUser = 'iconFacebook';
                 } else {
                     $iconUser = 'iconUser';
                 }
-                
-                if( $userInfo[0] == $vcsLogin && $userInfo[1] == $anonymousIdent ) {
-                    $expanded  = 'true';
-                } else {
-                    $expanded  = 'false';
-                }
-                
-                $email = $am->getUserEmail($userInfo[0], $userInfo[1]);
-                $email = ($email) ? $email : 'false';
-
-                $isAnonymous = $am->anonymous($userInfo[0], $userInfo[1]);
-                $haveKarma = $isAnonymous ? false : (VCSFactory::getInstance()->checkKarma($userInfo[0], $vcsLang) === true);
-                // We put nbFiles into user's nodes to not have to count it by the client
-                $result .= "{task:'".$userInfo[0]."',type:'user',userID:'".$userDetails->userID."',isAnonymous:".($isAnonymous ? 'true' : 'false').",haveKarma:".($haveKarma ? 'true' : 'false').",email:'".$email."', iconCls:'".$iconUser."',expanded:".$expanded.",children:[";
-
-                    // We now walk into the folders for this users
-                    while( list($folder, $dataFiles) = each($dataFolders)) {
-                        $result .= "{task:'".$folder."',type:'folder',iconCls:'iconFolderOpen',expanded:true,children:[";
-
-                                // We now walk into the files for this folder
-                                while( list($file, $data) = each($dataFiles)) {
-
-                                    // Witch iconCls do we need to use ?
-                                    switch ($data["type"]) {
-                                        case 'delete':
-                                            $iconCls = 'iconTrash';
-
-                                            break;
-                                        case 'new':
-                                            $iconCls = 'iconNewFiles';
-
-                                            break;
-                                        case 'update':
-                                            $iconCls = 'iconRefresh';
-
-                                            break;
-
-                                        default:
-                                            $iconCls = 'task';
-                                            break;
-                                    }
-
-                                    $result .= "{task:'".$data["name"]."',type:'".$data["type"]."',last_modified:'".$data["last_modified"]."',leaf:true,iconCls:'".$iconCls."',progress:".$data["progress"].", idDB:".$data["idDB"]."},";
-                                }
-
-                        $result .= ']},';
-                    }
-
-
-                $result .= ']},';
+                $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
+                $result[] = array(
+                    'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),
+                    'type' => 'user',
+                    'userID' => $userId,
+                    'isAnonymous' => $isAnonymous,
+                    'haveKarma' => $isAnonymous ? false : ($am->checkKarma($userData['data']['vcs_login'], $vcsLang) === true),
+                    'email' => ($userData['data']['email']) ? $userData['data']['email'] : false,
+                    'iconCls' => $iconUser,
+                    'expanded' => ($userData['data']['vcs_login'] == $vcsLogin && $userData['data']['anonymousIdent'] == $anonymousIdent),
+                    'children' => $children
+                );
 
             }
-            $result .= ']';
 
-            // We skip trailing comma
-            $result = str_replace("},]", "}]", $result);
+            return json_encode($result);
 
-            return $result;
+        } // End if module == PatchesForReview
+
+
+        elseif( $module == 'workInProgress' ) {
+
+            // We exclude item witch name == '-' ; this is new folder ; We don't display it.
+            $s = 'SELECT
+                    `work`.`lang`, `work`.`path`, `work`.`name`, `work`.`date`, `work`.`progress`, `work`.`type`, `work`.`id`,
+                    `users`.`userID`, `users`.`authService`, `users`.`email`, `users`.`anonymousIdent`, `users`.`vcs_login`
+                 FROM
+                    `work`,
+                    `users`
+                 WHERE
+                    `work`.`userID` = `users`.`userID` AND
+                    `work`.`project` = "%s" AND
+                    '.$langFilter.' AND
+                    `name`   != "-" AND
+                    `module`  = "%s" AND
+                    `patchID` IS NULL';
+
+            $params = array(
+                $project,
+                $vcsLang,
+                $module
+            );
+            $r = $this->conn->query($s, $params);
+
+            $nodes = array();
+            while ($a = $r->fetch_object()) {
+                $nodes[$a->userID]['data'] = Array(
+                    "authService" => $a->authService,
+                    "email" => $a->email,
+                    "anonymousIdent" => $a->anonymousIdent,
+                    "vcs_login" => $a->vcs_login
+                );
+                $nodes[$a->userID]['folders'][$a->lang.$a->path][] = Array(
+                    "name"          => $a->name,
+                    "last_modified" => $a->date,
+                    "progress"      => $a->progress,
+                    "type"          => $a->type,
+                    "idDB"          => $a->id
+                );
+            }
+
+            $result = array();
+            foreach ($nodes as $userId => $userData) {
+
+                $children = array();
+
+                foreach ($userData['folders'] as $folder => $files) {
+
+                    $childrenFiles = array();
+
+                    foreach ($files as $file) {
+                        // Witch iconCls do we need to use ?
+                        switch ($file["type"]) {
+                            case 'delete':
+                                $iconCls = 'iconTrash';
+                                break;
+                            case 'new':
+                                $iconCls = 'iconNewFiles';
+                                break;
+                            case 'update':
+                                $iconCls = 'iconRefresh';
+                                break;
+                            default:
+                                $iconCls = 'task';
+                                break;
+                        }
+
+                        $childrenFiles[] = array(
+                            'task' => $file["name"],
+                            'type' => $file["type"],
+                            'last_modified' => $file["last_modified"],
+                            'leaf' => true,
+                            'iconCls' => $iconCls,
+                            'progress' => (int)$file["progress"],
+                            'idDB' => $file["idDB"]
+                        );
+                    }
+                    $children[] = array(
+                        'task' => $folder,
+                        'type' => 'folder',
+                        'iconCls' => 'iconFolderOpen',
+                        'expanded' => true,
+                        'children' => $childrenFiles
+                    );
+                }
+
+                if( $userData['data']['authService'] == 'google' ) {
+                    $iconUser = 'iconGoogle';
+                } else if( $userData['data']['authService'] == 'facebook' ) {
+                    $iconUser = 'iconFacebook';
+                } else {
+                    $iconUser = 'iconUser';
+                }
+                $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
+                $result[] = array(
+                    'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),
+                    'type' => 'user',
+                    'userID' => $userId,
+                    'isAnonymous' => $isAnonymous,
+                    'haveKarma' => $isAnonymous ? false : ($am->checkKarma($userData['data']['vcs_login'], $vcsLang) === true),
+                    'email' => ($userData['data']['email']) ? $userData['data']['email'] : false,
+                    'iconCls' => $iconUser,
+                    'expanded' => ($userData['data']['vcs_login'] == $vcsLogin && $userData['data']['anonymousIdent'] == $anonymousIdent),
+                    'children' => $children
+                );
+
+            }
+
+            return json_encode($result);
 
         } // End if module == workInProgress
     }

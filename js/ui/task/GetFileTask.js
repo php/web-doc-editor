@@ -125,17 +125,10 @@ ui.task.GetFileTask = function(config)
 
             // This file have been modified by a different user than the current one.
             // If we ask for the original content, we don't display this message
-            if( o.fileModified && !readOriginal  && 
-                
-                (
-                    ( !PhDOE.user.isAnonymous && fileModifiedInfo.user !== PhDOE.user.login ) ||
-                    ( PhDOE.user.isAnonymous && fileModifiedInfo.anonymousIdent !== PhDOE.user.anonymousIdent )
-                )
-                
-            ) {
+            if( o.fileModified && !readOriginal  && ( PhDOE.user.userID !== fileModifiedInfo.userID )) {
 
-                // If the current user is an authenticate user with karma & the user who have modified this file is an anonymous, we allow to modify this file
-                if( fileModifiedInfo.isAnonymous  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'workInProgress' ) {
+                // If the current user is an authenticate user with karma & the user who have modified this file dont have karma, we allow to modify this file
+                if( !fileModifiedInfo.haveKarma  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
@@ -144,7 +137,7 @@ ui.task.GetFileTask = function(config)
                     });
                 }
                 //
-                else if( fileModifiedInfo.isAnonymous  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
+                else if( !fileModifiedInfo.haveKarma  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
                     
                     new ui.cmp.AnonymousPatchWin({
                         fidDB: fileModifiedInfo.fidDB,

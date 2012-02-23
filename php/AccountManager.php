@@ -12,6 +12,7 @@ class AccountManager
 {
     private static $instance;
     private $conn;
+    private $karmaList;
 
     /**
      * @static
@@ -123,7 +124,7 @@ class AccountManager
     public function switchLang($lang) {
         $_SESSION['lang'] = $lang;
         $this->vcsLang    = $lang;
-        $_SESSION['haveKarma'] = VCSFactory::getInstance()->checkKarma($_SESSION['vcsLogin'], $lang) === true;
+        $_SESSION['haveKarma'] = $this->checkKarma($_SESSION['vcsLogin'], $lang) === true;
         $this->haveKarma = $_SESSION['haveKarma'];
     }
 
@@ -327,7 +328,7 @@ class AccountManager
                 } else {
                 
                     // Check the karma
-                    $karma = VCSFactory::getInstance()->checkKarma($vcsLogin, $lang);
+                    $karma = $this->checkKarma($vcsLogin, $lang);
                     $this->haveKarma = ($karma === true);
 
                     // Register var
@@ -487,28 +488,6 @@ class AccountManager
         
     }
 
-    /**
-     * Check if a user is an anonymous or not based only on his name.
-     * @param string The user name to check
-     * @return boolean TRUE if the given user is an anonymous, FALSE otherwise.
-     */
-    public function anonymous($userLogin, $anonymousIdent)
-    {
-        // A valid user is a user who have a "VCS" authService, without anonymousIdent
-        $s = 'SELECT authService, anonymousIdent FROM `users` WHERE project="%s" AND vcs_login = "%s" AND anonymousIdent = "%s"';
-        
-        $params = array($this->project, $userLogin, $anonymousIdent);
-        $r = $this->conn->query($s, $params);
-        $a = $r->fetch_object();
-        
-        // An anonymous have is #xxx at the end of his login. So, the sql "failed"
-        if( !is_object($a) ) {
-            return true;
-        }
-
-        return ( $a->authService == 'VCS' && $a->anonymousIdent == '' ) ? false : true;
-    }
-
     public function isGlobalAdmin()
     {
         // Anonymous can't be a globalAdmin
@@ -573,16 +552,9 @@ class AccountManager
     
     public function setFileOwner($fileIdDB, $newOwnerID)
     {
-        // Get newUser information
-        $s = 'SELECT * FROM `users` WHERE `userID` = %d';
-        $params = array($newOwnerID);
-
-        $r = $this->conn->query($s, $params);
-        $userInfo = $r->fetch_object();
-        
         // We update the file
-        $s = 'UPDATE `work` SET `user` = "%s", `anonymousIdent` = "%s", `module`="workInProgress", patchID=NULL WHERE `id` = %d';
-        $params = array($userInfo->vcs_login, $userInfo->anonymousIdent, $fileIdDB);
+        $s = 'UPDATE `work` SET `userID` = %d, `module`="workInProgress", patchID=NULL WHERE `id` = %d';
+        $params = array($newOwnerID, $fileIdDB);
 
         $this->conn->query($s, $params);
     }
@@ -702,6 +674,14 @@ class AccountManager
         $params = array($this->vcsLogin);
         $this->conn->query($s, $params);
 
+        $s = 'DELETE FROM `work` WHERE `userID`=%d';
+        $params = array($this->userID);
+        $this->conn->query($s, $params);
+
+        $s = 'DELETE FROM `patches` WHERE `userID`=%d';
+        $params = array($this->userID);
+        $this->conn->query($s, $params);
+
         $s = 'DELETE FROM `users` WHERE `userID`=%d';
         $params = array($this->userID);
         $this->conn->query($s, $params);
@@ -728,6 +708,96 @@ class AccountManager
 
         mail($to, stripslashes($subject), stripslashes(trim($msg)), $headers, "-fnoreply@php.net");
     }
+
+
+    private function getKarmaList()
+    {
+        if (!$this->karmaList) {
+            // If this data is older than 1 day, we update it
+            $data = RepositoryFetcher::getStaticValue('karma_list', '');
+
+            if( $data === false || ($data->update_time + (24*60*60)) > time() ) {
+                $this->updateKarmaList();
+                $data = RepositoryFetcher::getStaticValue('karma_list', '');
+            }
+            $this->karmaList=$data->data;
+        }
+
+        return $this->karmaList;
+    }
+
+    private function updateKarmaList()
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+
+        $file = @file($appConf[$project]['vcs.karma.file']);
+
+        $line_avail = array();
+        $user = array();
+
+        // We cleanUp the content of this file
+        for( $i=0; $i < count($file); $i++) {
+            if( substr($file[$i], 0, 6) == 'avail|') {
+                $line_avail[] = $file[$i];
+
+                $t = explode("|", $file[$i]);
+                $users   = trim($t[1]);
+                $karmas = ( isset($t[2]) ) ? trim($t[2]) : 'ALL';
+
+                $users = explode(",", $users);
+                $karmas = explode(",", $karmas);
+
+                for( $j=0; $j < count($users); $j++ ) {
+                    if( isset($user[$users[$j]]) ) {
+
+                        $user[$users[$j]]['karma'] = array_merge( $karmas, $user[$users[$j]]['karma'] );
+
+                    } else {
+
+                        $user[$users[$j]]['karma'] = $karmas;
+                    }
+                }
+
+            }
+        }
+
+        // We store this value into DB as json string to retrieve it later
+        $to_store = array(
+            "update_time" => time(),
+            "data"        => $user
+        );
+        RepositoryManager::setStaticValue('karma_list', '', json_encode($to_store));
+
+    }
+
+    // Return true if the $user have the right karma for $module
+    public function checkKarma($user, $lang)
+    {
+        if ($user == '' || $user == 'anonymous') return 'You haven\'t any karma !';
+        $userList = $this->getKarmaList();
+
+        $userList = (array) $userList;
+
+        if( isset($userList[$user]) ) {
+
+            $userList[$user] = (array) $userList[$user];
+
+            $karma = $userList[$user]['karma'];
+
+            // Must have ALL, phpdoc or phpdoc/$lang
+            if( in_array("ALL", $karma) || in_array("phpdoc", $karma) || in_array("phpdoc/$lang", $karma) ) {
+                return true;
+            } else {
+                return 'You haven\'t good Karma for the chosen language. Your Current karma is : '.implode(", ", $karma);
+            }
+
+        }
+        return 'You haven\'t any karma !';
+
+    }
+
 }
 
 ?>

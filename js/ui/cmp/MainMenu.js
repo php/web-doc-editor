@@ -198,7 +198,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             }, {
                                 text    : _('Run this script'),
                                 iconCls : 'iconRun',
-                                disabled: (PhDOE.user.isAnonymous),
+                                disabled: !PhDOE.user.haveKarma,
                                 handler : function()
                                 {
                                     // We test if there is a check in progress for this language
@@ -284,7 +284,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
             }, {
                 text     : _('Erase my personal data'),
                 iconCls  : 'iconErasePersonalData',
-                disabled : (PhDOE.user.isAnonymous),
+                disabled : !PhDOE.user.haveKarma,
                 handler  : function()
                 {
                     Ext.MessageBox.confirm(_('Confirm'),

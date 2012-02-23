@@ -1023,14 +1023,11 @@ class ExtJsController
             $infoModified = json_decode($infoModified);
             
             // If the user who have modified this file isn't the current one
-            if( 
-                ( !$am->isAnonymous && ( $infoModified->user ==  $am->vcsLogin ) ) ||
-                (  $am->isAnonymous && ( $infoModified->anonymousIdent == $am->anonymousIdent ) )
-            ) {
+            if( $am->userID == $infoModified->userID ) {
                     // We can modify it, it's mine ;)
             } else {
-                    // If he is an anonymous and current user, an authenticated user, the current one can modify it.
-                    if( $am->anonymous($infoModified->user, $infoModified->anonymousIdent) && !$am->anonymous($am->vcsLogin, $am->anonymousIdent) ) {
+                    // If he don't have karma and current user have karma, the current can modify it.
+                    if( $am->haveKarma && !$infoModified->haveKarma ) {
                             // The current user can modify it
                     } else {
                             // We must trow an error. We can't modify it.
@@ -1347,7 +1344,7 @@ class ExtJsController
         // This user must be a global admin or the admin for this lang
         // Or if the owner of this file is an anonymous and the current user is a valid user
         
-        if( $am->isAdmin(true) || ( !$am->isAnonymous && $am->anonymous($fileInfo[0]['user'], $fileInfo[0]['anonymousIdent']) ))
+        if($am->isAdmin(true))
         {
             $am->setFileOwner($fileIdDB, $newOwnerID);
             

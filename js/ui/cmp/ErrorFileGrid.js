@@ -43,7 +43,7 @@ ui.cmp._ErrorFileGrid.store = new Ext.data.GroupingStore({
             var nbItems = ds.getCount(),
                 nbItemsForCurrentUser = false;
 
-            if( !PhDOE.user.isAnonymous )
+            if( PhDOE.user.haveKarma )
             {
                 ds.each(function(record) {
 

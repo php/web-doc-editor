@@ -382,8 +382,7 @@ class RepositoryManager
     public function addProgressWork($file, $revision, $en_revision, $reviewed, $reviewed_maintainer, $maintainer, $type='update')
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
-        $anonymousIdent = $am->anonymousIdent;
+        $userID = $am->userID;
         $project  = $am->project;
 
         $s = 'SELECT
@@ -408,9 +407,9 @@ class RepositoryManager
 
             $s = 'INSERT into
                     `work`
-                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `reviewed_maintainer`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
+                    (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `reviewed_maintainer`, `maintainer`, `userID`, `date`, `type`)
                  VALUES
-                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")';
+                    ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", now(), "%s")';
             $params = array(
                 $project,
                 $file->lang,
@@ -421,8 +420,7 @@ class RepositoryManager
                 $reviewed,
                 $reviewed_maintainer,
                 $maintainer,
-                $vcsLogin,
-                $anonymousIdent,
+                $userID,
                 $type
             );
             $this->conn->query($s, $params);
@@ -440,8 +438,7 @@ class RepositoryManager
                     `reviewed`="%s",
                     `reviewed_maintainer`="%s",
                     `maintainer`="%s",
-                    `user`="%s",
-                    `anonymousIdent`="%s",
+                    `userID`="%s",
                     `date`=now(),
                     `module`="workInProgress",
                     `patchID` = NULL
@@ -453,8 +450,7 @@ class RepositoryManager
                 $reviewed,
                 $reviewed_maintainer,
                 $maintainer,
-                $am->vcsLogin,
-                $am->anonymousIdent,
+                $userID,
                 $a->id
             );
             $this->conn->query($s, $params);
@@ -502,7 +498,7 @@ class RepositoryManager
     public function moveToPatch($patchID, $filesID)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $project  = $am->project;
 
         $s = 'SELECT
@@ -512,11 +508,11 @@ class RepositoryManager
               WHERE
                  `project` = "%s" AND
                  `id`      = "%s" AND
-                 `user`    = "%s"';
+                 `userID`    = %d';
         $params = array(
              $project,
              $patchID,
-             $vcsLogin
+             $userID
         );
         $r = $this->conn->query($s, $params);
 
@@ -529,14 +525,14 @@ class RepositoryManager
              SET
                 `patchID` = "%s",
                 `module`  = "PatchesForReview"
-            WHERE
+             WHERE
                 `project` = "%s" AND
-                `user`    = "%s" AND
+                `userID`    = %d AND
                 `id` IN (%s)';
         $params = array(
             $patchID,
             $project,
-            $vcsLogin,
+            $userID,
             implode(',', array_map('intval', explode(',', $filesID)))
         );
         $r = $this->conn->query($s, $params);
@@ -558,7 +554,7 @@ class RepositoryManager
     public function moveToWork($filesID)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $project  = $am->project;
 
         $s = 'UPDATE
@@ -568,12 +564,12 @@ class RepositoryManager
                 `module`  = "workInProgress"
             WHERE
                 `project` = "%s" AND
-                `user`    = "%s" AND
+                `userID`    = %d AND
                 `id` IN (%s)';
 
         $params = array(
             $project,
-            $vcsLogin,
+            $userID,
             implode(',', array_map('intval', explode(',', $filesID)))
         );
         $r = $this->conn->query($s, $params);
@@ -595,7 +591,6 @@ class RepositoryManager
     public function deletePatch($patchID)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
         $project  = $am->project;
 
         // We start by retrieve patch information
@@ -607,10 +602,8 @@ class RepositoryManager
             
             // We must check if we can delete this patch
             // Either this patch must be own by the current user or the current user is a global admin for this project
-            if( $patchInfo->user != $am->vcsLogin || ( $am->isAnonymous && ($patchInfo->anonymousIdent != $am->anonymousIdent) ) ) {
-                if( ! $am->isAdmin() ) {
+            if( $patchInfo->userID != $am->userID && !$am->isAdmin() ) {
                     return 'patch_delete_isnt_own_by_current_user';
-                }
             }
         }
         
@@ -653,8 +646,6 @@ class RepositoryManager
     public function getPatchInfo($patchID)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
-        $project  = $am->project;
 
         $s = 'SELECT
                 *
@@ -722,21 +713,20 @@ class RepositoryManager
     public function createPatch($name, $description, $email)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $project  = $am->project;
 
         $s = 'INSERT INTO
                 `patches`
-                (`project`, `name`, `description`, `email`, `user`, `anonymousIdent`, `date`)
+                (`project`, `name`, `description`, `userID`, `email`, `date`)
             VALUES
-                ("%s", "%s", "%s", "%s", "%s", "%s", now())';
+                ("%s", "%s", "%s", %d, "%s", now())';
         $params = array(
             $project,
             $name,
             $description,
-            $email,
-            $vcsLogin,
-            $am->anonymousIdent
+            $userID,
+            $email
         );
         $this->conn->query($s, $params);
 
@@ -755,7 +745,7 @@ class RepositoryManager
     public function modPatch($patchID, $name, $description, $email)
     {
         $am       = AccountManager::getInstance();
-        $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $project  = $am->project;
 
         $s = 'UPDATE
@@ -766,14 +756,14 @@ class RepositoryManager
                 `email`       = "%s"
              WHERE
                 `project` = "%s" AND
-                `user`    = "%s" AND
+                `userID`    = %d AND
                 `id`      = %d';
         $params = array(
             $name,
             $description,
             $email,
             $project,
-            $vcsLogin,
+            $userID,
             $patchID
         );
         $this->conn->query($s, $params);
@@ -795,6 +785,7 @@ class RepositoryManager
     {
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $project  = $am->project;
         $anonymousIdent = $am->anonymousIdent;
 
@@ -802,16 +793,15 @@ class RepositoryManager
 
         $s = 'INSERT INTO
                 `work`
-                (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `user`, `anonymousIdent`, `date`, `type`)
+                (`project`, `lang`, `path`, `name`, `revision`, `en_revision`, `reviewed`, `maintainer`, `userID`, `date`, `type`)
             VALUES
-                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "%s", "delete")';
+                ("%s", "%s", "%s", "%s", "-", "-", "-", "-", "%s", "%s", "delete")';
         $params = array(
             $project,
             $file->lang,
             $file->path,
             $file->name,
-            $vcsLogin,
-            $anonymousIdent,
+            $userID,
             $date
         );
         $this->conn->query($s, $params);
@@ -1215,18 +1205,17 @@ class RepositoryManager
     {
         $am       = AccountManager::getInstance();
         $project  = $am->project;
-        $vcsLogin = $am->vcsLogin;
+        $userID = $am->userID;
         $anonymousIdent = $am->anonymousIdent;
 
         // We start by get the current row
         $s = 'SELECT
-                `user`,
-                `anonymousIdent`
+                `userID`
              FROM
                 `work`
              WHERE
                 `project` = "%s" AND
-                `id`      = %d';
+                `id` = %d';
         $params = array(
             $project,
             $idDB
@@ -1239,7 +1228,7 @@ class RepositoryManager
 
             $a = $r->fetch_object();
             
-            if( !($a->user == $vcsLogin && $a->anonymousIdent == $anonymousIdent) ) {
+            if($a->userID != $userID) {
                 return 'file_isnt_owned_by_current_user';
             }
         }
@@ -1249,15 +1238,9 @@ class RepositoryManager
              SET
                 `progress` = "%s"
              WHERE
-                `project`        = "%s" AND
-                `user`           = "%s" AND
-                `anonymousIdent` = "%s" AND
                 `id`             = %d';
         $params = array(
             $progress,
-            $project,
-            $vcsLogin,
-            $anonymousIdent,
             $idDB
         );
         $this->conn->query($s, $params);
@@ -1275,10 +1258,9 @@ class RepositoryManager
     public function clearLocalChange($type, $file)
     {
         $am      = AccountManager::getInstance();
+        $userID = $am->userID;
         $appConf = $am->appConf;
         $project = $am->project;
-        $vcsLogin = $am->vcsLogin;
-        $anonymousIdent = $am->anonymousIdent;
 
         $lang = $file->lang;
         $path = $file->path;
@@ -1296,8 +1278,7 @@ class RepositoryManager
         // We need select row from work table
         $s = "SELECT
                  `id`,
-                 `user`,
-                 `anonymousIdent`
+                 `userID`
               FROM
                  `work`
               WHERE
@@ -1321,17 +1302,9 @@ class RepositoryManager
         } else {
             $a = $r->fetch_object();
 
-            // Rules to allow clearLocalChange or not.
-            // Either the user who made the modification, either a global admin for this project, either a lang admin
-            if( $a->user != $am->vcsLogin || ( $am->isAnonymous && ($a->anonymousIdent != $am->anonymousIdent) ) ) {
-                // This file isn't own by the current user
-                
-                // Is the current user is a global admin or a lang admin ?
-                if( ! $am->isAdmin(true) ) {
-                    if( !(!$am->isAnonymous && $am->anonymous($a->user, $a->anonymousIdent) ) ) {
+
+            if($a->userID != $userID && !$am->isAdmin(true)) {
                         return 'file_isnt_owned_by_current_user';
-                    }
-                }
             }
             
         }
@@ -2138,7 +2111,7 @@ EOD;
         // 1) the email must exist
         // 2) patch user != current user
 
-        if( !empty($patchInfo->email) && $patchInfo->user != $vcsLogin ) {
+        if( !empty($patchInfo->email) && $patchInfo->userID != $am->userID ) {
             $am->email($to, $subject, $msg);
         }
     }
