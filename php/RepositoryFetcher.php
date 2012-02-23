@@ -29,7 +29,7 @@ class RepositoryFetcher
         $this->conn = DBConnection::getInstance();
     }
 
-    
+
     /**
      * Get lst info dateTime about this apps
      *
@@ -231,7 +231,7 @@ class RepositoryFetcher
         $a = $r->fetch_object();
 
         return ( $a->total > $am->userConf->needUpdate->nbDisplay && $am->userConf->needUpdate->nbDisplay != 0 ) ? $am->userConf->needUpdate->nbDisplay : $a->total;
-       
+
     }
     /**
      * Get all files witch need to be updated.
@@ -371,7 +371,7 @@ class RepositoryFetcher
         $node = array();
         while ($a = $r->fetch_object()) {
 
-            
+
             $isModifiedLang = ( isset($m[$vcsLang.$a->path.$a->name]) ) ? $m[$vcsLang.$a->path.$a->name] : false ;
 
             $temp = array(
@@ -489,7 +489,7 @@ class RepositoryFetcher
             $project,
             $vcsLang
         );
-        
+
         $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
 
@@ -546,7 +546,7 @@ class RepositoryFetcher
         return array('nb' => $r->num_rows, 'node' => $node);
     }
 
-    
+
     // TODO : Deprecated
     public function getNbPendingPatch()
     {
@@ -571,10 +571,10 @@ class RepositoryFetcher
 
         return $a->total;
     }
-    
+
     /**
      * TODO : deprecated
-     * 
+     *
      * Get all pending patch.
      *
      * @return An associated array containing informations about pending patch.
@@ -654,8 +654,8 @@ class RepositoryFetcher
 
         return $a->total;
     }
-    
-    
+
+
     /**
      * Get all files in Work module (progress work and patches for review).
      * Actually only used in scripts/cron/send_work_to_list.php
@@ -666,9 +666,9 @@ class RepositoryFetcher
     {
         $am      = AccountManager::getInstance();
         $project = $am->project;
-        
+
         /**** We start by the work in progress module ****/
-        
+
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
@@ -690,7 +690,7 @@ class RepositoryFetcher
             $project
         );
         $r = $this->conn->query($s, $params);
-        
+
         $workInProgress = Array('nb'=>0,'data'=>Array());
 
         if( $r->num_rows != 0 )
@@ -700,9 +700,9 @@ class RepositoryFetcher
                 $workInProgress['data'][] = $a;
             }
         }
-        
+
         /**** then, by the patches for review module ****/
-        
+
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
                 CONCAT(`lang`, `path`, `name`) as filePath,
@@ -724,7 +724,7 @@ class RepositoryFetcher
             $project
         );
         $r = $this->conn->query($s, $params);
-        
+
         $PatchesForReview = Array('nb'=>0,'data'=>Array());
 
         if( $r->num_rows != 0 )
@@ -742,10 +742,10 @@ class RepositoryFetcher
             "PatchesForReview" => $PatchesForReview
             );
     }
-    
+
     /**
      * Check is a patch don't contain any files
-     * 
+     *
      *
      * @return TRUE if this patch is empty, FALSE either.
      * @see RepositoryFetcher::getWork
@@ -790,7 +790,7 @@ class RepositoryFetcher
         if( $module == 'PatchesForReview' ) {
             // We exclude item witch name == '-' ; this is new folder ; We don't display it.
             $s = 'SELECT
-                    `patches`.`name` as `patch_name`, `patches`.`description`, `patches`.`email` as `patch_email`, `patches`.`date`, `patches`.`id` as `patch_id`,
+                    `patches`.`name` as `patch_name`, `patches`.`description`, `patches`.`email` as `patch_email`, `patches`.`date` as `patch_date`, `patches`.`id` as `patch_id`,
                     `work`.`lang`, `work`.`path`, `work`.`name`, `work`.`date`, `work`.`progress`, `work`.`type`, `work`.`id`,
                     `users`.`userID`, `users`.`authService`, `users`.`email`, `users`.`anonymousIdent`, `users`.`vcs_login`
                  FROM
@@ -811,8 +811,8 @@ class RepositoryFetcher
                 $module
             );
             $r = $this->conn->query($s, $params);
-
             $nodes = array();
+            $patchIds = array();
             while ($a = $r->fetch_object()) {
                 $nodes[$a->userID]['data'] = Array(
                     "authService" => $a->authService,
@@ -825,7 +825,7 @@ class RepositoryFetcher
                     "name" => $a->patch_name,
                     "description" => $a->description,
                     "email" => $a->patch_email,
-                    "date" => $a->date
+                    "date" => $a->patch_date
                 );
 
                 $nodes[$a->userID]['patches'][$a->patch_id]['folders'][$a->lang.$a->path][] = Array(
@@ -835,7 +835,46 @@ class RepositoryFetcher
                     "type"          => $a->type,
                     "idDB"          => $a->id
                 );
+                $patchIds[$a->patch_id] = true;
             }
+
+
+
+            // FIXME: temporary fix for empty patches
+            $s = 'SELECT
+                    `patches`.`name` as `patch_name`, `patches`.`description`, `patches`.`email` as `patch_email`, `patches`.`date` as `patch_date`, `patches`.`id` as `patch_id`,
+                    `users`.`userID`, `users`.`authService`, `users`.`email`, `users`.`anonymousIdent`, `users`.`vcs_login`
+                 FROM
+                    `patches`,
+                    `users`
+                 WHERE
+                    `patches`.`userID` = `users`.`userID` AND
+                    `patches`.`project` = "%s"
+                    ' . (count($patchIds) ?  'AND `id` NOT IN (%s)' : '');
+            $params = array(
+                $project,
+                implode(',' ,array_keys($patchIds))
+            );
+            $r = $this->conn->query($s, $params);
+
+            while ($a = $r->fetch_object()) {
+                $nodes[$a->userID]['data'] = Array(
+                    "authService" => $a->authService,
+                    "email" => $a->email,
+                    "anonymousIdent" => $a->anonymousIdent,
+                    "vcs_login" => $a->vcs_login
+                );
+
+                $nodes[$a->userID]['patches'][$a->patch_id]['data'] = Array(
+                    "name" => $a->patch_name,
+                    "description" => $a->description,
+                    "email" => $a->patch_email,
+                    "date" => $a->patch_date
+                );
+
+                $nodes[$a->userID]['patches'][$a->patch_id]['folders'] = Array();
+            }
+            // end temporary fix for empty patches
 
 
             $result = array();
@@ -1088,7 +1127,7 @@ TODO: Handle project here
         if( $id == 'function' || empty($id) ) {
             return false;
         }
-        
+
         // We start by searching file witch only this ID
         $s = 'SELECT
                 `lang`, `path`, `name`
@@ -1105,11 +1144,11 @@ TODO: Handle project here
         );
         $r = $this->conn->query($s, $params);
         $nb = $r->num_rows;
-        
+
         if( $nb >= 1 ) {
             return $r->fetch_object();
         } else {
-            
+
             // We now search file which contain this ID
             $s = 'SELECT
                     `lang`, `path`, `name`
@@ -1126,13 +1165,13 @@ TODO: Handle project here
             );
             $r = $this->conn->query($s, $params);
             $nb = $r->num_rows;
-            
+
             if( $nb == 0 ) {
                 return false;
             } else {
                 return $r->fetch_object();
             }
-            
+
         }
     }
 
@@ -1239,14 +1278,14 @@ TODO: Handle project here
                 $isModified = ( isset($m[$testedPath]) ) ? $m[$testedPath] : false ;
 
                 if ( $isModified ) {
-                    
+
                     if( $isModified['user'] == $vcsLogin && $isModified['anonymousIdent'] == $anonymousIdent ) {
                         $cls = 'file fileModifiedByMe';
                     } else {
                         $cls = 'file fileModifiedByAnother';
                     }
-                    
-                    
+
+
                 } else {
                     $cls = 'file';
                 }
@@ -1258,7 +1297,7 @@ TODO: Handle project here
                     'leaf'      => true,
                     'cls'       => $cls,
                     'extension' => $ext,
-                    'type'      => 'file'                    
+                    'type'      => 'file'
                 );
             }
         }
