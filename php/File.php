@@ -300,7 +300,7 @@ class File
 
         $s = 'SELECT
                 `id` as fidDB,
-                `users`.`vcs_login`,
+                `users`.`vcs_login` as `user`,
                 `users`.`authService`,
                 `module` as fromModule,
                 `type` as ftype,
