@@ -309,6 +309,7 @@ class File
                 `work`,
                 `users`
              WHERE
+                `work`.`userID` = `users`.`userID` AND
                 `work`.`project` = "%s" AND
                 `lang`="%s" AND
                 `path`="%s" AND
