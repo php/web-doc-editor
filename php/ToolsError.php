@@ -375,19 +375,19 @@ class ToolsError
         // Check Error specific to LANG files
         else
         {
-            $this->attributAppendixTag();
-            $this->attributBookTag();
-            $this->attributChapterTag();
-            $this->attributLinkTag();
-            $this->attributXrefTag();
-            $this->attributPrefaceTag();
-            $this->attributQandaentryTag();
-            $this->attributRefsec1Tag();
-            $this->attributRefentryTag();
-            $this->attributReferenceTag();
-            $this->attributSect1Tag();
-            $this->attributSectionTag();
-            $this->attributVarlistentryTag();
+            $this->attributeAppendixTag();
+            $this->attributeBookTag();
+            $this->attributeChapterTag();
+            $this->attributeLinkTag();
+            $this->attributeXrefTag();
+            $this->attributePrefaceTag();
+            $this->attributeQandaentryTag();
+            $this->attributeRefsec1Tag();
+            $this->attributeRefentryTag();
+            $this->attributeReferenceTag();
+            $this->attributeSect1Tag();
+            $this->attributeSectionTag();
+            $this->attributeVarlistentryTag();
             $this->classsynopsis();
             $this->methodsynopsis();
             $this->nbCdataTag();
@@ -458,11 +458,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in chapter tag
+     * Check attributes in chapter tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributChapterTag()
+    function attributeChapterTag()
     {
 
         $reg = '/<chapter\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?(version="(.*?)"\s*?)?>/s';
@@ -514,7 +514,7 @@ class ToolsError
                     $this->addError(array(
                         'value_en'   => $en_chapter[$property][$i],
                         'value_lang' => $lang_chapter[$property][$i],
-                        'type'       => 'attribut' . $label . 'Chapter'
+                        'type'       => 'attribute' . $label . 'Chapter'
                     ));
 
                 }
@@ -524,11 +524,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in appendix tag
+     * Check attributes in appendix tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributAppendixTag()
+    function attributeAppendixTag()
     {
 
         $reg = '/<appendix\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -563,7 +563,7 @@ class ToolsError
                     $this->addError(array(
                         'value_en'   => $en_appendix[$property][$i],
                         'value_lang' => $lang_appendix[$property][$i],
-                        'type'       => 'attribut' . $label . 'Appendix',
+                        'type'       => 'attribute' . $label . 'Appendix',
                     ));
 
                 }
@@ -572,11 +572,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in qandaentry tag
+     * Check attributes in qandaentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributQandaentryTag()
+    function attributeQandaentryTag()
     {
 
         $reg = '/<qandaentry\s*?xml:id="(.*?)"\s*?>/s';
@@ -604,7 +604,7 @@ class ToolsError
                 $this->addError(array(
                     'value_en'   => $en_qandaentry[$i],
                     'value_lang' => $lang_qandaentry[$i],
-                    'type'       => 'attributXmlIdQandaentry'
+                    'type'       => 'attributeXmlIdQandaentry'
                 ));
 
             }
@@ -612,11 +612,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Xref tag
+     * Check attributes in Xref tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributXrefTag()
+    function attributeXrefTag()
     {
 
         $reg = '/<xref\s*?linkend=\s*?"(.[^"]*?)"\s*\/>/s';
@@ -637,7 +637,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_xref[$i],
                     "value_lang" => $lang_xref[$i],
-                    "type"       => "attributLinkendXref"
+                    "type"       => "attributeLinkendXref"
                 ));
             }
         }
@@ -652,11 +652,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Link tag
+     * Check attributes in Link tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributLinkTag()
+    function attributeLinkTag()
     {
 
         $reg = '/<link\s*?xlink:href=\s*?"(.[^"]*?)"(\s*|\s*?\/)?>/s';
@@ -678,7 +678,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_xlink[$i],
                     "value_lang" => $lang_xlink[$i],
-                    "type"       => "attributXlinkLink"
+                    "type"       => "attributeXlinkLink"
                 ));
 
             }
@@ -718,7 +718,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_linkend[$i],
                     "value_lang" => $lang_linkend[$i],
-                    "type"       => "attributLinkendLink"
+                    "type"       => "attributeLinkendLink"
                 ));
 
             }
@@ -726,11 +726,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Sect1 tag
+     * Check attributes in Sect1 tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributSect1Tag()
+    function attributeSect1Tag()
     {
 
         $reg = '/<sect1\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -754,7 +754,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_sect1["xmlid"][$i],
                     "value_lang" => $lang_sect1["xmlid"][$i],
-                    "type"       => "attributXmlIdSect1"
+                    "type"       => "attributeXmlIdSect1"
                 ));
 
             }
@@ -764,7 +764,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_sect1["xmlns"][$i],
                     "value_lang" => $lang_sect1["xmlns"][$i],
-                    "type"       => "attributXmlNsSect1"
+                    "type"       => "attributeXmlNsSect1"
                 ));
 
             }
@@ -774,7 +774,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_sect1["xmlnsxlink"][$i],
                     "value_lang" => $lang_sect1["xmlnsxlink"][$i],
-                    "type"       => "attributXmlNsXlinkSect1"
+                    "type"       => "attributeXmlNsXlinkSect1"
                 ));
 
             }
@@ -782,11 +782,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Book tag
+     * Check attributes in Book tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributBookTag()
+    function attributeBookTag()
     {
 
         $reg = '/<book\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -808,7 +808,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_book["xmlid"][$i],
                     "value_lang" => $lang_book["xmlid"][$i],
-                    "type"       => "attributXmlIdBook"
+                    "type"       => "attributeXmlIdBook"
                 ));
 
             }
@@ -819,7 +819,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_book["xmlns"][$i],
                     "value_lang" => $lang_book["xmlns"][$i],
-                    "type"       => "attributXmlNsBook"
+                    "type"       => "attributeXmlNsBook"
                 ));
 
             }
@@ -830,18 +830,18 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_book["xmlnsxlink"][$i],
                     "value_lang" => $lang_book["xmlnsxlink"][$i],
-                    "type"       => "attributXmlXlinkBook"
+                    "type"       => "attributeXmlXlinkBook"
                 ));
             }
         }
     }
 
     /**
-     * Check attributs in Preface tag
+     * Check attributes in Preface tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributPrefaceTag()
+    function attributePrefaceTag()
     {
 
         $reg = '/<preface\s*?xml:id="(.*?)"\s*?(xmlns="(.*?)")?\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -889,7 +889,7 @@ class ToolsError
                     $this->addError(array(
                         'value_en' => $en_preface[$property][$i],
                         'value_lang' => $lang_preface[$property][$i],
-                        'type' => 'attribut' . $label . 'Preface'
+                        'type' => 'attribute' . $label . 'Preface'
                     ));
 
                 }
@@ -898,11 +898,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Section tag
+     * Check attributes in Section tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributSectionTag()
+    function attributeSectionTag()
     {
 
         $reg = '/<section\s*?xml:id=("|\')(.*?)("|\')\s*?(xmlns=("|\')(.*?)("|\'))?\s*?(xmlns:xlink=("|\')(.*?)("|\')\s*?)?>/s';
@@ -953,7 +953,7 @@ class ToolsError
                     $this->addError(array(
                         'value_en'   => $en_section[$property][$i],
                         'value_lang' => $lang_section[$property][$i],
-                        'type'       => 'attribut' . $label . 'Section'
+                        'type'       => 'attribute' . $label . 'Section'
                     ));
 
                 }
@@ -963,11 +963,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Varlistentry tag
+     * Check attributes in Varlistentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributVarlistentryTag()
+    function attributeVarlistentryTag()
     {
 
         $reg = '/<varlistentry\s*?xml:id=("|\')(.*?)("|\')\s*?>/s';
@@ -995,18 +995,18 @@ class ToolsError
                 $this->addError(array(
                 "value_en"   => $en_varlistentry[$i],
                 "value_lang" => $lang_varlistentry[$i],
-                "type"       => "attributXmlIdVarlistentry"
+                "type"       => "attributeXmlIdVarlistentry"
                 ));
             }
         }
     }
 
     /**
-     * Check attributs in Reference tag
+     * Check attributes in Reference tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributReferenceTag()
+    function attributeReferenceTag()
     {
 
         $reg = '/<reference\s*?xml:id="(.*?)"\s*?xmlns="(.*?)"\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -1034,7 +1034,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_reference["xmlid"][$i],
                     "value_lang" => $lang_reference["xmlid"][$i],
-                    "type"       => "attributXmlIDReference"
+                    "type"       => "attributeXmlIDReference"
                 ));
 
             }
@@ -1049,7 +1049,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_reference["xmlns"][$i],
                     "value_lang" => $lang_reference["xmlns"][$i],
-                    "type"       => "attributXmlNsReference"
+                    "type"       => "attributeXmlNsReference"
                 ));
             }
         }
@@ -1063,18 +1063,18 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_reference["xmlnsxlink"][$i],
                     "value_lang" => $lang_reference["xmlnsxlink"][$i],
-                    "type"       => "attributXmlNsXlinkReference"
+                    "type"       => "attributeXmlNsXlinkReference"
                 ));
             }
         }
     }
 
     /**
-     * Check attributs in Refentry tag
+     * Check attributes in Refentry tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributRefentryTag()
+    function attributeRefentryTag()
     {
 
         $reg = '/<refentry\s*?xml:id="(.*?)"\s*?xmlns="(.*?)"\s*?(xmlns:xlink="(.*?)"\s*?)?>/s';
@@ -1102,7 +1102,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_refentry["xmlid"][$i],
                     "value_lang" => $lang_refentry["xmlid"][$i],
-                    "type"       => "attributXmlIdRefentry"
+                    "type"       => "attributeXmlIdRefentry"
                 ));
             }
         }
@@ -1116,7 +1116,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_refentry["xmlns"][$i],
                     "value_lang" => $lang_refentry["xmlns"][$i],
-                    "type"       => "attributXmlNsRefentry"
+                    "type"       => "attributeXmlNsRefentry"
                 ));
 
             }
@@ -1131,7 +1131,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_refentry["xmlnsxlink"][$i],
                     "value_lang" => $lang_refentry["xmlnsxlink"][$i],
-                    "type"       => "attributXmlNsXlinkRefentry"
+                    "type"       => "attributeXmlNsXlinkRefentry"
                 ));
 
             }
@@ -1139,11 +1139,11 @@ class ToolsError
     }
 
     /**
-     * Check attributs in Refsec1 tag
+     * Check attributes in Refsec1 tag
      * Add an entry into the error's stack if an error is found
      *
      */
-    function attributRefsec1Tag()
+    function attributeRefsec1Tag()
     {
 
         $reg = '/<refsect1\s*?role="(.*?)"\s*?>/s';
@@ -1163,7 +1163,7 @@ class ToolsError
                 $this->addError(array(
                     "value_en"   => $en_refsect1[$i],
                     "value_lang" => $lang_refsect1[$i],
-                    "type"       => "attributRefsect1"
+                    "type"       => "attributeRefsect1"
                 ));
             }
         }
@@ -1552,7 +1552,7 @@ class ToolsError
                 $this->addError(array(
                     'value_en'   => $en_attrRow['xmlid'][$i],
                     'value_lang' => $lang_attrRow['xmlid'][$i],
-                    'type'       => 'attributXmlIdRow'
+                    'type'       => 'attributeXmlIdRow'
                 ));
 
             }

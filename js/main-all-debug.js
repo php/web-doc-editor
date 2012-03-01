@@ -24852,55 +24852,55 @@ var PhDOE = function()
             switch (type) {
                 case 'fs_error' :
                     title = _('Error');
-                    mess  = _('File system error. Check read/write permission under data folder.');
+                    mess  = _('File system error. Check read/write permissions under data folder.');
                     break;
                 case 'encoding_error' :
                     title = _('Error');
-                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
+                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
                     break;
                 case 'tabs_found' :
                     title = _('Error');
-                    mess  = _('It seems that you have inserted some tabs caracters into this files. Please, replace each one by one space.<br>Tip: You can use the "Re-indent all this file" button to replace all tabs by spaces.');
+                    mess  = _('It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
                     break;
                 case 'folder_already_exist' :
                     title = _('Error');
-                    mess  = _('This folder already exist in the current folder.');
+                    mess  = _('This folder already exists in the current folder.');
                     break;
                 case 'file_already_exist' :
                     title = _('Error');
-                    mess  = _('This file already exist in the current folder.');
+                    mess  = _('This file already exists in the current folder.');
                     break;
                 case 'save_you_cant_modify_it' :
                     title = _('Error');
-                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it.');
+                    mess  = _('You aren\'t allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it.');
                     break;
                 case 'file_isnt_owned_by_current_user' :
                     title = _('Error');
-                    mess  = _('The file you want to clear local change isn\'t own by you.<br>You can only do this action for yours files.');
+                    mess  = _('The file for which you want to clear local changes isn\'t owned by you.<br>You can only perform this action on your own files.');
                     break;
                 case 'file_localchange_didnt_exist' :
                     title = _('Error');
-                    mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
+                    mess  = _('The file you want to clear local changes in doesn\'t exist as a work in progress.');
                     break;
                 case 'changeFilesOwnerNotAdmin' :
                     title = _('Error');
-                    mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
+                    mess  = _('You aren\'t allowed to change this file\'s owner. You must be a global administrator or an administrator for this language to be able to do that.');
                     break;
                 case 'patch_delete_dont_exist' :
                     title = _('Error');
-                    mess  = _('The patch you want to delete didn\'t exist.');
+                    mess  = _('The patch you want to delete doesn\'t exist.');
                     break;
                 case 'patch_delete_isnt_own_by_current_user' :
                     title = _('Error');
-                    mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
+                    mess  = _('The patch you want to delete isn\'t owned by you. Only the author of the patch or a global administrator can delete it.');
                     break;
                 case 'action_only_global_admin' :
                     title = _('Error');
-                    mess  = _('This action is available only to global administrator.');
+                    mess  = _('This action is available to global administrators only.');
                     break;
                 case 'action_only_admin' :
                     title = _('Error');
-                    mess  = _('This action is available only to global administrator or to administrator for this lang.');
+                    mess  = _('This action is available to global administrators or to administrators for this language only.');
                     break;
 
             }
