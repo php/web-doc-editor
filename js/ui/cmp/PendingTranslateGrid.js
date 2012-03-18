@@ -47,9 +47,11 @@ ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -66,9 +68,11 @@ ui.cmp._PendingTranslateGrid.columns = [{
     renderer: function(v, metada, r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            if (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            if (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {

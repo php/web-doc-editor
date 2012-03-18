@@ -15863,13 +15863,15 @@ ui.cmp._ErrorFileGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, metada, r){
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+        
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -15881,7 +15883,7 @@ ui.cmp._ErrorFileGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
@@ -15928,10 +15930,12 @@ ui.cmp._ErrorFileGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
             
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     }
@@ -19661,13 +19665,15 @@ ui.cmp._PendingReviewGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, m, r){
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+            
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -19679,7 +19685,7 @@ ui.cmp._PendingReviewGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
@@ -19724,9 +19730,12 @@ ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
+            
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     },
@@ -20139,9 +20148,11 @@ ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -20158,9 +20169,11 @@ ui.cmp._PendingTranslateGrid.columns = [{
     renderer: function(v, metada, r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            if (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            if (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {
@@ -22886,10 +22899,11 @@ ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
             
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user   === userToCompare && infoEN.anonymousIdent   === PhDOE.user.anonymousIdent) || (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -22905,13 +22919,15 @@ ui.cmp._StaleFileGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, metada, r){
     
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+        
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -22923,7 +22939,7 @@ ui.cmp._StaleFileGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {

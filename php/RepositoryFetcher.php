@@ -145,12 +145,20 @@ class RepositoryFetcher
         $am = AccountManager::getInstance();
 
         $s = 'SELECT
-                *
+                `work`.`lang` as lang,
+                `work`.`path` as path,
+                `work`.`name` as name,
+                `work`.`en_revision` as en_revision,
+                `work`.`maintainer` as maintainer,
+                `users`.`vcs_login` as user,
+                `users`.`anonymousIdent` as anonymousIdent
              FROM
-                `work`
+                `work`,
+                `users`
              WHERE
-                `project` = "%s" AND
-                ( `lang`="%s" OR `lang`="en" ) ';
+                `users`.`userID` = `work`.`userID` AND
+                `work`.`project` = "%s" AND
+                ( `work`.`lang`="%s" OR `work`.`lang`="en" ) ';
         $params = array(
             $am->project,
             $am->vcsLang
