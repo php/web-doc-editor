@@ -705,3 +705,8 @@ var i18n = new Array();
   
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Prévisualisation";
+  
+// In file: ../../js/ux/codemirror2/lib/util/search.js
+  i18n["Search"] = "Recherche ";
+  i18n["Use /re/ syntax for regexp search"] = "Utiliser la syntaxe /re/ pour une recherche utilisant les expressions rationnelles";
+  
