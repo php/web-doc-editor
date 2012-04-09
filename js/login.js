@@ -230,67 +230,25 @@ var PhDOE_loginPage = function()
                                         }
                                     }
                                 },{
-                                    title: 'Google Friend Connect',
+                                    scope: this,
+                                    title: 'Google',
                                     iconCls:'iconGoogle',
                                     id:'accordion-google',
-                                    disabled: ( !google || !google.friendconnect || !google.friendconnect.container ),
-                                    collapsed : true,
+                                    collapsed : !googleInfo,
                                     html: '<div id="google-box"></div>',
                                     listeners: {
-                                        resize: function(c) {
+                                        resize: function(c)
+                                        {
                                             c.setHeight(100);
                                         },
-                                        afterrender: function(cmp) {
-
-                                            
-                                            if ( !google || !google.friendconnect || !google.friendconnect.container ) {
-                                                
-                                                new Ext.ToolTip({
-                                                    target: Ext.getCmp('accordion-google').id,
-                                                    anchor: 'left',
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    title: 'Error',
-                                                    html: 'Error while loading Google Connect API'
-                                                });
-                                                
-                                                return;
+                                        afterrender: function(cmp)
+                                        {
+                                            document.getElementById('google-box').innerHTML = googleInfo.libel;
+                                            // Is there already a connection ?
+                                            if( googleInfo.user )
+                                            {
+                                                this.scope.externalCredentials('google', googleInfo.user.name, googleInfo.user.id, googleInfo.user.email);
                                             }
-                                            
-                                            google.friendconnect.container.loadOpenSocialApi({
-                                                site: '05056619882644935463',
-                                                onload: function() {
-                                                    GGinitAllData();
-                                                    cmp.doLayout();
-                                                }
-                                            });
-
-                                            function GGinitAllData() {
-                                                var params = {},
-                                                    req = opensocial.newDataRequest();
-                                                
-                                                params[opensocial.DataRequest.PeopleRequestFields.PROFILE_DETAILS] =
-                                                    [opensocial.Person.Field.ID,opensocial.Person.Field.NAME,opensocial.Person.Field.THUMBNAIL_URL];
-                                                
-                                                req.add(req.newFetchPersonRequest('VIEWER', params), 'viewer');
-                                                req.send(GGsetupData);
-                                            }
-
-                                            function GGsetupData(data) {
-                                                var viewer = data.get('viewer').getData();
-
-                                                if (viewer) {
-                                                    document.getElementById('google-box').innerHTML = 
-                                                    '<img style="margin-right:5px" align="left" src="' + viewer.getField("thumbnailUrl")  + '">' +
-                                                    viewer.getField("displayName") + '<br>'+
-                                                    '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'google\', \''+viewer.getField("displayName")+'\', \''+viewer.getField("id")+'\' ); return false;">Use this credentials</a><br><br>'+
-                                                    '<a href="#" onclick="google.friendconnect.requestSignOut(); return false;">Sign out</a><br>';
-                                                } else {
-                                                    google.friendconnect.renderSignInButton({ 'id': 'google-box',style:'long' });
-                                                }
-
-                                            }
-
                                         }
                                     }
                                 }

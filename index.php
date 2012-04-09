@@ -74,11 +74,72 @@ if (isset($_REQUEST['perm'])) {
 }
 
 // Init FB var
-$jsVar .= ' var FB = false;';
+$jsVar .= "\nvar FB = false, googleInfo = false;\n";
 
 // Log the user in if needed
-if (!isset($_SESSION['userID'])) {
+if (!isset($_SESSION['userID']))
+{
+    // Google API
+    require_once 'php/google-api-php-client/src/apiClient.php';
+    require_once 'php/google-api-php-client/src/contrib/apiOauth2Service.php';
+    
+    $client = new apiClient();
+    $client->setApplicationName("PhDOE : Php Docbook Online Editor");
+    $client->setClientId('100526866357.apps.googleusercontent.com');
+    $client->setClientSecret('FcKf36077Rco6S2xvdad9-WG');
+    $client->setRedirectUri('http://ytorres.mooo.com/');
+    $client->setState('googleAPI');
 
+    $oauth2 = new apiOauth2Service($client);
+
+    if ( isset($_GET['code']) && isset($_GET['state']) &&  $_GET['state'] == 'googleAPI' )
+    {
+        $client->authenticate();
+        $_SESSION['GGtoken'] = $client->getAccessToken();
+        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+    }
+
+    if (isset($_SESSION['GGtoken']))
+    {
+        $client->setAccessToken($_SESSION['GGtoken']);
+    }
+
+    if ($client->getAccessToken())
+    {
+        $user = $oauth2->userinfo->get();
+        
+        $email = filter_var($user['email'], FILTER_SANITIZE_EMAIL);
+        $img = filter_var($user['picture'], FILTER_VALIDATE_URL);
+        $name = $user['name'];
+        $GGuserID = $user['id'];
+
+        // The access token may have been updated lazily.
+        $_SESSION['GGtoken'] = $client->getAccessToken();
+        
+        $_SESSION['GGuserInfo'] = Array(
+            'id' => $GGuserID,
+            'name' => $name,
+            'email' => $email,
+            'photo' => $img
+        );
+        
+        $jsVar .= "googleInfo = {};\n";
+        $jsVar .= "googleInfo.libel = \"<img style='margin-right:5px' align='left' src='$img?sz=50'>\";\n";
+        $jsVar .= "googleInfo.libel += \"$name<br>\";\n";
+        $jsVar .= "googleInfo.libel += \"$email<br><br>\";\n";
+        $jsVar .= "googleInfo.user = {};\n";
+        $jsVar .= "googleInfo.user.id = \"$GGuserID\";\n";
+        $jsVar .= "googleInfo.user.name = \"$name\";\n";
+        $jsVar .= "googleInfo.user.email = \"$email\";\n";
+        $jsVar .= "googleInfo.user.photo = \"$img\";\n";
+        
+    } else {
+        $authUrl = $client->createAuthUrl();
+        $jsVar .= 'googleInfo = {};';
+        $jsVar .= 'googleInfo.libel = "<a href='.$authUrl.'><img src=\"themes/img/signInWithGoogle.png\" /></a>";';
+    }
+    
     echo headerTemplate();
     echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login-all.css');
@@ -87,36 +148,6 @@ if (!isset($_SESSION['userID'])) {
     
     // Facebook
     echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
-    
-    // Twitter
-    //echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
-    
-    //Google
-    echo jsLoadTemplate('https://www.google.com/jsapi');
-
-    echo jsCallTemplate("
-
-if(typeof google == 'undefined' ) {
-    var google = false;
-} else {
-    google.load('friendconnect', '0.8');
-}
-
-// Fix for IE9
-if (typeof Range.prototype.createContextualFragment == \"undefined\") {
-    Range.prototype.createContextualFragment = function(html) {
-        var doc = this.startContainer.ownerDocument;
-        var container = doc.createElement(\"div\");
-        container.innerHTML = html;
-        var frag = doc.createDocumentFragment(), n;
-        while ( (n = container.firstChild) ) {
-            frag.appendChild(n);
-        }
-        return frag;
-    };
-}  
-
-");
     
     
     echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
