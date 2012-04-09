@@ -87,7 +87,7 @@ if (!isset($_SESSION['userID']))
     $client->setApplicationName("PhDOE : Php Docbook Online Editor");
     $client->setClientId('100526866357.apps.googleusercontent.com');
     $client->setClientSecret('FcKf36077Rco6S2xvdad9-WG');
-    $client->setRedirectUri('http://ytorres.mooo.com/');
+    $client->setRedirectUri('https://edit.php.net/');
     $client->setState('googleAPI');
 
     $oauth2 = new apiOauth2Service($client);
