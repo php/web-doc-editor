@@ -74,7 +74,7 @@ if (isset($_REQUEST['perm'])) {
 }
 
 // Init FB var
-$jsVar .= "\nvar FB = false, googleInfo = false;\n";
+$jsVar .= "\nvar FBInfo = false, googleInfo = false;\n";
 
 // Log the user in if needed
 if (!isset($_SESSION['userID']))
@@ -126,11 +126,11 @@ if (!isset($_SESSION['userID']))
         
         $jsVar .= "googleInfo = {};\n";
         $jsVar .= "googleInfo.libel = \"<img style='margin-right:5px' align='left' src='$img?sz=50'>\";\n";
-        $jsVar .= "googleInfo.libel += \"$name<br>\";\n";
+        $jsVar .= "googleInfo.libel += \"". $name."<br>\";\n";
         $jsVar .= "googleInfo.libel += \"$email<br><br>\";\n";
         $jsVar .= "googleInfo.user = {};\n";
         $jsVar .= "googleInfo.user.id = \"$GGuserID\";\n";
-        $jsVar .= "googleInfo.user.name = \"$name\";\n";
+        $jsVar .= "googleInfo.user.name = \"". $name."\";\n";
         $jsVar .= "googleInfo.user.email = \"$email\";\n";
         $jsVar .= "googleInfo.user.photo = \"$img\";\n";
         
@@ -139,6 +139,53 @@ if (!isset($_SESSION['userID']))
         $jsVar .= 'googleInfo = {};';
         $jsVar .= 'googleInfo.libel = "<a href='.$authUrl.'><img src=\"themes/img/signInWithGoogle.png\" /></a>";';
     }
+    
+    
+    // Facebook API
+    require_once 'php/facebook-api-php-client/src/facebook.php';
+    $facebook = new Facebook(array(
+    'appId'  => '128417830579090',
+    'secret' => '2e18fd9adfc219ddb85031fe08f481d9',
+    ));
+    // Get User ID
+    $FBuser = $facebook->getUser();
+    if ($FBuser) {
+        try {
+            // Proceed knowing you have a logged in user who's authenticated.
+            $FBuser_profile = $facebook->api('/me');
+            
+            $FBimg = "https://graph.facebook.com/" . $FBuser . "/picture";
+            
+            $jsVar .= "FBInfo = {};\n";
+            $jsVar .= "FBInfo.libel = \"<img style='margin-right:5px' align='left' src='https://graph.facebook.com/" . $FBuser . "/picture'>\";\n";
+            $jsVar .= "FBInfo.libel += \"" . $FBuser_profile['name'] . "<br>\";\n";
+            $jsVar .= "FBInfo.libel += \"" . filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL) . "<br><br>\";\n";
+            $jsVar .= "FBInfo.user = {};\n";
+            $jsVar .= "FBInfo.user.id = \"" . $FBuser_profile['id'] . "\";\n";
+            $jsVar .= "FBInfo.user.name = \"" . $FBuser_profile['name'] . "\";\n";
+            $jsVar .= "FBInfo.user.email = \"" . filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL) . "\";\n";
+            $jsVar .= "FBInfo.user.photo = \"$FBimg\";\n";
+            
+            $_SESSION['FBuserInfo'] = Array(
+                'id' => $FBuser_profile['id'],
+                'name' => $FBuser_profile['name'],
+                'email' => filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL),
+                'photo' => $FBimg
+            );
+        
+        } catch (FacebookApiException $e) {
+            error_log($e);
+            $FBuser = null;
+            $jsVar .= 'FBInfo = {};';
+            $jsVar .= 'FBInfo.libel = "<a href='.$facebook->getLoginUrl().'><img src=\"themes/img/signInWithFacebook.png\" /></a>";';
+        }
+    } else {
+        $jsVar .= 'FBInfo = {};';
+        $jsVar .= 'FBInfo.libel = "<a href='.$facebook->getLoginUrl().'><img src=\"themes/img/signInWithFacebook.png\" /></a>";';
+    }
+    
+    
+    
     
     echo headerTemplate();
     echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');

@@ -132,100 +132,21 @@ var PhDOE_loginPage = function()
                                     title: 'Facebook',
                                     id:'accordion-fb',
                                     layout:'fit',
-                                    disabled: (!FB),
-                                    collapsed : true,
                                     iconCls:'iconFacebook',
-                                    html: '<div id="facebook-box">'+
-                                            '<div id="fb-root"></div>'+
-                                            '<div id="fb-info">'+
-                                                '<img style="margin-right:5px" align="left" id="fb-image">'+
-                                                ' <span id="fb-name"></span><br>'+
-                                                ' <span id="fb-use-credentials">Use this credentials</span><br><br>'+
-                                                ' <a href="#" onclick="FB.logout(); return false;">Sign out</a><br>'+
-                                            '</div>'+
-                                            '<div id="fb-login">'+
-                                                '<fb:login-button perms="email">Login with Facebook</fb:login-button>'+
-                                            '</div>'+
-                                          '</div>',
+                                    html: '<div id="facebook-box"></div><div id="facebook-box2"></div>',
                                     listeners: {
                                         resize: function(c) {
                                             c.setHeight(100);
                                         },
-                                        afterrender: function(c) {
-                                            
-                                            if ( !FB ) {
-                                                
-                                                new Ext.ToolTip({
-                                                    target: Ext.getCmp('accordion-fb').id,
-                                                    anchor: 'bottom',
-                                                    autoShow: true,
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    title: 'Error',
-                                                    html: 'Error while loading Facebook API'
-                                                });
-                                                
-                                                return;
+                                        afterrender: function(c)
+                                        {
+                                            document.getElementById('facebook-box').innerHTML = FBInfo.libel;
+                                            // Is there already a connection ?
+                                            if( FBInfo.user )
+                                            {
+                                                document.getElementById('facebook-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'facebook\', \''+FBInfo.user.name+'\', \''+FBInfo.user.id+'\',  \''+FBInfo.user.email+'\')">Use this credentials</a>';
                                             }
                                             
-                                            FB.init({ 
-                                                appId:'128417830579090', cookie:true, 
-                                                status:true, xfbml:true 
-                                            });
-
-                                            Ext.get('fb-info').setVisibilityMode(Ext.Element.DISPLAY);
-                                            Ext.get('fb-login').setVisibilityMode(Ext.Element.DISPLAY);
-
-                                            function displayInfo(user) {
-                                            
-                                                //Ensure this bloc is displayed
-                                                Ext.get('fb-info').setVisible(true);
-
-                                                var image = Ext.get('fb-image').dom,
-                                                    name = Ext.get('fb-name').dom;
-
-                                                image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-                                                name.innerHTML = user.name;
-                                                
-                                                Ext.get('fb-use-credentials').on('click', function() {
-                                                    PhDOE_loginPage.externalCredentials('facebook', user.username, user.id, user.email);
-                                                });
-                                                
-
-                                                // We hide the connect button
-                                                Ext.get('fb-login').setVisible(false);
-
-                                            }
-
-                                            FB.api('/me', function(user) {
-
-                                                if(! user.error) {
-                                                    displayInfo(user);
-                                                } else {
-
-                                                    Ext.get('fb-info').setVisible(false);
-                                                }
-                                            });
-
-                                            FB.Event.subscribe('auth.login', function(response) {
-
-                                                FB.api('/me', function(user) {
-                                                    if( !user.error ) {
-                                                        displayInfo(user);
-                                                    }
-                                                });
-                                            });
-
-                                            FB.Event.subscribe('auth.logout', function(response) {
-
-                                                // We display the connect button
-                                                Ext.get('fb-login').setVisible(true);
-
-                                                // Hide info
-                                                Ext.get('fb-info').setVisible(false);
-
-
-                                            });
 
                                         }
                                     }
@@ -234,8 +155,7 @@ var PhDOE_loginPage = function()
                                     title: 'Google',
                                     iconCls:'iconGoogle',
                                     id:'accordion-google',
-                                    collapsed : !googleInfo,
-                                    html: '<div id="google-box"></div>',
+                                    html: '<div id="google-box"></div><div id="google-box2"></div>',
                                     listeners: {
                                         resize: function(c)
                                         {
@@ -247,7 +167,8 @@ var PhDOE_loginPage = function()
                                             // Is there already a connection ?
                                             if( googleInfo.user )
                                             {
-                                                this.scope.externalCredentials('google', googleInfo.user.name, googleInfo.user.id, googleInfo.user.email);
+                                                //this.scope.externalCredentials('google', googleInfo.user.name, googleInfo.user.id, googleInfo.user.email);
+                                                document.getElementById('google-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'google\', \''+googleInfo.user.name+'\', \''+googleInfo.user.id+'\',  \''+googleInfo.user.email+'\')">Use this credentials</a>';
                                             }
                                         }
                                     }
