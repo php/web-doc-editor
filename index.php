@@ -193,10 +193,6 @@ if (!isset($_SESSION['userID']))
     echo jsCallTemplate($jsVar);
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
     
-    // Facebook
-    echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
-    
-    
     echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
     echo jsLoadTemplate('js/ExtJs/ext-all.js');
@@ -218,6 +214,10 @@ echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading
 echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
 echo jsLoadTemplate('js/ExtJs/ext-all.js');
+
+//echo jsCallTemplate('window.___gcfg = { lang: \'en_US\', size: \'medium\', annotation: \'bubble\', width: 40};');
+
+//echo jsLoadTemplate('https://apis.google.com/js/plusone.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');

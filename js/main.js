@@ -600,7 +600,7 @@ var PhDOE = function()
                                         ' <em id="loginLibel"></em>' +
                                             ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                         '</h3>' +
-                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
+                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div><div class="x-box-like"><g:plusone size="medium" width="20"></g:plusone><br/><div class="fb-like" data-send="false" data-layout="button_count" data-width="40" data-show-faces="false"></div></div>',
                                  listeners: {
                                     afterrender: function(cmp) {
                                     
@@ -842,7 +842,29 @@ var PhDOE = function()
                     return true;
                 }
             });
+            
+            // Call Js for Facebook-like button
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=128417830579090";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            
+            
+            window.___gcfg = {
+                lang: 'en-US',
+                size: 'medium',
+                annotation: 'bubble'
+            };
 
+            (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+            
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 
