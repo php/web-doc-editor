@@ -1411,6 +1411,9 @@ class ExtJsController
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
+        // If we are on root node, FilePath is empty. He must be "/".
+        if( $FilePath == '' ) $FilePath = '/';
+        
         $info = RepositoryManager::getInstance()->clearLocalChange(
             $FileType, new File($FileLang, $FilePath.$FileName)
         );
