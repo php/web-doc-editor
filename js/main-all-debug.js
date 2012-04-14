@@ -24744,7 +24744,8 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 for (h = 0; h < folder.childNodes.length; h++) {
                     file = folder.childNodes[h];
                     
-                    if (file.attributes.idDB === fid) {
+                    // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                    if (file.attributes.idDB == fid) {
                     
                         file.remove(true);
                         

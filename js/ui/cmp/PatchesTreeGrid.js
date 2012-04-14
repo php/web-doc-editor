@@ -532,7 +532,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
                         
-                        // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                        // We can't use === operator here. Sometimes, fid is a string, Sometimes, it's an integer ( see Bug #55316 )
                         if (file.attributes.idDB == fid) {
                             
                             file.remove(true);
