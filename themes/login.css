@@ -15,11 +15,6 @@
     background-image: url(./img/icon_twitter.png) !important;
 }
 
-.x-form-field-wrap .project-php, .x-form-field-wrap .project-pear {
-    top: 5px;
-    left: 5px;
-}
-
 .project-php {
     background-image: url(./img/project_php.png) !important;
     height: 12px;

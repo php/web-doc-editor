@@ -80,70 +80,69 @@ $jsVar .= ' var FB = false;';
 if (!isset($_SESSION['userID'])) {
 
     echo headerTemplate();
-    echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');
-    echo cssLoadTemplate('themes/login-all.css');
-    echo jsCallTemplate($jsVar);
-    echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
     
     // Facebook
-    echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
+    //echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
     
     // Twitter
     //echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
     
     //Google
-    echo jsLoadTemplate('https://www.google.com/jsapi');
+   // echo jsLoadTemplate('https://www.google.com/jsapi');
 
-    echo jsCallTemplate("
+//    echo jsCallTemplate("
+//
+//if(typeof google == 'undefined' ) {
+//    var google = false;
+//} else {
+//    google.load('friendconnect', '0.8');
+//}
+//
+//// Fix for IE9
+//if (typeof Range.prototype.createContextualFragment == \"undefined\") {
+//    Range.prototype.createContextualFragment = function(html) {
+//        var doc = this.startContainer.ownerDocument;
+//        var container = doc.createElement(\"div\");
+//        container.innerHTML = html;
+//        var frag = doc.createDocumentFragment(), n;
+//        while ( (n = container.firstChild) ) {
+//            frag.appendChild(n);
+//        }
+//        return frag;
+//    };
+//}
+//
+//");
 
-if(typeof google == 'undefined' ) {
-    var google = false;
-} else {
-    google.load('friendconnect', '0.8');
-}
 
-// Fix for IE9
-if (typeof Range.prototype.createContextualFragment == \"undefined\") {
-    Range.prototype.createContextualFragment = function(html) {
-        var doc = this.startContainer.ownerDocument;
-        var container = doc.createElement(\"div\");
-        container.innerHTML = html;
-        var frag = doc.createDocumentFragment(), n;
-        while ( (n = container.firstChild) ) {
-            frag.appendChild(n);
-        }
-        return frag;
-    };
-}  
-
-");
-    
-    
-    echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
+    //echo cssLoadTemplate('themes/login-all.css');
+    echo cssLoadTemplate('extjs/resources/css/ext-all.css');
+    echo cssLoadTemplate('themes/login.css');
+    echo cssLoadTemplate('themes/flags.css');
+    echo jsCallTemplate($jsVar);
+    echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-    echo jsLoadTemplate('js/ExtJs/ext-all.js');
+    echo jsLoadTemplate('extjs/ext-debug.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
-    echo jsLoadTemplate('js/login-all.js');
+    echo jsLoadTemplate('js/login.js');
     echo footerTemplate();
     exit;
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css', 'extTheme');
-echo cssLoadTemplate('themes/empty.css', 'appTheme');
-echo cssLoadTemplate('themes/main-all.css');
+echo cssLoadTemplate('extjs/resources/css/ext-all.css');
+//echo cssLoadTemplate('themes/empty.css', 'appTheme');
+echo cssLoadTemplate('themes/main.css');
 echo jsCallTemplate($jsVar);
 echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
-echo jsLoadTemplate('js/ExtJs/adapter/ext/ext-base.js');
-echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
-echo jsLoadTemplate('js/ExtJs/ext-all.js');
+echo jsLoadTemplate('extjs/ext-debug.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
-echo jsLoadi18nTemplate();
-echo jsLoadTemplate('js/main-all.js');
+//echo jsLoadi18nTemplate();
+echo jsLoadTemplate('js/main.js');
 echo footerTemplate();
 ?>
