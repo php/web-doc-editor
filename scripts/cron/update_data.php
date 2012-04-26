@@ -12,6 +12,7 @@ require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
 require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 require_once dirname(__FILE__) . '/../../php/TranslationStatistic.php';
 require_once dirname(__FILE__) . '/../../php/TranslatorStatistic.php';
+require_once dirname(__FILE__) . '/../../php/utility.php';
 
 $isCLI = (PHP_SAPI == 'cli');
 
@@ -32,54 +33,157 @@ while( list($key, $project) = each($availableProject) ) {
     // Define it as a project
     $pm->setProject($project['code']);
 
+    /*
+     * VCS update
+     * 
+     */
+    
     if ($isCLI) {
         echo "\n * Update the VCS repository for the " . $project['name'] . "...";
     }
     flush();
-    // VCS update
+    
+    $startTime = new DateTime();
+    $startTimeStamp = $startTime->getTimestamp();
+    
     $rm->updateRepository();
+    
+    $endTime = new DateTime();
+    $endTimeStamp = $endTime->getTimestamp();
+    
+    if ($isCLI) {
+        echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+    }
+    flush();
+    
+    /*
+     * Clean Up DB
+     * 
+     */
 
     if ($isCLI) {
         echo "\n * Clean up the database...";
     }
     flush();
-    // Clean Up DB
+    
+    $startTime = new DateTime();
+    $startTimeStamp = $startTime->getTimestamp();
+    
     $rm->cleanUp();
+    
+    $endTime = new DateTime();
+    $endTimeStamp = $endTime->getTimestamp();
 
+    if ($isCLI) {
+        echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+    }
+    flush();
+    
     // Set the lock File
     $lock = new LockFile('project_' . $project['code'] . '_lock_apply_tools');
 
     if ($lock->lock()) {
 
+        /*
+         * Start applaying tools
+         * 
+         */
         if ($isCLI) {
             echo "\n * Applying tools on repository...";
         }
         flush();
-        // Start Revcheck
+    
+        $startTime = new DateTime();
+        $startTimeStamp = $startTime->getTimestamp();
+        
         $rm->applyRevCheck();
 
         // Search for NotInEN Old Files
         $rm->updateNotInEN();
+    
+        $endTime = new DateTime();
+        $endTimeStamp = $endTime->getTimestamp();
+
+        if ($isCLI) {
+            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+        }
+        flush();
+        
+        /*
+         * Parse translators
+         * 
+         */
 
         if ($isCLI) {
             echo "\n * Parsing translation data...";
         }
         flush();
-        // Parse translators
+    
+        $startTime = new DateTime();
+        $startTimeStamp = $startTime->getTimestamp();
+        
         $rm->updateTranslatorInfo();
 
+        $endTime = new DateTime();
+        $endTimeStamp = $endTime->getTimestamp();
+
+        if ($isCLI) {
+            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+        }
+        flush();
+        
+        
+        /*
+         * Compute all statistics
+         * 
+         */
+        
         if ($isCLI) {
             echo "\n * Compute all statistics...";
         }
         flush();
+    
+        $startTime = new DateTime();
+        $startTimeStamp = $startTime->getTimestamp();
+        
         // Compute all summary
         TranslationStatistic::getInstance()->computeSummary('all');
         TranslatorStatistic::getInstance()->computeSummary('all');    
 
-        // We start the revcheck's script to make a static page into data/revcheck/ directory
-        // Only for php project
+        $endTime = new DateTime();
+        $endTimeStamp = $endTime->getTimestamp();
+
+        if ($isCLI) {
+            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+        }
+        flush();
+        
+        
+        /*
+         * We start the revcheck's script to make a static page into data/revcheck/ directory
+         * Only for php project
+         * 
+         */
+        
         if( $project['code'] == 'php' ) {
+            
+            if ($isCLI) {
+                echo "\n * Make a static page for the revcheck...";
+            }
+            flush();
+        
+            $startTime = new DateTime();
+            $startTimeStamp = $startTime->getTimestamp();
+        
             $rm->applyStaticRevcheck();
+            
+            $endTime = new DateTime();
+            $endTimeStamp = $endTime->getTimestamp();
+
+            if ($isCLI) {
+                echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
+            }
+            flush();
         }
 
         // Store this info

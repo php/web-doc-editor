@@ -102,4 +102,18 @@ function DiffGenHTMLOutput($content) {
 
     return $return;
 }
+
+function time2string($timeline) {
+    $periods = array('hour' => 3600, 'minute' => 60, 'second' => 1);
+
+    $ret = '';
+    
+    foreach($periods AS $name => $seconds){
+        $num = floor($timeline / $seconds);
+        $timeline -= ($num * $seconds);
+        $ret .= $num.' '.$name.(($num > 1) ? 's' : '').' ';
+    }
+
+    return trim($ret);
+}
 ?>
