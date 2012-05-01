@@ -272,6 +272,10 @@ $error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 
 $error['SgmlDefaultDTDFile']['head'] = 'Wrong Sgml default dtd file';
 $error['SgmlDefaultDTDFile']['desc'] = 'You must set it like this : <br><br><b>sgml-default-dtd-file:"~/.phpdoc/manual.ced"</b>';
 
+$error['VCSKeyWordsEolStyle']['head'] = 'Wrong VCS Keywords & Eol-style';
+$error['VCSKeyWordsEolStyle']['desc'] = 'There is some error on this file about VCS Keywords & Eol-Style. Just commit this file against the editor, it will fix it for you.';
+
+
 $to_display = array();
 
 // If $error_to_display is an empty array, we add it all errors (default page)
