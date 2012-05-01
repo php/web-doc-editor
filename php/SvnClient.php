@@ -595,6 +595,118 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         return array('err' => $err, 'output' => $output);
     }
+    
+    public function checkKeyWords($lang,$filePath,$fileName)
+    {
+        $am      = AccountManager::getInstance();
+        $appConf = $am->appConf;
+        $project = $am->project;
+        
+        $goodSVNKeywords = Array(
+            0 => "Id",
+            1 => "Rev",
+            2 => "Revision",
+            3 => "Date",
+            4 => "LastChangedDate",
+            5 => "LastChangedRevision",
+            6 => "Author",
+            7 => "LastChangedBy",
+            8 => "HeadURL",
+            9 => "URL"
+            );
+
+        $goodSVNEolStyle = Array(
+            0 => "native"
+            );
+            
+        $result = array(
+            "keyWords" => false,
+            "EolStyle" => false
+            );
+        $isDirty = false;
+        
+        
+        $commands = array(
+            new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$lang.$filePath)),
+            new ExecStatement('svn proplist --xml --verbose %s', array($fileName))
+        );
+
+        $trial_threshold = 3;
+        while ($trial_threshold-- > 0) {
+            $output = array();
+            SaferExec::execMulti($commands, $output);
+            if (strlen(trim(implode('', $output))) != 0) break;
+        }
+
+        $outputXML = implode("\n", $output)."\n";
+        
+        $content = trim($outputXML);
+        $content = str_replace("\r", " ", $content);
+        $content = str_replace("\n", " ", $content);
+        
+        $content = simplexml_load_string($content);
+        
+        $keywords = array();
+        
+        for( $i=0; $i < count($content->target->property); $i++) {
+
+            $attributName = "";
+            $attributValue = "";
+            
+            $attributName = $content->target->property[$i]->attributes();
+            $attributValue = (string) $content->target->property[$i][0];
+            
+            $attributName = explode(":",$attributName);
+            $attributName = $attributName[1];
+            
+            $attributValue = explode(" ",$attributValue);
+            
+            $keywords[$attributName] = $attributValue;
+            
+        }
+
+        // For keywords
+        if( isset($keywords["keywords"]) ) {
+            
+            $diffKeywords = array_diff($goodSVNKeywords, $keywords["keywords"]);
+            
+            if( ! empty($diffKeywords) ) {
+                
+                $result['keyWords'] = implode(' ',$diffKeywords);
+                $isDirty = true;
+            }
+            
+        } else {
+            $result['keyWords'] = implode(' ',$goodSVNKeywords);
+            $isDirty = true;
+        }
+        
+        // For eol-style
+        if( isset($keywords["eol-style"]) ) {
+            
+            $diffEolStyle = array_diff($goodSVNEolStyle, $keywords["eol-style"]);
+            
+            if( ! empty($diffEolStyle) ) {
+                
+                $result['EolStyle'] = implode(' ',$diffEolStyle);
+                $isDirty = true;
+                
+            }
+            
+        } else {
+            $result['EolStyle'] = implode(' ',$goodSVNEolStyle);
+            $isDirty = true;
+        }
+        
+        // We send the result
+        if( $isDirty ) {
+            return $result;
+        } else {
+            return false;
+        }
+        
+        
+    }
 }
 
 ?>

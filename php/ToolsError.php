@@ -6,6 +6,7 @@
 require_once dirname(__FILE__) . '/AccountManager.php';
 require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
 require_once dirname(__FILE__) . '/DBConnection.php';
+require_once dirname(__FILE__) . '/VCSFactory.php';
 
 class ToolsError
 {
@@ -370,6 +371,7 @@ class ToolsError
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
+            $this->checkVCSKeyWords();
         }
 
         // Check Error specific to LANG files
@@ -398,6 +400,7 @@ class ToolsError
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
+            $this->checkVCSKeyWords();
         }
 
     }
@@ -1867,6 +1870,36 @@ class ToolsError
                 }
             }
         }
+    }
+
+    /**
+     * Check VCS keyWords
+     * Add an entry into the error's stack if keywords are dirty
+     *
+     */
+    function checkVCSKeyWords()
+    {
+        $result = VCSFactory::getInstance()->checkKeyWords($this->lang,$this->filePath,$this->fileName);
+        
+        if( $result ) {
+            
+            $errLibel = "";
+            
+            if( $result["keyWords"] ) {
+                $errLibel .= "keyWords : ".$result["keyWords"]." ; ";
+            }
+            if( $result["EolStyle"] ) {
+                $errLibel .= "EolStyle : ".$result["EolStyle"]." ; ";
+            }
+            
+            $this->addError(array(
+                    'value_en'   => $errLibel,
+                    'value_lang' => '',
+                    'type'       => 'VCSKeyWordsEolStyle'
+            ));
+            
+        }
+        
     }
 
 }
