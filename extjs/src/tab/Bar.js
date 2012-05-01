@@ -174,7 +174,12 @@ Ext.define('Ext.tab.Bar', {
             // Remove the ownerCt so the tab doesn't get destroyed if the remove is successful
             // We need this so we can have the tab fire it's own close event.
             delete toClose.ownerCt;
+            
+            // we must fire 'close' before removing the card from panel, otherwise
+            // the event will no loger have any listener
+            card.fireEvent('close', card);
             tabPanel.remove(card);
+            
             // Remove succeeded
             if (!tabPanel.getComponent(card)) {
                 /*
@@ -184,9 +189,6 @@ Ext.define('Ext.tab.Bar', {
                  */
                 toClose.fireClose();
                 me.remove(toClose);
-                if (card.hasListeners.close) {
-                    card.fireEvent('close', card);
-                }
             } else {
                 // Restore the ownerCt from above
                 toClose.ownerCt = me;

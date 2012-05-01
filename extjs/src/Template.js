@@ -83,6 +83,14 @@ Ext.define('Ext.Template', {
             value;
 
         me.initialConfig = {};
+        
+        // Allow an array to be passed here so we can
+        // pass an array of strings and an object
+        // at the end
+        if (length === 1 && Ext.isArray(html)) {
+            args = html;
+            length = args.length;
+        }
 
         if (length > 1) {
             for (; i < length; i++) {
@@ -94,13 +102,8 @@ Ext.define('Ext.Template', {
                     buffer.push(value);
                 }
             }
-            html = buffer.join('');
         } else {
-            if (Ext.isArray(html)) {
-                buffer.push(html.join(''));
-            } else {
-                buffer.push(html);
-            }
+            buffer.push(html);
         }
 
         // @private

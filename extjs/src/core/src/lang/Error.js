@@ -230,8 +230,8 @@ Ext.Error = Ext.extend(Error, {
      */
     toString: function(){
         var me = this,
-            className = me.className ? me.className  : '',
-            methodName = me.methodName ? '.' + me.methodName + '(): ' : '',
+            className = me.sourceClass ? me.sourceClass : '',
+            methodName = me.sourceMethod ? '.' + me.sourceMethod + '(): ' : '',
             msg = me.msg || '(No description provided)';
 
         return className + methodName + msg;

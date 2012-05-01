@@ -499,6 +499,12 @@ Ext.define('Ext.grid.plugin.Editing', {
 
         // Coerce the column index to the closest visible column
         columnHeader = grid.headerCt.getVisibleHeaderClosestToIndex(Ext.isNumber(columnHeader) ? columnHeader : columnHeader.getIndex());
+
+        // No corresponding column. Possible if all columns have been moved to the other side of a lockable grid pair
+        if (!columnHeader) {
+            return;
+        }
+
         colIdx = columnHeader.getIndex();
 
         if (Ext.isNumber(record)) {

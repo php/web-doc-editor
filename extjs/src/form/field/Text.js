@@ -714,7 +714,7 @@ Ext.define('Ext.form.field.Text', {
         var me = this,
             width;
 
-        me.callParent();
+        me.callParent(arguments);
         if (me.autoSizing) {
             width = me.inputEl.getWidth();
             if (width !== me.lastInputWidth) {

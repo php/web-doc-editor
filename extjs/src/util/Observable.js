@@ -103,7 +103,7 @@ Ext.define('Ext.util.Observable', {
          * @param {Function} T The class constructor to prepare.
          * @private
          */
-        prepareClass: function (T) {
+        prepareClass: function (T, mixin) {
             // T.hasListeners is the object to track listeners on class T. This object's
             // prototype (__proto__) is the "hasListeners" of T.superclass.
 
@@ -114,8 +114,10 @@ Ext.define('Ext.util.Observable', {
                 // We create a HasListeners "class" for this class. The "prototype" of the
                 // HasListeners class is an instance of the HasListeners class associated
                 // with this class's super class (or with Observable).
-                var HasListeners = function () {},
-                    SuperHL = T.superclass.HasListeners || this.HasListeners;
+                var Observable = Ext.util.Observable,
+                    HasListeners = function () {},
+                    SuperHL = T.superclass.HasListeners || (mixin && mixin.HasListeners) ||
+                              Observable.HasListeners;
 
                 // Make the HasListener class available on the class and its prototype:
                 T.prototype.HasListeners = T.HasListeners = HasListeners;
@@ -214,16 +216,6 @@ Ext.define('Ext.util.Observable', {
             // Some classes derive from us and some others derive from those classes. All
             // of these are passed to this method.
             Ext.util.Observable.prepareClass(T);
-        }
-    },
-
-    onClassMixedIn: function (T) {
-        if (!T.HasListeners) {
-            // Classes that use us as a mixin (best practice) need to be prepared. We also
-            // need to track any classes that derive from those classes and prepare them as
-            // well.
-            this.prepareClass(T);
-            T.onExtended(this.prepareClass, this);
         }
     },
 
@@ -822,10 +814,40 @@ Ext.define('Ext.util.Observable', {
         }
     }
 }, function() {
-
     var Observable = this,
         proto = Observable.prototype,
-        HasListeners = function () {};
+        HasListeners = function () {},
+        prepareMixin = function (T) {
+            if (!T.HasListeners) {
+                var proto = T.prototype;
+
+                // Classes that use us as a mixin (best practice) need to be prepared.
+                Observable.prepareClass(T, this);
+
+                // Now that we are mixed in to class T, we need to watch T for derivations
+                // and prepare them also.
+                T.onExtended(function (U) {
+                    Observable.prepareClass(U);
+                });
+
+                // Also, if a class uses us as a mixin and that class is then used as
+                // a mixin, we need to be notified of that as well.
+                if (proto.onClassMixedIn) {
+                    // play nice with other potential overrides...
+                    Ext.override(T, {
+                        onClassMixedIn: function (U) {
+                            prepareMixin.call(this, U);
+                            this.callParent(arguments);
+                        }
+                    });
+                } else {
+                    // just us chickens, so add the method...
+                    proto.onClassMixedIn = function (U) {
+                        prepareMixin.call(this, U);
+                    };
+                }
+            }
+        };
 
     HasListeners.prototype = {
         //$$: 42  // to make sure we have a proper prototype
@@ -863,119 +885,119 @@ Ext.define('Ext.util.Observable', {
     //deprecated, will be removed in 5.0
     Observable.observeClass = Observable.observe;
 
-    Ext.apply(proto, (function(){
-        // this is considered experimental (along with beforeMethod, afterMethod, removeMethodListener?)
-        // allows for easier interceptor and sequences, including cancelling and overwriting the return value of the call
-        // private
-        function getMethodEvent(method){
-            var e = (this.methodEvents = this.methodEvents || {})[method],
-                returnValue,
-                v,
-                cancel,
-                obj = this,
-                makeCall;
+    // this is considered experimental (along with beforeMethod, afterMethod, removeMethodListener?)
+    // allows for easier interceptor and sequences, including cancelling and overwriting the return value of the call
+    // private
+    function getMethodEvent(method){
+        var e = (this.methodEvents = this.methodEvents || {})[method],
+            returnValue,
+            v,
+            cancel,
+            obj = this,
+            makeCall;
 
-            if (!e) {
-                this.methodEvents[method] = e = {};
-                e.originalFn = this[method];
-                e.methodName = method;
-                e.before = [];
-                e.after = [];
+        if (!e) {
+            this.methodEvents[method] = e = {};
+            e.originalFn = this[method];
+            e.methodName = method;
+            e.before = [];
+            e.after = [];
 
-                makeCall = function(fn, scope, args){
-                    if((v = fn.apply(scope || obj, args)) !== undefined){
-                        if (typeof v == 'object') {
-                            if(v.returnValue !== undefined){
-                                returnValue = v.returnValue;
-                            }else{
-                                returnValue = v;
-                            }
-                            cancel = !!v.cancel;
+            makeCall = function(fn, scope, args){
+                if((v = fn.apply(scope || obj, args)) !== undefined){
+                    if (typeof v == 'object') {
+                        if(v.returnValue !== undefined){
+                            returnValue = v.returnValue;
+                        }else{
+                            returnValue = v;
                         }
-                        else
-                            if (v === false) {
-                                cancel = true;
-                            }
-                            else {
-                                returnValue = v;
-                            }
+                        cancel = !!v.cancel;
                     }
-                };
-
-                this[method] = function(){
-                    var args = Array.prototype.slice.call(arguments, 0),
-                        b, i, len;
-                    returnValue = v = undefined;
-                    cancel = false;
-
-                    for(i = 0, len = e.before.length; i < len; i++){
-                        b = e.before[i];
-                        makeCall(b.fn, b.scope, args);
-                        if (cancel) {
-                            return returnValue;
+                    else
+                        if (v === false) {
+                            cancel = true;
                         }
-                    }
-
-                    if((v = e.originalFn.apply(obj, args)) !== undefined){
-                        returnValue = v;
-                    }
-
-                    for(i = 0, len = e.after.length; i < len; i++){
-                        b = e.after[i];
-                        makeCall(b.fn, b.scope, args);
-                        if (cancel) {
-                            return returnValue;
+                        else {
+                            returnValue = v;
                         }
-                    }
-                    return returnValue;
-                };
-            }
-            return e;
-        }
+                }
+            };
 
-        return {
-            // these are considered experimental
-            // allows for easier interceptor and sequences, including cancelling and overwriting the return value of the call
-            // adds an 'interceptor' called before the original method
-            beforeMethod : function(method, fn, scope){
-                getMethodEvent.call(this, method).before.push({
-                    fn: fn,
-                    scope: scope
-                });
-            },
+            this[method] = function(){
+                var args = Array.prototype.slice.call(arguments, 0),
+                    b, i, len;
+                returnValue = v = undefined;
+                cancel = false;
 
-            // adds a 'sequence' called after the original method
-            afterMethod : function(method, fn, scope){
-                getMethodEvent.call(this, method).after.push({
-                    fn: fn,
-                    scope: scope
-                });
-            },
-
-            removeMethodListener: function(method, fn, scope){
-                var e = this.getMethodEvent(method),
-                    i, len;
                 for(i = 0, len = e.before.length; i < len; i++){
-                    if(e.before[i].fn == fn && e.before[i].scope == scope){
-                        Ext.Array.erase(e.before, i, 1);
-                        return;
+                    b = e.before[i];
+                    makeCall(b.fn, b.scope, args);
+                    if (cancel) {
+                        return returnValue;
                     }
                 }
-                for(i = 0, len = e.after.length; i < len; i++){
-                    if(e.after[i].fn == fn && e.after[i].scope == scope){
-                        Ext.Array.erase(e.after, i, 1);
-                        return;
-                    }
-                }
-            },
 
-            toggleEventLogging: function(toggle) {
-                Ext.util.Observable[toggle ? 'capture' : 'releaseCapture'](this, function(en) {
-                    if (Ext.isDefined(Ext.global.console)) {
-                        Ext.global.console.log(en, arguments);
+                if((v = e.originalFn.apply(obj, args)) !== undefined){
+                    returnValue = v;
+                }
+
+                for(i = 0, len = e.after.length; i < len; i++){
+                    b = e.after[i];
+                    makeCall(b.fn, b.scope, args);
+                    if (cancel) {
+                        return returnValue;
                     }
-                });
+                }
+                return returnValue;
+            };
+        }
+        return e;
+    }
+
+    Ext.apply(proto, {
+        onClassMixedIn: prepareMixin,
+
+        // these are considered experimental
+        // allows for easier interceptor and sequences, including cancelling and overwriting the return value of the call
+        // adds an 'interceptor' called before the original method
+        beforeMethod : function(method, fn, scope){
+            getMethodEvent.call(this, method).before.push({
+                fn: fn,
+                scope: scope
+            });
+        },
+
+        // adds a 'sequence' called after the original method
+        afterMethod : function(method, fn, scope){
+            getMethodEvent.call(this, method).after.push({
+                fn: fn,
+                scope: scope
+            });
+        },
+
+        removeMethodListener: function(method, fn, scope){
+            var e = this.getMethodEvent(method),
+                i, len;
+            for(i = 0, len = e.before.length; i < len; i++){
+                if(e.before[i].fn == fn && e.before[i].scope == scope){
+                    Ext.Array.erase(e.before, i, 1);
+                    return;
+                }
             }
-        };
-    }()));
+            for(i = 0, len = e.after.length; i < len; i++){
+                if(e.after[i].fn == fn && e.after[i].scope == scope){
+                    Ext.Array.erase(e.after, i, 1);
+                    return;
+                }
+            }
+        },
+
+        toggleEventLogging: function(toggle) {
+            Ext.util.Observable[toggle ? 'capture' : 'releaseCapture'](this, function(en) {
+                if (Ext.isDefined(Ext.global.console)) {
+                    Ext.global.console.log(en, arguments);
+                }
+            });
+        }
+    });
 });

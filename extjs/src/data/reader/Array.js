@@ -50,8 +50,9 @@ Ext.define('Ext.data.reader.Array', {
      * This is used by buildExtractors to create optimized on extractor function which converts raw data into model instances.
      */
     createFieldAccessExpression: function(field, fieldVarName, dataName) {
-        var me     = this,
-            index  = (field.mapping == null) ? me.model.prototype.fields.indexOf(field) : field.mapping,
+            // In the absence of a mapping property, use the original ordinal position
+            // at which the Model inserted the field into its collection.
+        var index  = (field.mapping == null) ? field.originalIndex : field.mapping,
             result;
 
         if (typeof index === 'function') {
@@ -61,12 +62,6 @@ Ext.define('Ext.data.reader.Array', {
                 index = '"' + index + '"';
             }
             result = dataName + "[" + index + "]";
-        }
-            if (field.defaultValue !== undefined) {
-                result = '(' + result + ' === undefined) ? ' + fieldVarName + '.defaultValue : ' + result;
-            }
-        if (field.convert) {
-            result = fieldVarName + '.convert(' + result + ', record)';
         }
         return result;
     }

@@ -377,12 +377,6 @@ Ext.define('Ext.data.reader.Json', {
             } else {
                 result = dataName + (operatorSearch > 0 ? '.' : '') + map;
             }
-            if (field.defaultValue !== undefined) {
-                result = '(' + result + ' === undefined) ? ' + fieldVarName + '.defaultValue : ' + result;
-            }
-            if (field.convert) {
-                result = fieldVarName + '.convert(' + result + ', record)';
-            }
             return result;
         };
     }())

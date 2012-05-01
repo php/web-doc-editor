@@ -38,7 +38,7 @@
  *         },
  *         to: {
  *             width: 300, //end width 300
- *             height: 300 // end width 300
+ *             height: 300 // end height 300
  *         }
  *     });
  */

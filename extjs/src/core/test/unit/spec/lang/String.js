@@ -121,7 +121,7 @@ describe("Ext.String", function() {
     
     describe("htmlEncode", function() {
         var str;
-        
+
         it("should replace ampersands", function() {
             str = "Fish & Chips";
             expect(Ext.String.htmlEncode(str)).toEqual("Fish &amp; Chips");
@@ -144,7 +144,7 @@ describe("Ext.String", function() {
 
         it("should replace apostraphes", function() {
             str = "Fish ' Chips";
-            expect(Ext.String.htmlEncode(str)).toEqual("Fish &apos; Chips");
+            expect(Ext.String.htmlEncode(str)).toEqual("Fish &#39; Chips");
         });
 
         describe("adding character entities", function(){
@@ -175,7 +175,7 @@ describe("Ext.String", function() {
     
     describe("htmlDecode", function() {
         var str;
-        
+
         it("should replace ampersands", function() {
             str = "Fish &amp; Chips";
             expect(Ext.String.htmlDecode(str)).toEqual("Fish & Chips");
@@ -197,7 +197,7 @@ describe("Ext.String", function() {
         });
 
         it("should replace apostraphes", function() {
-            str = "Fish &apos; Chips";
+            str = "Fish &#39; Chips";
             expect(Ext.String.htmlDecode(str)).toEqual("Fish ' Chips");
         });
 

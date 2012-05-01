@@ -136,18 +136,18 @@ Ext.define('Ext.grid.feature.Grouping', {
     collapsedCls: Ext.baseCSSPrefix + 'grid-group-collapsed',
     hdCollapsedCls: Ext.baseCSSPrefix + 'grid-group-hd-collapsed',
 
+    //<locale>
     /**
      * @cfg
      * Text displayed in the grid header menu for grouping by header.
      */
-    //<locale>
     groupByText : 'Group By This Field',
     //</locale>
+    //<locale>
     /**
      * @cfg
      * Text displayed in the grid header for enabling/disabling grouping.
      */
-    //<locale>
     showGroupsText : 'Show in Groups',
     //</locale>
 

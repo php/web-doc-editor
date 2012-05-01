@@ -161,17 +161,25 @@ Ext.define('Ext.data.NodeInterface', {
         /**
          * This method allows you to decorate a Model's class to implement the NodeInterface.
          * This adds a set of methods, new events, new properties and new fields on every Record.
-         * @param {Ext.data.Model} modelClass The Model class you want to decorate the prototype of.
+         * @param {Ext.Class/Ext.data.Model} modelClass The Model class or an instance of the Model class you want to
+         * decorate the prototype of.
          * @static
          */
         decorate: function(modelClass) {
             var idName, idType;
+
+            // get the reference to the model class, in case the argument was a string or a record
             if (typeof modelClass == 'string') {
                 modelClass = Ext.ModelManager.getModel(modelClass);
+            } else if (modelClass.isModel) {
+                modelClass = Ext.ModelManager.getModel(modelClass.modelName);
             }
+            
+            // avoid unnecessary work in case the model was already decorated
             if (modelClass.prototype.isNode) {
                 return;
             }
+
             idName = modelClass.prototype.idProperty;
             idType = modelClass.prototype.fields.get(idName).type.type;
             modelClass.override(this.getPrototypeBody());

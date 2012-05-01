@@ -99,6 +99,7 @@ Ext.define('Ext.grid.header.Container', {
     initComponent: function() {
         var me = this;
 
+        me.headerCounter = 0;
         me.plugins = me.plugins || [];
 
         // TODO: Pass in configurations to turn on/off dynamic
@@ -214,31 +215,32 @@ Ext.define('Ext.grid.header.Container', {
         }
 
         var me     = this,
+            items  = me.items.items,
+            count  = items.length,
             i      = 0,
             length = columns.length,
-            c,
-            index, col, columnState;
+            c, col, columnState, index;
 
         for (c = 0; c < length; c++) {
             columnState = columns[c];
 
-            col = me.down('gridcolumn[headerId=' + columnState.id + ']');
-            
-            // If a column in the new grid matches up with a saved state...
-            if (col) {
-                index = me.items.indexOf(col);
+            for (index = count; index--; ) {
+                col = items[index];
+                if (col.getStateId && col.getStateId() == columnState.id) {
+                    // If a column in the new grid matches up with a saved state...
+                    // Ensure that the column is restored to the state order.
+                    // i is incremented upon every column match, so all persistent
+                    // columns are ordered before any new columns.
+                    if (i !== index) {
+                        me.moveHeader(index, i);
+                    }
 
-                // Ensure that the column is restored to the state order.
-                // i is incremented upon every column match, so all persistent
-                // columns are ordered before any new columns.
-                if (i !== index) {
-                    me.moveHeader(index, i);
+                    if (col.applyColumnState) {
+                        col.applyColumnState(columnState);
+                    }
+                    ++i;
+                    break;
                 }
-
-                if (col.applyColumnState) {
-                    col.applyColumnState(columnState);
-                }
-                ++i;
             }
         }
     },
@@ -266,6 +268,15 @@ Ext.define('Ext.grid.header.Container', {
         if (!c.headerId) {
             c.headerId = c.initialConfig.id || Ext.id(null, 'header-');
         }
+
+        if (!c.stateId) {
+            // This was the headerId generated in 4.0, so to preserve saved state, we now
+            // assign a default stateId in that same manner. The stateId's of a column are
+            // not global at the stateProvider, but are local to the grid state data. The
+            // headerId should still follow our standard naming convention.
+            c.stateId = c.initialConfig.id || ('h' + (++me.headerCounter));
+        }
+
         //<debug warn>
         if (Ext.global.console && Ext.global.console.warn) {
             if (!me._usedIDs) {
@@ -874,7 +885,7 @@ Ext.define('Ext.grid.header.Container', {
      */
     getVisibleHeaderClosestToIndex: function(index) {
         var result = this.getHeaderAtIndex(index);
-        if (result.hidden) {
+        if (result && result.hidden) {
             result = result.next(':not([hidden])') || result.next(':not([hidden])');
         }
         return result;

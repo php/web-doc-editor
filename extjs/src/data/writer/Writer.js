@@ -55,6 +55,12 @@ Ext.define('Ext.data.writer.Writer', {
      */
     nameProperty: 'name',
 
+    /*
+     * @property {Boolean} isWriter
+     * `true` in this class to identify an object as an instantiated Writer, or subclass thereof.
+     */
+    isWriter: true,
+
     /**
      * Creates new Writer.
      * @param {Object} [config] Config object.

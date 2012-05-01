@@ -8,6 +8,14 @@ Ext.require('Ext.util.DelayedTask', function() {
      * @private
      */
     Ext.util.Event = Ext.extend(Object, (function() {
+        function createTargeted(handler, listener, o, scope){
+            return function(){
+                if (o.target === arguments[0]){
+                    handler.apply(scope, arguments);
+                }
+            };
+        }
+
         function createBuffered(handler, listener, o, scope) {
             listener.task = new Ext.util.DelayedTask();
             return function() {
@@ -94,6 +102,9 @@ Ext.require('Ext.util.DelayedTask', function() {
                 // because the event removal that the single listener does destroys the listener's DelayedTask(s)
                 if (o.single) {
                     handler = createSingle(handler, listener, o, scope);
+                }
+                if (o.target) {
+                    handler = createTargeted(handler, listener, o, scope);
                 }
                 if (o.delay) {
                     handler = createDelayed(handler, listener, o, scope);

@@ -11,6 +11,17 @@ Ext.define('Ext.layout.component.field.Text', {
     
     canGrowWidth: true,
 
+    beginLayoutCycle: function(ownerContext) {
+        var me = this;
+        
+        me.callParent(arguments);
+        
+        // Clear height, in case a previous layout cycle stretched it.
+        if (ownerContext.shrinkWrap) {
+            ownerContext.inputContext.el.setStyle('height', '');
+        }
+    },
+
     measureContentWidth: function (ownerContext) {
         var me = this,
             owner = me.owner,
@@ -42,7 +53,7 @@ Ext.define('Ext.layout.component.field.Text', {
         return width;
     },
     
-    publishInnerHeight: function (ownerContext, height) {
+    publishInnerHeight: function(ownerContext, height) {
         ownerContext.inputContext.setHeight(height - this.measureLabelErrorHeight(ownerContext));
     },
 

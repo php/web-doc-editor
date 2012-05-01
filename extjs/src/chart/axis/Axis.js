@@ -9,7 +9,6 @@
  *
  *     axes: [{
  *         type: 'Numeric',
- *         grid: true,
  *         position: 'left',
  *         fields: ['data1', 'data2', 'data3'],
  *         title: 'Number of Hits',
@@ -71,7 +70,6 @@ Ext.define('Ext.chart.axis.Axis', {
      *
      *     axes: [{
      *         type: 'Numeric',
-     *         grid: true,
      *         position: 'left',
      *         fields: ['data1', 'data2', 'data3'],
      *         title: 'Number of Hits',
@@ -189,19 +187,21 @@ Ext.define('Ext.chart.axis.Axis', {
             
             if (seriesClasses.Bar && series[i] instanceof seriesClasses.Bar && !series[i].column) {
                 // If this is a horizontal bar series, then flip xField and yField.
-                fields = vertical ? [].concat(series[i].xField) : [].concat(series[i].yField);
+                fields = vertical ? Ext.Array.from(series[i].xField) : Ext.Array.from(series[i].yField);
             } else {
-                fields = vertical ? [].concat(series[i].yField) : [].concat(series[i].xField);
+                fields = vertical ? Ext.Array.from(series[i].yField) : Ext.Array.from(series[i].xField);
             }
             
-            for (j = 0, ln2 = fields.length; j < ln2; j++) {
-                if(allFields[fields[j]]) {
-                    break;
+            if (me.fields.length) {
+                for (j = 0, ln2 = fields.length; j < ln2; j++) {
+                    if(allFields[fields[j]]) {
+                        break;
+                    }
                 }
-            }
-            if (j == ln2) {
-                // Not matching fields, skipping this series.
-                continue;
+                if (j == ln2) {
+                    // Not matching fields, skipping this series.
+                    continue;
+                }
             }
             
             if (aggregates = series[i].stacked) {

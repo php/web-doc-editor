@@ -44,7 +44,7 @@ Ext.define('Ext.view.BoundList', {
     ],
 
     renderTpl: [
-        '<div id="{id}-listEl" class="{baseCls}-list-ct" style="overflow:auto">' +
+        '<div id="{id}-listEl" class="{baseCls}-list-ct" style="overflow:auto"></div>',
         '{%',
             'var me=values.$comp, pagingToolbar=me.pagingToolbar;',
             'if (pagingToolbar) {',
@@ -52,7 +52,6 @@ Ext.define('Ext.view.BoundList', {
                 'Ext.DomHelper.generateMarkup(pagingToolbar.getRenderTree(), out);',
             '}',
         '%}',
-        '</div>',
         {
             disableFormats: true
         }

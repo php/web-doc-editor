@@ -375,12 +375,13 @@ Ext.dom.AbstractElement.addInheritableStatics({
         },
 
         getXY: function(el) {
-            var bd = (doc.body || doc.documentElement),
+            var bd = doc.body,
+                docEl = doc.documentElement,
                 leftBorder = 0,
                 topBorder = 0,
                 ret = [0,0],
                 round = Math.round,
-                b,
+                box,
                 scroll;
 
             el = Ext.getDom(el);
@@ -390,19 +391,19 @@ Ext.dom.AbstractElement.addInheritableStatics({
                 // on element not attached to dom
                 if (Ext.isIE) {
                     try {
-                        b = el.getBoundingClientRect();
-                        // In some versions of IE, the html element will have a 1px border that gets included, so subtract it off
-                        topBorder = bd.clientTop;
-                        leftBorder = bd.clientLeft;
+                        box = el.getBoundingClientRect();
+                        // In some versions of IE, the documentElement (HTML element) will have a 2px border that gets included, so subtract it off
+                        topBorder = docEl.clientTop || bd.clientTop;
+                        leftBorder = docEl.clientLeft || bd.clientLeft;
                     } catch (ex) {
-                        b = { left: 0, top: 0 };
+                        box = { left: 0, top: 0 };
                     }
                 } else {
-                    b = el.getBoundingClientRect();
+                    box = el.getBoundingClientRect();
                 }
 
                 scroll = fly(document).getScroll();
-                ret = [round(b.left + scroll.left - leftBorder), round(b.top + scroll.top - topBorder)];
+                ret = [round(box.left + scroll.left - leftBorder), round(box.top + scroll.top - topBorder)];
             }
             return ret;
         },

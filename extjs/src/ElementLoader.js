@@ -122,7 +122,8 @@ Ext.define('Ext.ElementLoader', {
 
     /**
      * @cfg {Function} renderer
-     * A custom function to render the content to the element. The passed parameters are:
+     * A custom function to render the content to the element. The function should
+     * return false if the renderer could not be applied. The passed parameters are:
      *
      * - The loader
      * - The response
@@ -329,7 +330,7 @@ Ext.define('Ext.ElementLoader', {
 
 
         if (success) {
-            success = renderer.call(me, me, response, active);
+            success = renderer.call(me, me, response, active) !== false;
         }
 
         if (success) {

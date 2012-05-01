@@ -222,7 +222,7 @@ Ext.define('Ext.data.proxy.Proxy', {
             };
         }
 
-        if (!(writer instanceof Ext.data.writer.Writer)) {
+        if (!writer.isWriter) {
             Ext.applyIf(writer, {
                 model: this.model,
                 type : this.defaultWriterType

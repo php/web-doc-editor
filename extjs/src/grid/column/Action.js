@@ -5,7 +5,7 @@
  *     @example
  *     Ext.create('Ext.data.Store', {
  *         storeId:'employeeStore',
- *         fields:['firstname', 'lastname', 'senority', 'dep', 'hired'],
+ *         fields:['firstname', 'lastname', 'seniority', 'dep', 'hired'],
  *         data:[
  *             {firstname:"Michael", lastname:"Scott"},
  *             {firstname:"Dwight", lastname:"Schrute"},

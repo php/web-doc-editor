@@ -1212,7 +1212,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
                         range = doc.selection.createRange();
                         if(range){
                             range.collapse(true);
-                            range.pasteHTML('&nbsp;&nbsp;&nbsp;&nbsp;');
+                            range.pasteHTML('&#160;&#160;&#160;&#160;');
                             me.deferFocus();
                         }
                     }
@@ -1241,7 +1241,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
                     e.stopEvent();
                     if (!me.readOnly) {
                         me.win.focus();
-                        me.execCmd('InsertHTML','&nbsp;&nbsp;&nbsp;&nbsp;');
+                        me.execCmd('InsertHTML','&#160;&#160;&#160;&#160;');
                         me.deferFocus();
                     }
                 }

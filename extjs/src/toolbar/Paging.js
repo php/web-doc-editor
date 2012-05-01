@@ -411,7 +411,7 @@ Ext.define('Ext.toolbar.Paging', {
         me.child('#last').setDisabled(currPage === pageCount  || isEmpty);
         me.child('#refresh').enable();
         me.updateInfo();
-        Ext.resumeLayouts();
+        Ext.resumeLayouts(true);
 
         if (me.rendered) {
             me.fireEvent('change', me, pageData);

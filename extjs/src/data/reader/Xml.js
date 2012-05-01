@@ -287,12 +287,6 @@ Ext.define('Ext.data.reader.Xml', {
         } else {
             result = 'me.getNodeValue(Ext.DomQuery.selectNode("' + selector + '", ' + dataName + '))';
         }
-        if (field.defaultValue !== undefined) {
-            result = '(' + result + ' === undefined) ? ' + fieldVarName + '.defaultValue : ' + result;
-        }
-        if (field.convert) {
-            result = fieldVarName + '.convert(' + result + ', record)';
-        }
         return result;
     }
 });

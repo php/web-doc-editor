@@ -242,10 +242,21 @@ Ext.define('Ext.util.Renderable', {
 
     beforeRender: function () {
         var me = this,
+            target = me.getTargetEl(),
             layout = me.getComponentLayout();
+
+        // Just before rendering, set the frame flag if we are an always-framed component like Window or Tip.
+        me.frame = me.frame || me.alwaysFramed;
 
         if (!layout.initialized) {
             layout.initLayout();
+        }
+
+        // Attempt to set overflow style prior to render if the targetEl can be accessed.
+        // If the targetEl does not exist yet, this will take place in finishRender
+        if (target) {
+            target.setStyle(me.getOverflowStyle());
+            me.overflowStyleSet = true;
         }
 
         me.setUI(me.ui);
@@ -347,7 +358,7 @@ Ext.define('Ext.util.Renderable', {
      */
     finishRender: function(containerIdx) {
         var me = this,
-            tpl, data, contentEl, el, pre, hide, target;
+            tpl, data, contentEl, el, pre, hide;
 
         // We are typically called w/me.el==null as a child of some ownerCt that is being
         // rendered. We are also called by render for a normal component (w/o a configured
@@ -404,9 +415,10 @@ Ext.define('Ext.util.Renderable', {
         // Sets the rendered flag and clears the redering flag
         me.onRender(me.container, containerIdx);
 
-        // Initialize with correct overflow attributes
-        target = me.getTargetEl();
-        target.setStyle(me.getOverflowStyle());
+        // If we could not access a target protoEl in bewforeRender, we have to set the overflow styles here.
+        if (!me.overflowStyleSet) {
+            me.getTargetEl().setStyle(me.getOverflowStyle());
+        }
 
         // Tell the encapsulating element to hide itself in the way the Component is configured to hide
         // This means DISPLAY, VISIBILITY or OFFSETS.
@@ -425,7 +437,7 @@ Ext.define('Ext.util.Renderable', {
             hide = pre + 'hide-';
             contentEl = Ext.get(me.contentEl);
             contentEl.removeCls([pre+'hidden', hide+'display', hide+'offsets', hide+'nosize']);
-            target.appendChild(contentEl.dom);
+            me.getTargetEl().appendChild(contentEl.dom);
         }
 
         me.afterRender(); // this can cause a layout
@@ -901,8 +913,7 @@ Ext.define('Ext.util.Renderable', {
      * into the document to receive the document element's CSS class name, and therefore style attributes.
      */
     getFrameInfo: function() {
-        // If native framing can be used, or this Component is not configured (or written) to be framed,
-        // then do not attempt to read CSS framing info.
+        // If native framing can be used, or this component is not going to be framed, then do not attempt to read CSS framing info.
         if (Ext.supports.CSS3BorderRadius || !this.frame) {
             return false;
         }
@@ -989,7 +1000,7 @@ Ext.define('Ext.util.Renderable', {
     /**
      * @private
      * Returns an offscreen div with the same class name as the element this is being rendered.
-     * This is because child item rendering takes place in a detached div which, being ot part of the document, has no styling.
+     * This is because child item rendering takes place in a detached div which, being not part of the document, has no styling.
      */
     getStyleProxy: function(cls) {
         var result = this.styleProxyEl || (Ext.AbstractComponent.prototype.styleProxyEl = Ext.getBody().createChild({

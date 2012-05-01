@@ -16,7 +16,7 @@
  *         onSpinUp: function() {
  *             var me = this;
  *             if (!me.readOnly) {
- *                 var val = parseInt(me.getValue().split(' '))||0; // gets rid of " Pack", defaults to zero on parse failure
+ *                 var val = parseInt(me.getValue().split(' '), 10)||0; // gets rid of " Pack", defaults to zero on parse failure
  *                 me.setValue((val + me.step) + ' Pack');
  *             }
  *         },
@@ -25,7 +25,7 @@
  *         onSpinDown: function() {
  *             var val, me = this;
  *             if (!me.readOnly) {
- *                var val = parseInt(me.getValue().split(' '))||0; // gets rid of " Pack", defaults to zero on parse failure
+ *                var val = parseInt(me.getValue().split(' '), 10)||0; // gets rid of " Pack", defaults to zero on parse failure
  *                if (val <= me.step) {
  *                    me.setValue('Dry!');
  *                } else {
@@ -110,7 +110,7 @@ Ext.define('Ext.form.field.Spinner', {
     onSpinDown: Ext.emptyFn,
 
     triggerTpl: '<td style="{triggerStyle}">' +
-                    '<div class="' + Ext.baseCSSPrefix + 'trigger-index-0 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-up role="button"></div>' +
+                    '<div class="' + Ext.baseCSSPrefix + 'trigger-index-0 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-up" role="button"></div>' +
                     '<div class="' + Ext.baseCSSPrefix + 'trigger-index-1 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-down" role="button"></div>' +
                 '</td>' +
             '</tr>',

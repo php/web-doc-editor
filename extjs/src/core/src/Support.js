@@ -407,7 +407,7 @@ Ext.supports = {
             identity: 'Vml',
             fn: function(doc) {
                 var d = doc.createElement("div");
-                d.innerHTML = "<!--[if vml]><br><br><![endif]-->";
+                d.innerHTML = "<!--[if vml]><br/><br/><![endif]-->";
                 return (d.childNodes.length == 2);
             }
         },

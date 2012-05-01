@@ -98,7 +98,7 @@ Ext.define('Ext.layout.container.Fit', {
             childWidthCalculated = !widthModel.shrinkWrap,
             childHeightCalculated = !heightModel.shrinkWrap,
             length = childItems.length,
-            clearItemSizes = (ownerContext.targetContext.el.dom.tagName === 'TD'),
+            clearItemSizes = (ownerContext.targetContext.el.dom.tagName.toUpperCase() === 'TD'),
             i, invalidateOptions, itemContext, targetEl;
 
         me.callParent(arguments);

@@ -173,10 +173,6 @@ The function must return false is loading is not successful. Below is a sample o
         this.target.setLoading(mask);
     },
 
-    /**
-     * Get the target of this loader.
-     * @return {Ext.Component} target The target, null if none exists.
-     */
 
     setOptions: function(active, options){
         active.removeAll = Ext.isDefined(options.removeAll) ? options.removeAll : this.removeAll;

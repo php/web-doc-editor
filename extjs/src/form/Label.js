@@ -41,7 +41,7 @@
  *             xtype: 'label',
  *             forId: 'myFieldId',
  *             text: 'My Awesome Field',
- *             margins: '0 0 0 10'
+ *             margin: '0 0 0 10'
  *         }]
  *     });
  */

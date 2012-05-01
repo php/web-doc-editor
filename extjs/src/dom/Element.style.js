@@ -83,7 +83,9 @@ if (!view || !view.getComputedStyle) {
                         out = '';
                     }
                 } else {
-                    out = style[camel];
+                    // EXTJSIV-5657 - In IE9 quirks mode there is a chance that VML root element 
+                    // has neither `currentStyle` nor `style`. Return '' this case.
+                    out = style ? style[camel] : '';
                 }
             }
 

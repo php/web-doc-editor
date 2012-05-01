@@ -1,7 +1,7 @@
 /**
  * Represents an Ext JS 4 application, which is typically a single page app using a {@link Ext.container.Viewport Viewport}.
  * A typical Ext.app.Application might look like this:
- * 
+ *
  *     Ext.application({
  *         name: 'MyApp',
  *         launch: function() {
@@ -12,55 +12,55 @@
  *             });
  *         }
  *     });
- * 
+ *
  * This does several things. First it creates a global variable called 'MyApp' - all of your Application's classes (such
  * as its Models, Views and Controllers) will reside under this single namespace, which drastically lowers the chances
  * of colliding global variables.
- * 
+ *
  * When the page is ready and all of your JavaScript has loaded, your Application's {@link #launch} function is called,
  * at which time you can run the code that starts your app. Usually this consists of creating a Viewport, as we do in
  * the example above.
- * 
+ *
  * # Telling Application about the rest of the app
- * 
+ *
  * Because an Ext.app.Application represents an entire app, we should tell it about the other parts of the app - namely
  * the Models, Views and Controllers that are bundled with the application. Let's say we have a blog management app; we
  * might have Models and Controllers for Posts and Comments, and Views for listing, adding and editing Posts and Comments.
  * Here's how we'd tell our Application about all these things:
- * 
+ *
  *     Ext.application({
  *         name: 'Blog',
  *         models: ['Post', 'Comment'],
  *         controllers: ['Posts', 'Comments'],
- *     
+ *
  *         launch: function() {
  *             ...
  *         }
  *     });
- * 
+ *
  * Note that we didn't actually list the Views directly in the Application itself. This is because Views are managed by
- * Controllers, so it makes sense to keep those dependencies there. The Application will load each of the specified 
+ * Controllers, so it makes sense to keep those dependencies there. The Application will load each of the specified
  * Controllers using the pathing conventions laid out in the [application architecture guide][mvc] - in this case
  * expecting the controllers to reside in app/controller/Posts.js and app/controller/Comments.js. In turn, each
  * Controller simply needs to list the Views it uses and they will be automatically loaded. Here's how our Posts
  * controller like be defined:
- * 
+ *
  *     Ext.define('MyApp.controller.Posts', {
  *         extend: 'Ext.app.Controller',
  *         views: ['posts.List', 'posts.Edit'],
- *     
+ *
  *         //the rest of the Controller here
  *     });
- * 
+ *
  * Because we told our Application about our Models and Controllers, and our Controllers about their Views, Ext JS will
  * automatically load all of our app files for us. This means we don't have to manually add script tags into our html
- * files whenever we add a new class, but more importantly it enables us to create a minimized build of our entire 
+ * files whenever we add a new class, but more importantly it enables us to create a minimized build of our entire
  * application using the Ext JS 4 SDK Tools.
  *
  * For more information about writing Ext JS 4 applications, please see the [application architecture guide][mvc].
  *
  * [mvc]: #/guide/application_architecture
- * 
+ *
  * @docauthor Ed Spencer
  */
 Ext.define('Ext.app.Application', {
@@ -80,7 +80,7 @@ Ext.define('Ext.app.Application', {
      * The name of your application. This will also be the namespace for your views, controllers
      * models and stores. Don't use spaces or special characters in the name.
      */
-    
+
     /**
      * @cfg {String[]} controllers
      * Names of controllers that the app uses.
@@ -215,15 +215,19 @@ Ext.define('Ext.app.Application', {
         }
     },
 
-    getModuleClassName: function(name, namespace) {
-        var appName = this.name;
-        
-        // we check name === appName to allow MyApp.profile.MyApp to exist
-        if (Ext.isString(name) && (Ext.Loader.getPrefix(name) === "" || name === appName)) {
-            name = appName + '.' + namespace + '.' + name;
+    getModuleClassName: function(name, module) {
+        // Deciding if a class name must be qualified:
+        // 1 - if the name doesn't contains at least one dot, we must definitely qualify it
+        // 2 - the name may be a qualified name of a known class, but:
+        // 2.1 - in runtime, the loader may not know the class - specially in production - so we must check the class manager
+        // 2.2 - in build time, the class manager may not know the class, but the loader does, so we check the second one
+        //       (the loader check assures it's really a class, and not a namespace, so we can have 'Books.controller.Books',
+        //       and request for a controller called Books will not be underqualified)
+        if (name.indexOf('.') !== -1 && (Ext.ClassManager.isCreated(name) || Ext.Loader.isAClassNameWithAKnownPrefix(name))) {
+            return name;
+        } else {
+            return this.name + '.' + module + '.' + name;
         }
-        
-        return name;
     },
 
     getController: function(name) {

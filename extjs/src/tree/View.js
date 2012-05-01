@@ -43,22 +43,22 @@ Ext.define('Ext.tree.View', {
 
     expandDuration: 250,
     collapseDuration: 250,
-    
+
     toggleOnDblClick: true,
 
     stripeRows: false,
-    
+
     // fields that will trigger a change in the ui that aren't likely to be bound to a column
     uiFields: ['expanded', 'loaded', 'checked', 'expandable', 'leaf', 'icon', 'iconCls', 'loading'],
 
     initComponent: function() {
         var me = this,
             treeStore = me.panel.getStore();
-        
+
         if (me.initialConfig.animate === undefined) {
             me.animate = Ext.enableFx;
         }
-        
+
         me.store = new Ext.data.NodeStore({
             treeStore: treeStore,
             recursive: true,
@@ -73,7 +73,7 @@ Ext.define('Ext.tree.View', {
                 scope: me
             }
         });
-        
+
         if (me.node) {
             me.setRootNode(me.node);
         }
@@ -112,7 +112,7 @@ Ext.define('Ext.tree.View', {
             click: me.onCheckboxChange
         });
     },
-    
+
     afterComponentLayout: function(){
         this.callParent(arguments);
         var stretcher = this.stretcher;
@@ -144,12 +144,12 @@ Ext.define('Ext.tree.View', {
     onCheckboxChange: function(e, t) {
         var me = this,
             item = e.getTarget(me.getItemSelector(), me.getTargetEl());
-            
+
         if (item) {
             me.onCheckChange(me.getRecord(item));
         }
     },
-    
+
     onCheckChange: function(record){
         var checked = record.get('checked');
         if (Ext.isBoolean(checked)) {
@@ -168,7 +168,7 @@ Ext.define('Ext.tree.View', {
         });
         return checked;
     },
-    
+
     isItemChecked: function(rec){
         return rec.get('checked');
     },
@@ -240,10 +240,10 @@ Ext.define('Ext.tree.View', {
         if (!this.animate) {
             return null;
         }
-        
+
         var wraps = this.animWraps,
             wrap = wraps[parent.internalId];
-        
+
         if (bubble !== false) {
             while (!wrap && parent) {
                 parent = parent.parentNode;
@@ -272,17 +272,17 @@ Ext.define('Ext.tree.View', {
 
         // We need the parent that has the animWrap, not the nodes parent
         parent = animWrap.record;
-        
+
         // If there is an anim wrap we do our special magic logic
         targetEl = animWrap.targetEl;
         children = targetEl.dom.childNodes;
-        
+
         // We subtract 1 from the childrens length because we have a tr in there with the th'es
         len = children.length - 1;
-        
+
         // The relative index is the index in the full flat collection minus the index of the wraps parent
         relativeIndex = index - me.indexOf(parent) - 1;
-        
+
         // If we are adding records to the wrap that have a higher relative index then there are currently children
         // it means we have to append the nodes to the wrap
         if (!len || relativeIndex >= len) {
@@ -297,40 +297,42 @@ Ext.define('Ext.tree.View', {
 
         // We also have to update the CompositeElementLite collection of the DataView
         Ext.Array.insert(a, index, nodes);
-        
+
         // If we were in an animation we need to now change the animation
         // because the targetEl just got higher.
         if (animWrap.isAnimating) {
             me.onExpand(parent);
         }
     },
-    
+
     beginBulkUpdate: function(){
         this.bulkUpdate = true;
         this.ownerCt.changingScrollbars = true;  
     },
-    
+
     endBulkUpdate: function(){
         this.bulkUpdate = false;
         this.ownerCt.changingScrollbars = true;  
     },
-    
+
     onRemove : function(ds, record, index) {
         var me = this,
             bulk = me.bulkUpdate;
-
-        me.doRemove(record, index);
-        if (!bulk) {
-            me.updateIndexes(index);
-        }
-        if (me.store.getCount() === 0){
-            me.refresh();
-        }
-        if (!bulk) {
-            me.fireEvent('itemremove', record, index);
+            
+        if (me.rendered) {
+            me.doRemove(record, index);
+            if (!bulk) {
+                me.updateIndexes(index);
+            }
+            if (me.store.getCount() === 0){
+                me.refresh();
+            }
+            if (!bulk) {
+                me.fireEvent('itemremove', record, index);
+            }
         }
     },
-    
+
     doRemove: function(record, index) {
         // If we are adding records which have a parent that is currently expanding
         // lets add them to the animation wrap
@@ -350,7 +352,7 @@ Ext.define('Ext.tree.View', {
     onBeforeExpand: function(parent, records, index) {
         var me = this,
             animWrap;
-            
+
         if (!me.rendered || !me.animate) {
             return;
         }
@@ -380,23 +382,24 @@ Ext.define('Ext.tree.View', {
             animWrap,
             animateEl, 
             targetEl;        
-        
+
         if (me.singleExpand) {
             me.ensureSingleExpand(parent);
         }
-        
+
         // The item is not visible yet
         if (index === -1) {
             return;
         }
-        
+
         animWrap = me.getAnimWrap(parent, false);
 
         if (!animWrap) {
+            me.isExpandingOrCollapsing = false;
             me.fireEvent('afteritemexpand', parent, index, node);
             return;
         }
-        
+
         animateEl = animWrap.animateEl;
         targetEl = animWrap.targetEl;
 
@@ -416,17 +419,18 @@ Ext.define('Ext.tree.View', {
                 }
             },
             callback: function() {
+                me.isExpandingOrCollapsing = false;
                 me.fireEvent('afteritemexpand', parent, index, node);
             }
         });
-        
+
         animWrap.isAnimating = true;
     },
 
     onBeforeCollapse: function(parent, records, index) {
         var me = this,
             animWrap;
-            
+
         if (!me.rendered || !me.animate) {
             return;
         }
@@ -445,7 +449,7 @@ Ext.define('Ext.tree.View', {
             animWrap.collapsing = true;
         }
     },
-    
+
     onCollapse: function(parent) {
         var me = this,
             queue = me.animQueue,
@@ -454,22 +458,23 @@ Ext.define('Ext.tree.View', {
             index = node ? me.indexOf(node) : -1,
             animWrap = me.getAnimWrap(parent),
             animateEl, targetEl;
-            
+
         // The item has already been removed by a parent node
         if (index === -1) {
             return;
         }
 
         if (!animWrap) {
+            me.isExpandingOrCollapsing = false;
             me.fireEvent('afteritemcollapse', parent, index, node);
             return;
         }
-        
+
         animateEl = animWrap.animateEl;
         targetEl = animWrap.targetEl;
 
         queue[id] = true;
-        
+
         // @TODO: we are setting it to 1 because quirks mode on IE seems to have issues with 0
         animateEl.stopAnimation();
         animateEl.slideOut('t', {
@@ -483,12 +488,13 @@ Ext.define('Ext.tree.View', {
                 }             
             },
             callback: function() {
+                me.isExpandingOrCollapsing = false;
                 me.fireEvent('afteritemcollapse', parent, index, node);
             }
         });
         animWrap.isAnimating = true;
     },
-    
+
     /**
      * Checks if a node is currently undergoing animation
      * @private
@@ -498,14 +504,14 @@ Ext.define('Ext.tree.View', {
     isAnimating: function(node) {
         return !!this.animQueue[node.getId()];    
     },
-    
+
     collectData: function(records) {
         var data = this.callParent(arguments),
             rows = data.rows,
             len = rows.length,
             i = 0,
             row, record;
-            
+
         for (; i < len; i++) {
             row = rows[i];
             record = records[i];
@@ -525,10 +531,10 @@ Ext.define('Ext.tree.View', {
                 row.rowCls = (row.rowCls || '') + ' ' + this.loadingCls;
             }
         }
-        
+
         return data;
     },
-    
+
     /**
      * Expands a record that is loaded in the view.
      * @param {Ext.data.Model} record The record to expand
@@ -539,7 +545,7 @@ Ext.define('Ext.tree.View', {
     expand: function(record, deep, callback, scope) {
         return record.expand(deep, callback, scope);
     },
-    
+
     /**
      * Collapses a record that is loaded in the view.
      * @param {Ext.data.Model} record The record to collapse
@@ -550,15 +556,31 @@ Ext.define('Ext.tree.View', {
     collapse: function(record, deep, callback, scope) {
         return record.collapse(deep, callback, scope);
     },
-    
+
     /**
      * Toggles a record between expanded and collapsed.
-     * @param {Ext.data.Model} recordInstance
+     * @param {Ext.data.Model} record
+     * @param {Boolean} [deep] True to collapse nodes all the way up the tree hierarchy.
+     * @param {Function} [callback] The function to run after the expand/collapse is completed
+     * @param {Object} [scope] The scope of the callback function.
      */
-    toggle: function(record, deep) {
-        this[record.isExpanded() ? 'collapse' : 'expand'](record, deep);
+    toggle: function(record, deep, callback, scope) {
+        var me = this,
+            doAnimate = !!this.animate;
+
+        // Block toggling if we are already animating an expand or collapse operation.
+        if (!doAnimate || !this.isExpandingOrCollapsing) {
+            if (!record.isLeaf()) {
+                this.isExpandingOrCollapsing = doAnimate;
+            }
+            if (record.isExpanded()) {
+                me.collapse(record, deep, callback, scope);
+            } else {
+                me.expand(record, deep, callback, scope);
+            }
+        }
     },
-    
+
     onItemDblClick: function(record, item, index) {
         var editingPlugin = this.editingPlugin;
         this.callParent(arguments);
@@ -566,14 +588,14 @@ Ext.define('Ext.tree.View', {
             this.toggle(record);
         }
     },
-    
+
     onBeforeItemMouseDown: function(record, item, index, e) {
         if (e.getTarget(this.expanderSelector, item)) {
             return false;
         }
         return this.callParent(arguments);
     },
-    
+
     onItemClick: function(record, item, index, e) {
         if (e.getTarget(this.expanderSelector, item)) {
             this.toggle(record, e.ctrlKey);
@@ -581,22 +603,22 @@ Ext.define('Ext.tree.View', {
         }
         return this.callParent(arguments);
     },
-    
+
     onExpanderMouseOver: function(e, t) {
         e.getTarget(this.cellSelector, 10, true).addCls(this.expanderIconOverCls);
     },
-    
+
     onExpanderMouseOut: function(e, t) {
         e.getTarget(this.cellSelector, 10, true).removeCls(this.expanderIconOverCls);
     },
-    
+
     /**
      * Gets the base TreeStore from the bound TreePanel.
      */
     getTreeStore: function() {
         return this.panel.store;
     },    
-    
+
     ensureSingleExpand: function(node) {
         var parent = node.parentNode;
         if (parent) {
@@ -607,7 +629,7 @@ Ext.define('Ext.tree.View', {
             });
         }
     },
-    
+
     shouldUpdateCell: function(column, changedFieldNames){
         return Ext.Array.contains(this.uiFields, column.dataIndex) || this.callParent(arguments);
     },

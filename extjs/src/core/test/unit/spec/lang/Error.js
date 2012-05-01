@@ -223,6 +223,7 @@ describe("Ext.Error", function() {
                 expect(error.msg).toEqual('Custom error');
                 expect(error.sourceClass).toEqual('CustomClass');
                 expect(error.sourceMethod).toEqual('doSomething');
+                expect(error.toString()).toBe('CustomClass.doSomething(): Custom error');
             });
         
             it("should log the complete metadata to the console", function() {
@@ -240,7 +241,8 @@ describe("Ext.Error", function() {
                         extraData: 'extra'
                     });
                 } 
-                catch (err) {}
+                catch (err) {
+                }
             });
         });
     });

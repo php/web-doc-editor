@@ -427,9 +427,6 @@ Ext.define('Ext.Component', {
         if (!(me.x && me.y) && (me.pageX || me.pageY)) {
             me.setPagePosition(me.pageX, me.pageY);
         }
-        if (me.draggable) {
-            me.initDraggable();
-        }
     },
 
     /**
@@ -438,19 +435,17 @@ Ext.define('Ext.Component', {
      * @return {Ext.Component} this
      */
     setAutoScroll : function(scroll) {
-        var me = this,
-            layout,
-            targetEl;
+        var me = this;
 
         me.autoScroll = !!scroll;
 
-        // Scrolling styles must be applied to the element into which content is rendered.
-        // This means the layout's target if we are using a layout.
+        // Scrolling styles must be applied to Component's main element.
+        // Layouts which use an innerCt (Box layout), shrinkwrap the innerCt round overflowing content,
+        // so the innerCt must be scrolled by the container, it does not scroll content.
         if (me.rendered) {
-            targetEl = (layout = me.getLayout && me.getLayout()) ? layout.getRenderTarget() : me.getTargetEl();
-            targetEl.setStyle(me.getOverflowStyle());
+            me.getTargetEl().setStyle(me.getOverflowStyle());
         }
-
+        me.updateLayout();
         return me;
     },
 
@@ -466,8 +461,6 @@ Ext.define('Ext.Component', {
      */
     setOverflowXY: function(overflowX, overflowY) {
         var me = this,
-            layout,
-            targetEl,
             argCount = arguments.length;
 
         if (argCount) {
@@ -477,13 +470,13 @@ Ext.define('Ext.Component', {
             }
         }
 
-        // Scrolling styles must be applied to the element into which content is rendered.
-        // This means the layout's target if we are using a layout.
+        // Scrolling styles must be applied to Component's main element.
+        // Layouts which use an innerCt (Box layout), shrinkwrap the innerCt round overflowing content,
+        // so the innerCt must be scrolled by the container, it does not scroll content.
         if (me.rendered) {
-            targetEl = (layout = me.getLayout && me.getLayout()) ? layout.getRenderTarget() : me.getTargetEl();
-            targetEl.setStyle(me.getOverflowStyle());
+            me.getTargetEl().setStyle(me.getOverflowStyle());
         }
-
+        me.updateLayout();
         return me;
     },
 
@@ -543,8 +536,17 @@ Ext.define('Ext.Component', {
 
     initDraggable: function() {
         var me = this,
+
+            // If we are resizable, and the resizer had to wrap this Component's el (eg an Img)
+            // Then we have to create a pseudo-Component out of the resizer to drag that,
+            // otherwise, we just drag this Component
+            dragTarget = (me.resizer && me.resizer.el !== me.el) ? me.resizerComponent = new Ext.Component({
+                el: me.resizer.el,
+                rendered: true,
+                container: me.container
+            }) : me,
             ddConfig = Ext.applyIf({
-                el: me.getDragEl(),
+                el: dragTarget.getDragEl(),
                 constrainTo: me.constrain ? (me.constrainTo || (me.floatParent ? me.floatParent.getTargetEl() : me.el.getScopeParent())) : undefined
             }, me.draggable);
 
@@ -554,7 +556,7 @@ Ext.define('Ext.Component', {
             ddConfig.constrainDelegate = me.constrainDelegate;
         }
 
-        me.dd = new Ext.util.ComponentDragger(me, ddConfig);
+        me.dd = new Ext.util.ComponentDragger(dragTarget, ddConfig);
     },
 
     /**
@@ -1096,7 +1098,8 @@ Ext.define('Ext.Component', {
             Ext.destroy(
                 me.proxy,
                 me.proxyWrap,
-                me.resizer
+                me.resizer,
+                me.resizerComponent
             );
             // Different from AbstractComponent
             if (me.actionMode == 'container' || me.removeMode == 'container') {
@@ -1128,7 +1131,6 @@ Ext.define('Ext.Component', {
         var me = this,
             focusEl,
             focusElDom;
-
 
         if (me.rendered && !me.isDestroyed && me.isVisible(true) && (focusEl = me.getFocusEl())) {
 

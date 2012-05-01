@@ -757,43 +757,49 @@ Ext.define('Ext.view.Table', {
     // private
     onUpdate : function(store, record, operation, changedFieldNames) {
         var me = this,
-            index = me.store.indexOf(record),
+            index,
             newRow, oldRow,
             oldCells, newCells, len, i,
-            columns = me.headerCt.getGridColumns(),
-            overItemCls = me.overItemCls,
+            columns, overItemCls,
             isHovered, row;
+            
+        if (me.rendered) {
+            
+            index = me.store.indexOf(record);
+            columns = me.headerCt.getGridColumns();
+            overItemCls = me.overItemCls;
 
-        // If we have columns which may *need* updating (think lockable grid child with all columns either locked or unlocked)
-        // and the changed record is within our view, then update the view
-        if (columns.length && index > -1) {
-            newRow = me.bufferRender([record], index)[0];
-            oldRow = me.all.item(index);
-            isHovered = oldRow.hasCls(overItemCls);
-            oldRow.dom.className = newRow.className;
-            if(isHovered) {
-                oldRow.addCls(overItemCls);
-            }
-
-            // Replace changed cells in the existing row structure with the new version from the rendered row.
-            oldCells = oldRow.query(this.cellSelector);
-            newCells = Ext.fly(newRow).query(this.cellSelector);
-            len = newCells.length;
-            // row is the element that contains the cells.  This will be a different element from oldRow when using a rowwrap feature
-            row = oldCells[0].parentNode;
-            for (i = 0; i < len; i++) {
-                // If the field at this column index was changed, replace the cell.
-                if (me.shouldUpdateCell(columns[i], changedFieldNames)) {
-                    row.insertBefore(newCells[i], oldCells[i]);
-                    row.removeChild(oldCells[i]);
+            // If we have columns which may *need* updating (think lockable grid child with all columns either locked or unlocked)
+            // and the changed record is within our view, then update the view
+            if (columns.length && index > -1) {
+                newRow = me.bufferRender([record], index)[0];
+                oldRow = me.all.item(index);
+                isHovered = oldRow.hasCls(overItemCls);
+                oldRow.dom.className = newRow.className;
+                if(isHovered) {
+                    oldRow.addCls(overItemCls);
                 }
-            }
 
-            // Maintain selection after update
-            // TODO: Move to approriate event handler.
-            me.selModel.refresh();
-            me.doStripeRows(index, index);
-            me.fireEvent('itemupdate', record, index, newRow);
+                // Replace changed cells in the existing row structure with the new version from the rendered row.
+                oldCells = oldRow.query(this.cellSelector);
+                newCells = Ext.fly(newRow).query(this.cellSelector);
+                len = newCells.length;
+                // row is the element that contains the cells.  This will be a different element from oldRow when using a rowwrap feature
+                row = oldCells[0].parentNode;
+                for (i = 0; i < len; i++) {
+                    // If the field at this column index was changed, replace the cell.
+                    if (me.shouldUpdateCell(columns[i], changedFieldNames)) {
+                        row.insertBefore(newCells[i], oldCells[i]);
+                        row.removeChild(oldCells[i]);
+                    }
+                }
+
+                // Maintain selection after update
+                // TODO: Move to approriate event handler.
+                me.selModel.refresh();
+                me.doStripeRows(index, index);
+                me.fireEvent('itemupdate', record, index, newRow);
+            }
         }
 
     },
@@ -1197,21 +1203,24 @@ Ext.define('Ext.view.Table', {
      * @private
      */
     doStripeRows: function(startRow, endRow) {
+        var me = this,
+            rows,
+            rowsLn,
+            i,
+            row;
+            
         // ensure stripeRows configuration is turned on
-        if (this.stripeRows) {
-            var rows   = this.getNodes(startRow, endRow),
-                rowsLn = rows.length,
-                i      = 0,
-                row;
+        if (me.rendered && me.stripeRows) {
+            rows = me.getNodes(startRow, endRow);
                 
-            for (; i < rowsLn; i++) {
+            for (i = 0, rowsLn = rows.length; i < rowsLn; i++) {
                 row = rows[i];
                 // Remove prior applied row classes.
-                row.className = row.className.replace(this.rowClsRe, ' ');
+                row.className = row.className.replace(me.rowClsRe, ' ');
                 startRow++;
                 // Every odd row will get an additional cls
                 if (startRow % 2 === 0) {
-                    row.className += (' ' + this.altRowCls);
+                    row.className += (' ' + me.altRowCls);
                 }
             }
         }

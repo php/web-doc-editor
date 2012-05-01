@@ -143,6 +143,11 @@ Ext.define('Ext.form.FieldContainer', {
         me.callParent();
     },
 
+    beforeRender: function(){
+        this.callParent(arguments);
+        this.beforeLabelableRender(arguments);
+    },
+
     /**
      * @protected Called when a {@link Ext.form.Labelable} instance is added to the container's subtree.
      * @param {Ext.form.Labelable} labelable The instance that was added

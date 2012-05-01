@@ -108,7 +108,7 @@ Ext.define('Ext.data.StoreManager', {
     }
 }, function() {    
     /**
-     * Creates a new store for the given id and config, then registers it with the {@link Ext.data.StoreManager Store Mananger}. 
+     * Creates a new store for the given id and config, then registers it with the {@link Ext.data.StoreManager Store Manager}. 
      * Sample usage:
      *
      *     Ext.regStore('AllUsers', {

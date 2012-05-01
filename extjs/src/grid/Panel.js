@@ -223,14 +223,14 @@
  *     @example
  *     var store = Ext.create('Ext.data.Store', {
  *         storeId:'employeeStore',
- *         fields:['name', 'senority', 'department'],
+ *         fields:['name', 'seniority', 'department'],
  *         groupField: 'department',
  *         data: {'employees':[
- *             { "name": "Michael Scott",  "senority": 7, "department": "Manangement" },
- *             { "name": "Dwight Schrute", "senority": 2, "department": "Sales" },
- *             { "name": "Jim Halpert",    "senority": 3, "department": "Sales" },
- *             { "name": "Kevin Malone",   "senority": 4, "department": "Accounting" },
- *             { "name": "Angela Martin",  "senority": 5, "department": "Accounting" }
+ *             { "name": "Michael Scott",  "seniority": 7, "department": "Management" },
+ *             { "name": "Dwight Schrute", "seniority": 2, "department": "Sales" },
+ *             { "name": "Jim Halpert",    "seniority": 3, "department": "Sales" },
+ *             { "name": "Kevin Malone",   "seniority": 4, "department": "Accounting" },
+ *             { "name": "Angela Martin",  "seniority": 5, "department": "Accounting" }
  *         ]},
  *         proxy: {
  *             type: 'memory',
@@ -246,7 +246,7 @@
  *         store: Ext.data.StoreManager.lookup('employeeStore'),
  *         columns: [
  *             { header: 'Name',     dataIndex: 'name' },
- *             { header: 'Senority', dataIndex: 'senority' }
+ *             { header: 'Seniority', dataIndex: 'seniority' }
  *         ],
  *         features: [{ftype:'grouping'}],
  *         width: 200,

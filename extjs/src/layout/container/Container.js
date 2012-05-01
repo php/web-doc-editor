@@ -243,7 +243,7 @@ Ext.define('Ext.layout.container.Container', {
 
     /**
      * In addition to work done by our base classes, containers benefit from some extra
-     * cached daata. The following properties are added to the ownerContext:
+     * cached data. The following properties are added to the ownerContext:
      * 
      *  - visibleItems: the result of {@link #getVisibleItems}
      *  - childItems: the ContextItem[] for each visible item

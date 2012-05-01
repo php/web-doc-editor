@@ -225,6 +225,12 @@ Ext.define('Ext.data.proxy.Server', {
 
         if (success === true) {
             reader = me.getReader();
+
+            // Apply defaults to incoming data only for read operations.
+            // For create and update, there will already be a client-side record
+            // to match with which will contain any defaulted in values.
+            reader.applyDefaults = operation.action === 'read';
+
             result = reader.read(me.extractResponseData(response));
 
             if (result.success !== false) {

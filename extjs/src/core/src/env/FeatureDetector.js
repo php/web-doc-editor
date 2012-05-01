@@ -31,7 +31,7 @@ Ext.define('Ext.env.FeatureDetector', {
                 var element = this.getTestElement(),
                     ret = false;
 
-                element.innerHTML = "<!--[if vml]><br><br><![endif]-->";
+                element.innerHTML = "<!--[if vml]><br/><br/><![endif]-->";
                 ret = (element.childNodes.length === 2);
                 element.innerHTML = "";
 

@@ -12,9 +12,9 @@
  *         extend: 'Ext.data.Model',
  *         fields: [
  *             {name: 'name',  type: 'string'},
- *             {name: 'age',   type: 'int'},
+ *             {name: 'age',   type: 'int', convert: null},
  *             {name: 'phone', type: 'string'},
- *             {name: 'alive', type: 'boolean', defaultValue: true}
+ *             {name: 'alive', type: 'boolean', defaultValue: true, convert: null}
  *         ],
  *
  *         changeName: function() {
@@ -27,6 +27,11 @@
  *
  * The fields array is turned into a {@link Ext.util.MixedCollection MixedCollection} automatically by the {@link
  * Ext.ModelManager ModelManager}, and all other functions and properties are copied to the new Model's prototype.
+ * 
+ * By default, the built in numeric and boolean field types have a (@link Ext.data.Field#convert} function which coerces string
+ * values in raw data into the field's type. For better performance with {@link Ext.data.reader.Json Json} or {@link Ext.data.reader.Array Array}
+ * readers *if you are in control of the data fed into this Model*, you can null out the default convert function which will cause
+ * the raw property to be copied directly into the Field's value.
  *
  * Now we can create instances of our User model and call any model logic we defined:
  *
@@ -219,9 +224,9 @@ Ext.define('Ext.data.Model', {
         'Ext.util.MixedCollection'
     ],
 
-    sortConvertFields: function(f1, f2) {
-        var f1SpecialConvert = f1.type && f1.convert !== f1.type.convert,
-            f2SpecialConvert = f2.type && f2.convert !== f2.type.convert;
+    compareConvertFields: function(f1, f2) {
+        var f1SpecialConvert = f1.convert && f1.type && f1.convert !== f1.type.convert,
+            f2SpecialConvert = f2.convert && f2.type && f2.convert !== f2.type.convert;
 
         if (f1SpecialConvert && !f2SpecialConvert) {
             return 1;
@@ -249,9 +254,6 @@ Ext.define('Ext.data.Model', {
                 validations = data.validations || [],
                 fields = data.fields || [],
                 associations = data.associations || [],
-                belongsTo = data.belongsTo,
-                hasMany = data.hasMany,
-                hasOne = data.hasOne,
                 addAssociations = function(items, type) {
                     var i = 0,
                         len,
@@ -285,13 +287,41 @@ Ext.define('Ext.data.Model', {
                 association, i, ln,
                 dependencies = [],
                 idProperty = data.idProperty || cls.prototype.idProperty,
-                fieldConvertSortFn = Ext.Function.bind(
-                    fieldsMixedCollection.sortBy, 
-                    fieldsMixedCollection,
-                    [prototype.sortConvertFields], false),
+
+                // Process each Field upon add into the collection
+                onFieldAddReplace = function(arg0, arg1, arg2) {
+                    var newField,
+                        pos;
+
+                    if (fieldsMixedCollection.events.add.firing) {
+                        // Add event signature is (position, value, key);
+                        pos = arg0;
+                        newField  = arg1;
+                    } else {
+                        // Replace event signature is (key, oldValue, newValue);
+                        newField = arg2;
+                        pos = arg1.originalIndex;
+                    }
+
+                    // Set the originalIndex for ArrayReader to get the default mapping from in case
+                    // compareConvertFields changes the order due to some fields having custom convert functions.
+                    newField.originalIndex = pos;
+
+                    // The field(s) which encapsulates the idProperty must never have a default value set
+                    // if no value arrives from the server side. So override any possible prototype-provided
+                    // defaultValue with undefined which will inhibit generation of defaulting code in Reader.buildRecordDataExtractor
+                    if (newField.mapping === idProperty || (newField.mapping == null && newField.name === idProperty)) {
+                        newField.defaultValue = undefined;
+                    }
+                },
 
                 // Use the proxy from the class definition object if present, otherwise fall back to the inherited one, or the default    
-                clsProxy = data.proxy || cls.prototype.proxy || cls.prototype.defaultProxyType;
+                clsProxy = data.proxy || cls.prototype.proxy || cls.prototype.defaultProxyType,
+
+                // Sort upon add function to be used in case of dynamically added Fields
+                fieldConvertSortFn = function() {
+                    fieldsMixedCollection.sortBy(prototype.compareConvertFields);
+                };
 
             // Save modelName on class and its prototype
             cls.modelName = name;
@@ -310,8 +340,8 @@ Ext.define('Ext.data.Model', {
             }
 
             fieldsMixedCollection.on({
-                add: fieldConvertSortFn,
-                replace: fieldConvertSortFn
+                add:     onFieldAddReplace,
+                replace: onFieldAddReplace
             });  
 
             for (i = 0, ln = fields.length; i < ln; ++i) {
@@ -320,6 +350,14 @@ Ext.define('Ext.data.Model', {
             if (!fieldsMixedCollection.get(idProperty)) {
                 fieldsMixedCollection.add(new Ext.data.Field(idProperty));
             }
+
+            // Ensure the Fields are on correct order: Fields with custom convert function last
+            fieldConvertSortFn();
+            fieldsMixedCollection.on({
+                add:     fieldConvertSortFn,
+                replace: fieldConvertSortFn
+            });
+
             data.fields = fieldsMixedCollection;
 
             if (idgen) {
@@ -461,8 +499,18 @@ Ext.define('Ext.data.Model', {
             return prototypeFields;
         },
 
+        /**
+         * Returns an Array of {@link Ext.data.Field Field} definitions which define this Model's structure
+         *
+         * Fields are sorted upon Model class definition. Fields with custom {@link Ext.data.Field#convert convert} functions
+         * are moved to *after* fields with no convert functions. This is so that convert functions which rely on existing
+         * field values will be able to read those field values.
+         *
+         * @return {Ext.data.Field[]} The defined Fields for this Model.
+         *
+         */
         getFields: function() {
-            return this.fields;
+            return this.prototype.fields.items;
         },
 
         /**
@@ -802,7 +850,10 @@ Ext.define('Ext.data.Model', {
                     if (field.convert) {
                         value = field.convert(value, me);
                     }
-                    persistenceProperty[name] = value ;
+                    // On instance construction, do not create data properties based on undefined input properties
+                    if (value !== undefined) {
+                        persistenceProperty[name] = value;
+                    }
                 }
 
             } else {
@@ -816,7 +867,10 @@ Ext.define('Ext.data.Model', {
                     if (field.convert) {
                         value = field.convert(value, me);
                     }
-                    persistenceProperty[name] = value ;
+                    // On instance construction, do not create data properties based on undefined input properties
+                    if (value !== undefined) {
+                        persistenceProperty[name] = value;
+                    }
                }
             }
         }
@@ -887,7 +941,7 @@ Ext.define('Ext.data.Model', {
             if (values.hasOwnProperty(name)) {
                 value = values[name];
 
-                if ((field = fields && fields.get(name)) && field.convert) {
+                if (fields && (field = fields.get(name)) && field.convert) {
                     value = field.convert(value, me);
                 }
 
@@ -946,6 +1000,47 @@ Ext.define('Ext.data.Model', {
         }
 
         return modifiedFieldNames || null;
+    },
+
+    /**
+     * @private
+     * Copies data from the passed record into this record. If the passed record is undefined, does nothing.
+     *
+     * If this is a phantom record (represented only in the client, with no corresponding database entry), and
+     * the source record is not a phantom, then this record acquires the id of the source record.
+     *
+     * @param {Ext.data.Model} sourceRecord The record to copy data from.
+     */
+    copyFrom: function(sourceRecord) {
+        if (sourceRecord) {
+
+            var me = this,
+                fields = me.fields.items,
+                fieldCount = fields.length,
+                field, i = 0,
+                myData = me[me.persistenceProperty],
+                sourceData = sourceRecord[sourceRecord.persistenceProperty],
+                value;
+
+            for (; i < fieldCount; i++) {
+                field = fields[i];
+
+                // Do not use setters.
+                // Copy returned values in directly from the data object.
+                // Converters have already been called because new Records
+                // have been created to copy from.
+                // This is a direct record-to-record value copy operation.
+                value = sourceData[field.name];
+                if (value !== undefined) {
+                    myData[field.name] = value;
+                }
+            }
+
+            // If this is a phantom record being updated from a concrete record, copy the ID in.
+            if (me.phantom && !sourceRecord.phantom) {
+                me.setId(sourceRecord.getId());
+            }
+        }
     },
 
     /**

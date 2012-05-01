@@ -22,7 +22,7 @@ Ext.define('Ext.picker.Month', {
         '<div id="{id}-bodyEl" class="{baseCls}-body">',
           '<div id="{id}-monthEl" class="{baseCls}-months">',
               '<tpl for="months">',
-                  '<div style="{parent.monthStyle}" class="{parent.baseCls}-item {parent.baseCls}-month"><a href="#" hidefocus="on">{.}</a></div>',
+                  '<div class="{parent.baseCls}-item {parent.baseCls}-month"><a style="{parent.monthStyle}" href="#" hidefocus="on">{.}</a></div>',
               '</tpl>',
           '</div>',
           '<div id="{id}-yearEl" class="{baseCls}-years">',
@@ -225,7 +225,7 @@ Ext.define('Ext.picker.Month', {
         me.nextEl.addClsOnOver(me.baseCls + '-yearnav-next-over');
         me.updateBody();
         
-        if (!me.monthMargin) {
+        if (!Ext.isDefined(me.monthMargin)) {
             Ext.picker.Month.prototype.monthMargin = me.calculateMonthMargin();
         }
     },

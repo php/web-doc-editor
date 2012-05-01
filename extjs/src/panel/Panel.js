@@ -288,6 +288,13 @@ Ext.define('Ext.panel.Panel', {
      */
 
     /**
+     * @cfg {Number} placeholderCollapseHideMode
+     * The {@link Ext.dom.Element#setVisibilityMode mode} for hiding collapsed panels when
+     * using {@link #collapseMode} "placeholder".
+     */
+    placeholderCollapseHideMode: Ext.Element.VISIBILITY,
+
+    /**
      * @cfg {Boolean} preventHeader
      * @deprecated 4.1.0 Use {@link #header} instead.
      * Prevent a Header from being created and shown.
@@ -928,7 +935,7 @@ Ext.define('Ext.panel.Panel', {
 
         // Append collapse tool if needed.
         if (me.collapseTool && !me.collapseFirst) {
-            me.tools.push(me.collapseTool);
+            me.addTool(me.collapseTool);
         }
     },
 
@@ -1028,7 +1035,8 @@ Ext.define('Ext.panel.Panel', {
     },
 
     getTargetEl: function() {
-        return this.body || this.frameBody || this.el;
+        var me = this;
+        return me.body || me.protoBody || me.frameBody || me.el;
     },
 
     // the overrides below allow for collapsed regions inside the border layout to be hidden
@@ -1615,7 +1623,7 @@ Ext.define('Ext.panel.Panel', {
 
         if (me.rendered) {
             // We MUST NOT hide using display because that resets all scroll information.
-            me.el.setVisibilityMode(Ext.Element.VISIBILITY);
+            me.el.setVisibilityMode(me.placeholderCollapseHideMode);
             if (animate) {
                 me.el.addCls(floatCls);
                 placeholder.el.hide();
@@ -2062,7 +2070,8 @@ Ext.define('Ext.panel.Panel', {
                 floating: {
                     shadow: false
                 },
-                frame: (Ext.supports.CSS3BorderRadius && !me.isWindow) ? me.frame : false,
+                frame: me.frame && !me.alwaysFramed,
+                alwaysFramed: me.alwaysFramed,
                 overlapHeader: me.overlapHeader,
                 headerPosition: me.headerPosition,
                 baseCls: me.baseCls,

@@ -68,7 +68,7 @@ Ext.define('Ext.grid.plugin.HeaderResizer', {
     onHeaderCtMouseMove: function(e, t) {
         var me = this,
             prevSiblings,
-            headerEl, overHeader, resizeHeader, resizeHeaderOwnerGrid, ownerGrid; 
+            headerEl, overHeader, resizeHeader, resizeHeaderOwnerGrid, ownerGrid;
 
         if (me.headerCt.dragging) {
             if (me.activeHd) {
@@ -83,7 +83,7 @@ Ext.define('Ext.grid.plugin.HeaderResizer', {
 
                 // On left edge, go back to the previous non-hidden header.
                 if (overHeader.isOnLeftEdge(e)) {
-                    resizeHeader = overHeader.previousNode('gridcolumn:not([hidden]):not([isGroupHeader])');
+                    resizeHeader = overHeader.previousNode('gridcolumn:not([hidden]):not([isGroupHeader])')
                     // There may not *be* a previous non-hidden header.
                     if (resizeHeader) {
 

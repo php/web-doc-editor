@@ -31,7 +31,7 @@ Ext.define('Ext.layout.component.field.TextArea', {
             value += owner.growAppend;
             
             // Translate newlines to <br> tags
-            value = value.replace(/\n/g, '<br>');
+            value = value.replace(/\n/g, '<br/>');
 
             // Find the height that contains the whole text value
             calcHeight = Ext.util.TextMetrics.measure(inputEl, value, curWidth).height +

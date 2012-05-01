@@ -99,8 +99,12 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
      */
     getColumnValue: function(column, summaryData){
         var comp     = Ext.getCmp(column.id),
-            value    = summaryData[column.id] || '\u00a0',
+            value    = summaryData[column.id],
             renderer = comp.summaryRenderer;
+            
+        if (!value && value !== 0) {
+            value = '\u00a0';
+        }
 
         if (renderer) {
             value = renderer.call(

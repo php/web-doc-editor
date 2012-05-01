@@ -5,15 +5,18 @@ Copyright (c) 2011-2012 Sencha Inc
 
 Contact:  http://www.sencha.com/contact
 
-Pre-release code in the Ext repository is intended for development purposes only and will
-not always be stable. 
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
 
-Use of pre-release code is permitted with your application at your own risk under standard
-Ext license terms. Public redistribution is prohibited.
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 
-For early licensing, please contact us at licensing@sencha.com
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
 
-Build date: 2012-04-09 21:11:41 (689b0758837b782dcb0747ba1c4d8ba76344070d)
+Build date: 2012-04-20 14:10:47 (19f55ab932145a3443b228045fa80950dfeaf9cc)
 */
 
 
@@ -530,7 +533,7 @@ Ext.globalEval = Ext.global.execScript
 (function() {
 
 
-var version = '4.1.0RC', Version;
+var version = '4.1.0', Version;
     Ext.Version = Version = Ext.extend(Object, {
 
         
@@ -800,7 +803,7 @@ Ext.String = (function() {
                 '&gt;'      :   '>',
                 '&lt;'      :   '<',
                 '&quot;'    :   '"',
-                '&apos;'    :   "'"
+                '&#39;'     :   "'"
             });
         },
 
@@ -2154,7 +2157,7 @@ var TemplateClass = function(){},
     },
 
     
-    merge: function(source) {
+    merge: function(destination) {
         var i = 1,
             ln = arguments.length,
             mergeFn = ExtObject.merge,
@@ -2167,25 +2170,25 @@ var TemplateClass = function(){},
             for (key in object) {
                 value = object[key];
                 if (value && value.constructor === Object) {
-                    sourceKey = source[key];
+                    sourceKey = destination[key];
                     if (sourceKey && sourceKey.constructor === Object) {
                         mergeFn(sourceKey, value);
                     }
                     else {
-                        source[key] = cloneFn(value);
+                        destination[key] = cloneFn(value);
                     }
                 }
                 else {
-                    source[key] = value;
+                    destination[key] = value;
                 }
             }
         }
 
-        return source;
+        return destination;
     },
 
     
-    mergeIf: function(source) {
+    mergeIf: function(destination) {
         var i = 1,
             ln = arguments.length,
             cloneFn = Ext.clone,
@@ -2195,20 +2198,20 @@ var TemplateClass = function(){},
             object = arguments[i];
 
             for (key in object) {
-                if (!(key in source)) {
+                if (!(key in destination)) {
                     value = object[key];
 
                     if (value && value.constructor === Object) {
-                        source[key] = cloneFn(value);
+                        destination[key] = cloneFn(value);
                     }
                     else {
-                        source[key] = value;
+                        destination[key] = value;
                     }
                 }
             }
         }
 
-        return source;
+        return destination;
     },
 
     
@@ -2877,6 +2880,7 @@ Ext.Date = {
             s:"(\\d{1,2})"
         },
         
+        
         a: {
             g:1,
             c:"if (/(am)/i.test(results[{0}])) {\n"
@@ -2885,6 +2889,8 @@ Ext.Date = {
             s:"(am|pm|AM|PM)",
             calcAtEnd: true
         },
+        
+        
         A: {
             g:1,
             c:"if (/(am)/i.test(results[{0}])) {\n"
@@ -2893,6 +2899,7 @@ Ext.Date = {
             s:"(AM|PM|am|pm)",
             calcAtEnd: true
         },
+        
         g: {
             g:1,
             c:"h = parseInt(results[{0}], 10);\n",
@@ -3034,11 +3041,17 @@ Ext.Date = {
 
     
     format: function(date, format) {
-        if (utilDate.formatFunctions[format] == null) {
+        var formatFunctions = utilDate.formatFunctions;
+
+        if (!Ext.isDate(date)) {
+            return '';
+        }
+
+        if (formatFunctions[format] == null) {
             utilDate.createFormat(format);
         }
-        var result = utilDate.formatFunctions[format].call(date);
-        return result + '';
+
+        return formatFunctions[format].call(date) + '';
     },
 
     
@@ -3341,7 +3354,7 @@ var noArgs = [],
         },
 
         
-        '$onExtended': [],
+        $onExtended: [],
 
         
         triggerExtended: function() {
@@ -4131,7 +4144,7 @@ var noArgs = [],
         Class.triggerExtended.apply(Class, arguments);
 
         if (data.onClassExtended) {
-            Class.onExtended(data.onClassExtended);
+            Class.onExtended(data.onClassExtended, Class);
             delete data.onClassExtended;
         }
 
@@ -5320,6 +5333,14 @@ Ext.Loader = new function() {
         },
 
         
+        isAClassNameWithAKnownPrefix: function(className) {
+            var prefix = Loader.getPrefix(className);
+
+            
+            return prefix !== '' && prefix !== className;
+        },
+
+        
         require: function(expressions, fn, scope, excludes) {
             if (fn) {
                 fn.call(scope);
@@ -6098,8 +6119,8 @@ Ext.Error = Ext.extend(Error, {
     
     toString: function(){
         var me = this,
-            className = me.className ? me.className  : '',
-            methodName = me.methodName ? '.' + me.methodName + '(): ' : '',
+            className = me.sourceClass ? me.sourceClass : '',
+            methodName = me.sourceMethod ? '.' + me.sourceMethod + '(): ' : '',
             msg = me.msg || '(No description provided)';
 
         return className + methodName + msg;
@@ -6317,14 +6338,21 @@ Ext.apply(Ext, {
     escapeId: (function(){
         var validIdRe = /^[a-zA-Z_][a-zA-Z0-9_\-]*$/i,
             escapeRx = /([\W]{1})/g,
+            leadingNumRx = /^(\d)/g,
             escapeFn = function(match, capture){
                 return "\\" + capture;
+            },
+            numEscapeFn = function(match, capture){
+                return '\\00' + capture.charCodeAt(0).toString(16) + ' ';
             };
 
         return function(id) {
             return validIdRe.test(id)
                 ? id
-                : id.replace(escapeRx, escapeFn);
+                
+                
+                : id.replace(escapeRx, escapeFn)
+                    .replace(leadingNumRx, numEscapeFn);
         };
     }()),
 
@@ -6526,11 +6554,20 @@ window.undefined = window.undefined;
             ? (function() {
                 var d;
                 return function(n){
-                    if(n && n.tagName != 'BODY'){
+                    if(n && n.tagName.toUpperCase() != 'BODY'){
                         (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
+
+                        var cache = Ext.cache,
+                            id = n.id;
+
+                        if (cache[id]) {
+                            delete cache[id].dom;
+                            delete cache[id];
+                        }
+
                         
                         
-                        if (n.tagName != 'IFRAME') {
+                        if (n.tagName.toUpperCase() != 'IFRAME') {
                             if (isIE8 && n.parentNode) {
                                 n.parentNode.removeChild(n);
                             }
@@ -6538,15 +6575,22 @@ window.undefined = window.undefined;
                             d.appendChild(n);
                             d.innerHTML = '';
                         }
-                        delete Ext.cache[n.id];
                     }
                 };
             }())
             : function(n) {
-                if (n && n.parentNode && n.tagName != 'BODY') {
+                if (n && n.parentNode && n.tagName.toUpperCase() != 'BODY') {
                     (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
+
+                    var cache = Ext.cache,
+                        id = n.id;
+
+                    if (cache[id]) {
+                        delete cache[id].dom;
+                        delete cache[id];
+                    }
+
                     n.parentNode.removeChild(n);
-                    delete Ext.cache[n.id];
                 }
             },
 
@@ -8130,7 +8174,7 @@ Ext.supports = {
             identity: 'Vml',
             fn: function(doc) {
                 var d = doc.createElement("div");
-                d.innerHTML = "<!--[if vml]><br><br><![endif]-->";
+                d.innerHTML = "<!--[if vml]><br/><br/><![endif]-->";
                 return (d.childNodes.length == 2);
             }
         },
@@ -8357,6 +8401,14 @@ Ext.require('Ext.util.DelayedTask', function() {
 
     
     Ext.util.Event = Ext.extend(Object, (function() {
+        function createTargeted(handler, listener, o, scope){
+            return function(){
+                if (o.target === arguments[0]){
+                    handler.apply(scope, arguments);
+                }
+            };
+        }
+
         function createBuffered(handler, listener, o, scope) {
             listener.task = new Ext.util.DelayedTask();
             return function() {
@@ -8431,6 +8483,9 @@ Ext.require('Ext.util.DelayedTask', function() {
                 
                 if (o.single) {
                     handler = createSingle(handler, listener, o, scope);
+                }
+                if (o.target) {
+                    handler = createTargeted(handler, listener, o, scope);
                 }
                 if (o.delay) {
                     handler = createDelayed(handler, listener, o, scope);
@@ -9038,7 +9093,7 @@ Ext.EventManager = new function() {
         createListenerWrap : function(dom, ename, fn, scope, options) {
             options = options || {};
 
-            var f, gen, wrap = function(e, args) {
+            var f, gen, escapeRx = /\\/g, wrap = function(e, args) {
                 
                 if (!gen) {
                     f = ['if(!' + Ext.name + ') {return;}'];
@@ -9050,7 +9105,9 @@ Ext.EventManager = new function() {
                     }
 
                     if (options.delegate) {
-                        f.push('var t = e.getTarget("' + options.delegate + '", this);');
+                        
+                        
+                        f.push('var t = e.getTarget("' + (options.delegate + '').replace(escapeRx, '\\\\') + '", this);');
                         f.push('if(!t) {return;}');
                     } else {
                         f.push('var t = e.target;');
@@ -9219,6 +9276,8 @@ Ext.EventManager = new function() {
             return EventManager.resolveTextNode(event.target || event.srcElement);
         },
 
+        
+        
         
         
         resolveTextNode: Ext.isGecko ?
@@ -11189,12 +11248,13 @@ Ext.dom.AbstractElement.addInheritableStatics({
         },
 
         getXY: function(el) {
-            var bd = (doc.body || doc.documentElement),
+            var bd = doc.body,
+                docEl = doc.documentElement,
                 leftBorder = 0,
                 topBorder = 0,
                 ret = [0,0],
                 round = Math.round,
-                b,
+                box,
                 scroll;
 
             el = Ext.getDom(el);
@@ -11204,19 +11264,19 @@ Ext.dom.AbstractElement.addInheritableStatics({
                 
                 if (Ext.isIE) {
                     try {
-                        b = el.getBoundingClientRect();
+                        box = el.getBoundingClientRect();
                         
-                        topBorder = bd.clientTop;
-                        leftBorder = bd.clientLeft;
+                        topBorder = docEl.clientTop || bd.clientTop;
+                        leftBorder = docEl.clientLeft || bd.clientLeft;
                     } catch (ex) {
-                        b = { left: 0, top: 0 };
+                        box = { left: 0, top: 0 };
                     }
                 } else {
-                    b = el.getBoundingClientRect();
+                    box = el.getBoundingClientRect();
                 }
 
                 scroll = fly(document).getScroll();
-                ret = [round(b.left + scroll.left - leftBorder), round(b.top + scroll.top - topBorder)];
+                ret = [round(box.left + scroll.left - leftBorder), round(box.top + scroll.top - topBorder)];
             }
             return ret;
         },
@@ -13295,6 +13355,14 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
                 lmode = path.match(modeRe),
                 tokenMatch, matched, j, t, m;
 
+            hasEscapes = (path.indexOf('\\') > -1);
+            if (hasEscapes) {
+                path = path
+                    .replace(shortHex, shortToLongHex)
+                    .replace(nonHex, charToLongHex)
+                    .replace(escapes, '\\\\');  
+            }
+
             if(lmode && lmode[1]){
                 fn[fn.length] = 'mode="'+lmode[1].replace(trimRe, "")+'";';
                 path = path.replace(lmode[1], "");
@@ -13371,13 +13439,6 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
         jsSelect: function(path, root, type){
             
             root = root || document;
-
-            if (hasEscapes = (path.indexOf('\\') > -1)) {
-                path = path
-                    .replace(shortHex, shortToLongHex)
-                    .replace(nonHex, charToLongHex)
-                    .replace(escapes, '\\\\');  
-            }
 
             if(typeof root == "string"){
                 root = document.getElementById(root);
@@ -13905,15 +13966,17 @@ var HIDDEN = 'hidden',
             visFly = new Element.Fly();
         }
 
-        for (; dom !== stopNode; dom = dom.parentNode) {
+        while (dom !== stopNode) {
             
-            if (!dom || (visFly.attach(dom)).isStyle(VISIBILITY, HIDDEN) || visFly.isStyle(DISPLAY, NONE)) {
+            
+            if (!dom || dom.nodeType === 11 || (visFly.attach(dom)).isStyle(VISIBILITY, HIDDEN) || visFly.isStyle(DISPLAY, NONE)) {
                 return false;
             }
             
             if (!deep) {
                 break;
             }
+            dom = dom.parentNode;
         }
         return true;
     },
@@ -15441,8 +15504,20 @@ Ext.dom.Element.override({
 
     
     fadeIn: function(o) {
-        this.animate(Ext.apply({}, o, {
-            opacity: 1
+        var me = this;
+        me.animate(Ext.apply({}, o, {
+            opacity: 1,
+            internalListeners: {
+                beforeanimate: function(anim){
+                    
+                    
+                    if (me.isStyle('display', 'none')) {
+                        me.setDisplayed('');
+                    } else {
+                        me.show();
+                    } 
+                }
+            }
         }));
         return this;
     },
@@ -15450,7 +15525,7 @@ Ext.dom.Element.override({
     
     fadeOut: function(o) {
         var me = this;
-        me.animate(Ext.applyIf(o || {}, {
+        o = Ext.apply({
             opacity: 0,
             internalListeners: {
                 afteranimate: function(anim){
@@ -15464,7 +15539,8 @@ Ext.dom.Element.override({
                     }         
                 }
             }
-        }));
+        }, o);
+        me.animate(o);
         return me;
     },
 
@@ -16308,7 +16384,9 @@ if (!view || !view.getComputedStyle) {
                         out = '';
                     }
                 } else {
-                    out = style[camel];
+                    
+                    
+                    out = style ? style[camel] : '';
                 }
             }
 

@@ -786,7 +786,7 @@
                 padding-top: 1px;
             }
         }
-        .#{$prefix}ie6,
+        .#{$prefix}strict .#{$prefix}ie6,
         .#{$prefix}strict .#{$prefix}ie7 {
             .#{$prefix}grid-editor .#{$prefix}form-text,
             .#{$prefix}grid-row-editor .#{$prefix}form-text {

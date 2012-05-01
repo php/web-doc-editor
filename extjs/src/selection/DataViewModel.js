@@ -139,10 +139,12 @@ Ext.define('Ext.selection.DataViewModel', {
         if ((suppressEvent || me.fireEvent('before' + eventName, me, record)) !== false &&
                 commitFn() !== false) {
 
-            if (isSelected) {
-                view.onItemSelect(record);
-            } else {
-                view.onItemDeselect(record);
+            if (view) {
+                if (isSelected) {
+                    view.onItemSelect(record);
+                } else {
+                    view.onItemDeselect(record);
+                }
             }
 
             if (!suppressEvent) {

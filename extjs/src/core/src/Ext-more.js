@@ -111,14 +111,21 @@ Ext.apply(Ext, {
     escapeId: (function(){
         var validIdRe = /^[a-zA-Z_][a-zA-Z0-9_\-]*$/i,
             escapeRx = /([\W]{1})/g,
+            leadingNumRx = /^(\d)/g,
             escapeFn = function(match, capture){
                 return "\\" + capture;
+            },
+            numEscapeFn = function(match, capture){
+                return '\\00' + capture.charCodeAt(0).toString(16) + ' ';
             };
 
         return function(id) {
             return validIdRe.test(id)
                 ? id
-                : id.replace(escapeRx, escapeFn);
+                // replace the number portion last to keep the trailing ' '
+                // from being escaped
+                : id.replace(escapeRx, escapeFn)
+                    .replace(leadingNumRx, numEscapeFn);
         };
     }()),
 
@@ -485,7 +492,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
                         'extlog = ext && ext.log;',
                     'if (extlog && extlog.out && lastCount != extlog.count) {',
                         'lastCount = extlog.count;',
-                        'var s = "<tt>" + extlog.out.join("~~~").replace(/[&]/g, "&amp;").replace(/[<]/g, "&lt;").replace(/[ ]/g, "&nbsp;").replace(/\\~\\~\\~/g, "<br>") + "</tt>";',
+                        'var s = "<tt>" + extlog.out.join("~~~").replace(/[&]/g, "&amp;").replace(/[<]/g, "&lt;").replace(/[ ]/g, "&#160;").replace(/\\~\\~\\~/g, "<br/>") + "</tt>";',
                         'document.body.innerHTML = s;',
                     '}',
                     'setTimeout(update, 1000);',
@@ -612,11 +619,20 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
             ? (function() {
                 var d;
                 return function(n){
-                    if(n && n.tagName != 'BODY'){
+                    if(n && n.tagName.toUpperCase() != 'BODY'){
                         (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
+
+                        var cache = Ext.cache,
+                            id = n.id;
+
+                        if (cache[id]) {
+                            delete cache[id].dom;
+                            delete cache[id];
+                        }
+
                         // removing an iframe this way can cause severe leaks
                         // fixes leak issue with htmleditor in themes example
-                        if (n.tagName != 'IFRAME') {
+                        if (n.tagName.toUpperCase() != 'IFRAME') {
                             if (isIE8 && n.parentNode) {
                                 n.parentNode.removeChild(n);
                             }
@@ -624,15 +640,22 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
                             d.appendChild(n);
                             d.innerHTML = '';
                         }
-                        delete Ext.cache[n.id];
                     }
                 };
             }())
             : function(n) {
-                if (n && n.parentNode && n.tagName != 'BODY') {
+                if (n && n.parentNode && n.tagName.toUpperCase() != 'BODY') {
                     (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
+
+                    var cache = Ext.cache,
+                        id = n.id;
+
+                    if (cache[id]) {
+                        delete cache[id].dom;
+                        delete cache[id];
+                    }
+
                     n.parentNode.removeChild(n);
-                    delete Ext.cache[n.id];
                 }
             },
 

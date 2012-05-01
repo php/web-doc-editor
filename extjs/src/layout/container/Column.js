@@ -31,13 +31,13 @@
  *         layout:'column',
  *         items: [{
  *             title: 'Column 1',
- *             columnWidth: .25
+ *             columnWidth: 0.25
  *         },{
  *             title: 'Column 2',
- *             columnWidth: .55
+ *             columnWidth: 0.55
  *         },{
  *             title: 'Column 3',
- *             columnWidth: .20
+ *             columnWidth: 0.20
  *         }],
  *         renderTo: Ext.getBody()
  *     });
@@ -56,10 +56,10 @@
  *             width: 120
  *         },{
  *             title: 'Column 2',
- *             columnWidth: .7
+ *             columnWidth: 0.7
  *         },{
  *             title: 'Column 3',
- *             columnWidth: .3
+ *             columnWidth: 0.3
  *         }],
  *         renderTo: Ext.getBody()
  *     });

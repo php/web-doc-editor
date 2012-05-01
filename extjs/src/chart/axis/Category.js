@@ -27,7 +27,6 @@
  *         store: store,
  *         axes: [{
  *             type: 'Numeric',
- *             grid: true,
  *             position: 'left',
  *             fields: ['data1', 'data2', 'data3', 'data4', 'data5'],
  *             title: 'Sample Values',

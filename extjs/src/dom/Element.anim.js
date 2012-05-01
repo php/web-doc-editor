@@ -838,8 +838,20 @@ Ext.dom.Element.override({
      * @return {Ext.Element} The Element
      */
     fadeIn: function(o) {
-        this.animate(Ext.apply({}, o, {
-            opacity: 1
+        var me = this;
+        me.animate(Ext.apply({}, o, {
+            opacity: 1,
+            internalListeners: {
+                beforeanimate: function(anim){
+                    // restore any visibility/display that may have 
+                    // been applied by a fadeout animation
+                    if (me.isStyle('display', 'none')) {
+                        me.setDisplayed('');
+                    } else {
+                        me.show();
+                    } 
+                }
+            }
         }));
         return this;
     },
@@ -869,7 +881,7 @@ Ext.dom.Element.override({
      */
     fadeOut: function(o) {
         var me = this;
-        me.animate(Ext.applyIf(o || {}, {
+        o = Ext.apply({
             opacity: 0,
             internalListeners: {
                 afteranimate: function(anim){
@@ -883,7 +895,8 @@ Ext.dom.Element.override({
                     }         
                 }
             }
-        }));
+        }, o);
+        me.animate(o);
         return me;
     },
 

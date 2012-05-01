@@ -23,7 +23,7 @@ Ext.define('Ext.resizer.Splitter', {
     renderTpl: [
         '<tpl if="collapsible===true">',
             '<div id="{id}-collapseEl" class="', Ext.baseCSSPrefix, 'collapse-el ',
-                Ext.baseCSSPrefix, 'layout-split-{collapseDir}">&nbsp;</div>',
+                Ext.baseCSSPrefix, 'layout-split-{collapseDir}">&#160;</div>',
         '</tpl>'
     ],
 

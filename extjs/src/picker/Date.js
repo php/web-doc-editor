@@ -76,7 +76,7 @@ Ext.define('Ext.picker.Date', {
         '</div>',
         {
             firstInitial: function(value) {
-                return value.substr(0,1);
+                return Ext.picker.Date.prototype.getDayInitial(value);
             },
             isEndOfWeek: function(value) {
                 // convert from 1 based index to 0 based
@@ -620,6 +620,16 @@ Ext.define('Ext.picker.Date', {
     getValue : function(){
         return this.value;
     },
+
+    //<locale type="function">
+    /**
+     * Gets a single character to represent the day of the week
+     * @return {String} The character
+     */
+    getDayInitial: function(value){
+        return value.substr(0,1);
+    },
+    //</locale>
 
     // private
     focus : function(){

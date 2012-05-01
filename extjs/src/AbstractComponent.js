@@ -1940,25 +1940,24 @@ Ext.define('Ext.AbstractComponent', {
     previousNode: function(selector, includeSelf) {
         var node = this,
             result,
-            it, len, i;
+            it, i, sib;
 
         // If asked to include self, test me
         if (includeSelf && node.is(selector)) {
             return node;
         }
 
-        result = this.prev(selector);
-        if (result) {
-            return result;
-        }
-
         if (node.ownerCt) {
             for (it = node.ownerCt.items.items, i = Ext.Array.indexOf(it, node) - 1; i > -1; i--) {
-                if (it[i].query) {
-                    result = it[i].query(selector);
+                sib = it[i];
+                if (sib.query) {
+                    result = sib.query(selector);
                     result = result[result.length - 1];
                     if (result) {
                         return result;
+                    }
+                    if (sib.is(selector)) {
+                        return sib;
                     }
                 }
             }
@@ -1978,22 +1977,21 @@ Ext.define('Ext.AbstractComponent', {
     nextNode: function(selector, includeSelf) {
         var node = this,
             result,
-            it, len, i;
+            it, len, i, sib;
 
         // If asked to include self, test me
         if (includeSelf && node.is(selector)) {
             return node;
         }
 
-        result = this.next(selector);
-        if (result) {
-            return result;
-        }
-
         if (node.ownerCt) {
             for (it = node.ownerCt.items, i = it.indexOf(node) + 1, it = it.items, len = it.length; i < len; i++) {
-                if (it[i].down) {
-                    result = it[i].down(selector);
+                sib = it[i];
+                if (sib.is(selector)) {
+                    return sib;
+                }
+                if (sib.down) {
+                    result = sib.down(selector);
                     if (result) {
                         return result;
                     }
@@ -2220,6 +2218,12 @@ Ext.define('Ext.AbstractComponent', {
         }
         if (me.resizable) {
             me.initResizable(me.resizable);
+        }
+
+        // Draggability must be initialized after resizability
+        // Because if we have to be wrapped, the resizer wrapper must be dragged as a pseudo-Component
+        if (me.draggable) {
+            me.initDraggable();
         }
     },
 
@@ -2762,7 +2766,7 @@ Ext.define('Ext.AbstractComponent', {
                 policy = Ext.layout.Layout.prototype.autoSizePolicy;
                 shrinkWrap = me.floating ? 3 : me.shrinkWrap;
             } else {
-                policy = ownerLayout.getItemSizePolicy(me);
+                policy = ownerLayout.getItemSizePolicy(me, ownerCtSizeModel);
                 shrinkWrap = ownerLayout.isItemShrinkWrap(me);
             }
 
@@ -3230,7 +3234,7 @@ Ext.define('Ext.AbstractComponent', {
 
     /**
      * Retrieves a plugin by its pluginId which has been bound to this component.
-     * @param {Object} pluginId
+     * @param {String} pluginId
      * @return {Ext.AbstractPlugin} plugin instance.
      */
     getPlugin: function(pluginId) {

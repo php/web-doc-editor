@@ -462,11 +462,19 @@ Ext.define('Ext.data.Store', {
         // don't use *config* anymore from here on... use *me* instead...
 
         if (me.buffered) {
+
+            // Create our page map.
+            // Whenever it gets cleared, it means we re no longer interested in 
+            // any outstanding page prefetches, so cancel tham all
             me.pageMap = new me.PageMap({
                 pageSize: me.pageSize,
-                maxSize: me.purgePageCount
+                maxSize: me.purgePageCount,
+                listeners: {
+                    clear: me.cancelAllPrefetches,
+                    scope: me
+                }
             });
-            me.pagesRequested = {};
+            me.pageRequests = {};
 
             me.sortOnLoad = false;
             me.filterOnLoad = false;
@@ -500,6 +508,16 @@ Ext.define('Ext.data.Store', {
             // Remove the defer call, we may need reinstate this at some point, but currently it's not obvious why it's here.
             // this.load(typeof this.autoLoad == 'object' ? this.autoLoad : undefined);
         }
+    },
+    
+    destroy: function() {
+        // Release cached pages.
+        // Will also ccancel outstanding prefetch requests, and cause a generation change
+        // so that incoming prefetch data will be ignored.
+        if (this.pageMap) {
+            this.pageMap.clear();
+        }
+        this.callParent(arguments);
     },
 
     onBeforeSort: function() {
@@ -923,6 +941,9 @@ Ext.define('Ext.data.Store', {
         //accept both a single-argument array of records, or any number of record arguments
         if (!Ext.isArray(records)) {
             records = Array.prototype.slice.apply(arguments);
+        } else {
+            // Create an array copy
+            records = records.slice(0);
         }
 
         var me = this,
@@ -1458,7 +1479,7 @@ Ext.define('Ext.data.Store', {
         }
 
         me.resumeEvents();
-        me.fireEvent('datachanged', me, records);
+        me.fireEvent('datachanged', me);
         me.fireEvent('refresh', me);
     },
 
@@ -1520,20 +1541,17 @@ Ext.define('Ext.data.Store', {
     },
 
     loadToPrefetch: function(options) {
-        var me = this;
+        var me = this,
+            waitForInitialRange = function() {
+                if (me.rangeCached(options.start, options.limit - 1)) {
+                    me.pageMap.un('pageAdded', waitForInitialRange);
+                    me.guaranteeRange(options.start, (me.viewSize || me.pageSize) - 1);
+                }
+            };
 
-        // Snag the next prefetch event to load the Store through the guaranteeRange method
-        // which will also ensure that the leading extra rows are also cached to allow fast scrolling.
-        me.on({
-            prefetch: me.onItitialPrefetch,
-            scope: me,
-            single: true
-        });
+        // Wait for the requested range to become available in the page map
+        me.pageMap.on('pageAdded', waitForInitialRange);
         return me.prefetch(options || {});
-    },
-
-    onItitialPrefetch: function(me, records, successful, operation) {
-        me.guaranteeRange(operation.start, (me.viewSize || me.pageSize) - 1);
     },
 
     // Buffering
@@ -1573,25 +1591,58 @@ Ext.define('Ext.data.Store', {
         }
 
         // Currently not requesting this page, then request it...
-        if (!me.pagesRequested[options.page]) {
-            me.pagesRequested[options.page] = true;
+        if (!me.pageRequests[options.page]) {
 
             // Copy options into a new object so as not to mutate passed in objects
             options = Ext.apply({
                 action : 'read',
                 filters: me.filters.items,
-                sorters: me.sorters.items
+                sorters: me.sorters.items,
+
+                // Generation # of the page map to which the requested records belong.
+                // If page map is cleared while this request is in flight, the generation will increment and the payload will be rejected
+                generation: me.pageMap.generation
             }, options);
 
             operation = new Ext.data.Operation(options);
 
             if (me.fireEvent('beforeprefetch', me, operation) !== false) {
                 me.loading = true;
-                me.proxy.read(operation, me.onProxyPrefetch, me);
+                me.pageRequests[options.page] = me.proxy.read(operation, me.onProxyPrefetch, me);
             }
         }
 
         return me;
+    },
+
+    /**
+     * @private
+     * Cancels all pending prefetch requests.
+     *
+     * This is called when the page map is cleared.
+     *
+     * Any requests which still make it through will be for the previous page map generation
+     * (generation is incremented upon clear), and so will be rejected upon arrival.
+     */
+    cancelAllPrefetches: function() {
+        var me = this,
+            reqs = me.pageRequests,
+            req,
+            page;
+
+        // If any requests return, we no longer respond to them.
+        if (me.pageMap.events.pageadded) {
+            me.pageMap.events.pageadded.clearListeners();
+        }
+
+        // Cancel all outstanding requests
+        for (page in reqs) {
+            if (reqs.hasOwnProperty(page)) {
+                req = reqs[page];
+                delete reqs[page];
+                delete req.callback;
+            }
+        }
     },
 
     /**
@@ -1604,15 +1655,10 @@ Ext.define('Ext.data.Store', {
         var me = this,
             pageSize = me.pageSize || me.defaultPageSize,
             start = (page - 1) * me.pageSize,
-            end = start + pageSize,
-            total = me.getTotalCount();
-
-        if (total) {
-            end = Math.min(end, total);
-        }
+            total = me.totalCount;
 
         // No more data to prefetch.
-        if (me.getCount() === total) {
+        if (total !== undefined && me.getCount() === total) {
             return;
         }
 
@@ -1636,27 +1682,32 @@ Ext.define('Ext.data.Store', {
             successful = operation.wasSuccessful(),
             page = operation.page;
 
-        if (resultSet) {
-            me.totalCount = resultSet.total;
-            me.fireEvent('totalcountchange', me.totalCount);
+        // Only cache the data if the operation was invoked for the current generation of the page map.
+        // If the generation has changed since the request was fired off, it will have been cancelled.
+        if (operation.generation === me.pageMap.generation) {
+
+            if (resultSet) {
+                me.totalCount = resultSet.total;
+                me.fireEvent('totalcountchange', me.totalCount);
+            }
+
+            // Remove the loaded page from the outstanding pages hash
+            if (page !== undefined) {
+                delete me.pageRequests[page];
+            }
+
+            // Add the page into the page map.
+            // pageAdded event may trigger the onGuaranteedRange
+            if (successful) {
+                me.cachePage(records, operation.page);
+            }
+
+            me.loading = false;
+            me.fireEvent('prefetch', me, records, successful, operation);
+
+            //this is a callback that would have been passed to the 'read' function and is optional
+            Ext.callback(operation.callback, operation.scope || me, [records, operation, successful]);
         }
-
-        // Remove the loaded page from the outstanding pages hash
-        if (page !== undefined) {
-            delete me.pagesRequested[page];
-        }
-
-        // Add the page into the page map.
-        // pageAdded event may trigger the onGuaranteedRange
-        if (successful) {
-            me.cachePage(records, operation.page);
-        }
-
-        me.loading = false;
-        me.fireEvent('prefetch', me, records, successful, operation);
-
-        //this is a callback that would have been passed to the 'read' function and is optional
-        Ext.callback(operation.callback, operation.scope || me, [records, operation, successful]);
     },
 
     /**
@@ -1837,7 +1888,7 @@ Ext.define('Ext.data.Store', {
             me.pageMap.on('pageAdded', pageAddHandler);
 
             // Prioritize the request for the *exact range that the UI is asking for*.
-            // When a page request is in flight, it will not be requested again by checking the me.pagesRequested hash,
+            // When a page request is in flight, it will not be requested again by checking the me.pageRequests hash,
             // so the request after this will only request the *remaining* unrequested pages .
             me.prefetchRange(options.prefetchStart, options.prefetchEnd);
 
@@ -2031,10 +2082,11 @@ Ext.define('Ext.data.Store', {
      * indicates exist. This will usually differ from {@link #getCount} when using paging - getCount returns the
      * number of records loaded into the Store at the moment, getTotalCount returns the number of records that
      * could be loaded into the Store if the Store contained all data
-     * @return {Number} The total number of Model instances available via the Proxy
+     * @return {Number} The total number of Model instances available via the Proxy. 0 returned if
+     * no value has been set via the reader.
      */
     getTotalCount: function() {
-        return this.totalCount;
+        return this.totalCount || 0;
     },
 
     /**
@@ -2068,7 +2120,7 @@ Ext.define('Ext.data.Store', {
      * This method is not effected by filtering, lookup will be performed from all records
      * inside the store, filtered or not.
      *
-     * @param {String} id The id of the Record to find.
+     * @param {Mixed} id The id of the Record to find.
      * @return {Ext.data.Model} The Record with the passed id. Returns null if not found.
      */
     getById: function(id) {
@@ -2129,7 +2181,7 @@ Ext.define('Ext.data.Store', {
         if (me.snapshot) {
             me.snapshot.clear();
         }
-        
+
         // Special handling to synch the PageMap only for removeAll
         // TODO: handle other store/data modifications WRT buffered Stores.
         if (me.pageMap) {
@@ -2476,6 +2528,12 @@ Ext.define('Ext.data.Store', {
 //  Private class for use by only Store when configured buffered: true
     this.prototype.PageMap = new Ext.Class({
         extend: 'Ext.util.LruCache',
+
+        // Maintain a generation counter, so that the Store can reject incoming pages destined for the previous generation
+        clear: function(initial) {
+            this.generation = (this.generation ||0) + 1;
+            this.callParent(arguments);
+        },
 
         getPageFromRecordIndex: this.prototype.getPageFromRecordIndex,
 

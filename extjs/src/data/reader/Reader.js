@@ -167,8 +167,8 @@ Ext.define('Ext.data.reader.Reader', {
 
     /**
      * @cfg {String} idProperty
-     * Name of the property within a row object that contains a record identifier value. Defaults to The id of the
-     * model. If an idProperty is explicitly specified it will override that of the one specified on the model
+     * Name of the property within a row object that contains a record identifier value. Defaults to the id of the
+     * model. If an idProperty is explicitly specified it will override the idProperty defined on the model.
      */
 
     /**
@@ -180,17 +180,20 @@ Ext.define('Ext.data.reader.Reader', {
 
     /**
      * @cfg {String} [successProperty="success"]
-     * Name of the property from which to retrieve the success attribute. Defaults to success. See
+     * Name of the property from which to retrieve the `success` attribute, the value of which indicates
+     * whether a given request succeeded or failed (typically a boolean or 'true'|'false'). See
      * {@link Ext.data.proxy.Server}.{@link Ext.data.proxy.Server#exception exception} for additional information.
      */
     successProperty: 'success',
 
     /**
      * @cfg {String} root
-     * The name of the property which contains the Array of row objects.  For JSON reader it's dot-separated list
-     * of property names.  For XML reader it's a CSS selector.  For array reader it's not applicable.
+     * The name of the property which contains the data items corresponding to the Model(s) for which this
+     * Reader is configured.  For JSON reader it's a property name (or a dot-separated list of property names
+     * if the root is nested).  For XML reader it's a CSS selector.  For Array reader the root is not applicable
+     * since the data is assumed to be a single-level array of arrays.
      * 
-     * By default the natural root of the data will be used.  The root Json array, the root XML element, or the array.
+     * By default the natural root of the data will be used: the root JSON array, the root XML element, or the array.
      *
      * The data packet value for this property should be an empty array to clear the data or show no data.
      */
@@ -210,8 +213,7 @@ Ext.define('Ext.data.reader.Reader', {
     
     /**
      * @cfg {Boolean} [readRecordsOnFailure=true]
-     * True to read extract the records from a data packet even if the {@link #success} property
-     * returns false.
+     * True to extract the records from a data packet even if the {@link #success} property returns false.
      */
     readRecordsOnFailure: true,
     
@@ -240,6 +242,11 @@ Ext.define('Ext.data.reader.Reader', {
      * `true` in this class to identify an object as an instantiated Reader, or subclass thereof.
      */
     isReader: true,
+
+    // Private flag to the generated convertRecordData function to indicate whether to apply Field default
+    // values to fields for which no value is present in the raw data.
+    // This is set to false by a Server Proxy which is reading the response from a "create" or "update" operation.
+    applyDefaults: true,
     
     /**
      * Creates new Reader.
@@ -336,7 +343,7 @@ Ext.define('Ext.data.reader.Reader', {
         
         /**
          * @property {Object} rawData
-         * The raw data object that was last passed to readRecords. Stored for further processing if needed
+         * The raw data object that was last passed to {@link #readRecords}. Stored for further processing if needed.
          */
         me.rawData = data;
 
@@ -393,6 +400,7 @@ Ext.define('Ext.data.reader.Reader', {
     /**
      * Returns extracted, type-cast rows of data.
      * @param {Object[]/Object} root from server response
+     * @return {Array} An array of records containing the extracted data
      * @private
      */
     extractData : function(root) {
@@ -507,8 +515,8 @@ Ext.define('Ext.data.reader.Reader', {
     },
 
     /**
-     * Takes a raw response object (as passed to this.read) and returns the useful data segment of it. This must be
-     * implemented by each subclass
+     * Takes a raw response object (as passed to the {@link #read} method) and returns the useful data
+     * segment from it. This must be implemented by each subclass.
      * @param {Object} response The response object
      * @return {Ext.data.ResultSet} A ResultSet object
      */
@@ -645,7 +653,6 @@ Ext.define('Ext.data.reader.Reader', {
             fields = modelProto.fields.items,
             numFields = fields.length,
             fieldVarName = [],
-            prefix = '__field',
             varName,
             i = 0,
             field,
@@ -656,7 +663,7 @@ Ext.define('Ext.data.reader.Reader', {
                 '    internalId'
             ];
 
-        for (; i < numFields; i++) {
+        for (i = 0; i < numFields; i++) {
             field = fields[i];
             fieldVarName[i] = '__field' + i;
             code.push(',\n    ', fieldVarName[i], ' = fields.get("', field.name, '")');
@@ -667,7 +674,25 @@ Ext.define('Ext.data.reader.Reader', {
             field = fields[i];
             varName = fieldVarName[i];
             // createFieldAccessExpression must be implemented in subclasses to extract data from the source object in the correct way.
-            code.push('        dest["' + field.name + '"]', ' = ', me.createFieldAccessExpression(field, varName, 'source'), ';\n');
+            code.push('        value = ', me.createFieldAccessExpression(field, varName, 'source'), ';\n');
+
+            // Code for processing a source property value when there is a default value.
+            if (field.defaultValue !== undefined) {
+                code.push('        if (value === undefined) {\n');
+                code.push('            if (me.applyDefaults) {\n');
+                code.push('                dest["' + field.name + '"] = ', (field.convert ? fieldVarName[i] + '.convert(' + fieldVarName[i] + '.defaultValue, record)' : (fieldVarName[i] + '.defaultValue')), ';\n');
+                code.push('            }\n');
+                code.push('        } else {\n');
+                code.push('            dest["' + field.name + '"] = ', (field.convert ? fieldVarName[i] + '.convert(value, record)' : 'value'), ';\n');
+                code.push('        }\n');
+            }
+            
+            // Code for processing a source property value when there is no default value.
+            else {
+                code.push('        if (value !== undefined) {\n');
+                code.push('            dest["' + field.name + '"] = ', (field.convert ? fieldVarName[i] + '.convert(value, record)' : 'value'), ';\n');
+                code.push('        }\n');
+            }
         }
 
         // set the client id as the internalId of the record.

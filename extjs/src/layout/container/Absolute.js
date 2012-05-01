@@ -11,7 +11,7 @@
  *         width: 300,
  *         height: 275,
  *         layout: {
- *             type: 'absolute',
+ *             type: 'absolute'
  *             // layout-specific configs go here
  *             //itemCls: 'x-abs-layout-item',
  *         },
@@ -92,14 +92,6 @@ Ext.define('Ext.layout.container.Absolute', {
 
     isItemShrinkWrap: function (item) {
         return true;
-    },
-
-    // private
-    isValidParent : function(item, target, position) {
-        // Note: Absolute layout does not care about order within the innerCt element because it's an absolutely positioning layout
-        // We only care whether the item is a direct child of the innerCt element.
-        var itemEl = item.el ? item.el.dom : Ext.getDom(item);
-        return (itemEl && itemEl.parentNode === this.getRenderTarget().dom) || false;
     },
 
     beginLayout: function (ownerContext) {

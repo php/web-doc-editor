@@ -186,13 +186,16 @@ Ext.define('Ext.chart.series.Area', {
             boundAxis = me.getAxesForXAndYFields(),
             boundXAxis = boundAxis.xAxis,
             boundYAxis = boundAxis.yAxis,
-            ends,
+            ends, allowDate,
             bbox, xScale, yScale, xValue, yValue, areaIndex, acumY, ln, sumValues, clipBox, areaElem, axis, out;
 
         me.setBBox();
         bbox = me.bbox;
 
         if (axis = chart.axes.get(boundXAxis)) {
+            if (axis.type === 'Time') {
+                allowDate = true;
+            }
             ends = axis.applyData();
             minX = ends.from;
             maxX = ends.to;
@@ -207,6 +210,7 @@ Ext.define('Ext.chart.series.Area', {
         // If a field was specified without a corresponding axis, create one to get bounds
         if (me.xField && !Ext.isNumber(minX)) {
             axis = me.getMinMaxXValues();
+            allowDate = true;
             minX = axis[0];
             maxX = axis[1];
         }
@@ -229,7 +233,11 @@ Ext.define('Ext.chart.series.Area', {
             xValue = record.get(me.xField);
             yValue = [];
             if (typeof xValue != 'number') {
-                xValue = i;
+                if (allowDate) {
+                    xValue = +xValue;
+                } else {
+                    xValue = i;
+                }
             }
             xValues.push(xValue);
             acumY = 0;

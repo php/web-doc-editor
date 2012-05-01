@@ -223,7 +223,8 @@ Ext.define('Ext.window.Window', {
 
     ignoreHeaderBorderManagement: true,
 
-    //frame: true,
+    // Flag to Renderable to always look up the framing styles for this Component
+    alwaysFramed: true,
 
     /**
      * @property {Boolean} isWindow
@@ -295,11 +296,6 @@ Ext.define('Ext.window.Window', {
                 scope: me
             });
         }
-
-        // Only set frame to true after the protoEl has been set up with the UI classes attached.
-        // Generated CSS classes for elements within Window's structure
-        // do not expect to use the "framed" UI.
-        me.frame = true;
 
         me.addStateEvents(['maximize', 'restore', 'resize', 'dragend']);
     },
@@ -420,7 +416,7 @@ Ext.define('Ext.window.Window', {
         if (me.header) {
             ddConfig = Ext.applyIf({
                 el: me.el,
-                delegate: '#' + me.header.id
+                delegate: '#' + Ext.escapeId(me.header.id)
             }, me.draggable);
 
             // Add extra configs if Window is specified to be constrained

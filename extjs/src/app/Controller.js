@@ -220,8 +220,8 @@ Ext.define('Ext.app.Controller', {
             onBeforeClassCreated,
             requires,
             modules,
-            prefix;
-
+            namespaceAndModule;
+        
         if (match !== null) {
             namespace = Ext.Loader.getPrefix(className) || match[1];
             onBeforeClassCreated = hooks.onBeforeCreated;
@@ -234,24 +234,23 @@ Ext.define('Ext.app.Controller', {
 
                 for (i = 0,ln = modules.length; i < ln; i++) {
                     module = modules[i];
+                    namespaceAndModule = namespace + '.' + module + '.';
 
                     items = Ext.Array.from(data[module + 's']);
 
                     for (j = 0,subLn = items.length; j < subLn; j++) {
                         item = items[j];
-
-                        // we check the ClassManager here because the following logic assumes a specific organization of folders
-                        if (Ext.ClassManager.isCreated(item)) {
-                            continue;
-                        }
-
-                        prefix = Ext.Loader.getPrefix(item);
-
-                        if (prefix === '' || prefix === item) {
-                            requires.push(namespace + '.' + module + '.' + item);
-                        }
-                        else {
+                        // Deciding if a class name must be qualified:
+                        // 1 - if the name doesn't contains at least one dot, we must definitely qualify it
+                        // 2 - the name may be a qualified name of a known class, but:
+                        // 2.1 - in runtime, the loader may not know the class - specially in production - so we must check the class manager
+                        // 2.2 - in build time, the class manager may not know the class, but the loader does, so we check the second one
+                        //       (the loader check assures it's really a class, and not a namespace, so we can have 'Books.controller.Books',
+                        //       and requesting a controller called Books will not be underqualified)
+                        if (item.indexOf('.') !== -1 && (Ext.ClassManager.isCreated(item) || Ext.Loader.isAClassNameWithAKnownPrefix(item))) {
                             requires.push(item);
+                        } else {
+                            requires.push(namespaceAndModule + item);
                         }
                     }
                 }

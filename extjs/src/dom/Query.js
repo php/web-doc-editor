@@ -507,6 +507,14 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
                 lmode = path.match(modeRe),
                 tokenMatch, matched, j, t, m;
 
+            hasEscapes = (path.indexOf('\\') > -1);
+            if (hasEscapes) {
+                path = path
+                    .replace(shortHex, shortToLongHex)
+                    .replace(nonHex, charToLongHex)
+                    .replace(escapes, '\\\\');  // double the '\' for js compilation
+            }
+
             if(lmode && lmode[1]){
                 fn[fn.length] = 'mode="'+lmode[1].replace(trimRe, "")+'";';
                 path = path.replace(lmode[1], "");
@@ -591,13 +599,6 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
         jsSelect: function(path, root, type){
             // set root to doc if not specified.
             root = root || document;
-
-            if (hasEscapes = (path.indexOf('\\') > -1)) {
-                path = path
-                    .replace(shortHex, shortToLongHex)
-                    .replace(nonHex, charToLongHex)
-                    .replace(escapes, '\\\\');  // double the '\' for js compilation
-            }
 
             if(typeof root == "string"){
                 root = document.getElementById(root);

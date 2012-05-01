@@ -28,7 +28,7 @@
  *             value: '11'
  *         }],
  *         buttons: [{
- *             text: 'Update',
+ *             text: 'Update'
  *         }]
  *     });
  */
@@ -38,7 +38,9 @@ Ext.define('Ext.form.field.Display', {
     requires: ['Ext.util.Format', 'Ext.XTemplate'],
     alternateClassName: ['Ext.form.DisplayField', 'Ext.form.Display'],
     fieldSubTpl: [
-        '<div id="{id}" class="{fieldCls}">{value}</div>',
+        '<div id="{id}"',
+        '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>', 
+        ' class="{fieldCls}">{value}</div>',
         {
             compiled: true,
             disableFormats: true

@@ -40,7 +40,7 @@ Ext.define('Ext.chart.axis.Abstract', {
         config.label = Ext.apply(config['axisLabel' + pos + 'Style'] || {}, config.label || {});
         config.axisTitleStyle = Ext.apply(config['axisTitle' + pos + 'Style'] || {}, config.labelTitle || {});
         Ext.apply(me, config);
-        me.fields = [].concat(me.fields);
+        me.fields = Ext.Array.from(me.fields);
         this.callParent();
         me.labels = [];
         me.getId();

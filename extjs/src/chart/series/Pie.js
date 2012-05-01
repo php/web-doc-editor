@@ -447,7 +447,10 @@ Ext.define('Ext.chart.series.Pie', {
                 slice.rho = me.radius;
             }
             slices[i] = slice;
-            angle = endAngle;
+            // Do not remove this closure for the sake of https://sencha.jira.com/browse/EXTJSIV-5836
+            (function () {
+                angle = endAngle;
+            })();
         }
 
         //do all shadows first.

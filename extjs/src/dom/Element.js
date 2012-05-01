@@ -290,15 +290,17 @@ var HIDDEN = 'hidden',
             visFly = new Element.Fly();
         }
 
-        for (; dom !== stopNode; dom = dom.parentNode) {
-            // We're invisible if we hit a nonexistent parentNode or computed style visibility:hidden or display:none
-            if (!dom || (visFly.attach(dom)).isStyle(VISIBILITY, HIDDEN) || visFly.isStyle(DISPLAY, NONE)) {
+        while (dom !== stopNode) {
+            // We're invisible if we hit a nonexistent parentNode or a document
+            // fragment or computed style visibility:hidden or display:none
+            if (!dom || dom.nodeType === 11 || (visFly.attach(dom)).isStyle(VISIBILITY, HIDDEN) || visFly.isStyle(DISPLAY, NONE)) {
                 return false;
             }
             // Quit now unless we are being asked to check parent nodes.
             if (!deep) {
                 break;
             }
+            dom = dom.parentNode;
         }
         return true;
     },

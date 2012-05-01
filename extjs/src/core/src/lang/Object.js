@@ -348,15 +348,16 @@ var TemplateClass = function(){},
      *         isSuperCool: true,
      *         office: {
      *             size: 40000,
-     *             location: 'Redwood City'
+     *             location: 'Redwood City',
      *             isFun: true
      *         }
      *     }
      *
-     * @param {Object...} object Any number of objects to merge.
-     * @return {Object} merged The object that is created as a result of merging all the objects passed in.
+     * @param {Object} destination The object into which all subsequent objects are merged.
+     * @param {Object...} object Any number of objects to merge into the destination.
+     * @return {Object} merged The destination object with all passed objects merged in.
      */
-    merge: function(source) {
+    merge: function(destination) {
         var i = 1,
             ln = arguments.length,
             mergeFn = ExtObject.merge,
@@ -369,28 +370,28 @@ var TemplateClass = function(){},
             for (key in object) {
                 value = object[key];
                 if (value && value.constructor === Object) {
-                    sourceKey = source[key];
+                    sourceKey = destination[key];
                     if (sourceKey && sourceKey.constructor === Object) {
                         mergeFn(sourceKey, value);
                     }
                     else {
-                        source[key] = cloneFn(value);
+                        destination[key] = cloneFn(value);
                     }
                 }
                 else {
-                    source[key] = value;
+                    destination[key] = value;
                 }
             }
         }
 
-        return source;
+        return destination;
     },
 
     /**
      * @private
-     * @param source
+     * @param destination
      */
-    mergeIf: function(source) {
+    mergeIf: function(destination) {
         var i = 1,
             ln = arguments.length,
             cloneFn = Ext.clone,
@@ -400,20 +401,20 @@ var TemplateClass = function(){},
             object = arguments[i];
 
             for (key in object) {
-                if (!(key in source)) {
+                if (!(key in destination)) {
                     value = object[key];
 
                     if (value && value.constructor === Object) {
-                        source[key] = cloneFn(value);
+                        destination[key] = cloneFn(value);
                     }
                     else {
-                        source[key] = value;
+                        destination[key] = value;
                     }
                 }
             }
         }
 
-        return source;
+        return destination;
     },
 
     /**

@@ -376,12 +376,9 @@ Ext.define('Ext.view.View', {
 
     // private
     afterRender: function(){
-        var me = this,
-            listeners;
-
+        var me = this;
         me.callParent();
-
-        listeners = {
+        me.mon(me.getTargetEl(), {
             scope: me,
             /*
              * We need to make copies of this since some of the events fired here will end up triggering
@@ -398,13 +395,7 @@ Ext.define('Ext.view.View', {
             mouseover: me.handleEvent,
             mouseout: me.handleEvent,
             keydown: me.handleEvent
-        };
-
-        me.mon(me.getTargetEl(), listeners);
-
-        if (me.store) {
-            me.bindStore(me.store, true);
-        }
+        });
     },
 
     handleEvent: function(e) {
@@ -620,14 +611,20 @@ Ext.define('Ext.view.View', {
     
     onUpdate: function(store, record){
         var me = this,
-            node = me.getNode(record),
-            newNode = me.callParent(arguments),
+            node,
+            newNode,
+            highlighted;
+        
+        if (me.rendered) {
+            node = me.getNode(record);
+            newNode = me.callParent(arguments);
             highlighted = me.highlightedItem;
             
-        if (highlighted && highlighted === node) {
-            delete me.highlightedItem;
-            if (newNode) {
-                me.highlightItem(newNode);
+            if (highlighted && highlighted === node) {
+                delete me.highlightedItem;
+                if (newNode) {
+                    me.highlightItem(newNode);
+                }
             }
         }
     },

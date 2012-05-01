@@ -313,7 +313,7 @@ Ext.define('Ext.tree.Panel', {
             /**
              * @event checkchange
              * Fires when a node with a checkbox's checked property changes
-             * @param {Ext.data.Model} node The node who's checked property was changed
+             * @param {Ext.data.Nodeinterface} node The node who's checked property was changed
              * @param {Boolean} checked The node's new checked state
              */
             'checkchange',
@@ -364,7 +364,7 @@ Ext.define('Ext.tree.Panel', {
 
     /**
      * Retrieve an array of checked records.
-     * @return {Ext.data.Model[]} An array containing the checked records
+     * @return {Ext.data.NodeInterface[]} An array containing the checked records
      */
     getChecked: function() {
         return this.getView().getChecked();

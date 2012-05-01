@@ -505,4 +505,16 @@ describe("Ext-more", function() {
             });
         });
     });
+
+    describe('Ext.escapeId', function(){
+        it("should escape element id sequences with special characters", function(){
+            expect(Ext.escapeId('abcdef')).toBe('abcdef');
+            expect(Ext.escapeId('.abcdef')).toBe('\\.abcdef');
+            expect(Ext.escapeId('0a...')).toBe('\\0030 a\\.\\.\\.');
+            expect(Ext.escapeId('12345')).toBe('\\0031 2345');
+            expect(Ext.escapeId('.abc-def')).toBe('\\.abc\\-def');
+            expect(Ext.escapeId('<12345/>')).toBe('\\<12345\\/\\>');
+            expect(Ext.escapeId('1<>234.567')).toBe('\\0031 \\<\\>234\\.567');
+        });
+    });
 });

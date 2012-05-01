@@ -173,7 +173,6 @@ Ext.define('Ext.grid.PagingScroller', {
         var me = this,
             view = me.view,
             rows,
-            store = me.store,
             direction = me.lastScrollDirection;
 
         me.commonRecordIndex = undefined;
@@ -223,13 +222,12 @@ Ext.define('Ext.grid.PagingScroller', {
             rows,
             newScrollOffset,
             scrollDelta,
-            table,
+            table = viewEl.child('table', true),
             tableTop,
             scrollTop;
 
-        if (!store.getCount()) {
-            return;
-        }
+        // Scroll events caused by processing in here must be ignored, so disable for the duration
+        me.disabled = true;
 
         // No scroll monitoring is needed if
         //    All data is in view OR
@@ -238,13 +236,18 @@ Ext.define('Ext.grid.PagingScroller', {
         //      so local scrolling is appropriate.
         if (store.getCount() === store.getTotalCount() || (store.isFiltered() && !store.remoteFilter)) {
             me.stretcher.setHeight(0);
-            return (me.disabled = true);
-        } else {
-            me.disabled = false;
+            me.position = viewDom.scrollTop = 0;
+
+            // Chrome's scrolling went crazy upon zeroing of the stretcher, and left the view's scrollTop stuck at -15
+            // This is the only thing that fixes that
+            table.style.position = 'absolute';
+
+            // We remain disabled now because no scrolling is needed - we have the full dataset in the Store
+            return;
         }
 
         me.stretcher.setHeight(newScrollHeight = me.getScrollHeight());
-        
+
         scrollTop = viewDom.scrollTop;
 
         // Flag to the refreshSize interceptor that regular refreshSize postprocessing should be vetoed.
@@ -253,14 +256,11 @@ Ext.define('Ext.grid.PagingScroller', {
         // If we have had to calculate the store position from the pure scroll bar position,
         // then we must calculate the table's vertical position from the scrollProportion
         if (me.scrollProportion !== undefined) {
-            table = me.viewEl.child('table', true);
             me.scrollProportion = scrollTop / (newScrollHeight - table.offsetHeight);
-            table = me.viewEl.child('table', true);
             table.style.position = 'absolute';
             table.style.top = (me.scrollProportion ? (newScrollHeight * me.scrollProportion) - (table.offsetHeight * me.scrollProportion) : 0) + 'px';
         }
         else {
-            table = viewEl.child('table', true);
             table.style.position = 'absolute';
             table.style.top = (tableTop = (me.tableStart||0) * me.rowHeight) + 'px';
 
@@ -279,11 +279,15 @@ Ext.define('Ext.grid.PagingScroller', {
             // Note that with buffered Stores, only remote sorting is allowed, otherwise the locally
             // sorted page will be out of order with the whole dataset.
             else if ((tableTop > scrollTop) || ((tableTop + table.offsetHeight) < scrollTop + viewDom.clientHeight)) {
+                me.lastScrollDirection = -1;
                 me.position = viewDom.scrollTop = tableTop;
             }
         }
+
+        // Re-enable upon function exit
+        me.disabled = false;
     },
-    
+
     beforeViewrefreshSize: function() {
         // Veto the refreshSize if the refresh is due to a scroll.
         if (this.isScrollRefresh) {
@@ -475,7 +479,6 @@ Ext.define('Ext.grid.PagingScroller', {
             table,
             firstRow,
             store  = me.store,
-            rowCount,
             deltaHeight = 0,
             doCalcHeight = !me.hasOwnProperty('rowHeight');
 

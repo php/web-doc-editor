@@ -380,6 +380,17 @@ Ext.Loader = new function() {
         },
 
         /**
+         * @private
+         * @param {String} className
+         */
+        isAClassNameWithAKnownPrefix: function(className) {
+            var prefix = Loader.getPrefix(className);
+
+            // we can only say it's really a class if className is not equal to any known namespace
+            return prefix !== '' && prefix !== className;
+        },
+
+        /**
          * Loads all classes by the given names and all their direct dependencies; optionally executes the given callback function when
          * finishes, within the optional scope. This method is aliased by {@link Ext#require Ext.require} for convenience
          * @param {String/Array} expressions Can either be a string or an array of string

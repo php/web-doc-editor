@@ -92,13 +92,11 @@ var noArgs = [],
 
         /**
          * @private
-         * @param config
          */
-        '$onExtended': [],
+        $onExtended: [],
 
         /**
          * @private
-         * @param config
          */
         triggerExtended: function() {
             var callbacks = this.$onExtended,
@@ -115,7 +113,6 @@ var noArgs = [],
 
         /**
          * @private
-         * @param config
          */
         onExtended: function(fn, scope) {
             this.$onExtended.push({

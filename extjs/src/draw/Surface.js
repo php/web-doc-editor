@@ -658,7 +658,7 @@ Ext.define('Ext.draw.Surface', {
         if (sprite) {
             this.items.remove(sprite);
 
-            var groups = [].concat(this.groups),
+            var groups = [].concat(this.groups.items),
                 gLen   = groups.length,
                 g;
 

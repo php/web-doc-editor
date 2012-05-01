@@ -10,7 +10,7 @@ Ext.define('Ext.layout.container.CheckboxGroup', {
     /**
      * @cfg {Boolean} [autoFlex=true]
      * By default,  CheckboxGroup allocates all available space to the configured columns meaning that
-     * column are evenly spaced across the contaioner.
+     * column are evenly spaced across the container.
      *
      * To have each column only be wide enough to fit the container Checkboxes (or Radios), set `autoFlex` to `false`
      */
@@ -67,7 +67,7 @@ Ext.define('Ext.layout.container.CheckboxGroup', {
             if (me.columnsArray) {
 
                 // first calculate total flex
-                for (i=0; i < columns; i++) {
+                for (i = 0; i < numCols; i++) {
                     width = me.owner.columns[i];
                     if (width < 1) {
                         totalFlex += width;
@@ -242,7 +242,7 @@ Ext.define('Ext.layout.container.CheckboxGroup', {
 
             // add column td's for each new item added
             newCount = itemCount - columnCount;
-            for (var i = 0; i < newCount; i++) {
+            for (i = 0; i < newCount; i++) {
                 tr = me.innerCt.down('tr');
                 tr.createChild({
                     cls: owner.groupCls,

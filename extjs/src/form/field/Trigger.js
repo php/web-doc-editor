@@ -25,7 +25,7 @@
  *         items:[{
  *             xtype: 'customtrigger',
  *             fieldLabel: 'Sample Trigger',
- *             emptyText: 'click the trigger',
+ *             emptyText: 'click the trigger'
  *         }]
  *     });
  *
@@ -126,16 +126,8 @@ Ext.define('Ext.form.field.Trigger', {
     componentLayout: 'triggerfield',
 
     initComponent: function() {
-        var me = this,
-            tempEl;
-
-        // Measure width of a trigger element.
-        if (!me.triggerWidth) {
-            Ext.form.field.Trigger.prototype.triggerWidth = (tempEl = Ext.getBody().createChild({style: 'position:absolute', cls: Ext.baseCSSPrefix + 'form-trigger'})).getWidth();
-            tempEl.remove();
-        }
-        me.wrapFocusCls = me.triggerWrapCls + '-focus';
-        me.callParent(arguments);
+        this.wrapFocusCls = this.triggerWrapCls + '-focus';
+        this.callParent(arguments);
     },
 
     getSubTplMarkup: function() {
@@ -212,7 +204,18 @@ Ext.define('Ext.form.field.Trigger', {
     // private
     beforeRender: function() {
         var me = this,
-            triggerBaseCls = me.triggerBaseCls;
+            triggerBaseCls = me.triggerBaseCls,
+            tempEl;
+            
+        // Measure width of a trigger element.
+        if (!me.triggerWidth) {
+            tempEl = Ext.getBody().createChild({
+                style: 'position: absolute;', 
+                cls: Ext.baseCSSPrefix + 'form-trigger'
+            });
+            Ext.form.field.Trigger.prototype.triggerWidth = tempEl.getWidth();
+            tempEl.remove();
+        }
 
         me.callParent();
 

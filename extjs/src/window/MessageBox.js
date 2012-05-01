@@ -141,6 +141,7 @@ Ext.define('Ext.window.MessageBox', {
      * for setting a different minimum width than text-only dialogs may need.
      */
     minPromptWidth: 250,
+    //<locale type="object">
     /**
      * @property
      * An object containing the default button text strings that can be overriden for localized language support.
@@ -150,7 +151,6 @@ Ext.define('Ext.window.MessageBox', {
      *
      *     Ext.window.MessageBox.buttonText.yes = "oui"; //french
      */
-    //<locale type="object">
     buttonText: {
         ok: 'OK',
         yes: 'Yes',

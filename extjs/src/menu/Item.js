@@ -220,7 +220,7 @@ Ext.define('Ext.menu.Item', {
             me.parentMenu.activeChild = me.menu;
             me.menu.parentItem = me;
             me.menu.parentMenu = me.menu.ownerCt = me.parentMenu;
-            me.menu.showBy(me, me.menuAlign, ((!Ext.isStrict && Ext.isIE) || Ext.isIE6) ? [-2, -2] : undefined);
+            me.menu.showBy(me, me.menuAlign);
         }
     },
 

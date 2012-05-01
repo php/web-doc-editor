@@ -40,7 +40,7 @@
  *             name: 'time',
  *             minValue: '8:00am',
  *             maxValue: '6:00pm'
- *         }],
+ *         }]
  *     });
  *
  * Note that any configured {@link Ext.Component#padding padding} will be ignored on items within a Form layout.
@@ -62,9 +62,11 @@ Ext.define('Ext.layout.container.Form', {
     manageOverflow: 2,
 
     childEls: ['formTable'],
+    
+    padRow: '<tr><td class="' + Ext.baseCSSPrefix + 'form-item-pad" colspan="3"></td></tr>',
 
     renderTpl: [
-        '<table id="{ownerId}-formTable" class="{tableCls}" style="width:100%" cellspacing="0" cellpadding="0">',
+        '<table id="{ownerId}-formTable" class="{tableCls}" style="width:100%" cellpadding="0">',
             '{%this.renderBody(out,values)%}',
         '</table>',
         '{%this.renderPadder(out,values)%}'
@@ -104,8 +106,6 @@ Ext.define('Ext.layout.container.Form', {
     getRenderTree: function() {
         var result = this.callParent(arguments),
             i = 0, len = result.length,
-            prefix = Ext.baseCSSPrefix,
-            children = '<tr><td class="' + prefix + 'form-item-pad" colspan="3"></td></tr>',
             item;
 
         for (; i < len; i++) {
@@ -114,7 +114,14 @@ Ext.define('Ext.layout.container.Form', {
                 item.tag = 'tbody';
                 delete item.cellspacing;
                 delete item.cellpadding;
-                item.cn = children;
+
+                // IE6 doesn't separate cells nicely to provide input field
+                // vertical separation. It also does not support transparent borders
+                // which is how the extra 1px is added to the 2px each side cell spacing.
+                // So it needs a 5px high pad row.
+                if (Ext.isIE6) {
+                    item.cn = this.padRow;
+                }
             } else {
                 result[i] = {
                     tag: 'tbody',

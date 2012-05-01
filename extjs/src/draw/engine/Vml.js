@@ -568,7 +568,7 @@ Ext.define('Ext.draw.engine.Vml', {
             me.setText(sprite, params.text);
 
             if (vml.textpath.string) {
-                me.span.innerHTML = String(vml.textpath.string).replace(/</g, "&#60;").replace(/&/g, "&#38;").replace(/\n/g, "<br>");
+                me.span.innerHTML = String(vml.textpath.string).replace(/</g, "&#60;").replace(/&/g, "&#38;").replace(/\n/g, "<br/>");
             }
             vml.W = me.span.offsetWidth;
             vml.H = me.span.offsetHeight + 2; // TODO handle baseline differences and offset in VML Textpath

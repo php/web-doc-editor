@@ -245,7 +245,7 @@ Ext.define('Ext.resizer.Resizer', {
         // Tags like textarea and img cannot
         // have children and therefore must
         // be wrapped
-        tag = me.el.dom.tagName;
+        tag = me.el.dom.tagName.toUpperCase();
         if (tag == 'TEXTAREA' || tag == 'IMG' || tag == 'TABLE') {
             /**
              * @property {Ext.Element/Ext.Component} originalTarget
@@ -316,9 +316,8 @@ Ext.define('Ext.resizer.Resizer', {
         handleCls = me.handleCls + ' ' + (me.target.isComponent ? (me.target.baseCls + '-handle ') : '') + me.handleCls + '-';
 
         // Needs heighting on IE6!
-        if (Ext.isIE6) {
-            eastWestStyle = ' style="height:' + me.el.getHeight() + 'px"';
-        }
+        eastWestStyle = Ext.isIE6 ? ' style="height:' + me.el.getHeight() + 'px"' : '';
+
         for (; i < len; i++){
             // if specified and possible, create
             if (handles[i] && possibles[handles[i]]) {

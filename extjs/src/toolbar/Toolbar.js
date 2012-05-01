@@ -144,7 +144,7 @@
  *                 }
  *             },
  *             {
- *                 text   : 'Add a toolbar seperator',
+ *                 text   : 'Add a toolbar separator',
  *                 scope  : this,
  *                 handler: function() {
  *                     addedItems.push(toolbar.add('-'));

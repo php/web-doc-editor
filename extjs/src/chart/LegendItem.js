@@ -167,7 +167,6 @@ Ext.define('Ext.chart.LegendItem', {
                     opacity: 1
                 }, true);
             }
-            me.legend.chart.redraw();
             toggle = !toggle;
         }, me);
         me.updatePosition({x:0, y:0}); //Relative to 0,0 at first so that the bbox is calculated correctly

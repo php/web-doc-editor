@@ -12,7 +12,7 @@
  *             "(name)": "My Object",
  *             "Created": Ext.Date.parse('10/15/2006', 'm/d/Y'),
  *             "Available": false,
- *             "Version": .01,
+ *             "Version": 0.01,
  *             "Description": "A test object"
  *         }
  *     });
@@ -214,7 +214,7 @@ Ext.define('Ext.grid.property.Grid', {
         var me = this,
             v, oldValue;
 
-        if (operation == Ext.data.Model.EDIT) {
+        if (me.rendered && operation == Ext.data.Model.EDIT) {
             v = record.get(me.valueField);
             oldValue = record.modified.value;
             if (me.fireEvent('beforepropertychange', me.source, record.getId(), v, oldValue) !== false) {

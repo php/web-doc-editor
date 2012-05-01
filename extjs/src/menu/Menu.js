@@ -374,7 +374,6 @@ Ext.define('Ext.menu.Menu', {
             } else {
                 cmp.cls = (cmp.cls ? cmp.cls : '') + ' ' + cls.join(' ');
             }
-            cmp.isMenuItem = true;
         }
         return cmp;
     },
@@ -400,20 +399,19 @@ Ext.define('Ext.menu.Menu', {
             return;
         }
 
-        if (e.within(me.layout.getRenderTarget())) {
-            item = me.getItemFromEvent(e) || me.activeItem;
-
-            if (item && item.isXType('menuitem')) {
-                if (!item.menu || !me.ignoreParentClicks) {
-                    item.onClick(e);
-                } else {
-                    e.stopEvent();
-                }
-            }
-            if (!item.disabled) {
-                me.fireEvent('click', me, item, e);
+        item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
+        if (item && item.isMenuItem) {
+            if (!item.menu || !me.ignoreParentClicks) {
+                item.onClick(e);
+            } else {
+                e.stopEvent();
             }
         }
+        // Click event may be fired without an item, so we need a second check
+        if (!item || item.disabled) {
+            item = undefined;
+        }
+        me.fireEvent('click', me, item, e);
     },
 
     onDestroy: function() {

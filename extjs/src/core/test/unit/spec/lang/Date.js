@@ -679,5 +679,19 @@ describe("Ext.Date", function() {
             var value = '\\/Date(' + date.getTime() + ')\\/'
             expect(format(date, 'MS')).toBe(value);
         });
+
+        it("should return an empty string", function(){
+            expect(format(undefined, 'd')).toBe('');
+            expect(format(null, 'd')).toBe('');
+            expect(format({}, 'd')).toBe('');
+            expect(format([], 'd')).toBe('');
+            expect(format('', 'd')).toBe('');
+            expect(format(true, 'd')).toBe('');
+            expect(format(1992, 'd')).toBe('');
+        });
+
+        it("should not return an empty string", function(){
+            expect(format(new Date(), 'd')).not.toBe('');
+        });
     });
 });

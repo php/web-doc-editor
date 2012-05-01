@@ -397,7 +397,7 @@
         Class.triggerExtended.apply(Class, arguments);
 
         if (data.onClassExtended) {
-            Class.onExtended(data.onClassExtended);
+            Class.onExtended(data.onClassExtended, Class);
             delete data.onClassExtended;
         }
 

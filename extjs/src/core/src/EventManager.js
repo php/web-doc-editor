@@ -636,7 +636,7 @@ Ext.EventManager = new function() {
         createListenerWrap : function(dom, ename, fn, scope, options) {
             options = options || {};
 
-            var f, gen, wrap = function(e, args) {
+            var f, gen, escapeRx = /\\/g, wrap = function(e, args) {
                 // Compile the implementation upon first firing
                 if (!gen) {
                     f = ['if(!' + Ext.name + ') {return;}'];
@@ -648,7 +648,9 @@ Ext.EventManager = new function() {
                     }
 
                     if (options.delegate) {
-                        f.push('var t = e.getTarget("' + options.delegate + '", this);');
+                        // double up '\' characters so escape sequences survive the
+                        // string-literal translation
+                        f.push('var t = e.getTarget("' + (options.delegate + '').replace(escapeRx, '\\\\') + '", this);');
                         f.push('if(!t) {return;}');
                     } else {
                         f.push('var t = e.target;');
@@ -852,13 +854,15 @@ Ext.EventManager = new function() {
             return EventManager.resolveTextNode(event.target || event.srcElement);
         },
 
+        // technically no need to browser sniff this, however it makes
+        // no sense to check this every time, for every event, whether
+        // the string is equal.
         /**
          * Resolve any text nodes accounting for browser differences.
          * @private
          * @param {HTMLElement} node The node
          * @return {HTMLElement} The resolved node
          */
-        // technically no need to browser sniff this, however it makes no sense to check this every time, for every event, whether the string is equal.
         resolveTextNode: Ext.isGecko ?
             function(node) {
                 if (!node) {

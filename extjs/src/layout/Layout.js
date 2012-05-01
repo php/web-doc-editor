@@ -163,7 +163,7 @@ Ext.define('Ext.layout.Layout', {
      * ways this is similar to {@link #completeLayout}. This call can cause this (or any
      * layout) to be become invalid (see {@link Ext.layout.Context#invalidate}), but this
      * is best avoided. This method is intended to be where final reads are made and so it
-     * is best to avoidinvalidating layouts at this point whenever possible. Even so, this
+     * is best to avoid invalidating layouts at this point whenever possible. Even so, this
      * method can be used to perform final checks that may require all other layouts to be
      * complete and then invalidate some results.
      * 

@@ -3,7 +3,7 @@
  *
  *     @example
  *     Ext.create('Ext.panel.Panel', {
- *         title: 'Toolbar Seperator Example',
+ *         title: 'Toolbar Separator Example',
  *         width: 300,
  *         height: 200,
  *         tbar : [

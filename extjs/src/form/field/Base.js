@@ -312,13 +312,13 @@ Ext.define('Ext.form.field.Base', {
     },
     
     beforeRender: function(){
-        var me = this,
-            readOnly = this.readOnly;
+        var me = this;
             
         me.callParent(arguments);
-        if (readOnly) {
+        me.beforeLabelableRender(arguments);
+        if (me.readOnly) {
             me.addCls(me.readOnlyCls);
-        }    
+        }
     },
 
     /**

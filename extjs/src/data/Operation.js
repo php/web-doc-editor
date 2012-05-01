@@ -162,7 +162,7 @@ Ext.define('Ext.data.Operation', {
             clientRecords = me.records;
 
             if (clientRecords && clientRecords.length) {
-                if(clientRecords.length > 1) {
+                if (clientRecords.length > 1) {
                     // if this operation has multiple records, client records need to be matched up with server records
                     // so that any data returned from the server can be updated in the client records.
                     mc = new Ext.util.MixedCollection();
@@ -170,19 +170,10 @@ Ext.define('Ext.data.Operation', {
 
                     for (index = clientRecords.length; index--; ) {
                         clientRec = clientRecords[index];
-                        serverRec = mc.findBy(function(record) {
-                            var clientRecordId = clientRec.getId();
-                            if(clientRecordId && record.getId() === clientRecordId) {
-                                return true;
-                            }
-                            // if the server record cannot be found by id, find by internalId.
-                            // this allows client records that did not previously exist on the server
-                            // to be updated with the correct server id and data.
-                            return record.internalId === clientRec.internalId;
-                        });
+                        serverRec = mc.findBy(me.matchClientRec, clientRec);
 
-                        // replace client record data with server record data
-                        me.updateClientRecord(clientRec, serverRec);
+                        // Replace client record data with server record data
+                        clientRec.copyFrom(serverRec);
                     }
                 } else {
                     // operation only has one record, so just match the first client record up with the first server record
@@ -190,7 +181,7 @@ Ext.define('Ext.data.Operation', {
                     serverRec = serverRecords[0];
                     // if the client record is not a phantom, make sure the ids match before replacing the client data with server data.
                     if(serverRec && (clientRec.phantom || clientRec.getId() === serverRec.getId())) {
-                        me.updateClientRecord(clientRec, serverRec);
+                        clientRec.copyFrom(serverRec);
                     }
                 }
 
@@ -203,34 +194,20 @@ Ext.define('Ext.data.Operation', {
         }
     },
 
-    /**
-     * Replaces the data in a client record with the data from a server record. If either record is undefined, does nothing.
-     * Since non-persistent fields will have default values in the server record, this method only replaces data for persistent
-     * fields to avoid overwriting the client record's data with default values from the server record.
-     * @private
-     * @param {Ext.data.Model} [clientRecord]
-     * @param {Ext.data.Model} [serverRecord]
-     */
-    updateClientRecord: function(clientRecord, serverRecord) {
-        if (clientRecord && serverRecord) {
-            clientRecord.beginEdit();
+    // Private.
+    // Record matching function used by commitRecords
+    // IMPORTANT: This is called in the scope of the clientRec being matched
+    matchClientRec: function(record) {
+        var clientRec = this,
+            clientRecordId = clientRec.getId();
 
-            var fields = clientRecord.fields.items,
-                fLen   = fields.length,
-                field, f;
-
-            for (f = 0; f < fLen; f++) {
-                field = fields[f];
-
-                if (field.persist) {
-                    clientRecord.set(field.name, serverRecord.get(field.name));
-                }
-            }
-            if(clientRecord.phantom) {
-                clientRecord.setId(serverRecord.getId());
-            }
-            clientRecord.endEdit(true);
+        if(clientRecordId && record.getId() === clientRecordId) {
+            return true;
         }
+        // if the server record cannot be found by id, find by internalId.
+        // this allows client records that did not previously exist on the server
+        // to be updated with the correct server id and data.
+        return record.internalId === clientRec.internalId;
     },
 
     /**

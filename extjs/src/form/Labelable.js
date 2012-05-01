@@ -25,7 +25,6 @@ Ext.define("Ext.form.Labelable", {
 
     autoEl: {
         tag: 'table',
-        cellspacing: 0,
         cellpadding: 0
     },
 
@@ -164,7 +163,7 @@ Ext.define("Ext.form.Labelable", {
      */
     activeErrorsTpl: [
         '<tpl if="errors && errors.length">',
-            '<ul><tpl for="errors"><li<tpl if="xindex == xcount"> class="last"</tpl>>{.}</li></tpl></ul>',
+            '<ul><tpl for="errors"><li>{.}</li></tpl></ul>',
         '</tpl>'
     ],
 
@@ -519,6 +518,13 @@ Ext.define("Ext.form.Labelable", {
 
         return data;
     },
+    
+    beforeLabelableRender: function() {
+        var me = this;
+        if (me.ownerLayout) {
+            me.addCls(Ext.baseCSSPrefix + me.ownerLayout.type + '-form-item');
+        }
+    },
 
     onLabelableRender: function() {
         var me = this,
@@ -593,7 +599,7 @@ Ext.define("Ext.form.Labelable", {
         if (labelAlign !== 'top') {
             result = 'valign="top" halign="' + labelAlign + '" width="' + (me.labelWidth + me.labelPad) + '"';
         }
-        return result;
+        return result + ' class="' + Ext.baseCSSPrefix + 'field-label-cell"';
     },
     
     /**

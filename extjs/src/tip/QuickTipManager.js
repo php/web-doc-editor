@@ -132,7 +132,7 @@ Ext.define('Ext.tip.QuickTipManager', (function() {
                     tipConfig.renderTo = document.body;
 
                     //<debug>
-                    if (tipConfig.renderTo.tagName != 'BODY') { // e.g., == 'FRAMESET'
+                    if (tipConfig.renderTo.tagName.toUpperCase() != 'BODY') { // e.g., == 'FRAMESET'
                         Ext.Error.raise({
                             sourceClass: 'Ext.tip.QuickTipManager',
                             sourceMethod: 'init',

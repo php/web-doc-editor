@@ -42,7 +42,7 @@ Ext._startTime = new Date().getTime();
      * {@link Ext.Object#merge} instead.
      * @param {Object} object The receiver of the properties
      * @param {Object} config The source of the properties
-     * @param {Object} defaults A different object that will also be applied for default values
+     * @param {Object} [defaults] A different object that will also be applied for default values
      * @return {Object} returns obj
      */
     Ext.apply = function(object, config, defaults) {

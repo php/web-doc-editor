@@ -39,7 +39,7 @@
         .#{$prefix}form-item,
         .#{$prefix}tool {
             float: left;
-            margin: 1px 0 0;
+            margin: 1px 0 0 0;
         }
 
         .#{$prefix}form-cb-wrap {
@@ -53,6 +53,14 @@
         .#{$prefix}form-item,
         .#{$prefix}tool {
             margin-right: 3px;
+        }
+    }
+
+    // Use Webkit's built-in fieldset legend padding which takes precedence over padding-left/right
+    .#{$prefix}webkit {
+        .#{$prefix}fieldset-header {
+            -webkit-padding-start: #{left($fieldset-header-padding)};
+            -webkit-padding-end: #{right($fieldset-header-padding)};
         }
     }
 

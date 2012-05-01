@@ -5,15 +5,18 @@ Copyright (c) 2011-2012 Sencha Inc
 
 Contact:  http://www.sencha.com/contact
 
-Pre-release code in the Ext repository is intended for development purposes only and will
-not always be stable. 
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
 
-Use of pre-release code is permitted with your application at your own risk under standard
-Ext license terms. Public redistribution is prohibited.
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 
-For early licensing, please contact us at licensing@sencha.com
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
 
-Build date: 2012-04-09 21:11:41 (689b0758837b782dcb0747ba1c4d8ba76344070d)
+Build date: 2012-04-20 14:10:47 (19f55ab932145a3443b228045fa80950dfeaf9cc)
 */
 /**
  * @var {string} $prefix 
@@ -4117,8 +4120,8 @@ browsers will do whacky things with it.
   padding-top: 1px; }
 
 /* line 792, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
-.x4-ie6 .x4-grid-editor .x4-form-text,
-.x4-ie6 .x4-grid-row-editor .x4-form-text,
+.x4-strict .x4-ie6 .x4-grid-editor .x4-form-text,
+.x4-strict .x4-ie6 .x4-grid-row-editor .x4-form-text,
 .x4-strict .x4-ie7 .x4-grid-editor .x4-form-text,
 .x4-strict .x4-ie7 .x4-grid-row-editor .x4-form-text {
   height: 17px; }
@@ -4215,22 +4218,45 @@ browsers will do whacky things with it.
 /* line 12, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-item {
   vertical-align: top;
-  margin-bottom: 5px;
   table-layout: fixed; }
 
-/* line 19, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
-td.x4-form-item-pad {
-  height: 5px; }
+/* line 22, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-autocontainer-form-item,
+.x4-anchor-form-item,
+.x4-vbox-form-item,
+.x4-checkboxgroup-form-item,
+.x4-table-form-item {
+  margin-bottom: 5px; }
 
-/* line 24, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 27, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-form-layout-table {
+  border-collapse: separate;
+  border-spacing: 0 2px; }
+
+/* line 33, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-item-body {
   position: relative; }
 
-/* line 29, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 38, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-form-form-item td {
+  border-top: 1px solid transparent; }
+
+/* line 47, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-ie6 .x4-form-layout-table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+/* line 52, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-ie6 .x4-form-form-item td {
+  border-top-width: 0; }
+/* line 58, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+.x4-ie6 td.x4-form-item-pad {
+  height: 5px; }
+
+/* line 64, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-editor .x4-form-item-body {
   padding-bottom: 0; }
 
-/* line 33, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 68, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-item-label {
   display: block;
   padding: 3px 0 0;
@@ -4242,15 +4268,15 @@ td.x4-form-item-pad {
   -webkit-user-select: none;
   cursor: default; }
 
-/* line 40, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 75, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-item-label-top {
   padding: 0; }
 
-/* line 44, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 79, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-item-label-right {
   text-align: right; }
 
-/* line 48, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 83, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-invalid-under {
   padding: 2px 2px 2px 18px;
   color: #c0272b;
@@ -4259,27 +4285,27 @@ td.x4-form-item-pad {
   background: no-repeat 0 2px;
   background-image: url('../../resources/themes/images/default/form/exclamation.gif'); }
 
-/* line 59, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 94, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-external-error-icon {
   position: absolute;
   right: 10px;
   height: 22px; }
 
-/* line 66, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 101, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-quirks .x4-ie .x4-external-error-icon {
   right: 0; }
 
-/* line 71, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+/* line 106, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
 .x4-form-invalid-icon {
   width: 18px;
   background: no-repeat 2px 3px;
   background-image: url('../../resources/themes/images/default/form/exclamation.gif');
   overflow: hidden; }
-  /* line 76, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+  /* line 111, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
   .x4-form-invalid-icon ul {
     display: block;
     width: 18px; }
-    /* line 79, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
+    /* line 114, ../themes/stylesheets/ext4/default/widgets/form/_all.scss */
     .x4-form-invalid-icon ul li {
       /* prevent inner elements from interfering with QuickTip hovering */
       display: none; }
@@ -4435,7 +4461,7 @@ textarea.x4-form-invalid-field {
   .x4-fieldset-header .x4-form-item,
   .x4-fieldset-header .x4-tool {
     float: left;
-    margin: 1px 0 0; }
+    margin: 1px 0 0 0; }
   /* line 45, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
   .x4-fieldset-header .x4-form-cb-wrap {
     padding: 1px 0;
@@ -4447,72 +4473,77 @@ textarea.x4-form-invalid-field {
 .x4-fieldset-with-title .x4-tool {
   margin-right: 3px; }
 
-/* line 63, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 61, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+.x4-webkit .x4-fieldset-header {
+  -webkit-padding-start: 3px;
+  -webkit-padding-end: 3px; }
+
+/* line 71, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-opera .x4-fieldset-with-legend {
   margin-top: -1px; }
-/* line 66, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 74, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-opera.x4-mac .x4-fieldset-header-text {
   padding: 2px 0 0; }
 
-/* line 74, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 82, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-strict .x4-ie8 .x4-fieldset-header {
   margin-bottom: -1px; }
-  /* line 78, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+  /* line 86, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
   .x4-strict .x4-ie8 .x4-fieldset-header .x4-tool,
   .x4-strict .x4-ie8 .x4-fieldset-header .x4-fieldset-header-text,
   .x4-strict .x4-ie8 .x4-fieldset-header .x4-fieldset-header-checkbox {
     position: relative;
     top: -1px; }
 
-/* line 88, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 96, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-quirks .x4-ie .x4-fieldset-header,
 .x4-ie8m .x4-fieldset-header {
   padding-left: 1px;
   padding-right: 1px; }
 
-/* line 96, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 104, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-fieldset-collapsed .x4-fieldset-body {
   display: none; }
 
-/* line 101, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 109, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-fieldset-collapsed {
   padding-bottom: 0 !important;
   border-width: 1px 1px 0 1px !important;
   border-left-color: transparent !important;
   border-right-color: transparent !important; }
 
-/* line 110, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 118, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-ie6 .x4-fieldset-collapsed {
   border-width: 1px 0 0 0 !important;
   padding-bottom: 0 !important;
   margin-left: 1px;
   margin-right: 1px; }
 
-/* line 118, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 126, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-ie .x4-fieldset-bwrap {
   zoom: 1; }
 
 /* IE legend positioning bug */
-/* line 125, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 133, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-ie .x4-fieldset-noborder legend {
   position: relative;
   margin-bottom: 23px; }
 
-/* line 131, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 139, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-ie .x4-fieldset-noborder legend span {
   position: absolute;
   left: 16px; }
 
-/* line 137, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 145, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-fieldset {
   overflow: hidden; }
 
-/* line 141, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 149, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-fieldset-bwrap {
   overflow: hidden;
   zoom: 1; }
 
-/* line 147, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
+/* line 155, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x4-fieldset-body {
   overflow: hidden; }
 
@@ -4598,14 +4629,14 @@ textarea.x4-form-invalid-field {
 
 /* line 3, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x4-form-checkboxgroup-body {
-  padding: 3px 4px; }
+  padding: 1px 4px 1px 4px; }
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x4-form-invalid .x4-form-checkboxgroup-body {
   border: 1px solid #c30;
   background: transparent repeat-x bottom;
   background-image: url('../../resources/themes/images/default/grid/invalid_line.gif');
-  padding: 2px 3px; }
+  padding: 0 3px 0 3px; }
 
 /* line 16, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x4-check-group-alt {
