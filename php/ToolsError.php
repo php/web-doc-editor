@@ -371,7 +371,7 @@ class ToolsError
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
-            $this->checkVCSKeyWords();
+            //$this->checkVCSKeyWords(); Disable for now. This take too much time
         }
 
         // Check Error specific to LANG files
@@ -400,7 +400,7 @@ class ToolsError
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
-            $this->checkVCSKeyWords();
+            //$this->checkVCSKeyWords(); Disable for now. This take too much time
         }
 
     }
