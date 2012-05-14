@@ -21,12 +21,19 @@ Ext.define('phpdoe.view.main' ,{
         }),
         Ext.create('phpdoe.view.main.navigate', {
             region: 'west',
+            id: 'navigate',
             //animCollapse      : true,
             header: false,
             split: true,
+            collapsed: true,
             collapsible: true,
             collapseMode: 'mini',
-            width: 150
+            width: 250,
+            listeners: {
+                viewready: function(navigate) {
+                    navigate.expand();
+                }
+            }
         }),
         Ext.create('phpdoe.view.main.tabs', {
             region: 'center'

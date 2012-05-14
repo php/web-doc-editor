@@ -640,165 +640,44 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                     title: 'Facebook',
                                     id:'accordion-fb',
                                     layout:'fit',
-                                    disabled: (!FB),
-                                    collapsed : true,
                                     iconCls:'iconFacebook',
-                                    html: '<div id="facebook-box">'+
-                                            '<div id="fb-root"></div>'+
-                                            '<div id="fb-info">'+
-                                                '<img style="margin-right:5px" align="left" id="fb-image">'+
-                                                ' <span id="fb-name"></span><br>'+
-                                                ' <span id="fb-use-credentials">Use this credentials</span><br><br>'+
-                                                ' <a href="#" onclick="FB.logout(); return false;">Sign out</a><br>'+
-                                            '</div>'+
-                                            '<div id="fb-login">'+
-                                                '<fb:login-button perms="email">Login with Facebook</fb:login-button>'+
-                                            '</div>'+
-                                          '</div>',
+                                    html: '<div id="facebook-box"></div><div id="facebook-box2"></div>',
                                     listeners: {
                                         resize: function(c) {
                                             c.setHeight(100);
                                         },
-                                        afterrender: function(c) {
-                                            
-                                            if ( !FB ) {
-                                                
-                                                new Ext.ToolTip({
-                                                    target: Ext.getCmp('accordion-fb').id,
-                                                    anchor: 'bottom',
-                                                    autoShow: true,
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    title: 'Error',
-                                                    html: 'Error while loading Facebook API'
-                                                });
-                                                
-                                                return;
+                                        afterrender: function(c)
+                                        {
+                                            document.getElementById('facebook-box').innerHTML = FBInfo.libel;
+                                            // Is there already a connection ?
+                                            if( FBInfo.user )
+                                            {
+                                                document.getElementById('facebook-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'facebook\', \''+FBInfo.user.name+'\', \''+FBInfo.user.id+'\',  \''+FBInfo.user.email+'\')">Use this credentials</a>';
                                             }
                                             
-                                            FB.init({ 
-                                                appId:'128417830579090', cookie:true, 
-                                                status:true, xfbml:true 
-                                            });
-
-                                            Ext.get('fb-info').setVisibilityMode(Ext.Element.DISPLAY);
-                                            Ext.get('fb-login').setVisibilityMode(Ext.Element.DISPLAY);
-
-                                            function displayInfo(user) {
-                                            
-                                                //Ensure this bloc is displayed
-                                                Ext.get('fb-info').setVisible(true);
-
-                                                var image = Ext.get('fb-image').dom,
-                                                    name = Ext.get('fb-name').dom;
-
-                                                image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-                                                name.innerHTML = user.name;
-                                                
-                                                Ext.get('fb-use-credentials').on('click', function() {
-                                                    PhDOE_loginPage.externalCredentials('facebook', user.username, user.id, user.email);
-                                                });
-                                                
-
-                                                // We hide the connect button
-                                                Ext.get('fb-login').setVisible(false);
-
-                                            }
-
-                                            FB.api('/me', function(user) {
-
-                                                if(! user.error) {
-                                                    displayInfo(user);
-                                                } else {
-
-                                                    Ext.get('fb-info').setVisible(false);
-                                                }
-                                            });
-
-                                            FB.Event.subscribe('auth.login', function(response) {
-
-                                                FB.api('/me', function(user) {
-                                                    if( !user.error ) {
-                                                        displayInfo(user);
-                                                    }
-                                                });
-                                            });
-
-                                            FB.Event.subscribe('auth.logout', function(response) {
-
-                                                // We display the connect button
-                                                Ext.get('fb-login').setVisible(true);
-
-                                                // Hide info
-                                                Ext.get('fb-info').setVisible(false);
-
-
-                                            });
 
                                         }
                                     }
                                 },{
-                                    title: 'Google Friend Connect',
+                                    scope: this,
+                                    title: 'Google',
                                     iconCls:'iconGoogle',
                                     id:'accordion-google',
-                                    disabled: ( !google || !google.friendconnect || !google.friendconnect.container ),
-                                    collapsed : true,
-                                    html: '<div id="google-box"></div>',
+                                    html: '<div id="google-box"></div><div id="google-box2"></div>',
                                     listeners: {
-                                        resize: function(c) {
+                                        resize: function(c)
+                                        {
                                             c.setHeight(100);
                                         },
-                                        afterrender: function(cmp) {
-
-                                            
-                                            if ( !google || !google.friendconnect || !google.friendconnect.container ) {
-                                                
-                                                new Ext.ToolTip({
-                                                    target: Ext.getCmp('accordion-google').id,
-                                                    anchor: 'left',
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    title: 'Error',
-                                                    html: 'Error while loading Google Connect API'
-                                                });
-                                                
-                                                return;
+                                        afterrender: function(cmp)
+                                        {
+                                            document.getElementById('google-box').innerHTML = googleInfo.libel;
+                                            // Is there already a connection ?
+                                            if( googleInfo.user )
+                                            {
+                                                //this.scope.externalCredentials('google', googleInfo.user.name, googleInfo.user.id, googleInfo.user.email);
+                                                document.getElementById('google-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'google\', \''+googleInfo.user.name+'\', \''+googleInfo.user.id+'\',  \''+googleInfo.user.email+'\')">Use this credentials</a>';
                                             }
-                                            
-                                            google.friendconnect.container.loadOpenSocialApi({
-                                                site: '05056619882644935463',
-                                                onload: function() {
-                                                    GGinitAllData();
-                                                    cmp.doLayout();
-                                                }
-                                            });
-
-                                            function GGinitAllData() {
-                                                var params = {},
-                                                    req = opensocial.newDataRequest();
-                                                
-                                                params[opensocial.DataRequest.PeopleRequestFields.PROFILE_DETAILS] =
-                                                    [opensocial.Person.Field.ID,opensocial.Person.Field.NAME,opensocial.Person.Field.THUMBNAIL_URL];
-                                                
-                                                req.add(req.newFetchPersonRequest('VIEWER', params), 'viewer');
-                                                req.send(GGsetupData);
-                                            }
-
-                                            function GGsetupData(data) {
-                                                var viewer = data.get('viewer').getData();
-
-                                                if (viewer) {
-                                                    document.getElementById('google-box').innerHTML = 
-                                                    '<img style="margin-right:5px" align="left" src="' + viewer.getField("thumbnailUrl")  + '">' +
-                                                    viewer.getField("displayName") + '<br>'+
-                                                    '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'google\', \''+viewer.getField("displayName")+'\', \''+viewer.getField("id")+'\' ); return false;">Use this credentials</a><br><br>'+
-                                                    '<a href="#" onclick="google.friendconnect.requestSignOut(); return false;">Sign out</a><br>';
-                                                } else {
-                                                    google.friendconnect.renderSignInButton({ 'id': 'google-box',style:'long' });
-                                                }
-
-                                            }
-
                                         }
                                     }
                                 }

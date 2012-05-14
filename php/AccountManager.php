@@ -200,78 +200,169 @@ class AccountManager
 
         $this->authService = $authService;
         $this->authServiceID = $authServiceID;
-        
-        /*
-        *           VCS AUTH SYSTEM
-        *
-        */
-        
-        if( $this->authService == 'VCS' ) {
-        
+
+
+        if( $this->authService == 'anonymous' || $this->authService == '' ) {
+
             /*
             *           ANONYMOUS VCS
             *
             */
-        
-            // Anonymous's user can logging into this app by providing this login/pass => anonymous/(empty) ou (empty)/(empty)
-            // The result is the same. $this->vcsLogin will be "anonymous" and $this->vcsPasswd, (empty)
-            if( ($vcsLogin == "anonymous" && $vcsPasswd == "")
-             || ($vcsLogin == ""          && $vcsPasswd == "") ) {
-               
-               $this->isAnonymous = true;
-               $this->haveKarma = false;
 
-               // Even if the user provide an empty login, we force it to be 'anonymous'
-               $vcsLogin  = 'anonymous';
-        
-               $this->anonymousIdent = ( isset($_COOKIE['anonymousIdent']) ) ? $_COOKIE['anonymousIdent'] : uniqid('', true);
-               
-               setcookie("anonymousIdent", $this->anonymousIdent, time() + 3600*24*365, "/"); // One year ;)
-               
+            // $this->vcsLogin will be "anonymous" and $this->vcsPasswd will be empty
+
+            $this->isAnonymous = true;
+            $this->haveKarma = false;
+
+            // Even if the user provide an empty login, we force it to be 'anonymous'
+            $vcsLogin  = 'anonymous';
+
+            $this->anonymousIdent = ( isset($_COOKIE['anonymousIdent']) ) ? $_COOKIE['anonymousIdent'] : uniqid('', true);
+
+            setcookie("anonymousIdent", $this->anonymousIdent, time() + 3600*24*365, "/"); // One year ;)
+
+            // Register var
+            $this->vcsLogin  = $vcsLogin;
+            $this->vcsPasswd = '';
+            $this->vcsLang   = $lang;
+            $this->email     = $email;
+
+            // Check DB
+            $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "VCS" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
+            $params = array($project, $this->vcsLogin, $this->anonymousIdent);
+
+            $r = $this->conn->query($s, $params);
+
+
+            if ($r->num_rows == 1) {
+
+                //This anonymous user exist into DB. We store his configuration into ...
+                $a = $r->fetch_object();
+
+                // ... object's property ...
+                $this->userConf = json_decode($a->conf);
+
+                $this->userID = $a->userID;
+
+                // ... and into the php's session (only specific var)
+                $_SESSION['userConf']  = $this->userConf;
+
+                // We update the email if this user have decided to change it.
+                $this->updateEmail();
+
+            } else {
+
+                // We register this new valid user
+                $userID = $this->register();
+                $this->userID = $userID;
+
+                // Store in session only specific var
+                $_SESSION['userConf'] = $this->defaultConf;
+
+            }
+
+            // Generic session var for VALID & ANONYMOUS VCS user
+            $_SESSION['userID']  = $this->userID;
+            $_SESSION['project'] = $this->project;
+            $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$this->userID;
+            $_SESSION['vcsPasswd'] = $this->vcsPasswd;
+            $_SESSION['isAnonymous'] = $this->isAnonymous;
+            $_SESSION['haveKarma'] = $this->haveKarma;
+            $_SESSION['anonymousIdent'] = $this->anonymousIdent;
+            $_SESSION['lang']      = $this->vcsLang;
+            $_SESSION['email']  = $this->email;
+            $_SESSION['authService']  = $this->authService;
+            $_SESSION['authServiceID']  = $this->authServiceID;
+
+            // We set up the CSRF token
+            $_SESSION['csrfToken'] = sha1(uniqid(rand(), true));
+
+            // Store some user info in cookies: we can use this to pre-fill the
+            // login page if the user's session expires.
+            setcookie("email", $this->email, time() + 3600*24*365, "/");
+            setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
+
+
+            // We construct the return's var for ExtJs
+            $return['state'] = true;
+            $return['msg']   = 'Welcome !';
+            return $return;
+
+        } elseif( $this->authService == 'VCS' ) {
+            /*
+            *           VCS AUTH SYSTEM
+            *
+            */
+
+            
+            $this->isAnonymous = false;
+            $this->anonymousIdent = '';
+
+            // If this app is installed into Php's server, we use the standad way to verify login/password
+            if( $_SERVER["SERVER_NAME"] == "doc.php.net" ) {
+                // We try to authenticate this user to master php server.
+                $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
+                $return['authMethod'] = 'masterPhp';
+            } else {
+                // We try to authenticate this user to VCS server.
+                $AuthReturn = VCSFactory::getInstance()->svnAuthenticate($vcsLogin, $vcsPasswd);
+                $return['authMethod'] = 'svnServer';
+            }
+
+
+            if( $AuthReturn !== true ) {
+                $return['state'] = false;
+                $return['msg']   = $AuthReturn;
+                return $return;
+            } else {
+
+                // Check the karma
+                $karma = $this->checkKarma($vcsLogin, $lang);
+                $this->haveKarma = ($karma === true);
+
                 // Register var
                 $this->vcsLogin  = $vcsLogin;
-                $this->vcsPasswd = '';
+                $this->vcsPasswd = $vcsPasswd;
                 $this->vcsLang   = $lang;
                 $this->email     = $email;
-                
+
                 // Check DB
-                $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "VCS" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
-                $params = array($project, $this->vcsLogin, $this->anonymousIdent);
-       
+                $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "VCS" AND `vcs_login` = "%s"';
+                $params = array($project, $this->vcsLogin);
+
                 $r = $this->conn->query($s, $params);
 
-        
                 if ($r->num_rows == 1) {
-                
-                  //This anonymous user exist into DB. We store his configuration into ...
+
+                  //This user exist into DB. We store his configuration into ...
                   $a = $r->fetch_object();
 
                   // ... object's property ...
                   $this->userConf = json_decode($a->conf);
-                  
+
                   $this->userID = $a->userID;
 
                   // ... and into the php's session (only specific var)
                   $_SESSION['userConf']  = $this->userConf;
-                  
+
                   // We update the email if this user have decided to change it.
                   $this->updateEmail();
-                  
+
                 } else {
-                
+
                     // We register this new valid user
                     $userID = $this->register();
                     $this->userID = $userID;
-                
+
                     // Store in session only specific var
-                    $_SESSION['userConf'] = $this->defaultConf;
-                
+                    $_SESSION['userConf']  = $this->defaultConf;
+
                 }
-                
+
                 // Generic session var for VALID & ANONYMOUS VCS user
                 $_SESSION['userID']  = $this->userID;
                 $_SESSION['project'] = $this->project;
-                $_SESSION['vcsLogin'] = $this->vcsLogin = $this->vcsLogin.' #'.$this->userID;
+                $_SESSION['vcsLogin'] = $this->vcsLogin;
                 $_SESSION['vcsPasswd'] = $this->vcsPasswd;
                 $_SESSION['isAnonymous'] = $this->isAnonymous;
                 $_SESSION['haveKarma'] = $this->haveKarma;
@@ -280,125 +371,20 @@ class AccountManager
                 $_SESSION['email']  = $this->email;
                 $_SESSION['authService']  = $this->authService;
                 $_SESSION['authServiceID']  = $this->authServiceID;
-                
+
                 // We set up the CSRF token
                 $_SESSION['csrfToken'] = sha1(uniqid(rand(), true));
-                
+
                 // Store some user info in cookies: we can use this to pre-fill the
                 // login page if the user's session expires.
-                setcookie("loginApp", 'anonymous', time() + 3600*24*365, "/"); // One year ;)
-                setcookie("email", $this->email, time() + 3600*24*365, "/");
+                setcookie("loginApp", utf8_encode($this->vcsLogin), time() + 3600*24*365, "/"); // One year ;)
                 setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
-            
-                    
+
+
                 // We construct the return's var for ExtJs
                 $return['state'] = true;
                 $return['msg']   = 'Welcome !';
                 return $return;
-                
-            }
-            
-            /*
-            *           VALID VCS USER
-            *
-            */
-        
-            
-            else {
-            
-                $this->isAnonymous = false;
-                $this->anonymousIdent = '';
-                
-                // If this app is installed into Php's server, we use the standad way to verify login/password
-                if( $_SERVER["SERVER_NAME"] == "doc.php.net" ) {
-                    // We try to authenticate this user to master php server.
-                    $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
-                    $return['authMethod'] = 'masterPhp';
-                } else {
-                    // We try to authenticate this user to VCS server.
-                    $AuthReturn = VCSFactory::getInstance()->svnAuthenticate($vcsLogin, $vcsPasswd);
-                    $return['authMethod'] = 'svnServer';
-                }
-                
-                
-                if( $AuthReturn !== true ) {
-                    $return['state'] = false;
-                    $return['msg']   = $AuthReturn;
-                    return $return;
-                } else {
-                
-                    // Check the karma
-                    $karma = $this->checkKarma($vcsLogin, $lang);
-                    $this->haveKarma = ($karma === true);
-
-                    // Register var
-                    $this->vcsLogin  = $vcsLogin;
-                    $this->vcsPasswd = $vcsPasswd;
-                    $this->vcsLang   = $lang;
-                    $this->email     = $email;
-                    
-                    // Check DB
-                    $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "VCS" AND `vcs_login` = "%s"';
-                    $params = array($project, $this->vcsLogin);
-           
-                    $r = $this->conn->query($s, $params);
-
-                    if ($r->num_rows == 1) {
-                    
-                      //This user exist into DB. We store his configuration into ...
-                      $a = $r->fetch_object();
-
-                      // ... object's property ...
-                      $this->userConf = json_decode($a->conf);
-                      
-                      $this->userID = $a->userID;
-
-                      // ... and into the php's session (only specific var)
-                      $_SESSION['userConf']  = $this->userConf;
-                      
-                      // We update the email if this user have decided to change it.
-                      $this->updateEmail();
-                      
-                    } else {
-                    
-                        // We register this new valid user
-                        $userID = $this->register();
-                        $this->userID = $userID;
-                        
-                        // Store in session only specific var
-                        $_SESSION['userConf']  = $this->defaultConf;
-                    
-                    }
-                    
-                    // Generic session var for VALID & ANONYMOUS VCS user
-                    $_SESSION['userID']  = $this->userID;
-                    $_SESSION['project'] = $this->project;
-                    $_SESSION['vcsLogin'] = $this->vcsLogin;
-                    $_SESSION['vcsPasswd'] = $this->vcsPasswd;
-                    $_SESSION['isAnonymous'] = $this->isAnonymous;
-                    $_SESSION['haveKarma'] = $this->haveKarma;
-                    $_SESSION['anonymousIdent'] = $this->anonymousIdent;
-                    $_SESSION['lang']      = $this->vcsLang;
-                    $_SESSION['email']  = $this->email;
-                    $_SESSION['authService']  = $this->authService;
-                    $_SESSION['authServiceID']  = $this->authServiceID;
-                    
-                    // We set up the CSRF token
-                    $_SESSION['csrfToken'] = sha1(uniqid(rand(), true));
-                    
-                    // Store some user info in cookies: we can use this to pre-fill the
-                    // login page if the user's session expires.
-                    setcookie("loginApp", utf8_encode($this->vcsLogin), time() + 3600*24*365, "/"); // One year ;)
-                    setcookie("email", $this->email, time() + 3600*24*365, "/");
-                    setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
-                
-                        
-                    // We construct the return's var for ExtJs
-                    $return['state'] = true;
-                    $return['msg']   = 'Welcome !';
-                    return $return;
-                }
-            
             }
         
         }
@@ -470,8 +456,6 @@ class AccountManager
             
             // Store some user info in cookies: we can use this to pre-fill the
             // login page if the user's session expires.
-            setcookie("loginApp", utf8_encode($this->vcsLogin), time() + 3600*24*365, "/"); // One year ;)
-            setcookie("email", $this->email, time() + 3600*24*365, "/");
             setcookie("lang", $this->vcsLang, time() + 3600*24*365, "/");
             
             // We construct the return's var for ExtJs

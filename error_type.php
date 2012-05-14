@@ -113,148 +113,148 @@ $tags = array(
 foreach ($tags as $tag => $label)
 {
     $error['nb' . $label . 'Tag']['head'] = $label . ' tag';
-    $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different from english version.';
+    $error['nb' . $label . 'Tag']['desc'] = 'Throw if the number of <b>' . $label . '</b> tags is different in the english version.';
 }
 
 $error['-No error-']['head'] = '- No errors -';
 $error['-No error-']['desc'] = 'There are no more errors in this file.';
 
-$error['attributXmlXlinkAppendix']['head'] = 'Appendix tag';
-$error['attributXmlXlinkAppendix']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsAppendix']['head'] = 'Appendix tag';
-$error['attributXmlNsAppendix']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdAppendix']['head'] = 'Appendix tag';
-$error['attributXmlIdAppendix']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlXlinkAppendix']['head'] = 'Appendix tag';
+$error['attributeXmlXlinkAppendix']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsAppendix']['head'] = 'Appendix tag';
+$error['attributeXmlNsAppendix']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdAppendix']['head'] = 'Appendix tag';
+$error['attributeXmlIdAppendix']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlXlinkBook']['head'] = 'Book tag';
-$error['attributXmlXlinkBook']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsBook']['head'] = 'Book tag';
-$error['attributXmlNsBook']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdBook']['head'] = 'Book tag';
-$error['attributXmlIdBook']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlXlinkBook']['head'] = 'Book tag';
+$error['attributeXmlXlinkBook']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsBook']['head'] = 'Book tag';
+$error['attributeXmlNsBook']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdBook']['head'] = 'Book tag';
+$error['attributeXmlIdBook']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
 $error['nbCdataTag']['head'] = 'Cdata section';
-$error['nbCdataTag']['desc'] = 'Throw if the number of <b>cdata</b> section is different from english version.';
+$error['nbCdataTag']['desc'] = 'Throw if the number of <b>cdata</b> section is different in the english version.';
 
-$error['attributXmlXlinkChapter']['head'] = 'Chapter tag';
-$error['attributXmlXlinkChapter']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsChapter']['head'] = 'Chapter tag';
-$error['attributXmlNsChapter']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdChapter']['head'] = 'Chapter tag';
-$error['attributXmlIdChapter']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlXlinkChapter']['head'] = 'Chapter tag';
+$error['attributeXmlXlinkChapter']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsChapter']['head'] = 'Chapter tag';
+$error['attributeXmlNsChapter']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdChapter']['head'] = 'Chapter tag';
+$error['attributeXmlIdChapter']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributVersionChapter']['head'] = 'Chapter tag';
-$error['attributVersionChapter']['desc'] = 'Throw if the value of the attribut <b>version</b> is different from english version.';
+$error['attributeVersionChapter']['head'] = 'Chapter tag';
+$error['attributeVersionChapter']['desc'] = 'Throw if the value of the attribute <b>version</b> is different in the english version.';
 
 $error['nbEntryTag']['head'] = 'Entry tag';
-$error['nbEntryTag']['desc'] = 'Throw if the number of <b>entry</b> tags is different from english version.';
+$error['nbEntryTag']['desc'] = 'Throw if the number of <b>entry</b> tags is different in the english version.';
 
 $error['errorFieldsynopsisInitializer']['head'] = 'Fieldsynopsis tag';
-$error['errorFieldsynopsisInitializer']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different from english version.';
+$error['errorFieldsynopsisInitializer']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different in the english version.';
 $error['errorFieldsynopsisModifier']['head'] = 'Fieldsynopsis tag';
-$error['errorFieldsynopsisModifier']['desc'] = 'Throw if the value of the <b>modifier</b> tags is different from english version.';
+$error['errorFieldsynopsisModifier']['desc'] = 'Throw if the value of the <b>modifier</b> tags is different in the english version.';
 $error['errorFieldsynopsisType']['head'] = 'Fieldsynopsis tag';
-$error['errorFieldsynopsisType']['desc'] = 'Throw if the value of the <b>type</b> tags is different from english version.';
+$error['errorFieldsynopsisType']['desc'] = 'Throw if the value of the <b>type</b> tags is different in the english version.';
 $error['errorFieldsynopsisVarnameAttr']['head'] = 'Fieldsynopsis tag';
-$error['errorFieldsynopsisVarnameAttr']['desc'] = 'Throw if the value of the attribut <b>varname</b> is different from english version.';
+$error['errorFieldsynopsisVarnameAttr']['desc'] = 'Throw if the value of the attribute <b>varname</b> is different in the english version.';
 $error['errorFieldsynopsisVarnameValue']['head'] = 'Fieldsynopsis tag';
-$error['errorFieldsynopsisVarnameValue']['desc'] = 'Throw if the value of the <b>varname</b> tags is different from english version.';
+$error['errorFieldsynopsisVarnameValue']['desc'] = 'Throw if the value of the <b>varname</b> tags is different in the english version.';
 
-$error['attributLinkendLink']['head'] = 'Linkend and xlink tags';
-$error['attributLinkendLink']['desc'] = 'Throw if the value of the attribut <b>linkend</b> is different from english version.';
-$error['attributXlinkLink']['head'] = 'Linkend and xlink tags';
-$error['attributXlinkLink']['desc'] = 'Throw if the value of the attribut <b>xlink:href</b> is different from english version.';
+$error['attributeLinkendLink']['head'] = 'Linkend and xlink tags';
+$error['attributeLinkendLink']['desc'] = 'Throw if the value of the attribute <b>linkend</b> is different in the english version.';
+$error['attributeXlinkLink']['head'] = 'Linkend and xlink tags';
+$error['attributeXlinkLink']['desc'] = 'Throw if the value of the attribute <b>xlink:href</b> is different in the english version.';
 
 $error['NbXlinkLink']['head'] = 'Linkend and xlink tags';
-$error['NbXlinkLink']['desc'] = 'Throw if the number of <b>Link</b> tags is different from english version.';
+$error['NbXlinkLink']['desc'] = 'Throw if the number of <b>Link</b> tags is different in the english version.';
 
 $error['NbXref']['head'] = 'Xref tags';
-$error['NbXref']['desc'] = 'Throw if the number of <b>Xref</b> tags is different from english version.';
-$error['attributLinkendXref']['head'] = 'Xref tags';
-$error['attributLinkendXref']['desc'] = 'Throw if the value of the attribut <b>linkend</b> is different from english version.';
+$error['NbXref']['desc'] = 'Throw if the number of <b>Xref</b> tags is different in the english version.';
+$error['attributeLinkendXref']['head'] = 'Xref tags';
+$error['attributeLinkendXref']['desc'] = 'Throw if the value of the attribute <b>linkend</b> is different in the english version.';
 
 $error['errorRoleMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorRoleMethodsynopsis']['desc'] = 'Throw if the value of the attribut <b>role</b> is different from english version.';
+$error['errorRoleMethodsynopsis']['desc'] = 'Throw if the value of the attribute <b>role</b> is different in the english version.';
 $error['errorOptionalMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorOptionalMethodsynopsis']['desc'] = 'Throw if the value of the attribut <b>choice</b> is different from english version.';
+$error['errorOptionalMethodsynopsis']['desc'] = 'Throw if the value of the attribute <b>choice</b> is different in the english version.';
 $error['errorParameterInitializerMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorParameterInitializerMethodsynopsis']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different from english version.';
+$error['errorParameterInitializerMethodsynopsis']['desc'] = 'Throw if the value of the <b>initializer</b> tags is different in the english version.';
 $error['errorParameterTypeMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorParameterTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</b> tags is different from english version.';
+$error['errorParameterTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</b> tags is different in the english version.';
 $error['errorParameterNameMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorParameterNameMethodsynopsis']['desc'] = 'Throw if the value of the <b>parameter</b> tags is different from english version.';
+$error['errorParameterNameMethodsynopsis']['desc'] = 'Throw if the value of the <b>parameter</b> tags is different in the english version.';
 $error['errorNbMethodparamMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorNbMethodparamMethodsynopsis']['desc'] = 'Throw if the number of <b>parameter</b> tags is different from english version.';
+$error['errorNbMethodparamMethodsynopsis']['desc'] = 'Throw if the number of <b>parameter</b> tags is different in the english version.';
 $error['errorTypeMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</b> tags is different from english version.';
+$error['errorTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</b> tags is different in the english version.';
 $error['errorMethodnameMethodsynopsis']['head'] = 'Methodsynopsis tag';
-$error['errorMethodnameMethodsynopsis']['desc'] = 'Throw if the value of the <b>methodname</b> tags is different from english version.';
+$error['errorMethodnameMethodsynopsis']['desc'] = 'Throw if the value of the <b>methodname</b> tags is different in the english version.';
 
 $error['errorNbOoclassClassname']['head'] = 'Ooclass tag';
-$error['errorNbOoclassClassname']['desc'] = 'Throw if the number of <b>classname</b> tags is different from english version.';
+$error['errorNbOoclassClassname']['desc'] = 'Throw if the number of <b>classname</b> tags is different in the english version.';
 $error['errorOoclassClassname']['head'] = 'Ooclass tag';
-$error['errorOoclassClassname']['desc'] = 'Throw if the value of the <b>classname</b> tags is different from english version.';
+$error['errorOoclassClassname']['desc'] = 'Throw if the value of the <b>classname</b> tags is different in the english version.';
 
-$error['attributXmlNsXlinkPreface']['head'] = 'Preface tag';
-$error['attributXmlNsXlinkPreface']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsPreface']['head'] = 'Preface tag';
-$error['attributXmlNsPreface']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdPreface']['head'] = 'Preface tag';
-$error['attributXmlIdPreface']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlNsXlinkPreface']['head'] = 'Preface tag';
+$error['attributeXmlNsXlinkPreface']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsPreface']['head'] = 'Preface tag';
+$error['attributeXmlNsPreface']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdPreface']['head'] = 'Preface tag';
+$error['attributeXmlIdPreface']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlIdQandaentry']['head'] = 'Qandaentry tag';
-$error['attributXmlIdQandaentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlIdQandaentry']['head'] = 'Qandaentry tag';
+$error['attributeXmlIdQandaentry']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlNsXlinkRefentry']['head'] = 'Refentry tag';
-$error['attributXmlNsXlinkRefentry']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsRefentry']['head'] = 'Refentry tag';
-$error['attributXmlNsRefentry']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdRefentry']['head'] = 'Refentry tag';
-$error['attributXmlIdRefentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlNsXlinkRefentry']['head'] = 'Refentry tag';
+$error['attributeXmlNsXlinkRefentry']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsRefentry']['head'] = 'Refentry tag';
+$error['attributeXmlNsRefentry']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdRefentry']['head'] = 'Refentry tag';
+$error['attributeXmlIdRefentry']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlNsXlinkReference']['head'] = 'Reference tag';
-$error['attributXmlNsXlinkReference']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsReference']['head'] = 'Reference tag';
-$error['attributXmlNsReference']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIDReference']['head'] = 'Reference tag';
-$error['attributXmlIDReference']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlNsXlinkReference']['head'] = 'Reference tag';
+$error['attributeXmlNsXlinkReference']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsReference']['head'] = 'Reference tag';
+$error['attributeXmlNsReference']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIDReference']['head'] = 'Reference tag';
+$error['attributeXmlIDReference']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
 $error['spaceOrPeriodRefpurpose']['head'] = 'Refpurpose tag';
 $error['spaceOrPeriodRefpurpose']['desc'] = 'Throw if there is a space or a period at the end of refpurpose value.';
 
-$error['attributRefsect1']['head'] = 'Refsect1 tag';
-$error['attributRefsect1']['desc'] = 'Throw if the value of the attribut <b>role</b> is different from english version.';
+$error['attributeRefsect1']['head'] = 'Refsect1 tag';
+$error['attributeRefsect1']['desc'] = 'Throw if the value of the attribute <b>role</b> is different in the english version.';
 
 $error['nbRowTag']['head'] = 'Row tag';
-$error['nbRowTag']['desc'] = 'Throw if the number of <b>row</b> tags is different from english version.';
-$error['attributXmlIdRow']['head'] = 'Row tag';
-$error['attributXmlIdRow']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['nbRowTag']['desc'] = 'Throw if the number of <b>row</b> tags is different in the english version.';
+$error['attributeXmlIdRow']['head'] = 'Row tag';
+$error['attributeXmlIdRow']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlNsXlinkSect1']['head'] = 'Sect1 tag';
-$error['attributXmlNsXlinkSect1']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsSect1']['head'] = 'Sect1 tag';
-$error['attributXmlNsSect1']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdSect1']['head'] = 'Sect1 tag';
-$error['attributXmlIdSect1']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlNsXlinkSect1']['head'] = 'Sect1 tag';
+$error['attributeXmlNsXlinkSect1']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsSect1']['head'] = 'Sect1 tag';
+$error['attributeXmlNsSect1']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdSect1']['head'] = 'Sect1 tag';
+$error['attributeXmlIdSect1']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
-$error['attributXmlNsXlinkSection']['head'] = 'Section tag';
-$error['attributXmlNsXlinkSection']['desc'] = 'Throw if the value of the attribut <b>xmlns:xlink</b> is different from english version.';
-$error['attributXmlNsSection']['head'] = 'Section tag';
-$error['attributXmlNsSection']['desc'] = 'Throw if the value of the attribut <b>xmlns</b> is different from english version.';
-$error['attributXmlIdSection']['head'] = 'Section tag';
-$error['attributXmlIdSection']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlNsXlinkSection']['head'] = 'Section tag';
+$error['attributeXmlNsXlinkSection']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlNsSection']['head'] = 'Section tag';
+$error['attributeXmlNsSection']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlIdSection']['head'] = 'Section tag';
+$error['attributeXmlIdSection']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
 $error['nbSeeAlsoMember']['head'] = 'SeeAlso section';
-$error['nbSeeAlsoMember']['desc'] = 'Throw if the number of <b>member</b> tags is different from english version.';
+$error['nbSeeAlsoMember']['desc'] = 'Throw if the number of <b>member</b> tags is different in the english version.';
 
 $error['nbTbodyTag']['head'] = 'Tbody tag';
-$error['nbTbodyTag']['desc'] = 'Throw if the number of <b>tbody</b> tags is different from english version.';
+$error['nbTbodyTag']['desc'] = 'Throw if the number of <b>tbody</b> tags is different in the english version.';
 
 $error['nbTheadTag']['head'] = 'Thead tag';
-$error['nbTheadTag']['desc'] = 'Throw if the number of <b>thead</b> tags is different from english version.';
+$error['nbTheadTag']['desc'] = 'Throw if the number of <b>thead</b> tags is different in the english version.';
 
-$error['attributXmlIdVarlistentry']['head'] = 'Varlistentry tag';
-$error['attributXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribut <b>xml:id</b> is different from english version.';
+$error['attributeXmlIdVarlistentry']['head'] = 'Varlistentry tag';
+$error['attributeXmlIdVarlistentry']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
 
 $error['acronym']['head'] = 'Missing &lt;acronym&gt; tag';
@@ -271,6 +271,10 @@ $error['documentNotUTF8']['desc'] = 'We recommand to set your document in UTF-8 
 
 $error['SgmlDefaultDTDFile']['head'] = 'Wrong Sgml default dtd file';
 $error['SgmlDefaultDTDFile']['desc'] = 'You must set it like this : <br><br><b>sgml-default-dtd-file:"~/.phpdoc/manual.ced"</b>';
+
+$error['VCSKeyWordsEolStyle']['head'] = 'Wrong VCS Keywords & Eol-style';
+$error['VCSKeyWordsEolStyle']['desc'] = 'There is some error on this file about VCS Keywords & Eol-Style. Just commit this file against the editor, it will fix it for you.';
+
 
 $to_display = array();
 

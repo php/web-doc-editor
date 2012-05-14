@@ -12,7 +12,6 @@ Ext.define('phpdoe.store.Files', {
         }
     },
     folderSort: true,
-
     root: {
         id: '/'
     }

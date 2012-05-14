@@ -27,7 +27,7 @@
     return isRE ? new RegExp(isRE[1]) : query;
   }
   var queryDialog =
-    'Search: <input type="text" style="width: 10em"> <span style="color: #888">(Use /re/ syntax for regexp search)</span>';
+    _('Search')+': <input type="text" style="width: 10em"> <span style="color: #888">('+_('Use /re/ syntax for regexp search')+')</span>';
   function doSearch(cm, rev) {
     var state = getSearchState(cm);
     if (state.query) return findNext(cm, rev);

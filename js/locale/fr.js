@@ -9,7 +9,7 @@ var i18n = new Array();
   i18n["Forbidden"] = "Interdit";
   i18n["You can't do this action as anonymous user."] = "Vous ne pouvez pas effectuer cette action avec l'utilisateur anonyme.";
   i18n["Error"] = "Erreur";
-  i18n["File system error. Check read/write permission under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
+  i18n["File system error. Check read/write permissions under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
   i18n["Main menu"] = "Menu principal";
   i18n["Topic:"] = "Sujet :";
   i18n["Defined by {0}, {1}"] = "Défini par {0} le {1}";
@@ -33,14 +33,14 @@ var i18n = new Array();
   i18n["Project: "] = "Projet : ";
   i18n["Language: "] = "Langue : ";
   i18n["Total number of your files"] = "Nombre total de vos fichiers";
-  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-  i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter toutle fichier\" pour remplacer toutes les tabulations par des espaces.";
-  i18n["You can't modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it."] = "Vous ne pouvez pas modifier ce fichier car il l\'a déjà été par un autre utilisateur. Contactez un administrateur si vous voulez outrepasser cette restriction.";
-  i18n["The patch you want to delete didn't exist."] = "Le patch que vous voulez effacer n'existe pas.";
-  i18n["The patch you want to delete isn't own by you. Only the user how create it or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
-  i18n["This action is available only to global administrator."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
-  i18n["This action is available only to global administrator or to administrator for this lang."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
-  i18n["The file you want to clear local change isn't own by you.<br>You can only do this action for yours files."] = "Le fichier dont vous souhaitez effacer les modifications ne vous appartient pas.<br>Vous ne pouvez faire cette action que sur les fichiers vous appartenant.";
+  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
+  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter toutle fichier\" pour remplacer toutes les tabulations par des espaces.";
+  i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "Vous ne pouvez pas modifier ce fichier car il l\'a déjà été par un autre utilisateur. Contactez un administrateur si vous voulez outrepasser cette restriction.";
+  i18n["The patch you want to delete doesn't exist."] = "Le patch que vous voulez effacer n'existe pas.";
+  i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
+  i18n["This action is available to global administrators only."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
+  i18n["This action is available to global administrators or to administrators for this language only."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
+  i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "Le fichier dont vous souhaitez effacer les modifications ne vous appartient pas.<br>Vous ne pouvez faire cette action que sur les fichiers vous appartenant.";
   
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
@@ -204,10 +204,10 @@ var i18n = new Array();
   i18n["Folder created"] = "Dossier créé";
   i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info : Ce nouveau dossier ne sera pas commité tant qu'un nouveau fichier n'y sera pas commité. Si vous ne commitez aucun nouveau fichier dans ce dossier, il sera automatiquement supprimé sous 8 jours.";
   i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Le dossier <br><br><b>{0}</b><br><br> a été créé avec succès sous {1} !";
-  i18n["This folder already exist in the current folder."] = "Ce dossier existe déjà dans le dossier courant.";
+  i18n["This folder already exists in the current folder."] = "Ce dossier existe déjà dans le dossier courant.";
 
   i18n["Add a new file"] = "Ajouter un nouveau fichier";
-  i18n["This file already exist in the current folder."] = "Ce fichier existe déjà dans le dossier courant.";
+  i18n["This file already exists in the current folder."] = "Ce fichier existe déjà dans le dossier courant.";
   i18n["Name for the new file"] = "Nom du nouveau fichier";
   i18n["Chose a skeleton"] = "Choisissez un template";
   i18n["Open the editor"] = "Ouvrir l'éditeur";
@@ -705,3 +705,8 @@ var i18n = new Array();
   
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Prévisualisation";
+  
+// In file: ../../js/ux/codemirror2/lib/util/search.js
+  i18n["Search"] = "Recherche ";
+  i18n["Use /re/ syntax for regexp search"] = "Utiliser la syntaxe /re/ pour une recherche utilisant les expressions rationnelles";
+  

@@ -34,6 +34,9 @@ cat js/ux/codemirror2/lib/codemirror.js \
     js/ux/codemirror2/mode/php/php.js \
     js/ux/codemirror2/mode/htmlmixed/htmlmixed.js \
     js/ux/codemirror2/mode/rst/rst.js \
+    js/ux/codemirror2/lib/util/search.js \
+    js/ux/codemirror2/lib/util/searchcursor.js \
+    js/ux/codemirror2/lib/util/dialog.js \
     js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/extjsPowered/treegrid/TreeGridSorter.js \
@@ -59,6 +62,9 @@ cat js/ux/codemirror2/lib/codemirror.js \
     js/ux/codemirror2/mode/php/php.js \
     js/ux/codemirror2/mode/htmlmixed/htmlmixed.js \
     js/ux/codemirror2/mode/rst/rst.js \
+    js/ux/codemirror2/lib/util/search.js \
+    js/ux/codemirror2/lib/util/searchcursor.js \
+    js/ux/codemirror2/lib/util/dialog.js \
     js/util.js \
     js/ux/extjsPowered/*.js \
     js/ux/extjsPowered/treegrid/TreeGridSorter.js \
@@ -81,6 +87,7 @@ cat themes/flags.css \
     themes/main.css \
     js/ux/codemirror2/lib/codemirror.css \
     js/ux/codemirror2/theme/*.css \
+    js/ux/codemirror2/lib/util/dialog.css \
     | java -jar scripts/utils/yuicompressor.jar --type css --verbose -o themes/main-all.css
 
 popd

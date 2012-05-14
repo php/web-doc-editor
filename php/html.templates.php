@@ -58,6 +58,17 @@ function jsLoadTemplate($src)
 }
 
 /**
+ * Returns a raw element
+ *
+ * @param string $raw The raw content of the element
+ * @return string The raw content
+ */
+function insertRawElement($raw)
+{
+    return sprintf('  %s', $raw) . "\n";
+}
+
+/**
  * Returns a javascript script loading element
  *
  * @return string The script element

@@ -78,17 +78,36 @@ class ExtJsController
      */
     public function login()
     {
+
         $am = AccountManager::getInstance();
 
-        $vcsLogin  = $this->getRequestVariable('vcsLogin');
-        $vcsPasswd = $this->getRequestVariable('vcsPassword');
+        $login  = $this->getRequestVariable('login');
+        $passwd = $this->getRequestVariable('password');
         $lang      = $this->getRequestVariable('lang');
         $project   = $this->getRequestVariable('project');
-        $email   = $this->getRequestVariable('email');
         $authService   = $this->getRequestVariable('authService');
-        $authServiceID   = $this->getRequestVariable('authServiceID');
+        $authServiceID = '';
 
-        $response = $am->login($project, $vcsLogin, $vcsPasswd, $email, $lang, $authService, $authServiceID);
+        if ($authService == 'google' || $authService == 'facebook') {
+            require_once 'AuthServices.php';
+            $auth = new AuthServices();
+
+            $user = $auth->getUser($authService == 'google' ? AuthServices::GOOGLE : AuthServices::FACEBOOK);
+            // we get data only use token in session, because user can send changed(hack) data for us
+            if ($user) {
+                $authServiceID = $user['id'];
+                $login = $user['name'];
+                $email = $user['email'];
+            } else {
+                return JsonResponseBuilder::failure();
+            }
+        } else if ($authService == 'VCS') {
+            $email   = $login . '@php.net';
+        } else {
+            $email   = $this->getRequestVariable('email');
+        }
+
+        $response = $am->login($project, $login, $passwd, $email, $lang, $authService, $authServiceID);
 
         if ($response['state'] === true) {
             // This user is already know as a valid user
@@ -285,6 +304,55 @@ class ExtJsController
             )
         );
 
+    }
+
+    public function getAvailableAuthServices()
+    {
+
+        require_once 'AuthServices.php';
+        $auth = new AuthServices();
+
+        $googleUser = $auth->getUser(AuthServices::GOOGLE);
+        $fbUser = $auth->getUser(AuthServices::FACEBOOK);
+
+
+        $r = array(
+            array(
+                'id' => 'VCS',
+                'iconCls' => 'services iconUser',
+                'name' => 'VCS Account',
+                'login' => (isset($_COOKIE['loginApp']) ? $_COOKIE['loginApp'] : '')
+            ),
+            array(
+                'id' => 'google',
+                'iconCls' => 'services iconGoogle',
+                'name' => 'Google' . ($googleUser ? ' (' . $googleUser['name'] . ')' : ''),
+                'login' => $googleUser ? $googleUser['name'] : '',
+                'email' => $googleUser ? $googleUser['email'] : '',
+                'userId' => $googleUser ? $googleUser['id'] : ''
+            ),
+            array(
+                'id' => 'facebook',
+                'iconCls' => 'services iconFacebook',
+                'name' => 'Facebook' . ($fbUser ? ' (' . $fbUser['name'] . ')' : ''),
+                'login' => $fbUser ? $fbUser['name'] : '',
+                'email' => $fbUser ? $fbUser['email'] : '',
+                'userId' => $fbUser ? $fbUser['id'] : ''
+            ),
+            array(
+                'id' => 'anonymous',
+                'iconCls' => '',
+                'name' => 'Anonymous',
+                'email' => (isset($_COOKIE['email']) ? $_COOKIE['email'] : '')
+            )
+        );
+
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
     }
 
     public function getSkeletonsNames()
@@ -1397,6 +1465,9 @@ class ExtJsController
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
 
+        // If we are on root node, FilePath is empty. He must be "/".
+        if( $FilePath == '' ) $FilePath = '/';
+        
         $info = RepositoryManager::getInstance()->clearLocalChange(
             $FileType, new File($FileLang, $FilePath.$FileName)
         );

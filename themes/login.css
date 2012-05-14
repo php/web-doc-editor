@@ -15,6 +15,14 @@
     background-image: url(./img/icon_twitter.png) !important;
 }
 
+.iconUser              { background-image: url(./img/user.png)                  !important;}
+
+
+.services {
+    width: 16px !important;
+    height: 16px !important;
+}
+
 .project-php {
     background-image: url(./img/project_php.png) !important;
     height: 12px;

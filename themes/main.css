@@ -496,3 +496,12 @@
 .cm2-activeline {
     background: #f8f7f6 !important;
 }
+
+.x-box-like {
+    /*float: right;*/
+    padding-top: 6px;
+    padding-left: 6px;
+}
+.fb-like {
+    margin-top: 10px;
+}

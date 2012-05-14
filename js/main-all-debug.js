@@ -5020,7 +5020,300 @@ CodeMirror.defineMode('rst', function(config, options) {
 });
 
 CodeMirror.defineMIME("text/x-rst", "rst");
-Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
+// Define search commands. Depends on dialog.js or another
+// implementation of the openDialog method.
+
+// Replace works a little oddly -- it will do the replace on the next
+// Ctrl-G (or whatever is bound to findNext) press. You prevent a
+// replace by making sure the match is no longer selected when hitting
+// Ctrl-G.
+
+(function() {
+  function SearchState() {
+    this.posFrom = this.posTo = this.query = null;
+    this.marked = [];
+  }
+  function getSearchState(cm) {
+    return cm._searchState || (cm._searchState = new SearchState());
+  }
+  function dialog(cm, text, shortText, f) {
+    if (cm.openDialog) cm.openDialog(text, f);
+    else f(prompt(shortText, ""));
+  }
+  function confirmDialog(cm, text, shortText, fs) {
+    if (cm.openConfirm) cm.openConfirm(text, fs);
+    else if (confirm(shortText)) fs[0]();
+  }
+  function parseQuery(query) {
+    var isRE = query.match(/^\/(.*)\/$/);
+    return isRE ? new RegExp(isRE[1]) : query;
+  }
+  var queryDialog =
+    _('Search')+': <input type="text" style="width: 10em"> <span style="color: #888">('+_('Use /re/ syntax for regexp search')+')</span>';
+  function doSearch(cm, rev) {
+    var state = getSearchState(cm);
+    if (state.query) return findNext(cm, rev);
+    dialog(cm, queryDialog, "Search for:", function(query) {
+      cm.operation(function() {
+        if (!query || state.query) return;
+        state.query = parseQuery(query);
+        if (cm.lineCount() < 2000) { // This is too expensive on big documents.
+          for (var cursor = cm.getSearchCursor(query); cursor.findNext();)
+            state.marked.push(cm.markText(cursor.from(), cursor.to(), "CodeMirror-searching"));
+        }
+        state.posFrom = state.posTo = cm.getCursor();
+        findNext(cm, rev);
+      });
+    });
+  }
+  function findNext(cm, rev) {cm.operation(function() {
+    var state = getSearchState(cm);
+    var cursor = cm.getSearchCursor(state.query, rev ? state.posFrom : state.posTo);
+    if (!cursor.find(rev)) {
+      cursor = cm.getSearchCursor(state.query, rev ? {line: cm.lineCount() - 1} : {line: 0, ch: 0});
+      if (!cursor.find(rev)) return;
+    }
+    cm.setSelection(cursor.from(), cursor.to());
+    state.posFrom = cursor.from(); state.posTo = cursor.to();
+  })}
+  function clearSearch(cm) {cm.operation(function() {
+    var state = getSearchState(cm);
+    if (!state.query) return;
+    state.query = null;
+    for (var i = 0; i < state.marked.length; ++i) state.marked[i].clear();
+    state.marked.length = 0;
+  })}
+
+  var replaceQueryDialog =
+    'Replace: <input type="text" style="width: 10em"> <span style="color: #888">(Use /re/ syntax for regexp search)</span>';
+  var replacementQueryDialog = 'With: <input type="text" style="width: 10em">';
+  var doReplaceConfirm = "Replace? <button>Yes</button> <button>No</button> <button>Stop</button>";
+  function replace(cm, all) {
+    dialog(cm, replaceQueryDialog, "Replace:", function(query) {
+      if (!query) return;
+      query = parseQuery(query);
+      dialog(cm, replacementQueryDialog, "Replace with:", function(text) {
+        if (all) {
+          cm.operation(function() {
+            for (var cursor = cm.getSearchCursor(query); cursor.findNext();) {
+              if (typeof query != "string") {
+                var match = cm.getRange(cursor.from(), cursor.to()).match(query);
+                cursor.replace(text.replace(/\$(\d)/, function(w, i) {return match[i];}));
+              } else cursor.replace(text);
+            }
+          });
+        } else {
+          clearSearch(cm);
+          var cursor = cm.getSearchCursor(query, cm.getCursor());
+          function advance() {
+            var start = cursor.from(), match;
+            if (!(match = cursor.findNext())) {
+              cursor = cm.getSearchCursor(query);
+              if (!(match = cursor.findNext()) ||
+                  (cursor.from().line == start.line && cursor.from().ch == start.ch)) return;
+            }
+            cm.setSelection(cursor.from(), cursor.to());
+            confirmDialog(cm, doReplaceConfirm, "Replace?",
+                          [function() {doReplace(match);}, advance]);
+          }
+          function doReplace(match) {
+            cursor.replace(typeof query == "string" ? text :
+                           text.replace(/\$(\d)/, function(w, i) {return match[i];}));
+            advance();
+          }
+          advance();
+        }
+      });
+    });
+  }
+
+  CodeMirror.commands.find = function(cm) {clearSearch(cm); doSearch(cm);};
+  CodeMirror.commands.findNext = doSearch;
+  CodeMirror.commands.findPrev = function(cm) {doSearch(cm, true);};
+  CodeMirror.commands.clearSearch = clearSearch;
+  CodeMirror.commands.replace = replace;
+  CodeMirror.commands.replaceAll = function(cm) {replace(cm, true);};
+})();
+(function(){
+  function SearchCursor(cm, query, pos, caseFold) {
+    this.atOccurrence = false; this.cm = cm;
+    if (caseFold == null) caseFold = typeof query == "string" && query == query.toLowerCase();
+
+    pos = pos ? cm.clipPos(pos) : {line: 0, ch: 0};
+    this.pos = {from: pos, to: pos};
+
+    // The matches method is filled in based on the type of query.
+    // It takes a position and a direction, and returns an object
+    // describing the next occurrence of the query, or null if no
+    // more matches were found.
+    if (typeof query != "string") // Regexp match
+      this.matches = function(reverse, pos) {
+        if (reverse) {
+          var line = cm.getLine(pos.line).slice(0, pos.ch), match = line.match(query), start = 0;
+          while (match) {
+            var ind = line.indexOf(match[0]);
+            start += ind;
+            line = line.slice(ind + 1);
+            var newmatch = line.match(query);
+            if (newmatch) match = newmatch;
+            else break;
+            start++;
+          }
+        }
+        else {
+          var line = cm.getLine(pos.line).slice(pos.ch), match = line.match(query),
+          start = match && pos.ch + line.indexOf(match[0]);
+        }
+        if (match)
+          return {from: {line: pos.line, ch: start},
+                  to: {line: pos.line, ch: start + match[0].length},
+                  match: match};
+      };
+    else { // String query
+      if (caseFold) query = query.toLowerCase();
+      var fold = caseFold ? function(str){return str.toLowerCase();} : function(str){return str;};
+      var target = query.split("\n");
+      // Different methods for single-line and multi-line queries
+      if (target.length == 1)
+        this.matches = function(reverse, pos) {
+          var line = fold(cm.getLine(pos.line)), len = query.length, match;
+          if (reverse ? (pos.ch >= len && (match = line.lastIndexOf(query, pos.ch - len)) != -1)
+              : (match = line.indexOf(query, pos.ch)) != -1)
+            return {from: {line: pos.line, ch: match},
+                    to: {line: pos.line, ch: match + len}};
+        };
+      else
+        this.matches = function(reverse, pos) {
+          var ln = pos.line, idx = (reverse ? target.length - 1 : 0), match = target[idx], line = fold(cm.getLine(ln));
+          var offsetA = (reverse ? line.indexOf(match) + match.length : line.lastIndexOf(match));
+          if (reverse ? offsetA >= pos.ch || offsetA != match.length
+              : offsetA <= pos.ch || offsetA != line.length - match.length)
+            return;
+          for (;;) {
+            if (reverse ? !ln : ln == cm.lineCount() - 1) return;
+            line = fold(cm.getLine(ln += reverse ? -1 : 1));
+            match = target[reverse ? --idx : ++idx];
+            if (idx > 0 && idx < target.length - 1) {
+              if (line != match) return;
+              else continue;
+            }
+            var offsetB = (reverse ? line.lastIndexOf(match) : line.indexOf(match) + match.length);
+            if (reverse ? offsetB != line.length - match.length : offsetB != match.length)
+              return;
+            var start = {line: pos.line, ch: offsetA}, end = {line: ln, ch: offsetB};
+            return {from: reverse ? end : start, to: reverse ? start : end};
+          }
+        };
+    }
+  }
+
+  SearchCursor.prototype = {
+    findNext: function() {return this.find(false);},
+    findPrevious: function() {return this.find(true);},
+
+    find: function(reverse) {
+      var self = this, pos = this.cm.clipPos(reverse ? this.pos.from : this.pos.to);
+      function savePosAndFail(line) {
+        var pos = {line: line, ch: 0};
+        self.pos = {from: pos, to: pos};
+        self.atOccurrence = false;
+        return false;
+      }
+
+      for (;;) {
+        if (this.pos = this.matches(reverse, pos)) {
+          this.atOccurrence = true;
+          return this.pos.match || true;
+        }
+        if (reverse) {
+          if (!pos.line) return savePosAndFail(0);
+          pos = {line: pos.line-1, ch: this.cm.getLine(pos.line-1).length};
+        }
+        else {
+          var maxLine = this.cm.lineCount();
+          if (pos.line == maxLine - 1) return savePosAndFail(maxLine);
+          pos = {line: pos.line+1, ch: 0};
+        }
+      }
+    },
+
+    from: function() {if (this.atOccurrence) return this.pos.from;},
+    to: function() {if (this.atOccurrence) return this.pos.to;},
+
+    replace: function(newText) {
+      var self = this;
+      if (this.atOccurrence)
+        self.pos.to = this.cm.replaceRange(newText, self.pos.from, self.pos.to);
+    }
+  };
+
+  CodeMirror.defineExtension("getSearchCursor", function(query, pos, caseFold) {
+    return new SearchCursor(this, query, pos, caseFold);
+  });
+})();
+// Open simple dialogs on top of an editor. Relies on dialog.css.
+
+(function() {
+  function dialogDiv(cm, template) {
+    var wrap = cm.getWrapperElement();
+    var dialog = wrap.insertBefore(document.createElement("div"), wrap.firstChild);
+    dialog.className = "CodeMirror-dialog";
+    dialog.innerHTML = '<div>' + template + '</div>';
+    return dialog;
+  }
+
+  CodeMirror.defineExtension("openDialog", function(template, callback) {
+    var dialog = dialogDiv(this, template);
+    var closed = false, me = this;
+    function close() {
+      if (closed) return;
+      closed = true;
+      dialog.parentNode.removeChild(dialog);
+    }
+    var inp = dialog.getElementsByTagName("input")[0];
+    if (inp) {
+      CodeMirror.connect(inp, "keydown", function(e) {
+        if (e.keyCode == 13 || e.keyCode == 27) {
+          CodeMirror.e_stop(e);
+          close();
+          me.focus();
+          if (e.keyCode == 13) callback(inp.value);
+        }
+      });
+      inp.focus();
+      CodeMirror.connect(inp, "blur", close);
+    }
+    return close;
+  });
+
+  CodeMirror.defineExtension("openConfirm", function(template, callbacks) {
+    var dialog = dialogDiv(this, template);
+    var buttons = dialog.getElementsByTagName("button");
+    var closed = false, me = this, blurring = 1;
+    function close() {
+      if (closed) return;
+      closed = true;
+      dialog.parentNode.removeChild(dialog);
+      me.focus();
+    }
+    buttons[0].focus();
+    for (var i = 0; i < buttons.length; ++i) {
+      var b = buttons[i];
+      (function(callback) {
+        CodeMirror.connect(b, "click", function(e) {
+          CodeMirror.e_preventDefault(e);
+          close();
+          if (callback) callback(me);
+        });
+      })(callbacks[i]);
+      CodeMirror.connect(b, "blur", function() {
+        --blurring;
+        setTimeout(function() { if (blurring <= 0) close(); }, 200);
+      });
+      CodeMirror.connect(b, "focus", function() { ++blurring; });
+    }
+  });
+})();Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
 // Add ucFirst to string object
 String.prototype.ucFirst = function () {
@@ -15863,13 +16156,15 @@ ui.cmp._ErrorFileGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, metada, r){
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+        
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -15881,7 +16176,7 @@ ui.cmp._ErrorFileGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
@@ -15928,10 +16223,12 @@ ui.cmp._ErrorFileGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
             
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     }
@@ -19661,13 +19958,15 @@ ui.cmp._PendingReviewGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, m, r){
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+            
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -19679,7 +19978,7 @@ ui.cmp._PendingReviewGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
@@ -19724,9 +20023,12 @@ ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
+            
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
+            (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     },
@@ -20139,9 +20441,11 @@ ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -20158,9 +20462,11 @@ ui.cmp._PendingTranslateGrid.columns = [{
     renderer: function(v, metada, r){
         if (r.data.fileModified) {
         
-            var info = Ext.util.JSON.decode(r.data.fileModified);
+            var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
-            if (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            if (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {
@@ -22886,10 +23192,11 @@ ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
     getRowClass: function(r){
         if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
             
-            return ((infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
+            
+            return ((infoEN.user   === userToCompare && infoEN.anonymousIdent   === PhDOE.user.anonymousIdent) || (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -22905,13 +23212,15 @@ ui.cmp._StaleFileGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, metada, r){
     
-        var mess = '', infoEN, infoLang;
+        var mess = '', infoEN, infoLang, userToCompare;
+        
+        userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
         if (r.data.fileModifiedEN) {
         
             infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
             
-            if (infoEN.user === PhDOE.user.login && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess = _('File EN modified by me') + "<br>";
             }
             else {
@@ -22923,7 +23232,7 @@ ui.cmp._StaleFileGrid.columns = [{
         
             infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
             
-            if (infoLang.user === PhDOE.user.login && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
+            if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
             else {
@@ -24435,7 +24744,8 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 for (h = 0; h < folder.childNodes.length; h++) {
                     file = folder.childNodes[h];
                     
-                    if (file.attributes.idDB === fid) {
+                    // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                    if (file.attributes.idDB == fid) {
                     
                         file.remove(true);
                         
@@ -24852,55 +25162,55 @@ var PhDOE = function()
             switch (type) {
                 case 'fs_error' :
                     title = _('Error');
-                    mess  = _('File system error. Check read/write permission under data folder.');
+                    mess  = _('File system error. Check read/write permissions under data folder.');
                     break;
                 case 'encoding_error' :
                     title = _('Error');
-                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file in UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
+                    mess  = _('You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version="1.0" encoding="utf-8"?&gt;</i></center>');
                     break;
                 case 'tabs_found' :
                     title = _('Error');
-                    mess  = _('It seems that you have inserted some tabs caracters into this files. Please, replace each one by one space.<br>Tip: You can use the "Re-indent all this file" button to replace all tabs by spaces.');
+                    mess  = _('It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
                     break;
                 case 'folder_already_exist' :
                     title = _('Error');
-                    mess  = _('This folder already exist in the current folder.');
+                    mess  = _('This folder already exists in the current folder.');
                     break;
                 case 'file_already_exist' :
                     title = _('Error');
-                    mess  = _('This file already exist in the current folder.');
+                    mess  = _('This file already exists in the current folder.');
                     break;
                 case 'save_you_cant_modify_it' :
                     title = _('Error');
-                    mess  = _('You can\'t modify this file as it was modify by another user. Contact an administrator if you want to be able to modify it.');
+                    mess  = _('You aren\'t allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it.');
                     break;
                 case 'file_isnt_owned_by_current_user' :
                     title = _('Error');
-                    mess  = _('The file you want to clear local change isn\'t own by you.<br>You can only do this action for yours files.');
+                    mess  = _('The file for which you want to clear local changes isn\'t owned by you.<br>You can only perform this action on your own files.');
                     break;
                 case 'file_localchange_didnt_exist' :
                     title = _('Error');
-                    mess  = _('The file you want to clear local change isn\'t exist as work in progress.');
+                    mess  = _('The file you want to clear local changes in doesn\'t exist as a work in progress.');
                     break;
                 case 'changeFilesOwnerNotAdmin' :
                     title = _('Error');
-                    mess  = _('You can\'t change file\'s owner. You must be a global administrator or an administrator for this lang.');
+                    mess  = _('You aren\'t allowed to change this file\'s owner. You must be a global administrator or an administrator for this language to be able to do that.');
                     break;
                 case 'patch_delete_dont_exist' :
                     title = _('Error');
-                    mess  = _('The patch you want to delete didn\'t exist.');
+                    mess  = _('The patch you want to delete doesn\'t exist.');
                     break;
                 case 'patch_delete_isnt_own_by_current_user' :
                     title = _('Error');
-                    mess  = _('The patch you want to delete isn\'t own by you. Only the user how create it or a global administrator can delete it.');
+                    mess  = _('The patch you want to delete isn\'t owned by you. Only the author of the patch or a global administrator can delete it.');
                     break;
                 case 'action_only_global_admin' :
                     title = _('Error');
-                    mess  = _('This action is available only to global administrator.');
+                    mess  = _('This action is available to global administrators only.');
                     break;
                 case 'action_only_admin' :
                     title = _('Error');
-                    mess  = _('This action is available only to global administrator or to administrator for this lang.');
+                    mess  = _('This action is available to global administrators or to administrators for this language only.');
                     break;
 
             }
@@ -25348,7 +25658,7 @@ var PhDOE = function()
                                         ' <em id="loginLibel"></em>' +
                                             ', ' + _('Project: ') + '<em id="Info-Project">' + PhDOE.project + '</em>, '+_('Language: ')+' <em id="Info-Language">-</em>'+
                                         '</h3>' +
-                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div>',
+                                     '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div><div class="x-box-like"><g:plusone size="medium" width="20"></g:plusone><br/><div class="fb-like" data-send="false" data-layout="button_count" data-width="40" data-show-faces="false"></div></div>',
                                  listeners: {
                                     afterrender: function(cmp) {
                                     
@@ -25590,7 +25900,29 @@ var PhDOE = function()
                     return true;
                 }
             });
+            
+            // Call Js for Facebook-like button
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=128417830579090";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            
+            
+            window.___gcfg = {
+                lang: 'en-US',
+                size: 'medium',
+                annotation: 'bubble'
+            };
 
+            (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+            
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 

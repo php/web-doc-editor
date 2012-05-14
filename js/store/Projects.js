@@ -9,6 +9,5 @@ Ext.define('phpdoe.store.Projects', {
             totalProperty : 'nbItems',
             root          : 'Items'
         }
-    },
-    autoLoad : true
+    }
 });

@@ -73,48 +73,29 @@ if (isset($_REQUEST['perm'])) {
     $jsVar = 'var directAccess = false;';
 }
 
-// Init FB var
-$jsVar .= ' var FB = false;';
-
 // Log the user in if needed
 if (!isset($_SESSION['userID'])) {
 
+
+    require_once 'php/AuthServices.php';
+    $auth = new AuthServices();
+
+    if ( isset($_GET['code']) && isset($_GET['state']) ) {
+        $auth->auth($_GET['state']);
+    }
+
+    if (isset($_GET['code']) || isset($_GET['error'])) {
+        // FIXME: fb api add "#_=_" after uri
+        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+        die;
+    }
+
+
+    $jsVar .= 'var googleAuthUrl = "'.$auth->getAuthUrl(AuthServices::GOOGLE).'";';
+    $jsVar .= 'var FBAuthUrl = "'.$auth->getAuthUrl(AuthServices::FACEBOOK).'";';
+
     echo headerTemplate();
-    
-    // Facebook
-    //echo jsLoadTemplate('https://connect.facebook.net/en_US/all.js');
-    
-    // Twitter
-    //echo jsLoadTemplate('http://platform.twitter.com/anywhere.js?id=2hlkdhcRZG8W6jz1LkEAQ&v=1');
-    
-    //Google
-   // echo jsLoadTemplate('https://www.google.com/jsapi');
-
-//    echo jsCallTemplate("
-//
-//if(typeof google == 'undefined' ) {
-//    var google = false;
-//} else {
-//    google.load('friendconnect', '0.8');
-//}
-//
-//// Fix for IE9
-//if (typeof Range.prototype.createContextualFragment == \"undefined\") {
-//    Range.prototype.createContextualFragment = function(html) {
-//        var doc = this.startContainer.ownerDocument;
-//        var container = doc.createElement(\"div\");
-//        container.innerHTML = html;
-//        var frag = doc.createDocumentFragment(), n;
-//        while ( (n = container.firstChild) ) {
-//            frag.appendChild(n);
-//        }
-//        return frag;
-//    };
-//}
-//
-//");
-
-
     //echo cssLoadTemplate('themes/login-all.css');
     echo cssLoadTemplate('extjs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login.css');
@@ -130,19 +111,20 @@ if (!isset($_SESSION['userID'])) {
 }
 
 echo headerTemplate();
-echo cssLoadTemplate('extjs/resources/css/ext-all.css');
+echo cssLoadTemplate('extjs/resources/css/ext-all.css', 'extTheme');
 //echo cssLoadTemplate('themes/empty.css', 'appTheme');
-echo cssLoadTemplate('themes/main.css');
+//echo cssLoadTemplate('themes/main-all.css');
 echo jsCallTemplate($jsVar);
 echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 
 // ExtJs Javascript core files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
+echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
 echo jsLoadTemplate('extjs/ext-debug.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
-//echo jsLoadi18nTemplate();
+echo jsLoadi18nTemplate();
 echo jsLoadTemplate('js/main.js');
 echo footerTemplate();
 ?>

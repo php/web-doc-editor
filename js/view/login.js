@@ -1,9 +1,10 @@
 Ext.define('phpdoe.view.login' ,{
     extend: 'Ext.Window',
     alias : 'widget.loginwindow',
+    id    : 'login-window',
     layout    : 'border',
     width     : 370,
-    height    : 270,
+    height    : 300,
     closable  : false,
     draggable : false,
     resizable : false,
@@ -45,31 +46,7 @@ Ext.define('phpdoe.view.login' ,{
                     autoSelect   : true,
                     editable     : false,
                     iconClsField : 'iconCls',
-                    iconClsBase  : 'project',
                     value        : 'php'
-                }),
-                Ext.create('Ext.form.field.Text', {
-                    allowBlank : false,
-                    fieldLabel : 'VCS login',
-                    name       : 'vcsLogin',
-                    value      : Ext.util.Cookies.get("loginApp") || '',
-                    emptyText  : 'anonymous',
-                    id         : 'login-form-vcsLogin'
-                }),
-                Ext.create('Ext.form.field.Text', {
-                    allowBlank : false,
-                    fieldLabel : 'VCS password',
-                    name       : 'vcsPassword',
-                    id         : 'login-form-vcsPasswd',
-                    inputType  : 'password'
-                }),
-                Ext.create('Ext.form.field.Text', {
-                    allowBlank : false,
-                    fieldLabel : 'Email',
-                    name       : 'email',
-                    value      : Ext.util.Cookies.get("email") || '',
-                    id         : 'login-form-email',
-                    vtype      : 'email'
                 }),
                 Ext.create('phpdoe.view.form.IconCombo', {
                     id           : 'login-form-lang',
@@ -83,20 +60,43 @@ Ext.define('phpdoe.view.login' ,{
                     autoSelect   : true,
                     editable     : false,
                     iconClsField : 'iconCls',
-                    iconClsBase  : 'project',
                     value        : Ext.util.Cookies.get("lang") || 'en'
                 }),
-                Ext.create('Ext.form.field.Hidden', {
-                    allowBlank : false,
-                    name       : 'authService',
-                    value      : 'VCS',
-                    id         : 'login-form-auth-service'
+                Ext.create('phpdoe.view.form.IconCombo', {
+                    id           : 'login-form-auth-service',
+                    name         : 'authService',
+                    store        : 'AuthServices',
+                    queryMode    : 'local',
+                    displayField : 'name',
+                    valueField   : 'id',
+                    fieldLabel   : 'Auth Service',
+                    allowBlank   : false,
+                    autoSelect   : true,
+                    editable     : false,
+                    iconClsField : 'iconCls',
+                    value        :  'VCS'
                 }),
-                Ext.create('Ext.form.field.Hidden', {
-                    allowBlank : true,
-                    name       : 'authServiceId',
-                    value      : '',
-                    id         : 'login-form-auth-service-id'
+                Ext.create('Ext.form.field.Text', {
+                    allowBlank : false,
+                    fieldLabel : 'Login',
+                    name       : 'vcsLogin',
+                    value      : '',//Ext.util.Cookies.get("loginApp")
+                    id         : 'login-form-login'
+                }),
+                Ext.create('Ext.form.field.Text', {
+                    allowBlank : false,
+                    fieldLabel : 'Password',
+                    name       : 'vcsPassword',
+                    id         : 'login-form-password',
+                    inputType  : 'password'
+                }),
+                Ext.create('Ext.form.field.Text', {
+                    allowBlank : false,
+                    fieldLabel : 'Email',
+                    name       : 'email',
+                    value      : '',//Ext.util.Cookies.get("email")
+                    id         : 'login-form-email',
+                    vtype      : 'email'
                 })
             ],
             buttonAlign : 'left',
@@ -106,7 +106,7 @@ Ext.define('phpdoe.view.login' ,{
                     iconCls : 'iconHelp',
                     handler : function () {
                         var projectInput = Ext.getCmp('login-form-project'),
-                            url = projectInput.store.findRecord(projectInput.valueField, projectInput.getValue()).data.request_account_uri;
+                            url = projectInput.store.getById(projectInput.getValue()).get('request_account_uri');
 
                         Ext.Msg.show({
                             title   : 'Request an account',
@@ -131,17 +131,9 @@ Ext.define('phpdoe.view.login' ,{
                         this.up('form').getForm().reset();
                     }
                 })
-            ],
-            listeners: {
-                afterrender: function(comp) {
-                    // login button not enabled before we check validity (bug of comboBox?)
-                    // We use "formBind : true" for login-button, but after run application this button not enabled
-                    setTimeout(function() {comp.getForm().checkValidity();}, 500);
-                }
-            }
-
+            ]
 
         })
-    ],
+    ]
 
 });

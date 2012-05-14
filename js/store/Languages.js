@@ -9,6 +9,5 @@ Ext.define('phpdoe.store.Languages', {
             totalProperty : 'nbItems',
             root          : 'Items'
         }
-    },
-    autoLoad : true
+    }
 });

@@ -8,7 +8,7 @@ Ext.define('phpdoe.view.form.IconCombo', {
                 iconClsField:this.iconClsField,
                 tpl:'<ul><tpl for=".">' +
                     '<li role="option" class="x-boundlist-item" style="position:relative;padding-left: 25px;">' +
-                    '<div class="{' + this.iconClsField + '}" style="position:absolute;top: 5px;left: 5px;"></div>' +
+                    '<div class="{' + this.iconClsField + '}" style="position:absolute;top: 4px;left: 5px;"></div>' +
                     '{name}' +
                     '</li>' +
                     '</tpl></ul>'
