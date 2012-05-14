@@ -8,11 +8,31 @@ Ext.define('phpdoe.controller.login', {
             },
             '#login-form-auth-service': {
                 change: this.changeAuthService
+            },
+            '#login-form-request-button': {
+                click: this.requestAccount
             }
         });
 
         this.loadStores();
     },
+
+
+    requestAccount: function(button) {
+        var projectInput = Ext.getCmp('login-form-project'),
+            url = projectInput.store.getById(projectInput.getValue()).get('request_account_uri');
+
+        Ext.Msg.show({
+            title   : 'Request an account',
+            msg     : '<div style="text-align: center;">' +
+                'To request a VCS account please read:<br>' +
+                '<a href="' + url + '" target="_blank">' + url + '</a>' +
+                '</div>',
+            buttons : Ext.Msg.OK,
+            icon    : Ext.Msg.INFO
+        });
+    },
+
 
     loadStoresCount: 0,
     onLoadStore: function() {

@@ -102,22 +102,9 @@ Ext.define('phpdoe.view.login' ,{
             buttonAlign : 'left',
             buttons     : [
                 Ext.create('Ext.Button', {
+                    id: 'login-form-request-button',
                     text    : 'Request an account',
-                    iconCls : 'iconHelp',
-                    handler : function () {
-                        var projectInput = Ext.getCmp('login-form-project'),
-                            url = projectInput.store.getById(projectInput.getValue()).get('request_account_uri');
-
-                        Ext.Msg.show({
-                            title   : 'Request an account',
-                            msg     : '<div style="text-align: center;">' +
-                                'To request a VCS account please read:<br>' +
-                                '<a href="' + url + '" target="_blank">' + url + '</a>' +
-                                '</div>',
-                            buttons : Ext.Msg.OK,
-                            icon    : Ext.Msg.INFO
-                        });
-                    }
+                    iconCls : 'iconHelp'
                 }),
                 '->', // Ext.toolbar.Fill
                 Ext.create('Ext.Button', {
