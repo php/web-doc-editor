@@ -50,10 +50,14 @@ function jsCallTemplate($script)
  * Returns a javascript script loading element
  *
  * @param string $src The script url
+ * @param bool $ifExist write only if file exist
  * @return string The script element
  */
-function jsLoadTemplate($src)
+function jsLoadTemplate($src, $ifExist = false)
 {
+    if ($ifExist && !file_exists($src)) {
+        return '';
+    }
     return sprintf('  <script type="text/javascript" src="%s"></script>', $src) . "\n";
 }
 
@@ -75,42 +79,28 @@ function insertRawElement($raw)
  */
 function jsLoadi18nTemplate()
 {
-    global $ExtJsVersion;
     $return='';
 
     // We check the configuration for this user.
     // If $_SESSION['userConf']['main']['uiLang'] is set to 'default', we don't change anythings as the old beaviours
 
-    if ( !isset($_SESSION['userConf']->main->uiLang) || $_SESSION['userConf']->main->uiLang == 'default' ) {
-
-        //i18n for ExtJs library
-        if( @file_get_contents('js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') )
-        {
-            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/ExtJs/src/locale/ext-lang-'.$_SESSION['lang'].'.js') . "\n";
-        }
-
-        //i18n for the UI
-        if( is_file('js/locale/'.strtolower($_SESSION['lang']).'.js') )
-        {
-            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['lang']).'.js') . "\n";
-        }
-
+    if (!isset($_SESSION['userConf']->main->uiLang) || $_SESSION['userConf']->main->uiLang == 'default') {
+        $lang = $_SESSION['lang'];
     } else {
+        $lang = $_SESSION['userConf']->main->uiLang;
+    }
+    $lang = strtolower($lang);
 
+    //default locale
+    $return.= jsLoadTemplate('js/locale/lang-en.js', true);
+
+    if ($lang != 'en') {
         //i18n for ExtJs library
-        if( @file_get_contents('js/ExtJs/src/locale/ext-lang-'.$_SESSION['userConf']->main->uiLang.'.js') )
-        {
-            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/ExtJs/src/locale/ext-lang-'.$_SESSION['userConf']->main->uiLang.'.js') . "\n";
-        }
+        $return.= jsLoadTemplate('extjs/locale/ext-lang-'.$lang.'.js', true);
 
         //i18n for the UI
-        if( is_file('js/locale/'.strtolower($_SESSION['userConf']->main->uiLang).'.js') )
-        {
-            $return.= sprintf('  <script type="text/javascript" src="%s"></script>', 'js/locale/'.strtolower($_SESSION['userConf']->main->uiLang).'.js') . "\n";
-        }
-
+        $return.= jsLoadTemplate('js/locale/lang-'.$lang.'.js', true);
     }
-
 
     return $return;
 }

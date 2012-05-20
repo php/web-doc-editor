@@ -4,6 +4,9 @@ Ext.define('phpdoe.store.Languages', {
     proxy    : {
         type   : 'ajax',
         url    : './do/getAvailableLanguage',
+        extraParams: {
+            csrfToken: csrfToken
+        },
         reader : {
             type          : 'json',
             totalProperty : 'nbItems',

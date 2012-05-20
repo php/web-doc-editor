@@ -94,6 +94,7 @@ if (!isset($_SESSION['userID'])) {
 
     $jsVar .= 'var googleAuthUrl = "'.$auth->getAuthUrl(AuthServices::GOOGLE).'";';
     $jsVar .= 'var FBAuthUrl = "'.$auth->getAuthUrl(AuthServices::FACEBOOK).'";';
+    $jsVar .= 'var csrfToken = null;';
 
     echo headerTemplate();
     //echo cssLoadTemplate('themes/login-all.css');
@@ -112,8 +113,10 @@ if (!isset($_SESSION['userID'])) {
 
 echo headerTemplate();
 echo cssLoadTemplate('extjs/resources/css/ext-all.css', 'extTheme');
+echo cssLoadTemplate('themes/icon.css', 'extTheme');
+echo cssLoadTemplate('themes/flags.css');
 //echo cssLoadTemplate('themes/empty.css', 'appTheme');
-//echo cssLoadTemplate('themes/main-all.css');
+echo cssLoadTemplate('themes/main.css');
 echo jsCallTemplate($jsVar);
 echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 
@@ -121,6 +124,8 @@ echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
 echo jsLoadTemplate('extjs/ext-debug.js');
+//echo jsLoadTemplate('extjs/locale/ext-lang-ru.js');
+//echo jsLoadTemplate('js/locale/lang-en.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');

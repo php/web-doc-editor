@@ -38,23 +38,6 @@ function log()
     }
 }
 
-// i18n function
-function _(key)
-{
-    try {
-        var str = i18n[key];
-
-        if (str === undefined) {
-            str = key;
-            log("FIX ME : i18n not found for the string: " + key);
-        }
-
-        return str;
-    } catch(e) {
-        return key;
-    }
-}
-
 // XHR wrapper
 // config - Ext.ajax.request config
 function XHR(config)
@@ -92,6 +75,7 @@ function XHR(config)
     };
 
     Ext.Ajax.request(config);
+
 }
 
 Ext.override(Ext.form.Field, {

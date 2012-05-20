@@ -14,7 +14,7 @@ Ext.define('phpdoe.controller.login', {
             }
         });
 
-        this.loadStores();
+        this.loadStores(['Projects', 'Languages', 'AuthServices']);
     },
 
 
@@ -36,20 +36,23 @@ Ext.define('phpdoe.controller.login', {
 
     loadStoresCount: 0,
     onLoadStore: function() {
-        this.loadStoresCount++;
-        if (this.loadStoresCount == 3) {
-            this.initForm();
+        this.loadStoresCount--;
+        if (this.loadStoresCount <= 0) {
+            this.initApplication();
         }
     },
-    loadStores: function(callback) {
+    loadStores: function(storeNames) {
+
+        this.loadStoresCount = storeNames.length;
 
         //async loading stores
-        Ext.getStore('Projects').load({scope: this, callback: this.onLoadStore});
-        Ext.getStore('Languages').load({scope: this, callback: this.onLoadStore});
-        Ext.getStore('AuthServices').load({scope: this, callback: this.onLoadStore});
+        for (var i = 0; i < storeNames.length; i++) {
+            Ext.getStore(storeNames[i]).load({scope: this, callback: this.onLoadStore});
+
+        }
     },
 
-    initForm: function() {
+    initApplication: function() {
         var authServiceField = Ext.getCmp('login-form-auth-service'),
             authServiceId = Ext.util.Cookies.get("authService");
 

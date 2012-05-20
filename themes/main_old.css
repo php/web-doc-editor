@@ -1,0 +1,418 @@
+/* About window */
+
+#phd-oe-about {
+    text-align: center;
+    margin: 60px 0px 50px 0;
+    color: #444;
+    font: bold 13px tahoma, arial, helvetica;
+} #phd-oe-about-info {
+    font-size: 10px;
+    text-align: center;
+    color: #849090;
+} #phd-oe-credit, #phd-oe-support ul {
+    list-style: disc url(./img/arrow_right.png) inside;
+} #phd-oe-credit, #php-oe-support li {
+    margin: 10px;
+    padding: 0;
+} .phd-oe-credit-info {
+    margin-left: 30px;
+    padding-top: 7px;
+    color: #849090;
+}
+
+/* Wizard */
+
+#wizard-step-1, #wizard-step-2, #wizard-step-3 {
+    margin-top: 5px;
+    padding-left: 20px;
+}
+.wizard-step-before {
+    background: transparent url(./img/arrow_right.png) no-repeat 0 0;
+    opacity: 0.5;
+    padding-bottom: 5px;
+}
+.wizard-step-working {
+    background: transparent url(./img/loading.gif) no-repeat 0 0;
+    padding-bottom: 5px;
+}
+.wizard-wait {
+    display: none;
+}
+.wizard-show {
+    margin-top: 5px;
+    margin-left: 10px;
+    display: block;
+}
+.wizard-step-done {
+    background: transparent url(./img/accept.png) no-repeat 0 0;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+
+
+.MainInfoTabPanel {
+    margin: 0 5px 0 5px !important;
+    padding: 0 !important;
+}
+
+
+.x-tree-node .modified a span {
+    color: red;
+}
+
+.x-grid3-col-GridBugTitle {
+    padding-left: 5px !important;
+}
+
+.x-grid3-td-GridBugTitle .topic {
+    background: transparent url(./img/post.gif) no-repeat scroll 0 -1px !important;
+    padding-left: 20px !important;
+}
+
+.x-grid3-row-body p {
+    margin:5px 20px 10px 25px !important;
+    color:#555;
+}
+
+.MainMenu {
+    background-image: url(./img/go-home.png) !important;
+    background-position: 0 1px !important;
+}
+
+
+
+.confStatusBar {
+    background: transparent url(./img/help-browser.png) no-repeat 0 2px;
+    padding-left: 20px !important;
+}
+
+/* Add this class for span element to allow use it into a tree node*/
+.fileModifiedByMe, .fileModifiedByMe span {
+    color: green !important;
+}
+.fileModifiedByAnother, .fileModifiedByAnother span {
+    color: red !important;
+}
+
+.file-need-commit {
+    color: red !important;
+    font-weight: bold !important;
+}
+
+.summary_1 {
+    color: black !important;
+    font-weight: bold !important;
+    background-color: #68D888 !important;
+}
+.summary_2 {
+    color: black !important;
+    font-weight: bold !important;
+    background-color: #FF6347 !important;
+}
+.summary_3 {
+    color: black !important;
+    font-weight: bold !important;
+    background-color: #EEE8AA !important;
+}
+.summary_4 {
+    color: black !important;
+    font-weight: bold !important;
+    background-color: #DCDCDC !important;
+}
+.diff-content h2 {
+    font-size: 12px;
+    font-weight: normal;
+    background: transparent url(./img/anchor.png) no-repeat 0 0;
+    margin: 5px;
+    padding-left: 20px;
+}
+
+
+.diff-content table.code {
+    border-spacing: 0;
+    border-top: 0;
+    empty-cells: show;
+    font-size: 12px;
+    line-height: 110%;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.diff-content table.code td.header {
+    background-color: #9999cc;
+    color: #FFF;
+}
+
+.diff-content table.code th {
+    background: #eed;
+    color: #886;
+    font-weight: normal;
+    padding: 0 .5em;
+    text-align: right;
+    border-right: 1px solid #d7d7d7;
+    border-top: 1px solid #998;
+    font-size: 11px;
+    width: 35px;
+}
+.diff-content table.code td {
+    background: #fff;
+    font: normal 11px monospace;
+    overflow: auto;
+    padding: 1px 2px;
+}
+.diff-content table.code td.del {
+    color: black;
+    background-color: #FDD;
+}
+.diff-content table.code td.del.first {
+    border-top: 1px solid #C00;
+}
+.diff-content table.code td.ins {
+    color: black;
+    background-color: #DFD;
+}
+.diff-content table.code td.ins.first {
+    border-top: 1px solid #0A0;
+}
+.diff-content table.code td.del_end {
+    border-top: 1px solid #C00;
+}
+.diff-content table.code td.ins_end {
+    border-top: 1px solid #0A0;
+}
+
+.diff-content table.code td.line {
+    background-color: #eed;
+    color: #886;
+}
+.check-build-content {
+    margin: 5px 5px;
+    font-family: tahoma, arial, helvetica, sans-serif;
+    font-size: 11px;
+}
+#confMenu {
+    background: white;
+    font: 11px Arial, Helvetica, sans-serif;
+}
+#confMenu .menu {
+    padding-bottom: 5px;
+    background: url(./img/config-sprite.png) no-repeat top left !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#confMenu .card1 {
+    background-position: 0 0 !important; width: 48px; height: 47px;
+}
+
+#confMenu .card2 {
+    background-position: 0 -55px !important; width: 48px; height: 44px;
+}
+
+#confMenu .card3 {
+    background-position: 0 -105px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card4 {
+    background-position: 0 -160px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card5 {
+    background-position: 0 -212px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card6 {
+    background-position: 0 -263px !important; width: 48px; height: 47px;
+}
+
+#confMenu .card7 {
+    background-position: 0 -320px !important; width: 48px; height: 47px;
+}
+
+#confMenu .menu-wrap {
+    float: left;
+    margin: 5px;
+    padding: 5px;
+    width: 153px;
+    text-align: center;
+    cursor: pointer;
+}
+#confMenu .menu-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+#confMenu .x-view-over {
+    color: black;
+    border: 1px solid #dddddd;
+    background-color: #efefef;
+    padding: 4px;
+}
+#confMenu .x-view-selected {
+    background: #DFEDFF;
+    border: 1px solid #6593cf;
+    padding: 4px;
+}
+#confMenu .x-view-selected .menu {
+    background: transparent;
+}
+#confMenu .x-view-selected span {
+    color: #1A4D8F;
+    font-weight: bold;
+}
+
+
+.topic-connected, .topic-info {
+    margin: 10px 0 0 5px;
+    padding-top: 5px;
+}
+
+.topic-connected h3, .topic-info h3 {
+    background: transparent url(./img/user.png) no-repeat 0 1px;
+    padding-left: 20px;
+    padding-top: 3px;
+    -x-system-font: none;
+    color: #555555;
+    font-family: tahoma, arial, sans-serif;
+    font-size: 12px !important;
+    font-size-adjust: none;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    line-height: normal;
+    font-weight: normal !important;
+    margin-bottom: 8px;
+}
+.topic-info h3 {
+    background: transparent url(./img/page.png) no-repeat 0 1px;
+}
+
+#topic-info-user, #topic-info-user-lang {
+    color: #555555;
+    font-size: 10px;
+    text-align: right;
+}
+.topic-connected em, .topic-info em {
+    font-weight: bold;
+}
+
+.topic-connected em.userAdmin {
+    color: red;
+}
+
+
+.ux-grid3-row-action-cell .x-grid3-cell-inner {
+    padding: 1px 0 0 0;
+}
+.ux-grid3-row-action-cell .x-grid3-cell-inner div {
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.check_doc_cell {
+    color: black;
+    background-color: #DEDEDE;
+    text-align: right;
+}
+.file-needcommit-update {
+    background-image: url(./img/arrow_refresh.png) !important;
+    background-repeat: no-repeat !important;
+
+}
+.file-needcommit-delete {  /* TODO : must be replace by the iconTrash class */
+    background-image: url(./img/delete.png) !important;
+    background-repeat: no-repeat !important;
+}
+.file-needcommit-new {
+    background-image: url(./img/page_add.png) !important;
+    background-repeat: no-repeat !important;
+}
+
+.entities-details, .acronyms-details {
+    color: black;
+    background-color: #ffffff;
+    padding: 7px;
+    font-family: tahoma, arial, sans-serif;
+    font-size: 13px;
+}
+
+.treeFileUpdated {
+    font-weight: bold !important;
+}
+
+.x-row-editor .x-form-display-field { font-family:arial,tahoma,helvetica,sans-serif; font-size:11px; text-align: center; }
+
+.x-usernotes-content {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    padding: 10px;
+    background-color: #EFEFEF;
+}
+
+.x-grid3-progresscol .x-grid3-cell-inner {
+  padding: 0px 0px 0px 5px;
+}
+
+.x-grid3-progresscol .x-progress-bar {
+  height: 16px;
+}
+
+.x-grid3-progresscol .x-progress-inner {
+  height: 16px;
+}
+
+.x-grid3-progresscol .x-progress-text-front-ie6 {
+  padding: 2.5px 5px;
+}
+
+.x-grid3-progresscol .x-progress-text-front {
+  padding: 2px 5px;
+}
+
+.x-progress-bar-red,.x-progress-bar-orange,.x-progress-bar-green {
+  border-bottom: 1px solid #7fa9e4;
+  float: left;
+  height: 16px;
+}
+
+.x-progress-bar-red {
+  background: #ff0000 url(./img/progress-bg-red.gif) repeat-x scroll left
+    center;
+  border-top: 1px solid #ecb7ad;
+}
+
+.x-progress-bar-orange {
+  background: #9cbfee url(./img/progress-bg-orange.gif) repeat-x scroll
+    left center;
+  border-right: 1px solid #deab7e;
+  border-top: 1px solid #d7b290;
+}
+
+.x-progress-bar-green {
+  background: #00ff00 url(./img/progress-bg-green.gif) repeat-x scroll
+    left center;
+  border-right: 1px solid #5bd976;
+  border-top: 1px solid #79e18f;
+}
+
+.x-textfield-tooltip {
+    background: transparent url(./img/help.png) no-repeat 0 1px;
+    padding-left: 17px !important;
+}
+
+/* Highlight the current line into code mirror */
+.cm2-activeline {
+    background: #f8f7f6 !important;
+}
+
+.x-box-like {
+    /*float: right;*/
+    padding-top: 6px;
+    padding-left: 6px;
+}
+.fb-like {
+    margin-top: 10px;
+}
