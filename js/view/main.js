@@ -36,6 +36,7 @@ Ext.define('phpdoe.view.main' ,{
             }
         }),
         Ext.create('phpdoe.view.main.tabs', {
+            id: 'main-panel',
             region: 'center'
         })
     ]

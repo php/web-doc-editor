@@ -129,6 +129,21 @@ Ext.onReady(function() {
         }
     });
 
+    Ext.define("phpdoe.locale.view.main.tabs.bug", {
+        override: "phpdoe.view.main.tabs.bug",
+        title: "Report bugs"
+    });
+
+    Ext.define("phpdoe.locale.view.main.tabs.doc", {
+        override: "phpdoe.view.main.tabs.doc",
+        title: "Documentation"
+    });
+
+    Ext.define("phpdoe.locale.view.main.tabs.chat", {
+        override: "phpdoe.view.main.tabs.chat",
+        title: "Chat"
+    });
+
 
 });
 

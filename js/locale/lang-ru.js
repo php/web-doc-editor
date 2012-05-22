@@ -72,5 +72,20 @@ Ext.onReady(function() {
         }
     });
 
+    Ext.define("phpdoe.locale.view.main.tabs.bug", {
+        override: "phpdoe.view.main.tabs.bug",
+        title: "Сообщить об ошибках"
+    });
+
+    Ext.define("phpdoe.locale.view.main.tabs.doc", {
+        override: "phpdoe.view.main.tabs.doc",
+        title: "Документация"
+    });
+
+    Ext.define("phpdoe.locale.view.main.tabs.chat", {
+        override: "phpdoe.view.main.tabs.chat",
+        title: "Чат"
+    });
+
 });
 
