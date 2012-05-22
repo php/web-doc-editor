@@ -1,6 +1,5 @@
 Ext.define('phpdoe.controller.main.menu', {
     extend: 'Ext.app.Controller',
-    aboutWindow : null,
 
     init: function() {
         this.control({
@@ -52,7 +51,7 @@ Ext.define('phpdoe.controller.main.menu', {
         Ext.Ajax.request({
             task : 'checkLockFile',
             params: {
-                //lockFile : 'project_' + PhDOE.project + '_lock_check_build_' + PhDOE.user.lang
+                lockFile : 'project_' + config.user.project + '_lock_check_build_' + config.user.lang
             },
             success: function () {
                 Msg.hide();
@@ -97,7 +96,11 @@ Ext.define('phpdoe.controller.main.menu', {
         var mainPanel = Ext.getCmp('main-panel');
 
         if (!Ext.getCmp('tab-chat')) {
-            var chatLogin = 'an%3F%3F%3F';
+            var chatLogin = config.user.login;
+
+            if( config.user.isAnonymous ) {
+                chatLogin = 'an%3F%3F%3F';
+            }
             mainPanel.add(Ext.create('phpdoe.view.main.tabs.chat', {chatLogin: chatLogin}));
         }
 
