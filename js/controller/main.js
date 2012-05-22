@@ -1,5 +1,6 @@
 Ext.define('phpdoe.controller.main', {
     extend: 'Ext.app.Controller',
+
     init: function() {
         this.loadStores(['Languages']);
     },

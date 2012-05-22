@@ -36,18 +36,31 @@
 
 Ext.onReady(function() {
 
-    Ext.define("phpdoe.locale.view.main.menu", {
-        override: "phpdoe.view.main.menu",
-        text: "Main menu",
+    Ext.define("phpdoe.locale.view.window.msg", {
+        override: "phpdoe.view.window.msg",
         initComponent: function () {
-
             this.itemText = Ext.Object.merge(
                 {
-                    SwitchLang: 'Switch to language...',
-                    LogOut: 'Log out',
-                    confirm: 'Confirm',
-                    confirmLogout: 'Are you sure you want to logout?',
-                    About: 'About'
+                    // wait section
+                    PleaseWait: 'Please wait...',
+
+                    // confirm/info/alert section
+                    thanks: {
+                        title: 'Thanks!',
+                        text:  'Thank you for using this application!'
+                    },
+                    logout: {
+                        title: 'Confirm',
+                        text:  'Are you sure you want to logout?'
+                    },
+                    eraseData: {
+                        title: 'Confirm',
+                        text:  'This action will erase your personal data. All content about this account will be deleted definitively. Are you sure you want to do that?'
+                    },
+                    forbidden: {
+                        title: 'Forbidden',
+                        text: ''
+                    }
                 },
                 this.itemText
             );
@@ -55,6 +68,37 @@ Ext.onReady(function() {
         }
     });
 
+
+    Ext.define("phpdoe.locale.view.main.menu", {
+        override: "phpdoe.view.main.menu",
+        text: "Main menu",
+        initComponent: function () {
+
+            this.itemText = Ext.Object.merge(
+                {
+                    RefreshAllData: 'Refresh all data',
+                    BuildTools: 'Build tools',
+                    CheckBuild: 'Check build',
+                    LastFailedBuild: 'Show last failed build',
+                    EnTools: 'EN tools',
+                    CheckEntities: 'Script check entities',
+                    LastResult: 'View the last result',
+                    RunScript: 'Run this script',
+                    CheckDoc: 'Script check documentation',
+                    Configure: 'Configure',
+                    SwitchLang: 'Switch to language...',
+                    ErasePersonalData: 'Erase my personal data',
+                    LogOut: 'Log out',
+                    ReportBug: 'Report bugs',
+                    Documentation: 'Documentation',
+                    Chat: 'Chat with us on IRC!',
+                    About: 'About'
+                },
+                this.itemText
+            );
+            this.callParent();
+        }
+    });
 
     Ext.define("phpdoe.locale.view.main.about", {
         override: "phpdoe.view.main.about",

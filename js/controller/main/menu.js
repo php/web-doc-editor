@@ -1,11 +1,12 @@
 Ext.define('phpdoe.controller.main.menu', {
     extend: 'Ext.app.Controller',
-    requires  : ['Ext.window.MessageBox'],
-
     aboutWindow : null,
 
     init: function() {
         this.control({
+            '#main-menu-erase-personal': {
+                click: this.erasePersonalData
+            },
             '#main-menu-logout': {
                 click: this.logout
             },
@@ -16,6 +17,27 @@ Ext.define('phpdoe.controller.main.menu', {
 
     },
 
+    erasePersonalData: function(menuitem) {
+        Msg.confirm('eraseData', function() {
+
+            Msg.wait('PleaseWait');
+
+            Ext.Ajax.request({
+                task : 'erasePersonalData',
+                success: function () {
+                    Msg.hide();
+                    Msg.info('thanks', function(){
+                        window.location.href = './do/logout?csrfToken=' + csrfToken;
+                    });
+                },
+                failure: function() {
+                    Msg.hide();
+                    Msg.alert('forbidden');
+                }
+            });
+
+        });
+    },
 
     showAbout: function(menuItem) {
 
@@ -39,17 +61,9 @@ Ext.define('phpdoe.controller.main.menu', {
 
     logout: function(menuItem) {
 
-        // TODO: create class extend Ext.Msg with locale confirm/forbidden messages special for our project
-        Ext.Msg.confirm(
-            menuItem.parentMenu.ownerButton.itemText.confirm,
-            menuItem.parentMenu.ownerButton.itemText.confirmLogout,
-            function(btn)
-            {
-                if (btn === 'yes') {
-                    window.location.href = './do/logout?csrfToken=' + csrfToken;
-                }
-            }
-        );
+        Msg.confirm('logout', function() {
+            window.location.href = './do/logout?csrfToken=' + csrfToken;
+        });
 
     }
 });
