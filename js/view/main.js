@@ -25,15 +25,10 @@ Ext.define('phpdoe.view.main' ,{
             //animCollapse      : true,
             header: false,
             split: true,
-            collapsed: true,
+            collapsed: false,
             collapsible: true,
             collapseMode: 'mini',
-            width: 250,
-            listeners: {
-                viewready: function(navigate) {
-                    navigate.expand();
-                }
-            }
+            width: 250
         }),
         Ext.create('phpdoe.view.main.tabs', {
             id: 'main-panel',

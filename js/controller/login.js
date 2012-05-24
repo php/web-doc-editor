@@ -1,7 +1,7 @@
 Ext.define('phpdoe.controller.login', {
     extend: 'Ext.app.Controller',
     requires  : 'Ext.util.Cookies',
-    init: function() {
+    onLaunch: function() {
         this.control({
             '#login-button': {
                 click: this.doLogin
