@@ -1,7 +1,6 @@
 Ext.define('phpdoe.view.main.about', {
     extend : 'Ext.window.Window',
     id : 'window-about',
-    itemText: {}, //required for localization
     layout : 'fit',
     autoShow : false,
     width : 515,

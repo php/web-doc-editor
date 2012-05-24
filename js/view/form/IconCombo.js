@@ -22,8 +22,10 @@ Ext.define('phpdoe.view.form.IconCombo', {
     }, // end of function initComponent
 
     onRender:function (ct, position) {
+        var temp;
         this.callParent(arguments);
         this.inputEl.applyStyles({'padding-left':'25px'});
+        this.inputEl.wrap('<div style="position:relative;"></div>');
         this.icon = Ext.DomHelper.insertBefore(this.inputEl, '<div style="position:absolute;top: 5px;left: 5px;"></div>');
     },
 

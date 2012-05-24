@@ -1,8 +1,13 @@
 Ext.define('phpdoe.controller.main.menu', {
     extend: 'Ext.app.Controller',
+    aboutWindow: null,
+    configWindow: null,
 
     init: function() {
         this.control({
+            '#main-menu-config': {
+                click: this.showConfig
+            },
             '#main-menu-erase-personal': {
                 click: this.erasePersonalData
             },
@@ -135,6 +140,14 @@ Ext.define('phpdoe.controller.main.menu', {
             this.aboutWindow = Ext.create('phpdoe.view.main.about');
         }
         this.aboutWindow.show();
+    },
+
+    showConfig: function(menuItem) {
+
+        if (!this.configWindow) {
+            this.configWindow = Ext.create('phpdoe.view.main.config');
+        }
+        this.configWindow.show();
     },
 
     changeLanguage: function(menuItem) {

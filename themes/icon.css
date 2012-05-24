@@ -86,3 +86,10 @@
 .iconWorkInProgress    { background-image: url(./img/applications-development.png) !important;}
 .iconXml               { background-image: url(./img/text-xml.png)              !important;}
 .iconZoom              { background-image: url(./img/zoom-in.png)               !important;}
+.iconConfStatusBar {
+    height: 20px;
+    background: transparent url(./img/help-browser.png) no-repeat 3px 0;
+    padding-left: 25px !important;
+    height: 21px;
+    line-height: 21px;
+}

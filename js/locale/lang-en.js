@@ -129,6 +129,22 @@ Ext.onReady(function() {
         }
     });
 
+
+    Ext.define("phpdoe.locale.view.main.config", {
+        override: "phpdoe.view.main.config",
+        title: "Configuration",
+        initComponent: function () {
+
+            this.itemText = Ext.Object.merge(
+                {
+                    Close: 'Close'
+                },
+                this.itemText
+            );
+            this.callParent();
+        }
+    });
+
     Ext.define("phpdoe.locale.view.main.tabs.bug", {
         override: "phpdoe.view.main.tabs.bug",
         title: "Report bugs"
