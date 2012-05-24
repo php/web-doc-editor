@@ -5,6 +5,9 @@ Ext.define('phpdoe.controller.main.menu', {
 
     init: function() {
         this.control({
+            '#main-menu-switch-lang menu': {
+                add: this.addChangeLanguageListener
+            },
             '#main-menu-config': {
                 click: this.showConfig
             },
@@ -150,8 +153,11 @@ Ext.define('phpdoe.controller.main.menu', {
         this.configWindow.show();
     },
 
-    changeLanguage: function(menuItem) {
+    addChangeLanguageListener: function(menu, menuItem){
+        menuItem.addListener('click', this.changeLanguage, this);
+    },
 
+    changeLanguage: function(menuItem) {
         Ext.Ajax.request({
             task : 'switchLang',
             params : {lang : menuItem.code},

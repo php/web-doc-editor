@@ -24,22 +24,16 @@ Ext.define('phpdoe.controller.main', {
 
     initApplication: function() {
 
-        var languageController = this.getController('phpdoe.controller.main.menu');
-
         Ext.getStore('Languages').each(
             function(record) {
                 Ext.getCmp('main-menu-switch-lang').menu.add({
                     text    : record.get('name') + ' (' + record.get('code') + ')',
                     code: record.get('code'),
                     iconCls : 'mainMenuLang ' + record.get('iconCls'),
-                    listeners: {
-                        click: languageController.changeLanguage
-                    }
-                    //disabled: (record.get('code') === PhDOE.user.lang),
+                    disabled: (record.get('code') === config.user.lang)
                 });
             }
         );
-
 
         // Remove the global loading message
         Ext.get('loading').remove();
