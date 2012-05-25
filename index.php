@@ -111,11 +111,20 @@ if (!isset($_SESSION['userID'])) {
     exit;
 }
 
+require_once dirname(__FILE__) . '/php/AccountManager.php';
+$am = AccountManager::getInstance();
+$theme = 'ext-all.css';
+if ($am->isLogged()){
+    $theme = $am->userConf->main->theme;
+    $theme = $theme=='default' ? 'ext-all.css' : ('ext-all-'.$theme.'.css');
+}
+
+
 echo headerTemplate();
-echo cssLoadTemplate('extjs/resources/css/ext-all.css', 'extTheme');
-echo cssLoadTemplate('themes/icon.css', 'extTheme');
-echo cssLoadTemplate('themes/flags.css');
 //echo cssLoadTemplate('themes/empty.css', 'appTheme');
+echo cssLoadTemplate('extjs/resources/css/'.$theme);
+echo cssLoadTemplate('themes/icon.css');
+echo cssLoadTemplate('themes/flags.css');
 echo cssLoadTemplate('themes/main.css');
 echo jsCallTemplate($jsVar);
 echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
@@ -124,8 +133,6 @@ echo jsCallTemplate('var csrfToken = "' . $_SESSION['csrfToken'] . '";');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading Core API...";');
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Loading UI Components...";');
 echo jsLoadTemplate('extjs/ext-debug.js');
-//echo jsLoadTemplate('extjs/locale/ext-lang-ru.js');
-//echo jsLoadTemplate('js/locale/lang-en.js');
 
 // Ext.ux Javascript files
 echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');

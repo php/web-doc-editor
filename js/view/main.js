@@ -28,7 +28,7 @@ Ext.define('phpdoe.view.main' ,{
             collapsed: false,
             collapsible: true,
             collapseMode: 'mini',
-            width: 250
+            width: config.user.conf.main.mainMenuWidth || 300
         }),
         Ext.create('phpdoe.view.main.tabs', {
             id: 'main-panel',

@@ -12,10 +12,8 @@ Ext.define('phpdoe.view.main.config', {
     plain : true,
     iconCls : 'iconConf',
     modal : true,
+
     initComponent : function () {
-
-
-
         this.buttons = [
             {
                 text : this.itemText.Close,
@@ -50,11 +48,14 @@ Ext.define('phpdoe.view.main.config', {
                 {
                     xtype: 'tbtext',
                     text: 'All changes take effect immediately' ,
-                    cls: 'iconConfStatusBar'}
+                    cls: 'iconConfStatusBar'
+                }
             ],
 
             items : [
-            ]
+                Ext.create('phpdoe.view.main.config.cards.main'),
+                Ext.create('phpdoe.view.main.config.cards.needTranslate')
+           ]
         }];
 
 

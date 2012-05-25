@@ -20,14 +20,14 @@ Ext.define('phpdoe.view.main.config.menu', {
 
         if (config.user.lang === 'en') {
             Ext.getStore('ConfigCards').add(
-                {id :'1', card: 'card1', label:'Main'},
+                {id :'conf-card-main', card: 'card1', label:'Main'},
                 {id :'4', card: 'card4', label:'Module "Files with error"'},
                 {id :'6', card: 'card6', label:'Module "All files"'}
             );
         } else {
             Ext.getStore('ConfigCards').add(
-                {id :'1', card: 'card1', label:'Main'},
-                {id :'2', card: 'card2', label:'Module "Files need translate"'},
+                {id :'conf-card-main', card: 'card1', label:'Main'},
+                {id :'conf-card-need-translate', card: 'card2', label:'Module "Files need translate"'},
                 {id :'3', card: 'card3', label:'Module "Files need update"'},
                 {id :'4', card: 'card4', label:'Module "Files with error"'},
                 {id :'5', card: 'card5', label:'Module "Files need reviewed"'},

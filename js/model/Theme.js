@@ -1,9 +1,8 @@
-Ext.define('phpdoe.model.ConfigCard', {
+Ext.define('phpdoe.model.Theme', {
     extend     : 'Ext.data.Model',
     idProperty : 'id',
     fields     : [
         { name:'id', type:'string' },
-        { name:'card', type:'string' },
-        { name:'label', type:'string' }
+        { name:'name', type:'string' }
     ]
 });

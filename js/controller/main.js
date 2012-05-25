@@ -24,6 +24,8 @@ Ext.define('phpdoe.controller.main', {
 
     initApplication: function() {
 
+        Ext.create('phpdoe.view.main').show();
+
         Ext.getStore('Languages').each(
             function(record) {
                 Ext.getCmp('main-menu-switch-lang').menu.add({
