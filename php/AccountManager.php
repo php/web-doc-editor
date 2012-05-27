@@ -98,7 +98,7 @@ class AccountManager
                 'nbDisplay' => 0,
                 'toolsPanelDisplay' => false,
                 'toolsPanelWidth' => 375,
-                'secondPanel' => 'googleTranslate', // can be 'none', 'googleTranslate' or 'originalFile'
+                'secondPanel' => 'originalFile', // can be 'none', 'googleTranslate' or 'originalFile'
                 'syncScrollbars' => true
             ),
             'reviewed' => (object) Array(

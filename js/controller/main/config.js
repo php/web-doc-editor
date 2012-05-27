@@ -2,19 +2,74 @@ Ext.define('phpdoe.controller.main.config', {
     extend: 'Ext.app.Controller',
 
     init: function() {
+
+        var saveConfFieldListener = {},
+            idArray = [
+                '#config-left-panel-width',
+                '#config-on-save-file',
+                '#config-display-en-work',
+                '#config-theme',
+                '#config-lang',
+                '#config-load-mails',
+                '#config-load-bugs',
+                '#config-cm2-theme',
+
+                '#config-newFile-nbDisplay',
+                '#config-newFile-syncScrollbars',
+                '#config-newFile-toolsPanelDisplay checkbox',
+                '#config-newFile-toolsPanelWidth',
+                '#config-newFile-secondPanel',
+
+                '#config-needUpdate-nbDisplay',
+                '#config-needUpdate-syncScrollbars',
+                '#config-needUpdate-toolsPanelLogLoad',
+                '#config-needUpdate-toolsPanelDisplay checkbox',
+                '#config-needUpdate-toolsPanelWidth',
+                '#config-needUpdate-diffPanelDisplay checkbox',
+                '#config-needUpdate-diffPanelHeight',
+                '#config-needUpdate-diffMethod',
+
+                '#config-error-nbDisplay',
+                '#config-error-skipNbLiteralTag',
+                '#config-error-syncScrollbars',
+                '#config-error-toolsPanelLogLoad',
+                '#config-error-toolsPanelEntitiesLoad',
+                '#config-error-toolsPanelAcronymsLoad',
+                '#config-error-toolsPanelDisplay checkbox',
+                '#config-error-toolsPanelWidth',
+                '#config-error-descPanelDisplay checkbox',
+                '#config-error-descPanelHeight',
+
+                '#config-reviewed-nbDisplay',
+                '#config-reviewed-syncScrollbars',
+                '#config-reviewed-toolsPanelLogLoad',
+                '#config-reviewed-toolsPanelDisplay checkbox',
+                '#config-reviewed-toolsPanelWidth',
+
+                '#config-allFiles-toolsPanelLogLoad',
+                '#config-allFiles-toolsPanelEntitiesLoad',
+                '#config-allFiles-toolsPanelAcronymsLoad',
+                '#config-allFiles-toolsPanelDisplay checkbox',
+                '#config-allFiles-toolsPanelWidth'
+
+            ];
+
+        for (var i = 0; i < idArray.length; i++) {
+            saveConfFieldListener[idArray[i]] = {
+                change: {
+                    fn: this.saveConfField,
+                    buffer: 1000
+                }
+            };
+        };
+
+        this.control(saveConfFieldListener);
+
         this.control({
             '#conf-menu-view': {
                 selectionchange : this.showCard,
                 afterrender: this.selectFirstMenuItem
             },
-            '#config-left-panel-width,#config-on-save-file,#config-display-en-work,#config-theme,#config-lang,#config-load-mails,#config-load-bugs,#config-cm2-theme,#config-newFile-nbDisplay': {
-                change: {
-                    fn: this.saveConfField,
-                    buffer: 1000
-                }
-            }
-        });
-        this.control({
             '#config-left-panel-width': {
                 change: this.changeLeftPanelWidth
             }

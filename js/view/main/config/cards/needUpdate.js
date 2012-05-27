@@ -1,6 +1,6 @@
-Ext.define('phpdoe.view.main.config.cards.needTranslate', {
+Ext.define('phpdoe.view.main.config.cards.needUpdate', {
     extend  : 'Ext.tab.Panel',
-    id         : 'conf-card-need-translate',
+    id         : 'conf-card-need-update',
     activeTab: 0,      // First tab active by default,
     defaults   : {
         bodyStyle: 'padding: 5px;',
@@ -25,11 +25,11 @@ Ext.define('phpdoe.view.main.config.cards.needTranslate', {
                         items   : [
                             {
                                 xtype      : 'numberfield',
-                                id          : 'config-newFile-nbDisplay',
+                                id          : 'config-needUpdate-nbDisplay',
                                 hideLabel : true,
                                 size      : 6,
-                                name       : 'newFile.nbDisplay',
-                                value      : config.user.conf.newFile.nbDisplay || 300,
+                                name       : 'needUpdate.nbDisplay',
+                                value      : config.user.conf.needUpdate.nbDisplay || 300,
                                 minValue   : 0,
                                 maxValue   : 10000,
                                 enableKeyEvents : true
@@ -55,10 +55,10 @@ Ext.define('phpdoe.view.main.config.cards.needTranslate', {
                         items   : [
                             {
                                 xtype       : 'checkbox',
-                                id          : 'config-newFile-syncScrollbars',
+                                id          : 'config-needUpdate-syncScrollbars',
                                 hideLabel : true,
-                                name : 'newFile.syncScrollbars',
-                                checked : config.user.conf.newFile.syncScrollbars,
+                                name : 'needUpdate.syncScrollbars',
+                                checked : config.user.conf.needUpdate.syncScrollbars,
                                 boxLabel : 'Synchronize scroll bars'
                             }
                         ]
@@ -69,20 +69,28 @@ Ext.define('phpdoe.view.main.config.cards.needTranslate', {
                         iconCls : 'iconConf',
                         items   : [
                             {
+                                xtype       : 'checkbox',
+                                id          : 'config-needUpdate-toolsPanelLogLoad',
+                                hideLabel : true,
+                                name : 'needUpdate.toolsPanelLogLoad',
+                                checked : config.user.conf.needUpdate.toolsPanelLogLoad,
+                                boxLabel : 'Automatically load the log when displaying the file'
+                            },
+                            {
                                 xtype   : 'fieldset',
                                 title   : 'Start with the panel open',
-                                id: 'config-newFile-toolsPanelDisplay',
+                                id: 'config-needUpdate-toolsPanelDisplay',
                                 checkboxToggle: true,
-                                checkboxName: 'newFile.toolsPanelDisplay',
-                                collapsed : !config.user.conf.newFile.toolsPanelDisplay,
+                                checkboxName: 'needUpdate.toolsPanelDisplay',
+                                collapsed : !config.user.conf.needUpdate.toolsPanelDisplay,
                                 items   : [
                                     {
                                         xtype      : 'numberfield',
-                                        id          : 'config-newFile-toolsPanelWidth',
+                                        id          : 'config-needUpdate-toolsPanelWidth',
                                         hideLabel : true,
                                         size      : 6,
-                                        name       : 'newFile.toolsPanelWidth',
-                                        value      : config.user.conf.newFile.toolsPanelWidth || 375,
+                                        name       : 'needUpdate.toolsPanelWidth',
+                                        value      : config.user.conf.needUpdate.toolsPanelWidth || 375,
                                         minValue   : 0,
                                         maxValue   : 10000,
                                         enableKeyEvents : true
@@ -93,27 +101,47 @@ Ext.define('phpdoe.view.main.config.cards.needTranslate', {
                     },
                     {
                         xtype   : 'fieldset',
-                        title   : 'Right panel',
-                        iconCls : 'iconUI',
+                        title   : 'Diff view',
+                        iconCls : 'iconDiffView',
                         items   : [
+                            {
+                                xtype   : 'fieldset',
+                                title   : 'Start with the panel open',
+                                id: 'config-needUpdate-diffPanelDisplay',
+                                checkboxToggle: true,
+                                checkboxName: 'needUpdate.diffPanelDisplay',
+                                collapsed : !config.user.conf.needUpdate.diffPanelDisplay,
+                                items   : [
+                                    {
+                                        xtype      : 'numberfield',
+                                        id          : 'config-needUpdate-diffPanelHeight',
+                                        hideLabel : true,
+                                        size      : 6,
+                                        name       : 'needUpdate.diffPanelHeight',
+                                        value      : config.user.conf.needUpdate.diffPanelHeight || 375,
+                                        minValue   : 0,
+                                        maxValue   : 10000,
+                                        enableKeyEvents : true
+                                    }
+                                ]
+                            },
                             {
                                 xtype: 'radiogroup',
                                 hideLabel: true,
-                                name: 'newFile.secondPanel',
-                                defaults   : { name: 'newFile.secondPanel' },
+                                name: 'needUpdate.diffMethod',
+                                defaults   : { name: 'needUpdate.diffMethod' },
                                 columns: 1,
-                                id      : 'config-newFile-secondPanel',
+                                id      : 'config-needUpdate-diffMethod',
                                 items: [
                                     {
-                                        boxLabel: 'Display the original file',
-                                        inputValue: 'originalFile',
-                                        checked:
-                                            config.user.conf.newFile.secondPanel == 'originalFile'
+                                        boxLabel: 'Using ViewVc from php web site',
+                                        inputValue: 'using-viewvc',
+                                        checked: config.user.conf.needUpdate.diffMethod == 'using-viewvc'
                                     },
                                     {
-                                        boxLabel: 'Do not display a right panel',
-                                        inputValue: 'none',
-                                        checked: !Ext.isDefined(config.user.conf.newFile.secondPanel) || config.user.conf.newFile.secondPanel == 'none'
+                                        boxLabel: 'Using diff -u command line',
+                                        inputValue: 'using-exec',
+                                        checked: config.user.conf.needUpdate.diffMethod == 'using-exec'
                                     }
                                 ]
                             }
@@ -122,6 +150,7 @@ Ext.define('phpdoe.view.main.config.cards.needTranslate', {
                 ]
             }
         ];
+
 
         this.callParent();
     }
