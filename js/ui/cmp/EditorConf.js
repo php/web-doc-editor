@@ -607,7 +607,7 @@ ui.cmp._EditorConf.card2 = Ext.extend(Ext.TabPanel,
                                             name : 'PhDOE.user.conf.newFile.secondPanel',
                                             boxLabel : _('Do not display a right panel'),
                                             inputValue : 'none',
-                                            checked : (!Ext.isDefined(PhDOE.user.conf.newFile.secondPanel) || PhDOE.user.conf.newFile.secondPanel === 'none') ? true : false,
+                                            checked : ((!Ext.isDefined(PhDOE.user.conf.newFile.secondPanel) || PhDOE.user.conf.newFile.secondPanel === 'none')) ? true : false,
                                             listeners : {
                                                 check : function (field) {
                                                     if (field.checked) {

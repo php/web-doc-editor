@@ -591,7 +591,8 @@ var PhDOE = function()
                             xtype  : 'container',
                             layout: 'column',
                             border : false,
-                            items: [{
+                            items: [
+                                {
                                 xtype:'container',
                                 columnWidth: .5,
                                 html   : '<div class="topic-connected"><div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div><div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">' +
