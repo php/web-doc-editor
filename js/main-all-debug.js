@@ -11728,6 +11728,7 @@ ui.task.SaveFileTask = function(config)
             // reset file
             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+            Ext.getCmp(this.prefix + '-' + this.fid).isModified = false;
 
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(
                 Ext.getCmp(id_prefix + '-PANEL-' + this.fid).permlink +
@@ -11820,6 +11821,7 @@ ui.task.SaveTransFileTask = function(config){
             // reset file
             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+            Ext.getCmp(this.prefix + '-' + this.fid).isModified = false;
             
             Ext.getCmp(id_prefix + '-PANEL-' + this.fid).setTitle(Ext.getCmp(id_prefix + '-PANEL-' + this.fid).originTitle);
             // reset tab-panel
@@ -12440,7 +12442,7 @@ ui.task.VCSCommitTask = function(config)
         }
 
         Ext.MessageBox.show({
-            title   : 'Warning',
+            title   :  _('Warning'),
             icon    : Ext.MessageBox.INFO,
             buttons : Ext.MessageBox.YESNOCANCEL,
             msg     : (NeedToBeClose.length > 1) ? String.format(
@@ -17383,7 +17385,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
     activeScroll : false,  // scroll lock
-
+    
     goToPreviousTab : function()
     {
         var currentTabId = this.prefix+'-'+this.fid,
@@ -17803,8 +17805,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             // Desactivate save button
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
 
-                            // Mark as modified
+                            // Mark as not modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+                            Ext.getCmp(this.prefix + '-' + this.fid).isModified = false;
                         }
                     },
 
@@ -17838,6 +17841,8 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
                                 ' <t style="color:#ff0000; font-weight: bold;">*</t>'
                             );
+                            Ext.getCmp(this.prefix + '-' + this.fid).isModified = true;
+                            
 
                             // Activate save button
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
@@ -19641,7 +19646,7 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
                         
-                        // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                        // We can't use === operator here. Sometimes, fid is a string, Sometimes, it's an integer ( see Bug #55316 )
                         if (file.attributes.idDB == fid) {
                             
                             file.remove(true);
@@ -23955,6 +23960,39 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
     });
 });
 
+
+ui.cmp._WorkTreeGrid.isNotSavedFile = function(config) {
+    
+    var needToBeSaved = false;
+    
+    Ext.each(Ext.getCmp('main-panel').items.items, function(tab) {
+        
+        if( tab.isModified === true )
+        {
+             needToBeSaved = true;
+             
+             Ext.MessageBox.show({
+                title   : _('Warning'),
+                icon    : Ext.MessageBox.INFO,
+                buttons : Ext.MessageBox.OK,
+                msg     : _('There is some file unsaved. Please, save it before start a commit.'),
+                fn: function() {
+                    Ext.getCmp('main-panel').setActiveTab(tab.id);
+                }
+             });
+             
+             return false;
+             
+        }
+        
+    }, this);
+    
+    if( ! needToBeSaved ) {
+        config.commitWindow.show();
+    }
+};
+
+
 // WorkTreeGrid : adminstrator items for the context menu
 // config - { module, from, node, folderNode, userNode }
 
@@ -24063,9 +24101,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             fby: this.userNode.attributes.task
                         }];
                         
-                        new ui.cmp.CommitPrompt({
-                            files: file
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: file
+                                              })
+                        });
                     }
                 }, {
                     scope: this,
@@ -24089,9 +24129,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files
+                                              })
+                        });
                         
                     }
                 }, {
@@ -24124,11 +24166,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files,
-                            defaultMessage: defaultCommitMessage,
-                            patchID: patchID
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files,
+                                                    defaultMessage: defaultCommitMessage,
+                                                    patchID: patchID
+                                              })
+                        });
                         
                     }
                 }, {
@@ -24153,9 +24197,12 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files
+                                              })
+                        });
+                        
                     }
                 }]
             })
@@ -24744,7 +24791,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 for (h = 0; h < folder.childNodes.length; h++) {
                     file = folder.childNodes[h];
                     
-                    // We can't use === operator here. Somethings, fid is a string, something, it's an integer ( see Bug #55316 )
+                    // We can't use === operator here. Sometimes, fid is a string, Sometimes, it's an integer ( see Bug #55316 )
                     if (file.attributes.idDB == fid) {
                     
                         file.remove(true);

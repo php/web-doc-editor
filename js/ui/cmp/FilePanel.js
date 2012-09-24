@@ -655,7 +655,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
     activeScroll : false,  // scroll lock
-
+    
     goToPreviousTab : function()
     {
         var currentTabId = this.prefix+'-'+this.fid,
@@ -1075,8 +1075,9 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             // Desactivate save button
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').disable();
 
-                            // Mark as modified
+                            // Mark as not modified
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid).isModified = false;
+                            Ext.getCmp(this.prefix + '-' + this.fid).isModified = false;
                         }
                     },
 
@@ -1110,6 +1111,8 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 Ext.getCmp(this.prefix + '-' + this.fid).originTitle +
                                 ' <t style="color:#ff0000; font-weight: bold;">*</t>'
                             );
+                            Ext.getCmp(this.prefix + '-' + this.fid).isModified = true;
+                            
 
                             // Activate save button
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();

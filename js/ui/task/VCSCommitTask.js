@@ -221,7 +221,7 @@ ui.task.VCSCommitTask = function(config)
         }
 
         Ext.MessageBox.show({
-            title   : 'Warning',
+            title   :  _('Warning'),
             icon    : Ext.MessageBox.INFO,
             buttons : Ext.MessageBox.YESNOCANCEL,
             msg     : (NeedToBeClose.length > 1) ? String.format(

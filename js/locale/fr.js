@@ -84,6 +84,7 @@ var i18n = new Array();
   i18n["You have no patch currently. You must create one."] = "Vous n'avez aucun patch en cours actuellement. Vous devez en créer un.";
   i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
   i18n["Administrator menu"] = "Menu Administrateur";
+  i18n["There is some file unsaved. Please, save it before start a commit."] = "Il y a un fichier non sauvegardé. Veuillez le sauvegarder avant de commencer un commit.";
   
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js

@@ -9,6 +9,39 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
     });
 });
 
+
+ui.cmp._WorkTreeGrid.isNotSavedFile = function(config) {
+    
+    var needToBeSaved = false;
+    
+    Ext.each(Ext.getCmp('main-panel').items.items, function(tab) {
+        
+        if( tab.isModified === true )
+        {
+             needToBeSaved = true;
+             
+             Ext.MessageBox.show({
+                title   : _('Warning'),
+                icon    : Ext.MessageBox.INFO,
+                buttons : Ext.MessageBox.OK,
+                msg     : _('There is some file unsaved. Please, save it before start a commit.'),
+                fn: function() {
+                    Ext.getCmp('main-panel').setActiveTab(tab.id);
+                }
+             });
+             
+             return false;
+             
+        }
+        
+    }, this);
+    
+    if( ! needToBeSaved ) {
+        config.commitWindow.show();
+    }
+};
+
+
 // WorkTreeGrid : adminstrator items for the context menu
 // config - { module, from, node, folderNode, userNode }
 
@@ -117,9 +150,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             fby: this.userNode.attributes.task
                         }];
                         
-                        new ui.cmp.CommitPrompt({
-                            files: file
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: file
+                                              })
+                        });
                     }
                 }, {
                     scope: this,
@@ -143,9 +178,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files
+                                              })
+                        });
                         
                     }
                 }, {
@@ -178,11 +215,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files,
-                            defaultMessage: defaultCommitMessage,
-                            patchID: patchID
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files,
+                                                    defaultMessage: defaultCommitMessage,
+                                                    patchID: patchID
+                                              })
+                        });
                         
                     }
                 }, {
@@ -207,9 +246,12 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             }
                         }, this);
                         
-                        new ui.cmp.CommitPrompt({
-                            files: files
-                        }).show();
+                        ui.cmp._WorkTreeGrid.isNotSavedFile({
+                                commitWindow: new ui.cmp.CommitPrompt({
+                                                    files: files
+                                              })
+                        });
+                        
                     }
                 }]
             })
