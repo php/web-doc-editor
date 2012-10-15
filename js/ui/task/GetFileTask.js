@@ -79,7 +79,9 @@ ui.task.GetFileTask = function(config)
                 });
 
                 // Mark as dirty this editor now
-                f.manageCodeChange();
+                f.fireEvent('codemodified');
+                f.documentDurty = true;
+                
             }
 
             if( o.warn_encoding && !this.freadOnly ) {

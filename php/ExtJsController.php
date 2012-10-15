@@ -878,9 +878,16 @@ class ExtJsController
             $return['xmlid'] = $info['xmlid'];
         }
 
-        // Warn if this file contains some tab caracter (the online editor will replace them by a space)
-        $return['warn_tab'] = ( strstr($return['content'], "\t") ) ? true : false ;
-
+        // Warn if this file contains some tab caracter, we replace it with 4 space
+        if( strstr($return['content'], "\t") )
+        {
+            $return['content'] = str_replace("\t", "    ", $return['content']);
+            $return['warn_tab'] = true;
+        } else
+        {
+            $return['warn_tab'] = false ;
+        }
+        
         // We must check if this file isn't own by the current user
         $return['fileModified'] = $file->isModified();
 
