@@ -13895,9 +13895,12 @@ ui.cmp._CommitPrompt.store = new Ext.data.GroupingStore(
     groupField : 'path'
 });
 
+ui.cmp._CommitPrompt.CheckboxSelectionModel =  new Ext.grid.CheckboxSelectionModel();
+
+
 // PendingCommitGrid columns definition
 ui.cmp._CommitPrompt.columns = [
-    new Ext.grid.CheckboxSelectionModel(),
+    ui.cmp._CommitPrompt.CheckboxSelectionModel,
 {
     id        : 'name',
     header    : _('Files'),
@@ -13936,8 +13939,7 @@ ui.cmp._CommitPrompt.grid = Ext.extend(Ext.grid.GridPanel,
     height           : 180,
     columns          : ui.cmp._CommitPrompt.columns,
     view             : ui.cmp._CommitPrompt.view,
-    enableDragDrop   : true,
-    sm               : new Ext.grid.CheckboxSelectionModel(),
+    sm               : ui.cmp._CommitPrompt.CheckboxSelectionModel,
     listeners        : {
         viewready: function()
         {
