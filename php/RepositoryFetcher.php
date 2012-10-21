@@ -1267,6 +1267,7 @@ TODO: Handle project here
                 || $f == '..'
                 || substr($f, 0, 1) == '.'      // skip hidden files
                 || $f == 'CVS'
+                || substr($f, 0, 9) == 'entities.'
             ) continue;
 
             if (is_dir($appConf[$project]['vcs.path'].$dir.$f)) {
