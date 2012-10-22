@@ -10999,6 +10999,37 @@ ui.task.DeletePatchTask = function(config)
         });
 };Ext.namespace('ui','ui.task');
 
+// config - { str }
+ui.task.GetBingTranslation = function(config)
+{
+    Ext.apply(this, config);
+
+    // CleanUp the current result area
+    Ext.get('BingTranslate-result').dom.innerHTML = '';
+
+    // Disable the button & add a wait message into it
+    Ext.getCmp('BingTranslate-btn').disable();
+    Ext.getCmp('BingTranslate-btn').setText(_('Please, wait...'));
+
+    // We load the File
+    XHR({
+        scope  : this,
+        params : {
+            task : 'getBingTranslation',
+            str  : this.str
+        },
+        success : function(response)
+        {
+            var o    = Ext.util.JSON.decode(response.responseText);
+
+            Ext.get('BingTranslate-result').dom.innerHTML = Ext.util.Format.htmlEncode(o.translation);
+            Ext.getCmp('BingTranslate-btn').setText(_('Translate !'));
+            Ext.getCmp('BingTranslate-btn').enable();
+        }
+    });
+};
+Ext.namespace('ui','ui.task');
+
 // config - { xmlID }
 ui.task.GetFileInfoByXmlID = function(config)
 {
@@ -12674,6 +12705,53 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
         ui.cmp.AnonymousPatchWin.superclass.initComponent.call(this);
         
         this.show();
+    }
+});Ext.namespace('ui','ui.cmp');
+
+//------------------------------------------------------------------------------
+// BingTranslationPanel
+ui.cmp.BingTranslationPanel = Ext.extend(Ext.FormPanel,
+{
+    border     : false,
+    labelAlign : 'top',
+    bodyStyle  : 'padding:5px',
+    autoScroll : true,
+
+    getTranslation : function(str)
+    {
+        new ui.task.GetBingTranslation({
+            str : str
+        });
+
+    },
+
+    initComponent : function()
+    {
+        Ext.apply(this, {
+            items:[{
+                xtype      : 'textarea',
+                anchor     : '90%',
+                fieldLabel : String.format(_('String to translate (en => {0})'), PhDOE.user.lang),
+                name       : 'BingTranslate-string',
+                id         : 'BingTranslate-string',
+                allowBlank : false
+            },{
+                scope   : this,
+                xtype   : 'button',
+                text    : _('Translate !'),
+                id      : 'BingTranslate-btn',
+                handler : function() {
+                    this.getTranslation(Ext.getCmp('BingTranslate-string').getValue());
+                }
+            },{
+                xtype     : 'panel',
+                anchor    : '100%',
+                border    : false,
+                bodyStyle :'padding:5px',
+                html      : '<div id="BingTranslate-result" style="width: 90%; font: 12px tahoma,arial,sans-serif"></div>'
+            }]
+        });
+        ui.cmp.BingTranslationPanel.superclass.initComponent.call(this);
     }
 });Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
 
@@ -25694,18 +25772,16 @@ var PhDOE = function()
                         iconCls   : 'iconPatch',
                         items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
                         collapsed : true
-                    }
-                    /*, {
-                        id        : 'acc-google-translate',
-                        title     : _('Google translation'),
+                    }, {
+                        id        : 'acc-bing-translate',
+                        title     : _('Bing translation'),
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'iconGoogle',
+                        iconCls   : 'iconBing',
                         hidden    : (PhDOE.user.lang === 'en'),
-                        items     : [ new ui.cmp.GoogleTranslationPanel() ],
+                        items     : [ new ui.cmp.BingTranslationPanel() ],
                         collapsed : true
-                    }*/
-                    ]
+                    }]
                 }, {
                     // main panel
                     xtype  : 'mainpanel',

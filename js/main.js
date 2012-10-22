@@ -563,18 +563,16 @@ var PhDOE = function()
                         iconCls   : 'iconPatch',
                         items     : [ ui.cmp.PatchesTreeGrid.getInstance() ],
                         collapsed : true
-                    }
-                    /*, {
-                        id        : 'acc-google-translate',
-                        title     : _('Google translation'),
+                    }, {
+                        id        : 'acc-bing-translate',
+                        title     : _('Bing translation'),
                         layout    : 'fit',
                         border    : false,
-                        iconCls   : 'iconGoogle',
+                        iconCls   : 'iconBing',
                         hidden    : (PhDOE.user.lang === 'en'),
-                        items     : [ new ui.cmp.GoogleTranslationPanel() ],
+                        items     : [ new ui.cmp.BingTranslationPanel() ],
                         collapsed : true
-                    }*/
-                    ]
+                    }]
                 }, {
                     // main panel
                     xtype  : 'mainpanel',

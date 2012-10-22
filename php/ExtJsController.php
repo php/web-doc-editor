@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/BugReader.php';
 require_once dirname(__FILE__) . '/DictionaryManager.php';
 require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
 require_once dirname(__FILE__) . '/File.php';
-require_once dirname(__FILE__) . '/GTranslate.php';
+require_once dirname(__FILE__) . '/MicrosoftTranslator.class.php';
 require_once dirname(__FILE__) . '/JsonResponseBuilder.php';
 require_once dirname(__FILE__) . '/LogManager.php';
 require_once dirname(__FILE__) . '/LockFile.php';
@@ -733,6 +733,50 @@ class ExtJsController
 
         // Replace new line mark
         $translation = str_replace("[@]", "<br>", $translation);
+
+        // Few substitutions
+        $translation = str_replace("&amp;" , "&", $translation);
+        $translation = str_replace("&amp;  ", "&", $translation);
+        $translation = str_replace("&#39;" , "'", $translation);
+        $translation = str_replace("&quot;", '"', $translation);
+        $translation = str_replace("&lt;"  , '<', $translation);
+        $translation = str_replace("&gt;"  , '>', $translation);
+
+        return JsonResponseBuilder::success(
+            array(
+                'translation' => $translation
+            )
+         );
+
+    }
+
+    /**
+     * Get the translation from a given string using Bing Translate API
+     */
+    public function getBingTranslation()
+    {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $str = $this->getRequestVariable('str');
+
+        $lang = AccountManager::getInstance()->vcsLang;
+
+        $translation = false;
+
+        $str = str_replace("\n", "[@]", $str);
+
+        $bing = new MicrosoftTranslator("0Iwzej5BJeHK/2nvHh7/uJyHLhmnyFJEAuOYOfJ1QLg=");
+        
+        $bing->translate('en', $lang, $str);
+        
+        $bing->response->jsonResponse;
+        
+        preg_match("/<string xmlns=\"(.[^\"]*)\">(.*)?<\/string>/e", $bing->response->translation, $match);
+        
+        // Replace new line mark
+        $translation = str_replace("[@]", "<br>", $match[2]);
 
         // Few substitutions
         $translation = str_replace("&amp;" , "&", $translation);
