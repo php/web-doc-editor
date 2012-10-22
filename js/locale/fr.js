@@ -589,6 +589,10 @@ var i18n = new Array();
 // In file: ../../js/ui/task/SystemUpdateTask.js
   i18n["Finish !"] = "Terminer !";
 
+// In file: ../../js/ui/task/MoveToPatch.js
+  i18n["Error. Is this file(s) is(are) own by you ?"] = "Erreur. Est-ce que ce ou ces fichiers vous appartiennent ?";
+  i18n["Patches unknow for this project or for this user"] = "Ce patch n'existe pas pour ce projet ou pour cet utilisateur.";
+
 
 // In file: ../../js/ui/task/SavePatchTask.js
   i18n["Saving data as a patch..."] = "Sauvegarde des données sous forme de patch";

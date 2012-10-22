@@ -2127,7 +2127,7 @@ class ExtJsController
 
 
     /**
-     * Start the dowload of a given patch
+     * Define the progression of a file
      */
     public function SetFileProgress()
     {

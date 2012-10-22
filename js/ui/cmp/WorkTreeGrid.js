@@ -51,13 +51,35 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
     ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
+    
+    listeners: {
+        afterrender: function(){
+            ui.cmp._WorkTreeGrid.menu.usersPatch({
+                menuID: 'AdminPatchesMenu'
+            });
+        }
+    },
+    
     init: function() {
         
-        var items;
+        var allFiles = [], items;
+        
+        allFiles.push(this.node);
         
         switch(this.from) {
             case 'file' :
                 items = [{
+                    text: _('Submit all files for review in patch:'),
+                    iconCls: 'iconPendingPatch',
+                    handler: function(){
+                        return false;
+                    },
+                    menu: new Ext.menu.Menu({
+                        id: 'AdminPatchesMenu',
+                        itemRendered: false,
+                        nodesToAdd: allFiles
+                    })
+                },{
                     scope: this,
                     iconCls: 'iconSwitchLang',
                     text: _('Change file\'s owner'),

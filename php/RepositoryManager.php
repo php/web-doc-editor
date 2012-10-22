@@ -538,7 +538,36 @@ class RepositoryManager
         $r = $this->conn->query($s, $params);
         
         if( $this->conn->affected_rows() < 1 ) {
-            return 'Error. Is this file(s) is(are) own by you ?';
+            
+            // Either an error or this change is wanted by an admin
+            if($am->isAdmin(true))
+            {
+                $s = 'UPDATE
+                        `work`
+                    SET
+                        `patchID` = "%s",
+                        `module`  = "PatchesForReview",
+                        `userID`    = %d
+                    WHERE
+                        `project` = "%s" AND
+                        `id` IN (%s)';
+                $params = array(
+                    $patchID,
+                    $userID,
+                    $project,
+                    implode(',', array_map('intval', explode(',', $filesID)))
+                );
+                $r = $this->conn->query($s, $params);
+                
+                if( $this->conn->affected_rows() < 1 ) {
+                    return 'Error. Is this file(s) is(are) own by you ?';
+                } else {
+                    return true;
+                }
+                
+            } else {
+                return 'Error. Is this file(s) is(are) own by you ?';
+            }
         } else {
             return true;
         }

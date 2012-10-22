@@ -11434,6 +11434,13 @@ ui.task.MoveToPatch = function(config)
             {
                 Ext.getBody().unmask();
 
+                console.log('patchID', this.patchID);
+                console.log('patchName', this.patchName);
+                console.log('nodesToAdd', this.nodesToAdd);
+                console.log('patchDescription', this.patchDescription);
+                console.log('patchEmail', this.patchEmail);
+                
+                
                 // We add this new patch, and nodesToAdd into Patches for review component
                 ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
 
@@ -11450,7 +11457,7 @@ ui.task.MoveToPatch = function(config)
                 var o = Ext.util.JSON.decode(r.responseText);
                 Ext.getBody().unmask();
 
-                Ext.MessageBox.alert('Error', o.err);
+                Ext.MessageBox.alert(_('Error'), _(o.err));
             }
         });
 };Ext.namespace('ui','ui.task');
@@ -24006,13 +24013,35 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
     ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
+    
+    listeners: {
+        afterrender: function(){
+            ui.cmp._WorkTreeGrid.menu.usersPatch({
+                menuID: 'AdminPatchesMenu'
+            });
+        }
+    },
+    
     init: function() {
         
-        var items;
+        var allFiles = [], items;
+        
+        allFiles.push(this.node);
         
         switch(this.from) {
             case 'file' :
                 items = [{
+                    text: _('Submit all files for review in patch:'),
+                    iconCls: 'iconPendingPatch',
+                    handler: function(){
+                        return false;
+                    },
+                    menu: new Ext.menu.Menu({
+                        id: 'AdminPatchesMenu',
+                        itemRendered: false,
+                        nodesToAdd: allFiles
+                    })
+                },{
                     scope: this,
                     iconCls: 'iconSwitchLang',
                     text: _('Change file\'s owner'),

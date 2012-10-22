@@ -26,7 +26,7 @@ ui.task.MoveToPatch = function(config)
             success : function()
             {
                 Ext.getBody().unmask();
-
+                
                 // We add this new patch, and nodesToAdd into Patches for review component
                 ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
 
@@ -43,7 +43,7 @@ ui.task.MoveToPatch = function(config)
                 var o = Ext.util.JSON.decode(r.responseText);
                 Ext.getBody().unmask();
 
-                Ext.MessageBox.alert('Error', o.err);
+                Ext.MessageBox.alert(_('Error'), _(o.err));
             }
         });
 };
