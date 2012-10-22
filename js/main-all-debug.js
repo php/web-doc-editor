@@ -11433,13 +11433,6 @@ ui.task.MoveToPatch = function(config)
             success : function()
             {
                 Ext.getBody().unmask();
-
-                console.log('patchID', this.patchID);
-                console.log('patchName', this.patchName);
-                console.log('nodesToAdd', this.nodesToAdd);
-                console.log('patchDescription', this.patchDescription);
-                console.log('patchEmail', this.patchEmail);
-                
                 
                 // We add this new patch, and nodesToAdd into Patches for review component
                 ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
