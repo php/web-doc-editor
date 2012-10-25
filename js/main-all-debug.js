@@ -11394,6 +11394,9 @@ ui.task.LoadConfigTask = function(config)
 
             // Draw the interface
             PhDOE.drawInterface();
+            
+            console.log(PhDOE.user);
+            
         }
     });
 };
@@ -24319,58 +24322,57 @@ ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
     
     var menu = Ext.getCmp(this.menuID), newItem, patchesList;
     
-    if (!menu.itemRendered) {
-        menu.removeAll();
-        menu.doLayout();
+    // We remove all this menu
+    menu.removeAll();
+    menu.doLayout();
+    
+    patchesList = ui.cmp.PatchesTreeGrid.getInstance().getUserPatchesList();
+    
+    if (patchesList) {
+    
+        Ext.each(patchesList, function(item){
         
-        patchesList = ui.cmp.PatchesTreeGrid.getInstance().getUserPatchesList();
-        
-        if (patchesList) {
-        
-            Ext.each(patchesList, function(item){
-            
-                newItem = new Ext.menu.Item({
-                    id: Ext.id(),
-                    text: item.attributes.task,
-                    handler: function(){
-                        ui.task.MoveToPatch({
-                            patchID: item.attributes.idDB,
-                            patchName: item.attributes.task,
-                            nodesToAdd: menu.nodesToAdd
-                        });
-                    }
-                });
-                menu.add(newItem);
-                
-            }, this);
-            
-        }
-        else {
             newItem = new Ext.menu.Item({
-                disabled: true,
-                text: _('You have no patch currently. You must create one.')
+                id: Ext.id(),
+                text: item.attributes.task,
+                handler: function(){
+                    ui.task.MoveToPatch({
+                        patchID: item.attributes.idDB,
+                        patchName: item.attributes.task,
+                        nodesToAdd: menu.nodesToAdd
+                    });
+                }
             });
             menu.add(newItem);
-        }
+            
+        }, this);
         
-        // Set the default action : Add a new patch
+    }
+    else {
         newItem = new Ext.menu.Item({
-            text: _('Create a new patch'),
-            iconCls: 'iconAdd',
-            handler: function(){
-                var win = new ui.cmp.ManagePatchPrompt({
-                    title: _('Create a new patch'),
-                    nodesToAdd: menu.nodesToAdd
-                });
-                win.show(this.el);
-            }
+            disabled: true,
+            text: _('You have no patch currently. You must create one.')
         });
-        menu.add('-', newItem);
-        
-        menu.doLayout();
-        menu.itemRendered = true;
+        menu.add(newItem);
     }
     
+    // Set the default action : Add a new patch
+    newItem = new Ext.menu.Item({
+        text: _('Create a new patch'),
+        iconCls: 'iconAdd',
+        handler: function(){
+            var win = new ui.cmp.ManagePatchPrompt({
+                title: _('Create a new patch'),
+                nodesToAdd: menu.nodesToAdd
+            });
+            win.show(this.el);
+        }
+    });
+    menu.add('-', newItem);
+    
+    menu.doLayout();
+    menu.itemRendered = true;
+
 };
 
 
@@ -24519,11 +24521,9 @@ ui.cmp._WorkTreeGrid.menu.files = function(config){
 Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
     listeners: {
         show: function(){
-            if (this.node.parentNode.parentNode.attributes.task === PhDOE.user.login) {
-                ui.cmp._WorkTreeGrid.menu.usersPatch({
-                    menuID: 'filePatchesMenu'
-                });
-            }
+            ui.cmp._WorkTreeGrid.menu.usersPatch({
+                menuID: 'filePatchesMenu'
+            });
         }
     },
     
@@ -24554,7 +24554,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             }, {
                 text: _('Submit as patch for review in:'),
                 iconCls: 'iconPendingPatch',
-                hidden: (owner !== PhDOE.user.login),
+                hidden: !(owner === PhDOE.user.login || !PhDOE.user.isAnonymous ),
                 handler: function(){
                     return false;
                 },

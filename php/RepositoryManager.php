@@ -539,8 +539,8 @@ class RepositoryManager
         
         if( $this->conn->affected_rows() < 1 ) {
             
-            // Either an error or this change is wanted by an admin
-            if($am->isAdmin(true))
+            // Either an error or this change is wanted by a VCS user
+            if( !$am->isAnonymous )
             {
                 $s = 'UPDATE
                         `work`
