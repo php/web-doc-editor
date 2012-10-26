@@ -1,4 +1,11 @@
 Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+    
+    frame: null,
+    
+    setUrl : function(url) {
+        this.frame.src = url;
+    },
+    
     onRender : function(ct, position){
 
         ct.mask(
@@ -7,23 +14,23 @@ Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
             _('Loading...')
         );
 
-        var frame    = document.createElement('iframe'),
+        this.frame    = document.createElement('iframe'),
             callback = function(e) {
                 ct.unmask();
             };
 
-        frame.id = this.id;
-        frame.name = this.id;
-        frame.src = this.url;
-        frame.frameBorder = 0;
+        this.frame.id = this.id;
+        this.frame.name = this.id;
+        this.frame.src = this.url;
+        this.frame.frameBorder = 0;
 
-        this.el = ct.appendChild(frame);
+        this.el = ct.appendChild(this.frame);
 
         if(Ext.isIE) {
             document.frames[this.url].name = this.id;
         }
 
-        frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(frame);
+        this.frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(this.frame);
 
     }
 });

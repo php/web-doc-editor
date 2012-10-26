@@ -274,6 +274,7 @@ var i18n = new Array();
   i18n["Direct link to this patch"] = "Lien direct vers ce patch";
   i18n["Diff for patch: {0}"] = "Différence pour le patch : {0}";
   i18n["Patch Name: "] = "Nom du patch : ";
+  i18n["Documentation page not available"] = "La page de la documentation n'est pas disponible";
 
 
 // In file: ../../js/ui/component/FilePanel.js

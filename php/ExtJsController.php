@@ -795,6 +795,46 @@ class ExtJsController
     }
 
     /**
+     * Get the URL to the orignal page from the PHP Manual
+     */
+    public function getURLToOriginalManualPage()
+    {
+        $am = AccountManager::getInstance();
+        
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+        
+        $fileFullPath = $this->getRequestVariable('fileFullPath');
+        
+        $t = explode("/", $fileFullPath);
+        $FileLang = array_shift($t);
+        $FilePath = implode('/', $t);
+        
+        $file = new File($FileLang, $FilePath);
+        $info = $file->getInfo();
+        
+        // Extract xmlId and take the first one
+        $xmlID = '';
+        $tmp = explode('|', $info['xmlid']);
+        $xmlID = $tmp[0];
+        
+        // Build the URL for the original Documentation
+        $url = 'http://php.net/manual/'.$FileLang.'/'.$xmlID.'.php';
+        
+        if( trim($xmlID) == '' || $FileLang == 'doc-base' ) {
+            $url = '404';
+        }
+        
+        return JsonResponseBuilder::success(
+            array(
+                'url' => $url
+            )
+        );
+        
+    }
+    
+    /**
      * Get information of a file by his xmlID
      */
     public function getFileInfoByXmlID()

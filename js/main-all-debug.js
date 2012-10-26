@@ -8848,6 +8848,13 @@ Ext.ux.grid.GridSummary.Calculations = {
         return rowIdx === count - 1 ? (t / count) : t;
     }
 };Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+    
+    frame: null,
+    
+    setUrl : function(url) {
+        this.frame.src = url;
+    },
+    
     onRender : function(ct, position){
 
         ct.mask(
@@ -8856,23 +8863,23 @@ Ext.ux.grid.GridSummary.Calculations = {
             _('Loading...')
         );
 
-        var frame    = document.createElement('iframe'),
+        this.frame    = document.createElement('iframe'),
             callback = function(e) {
                 ct.unmask();
             };
 
-        frame.id = this.id;
-        frame.name = this.id;
-        frame.src = this.url;
-        frame.frameBorder = 0;
+        this.frame.id = this.id;
+        this.frame.name = this.id;
+        this.frame.src = this.url;
+        this.frame.frameBorder = 0;
 
-        this.el = ct.appendChild(frame);
+        this.el = ct.appendChild(this.frame);
 
         if(Ext.isIE) {
             document.frames[this.url].name = this.id;
         }
 
-        frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(frame);
+        this.frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(this.frame);
 
     }
 });/*
@@ -11394,9 +11401,6 @@ ui.task.LoadConfigTask = function(config)
 
             // Draw the interface
             PhDOE.drawInterface();
-            
-            console.log(PhDOE.user);
-            
         }
     });
 };
@@ -18718,9 +18722,8 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             patchName  = DiffOption.patchName || '',
             patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP, toolTip, tBar;
+            tabTIP, toolTip, tBar, previewPanelHeight, previewUrl;
         
-            
         // tabTIP
         if( patchID != '' ) {
             tabTIP = String.format(_('Diff for patch: {0}'), patchName);
@@ -18796,21 +18799,85 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 
             } : '' )
                 
-                
-                
             ];
+            
+            previewPanelHeight = Ext.getCmp('main-panel').getHeight() - 200;
+            
+            // Load diff data only if FilePath & FileName exist
+            if( FilePath !== '' && FileName !== '' )
+            {
+                previewUrl = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php';
+                
+                XHR({
+                    params: {
+                        task: 'getURLToOriginalManualPage',
+                        fileFullPath: FilePath + FileName
+                    },
+                    success: function(r) {
+                        var o = Ext.util.JSON.decode(r.responseText), frameSite, urlSite;
+                        
+                        if( o.url === '404' ) {
+                            
+                            urlSite = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php?'+Ext.urlEncode({
+                                     msg: _('Documentation page not available')
+                                });
+                            
+                            previewPanelHeight = 60;
+                            
+                            if( Ext.getCmp('diff_panel_' + FileMD5).items.items[1] )
+                            {
+                                Ext.getCmp('diff_panel_' + FileMD5).items.items[1].setHeight(previewPanelHeight);
+                                Ext.getCmp('diff_panel_' + FileMD5).doLayout();
+                            }
+                                 
+                            
+                        } else {
+                            urlSite = o.url;
+                        }
+                        
+                        // We get the iFrame witch contains the original documentation page
+                        frameSite = Ext.getCmp('diff_panel_' + FileMD5).items.items[1].items.items[0];
+                        
+                        // We set the URL
+                        frameSite.setUrl(urlSite);
+                    }
+                });  
+            } else {
+                previewUrl = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php?'+Ext.urlEncode({
+                                     msg: _('Documentation page not available')
+                                });
+                previewPanelHeight = 60;
+            }
+            
             
             // Add tab for the diff
             Ext.getCmp('main-panel').add({
-                xtype: 'panel',
+                layout: 'border',
                 id: 'diff_panel_' + FileMD5,
                 title: _('Diff'),
-                tabTip: tabTIP,
                 closable: true,
-                autoScroll: true,
                 iconCls: 'iconTabLink',
-                html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>',
-                tbar: tBar
+                tabTip: tabTIP,
+                border: false,
+                defaults : {
+                    split: true
+                },
+                items:[{
+                    xtype: 'panel',
+                    region:'center',
+                    autoScroll: true,
+                    html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>',
+                    tbar: tBar
+                },{
+                    xtype: 'panel',
+                    region:'south',
+                    height: previewPanelHeight,
+                    layout: 'fit',
+                    items: [ new Ext.ux.IFrameComponent({ id: Ext.id(), url: previewUrl }) ]
+                }]
             });
             
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)

@@ -237,9 +237,8 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             patchName  = DiffOption.patchName || '',
             patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP, toolTip, tBar;
+            tabTIP, toolTip, tBar, previewPanelHeight, previewUrl;
         
-            
         // tabTIP
         if( patchID != '' ) {
             tabTIP = String.format(_('Diff for patch: {0}'), patchName);
@@ -315,21 +314,85 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                 
             } : '' )
                 
-                
-                
             ];
+            
+            previewPanelHeight = Ext.getCmp('main-panel').getHeight() - 200;
+            
+            // Load diff data only if FilePath & FileName exist
+            if( FilePath !== '' && FileName !== '' )
+            {
+                previewUrl = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php';
+                
+                XHR({
+                    params: {
+                        task: 'getURLToOriginalManualPage',
+                        fileFullPath: FilePath + FileName
+                    },
+                    success: function(r) {
+                        var o = Ext.util.JSON.decode(r.responseText), frameSite, urlSite;
+                        
+                        if( o.url === '404' ) {
+                            
+                            urlSite = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php?'+Ext.urlEncode({
+                                     msg: _('Documentation page not available')
+                                });
+                            
+                            previewPanelHeight = 60;
+                            
+                            if( Ext.getCmp('diff_panel_' + FileMD5).items.items[1] )
+                            {
+                                Ext.getCmp('diff_panel_' + FileMD5).items.items[1].setHeight(previewPanelHeight);
+                                Ext.getCmp('diff_panel_' + FileMD5).doLayout();
+                            }
+                                 
+                            
+                        } else {
+                            urlSite = o.url;
+                        }
+                        
+                        // We get the iFrame witch contains the original documentation page
+                        frameSite = Ext.getCmp('diff_panel_' + FileMD5).items.items[1].items.items[0];
+                        
+                        // We set the URL
+                        frameSite.setUrl(urlSite);
+                    }
+                });  
+            } else {
+                previewUrl = 'http://' + window.location.host + ':' +
+                                 window.location.port + '/diffPreview.php?'+Ext.urlEncode({
+                                     msg: _('Documentation page not available')
+                                });
+                previewPanelHeight = 60;
+            }
+            
             
             // Add tab for the diff
             Ext.getCmp('main-panel').add({
-                xtype: 'panel',
+                layout: 'border',
                 id: 'diff_panel_' + FileMD5,
                 title: _('Diff'),
-                tabTip: tabTIP,
                 closable: true,
-                autoScroll: true,
                 iconCls: 'iconTabLink',
-                html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>',
-                tbar: tBar
+                tabTip: tabTIP,
+                border: false,
+                defaults : {
+                    split: true
+                },
+                items:[{
+                    xtype: 'panel',
+                    region:'center',
+                    autoScroll: true,
+                    html: '<div id="diff_content_' + FileMD5 + '" class="diff-content"></div>',
+                    tbar: tBar
+                },{
+                    xtype: 'panel',
+                    region:'south',
+                    height: previewPanelHeight,
+                    layout: 'fit',
+                    items: [ new Ext.ux.IFrameComponent({ id: Ext.id(), url: previewUrl }) ]
+                }]
             });
             
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
