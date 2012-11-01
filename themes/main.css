@@ -125,6 +125,7 @@
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
 .iconLineWrapping      { background-image: url(./img/line-wrapping.png)         !important;}
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
+.iconLoading           { background-image: url(./img/loading.gif)               !important;}
 .iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
 .iconMailing           { background-image: url(./img/email_open_image.png)      !important;}
 .iconNewFiles          { background-image: url(./img/page_add.png)              !important;}

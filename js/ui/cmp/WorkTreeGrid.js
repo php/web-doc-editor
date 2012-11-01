@@ -827,6 +827,15 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 dataUrl: './do/getWork',
                 baseParams: {
                     module: 'workInProgress'
+                },
+                listeners: {
+                    beforeload: function() {
+                        Ext.getCmp('acc-work-in-progress').setIconClass('iconLoading');
+                        
+                    },
+                    load: function() {
+                        Ext.getCmp('acc-work-in-progress').setIconClass('iconWorkInProgress');
+                    }
                 }
             }
         });

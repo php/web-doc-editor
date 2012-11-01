@@ -19927,6 +19927,15 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 dataUrl: './do/getWork',
                 baseParams: {
                     module: 'PatchesForReview'
+                },
+                listeners: {
+                    beforeload: function() {
+                        Ext.getCmp('acc-patches').setIconClass('iconLoading');
+                        
+                    },
+                    load: function() {
+                        Ext.getCmp('acc-patches').setIconClass('iconPatch');
+                    }
                 }
             }    
         });
@@ -25141,6 +25150,15 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 dataUrl: './do/getWork',
                 baseParams: {
                     module: 'workInProgress'
+                },
+                listeners: {
+                    beforeload: function() {
+                        Ext.getCmp('acc-work-in-progress').setIconClass('iconLoading');
+                        
+                    },
+                    load: function() {
+                        Ext.getCmp('acc-work-in-progress').setIconClass('iconWorkInProgress');
+                    }
                 }
             }
         });
