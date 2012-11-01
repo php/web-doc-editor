@@ -99,6 +99,7 @@
 .iconCommitFileVcs     { background-image: url(./img/mail-mark-notjunk.png)     !important;}
 .iconConf              { background-image: url(./img/configure.png)             !important;}
 .iconDiffView          { background-image: url(./img/code-class.png)            !important;}
+.iconDirectAction      { background-image: url(./img/checkbox.png)              !important;}
 .iconDownloadDiff      { background-image: url(./img/download-later.png)        !important;}
 .iconEditor, .iconEdit            { background-image: url(./img/document-edit.png)         !important;} /*@TODO: Remove the alias .iconEditor later */
 .iconEditInNewTab      { background-image: url(./img/tab-new.png)               !important;}

@@ -716,3 +716,10 @@ var i18n = new Array();
   i18n["Search"] = "Recherche ";
   i18n["Use /re/ syntax for regexp search"] = "Utiliser la syntaxe /re/ pour une recherche utilisant les expressions rationnelles";
   
+// In file: ../../js/ui/cmp/DirectActionWin.js
+  i18n["Live action"] = "Action en direct";
+  i18n["This live action didn't exist"] = "Cette action n'existe pas";
+  i18n["Put into this patch:"] = "Placer dans ce patach :";
+  i18n["Delete this change"] = "Effacer cette modification";
+  i18n["Modified file"] = "Fichier modifié";
+  

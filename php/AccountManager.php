@@ -584,6 +584,31 @@ class AccountManager
         }
 
     }
+    /**
+     * Get user's details by his ID
+     *
+     * @return An object containing all details for this user
+     */
+    public function getUserDetailsByID($userID)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $s = 'SELECT `vcs_login`, `authService`, `email` FROM `users` WHERE `project` = "%s" AND `userID` = "%s"';
+        $params = array($project, $userID);
+
+        $r = $this->conn->query($s, $params);
+        $nb = $r->num_rows;
+
+        // We have found the user
+        if( $nb != 0 ) {
+            $a = $r->fetch_object();
+            return $a;
+        } else {
+            return false;
+        }
+
+    }
     
 
     /**
@@ -701,7 +726,7 @@ class AccountManager
         if( $fromType == 'user' ) {
             $from = $this->vcsLogin."@php.net";
         }
-
+        
         $headers = 'From: '.$from . "\r\n" .
                    'X-Mailer: Php Docbook Online Editor' ."\r\n" .
                    'Content-Type: text/plain; charset="utf-8"'."\n";

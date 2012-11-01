@@ -70,10 +70,43 @@ Please review, then commit or delete these patches.
     */
     
     if( $data['PatchesForReview']['nb'] != 0 ) {
-        $msg .= "    Patches for review : \n    -----------------------\n";
+        $msg .= "    Patches for review : \n    -----------------------\n\n";
         
-        for( $i=0; $i < count($data['PatchesForReview']['data']); $i++) {
-            $msg .= "        * (".$data['PatchesForReview']['data'][$i]['type'].") On ".$data['PatchesForReview']['data'][$i]['date']." by ".$data['PatchesForReview']['data'][$i]['user']." : ".$data['PatchesForReview']['data'][$i]['filePath']."\n";
+        for( $i=0; $i < count($data['PatchesForReview']['data']); $i++)
+        {
+            
+            switch($data['PatchesForReview']['data'][$i]['type']) {
+                case 'update' :
+                    $libelMod = 'Modified';
+                    break;
+                case 'new' :
+                    $libelMod = 'New file';
+                    break;
+                case 'delete' :
+                    $libelMod = 'Deleted';
+                    break;
+            };
+            
+            $msg .= $libelMod.": ".$data['PatchesForReview']['data'][$i]['fileFullPath']."\n";
+            $msg .= "By: ".$data['PatchesForReview']['data'][$i]['user']." on ".$data['PatchesForReview']['data'][$i]['date']."\n";
+            
+            $msg .= "===================================================================\n";
+            
+            // We get the diff
+            $file = new File(
+                $data['PatchesForReview']['data'][$i]['fileLang'],
+                $data['PatchesForReview']['data'][$i]['filePath'].$data['PatchesForReview']['data'][$i]['fileName']
+                );
+            $r = $file->diff();
+            $msg .= implode("\n", $r);
+            
+            $msg .= "\n
+            => Put this change into your patches : https://edit.php.net/?project=php&action=putIntoMyPatches&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
+            => Delete this change: https://edit.php.net/?project=php&action=deleteThisChange&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
+            ";
+            
+            $msg .="\n";
+            $msg .= "                                          ------------------------------------------------------------------\n\n";
         }
         $msg .="\n\n";
         

@@ -2117,6 +2117,25 @@ class ExtJsController
             );
         }
     }
+    /**
+     * Get patch List for a the current user
+     * 
+     */
+    public function getPatchList()
+    {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $r = RepositoryFetcher::getInstance()->getPatchList();
+        
+        return JsonResponseBuilder::success(
+            array(
+                'nbItems' => count($r),
+                'Items'   => $r
+            )
+        );
+    }
 
     /**
      * Manage patch.
@@ -2592,6 +2611,91 @@ class ExtJsController
                 ),
             )
         );
+
+    }
+    
+    /**
+     * 
+     */
+    public function getDirectActionData()
+    {
+        $am = AccountManager::getInstance();
+        
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $rf = RepositoryFetcher::getInstance();
+        
+        $action = $this->getRequestVariable('action');
+        $idDB = $this->getRequestVariable('idDB');
+        
+        $fileInfo = $rf->getModifiesById($idDB);
+        $fileInfo = $fileInfo[0];
+        
+        // We get the diff
+        $file = new File(
+                $fileInfo['lang'],
+                $fileInfo['path'].$fileInfo['name']
+                );
+        
+        return JsonResponseBuilder::success(
+            array(
+                'fileInfo' => $fileInfo,
+                'userInfo' => $am->getUserDetailsByID($fileInfo['userID']),
+                'vcsDiff' => DiffGenHTMLOutput($file->diff())
+            )
+        );
+
+    }
+    
+    /**
+     * 
+     */
+    public function setDirectAction()
+    {
+        $am = AccountManager::getInstance();
+        
+        if (!$am->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+        
+        $action = $this->getRequestVariable('action');
+        $patchID = $this->getRequestVariable('patchID');
+        $idDB = $this->getRequestVariable('idDB');
+        
+        
+        if( $action == 'putIntoMyPatches' )
+        {
+            $r = RepositoryManager::getInstance()->moveToPatch($patchID, $idDB);
+            
+            if( $r === true ) {
+                return JsonResponseBuilder::success();
+            } else {
+                return JsonResponseBuilder::failure(
+                    array(
+                        'err' => $r
+                    )
+                );
+            }
+            
+        }
+        
+        if( $action == 'deleteThisChange' )
+        {
+            $r = RepositoryManager::getInstance()->clearLocalChangeByModifiedID($idDB);
+            
+            if( is_array($r) ) {
+                return JsonResponseBuilder::success();
+            } else {
+                return JsonResponseBuilder::failure(
+                    array(
+                        'err' => $r
+                    )
+                );
+            }
+            
+        }
 
     }
 }

@@ -662,6 +662,41 @@ class RepositoryFetcher
 
         return $a->total;
     }
+    
+    
+    public function getPatchList()
+    {
+        $am = AccountManager::getInstance();
+
+        $s = '
+            SELECT
+                `id`,
+                `name`,
+                `description`,
+                `email`,
+                `date`
+                
+            FROM 
+                `patches`
+                
+            WHERE
+                `project`="%s" AND
+                `userID` = %s';
+        $params = array(
+            $am->project,
+            $am->userID
+        );
+
+        $r = $this->conn->query($s, $params);
+        
+        $result = array();
+        
+        while ($a = $r->fetch_assoc()) {
+            $result[] = $a;
+        }
+
+        return $result;
+    }
 
 
     /**
@@ -679,6 +714,7 @@ class RepositoryFetcher
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
+                `work`.`id` as idDB,
                 CONCAT(`lang`, `path`, `name`) as filePath,
                 `vcs_login` as `user`,
                 `date`,
@@ -713,20 +749,30 @@ class RepositoryFetcher
 
         // We exclude item witch name == '-' ; this is new folder ; We don't display it.
         $s = 'SELECT
-                CONCAT(`lang`, `path`, `name`) as filePath,
-                `vcs_login` as `user`,
-                `date`,
-                `type`
+                `work`.`id` as idDB,
+                CONCAT(`work`.`lang`, `work`.`path`, `work`.`name`) as fileFullPath,
+                `work`.`path` as filePath,
+                `work`.`name` as fileName,
+                `work`.`lang` as fileLang,
+                `users`.`vcs_login` as `user`,
+                `users`.`authService` as `authService`,
+                `work`.`date`,
+                `work`.`type`
+                
                 FROM
                 `work`,
                 `users`
+                
                 WHERE
                 `work`.`userID` = `users`.`userID` AND
-                `module` = "PatchesForReview" AND
-                `lang` = "%s" AND
+                `work`.`module` = "PatchesForReview" AND
+                `work`.`lang` = "%s" AND
                 `work`.`project`  = "%s"
+                
                 ORDER BY
-                type, date';
+                `work`.`type`, `work`.`date`
+                
+                ';
         $params = array(
             $lang,
             $project

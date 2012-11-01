@@ -4,4 +4,3 @@ RewriteEngine On
 RewriteRule ^data(/?|/.*)$ - [F]
 RewriteRule ^do/([^\?]+)$ php/controller.php?task=$1&%{QUERY_STRING}
 RewriteRule ^error$ error_type.php?%{QUERY_STRING}
-

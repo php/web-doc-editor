@@ -854,7 +854,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                     }
                                 },
                                 afterrender : function(c) {
-                                    if( directAccess )
+                                    if( directAccess.lang )
                                     {
                                         c.focus();
                                         c.onLoad();

@@ -167,6 +167,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
     },
 
+    openDirectAction: function(opt)
+    {
+        new ui.cmp.DirectActionWin(opt);
+    },
+    
     // Need confirm if we want to close a tab and the content have been modified.
     onBeforeRemove : function(tabpanel, tab)
     {

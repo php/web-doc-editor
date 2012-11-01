@@ -346,7 +346,7 @@ var PhDOE_loginPage = function()
                                     }
                                 },
                                 afterrender : function(c) {
-                                    if( directAccess )
+                                    if( directAccess.lang )
                                     {
                                         c.focus();
                                         c.onLoad();

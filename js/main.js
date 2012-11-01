@@ -19,7 +19,28 @@ var PhDOE = function()
             isLangAdmin: false,
             lang: null,
             conf: '',
-            email: ''
+            email: '',
+            patchList: new Ext.data.Store({
+                proxy : new Ext.data.HttpProxy({
+                    url : './do/getPatchList'
+                }),
+                sortInfo: {
+                    field: 'name',
+                    direction: 'ASC'
+                },
+                reader : new Ext.data.JsonReader({
+                    root          : 'Items',
+                    totalProperty : 'nbItems',
+                    idProperty    : 'id',
+                    fields        : [
+                        {name : 'id'},
+                        {name : 'name'},
+                        {name : 'description'},
+                        {name : 'email'},
+                        {name : 'date', type : 'date', dateFormat : 'Y-m-d H:i:s' }
+                    ]
+                })
+            })
         },
         
         topic : {
@@ -165,7 +186,7 @@ var PhDOE = function()
 
         runDirectAccess: function()
         {
-            if (directAccess) {
+            if ( directAccess.link ) {
                 if( directAccess.link == 'perm' ) {
                     ui.cmp.RepositoryTree.getInstance().openFile('byPath',
                         directAccess.lang + directAccess.path,
@@ -186,6 +207,14 @@ var PhDOE = function()
                         patchName: directAccess.patchName
                     });
                 }
+            }
+            
+            if( directAccess.action )
+            {
+                Ext.getCmp('main-panel').openDirectAction({
+                    action: directAccess.action,
+                    idDB: directAccess.idDB
+                });
             }
         },
 
@@ -236,7 +265,8 @@ var PhDOE = function()
                     ui.cmp.PortletTranslator.getInstance().storeTranslator,
                     ui.cmp.PortletTranslator.getInstance().storeReviewer,
                     ui.cmp.PendingTranslateGrid.getInstance().store,
-                    ui.cmp.PortletInfo.getInstance().store
+                    ui.cmp.PortletInfo.getInstance().store,
+                    PhDOE.user.patchList
                 ];
             } else {
                 // Store to load only for EN project
@@ -244,7 +274,8 @@ var PhDOE = function()
                     ui.cmp._MainMenu.store,
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
                     ui.cmp.ErrorFileGrid.getInstance().store,
-                    ui.cmp.PortletInfo.getInstance().store
+                    ui.cmp.PortletInfo.getInstance().store,
+                    PhDOE.user.patchList
                 ];
 
 

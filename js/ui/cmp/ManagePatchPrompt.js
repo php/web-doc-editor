@@ -66,6 +66,9 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                                             nodesToAdd: win.nodesToAdd
                                     });
                             }
+                            
+                            // We reload the patchList store
+                            PhDOE.user.patchList.reload();
                         }
                     });
                 }

@@ -1277,6 +1277,24 @@ class RepositoryManager
         return true;
     }
 
+    public function clearLocalChangeByModifiedID($modifiedID)
+    {
+        $rf = RepositoryFetcher::getInstance();
+        
+        // We retrieve modifiedID information
+        $fileInfo = $rf->getModifiesById($modifiedID);
+        $fileInfo = $fileInfo[0];
+        
+        // If we are on root node, $fileInfo['path'] is empty. He must be "/".
+        if( $fileInfo['path'] == '' ) $fileInfo['path'] = '/';
+        
+        $info = $this->clearLocalChange(
+            $fileInfo['type'], new File($fileInfo['lang'], $fileInfo['path'].$fileInfo['name'])
+        );
+        
+        return $info;
+    }
+    
     /**
      * clear local change of a file.
      *
@@ -1315,6 +1333,7 @@ class RepositoryManager
                  `lang`           = '%s' AND
                  `path`           = '%s' AND
                  `name`           = '%s'";
+        
         $params = array(
               $project,
               $lang,
@@ -1332,7 +1351,7 @@ class RepositoryManager
             $a = $r->fetch_object();
 
 
-            if($a->userID != $userID && !$am->isAdmin(true)) {
+            if($a->userID != $userID && $am->isAnonymous) {
                         return 'file_isnt_owned_by_current_user';
             }
             
