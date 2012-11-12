@@ -3,16 +3,27 @@
 require_once dirname(__FILE__) . '/../../php/DBConnection.php';
 
 
-$year = ( isset($_GET['d']) ) ? $_GET['d'] : '2010';
+$nowDate = new DateTime();
+
+$year = ( isset($_GET['d']) ) ? $_GET['d'] : $nowDate->format('Y');
 
 $db = DBConnection::getInstance();
+
+
 
 $s = "select * from staticValue WHERE type='info' and YEAR(`date`)='".$year."'";
 $r = $db->query($s, array());
 
 
 $info = array(
-    "nbCon"=> 0,
+    "nbCon"=> array(
+        "total" => 0,
+        "authService" => array(
+                "VCS" => 0,
+                "google" => 0,
+                "facebook" => 0
+            )
+        ),
     "byMonth"=>Array()
     );
     
@@ -26,10 +37,12 @@ while( $a = $r->fetch_object()) {
     
     // pour les connexions
     if( $a->field == "login" ) {
-        $info["nbCon"] ++;
-        $info["byMonth"][$month]['dataCon']['raw'][] = $a;
         
-        //( !isset($info["byMonth"][$month]['nbCon']) ) ? $info["byMonth"][$month]['nbCon']=0 : '';
+        $tmp = json_decode($a->value);
+        $info["nbCon"]["authService"][$tmp->authService] ++;
+        $info["nbCon"]["total"] ++;
+        
+        $info["byMonth"][$month]['dataCon']['raw'][] = $a;
         
         $info["byMonth"][$month]['nbCon'] ++;
         
@@ -70,8 +83,8 @@ while( $a = $r->fetch_object()) {
     
 }
 
-
-echo '<div id="top"><a href="?d=2010">2010</a> - <a href="?d=2011">2011</a></div>';
+echo "<h1 style=\"text-align: center\">Year : ".$year."</h1>";
+echo '<div id="top"><a href="?d=2010">2010</a> - <a href="?d=2011">2011</a> - <a href="?d=2012">2012</a></div>';
 echo "<h1>All language</h1>";
 echo "<table border=1>";
 echo "<tr>";
@@ -106,7 +119,7 @@ echo "<tr>";
     echo "<td>".$info['byMonth']['10']['nbCon']."</td>";
     echo "<td>".$info['byMonth']['11']['nbCon']."</td>";
     echo "<td>".$info['byMonth']['12']['nbCon']."</td>";
-    echo "<td>".$info['nbCon']."</td>";
+    echo "<td>".$info['nbCon']['total']."</td>";
 echo "</tr>";
 
 //
@@ -162,11 +175,7 @@ echo "<tr>";
 echo "</tr>";
 
 
-echo "</table><br>";
-
-
-
-
+echo "</table>(Nb connexion per auth Service : Google => ".$info["nbCon"]["authService"]["google"]."; Facebook => ".$info["nbCon"]["authService"]["facebook"]."; VCS => ".$info["nbCon"]["authService"]["VCS"].")<br>";
 
 while( list($lang, $v) = each($availableLang)) {
     
@@ -269,7 +278,7 @@ while( list($user, $v) = each($availableUser)) {
     // Skip anonymous
     if( substr($user, 0, 11) == 'anonymous #') continue;
     
-    echo "<h1>User : ".$user." <a href=\"#top\" style=\"font-size:10px\">top</a></h1>";
+    echo "<h1>User : ".utf8_decode($user)." <a href=\"#top\" style=\"font-size:10px\">top</a></h1>";
     echo "<table border=1>";
     echo "<tr>";
         echo "<th></th>";
