@@ -29,7 +29,7 @@ while( list($key, $project) = each($availableProject) ) {
     $a = $r->fetch_object();
 
     if( $a->total == 0 ) {
-        $us->computeAll('2012'); // Place here the Year we want to start to compute statistics (this Year was included)
+        $us->computeAll('2010'); // Place here the Year we want to start to compute statistics (this Year was included)
         exit;
     }
 
