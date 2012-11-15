@@ -230,3 +230,17 @@ CREATE TABLE IF NOT EXISTS `patches` (
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Structure of table `usageStatistics`
+--
+
+CREATE TABLE IF NOT EXISTS `usageStatistics` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `type` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `subType` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `value` bigint(20) unsigned DEFAULT NULL,
+  `yearMonth` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
