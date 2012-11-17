@@ -11,15 +11,17 @@ require_once dirname(__FILE__) . '/../../php/Conf.php';
 require_once dirname(__FILE__) . '/../../php/ProjectManager.php';
 require_once dirname(__FILE__) . '/../../php/UsageStatistics.php';
 require_once dirname(__FILE__) . '/../../php/DBConnection.php';
+require_once dirname(__FILE__) . '/../../php/RepositoryManager.php';
 
 $pm = ProjectManager::getInstance();
 $db = DBConnection::getInstance();
 $us = UsageStatistics::getInstance();
+$rm = RepositoryManager::getInstance();
 
 $availableProject = $pm->getAvailableProject();
 
 while( list($key, $project) = each($availableProject) ) {
-    
+
     // Define it as a project
     $pm->setProject($project['code']);
     
@@ -30,6 +32,8 @@ while( list($key, $project) = each($availableProject) ) {
 
     if( $a->total == 0 ) {
         $us->computeAll('2010'); // Place here the Year we want to start to compute statistics (this Year was included)
+        
+        $rm->setStaticValue('info', 'computeUsageStatistics', '', true);
         exit;
     }
 
@@ -38,6 +42,8 @@ while( list($key, $project) = each($availableProject) ) {
     $yesterday->sub(new DateInterval('P1D'));
 
     $us->computeMonth($yesterday->format('Y-m'));
+        
+    $rm->setStaticValue('info', 'computeUsageStatistics', '', true);
 
 }
 
