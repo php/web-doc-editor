@@ -21468,6 +21468,10 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
                     user);
 
         break;
+        
+        case 'computeUsageStatistics' :
+            return _('Usage statistics were calculated');
+        break;
 
         // Login / logout
         case 'logout' :

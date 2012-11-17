@@ -147,6 +147,7 @@ var i18n = new Array();
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{0} a envoyé {1} nouveau(x) dossier(s) en langue {2}";
   i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{0} a envoyé {1} fichiers(s) ({2} nouveau(x), {3} mis à jour, {4} effacé(s)) en langue {5}";
   i18n["{0} changed file\'s owner"] = "{0} a modifié le propriétaire d'un fichier";
+  i18n["Usage statistics were calculated"] = "Les statistiques d'utilisation ont été calculées";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
