@@ -24,14 +24,17 @@ class SaferExec
             if (!($cur_command instanceof ExecStatement))
             {
                 trigger_error('Unexpected object encountered. Command will not execute.', E_USER_ERROR);
-                return '';
+                return;
             }
         }
 
         // Now that we've verified that we're looking at an array of ExecStatements, we can start working with them
         $command = implode('; ', $command_array);
 
-        return exec($command, $output, $return_var);
+        ob_start();
+        passthru($command, $return_var);
+        $output = explode(PHP_EOL, ob_get_clean());
+        
     }
 }
 
