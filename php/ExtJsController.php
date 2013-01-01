@@ -643,6 +643,25 @@ class ExtJsController
     }
 
     /**
+     * Get Usage informations about apps
+     */
+    public function getUsageInfos()
+    {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $year = $this->getRequestVariable('year');
+        $infos = RepositoryFetcher::getInstance()->getUsageInfos($year);
+
+        return JsonResponseBuilder::success(
+            array(
+                'Items'   => $infos
+            )
+        );
+    }
+
+    /**
      * Get some generals statistics
      */
     public function getSummaryInfo()

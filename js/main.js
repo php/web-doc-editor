@@ -266,6 +266,7 @@ var PhDOE = function()
                     ui.cmp.PortletTranslator.getInstance().storeReviewer,
                     ui.cmp.PendingTranslateGrid.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store,
+                    ui.cmp.PortletInfo.getInstance().storeUsage,
                     PhDOE.user.patchList
                 ];
             } else {
@@ -275,6 +276,7 @@ var PhDOE = function()
                     ui.cmp.PortletTranslationsGraph.getInstance().store,
                     ui.cmp.ErrorFileGrid.getInstance().store,
                     ui.cmp.PortletInfo.getInstance().store,
+                    ui.cmp.PortletInfo.getInstance().storeUsage,
                     PhDOE.user.patchList
                 ];
 

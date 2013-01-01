@@ -34,6 +34,26 @@ ui.cmp._PortletInfo.store = new Ext.data.Store({
 });
 ui.cmp._PortletInfo.store.setDefaultSort('date', 'desc');
 
+// Store : storeUsageInfo
+
+ui.cmp._PortletInfo.storeUsage = new Ext.data.Store({
+    proxy : new Ext.data.HttpProxy({
+        url : './do/getUsageInfos'
+    }),
+    baseParams: {
+        year: new Date().format('Y')
+    },
+    reader : new Ext.data.JsonReader({
+        root          : 'Items',
+        idProperty    : 'id',
+        fields        : [
+            {name : 'id'},
+            {name : 'field'},
+            {name : 'value', type:'int'}
+        ]
+    })
+});
+
 // PortletInfo cell renderer for type column
 ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
 {
@@ -174,16 +194,15 @@ ui.cmp._PortletInfo.gridColumns = [
 ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
 {
     autoExpandColumn : 'Type',
+    title            : _('General'),
     loadMask         : true,
     autoScroll       : true,
     autoHeight       : true,
     store            : ui.cmp._PortletInfo.store,
     columns          : ui.cmp._PortletInfo.gridColumns,
-    view             : ui.cmp._PortletInfo.gridView,
 
     initComponent : function()
     {
-        
         Ext.apply(this, {
             bbar: new Ext.PagingToolbar({
                 pageSize: 10,
@@ -193,8 +212,6 @@ ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
         });
         
         ui.cmp._PortletInfo.grid.superclass.initComponent.call(this);
-        
-        this.on('rowdblclick', this.onRowdblclick, this);
     }
 });
 
@@ -206,11 +223,16 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
     iconCls : 'iconInfo',
     layout  : 'fit',
     store   : ui.cmp._PortletInfo.store,
+    storeUsage: ui.cmp._PortletInfo.storeUsage,
     tools   : [{
         id      : 'refresh',
         qtip    : _('Refresh this grid'),
         handler : function() {
-            ui.cmp._PortletInfo.store.reload();
+            ui.cmp._PortletInfo.store.reload({
+                callback: function() {
+                    ui.cmp._PortletInfo.storeUsage.reload();
+                }
+            });
         }
     }],
     listeners : {
@@ -247,8 +269,89 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
         Ext.apply(this, config);
         ui.cmp.PortletInfo.superclass.initComponent.apply(this);
 
-        this.add(new ui.cmp._PortletInfo.grid());
-
+        this.Year = parseInt(new Date().format('Y'));
+        
+        this.buildButton = function(from)
+        {
+            var yearForward = (this.Year + 1), yearBackward = (this.Year - 1),
+                btnForward = this.items.items[0].items.items[1].toolbars[0].items.items[2],
+                btnBackward = this.items.items[0].items.items[1].toolbars[0].items.items[0],
+                chart = this.items.items[0].items.items[1].items.items[0];
+            
+            // On passe à l'année suivante / précédente
+            if( from == 'Backward' ) {
+                ui.cmp._PortletInfo.storeUsage.setBaseParam('year', yearBackward);
+                this.Year = yearBackward;
+            } else if( from == 'Forward' ) {
+                ui.cmp._PortletInfo.storeUsage.setBaseParam('year', yearForward);
+                this.Year = yearForward;
+            }
+            
+            ui.cmp._PortletInfo.storeUsage.load();
+            
+            btnForward.setText(this.Year+1);
+            btnBackward.setText(this.Year-1);
+            
+            // Futur statistics don't exist !
+            if( this.Year+1 > new Date().format('Y')) {
+                btnForward.disable();
+            } else {
+                btnForward.enable();
+            }
+            
+            // Statistics before 2010 don't exist !
+            if( this.Year-1 < 2010 ) {
+                btnBackward.disable();
+            } else {
+                btnBackward.enable();
+            }
+            
+        };
+        
+        this.add({
+            xtype:'tabpanel',
+            border: false,
+            activeTab: 0,
+            tabPosition: 'bottom',
+            autoScroll: true,
+            height: 288,
+            items: [
+                new ui.cmp._PortletInfo.grid(),
+                {
+                    xtype:'panel',
+                    border: false,
+                    title: _('Usage information'),
+                    tbar: [{
+                        scope:this,
+                        text: this.Year - 1,
+                        iconCls: 'iconBackward',
+                        handler: function() {
+                            this.buildButton('Backward');
+                        }
+                    },'->',{
+                        scope:this,
+                        text: this.Year + 1,
+                        iconCls: 'iconForward',
+                        disabled: true,
+                        iconAlign: 'right',
+                        handler: function() {
+                            this.buildButton('Forward');
+                        }
+                    }],
+                    items:[{
+                        scope:this,
+                        xtype: 'linechart',
+                        url: 'js/ExtJs/resources/charts.swf',
+                        store: ui.cmp._PortletInfo.storeUsage,
+                        xField: 'field',
+                        yField: 'value',
+                        tipRenderer: function(chart, record) {
+                            return _('Month:') + ' '+ Date.monthNames[record.data.field-1] + "\r" + _('Nb. connexion:') + ' ' + record.data.value;
+                        }
+                    }]
+                }
+            ]
+        });
     }
 });
 

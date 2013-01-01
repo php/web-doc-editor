@@ -110,6 +110,59 @@ class RepositoryFetcher
         return $infos;
     }
 
+    /**
+     * Get usage Informations
+     *
+     * @return Array
+     */
+    public function getUsageInfos($year)
+    {
+        $am      = AccountManager::getInstance();
+        $project = $am->project;
+
+        $infos = array();
+
+        $s = 'SELECT
+                value,
+                MONTH(`yearMonth`) as month
+             FROM
+                `usageStatistics`
+             WHERE
+                `project` = "%s" AND
+                `type`="nbCon" AND
+                `subType`="Total" AND
+                YEAR(`yearMonth`) = %s
+                ';
+        $params = array(
+            $am->project,
+            $year
+            );
+
+        $r = $this->conn->query($s, $params);
+
+        while ($a = $r->fetch_object()) {
+            $infos[$a->month] = $a->value;
+        }
+
+        $return = array();
+        //
+        for( $i=0; $i < 12; $i++ ) {
+            
+            $return[$i]['id'] = $i+1;
+            $return[$i]['field'] = $i+1;
+            
+            if( isset($infos[$i+1]) ) {
+                $return[$i]['value'] = (int) $infos[$i+1];
+                
+            } else {
+                $return[$i]['value'] = 0;
+            }
+            
+        }
+        
+        return $return;
+    }
+
     public function getSkeletonsNames()
     {
         $am      = AccountManager::getInstance();

@@ -131,6 +131,10 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Information"] = "Informations";
+  i18n["General"] = "Général";
+  i18n["Usage information"] = "Informations d'utilisation";
+  i18n["Month:"] = "Mois :";
+  i18n["Nb. connexion:"] = "Nb. connexion :";
   i18n["Since"] = "Depuis";
   i18n["{0} year(s)"] = "{0} année(s)";
   i18n["{0} month(s)"] = "{0} mois";
