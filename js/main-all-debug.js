@@ -22277,6 +22277,28 @@ ui.cmp._PortletTranslationGraph.chart = Ext.extend(Ext.chart.PieChart,
             colors : ["#68D888", "#FF6347", "#EEE8AA"]
         }
     }],
+    chartStyle: {
+        font: {
+            name: 'verdana',
+            color: 0x444444,
+            size: 11
+        },
+        dataTip: {
+            border: {
+                color: 0x99bbe8,
+                size:1
+            },
+            background: {
+                color: 0xDAE7F6,
+                alpha: .9
+            },
+            font: {
+                name: 'verdana',
+                size: 11,
+                color: 0x15428B
+            }
+        }
+    },
     extraStyle :
     {
         legend :
@@ -22360,6 +22382,30 @@ ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
     height      : 400,
     url         : 'js/ExtJs/resources/charts.swf',
     xField      : 'libel',
+    chartStyle: {
+        padding: 5,
+        animationEnabled: true,
+        font: {
+            name: 'verdana',
+            color: 0x444444,
+            size: 11
+        },
+        dataTip: {
+            border: {
+                color: 0x99bbe8,
+                size:1
+            },
+            background: {
+                color: 0xDAE7F6,
+                alpha: .9
+            },
+            font: {
+                name: 'verdana',
+                size: 11,
+                color: 0x15428B
+            }
+        }
+    },
     tipRenderer : function(chart, record){
         return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
     },
