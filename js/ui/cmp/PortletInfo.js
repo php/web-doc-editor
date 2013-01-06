@@ -48,8 +48,9 @@ ui.cmp._PortletInfo.storeUsage = new Ext.data.Store({
         idProperty    : 'id',
         fields        : [
             {name : 'id'},
-            {name : 'field'},
-            {name : 'value', type:'int'}
+            {name : 'month'},
+            {name : 'nbConTotal', type:'int'},
+            {name : 'nbCommitTotal', type:'int'}
         ]
     })
 });
@@ -340,13 +341,70 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
                     }],
                     items:[{
                         scope:this,
-                        xtype: 'linechart',
+                        xtype: 'columnchart',
                         url: 'js/ExtJs/resources/charts.swf',
                         store: ui.cmp._PortletInfo.storeUsage,
-                        xField: 'field',
-                        yField: 'value',
-                        tipRenderer: function(chart, record) {
-                            return _('Month:') + ' '+ Date.monthNames[record.data.field-1] + "\r" + _('Nb. connexion:') + ' ' + record.data.value;
+                        xField: 'month',
+                        series: [{
+                            type: 'column',
+                            yField: 'nbCommitTotal',
+                            style: {
+                                mode: 'stretch',
+                                color:0x99BBE8
+                            }
+                        },{
+                            type:'line',
+                            yField: 'nbConTotal',
+                            style: {
+                                color: 0x15428B
+                            }
+                        }],
+                        chartStyle: {
+                            padding: 5,
+                            animationEnabled: true,
+                            font: {
+                                name: 'verdana',
+                                color: 0x444444,
+                                size: 11
+                            },
+                            dataTip: {
+                                border: {
+                                    color: 0x99bbe8,
+                                    size:1
+                                },
+                                background: {
+                                    color: 0xDAE7F6,
+                                    alpha: .9
+                                },
+                                font: {
+                                    name: 'verdana',
+                                    size: 11,
+                                    color: 0x15428B
+                                }
+                            },
+                            xAxis: {
+                                color: 0x69aBc8,
+                                majorTicks: {color: 0x69aBc8, length: 4},
+                                minorTicks: {color: 0x69aBc8, length: 2},
+                                majorGridLines: {size: 1, color: 0xeeeeee}
+                            },
+                            yAxis: {
+                                color: 0x69aBc8,
+                                majorTicks: {color: 0x69aBc8, length: 4},
+                                minorTicks: {color: 0x69aBc8, length: 2},
+                                majorGridLines: {size: 1, color: 0xdfe8f6}
+                            }
+                        },
+                        tipRenderer: function(chart, record, index, series) {
+                            
+                            if (series.yField == 'nbConTotal') {
+                                return _('Month:') + ' '+ Date.monthNames[record.data.month-1] + "\r" + _('Nb. connexion:') + ' ' + record.data.nbConTotal;
+                            }
+                            
+                            if (series.yField == 'nbCommitTotal') {
+                                return _('Month:') + ' '+ Date.monthNames[record.data.month-1] + "\r" + _('Nb. commit:') + ' ' + record.data.nbCommitTotal;
+                            }
+                            
                         }
                     }]
                 }

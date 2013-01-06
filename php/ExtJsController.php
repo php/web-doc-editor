@@ -1188,8 +1188,9 @@ class ExtJsController
         if ($type == 'file') {
 
             $er = $file->save($fileContent);
+            $isError = is_array($er) && empty($er['state']);
 
-            if( $er['state'] ) {
+            if( !$isError ) {
 
                 $r = RepositoryManager::getInstance()->addProgressWork(
                     $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['reviewed_maintainer'], $info['maintainer']

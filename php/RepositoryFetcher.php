@@ -123,25 +123,43 @@ class RepositoryFetcher
         $infos = array();
 
         $s = 'SELECT
+                type,
+                subType,
                 value,
                 MONTH(`yearMonth`) as month
              FROM
                 `usageStatistics`
              WHERE
                 `project` = "%s" AND
-                `type`="nbCon" AND
-                `subType`="Total" AND
+                (
+                    ( `type`="nbCon" AND `subType`="Total" )
+                    OR
+                    ( `type`="nbCreatedFiles" OR 
+                      `type`="nbDeletedFiles" OR 
+                      `type`="nbUpdatedFiles" )
+                ) AND
                 YEAR(`yearMonth`) = %s
                 ';
         $params = array(
             $am->project,
             $year
-            );
+        );
 
         $r = $this->conn->query($s, $params);
 
         while ($a = $r->fetch_object()) {
-            $infos[$a->month] = $a->value;
+            
+            // Init
+            if( !isset($infos[$a->month]) ){
+                $infos[$a->month]['nbConTotal'] = 0;
+                $infos[$a->month]['nbCommitTotal'] = 0;
+            }
+            
+            if( $a->type == 'nbCon' && $a->subType == 'Total' ) {
+                $infos[$a->month]['nbConTotal'] = $a->value;
+            } else {
+                $infos[$a->month]['nbCommitTotal'] += $a->value;
+            }
         }
 
         $return = array();
@@ -149,13 +167,22 @@ class RepositoryFetcher
         for( $i=0; $i < 12; $i++ ) {
             
             $return[$i]['id'] = $i+1;
-            $return[$i]['field'] = $i+1;
+            $return[$i]['month'] = $i+1;
             
-            if( isset($infos[$i+1]) ) {
-                $return[$i]['value'] = (int) $infos[$i+1];
+            // nbConTotal
+            if( isset($infos[$i+1]['nbConTotal']) ) {
+                $return[$i]['nbConTotal'] = (int) $infos[$i+1]['nbConTotal'];
                 
             } else {
-                $return[$i]['value'] = 0;
+                $return[$i]['nbConTotal'] = 0;
+            }
+            
+            // nbCommitTotal
+            if( isset($infos[$i+1]['nbCommitTotal']) ) {
+                $return[$i]['nbCommitTotal'] = (int) $infos[$i+1]['nbCommitTotal'];
+                
+            } else {
+                $return[$i]['nbCommitTotal'] = 0;
             }
             
         }
