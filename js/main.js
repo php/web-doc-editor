@@ -635,7 +635,7 @@ var PhDOE = function()
                                  listeners: {
                                     afterrender: function(cmp) {
                                     
-                                        var ttContent='', libelContent='', loginLibelEl;
+                                        var ttContent='', libelContent='', loginLibelEl, content;
                                         
                                         // Build libel content
                                         loginLibelEl = Ext.get('loginLibel');
@@ -676,7 +676,7 @@ var PhDOE = function()
                                                 '<div id="topic-info-user">-</div>' +
                                             '</div>' +
                                             '<div id="topic-info-container-lang">' +
-                                                '<h3><em id="Topic-Language">-</em>' +_('Topic:')+'</h3>' +
+                                                '<h3><em id="Topic-Language">-</em></h3>' +
                                                 '<p id="topic-info-content-lang">-</p>' +
                                                 '<div id="topic-info-user-lang">-</div>' +
                                             '</div>' +

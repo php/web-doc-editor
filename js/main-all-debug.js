@@ -18288,8 +18288,10 @@ ui.cmp._MainMenu.store = new Ext.data.Store({
 ui.cmp._MainMenu.store.on('load', function(store)
 {
     // We put the lang libel into Info-Language and Topic-Language
-    Ext.getDom('Info-Language').innerHTML = Ext.getDom('Topic-Language').innerHTML = store.getById(PhDOE.user.lang).data.name;
+    Ext.getDom('Info-Language').innerHTML =  _(store.getById(PhDOE.user.lang).data.name);
 
+    Ext.getDom('Topic-Language').innerHTML = String.format(_('{0} Topic:'), _(store.getById(PhDOE.user.lang).data.name));
+    
     store.each(function(record) {
 
         var tmp = new Ext.menu.Item({
@@ -22407,7 +22409,7 @@ ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
         }
     },
     tipRenderer : function(chart, record){
-        return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
+        return _('Lang:') + ' ' + _(record.data.fullLibel) + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
     },
 
     series : [{
@@ -26351,7 +26353,7 @@ var PhDOE = function()
                                  listeners: {
                                     afterrender: function(cmp) {
                                     
-                                        var ttContent='', libelContent='', loginLibelEl;
+                                        var ttContent='', libelContent='', loginLibelEl, content;
                                         
                                         // Build libel content
                                         loginLibelEl = Ext.get('loginLibel');
@@ -26392,7 +26394,7 @@ var PhDOE = function()
                                                 '<div id="topic-info-user">-</div>' +
                                             '</div>' +
                                             '<div id="topic-info-container-lang">' +
-                                                '<h3><em id="Topic-Language">-</em>' +_('Topic:')+'</h3>' +
+                                                '<h3><em id="Topic-Language">-</em></h3>' +
                                                 '<p id="topic-info-content-lang">-</p>' +
                                                 '<div id="topic-info-user-lang">-</div>' +
                                             '</div>' +

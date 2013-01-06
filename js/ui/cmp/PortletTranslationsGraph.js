@@ -48,7 +48,7 @@ ui.cmp._PortletTranslationsGraph.chart = Ext.extend(Ext.chart.ColumnChart,
         }
     },
     tipRenderer : function(chart, record){
-        return _('Lang:') + ' ' + record.data.fullLibel + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
+        return _('Lang:') + ' ' + _(record.data.fullLibel) + "\r" + _('Total:') + ' ' + record.data.total + ' ' + _('files')+ ' (' + record.data.percent + '%)';
     },
 
     series : [{

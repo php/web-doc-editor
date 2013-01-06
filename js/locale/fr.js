@@ -12,6 +12,7 @@ var i18n = new Array();
   i18n["File system error. Check read/write permissions under data folder."] = "Erreur du système de fichiers. Vérifier les permissions en lecture/écriture du dossier data/.";
   i18n["Main menu"] = "Menu principal";
   i18n["Topic:"] = "Sujet :";
+  i18n["{0} Topic:"] = "Sujet {0} :";
   i18n["Defined by {0}, {1}"] = "Défini par {0} le {1}";
   i18n["Files need translate"] = "Nouveaux fichiers à traduire";
   i18n["Files need update"] = "Fichiers à mettre à jour";
@@ -178,6 +179,19 @@ var i18n = new Array();
   i18n["Lang:"] = "Langue :";
   i18n["Total:"] = "Total :";
   i18n["files"] = "fichiers";
+  i18n["Bulgarian"] = "Bulgare";
+  i18n["German"] = "Allemand";
+  i18n["Persian"] = "Persan";
+  i18n["Hungarian"] = "Hongrois";
+  i18n["Italian"] = "Italien";
+  i18n["Japanese"] = "Japonais";
+  i18n["Korean"] = "Coréen";
+  i18n["Polish"] = "Polonais";
+  i18n["Brazilian Portuguese"] = "Portugais du Brésil";
+  i18n["Romanian"] = "Roumain";
+  i18n["Serbian"] = "Serbe";
+  i18n["Turkish"] = "Turc";
+  i18n["Chinese (Simplified)"] = "Chinois (simplifié)";
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
