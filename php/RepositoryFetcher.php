@@ -377,8 +377,7 @@ class RepositoryFetcher
                     "original_revision" => $original_revision,
                     "en_revision"       => $new_en_revision,
                     "maintainer"        => $new_maintainer,
-                    "fileModifiedEN"    => ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModified"  => ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                 );
             } else {
                 $node[] = array(
@@ -389,8 +388,7 @@ class RepositoryFetcher
                     "original_revision" => NULL,
                     "en_revision"       => $a->en_revision,
                     "maintainer"        => $a->maintainer,
-                    "fileModifiedEN"    => false,
-                    "fileModifiedLang"  => false
+                    "fileModified"  => false
                 );
             }
         }

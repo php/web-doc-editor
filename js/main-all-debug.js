@@ -23728,9 +23728,7 @@ ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore({
         }, {
             name: 'maintainer'
         }, {
-            name: 'fileModifiedEN'
-        }, {
-            name: 'fileModifiedLang'
+            name: 'fileModified'
         }]
     }),
     sortInfo: {
@@ -23780,13 +23778,13 @@ ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
     '"]})',
     deferEmptyText: false,
     getRowClass: function(r){
-        if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
+        if ( r.data.fileModified ) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
+            var infoLang = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
             
-            return ((infoEN.user   === userToCompare && infoEN.anonymousIdent   === PhDOE.user.anonymousIdent) || (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            return ((infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         
         return false;
@@ -23802,25 +23800,13 @@ ui.cmp._StaleFileGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, metada, r){
     
-        var mess = '', infoEN, infoLang, userToCompare;
+        var mess = '', infoLang, userToCompare;
         
         userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
-        if (r.data.fileModifiedEN) {
+        if (r.data.fileModified) {
         
-            infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
-            
-            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
-                mess = _('File EN modified by me') + "<br>";
-            }
-            else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
-            }
-        }
-        
-        if (r.data.fileModifiedLang) {
-        
-            infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            infoLang = Ext.util.JSON.decode(r.data.fileModified);
             
             if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
@@ -23879,33 +23865,16 @@ Ext.extend(ui.cmp._StaleFileGrid.menu, Ext.menu.Menu, {
             }, {
                 scope: this,
                 hidden: this.hideDiffMenu,
-                text: _('View diff...'),
+                text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                menu: new Ext.menu.Menu({
-                    items: [{
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedEN === false),
-                        text: String.format(_('... of the {0} file'), 'EN'),
-                        handler: function(){
-                            Ext.getCmp('main-panel').openDiffTab({
-                                DiffType: 'file',
-                                FileName: this.fname,
-                                FilePath: 'en'+this.fpath
-                            });
-                        }
-                    }, {
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedLang === false),
-                        text: String.format(_('... of the {0} file'), PhDOE.user.lang.ucFirst()),
-                        handler: function(){
-                            Ext.getCmp('main-panel').openDiffTab({
-                                DiffType: 'file',
-                                FileName: this.fname,
-                                FilePath: PhDOE.user.lang+this.fpath
-                            });
-                        }
-                    }]
-                })
+                handler: function()
+                {
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        FileName: this.fname,
+                        FilePath: PhDOE.user.lang+this.fpath
+                    });
+                }
             }]
         });
     }
@@ -23930,7 +23899,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         this.getSelectionModel().selectRow(rowIndex);
         
         new ui.cmp._StaleFileGrid.menu({
-            hideDiffMenu: (data.fileModifiedEN === false && data.fileModifiedLang === false),
+            hideDiffMenu: ( data.fileModified === false ),
             grid: this,
             event: e,
             rowIdx: rowIndex,

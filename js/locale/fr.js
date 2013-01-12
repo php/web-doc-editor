@@ -573,8 +573,6 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/StaleFileGrid.js
   i18n["EN revision"] = "Version EN";
-  i18n["View diff..."] = "Voir la différence...";
-  i18n["... of the {0} file"] = "... du fichier {0}";
   i18n["Need Update: in {0}"] = "Fichiers à mettre à jour : dans {0}";
   i18n["{0} revision"] = "Version {0}";
 
