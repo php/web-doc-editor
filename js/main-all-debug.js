@@ -11714,10 +11714,10 @@ ui.task.SaveFileTask = function(config)
                 // Update our store
                 if( this.ftype === 'EN' ) {
                     this.storeRecord.set('en_revision', o.revision);
-                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                 } else {
                     this.storeRecord.set('revision', o.en_revision);
-                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.set('maintainer', o.maintainer);
                 }
                 this.storeRecord.commit();
