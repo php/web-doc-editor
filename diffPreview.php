@@ -25,7 +25,7 @@
   
   <?php
   
-  if( $_GET['msg'] ) {
+  if( isset($_GET['msg']) ) {
      $msg = $_GET['msg'];
   } else {
      $msg = '';    

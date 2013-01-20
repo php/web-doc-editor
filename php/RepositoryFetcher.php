@@ -230,6 +230,10 @@ class RepositoryFetcher
                 `work`.`name` as name,
                 `work`.`en_revision` as en_revision,
                 `work`.`maintainer` as maintainer,
+                
+                `work`.`reviewed` as reviewed,
+                `work`.`reviewed_maintainer` as reviewed_maintainer,
+                
                 `users`.`vcs_login` as user,
                 `users`.`anonymousIdent` as anonymousIdent
              FROM
@@ -473,8 +477,7 @@ class RepositoryFetcher
 
                 $temp['reviewed']          = $new_reviewed;
                 $temp['maintainer']        = $new_maintainer;
-                $temp['fileModifiedEN']    = ( $isModifiedEN )   ? '{"user":"'.$isModifiedEN["user"].'",   "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false;
-                $temp['fileModifiedLang']  = ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false;
+                $temp['fileModified']      = ( $isModifiedLang ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false;
             } else {
                 $temp['reviewed']          = $a->reviewed;
                 $temp['maintainer']        = $a->reviewed_maintainer;
@@ -1425,7 +1428,10 @@ TODO: Handle project here
                     $cls = 'file';
                 }
 
-                $ext = array_pop(explode('.',$f));
+                $tmp = explode('.',$f);
+                $ext = array_pop($tmp);
+                
+                
                 $files[] = array(
                     'text'      => $f,
                     'id'        => $dir.$f,

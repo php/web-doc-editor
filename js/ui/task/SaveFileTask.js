@@ -38,11 +38,11 @@ ui.task.SaveFileTask = function(config)
             if (this.prefix === 'FE') {
                 // Update our store
                 if( this.ftype === 'EN' ) {
-                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.commit();
                 } else {
                     this.storeRecord.set('maintainer', o.maintainer);
-                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.commit();
                 }
             }
@@ -51,12 +51,12 @@ ui.task.SaveFileTask = function(config)
                 // Update our store
                 if( this.ftype === 'EN' ) {
                     this.storeRecord.set('reviewed', o.reviewed);
-                    this.storeRecord.set('fileModifiedEN', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.commit();
                 } else {
                     this.storeRecord.set('reviewed', o.reviewed);
                     this.storeRecord.set('maintainer', o.reviewed_maintainer);
-                    this.storeRecord.set('fileModifiedLang', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
+                    this.storeRecord.set('fileModified', '{"user":"' + PhDOE.user.login + '", "anonymousIdent":"' + PhDOE.user.anonymousIdent + '"}');
                     this.storeRecord.commit();
 
                 }

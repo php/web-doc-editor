@@ -329,7 +329,7 @@ class File
         } else {
             $a = $r->fetch_assoc();
             if ($a['user'] == 'anonymous') $a['user'] = $a['user'] . ' #' . $a['userID'];
-            $a['haveKarma'] = (($a['authService'] == 'VCS') && ($am->checkKarma($a['vcs_login'], $this->lang) === true));
+            $a['haveKarma'] = (($a['authService'] == 'VCS') && ($am->checkKarma($a['user'], $this->lang) === true));
             return json_encode($a);
         }
     }

@@ -23,9 +23,7 @@ ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore({
         }, {
             name: 'maintainer'
         }, {
-            name: 'fileModifiedEN'
-        }, {
-            name: 'fileModifiedLang'
+            name: 'fileModified'
         }]
     }),
     sortInfo: {
@@ -47,25 +45,13 @@ ui.cmp._PendingReviewGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, m, r){
-        var mess = '', infoEN, infoLang, userToCompare;
+        var mess = '', infoLang, userToCompare;
             
         userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
         
-        if (r.data.fileModifiedEN) {
+        if (r.data.fileModified) {
         
-            infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN);
-            
-            if (infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) {
-                mess = _('File EN modified by me') + "<br>";
-            }
-            else {
-                mess = String.format(_('File EN modified by {0}'), infoEN.user) + "<br>";
-            }
-        }
-        
-        if (r.data.fileModifiedLang) {
-        
-            infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang);
+            infoLang = Ext.util.JSON.decode(r.data.fileModified);
             
             if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
@@ -110,14 +96,13 @@ ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
     _('File') +
     '"]})',
     getRowClass: function(r){
-        if (r.data.fileModifiedEN || r.data.fileModifiedLang) {
+        if (r.data.fileModified) {
         
-            var infoEN = Ext.util.JSON.decode(r.data.fileModifiedEN), infoLang = Ext.util.JSON.decode(r.data.fileModifiedLang), userToCompare;
+            var infoLang = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
             
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
             
-            return ((infoEN.user === userToCompare && infoEN.anonymousIdent === PhDOE.user.anonymousIdent) ||
-            (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
+            return ((infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
     },
@@ -196,33 +181,16 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.main, Ext.menu.Menu, {
             }, {
                 scope: this,
                 hidden: this.hideDiffMenu,
-                text: _('View diff...'),
+                text: _('View diff'),
                 iconCls: 'iconViewDiff',
-                menu: new Ext.menu.Menu({
-                    items: [{
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedEN === false),
-                        text: String.format(_('... of the {0} file'), 'EN'),
-                        handler: function(){
-                            Ext.getCmp('main-panel').openDiffTab({
-                                DiffType: 'file',
-                                FileName: this.fname,
-                                FilePath: 'en'+this.fpath
-                            });
-                        }
-                    }, {
-                        scope: this,
-                        hidden: (this.grid.store.getAt(this.rowIdx).data.fileModifiedLang === false),
-                        text: String.format(_('... of the {0} file'), PhDOE.user.lang.ucFirst()),
-                        handler: function(){
-                            Ext.getCmp('main-panel').openDiffTab({
-                                DiffType: 'file',
-                                FileName: this.fname,
-                                FilePath: PhDOE.user.lang+this.fpath
-                            });
-                        }
-                    }]
-                })
+                handler: function()
+                {
+                    Ext.getCmp('main-panel').openDiffTab({
+                        DiffType: 'file',
+                        FileName: this.fname,
+                        FilePath: PhDOE.user.lang+this.fpath
+                    });
+                }
             }, new Ext.menu.Separator({ // Only display a separator when we display the group menu
                 hidden: this.hideGroup
             }), new ui.cmp._PendingReviewGrid.menu.group({
@@ -257,7 +225,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
             event: e,
             fpath: FilePath,
             fname: FileName,
-            hideDiffMenu: (storeRecord.data.fileModifiedEN === false && storeRecord.data.fileModifiedLang === false),
+            hideDiffMenu: (storeRecord.data.fileModified === false),
             hideGroup: (fpath_split[1] !== 'reference'),
             gname: (fpath_split[2]) ? fpath_split[2] : ''
         }).showAt(e.getXY());

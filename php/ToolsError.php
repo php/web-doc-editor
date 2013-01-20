@@ -272,8 +272,7 @@ class ToolsError
                     "value_en"          => $a->value_en,
                     "value_lang"        => $a->value_lang,
                     "type"              => $a->type,
-                    "fileModifiedEN"    => ( isset($isModifiedEN) && $isModifiedEN != false )   ? '{"user":"'.$isModifiedEN["user"].'", "anonymousIdent":"'.$isModifiedEN["anonymousIdent"].'"}'   : false,
-                    "fileModifiedLang"  => ( isset($isModifiedLang) && $isModifiedLang != false ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
+                    "fileModified"      => ( isset($isModifiedLang) && $isModifiedLang != false ) ? '{"user":"'.$isModifiedLang["user"].'", "anonymousIdent":"'.$isModifiedLang["anonymousIdent"].'"}' : false
                     );
 
                 } else {
