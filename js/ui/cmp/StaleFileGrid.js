@@ -215,15 +215,14 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, en_revision = storeRecord.data.en_revision, revision = storeRecord.data.revision, originalRevision = storeRecord.data.original_revision, FileID = Ext.util.md5('FNU-' + PhDOE.user.lang + FilePath + FileName), diff = '';
         
         // Render only if this tab don't exist yet
-        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
-        
+        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID))
+        {
             if (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc") {
                 diff = ui.cmp.ViewVCDiff;
             }
-            else 
-                if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
+            else if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
                     diff = ui.cmp.ExecDiff;
-                }
+            }
             
             Ext.getCmp('main-panel').add({
                 id: 'FNU-' + FileID,

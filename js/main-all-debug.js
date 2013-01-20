@@ -18932,7 +18932,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             patchName  = DiffOption.patchName || '',
             patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
-            tabTIP, toolTip, tBar, previewPanelHeight, previewUrl;
+            tabTIP, toolTip, tBar, previewPanelHeight, previewUrl, loadDataPatch, optNbLine, optB, optW;
+        
+        optNbLine = (Ext.util.Cookies.get('optNbLine') || 3);
+        optB = ( Ext.util.Cookies.get('optB') && Ext.util.Cookies.get('optB') == 'true' ) ? true : false;
+        optW = ( Ext.util.Cookies.get('optW') && Ext.util.Cookies.get('optW') == 'true' ) ? true : false;
         
         // tabTIP
         if( patchID != '' ) {
@@ -19007,7 +19011,74 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     }
                 }]
                 
-            } : '' )
+            } : '' ), '->',{
+                xtype : 'buttongroup',
+                items: [{
+                  iconCls: 'iconRefresh',
+                  tooltip: _('Reload data'),
+                  handler: function()
+                  {
+                      var expire;
+                      
+                      // Get opt & store into cookies
+                      
+                      optNbLine = this.ownerCt.items.items[2].getValue();
+                      optB = this.ownerCt.items.items[4].getValue();
+                      optW = this.ownerCt.items.items[7].getValue();
+                      expire = new Date().add(Date.YEAR,1);
+                      
+                      Ext.util.Cookies.set('optNbLine', optNbLine, expire);
+                      Ext.util.Cookies.set('optB', optB, expire);
+                      Ext.util.Cookies.set('optW', optW, expire);
+                      
+                      loadDataPatch();
+                  }
+                },{
+                  xtype:'tbtext',
+                  text: _('Nb lines of contexte: ')
+                },{
+                    xtype:'spinnerfield',
+                    width : 60,
+                    hideLabel: true,
+                    minValue: 3,
+                    value: optNbLine
+                    
+                },{
+                    xtype:'tbseparator'
+                },{
+                    xtype:'checkbox',
+                    checked: optB
+                },{
+                  xtype:'tbtext',
+                  text: ': ' + _('Ignore changes in the amount of white space'),
+                  listeners: {
+                      afterrender: function(c) {
+                        new Ext.ToolTip({
+                            anchor: 'right',
+                            target: c.el,
+                            html: _('Option <b>b</b> for the diff command')
+                        });
+                      }
+                  }
+                },{
+                    xtype:'tbseparator'
+                },{
+                    xtype:'checkbox',
+                    checked: optW
+                },{
+                  xtype:'tbtext',
+                  text: ': '+_('Ignore all white space'),
+                  listeners: {
+                      afterrender: function(c) {
+                        new Ext.ToolTip({
+                            anchor: 'right',
+                            target: c.el,
+                            html: _('Option <b>w</b> for the diff command')
+                        });
+                      }
+                  }
+                }]
+            }
                 
             ];
             
@@ -19093,43 +19164,53 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + FileMD5);
             
-            Ext.get('diff_panel_' + FileMD5).mask('<img src="themes/img/loading.gif" ' +
-            'style="vertical-align: middle;" />' +
-            _('Please, wait...'));
             
-            // Load diff data
-            XHR({
-                params: {
-                    task: 'getDiff',
-                    DiffType: DiffType,
-                    FilePath: FilePath,
-                    FileName: FileName,
-                    patchID: patchID
-                },
-                success: function(r){
-                    var o = Ext.util.JSON.decode(r.responseText),
-                        patchPermLink='';
-                    
-                    if( patchID == '' ) {
-                        patchPermLink = '<a href="http://' + window.location.host + ':' +
-                                 window.location.port + window.location.pathname +
-                                 '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
-                                 _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
-                    } else {
-                        patchPermLink = '<a href="http://' + window.location.host + ':' +
-                                 window.location.port + window.location.pathname +
-                                 '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
-                                 _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
+            loadDataPatch = function()
+            {
+                Ext.get('diff_panel_' + FileMD5).mask('<img src="themes/img/loading.gif" ' +
+                'style="vertical-align: middle;" />' +
+                _('Please, wait...'));
+                
+                // Load diff data
+                XHR({
+                    params: {
+                        task: 'getDiff',
+                        DiffType: DiffType,
+                        FilePath: FilePath,
+                        FileName: FileName,
+                        patchID: patchID,
+                        optNbLine: optNbLine,
+                        optB: optB,
+                        optW: optW
+                    },
+                    success: function(r){
+                        var o = Ext.util.JSON.decode(r.responseText),
+                            patchPermLink='';
+                        
+                        if( patchID == '' ) {
+                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                                    window.location.port + window.location.pathname +
+                                    '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
+                                    _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
+                        } else {
+                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                                    window.location.port + window.location.pathname +
+                                    '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
+                                    _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
+                        }
+                        
+                        // We add the perm link into the content
+                        o.content = patchPermLink + o.content;
+                        
+                        // We display in diff div
+                        Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;
+                        Ext.get('diff_panel_' + FileMD5).unmask();
                     }
-                    
-                    // We add the perm link into the content
-                    o.content = patchPermLink + o.content;
-                    
-                    // We display in diff div
-                    Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;
-                    Ext.get('diff_panel_' + FileMD5).unmask();
-                }
-            });
+                });
+                
+            };
+            loadDataPatch();
+
         }
         else {
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + FileMD5);
@@ -23917,15 +23998,14 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, en_revision = storeRecord.data.en_revision, revision = storeRecord.data.revision, originalRevision = storeRecord.data.original_revision, FileID = Ext.util.md5('FNU-' + PhDOE.user.lang + FilePath + FileName), diff = '';
         
         // Render only if this tab don't exist yet
-        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID)) {
-        
+        if (!Ext.getCmp('main-panel').findById('FNU-' + FileID))
+        {
             if (PhDOE.user.conf.needUpdate.diffMethod === "using-viewvc") {
                 diff = ui.cmp.ViewVCDiff;
             }
-            else 
-                if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
+            else if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
                     diff = ui.cmp.ExecDiff;
-                }
+            }
             
             Ext.getCmp('main-panel').add({
                 id: 'FNU-' + FileID,

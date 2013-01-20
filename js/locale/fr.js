@@ -294,6 +294,11 @@ var i18n = new Array();
   i18n["Diff for patch: {0}"] = "Différence pour le patch : {0}";
   i18n["Patch Name: "] = "Nom du patch : ";
   i18n["Documentation page not available"] = "La page de la documentation n'est pas disponible";
+  i18n["Nb lines of contexte: "] = "Nombre de lignes de contexte : ";
+  i18n["Ignore changes in the amount of white space"] = "Ignorer les modifications dans le nombre d'espaces";
+  i18n["Option <b>b</b> for the diff command"] = "Option <b>b</b> de la commande diff";
+  i18n["Ignore all white space"] = "Ignorer toute modification sur les espaces blancs";
+  i18n["Option <b>w</b> for the diff command"] = "Option <b>w</b> de la commande diff";
 
 
 // In file: ../../js/ui/component/FilePanel.js

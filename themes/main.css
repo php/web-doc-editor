@@ -516,3 +516,7 @@
 .fb-like {
     margin-top: 10px;
 }
+
+.x-form-spinner-trigger {
+    height: 21px !important;
+}

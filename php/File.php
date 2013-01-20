@@ -415,11 +415,36 @@ class File
     }
 
 
-    public function diff()
+    public function diff($optNbLine=3, $optB=false, $optW=false)
     {
+        
+        // $optNbLine need to be an integer, >= 3
+        $optNbLine = (int) $optNbLine;
+        if( $optNbLine < 3 ) $optNbLine = 3;
+        
+        // $optB & $optW need to be a boolean
+        $optB = ($optB == 'true') ? true : false;
+        $optW = ($optW == 'true') ? true : false;
+        
+        $_optB = ( $optB == 'true' ) ? ' -b' : '';
+        $_optW = ( $optW == 'true' ) ? ' -w' : '';
+        
+        /* Diff option (from man page) :
+        * U : output NUM (default 3) lines of unified context
+        * 
+        * N : treat absent files as empty
+        * 
+        * b : ignore changes in the amount of white space
+        * Ne pas tenir compte des différences concernant des espaces blancs.
+        * 
+        * w : ignore all white space
+        * Ignorer les espaces blancs lors de la comparaison de lignes.
+        * 
+        */
+        
         $commands = array(
             new ExecStatement(
-                'diff -uN --label %s --label %s %s %s',
+                'diff -uN -U '.$optNbLine.' '.$_optB.$_optW.' --label %s --label %s %s %s',
                 array(
                     $this->lang.$this->path.$this->name,
                     $this->lang.$this->path.$this->name,

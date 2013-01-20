@@ -1391,11 +1391,15 @@ class ExtJsController
         } elseif( $DiffType == 'file') {
 
             $patchID = $this->getRequestVariable('patchID');
+            $optNbLine = $this->getRequestVariable('optNbLine');
+            $optB = $this->getRequestVariable('optB');
+            $optW = $this->getRequestVariable('optW');
+            
             if ($patchID) {
                 $r = File::patchDiff($patchID);
             } else {
                 $file = new File($FileLang, $FilePath.$FileName);
-                $r = $file->diff();
+                $r = $file->diff($optNbLine, $optB, $optW);
             }
 
         }
