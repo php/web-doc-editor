@@ -162,9 +162,13 @@ class File
      */
     public function read($readOriginal=false)
     {
-        $isModified = $this->isModified();
-        $isModified = (bool) $isModified;
-
+        if( $readOriginal ) {
+            $isModified = false;
+        } else {
+            $isModified = $this->isModified();
+            $isModified = (bool) $isModified;
+        }
+        
         $path = ($readOriginal || !$isModified)
                 ? $this->full_path
                 : $this->full_new_path;
