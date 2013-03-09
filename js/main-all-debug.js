@@ -12653,7 +12653,7 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
     title      : _('Anonymous patch manager'),
     iconCls    : 'iconPatch',
     width      : 450,
-    height     : 250,
+    height     : 260,
     layout     : 'fit',
     resizable  : false,
     modal      : true,
@@ -12675,14 +12675,25 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
                     break;
                     
                 case 'reject':
-                    //we clear local change for this file
-                    ui.task.ClearLocalChangeTask({
-                        ftype: win.ftype,
-                        fpath: win.fpath,
-                        fname: win.fname,
-                        noConfirm: true
-                    });
                     
+                    Ext.MessageBox.confirm(
+                        _('Confirm'),
+                        _('Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?'),
+                        function(btn)
+                        {
+                            if( btn === 'yes' )
+                            {
+                                //we clear local change for this file
+                                ui.task.ClearLocalChangeTask({
+                                    ftype: win.ftype,
+                                    fpath: win.fpath,
+                                    fname: win.fname,
+                                    noConfirm: true
+                                });
+                                win.close();
+                            }
+                        }
+                    );
                     break;
                     
                 case 'validate':

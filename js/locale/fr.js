@@ -730,6 +730,7 @@ var i18n = new Array();
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Cette action fermera ce fichier, et supprimera la modification. Le fichier reviendra à sa version originale, telle qu'elle se trouve sur le serveur VCS.";
   i18n["Validate this patch"] = "Valider ce patch";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Cette action fera que vous deviendrez le propriétaire de ce fichier. Il apparaîtra sous votre nom et vous pourrez commiter la modification.";
+  i18n["Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?"] = "En rejetant ce patch, vous êtes sur le point de supprimer cette modification.<br>Êtes-vous sûr de vouloir faire cela ?";
   
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Prévisualisation";
