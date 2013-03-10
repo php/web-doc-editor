@@ -324,6 +324,33 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             } : '' ), '->',{
                 xtype : 'buttongroup',
                 items: [{
+                  iconCls: 'iconTabView',
+                  tooltip: _('Display the preview panel'),
+                  enableToggle: true,
+                  pressed: PhDOE.user.conf.diff.displayPreviewPanel,
+                  toggleHandler: function(item, pressed)
+                  {
+                      if( pressed )
+                      {
+                          Ext.getCmp('diff_panel_' + FileMD5).items.items[1].expand(true);
+                      } else
+                      {
+                          Ext.getCmp('diff_panel_' + FileMD5).items.items[1].collapse(true);
+                      }
+                      
+                      // Save this configuration option
+                      new ui.task.UpdateConfTask({
+                          module:'diff',
+                          itemName  : 'displayPreviewPanel',
+                          value : pressed
+                      });
+                      
+                  }
+                }]
+                
+            },{
+                xtype : 'buttongroup',
+                items: [{
                   iconCls: 'iconRefresh',
                   tooltip: _('Reload data'),
                   handler: function()
@@ -464,6 +491,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     tbar: tBar
                 },{
                     xtype: 'panel',
+                    collapsed: ! PhDOE.user.conf.diff.displayPreviewPanel,
                     region:'south',
                     height: previewPanelHeight,
                     layout: 'fit',

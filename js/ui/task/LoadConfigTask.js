@@ -41,8 +41,15 @@ ui.task.LoadConfigTask = function(config)
             //For the theme, we apply it.
             Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 
+            if( ! PhDOE.user.conf.diff )
+            {
+                PhDOE.user.conf.diff = {};
+                PhDOE.user.conf.diff.displayPreviewPanel = true;
+            }
+            
             // Draw the interface
             PhDOE.drawInterface();
+            
         }
     });
 };

@@ -299,6 +299,7 @@ var i18n = new Array();
   i18n["Option <b>b</b> for the diff command"] = "Option <b>b</b> de la commande diff";
   i18n["Ignore all white space"] = "Ignorer toute modification sur les espaces blancs";
   i18n["Option <b>w</b> for the diff command"] = "Option <b>w</b> de la commande diff";
+  i18n["Display the preview panel"] = "Montrer le panneau de visualisation";
 
 
 // In file: ../../js/ui/component/FilePanel.js

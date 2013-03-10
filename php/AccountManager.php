@@ -109,6 +109,9 @@ class AccountManager
                 'toolsPanelDisplay' => false,
                 'toolsPanelLogLoad' => false,
                 'toolsPanelWidth' => 375
+            ),
+            'diff' => (object) Array(
+                'displayPreviewPanel' => true
             )
         );
 
