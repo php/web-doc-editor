@@ -275,6 +275,14 @@ $error['SgmlDefaultDTDFile']['desc'] = 'You must set it like this : <br><br><b>s
 $error['VCSKeyWordsEolStyle']['head'] = 'Wrong VCS Keywords & Eol-style';
 $error['VCSKeyWordsEolStyle']['desc'] = 'There is some error on this file about VCS Keywords & Eol-Style. Just commit this file against the editor, it will fix it for you.';
 
+$error['MembershipComment']['head'] = 'Membership\'s Comment';
+$error['MembershipComment']['desc'] = 'Membership\'s Comment is different in the English\'s version.';
+
+$error['PhpDocTagNb']['head'] = 'PhpDoc Tag';
+$error['PhpDocTagNb']['desc'] = 'Throw if the number of <b>&lt;?phpdoc ?&gt;</b> tags is different in the english version.';
+
+$error['PhpDocTagError']['head'] = 'PhpDoc Tag';
+$error['PhpDocTagError']['desc'] = 'Throw if there is an error into one of phpdoc\'s tag.';
 
 $to_display = array();
 
@@ -319,8 +327,8 @@ while (list($k, $v) = each($to_display)) {
 <?php
         if (isset($error_to_display[$k2]['error'])) {
             for ($i = 0; $i < count($error_to_display[$k2]['error']); $i++) {
-                echo 'value in En : ' . $error_to_display[$k2]['error'][$i]['value_en'] . '<br/>';
-                if( $am->vcsLang != 'en' ) { echo 'value in ' . ucfirst($am->vcsLang) . ' : ' . $error_to_display[$k2]['error'][$i]['value_lang'] . '<br/>'; }
+                echo 'value in En : ' . htmlentities($error_to_display[$k2]['error'][$i]['value_en']) . '<br/>';
+                if( $am->vcsLang != 'en' ) { echo 'value in ' . ucfirst($am->vcsLang) . ' : ' . htmlentities($error_to_display[$k2]['error'][$i]['value_lang']) . '<br/>'; }
             }
         }
 ?>
