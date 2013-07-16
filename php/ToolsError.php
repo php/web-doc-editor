@@ -399,6 +399,8 @@ class ToolsError
             $this->tabCharacterInDocument($this->lang);
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
+            $this->checkMembershipComment();
+            $this->checkPhpDocTag();
             //$this->checkVCSKeyWords(); Disable for now. This take too much time
         }
 
@@ -1900,5 +1902,77 @@ class ToolsError
         }
         
     }
+
+    /**
+     * Check MemberShip Comment
+     * Add an entry into the error's stack if MemberShip's Comment isn't the same as EN version
+     *
+     */
+    
+    function checkMembershipComment()
+    {
+        $reg = '/<!-- Membership: (.*?) -->/s';
+        
+        $en_MembershipComment = array();
+        $match = array();
+        preg_match($reg, $this->en_content_with_comment, $match);
+        $en_MembershipComment = (isset($match[1])) ? $match[1] : false;
+
+        $lang_MembershipComment = array();
+        $match = array();
+        preg_match($reg, $this->lang_content_with_comment, $match);
+        $lang_MembershipComment = (isset($match[1])) ? $match[1] : false;
+
+        if( $en_MembershipComment != $lang_MembershipComment ) {
+            
+            $this->addError(array(
+                    'value_en'   => $en_MembershipComment,
+                    'value_lang' => $lang_MembershipComment,
+                    'type'       => 'MembershipComment'
+            ));
+            
+        }
+        
+    }
+
+    /**
+     * Check PhpDoc Tag
+     * 
+     */
+    
+    function checkPhpDocTag()
+    {
+        $reg = '/<\?phpdoc\s(.*?)="(.*?)"\s?\?>/s';
+        
+        $en_PhpDocTag = array();
+        preg_match_all($reg, $this->en_content, $en_PhpDocTag);
+        
+        $lang_PhpDocTag = array();
+        preg_match_all($reg, $this->lang_content, $lang_PhpDocTag);
+
+        if( count($en_PhpDocTag[0]) != count($lang_PhpDocTag[0]) ) {
+            $this->addError(array(
+                    'value_en'   => count($en_PhpDocTag[0]),
+                    'value_lang' => count($lang_PhpDocTag[0]),
+                    'type'       => 'PhpDocTagNb'
+            ));
+            
+        } else {
+            for( $i=0; $i < count($en_PhpDocTag[0]); $i++ ) {
+            
+                if( $en_PhpDocTag[1][$i] != $lang_PhpDocTag[1][$i] ||
+                    $en_PhpDocTag[2][$i] != $lang_PhpDocTag[2][$i] ) {
+                
+                    $this->addError(array(
+                            'value_en'   => $en_PhpDocTag[0][$i],
+                            'value_lang' => $lang_PhpDocTag[0][$i],
+                            'type'       => 'PhpDocTagError'
+                    ));
+                
+                }
+                
+            }
+        }
+    } // checkPhpDocTag
 
 }
