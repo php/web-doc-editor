@@ -133,6 +133,17 @@ $error['attributeXmlNsBook']['desc'] = 'Throw if the value of the attribute <b>x
 $error['attributeXmlIdBook']['head'] = 'Book tag';
 $error['attributeXmlIdBook']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
 
+$error['attributeXmlIdPhpdocClassref']['head'] = 'phpdoc:classref tag';
+$error['attributeXmlIdPhpdocClassref']['desc'] = 'Throw if the value of the attribute <b>xml:id</b> is different in the english version.';
+$error['attributeXmlNsPhpdocPhpdocClassref']['head'] = 'phpdoc:classref tag';
+$error['attributeXmlNsPhpdocPhpdocClassref']['desc'] = 'Throw if the value of the attribute <b>xmlns:phpdoc</b> is different in the english version.';
+$error['attributeXmlNsPhpdocClassref']['head'] = 'phpdoc:classref tag';
+$error['attributeXmlNsPhpdocClassref']['desc'] = 'Throw if the value of the attribute <b>xmlns</b> is different in the english version.';
+$error['attributeXmlXlinkPhpdocClassref']['head'] = 'phpdoc:classref tag';
+$error['attributeXmlXlinkPhpdocClassref']['desc'] = 'Throw if the value of the attribute <b>xmlns:xlink</b> is different in the english version.';
+$error['attributeXmlnsXiPhpdocClassref']['head'] = 'phpdoc:classref tag';
+$error['attributeXmlnsXiPhpdocClassref']['desc'] = 'Throw if the value of the attribute <b>xmlns:xi</b> is different in the english version.';
+
 $error['nbCdataTag']['head'] = 'Cdata section';
 $error['nbCdataTag']['desc'] = 'Throw if the number of <b>cdata</b> section is different in the english version.';
 

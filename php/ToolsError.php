@@ -378,6 +378,7 @@ class ToolsError
         {
             $this->attributeAppendixTag();
             $this->attributeBookTag();
+            $this->attributePhpdocClassrefTag();
             $this->attributeChapterTag();
             $this->attributeLinkTag();
             $this->attributeXrefTag();
@@ -783,6 +784,80 @@ class ToolsError
                 ));
 
             }
+        }
+    }
+
+    /**
+     * Check attributes in <phpdoc:classref> tag
+     * Add an entry into the error's stack if an error is found
+     *
+     */
+    function attributePhpdocClassrefTag()
+    {
+        $reg = '/<phpdoc:classref (.[^>]*)>/s';
+        $reg2 = '/(.*?)="(.*?)"/s';
+        
+        $en_PhpdocClassref = $match = $_match = array();
+        
+        preg_match($reg, $this->en_content, $_match);
+        if( !isset($_match[1]) ) $_match[1]=false;
+        preg_match_all($reg2, $_match[1], $match);
+        
+        for( $i=0; $i < count($match[1]); $i++ ) {
+            $en_PhpdocClassref[trim($match[1][$i])] = $match[2][$i];
+        }
+    
+        $lang_PhpdocClassref = $match = $_match = array();
+        
+        preg_match($reg, $this->lang_content, $_match);
+        if( !isset($_match[1]) ) $_match[1]=false;
+        preg_match_all($reg2, $_match[1], $match);
+        
+        for( $i=0; $i < count($match[1]); $i++ ) {
+            $lang_PhpdocClassref[trim($match[1][$i])] = $match[2][$i];
+        }
+
+        if ($en_PhpdocClassref["xml:id"] != $lang_PhpdocClassref["xml:id"] ) {
+            $this->addError(array(
+                "value_en"   => $en_PhpdocClassref["xml:id"],
+                "value_lang" => $lang_PhpdocClassref["xml:id"],
+                "type"       => "attributeXmlIdPhpdocClassref"
+            ));
+
+        }
+        
+        if ($en_PhpdocClassref["xmlns:phpdoc"] != $lang_PhpdocClassref["xmlns:phpdoc"] ) {
+            $this->addError(array(
+                "value_en"   => $en_PhpdocClassref["xmlns:phpdoc"],
+                "value_lang" => $lang_PhpdocClassref["xmlns:phpdoc"],
+                "type"       => "attributeXmlNsPhpdocPhpdocClassref"
+            ));
+
+        }
+
+        if ($en_PhpdocClassref["xmlns"] != $lang_PhpdocClassref["xmlns"] ) {
+            $this->addError(array(
+                "value_en"   => $en_PhpdocClassref["xmlns"],
+                "value_lang" => $lang_PhpdocClassref["xmlns"],
+                "type"       => "attributeXmlNsBook"
+            ));
+
+        }
+
+        if ($en_PhpdocClassref["xmlns:xlink"] != $lang_PhpdocClassref["xmlns:xlink"] ) {
+            $this->addError(array(
+                "value_en"   => $en_PhpdocClassref["xmlns:xlink"],
+                "value_lang" => $lang_PhpdocClassref["xmlns:xlink"],
+                "type"       => "attributeXmlXlinkBook"
+            ));
+        }
+
+        if ($en_PhpdocClassref["xmlns:xi"] != $lang_PhpdocClassref["xmlns:xi"] ) {
+            $this->addError(array(
+                "value_en"   => $en_PhpdocClassref["xmlns:xi"],
+                "value_lang" => $lang_PhpdocClassref["xmlns:xi"],
+                "type"       => "attributeXmlXlinkBook"
+            ));
         }
     }
 
@@ -1645,7 +1720,7 @@ class ToolsError
     {
 
         $reg1 = '/<methodsynopsis>(\s.*?)<\/methodsynopsis>/s';
-        $reg2 = '/(<modifier>(.*?)<\/modifier>\s*?)?<type>(.*?)<\/type>\s*?<methodname>(.*?)<\/methodname>/s';
+        $reg2 = '/(<modifier>(.*?)<\/modifier>)?\s*?<type>(.*?)<\/type>\s*?<methodname>(.*?)<\/methodname>/s';
         $reg3 = '/<methodparam\s*?((choice=\'opt\')|(choice="opt"))?>\s*?<type>(.*?)<\/type>\s*?<parameter\s*?((role=\'reference\')|(role="reference"))?>(.*?)<\/parameter>\s*?(<initializer>(.*?)<\/initializer>\s*?)?<\/methodparam>/s';
 
 
