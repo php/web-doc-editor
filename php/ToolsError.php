@@ -400,6 +400,7 @@ class ToolsError
             $this->documentNotUTF8($this->lang);
             $this->SgmlDefaultDTDFile($this->lang);
             $this->checkMembershipComment();
+            $this->checkPurposeComment();
             $this->checkPhpDocTag();
             //$this->checkVCSKeyWords(); Disable for now. This take too much time
         }
@@ -1929,6 +1930,38 @@ class ToolsError
                     'value_en'   => $en_MembershipComment,
                     'value_lang' => $lang_MembershipComment,
                     'type'       => 'MembershipComment'
+            ));
+            
+        }
+        
+    }
+
+    /**
+     * Check Purpose Comment
+     * Add an entry into the error's stack if Purpose's Comment isn't the same as EN version
+     *
+     */
+    
+    function checkPurposeComment()
+    {
+        $reg = '/<!-- Purpose: (.*?) -->/s';
+        
+        $en_MembershipComment = array();
+        $match = array();
+        preg_match($reg, $this->en_content_with_comment, $match);
+        $en_MembershipComment = (isset($match[1])) ? $match[1] : false;
+
+        $lang_MembershipComment = array();
+        $match = array();
+        preg_match($reg, $this->lang_content_with_comment, $match);
+        $lang_MembershipComment = (isset($match[1])) ? $match[1] : false;
+
+        if( $en_MembershipComment != $lang_MembershipComment ) {
+            
+            $this->addError(array(
+                    'value_en'   => $en_MembershipComment,
+                    'value_lang' => $lang_MembershipComment,
+                    'type'       => 'PurposeComment'
             ));
             
         }

@@ -278,6 +278,9 @@ $error['VCSKeyWordsEolStyle']['desc'] = 'There is some error on this file about 
 $error['MembershipComment']['head'] = 'Membership\'s Comment';
 $error['MembershipComment']['desc'] = 'Membership\'s Comment is different in the English\'s version.';
 
+$error['PurposeComment']['head'] = 'Purpose\'s Comment';
+$error['PurposeComment']['desc'] = 'Purpose\'s Comment is different in the English\'s version.';
+
 $error['PhpDocTagNb']['head'] = 'PhpDoc Tag';
 $error['PhpDocTagNb']['desc'] = 'Throw if the number of <b>&lt;?phpdoc ?&gt;</b> tags is different in the english version.';
 
