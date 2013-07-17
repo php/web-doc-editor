@@ -418,11 +418,23 @@ class ExtJsController
 
         $data['lastInfoDate'] = $rf->getLastInfoDate();
 
+        // We get the update_data lock file
+        $lockFile = new LockFile('project_' . $am->project . '_lock_update_data');
+        
+        if( $lockFile->isLocked() ) {
+            $updateData = $lockFile->readLock();
+        } else {
+            $updateData = false;
+        }
+        
+        
+        
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
         return JsonResponseBuilder::success(
             array(
                 'ping'      => $response,
+                'updateData'=> $updateData,
                 'totalData' => $data
             )
         );
