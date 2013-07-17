@@ -189,6 +189,8 @@ $error['errorTypeMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorTypeMethodsynopsis']['desc'] = 'Throw if the value of the <b>type</b> tags is different in the english version.';
 $error['errorMethodnameMethodsynopsis']['head'] = 'Methodsynopsis tag';
 $error['errorMethodnameMethodsynopsis']['desc'] = 'Throw if the value of the <b>methodname</b> tags is different in the english version.';
+$error['errorModifierMethodsynopsis']['head'] = 'Methodsynopsis tag';
+$error['errorModifierMethodsynopsis']['desc'] = 'Throw if the value of the <b>Modifier</b> tags is different in the english version.';
 
 $error['errorNbOoclassClassname']['head'] = 'Ooclass tag';
 $error['errorNbOoclassClassname']['desc'] = 'Throw if the number of <b>classname</b> tags is different in the english version.';
