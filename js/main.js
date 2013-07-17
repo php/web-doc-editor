@@ -43,6 +43,8 @@ var PhDOE = function()
             })
         },
         
+        updateDataProgress: false,
+        
         topic : {
             global: {
                 author: '',
