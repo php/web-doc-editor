@@ -294,24 +294,13 @@ class RepositoryManager
         return json_encode($_SESSION['updateFolder']);
     }
 
-
     /**
      * Update the repository to sync our local copy.
-     * As this exec command take some time, we start by creating a lock file, then run the command, then delete this lock file.
-     * As it, we can test if this command has finish, or not.
      */
     public function updateRepository()
     {
-        $project = AccountManager::getInstance()->project;
-
-        $lock = new LockFile('project_' . $project . '_lock_update_repository');
-
-        if ($lock->lock()) {
-            // exec the update
-            VCSFactory::getInstance()->update();
-        }
-
-        $lock->release();
+        // exec the update
+        VCSFactory::getInstance()->update();
     }
 
     /**
@@ -1915,11 +1904,12 @@ class RepositoryManager
                 );
                 $this->conn->query($query, $params);
 
+                /*
                 $error = new ToolsError();
                 $error->setParams($infoEN['content'], '', 'en', $f->path, $f->name, '');
                 $error->run();
                 $error->saveError();
-
+                */
 
                 if( $revType == 'update' )
                 {
@@ -2012,7 +2002,9 @@ class RepositoryManager
                         );
                         $this->conn->query($query, $params);
 
+                        /*
                         // Check for error in this file ONLY if this file is uptodate
+                        
                         if ($revision == $en_revision &&  $revision != 0 ) {
                             $error = new ToolsError();
                             $error->setParams(
@@ -2022,6 +2014,8 @@ class RepositoryManager
                             $error->run();
                             $error->saveError();
                         }
+                        */
+                        
                     } else {
                         $query = 'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
                                 VALUES ("%s", "%s", "%s", "%s", "%s")';
@@ -2186,6 +2180,65 @@ EOD;
             }
         }
     }
+    
+    public function applyOnlyTools()
+    {
+        $am = AccountManager::getInstance();
+        
+        // We start by cleaning up the database
+        $this->conn->query("DELETE FROM `errorfiles` WHERE `project`='%s'", array($am->project));
+        
+        // We start by all translation
+        
+        // We select files how have revision=en_revision for this lang
+        $query = 'SELECT * FROM files WHERE `project`="%s" AND `lang`!="%s" AND `revision`=`en_revision`';
+        
+        $params = array(
+            $am->project,
+            'en'
+        );
+        
+        $r = $this->conn->query($query, $params);
+        
+        while( $a = $r->fetch_object() )
+        {
+                $error = new ToolsError();
+                
+                $fileEN = new File('en', $a->path.$a->name);
+                $ENContent = $fileEN->read(true);
+                
+                $fileLANG = new File($a->lang, $a->path.$a->name);
+                $LANGContent = $fileLANG->read(true);
+                
+                $error->setParams($ENContent, $LANGContent, $a->lang, $a->path, $a->name, '');
+                $error->run();
+                $error->saveError();
+        }
+        
+        //.... and now, EN files
+        $query = 'SELECT * FROM files WHERE `project`="%s" AND `lang`="%s"';
+        
+        $params = array(
+            $am->project,
+            'en'
+        );
+        
+        $r = $this->conn->query($query, $params);
+        
+        while( $a = $r->fetch_object() )
+        {
+                $error = new ToolsError();
+                
+                $fileEN = new File('en', $a->path.$a->name);
+                $ENContent = $fileEN->read(true);
+                
+                $error->setParams($ENContent, '', $a->lang, $a->path, $a->name, '');
+                $error->run();
+                $error->saveError();
+        }
+        
+    }
+    
 }
 
 ?>
