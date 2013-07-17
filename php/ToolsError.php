@@ -1645,7 +1645,7 @@ class ToolsError
     {
 
         $reg1 = '/<methodsynopsis>(\s.*?)<\/methodsynopsis>/s';
-        $reg2 = '/<type>(.*?)<\/type>\s*?<methodname>(.*?)<\/methodname>/s';
+        $reg2 = '/(<modifier>(.*?)<\/modifier>\s*?)?<type>(.*?)<\/type>\s*?<methodname>(.*?)<\/methodname>/s';
         $reg3 = '/<methodparam\s*?((choice=\'opt\')|(choice="opt"))?>\s*?<type>(.*?)<\/type>\s*?<parameter\s*?((role=\'reference\')|(role="reference"))?>(.*?)<\/parameter>\s*?(<initializer>(.*?)<\/initializer>\s*?)?<\/methodparam>/s';
 
 
@@ -1662,6 +1662,7 @@ class ToolsError
 
                 $en_methodsynopsis[$i]['methodname']['name'] = $match2[2][0];
                 $en_methodsynopsis[$i]['methodname']['type'] = $match2[1][0];
+                $en_methodsynopsis[$i]['methodname']['modifier'] = $match2[2][0];
 
                 $match2 = array();
                 preg_match_all($reg3, $match[1][$i], $match2);
@@ -1705,6 +1706,7 @@ class ToolsError
 
                 $lang_methodsynopsis[$i]['methodname']['name'] = $match2[2][0];
                 $lang_methodsynopsis[$i]['methodname']['type'] = $match2[1][0];
+                $lang_methodsynopsis[$i]['methodname']['modifier'] = $match2[2][0];
 
                 $match2 = array();
                 preg_match_all($reg3, $match[1][$i], $match2);
@@ -1762,6 +1764,21 @@ class ToolsError
                         'value_en'   => $en_methodsynopsis[$i]['methodname']['type'],
                         'value_lang' => $lang_methodsynopsis[$i]['methodname']['type'],
                         'type'       => 'errorTypeMethodsynopsis'
+                    ));
+
+                }
+            }
+
+            // Check on modifier
+            if (isset($en_methodsynopsis[$i]['methodname']['modifier'])) {
+
+                if (!isset($lang_methodsynopsis[$i]['methodname']['modifier'])) { $lang_methodsynopsis[$i]['methodname']['modifier'] = ''; }
+                if ($en_methodsynopsis[$i]['methodname']['modifier'] != $lang_methodsynopsis[$i]['methodname']['modifier'] ) {
+                    
+                    $this->addError(array(
+                        'value_en'   => $en_methodsynopsis[$i]['methodname']['modifier'],
+                        'value_lang' => $lang_methodsynopsis[$i]['methodname']['modifier'],
+                        'type'       => 'errorModifierMethodsynopsis'
                     ));
 
                 }
