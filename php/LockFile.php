@@ -66,5 +66,45 @@ class lockFile
         return true;
     }
     
+    /**
+     * Write into the lock
+     *
+     * @return boolean Returns TRUE if the write is OK, or FALSE otherwise
+     */
+    function writeIntoLock($text) 
+    {
+        if( $this->isLocked() )
+        {
+            $handle = fopen($this->path, 'w');
+            
+            if (fwrite($handle, $text) === FALSE) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+        
+    }
+    
+    /**
+     * Read the lock
+     *
+     * @return The content of the lock or FALSE if the lock didn't exist
+     */
+    function readLock() 
+    {
+        if( $this->isLocked() )
+        {
+            $handle = fopen($this->path, 'r');
+            return fread($handle, filesize($this->path));
+        } else
+        {
+            return false;
+        }
+        
+    }
+    
 }
 ?>
