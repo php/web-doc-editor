@@ -67,7 +67,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
         {
             items: [{
                 text     : _('Refresh all data'),
-                disabled : (!PhDOE.user.isGlobalAdmin),
+                disabled : true, //(!PhDOE.user.isGlobalAdmin),
                 iconCls  : 'iconRefresh',
                 handler  : function()
                 {
