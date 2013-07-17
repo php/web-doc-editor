@@ -267,6 +267,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 }
             }, '-', {
                 text: _('Update this folder'),
+                disabled: true,
                 iconCls: 'iconFilesNeedUpdate',
                 scope: this,
                 handler: function(){
