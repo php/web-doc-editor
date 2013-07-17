@@ -520,3 +520,8 @@
 .x-form-spinner-trigger {
     height: 21px !important;
 }
+
+#win-global-update-info em {
+    font-style: italic;
+    color: #333;
+}
