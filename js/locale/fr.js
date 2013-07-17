@@ -594,6 +594,16 @@ var i18n = new Array();
   i18n["check in progress..."] = "Vérification en cours...";
   i18n["Connection lost"] = "Connexion perdue";
   i18n["Retrying in {0} second(s)."] = "Nouvelle tentative de connexion dans {0} seconde(s).";
+  i18n["Update in progress"] = "Mise à jour en cours";
+  i18n["There is a global update in progress.<br/>Please, wait...<br/><br/><em>This window will close automatically at the end of the process</em>"] = "Une mise à jour globale est en cours.<br/>Veuillez patienter...<br/><br/><em>Cette fenêtre se fermera automatiquement à la fin du processus</em>";
+  i18n["1/8 - VCS update"] = "1/8 - Mise à jour du dépôt VCS";
+  i18n["2/8 - Cleaning the database"] = "2/8 - Nettoyage de la base de données";
+  i18n["3/8 - Apply the revcheck"] = "3/8 - Application du revcheck";
+  i18n["4/8 - Check for errors"] = "4/8 - Recherche des erreurs";
+  i18n["5/8 - Searching for files who are not in EN"] = "5/8 - Recherche des fichiers non présents en EN";
+  i18n["6/8 - Update translators info"] = "6/8 - Mise à jour des informations sur les traducteurs";
+  i18n["7/8 - Compute all statistics"] = "7/8 - Calcul de toutes les statistiques";
+  i18n["8/8 - Generate statics revcheck\'s pages"] = "8/8 - Génération des pages statiques de Revcheck";
 
 
 // In file: ../../js/ui/task/UpdateSingleFolderTask.js
