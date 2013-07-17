@@ -16,8 +16,9 @@ require_once dirname(__FILE__) . '/../../php/utility.php';
 
 $isCLI = (PHP_SAPI == 'cli');
 
-if ($isCLI) {
-    echo "\nPHP Documentation Online Editor - Update data\n\n";
+if (!$isCLI) {
+    echo "\nOnly in CLI mode !\n\n";
+    exit;
 }
 
 $rm = RepositoryManager::getInstance();
@@ -34,170 +35,79 @@ while( list($key, $project) = each($availableProject) ) {
     $pm->setProject($project['code']);
 
     /*
-     * VCS update
+     * Lock
      * 
      */
+    $lock = new LockFile('project_' . strtoupper($project['code']) . '_lock_update_data');
     
-    if ($isCLI) {
-        echo "\n * Update the VCS repository for the " . $project['name'] . "...";
-    }
-    flush();
-    
-    $startTime = new DateTime();
-    $startTimeStamp = $startTime->getTimestamp();
-    
-    $rm->updateRepository();
-    
-    $endTime = new DateTime();
-    $endTimeStamp = $endTime->getTimestamp();
-    
-    if ($isCLI) {
-        echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-    }
-    flush();
-    
-    /*
-     * Clean Up DB
-     * 
-     */
-
-    if ($isCLI) {
-        echo "\n * Clean up the database...";
-    }
-    flush();
-    
-    $startTime = new DateTime();
-    $startTimeStamp = $startTime->getTimestamp();
-    
-    $rm->cleanUp();
-    
-    $endTime = new DateTime();
-    $endTimeStamp = $endTime->getTimestamp();
-
-    if ($isCLI) {
-        echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-    }
-    flush();
-    
-    // Set the lock File
-    $lock = new LockFile('project_' . $project['code'] . '_lock_apply_tools');
-
-    if ($lock->lock()) {
-
-        /*
-         * Start applaying tools
-         * 
-         */
-        if ($isCLI) {
-            echo "\n * Applying tools on repository...";
-        }
-        flush();
-    
-        $startTime = new DateTime();
-        $startTimeStamp = $startTime->getTimestamp();
+    if( $lock->lock() )
+    {
+        // Write into the lock the update position
+        $lock->writeIntoLock('vcs_update');
         
+        // VCS update
+        $rm->updateRepository();
+        
+        // Write into the lock the update position
+        $lock->writeIntoLock('cleanUp_DB');
+        
+        // Clean Up DB
+        $rm->cleanUp();
+        
+        // Write into the lock the update position
+        $lock->writeIntoLock('revcheck');
+        
+        // Start RevCheck
         $rm->applyRevCheck();
-
+        
+        // Write into the lock the update position
+        $lock->writeIntoLock('checkErrors');
+        
+        // Start checkErrors
+        $rm->applyOnlyTools();
+        
+        // Write into the lock the update position
+        $lock->writeIntoLock('notInEN');
+        
         // Search for NotInEN Old Files
         $rm->updateNotInEN();
-    
-        $endTime = new DateTime();
-        $endTimeStamp = $endTime->getTimestamp();
-
-        if ($isCLI) {
-            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-        }
-        flush();
         
-        /*
-         * Parse translators
-         * 
-         */
-
-        if ($isCLI) {
-            echo "\n * Parsing translation data...";
-        }
-        flush();
-    
-        $startTime = new DateTime();
-        $startTimeStamp = $startTime->getTimestamp();
+        // Write into the lock the update position
+        $lock->writeIntoLock('updateTranslatorInfo');
         
+        // Parse translators
         $rm->updateTranslatorInfo();
-
-        $endTime = new DateTime();
-        $endTimeStamp = $endTime->getTimestamp();
-
-        if ($isCLI) {
-            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-        }
-        flush();
         
-        
-        /*
-         * Compute all statistics
-         * 
-         */
-        
-        if ($isCLI) {
-            echo "\n * Compute all statistics...";
-        }
-        flush();
-    
-        $startTime = new DateTime();
-        $startTimeStamp = $startTime->getTimestamp();
+        // Write into the lock the update position
+        $lock->writeIntoLock('ComputeAllStatistics');
         
         // Compute all summary
         TranslationStatistic::getInstance()->computeSummary('all');
-        TranslatorStatistic::getInstance()->computeSummary('all');    
-
-        $endTime = new DateTime();
-        $endTimeStamp = $endTime->getTimestamp();
-
-        if ($isCLI) {
-            echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-        }
-        flush();
-        
-        
-        /*
-         * We start the revcheck's script to make a static page into data/revcheck/ directory
-         * Only for php project
-         * 
-         */
+        TranslatorStatistic::getInstance()->computeSummary('all');
         
         if( $project['code'] == 'php' ) {
+        
+            // Write into the lock the update position
+            $lock->writeIntoLock('StaticRevcheck');
             
-            if ($isCLI) {
-                echo "\n * Make a static page for the revcheck...";
-            }
-            flush();
-        
-            $startTime = new DateTime();
-            $startTimeStamp = $startTime->getTimestamp();
-        
             $rm->applyStaticRevcheck();
-            
-            $endTime = new DateTime();
-            $endTimeStamp = $endTime->getTimestamp();
-
-            if ($isCLI) {
-                echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )";
-            }
-            flush();
         }
-
-        // Store this info
+        
+        // Store this update info
         $info = array();
         $info['user']   = 'root';
 
         $rm->setStaticValue('info', 'updateData', json_encode($info), true);
+        
+        $lock->release();
+        
+    } else {
+        echo 'Update in progress, can\'t do this action until the first finish'.PHP_EOL;
+        continue;
     }
-    $lock->release();
-
+    
+    
 }
 
-if ($isCLI) {
-    echo "\n\nUpdate completed!\n";
-}
 
 ?>
