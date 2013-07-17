@@ -86,6 +86,9 @@ ui.task.PingTask = function()
                             
                         }
                     }
+                    
+                    // Is there an update in progress ?
+                    this.onUpdateData(o.updateData);
 
                 }
             },
@@ -137,6 +140,97 @@ ui.task.PingTask.prototype.onPingFailed = function()
     });
     task.delay(1000);
 };
+
+ui.task.PingTask.prototype.onUpdateData = function(statut)
+{
+    var libelStatut;
+    
+    if( statut )
+    {
+        switch(statut) {
+            case 'vcs_update':
+                libelStatut = _('1/8 - VCS update');
+                break;
+            case 'cleanUp_DB':
+                libelStatut = _('2/8 - Cleaning the database');
+                break;
+            case 'revcheck':
+                libelStatut = _('3/8 - Apply the revcheck');
+                break;
+            case 'checkErrors':
+                libelStatut = _('4/8 - Check for errors');
+                break;
+            case 'notInEN':
+                libelStatut = _('5/8 - Searching for files who are not in EN');
+                break;
+            case 'updateTranslatorInfo':
+                libelStatut = _('6/8 - Update translators info');
+                break;
+            case 'ComputeAllStatistics':
+                libelStatut = _('7/8 - Compute all statistics');
+                break;
+            case 'StaticRevcheck':
+                libelStatut = _('8/8 - Generate statics revcheck\'s pages');
+                break;
+        };
+        
+        
+        if( ! PhDOE.updateDataProgress )
+        {
+            PhDOE.updateDataProgress = new Ext.Window({
+                title: _('Update in progress'),
+                iconCls: 'iconLoading',
+                layout:'border',
+                width: 400,
+                height: 130,
+                closable: false,
+                plain: true,
+                border: false,
+                modal: true,
+                resizable: false,
+                draggable: false,
+                items: [{
+                    region:'center',
+                    xtype:'container',
+                    height: 90,
+                    id:'win-global-update-info',
+                    html: _('There is a global update in progress.<br/>Please, wait...<br/><br/><em>This window will close automatically at the end of the process</em>'),
+                    margins: '10 10 10 10'
+                },{
+                    region:'south',
+                    xtype: 'panel',
+                    plain: true,
+                    height: 22,
+                    items: [{
+                        xtype:'progress',
+                        width:386,
+                        text: libelStatut    
+                    }]
+                    
+                }]
+            });
+            PhDOE.updateDataProgress.items.items[1].items.items[0].wait({
+                interval:200,
+                increment:15,
+                animate: true
+            });
+            
+            PhDOE.updateDataProgress.show();
+            PhDOE.updateDataProgress.items.items[1].items.items[0].updateText(libelStatut);
+        } else {
+            PhDOE.updateDataProgress.show();
+            PhDOE.updateDataProgress.items.items[1].items.items[0].updateText(libelStatut);
+        }
+        //PhDOE.updateDataProgress.doLayout();
+        
+    } else {
+        if( PhDOE.updateDataProgress )
+        {
+            PhDOE.updateDataProgress.hide();
+        }
+    }
+};
+
 
 // singleton
 ui.task._PingTask.instance = null;
