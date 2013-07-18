@@ -32,6 +32,8 @@ class Config
         // First, we load the global configuration file
         $this->conf['GLOBAL_CONFIGURATION'] = parse_ini_file($p."conf.ini");
 
+        // Second, we try to load localConfiguration file
+        // This file must have this name : localConf.ini
         if( is_file($p."localConf.ini") ) {
             $this->conf['GLOBAL_CONFIGURATION'] = array_merge( $this->conf['GLOBAL_CONFIGURATION'], parse_ini_file($p."localConf.ini") );
         }
@@ -47,7 +49,15 @@ class Config
                // Get the name of the project directly into the filename
                $t = explode(".", $entry);
 
+               // First, we load the configuration file for this project
                $this->conf[strtoupper($t[1])] = parse_ini_file($p.$entry);
+               
+               // Second, we try to load a local configuration file for this project
+               // This file must have this name, for example, PHP project : local.project.php.ini
+               if( is_file($p.'local.'.$entry) ) {
+                    $this->conf[strtoupper($t[1])] = array_merge( $this->conf[strtoupper($t[1])], parse_ini_file($p.'local.'.$entry) );
+                }
+               
             }
         }
         $d->close();
