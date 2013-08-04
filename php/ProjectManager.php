@@ -34,7 +34,7 @@ class ProjectManager
             if( $k == "GLOBAL_CONFIGURATION" ) { continue; }
 
             // Check if this project is enable
-            if( $this->appConf[$k]['project.enable'] )
+            if( isset($this->appConf[$k]['project.enable']) )
             {
                 $this->availableProject[$i] = array(
                     'code'                => $this->appConf[$k]['project.code'],
