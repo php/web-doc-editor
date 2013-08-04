@@ -46,7 +46,7 @@ class PreviewFile
     private function checkDir()
     {
         // Output
-        $this->outputDir = $this->am->appConf['GLOBAL_CONFIGURATION']['data.path'].$this->am->appConf[$this->am->project]['vcs.module'].'/output-'.$this->am->vcsLogin.'/';
+        $this->outputDir = $this->am->appConf['GLOBAL_CONFIGURATION']['data.path'].$this->am->appConf[$this->am->project]['vcs.module'].'-new/output-'.$this->am->vcsLogin.'/';
         if( !is_dir($this->outputDir) ) {
             mkdir($this->outputDir);
         }
@@ -102,7 +102,6 @@ class PreviewFile
             rename($this->fullPath, $this->fullNewPath);
             rename($this->fullPath . $t, $this->fullPath);
         }
-        
         
         // Only move the specific file we are generating
         $xmlID = $this->getOutputId();
