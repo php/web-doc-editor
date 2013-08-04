@@ -462,7 +462,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
 
         // Info we must store into DB
         $info = array();
-
+        
         $pathLogFile = $this->createCommitLogFile($log);
 
         $create_stack = array();
@@ -521,7 +521,7 @@ Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response=
             $create_stack
         );
 
-        $commands[] = new ExecStatement('svn ci --no-auth-cache --non-interactive -F %s --username %s --password %s' . str_repeat(' %s', $info['nbFilesCreate'] + $info['nbFilesUpdate'] + $info['nbFilesDelete']) . ' 2>&1', $args);
+        $commands[] = new ExecStatement('export LC_ALL=en_US.UTF_8; svn ci --no-auth-cache --non-interactive -F %s --username %s --password %s' . str_repeat(' %s', $info['nbFilesCreate'] + $info['nbFilesUpdate'] + $info['nbFilesDelete']) . ' 2>&1', $args);
 
         $err = 1;
         $trial_threshold = 3;
