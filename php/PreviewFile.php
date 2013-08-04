@@ -46,7 +46,7 @@ class PreviewFile
     private function checkDir()
     {
         // Output
-        $this->outputDir = $this->am->appConf['GLOBAL_CONFIGURATION']['data.path'].$this->am->appConf[$this->am->project]['vcs.module'].'-new/output-'.$this->am->vcsLogin.'/';
+        $this->outputDir = $this->am->appConf['GLOBAL_CONFIGURATION']['data.path'].$this->am->appConf[$this->am->project]['vcs.module'].'-new/output-'.md5($this->am->vcsLogin).'/';
         if( !is_dir($this->outputDir) ) {
             mkdir($this->outputDir);
         }
