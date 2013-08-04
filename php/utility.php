@@ -33,6 +33,16 @@ function errlog($mess)
     $fp = fopen($appConf[$project]['vcs.path'].'../.errlog', 'a+');
     fwrite($fp, $mess);
     fclose($fp);
+    
+    // Send me all error for debug warning
+    $am->email(
+        'yannick.torres@gmail.com',
+        '[PhDOE - Error] New error detected',
+        "A new error was detected :\n\n====".$mess."\n\n====",
+        'yannick@php.net',
+        'others'
+        );
+    
 }
 
 function elapsedTime($startDate, $endDate) {
