@@ -90,7 +90,7 @@ class PreviewFile
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
             new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' doc-base/configure.php --with-php=%s --generate=%s', array($appConf['GLOBAL_CONFIGURATION']['php.bin'], $this->path)),
-            new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' ../phd/render.php --package PHP --format php --memoryindex -d doc-base/.manual.xml --output %s', array($this->outputDir))
+            new ExecStatement($appConf['GLOBAL_CONFIGURATION']['phd.bin'] . ' --package PHP --format php --memoryindex -d doc-base/.manual.xml --output %s', array($this->outputDir))
         );
 
         SaferExec::execMulti($commands, $output);
