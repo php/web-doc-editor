@@ -24871,11 +24871,21 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     hidden: (this.module !== 'patches' || this.from === 'user'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
-                        var files = [], defaultCommitMessage = '', patchID = false;
+                        var files = [], defaultCommitMessage = '', patchID = false, anonymousName;
                         
                         // We build the default commit message for a commit issue from an anonymous patch
-                        if( this.from === 'anonymousPatch' ) {
-                            defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by "+this.patchNode.parentNode.attributes.task+' ('+this.patchNode.attributes.patchEmail+')';
+                        if( this.from === 'anonymousPatch' )
+                        {
+                            anonymousName = this.patchNode.parentNode.attributes.task;
+                            
+                            // We must remove # caracter from the automatic comment to avoid bug system problem.
+                            // See this thread : http://news.php.net/php.doc/969384624
+                            
+                            if( this.patchNode.parentNode.attributes.isAnonymous ) {
+                                anonymousName = 'anonymous ' + this.patchNode.parentNode.attributes.userID;
+                            }
+                            
+                            defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by " + anonymousName + ' ('+this.patchNode.attributes.patchEmail+')';
                             
                             patchID = this.patchNode.attributes.idDB;
                             
