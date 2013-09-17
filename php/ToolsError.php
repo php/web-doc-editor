@@ -1297,7 +1297,7 @@ class ToolsError
 	{
             $i=0;
 	    foreach ($matches[3] as $match) {
-		if (empty($match) || (false === strpos($match, '<initializer>'))) {
+		if ( (empty($match) || (false === strpos($match, '<initializer>')) ) && trim($matches[2][$i]) != '...' ) {
 		    $this->addError(array(
 			'value_en'   => $matches[2][$i],
 			'value_lang' => 'N/A',
