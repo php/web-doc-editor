@@ -499,7 +499,7 @@
 
 /* Highlight the current line into code mirror */
 .cm2-activeline {
-    background: #f8f7f6 !important;
+    background: rgba(248, 247, 246, 0.25) !important;
 }
 
 .cm-tab {
