@@ -1346,11 +1346,19 @@ class ToolsError
             $content = $this->lang_content;
         }
 
-        $matches = array();
-        preg_match('!<\?xml(.+)\s?encoding=("|\')(.*)("|\')\s?\?>!U', $content, $matches);
+        $exprs = array(
+            '#<\?xml[^>]+encoding=([\'"])[Uu][Tt][Ff]-8\1#U',
+            '#<meta\s+(?:(?:http-equiv\s*=\s*([\'"])content-type\1\s*)|(?:content\s*=\s*([\'"])text/html\s*;.*charset\s*=\s*utf-?8.*\2\s*)){2}#Ui',
+            '#<meta\s+charset\s*=\s*([\'"])utf-?8\1#Ui',
+        );
 
-        if ( !isset($matches[3]) || strtoupper($matches[3]) != 'UTF-8') {
+        foreach ($exprs as $expr) {
+            if ( $match = preg_match($expr, $content) ) {
+                break;
+            }
+        }
 
+        if (!$match) {
             $this->addError(array(
                 'value_en'   => 'N/A',
                 'value_lang' => 'N/A',
