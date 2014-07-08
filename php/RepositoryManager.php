@@ -1714,6 +1714,7 @@ class RepositoryManager
             || $name == 'missing-ids.xml'
             || $name == 'license.xml'
             || $name == 'versions.xml'
+            || $name == 'book.developer.xml'
         ) {
         	$return .= " FALSE !\n\n\n";
         	if( $toDisplay ) echo $return;
