@@ -18691,7 +18691,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                             iconCls    : 'iconBugs',
                             closable   : true,
                             layout     : 'fit',
-                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-report-bug', url: 'http://bugs.php.net/' }) ]
+                            items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-report-bug', url: 'https://bugs.php.net/' }) ]
                         });
 
                         Ext.getCmp('main-panel').setActiveTab('tab-report-bug');
