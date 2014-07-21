@@ -817,6 +817,9 @@ class ToolsError
             $lang_PhpdocClassref[trim($match[1][$i])] = $match[2][$i];
         }
 
+        $en_PhpdocClassref["xml:id"] = isset($en_PhpdocClassref["xml:id"]) ? $en_PhpdocClassref["xml:id"] : false;
+        $lang_PhpdocClassref["xml:id"] = isset($lang_PhpdocClassref["xml:id"]) ? $lang_PhpdocClassref["xml:id"] : false;
+        
         if ($en_PhpdocClassref["xml:id"] != $lang_PhpdocClassref["xml:id"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xml:id"],
@@ -825,6 +828,9 @@ class ToolsError
             ));
 
         }
+        
+        $en_PhpdocClassref["xmlns:phpdoc"] = isset($en_PhpdocClassref["xmlns:phpdoc"]) ? $en_PhpdocClassref["xmlns:phpdoc"] : false;
+        $lang_PhpdocClassref["xmlns:phpdoc"] = isset($lang_PhpdocClassref["xmlns:phpdoc"]) ? $lang_PhpdocClassref["xmlns:phpdoc"] : false;
         
         if ($en_PhpdocClassref["xmlns:phpdoc"] != $lang_PhpdocClassref["xmlns:phpdoc"] ) {
             $this->addError(array(
@@ -835,6 +841,9 @@ class ToolsError
 
         }
 
+        $en_PhpdocClassref["xmlns"] = isset($en_PhpdocClassref["xmlns"]) ? $en_PhpdocClassref["xmlns"] : false;
+        $lang_PhpdocClassref["xmlns"] = isset($lang_PhpdocClassref["xmlns"]) ? $lang_PhpdocClassref["xmlns"] : false;
+        
         if ($en_PhpdocClassref["xmlns"] != $lang_PhpdocClassref["xmlns"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns"],
@@ -844,6 +853,9 @@ class ToolsError
 
         }
 
+        $en_PhpdocClassref["xmlns:xlink"] = isset($en_PhpdocClassref["xmlns:xlink"]) ? $en_PhpdocClassref["xmlns:xlink"] : false;
+        $lang_PhpdocClassref["xmlns:xlink"] = isset($lang_PhpdocClassref["xmlns:xlink"]) ? $lang_PhpdocClassref["xmlns:xlink"] : false;
+        
         if ($en_PhpdocClassref["xmlns:xlink"] != $lang_PhpdocClassref["xmlns:xlink"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns:xlink"],
@@ -852,6 +864,9 @@ class ToolsError
             ));
         }
 
+        $en_PhpdocClassref["xmlns:xi"] = isset($en_PhpdocClassref["xmlns:xi"]) ? $en_PhpdocClassref["xmlns:xi"] : false;
+        $lang_PhpdocClassref["xmlns:xi"] = isset($lang_PhpdocClassref["xmlns:xi"]) ? $lang_PhpdocClassref["xmlns:xi"] : false;
+        
         if ($en_PhpdocClassref["xmlns:xi"] != $lang_PhpdocClassref["xmlns:xi"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns:xi"],
