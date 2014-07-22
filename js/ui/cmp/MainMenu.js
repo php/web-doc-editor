@@ -367,8 +367,8 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                 }
             }, {
                 id      : 'tab-documentation-btn',
-                text    : _('Documentation'),
-                iconCls : 'iconBook',
+                text    : _('Help'),
+                iconCls : 'iconInfo',
                 handler : function()
                 {
                     if (!Ext.getCmp('main-panel').findById('tab-documentation')) {
@@ -376,8 +376,8 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                         Ext.getCmp('main-panel').add({
                             id         : 'tab-documentation',
                             xtype      : 'panel',
-                            title      : _('Documentation'),
-                            iconCls    : 'iconBook',
+                            title      : _('Help'),
+                            iconCls    : 'iconInfo',
                             closable   : true,
                             layout     : 'fit',
                             items: [ new Ext.ux.IFrameComponent({ id: 'frame-tab-documentation', url: 'https://wiki.php.net/doc/editor/' }) ]
