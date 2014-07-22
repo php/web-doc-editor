@@ -868,6 +868,14 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                     }],
                     buttonAlign : 'left',
                     buttons     : [{
+                        text     : 'Help',
+                        iconCls  : 'iconHelp2',
+                        tabIndex : -1,
+                        tooltip  :'A little reference to this application',
+                        handler  : function() {
+                            window.open("https://wiki.php.net/doc/editor", "_blank");
+                        }
+                    },{
                         text     : 'Request an account',
                         iconCls  : 'iconHelp',
                         tabIndex : -1,
