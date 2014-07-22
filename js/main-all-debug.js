@@ -12654,6 +12654,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                     title : _('Help and support'),
                     bodyStyle : 'padding:15px',
                     html  : '<div id="phd-oe-support"><ul>' +
+                                '<li>' + _('Getting started with this editor:') + '<a href="https://wiki.php.net/doc/editor/" target="_blank">https://wiki.php.net/doc/editor/</a></li>' +
                                 '<li>' + _('Mailing list:') + '<a href="mailto:phpdoc@lists.php.net">phpdoc@lists.php.net</a></li>' +
                                 '<li>' + _('IRC:') + '<a href="irc://irc.efnet.org/#php.doc">EFnet: #php.doc</a></li>' +
                             '</ul></div>'

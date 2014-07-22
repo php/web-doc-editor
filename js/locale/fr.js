@@ -557,6 +557,7 @@ var i18n = new Array();
   i18n["Mode Xmlpure by Dror Ben-Gai"] = "Mode Xmlpure par Dror Ben-Gai";
   i18n["Web IRC Chat"] = "Web IRC Chat";
   i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit pour leur don de leur widget IRC Premium";
+  i18n["Getting started with this editor:"] = "Commencer à utiliser cet éditeur :";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
