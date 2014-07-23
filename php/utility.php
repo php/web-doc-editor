@@ -139,7 +139,8 @@ function getFlickr() {
     foreach ($xml->channel->item as $item ) {
         
         $namespaces = $item->getNameSpaces(true);
-        $thumbnail = $item->children($namespaces['media'])->thumbnail->attributes()['url'];
+        $t = $item->children($namespaces['media'])->thumbnail->attributes();
+        $thumbnail = $t['url'];
         
         $return[] = array(
         'img' => (string)$thumbnail,
