@@ -126,4 +126,29 @@ function time2string($timeline) {
 
     return trim($ret);
 }
+
+
+function getFlickr() {
+    
+    $return = array();
+    
+    $flickrRSS = 'https://api.flickr.com/services/feeds/groups_pool.gne?id=610963@N20&format=rss_200';
+    
+    $xml = simplexml_load_file($flickrRSS);
+    
+    foreach ($xml->channel->item as $item ) {
+        
+        $namespaces = $item->getNameSpaces(true);
+        $thumbnail = $item->children($namespaces['media'])->thumbnail->attributes()['url'];
+        
+        $return[] = array(
+        'img' => (string)$thumbnail,
+        'link' => (string)$item->link
+        );
+        
+    } 
+    
+    return $return;
+}
+
 ?>

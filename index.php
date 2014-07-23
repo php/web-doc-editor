@@ -215,7 +215,7 @@ if (!isset($_SESSION['userID']))
     echo jsLoadTemplate('js/ExtJs/ext-all.js');
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Initializing...";');
     echo jsLoadTemplate('js/login-all.js');
-    echo footerTemplate();
+    echo footerTemplate('loginPage');
     exit;
 }
 

@@ -135,9 +135,12 @@ function cssLoadTemplate($href, $id = '')
  *
  * @return string
  */
-function footerTemplate()
+function footerTemplate($isLoginPage=false)
 {
+    $elephpants = ( $isLoginPage ) ? '<div id="elephpants"><div id="images"></div></div>' : '';
+    
     return <<<EOD
+    $elephpants
  </body>
 </html>
 EOD;

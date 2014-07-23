@@ -55,3 +55,38 @@
     cursor: pointer;
     text-decoration:underline; 
 }
+
+#elephpants {
+    margin: auto;
+    /*overflow: hidden;*/
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#images {
+    height: 75px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* {{{ ElePHPants */
+#elephpants img {
+  opacity: 0.5;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+}
+
+#elephpants:hover img {
+  opacity: 0.6;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+}
+
+#elephpants img:hover,
+#elephpants img:focus {
+  opacity: 1;
+}
+/* }}} */

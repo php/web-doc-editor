@@ -7,6 +7,7 @@ var PhDOE_loginPage = function()
 
         storeLang    : '',
         storeProject : '',
+        storeFlickr : '',
         email : Ext.util.Cookies.get("email"),
         authService: 'VCS',
         authServiceID: '',
@@ -51,6 +52,21 @@ var PhDOE_loginPage = function()
                         {name : 'iconCls'},
                         {name : 'name'},
                         {name : 'request_account_uri'}
+                    ]
+                })
+            });
+
+            // Load Flickr elephpants
+            this.storeFlickr = new Ext.data.Store({
+                autoLoad: false,
+                proxy    : new Ext.data.HttpProxy({
+                    url : './do/getElephpants'
+                }),
+                reader : new Ext.data.JsonReader({
+                    root          : 'Items',
+                    fields        : [
+                        {name : 'img'},
+                        {name : 'link'}
                     ]
                 })
             });
@@ -457,11 +473,30 @@ var PhDOE_loginPage = function()
             }
 
             win.show();
+            
+            //
 
             // Remove the global loading message
             Ext.get('loading').remove();
             Ext.fly('loading-mask').fadeOut({ remove : true });
-
+            
+            // We load flickR
+            this.storeFlickr.load({
+                
+                callback: function() {
+                    
+                    // We put the elephpants !
+                    Ext.each(this.data.items, function(item) {
+                        
+                        Ext.DomHelper.append('images', {
+                            tag: 'a',
+                            href: item.data.link, 
+                            html: '<img src="'+ item.data.img +'" />', 
+                            target: '_blank'
+                        });
+                    });
+                }
+            });
         }
     };
 }();

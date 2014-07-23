@@ -2734,4 +2734,22 @@ class ExtJsController
         }
 
     }
+    
+    /**
+     * 
+     */
+    public function getElephpants()
+    {
+        //$r = RepositoryManager::getInstance()->moveToPatch();
+        
+        $r = getFlickr();
+        
+        return JsonResponseBuilder::success(
+            Array(
+                'Items' => $r
+            )
+            
+        );
+
+    }
 }
