@@ -2,7 +2,8 @@
 
 session_start();
 
-require_once './php/html.templates.php';
+require_once dirname(__FILE__) . '/php/html.templates.php';
+require_once dirname(__FILE__) . '/php/oauth.php';
 
 // Perm link management
 if (isset($_REQUEST['perm'])) {
@@ -90,119 +91,181 @@ if (isset($_REQUEST['perm'])) {
     $jsVar = 'var directAccess = false;';
 }
 
-// Init FB var
-$jsVar .= "\nvar FBInfo = false, googleInfo = false;\n";
+
+
+
+// Init auth var
+$jsVar .= "\nvar auth = {};\n";
 
 // Log the user in if needed
 if (!isset($_SESSION['userID']))
 {
-    // Google API
-    require_once 'php/google-api-php-client/src/apiClient.php';
-    require_once 'php/google-api-php-client/src/contrib/apiOauth2Service.php';
     
-    $client = new apiClient();
-    $client->setApplicationName("PhDOE : Php Docbook Online Editor");
-    $client->setClientId('100526866357.apps.googleusercontent.com');
-    $client->setClientSecret('FcKf36077Rco6S2xvdad9-WG');
-    $client->setRedirectUri('https://edit.php.net/');
-    $client->setState('googleAPI');
-
-    $oauth2 = new apiOauth2Service($client);
-
-    if ( isset($_GET['code']) && isset($_GET['state']) &&  $_GET['state'] == 'googleAPI' )
-    {
-        $client->authenticate();
-        $_SESSION['GGtoken'] = $client->getAccessToken();
-        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+    /* instagram */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'instagram') {
+    
+        $_SESSION['oauth']['identService'] = 'instagram';
+        
+        $instagram = new Oauth_instagram();
+        
+        $instagram->RequestCode();
     }
 
-    if (isset($_SESSION['GGtoken']))
-    {
-        $client->setAccessToken($_SESSION['GGtoken']);
+    if( $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
+        
+        $instagram = new Oauth_instagram();
+        $access_token = $instagram->RequestToken($_GET['code']);
+        
+        $jsVar .= "
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$access_token->user->id."\", 
+            auth.login     = \"".$access_token->user->full_name."\", 
+            auth.email     = \"\";
+        
+        ";
+        
+    }
+    
+    /* Github */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'github') {
+    
+        $_SESSION['oauth']['identService'] = 'github';
+        
+        $git = new Oauth_github();
+        
+        $git->RequestCode();
     }
 
-    if ($client->getAccessToken())
-    {
-        $user = $oauth2->userinfo->get();
+    if( $_SESSION['oauth']['identService'] == 'github' && isset($_GET['code']) ) {
         
-        $email = filter_var($user['email'], FILTER_SANITIZE_EMAIL);
-        $img = filter_var($user['picture'], FILTER_VALIDATE_URL);
-        $name = $user['name'];
-        $GGuserID = $user['id'];
-
-        // The access token may have been updated lazily.
-        $_SESSION['GGtoken'] = $client->getAccessToken();
+        $git = new Oauth_github();
+        $access_token = $git->RequestToken($_GET['code']);
+        $user = $git->getUserInfo($access_token);
         
-        $_SESSION['GGuserInfo'] = Array(
-            'id' => $GGuserID,
-            'name' => $name,
-            'email' => $email,
-            'photo' => $img
-        );
+        $jsVar .= "
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$user->id."\", 
+            auth.login     = \"".$user->login."\", 
+            auth.email     = \"".$user->email."\";
         
-        $jsVar .= "googleInfo = {};\n";
-        $jsVar .= "googleInfo.libel = \"<img style='margin-right:5px' align='left' src='$img?sz=50'>\";\n";
-        $jsVar .= "googleInfo.libel += \"". $name."<br>\";\n";
-        $jsVar .= "googleInfo.libel += \"$email<br><br>\";\n";
-        $jsVar .= "googleInfo.user = {};\n";
-        $jsVar .= "googleInfo.user.id = \"$GGuserID\";\n";
-        $jsVar .= "googleInfo.user.name = \"". $name."\";\n";
-        $jsVar .= "googleInfo.user.email = \"$email\";\n";
-        $jsVar .= "googleInfo.user.photo = \"$img\";\n";
+        ";
         
-    } else {
-        $authUrl = $client->createAuthUrl();
-        $jsVar .= 'googleInfo = {};';
-        $jsVar .= 'googleInfo.libel = "<a href='.$authUrl.'><img src=\"themes/img/signInWithGoogle.png\" /></a>";';
     }
     
     
-    // Facebook API
-    require_once 'php/facebook-api-php-client/src/facebook.php';
-    $facebook = new Facebook(array(
-    'appId'  => '128417830579090',
-    'secret' => '2e18fd9adfc219ddb85031fe08f481d9',
-    ));
-    // Get User ID
-    $FBuser = $facebook->getUser();
-    if ($FBuser) {
-        try {
-            // Proceed knowing you have a logged in user who's authenticated.
-            $FBuser_profile = $facebook->api('/me');
-            
-            $FBimg = "https://graph.facebook.com/" . $FBuser . "/picture";
-            
-            $jsVar .= "FBInfo = {};\n";
-            $jsVar .= "FBInfo.libel = \"<img style='margin-right:5px' align='left' src='https://graph.facebook.com/" . $FBuser . "/picture'>\";\n";
-            $jsVar .= "FBInfo.libel += \"" . $FBuser_profile['name'] . "<br>\";\n";
-            $jsVar .= "FBInfo.libel += \"" . filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL) . "<br><br>\";\n";
-            $jsVar .= "FBInfo.user = {};\n";
-            $jsVar .= "FBInfo.user.id = \"" . $FBuser_profile['id'] . "\";\n";
-            $jsVar .= "FBInfo.user.name = \"" . $FBuser_profile['name'] . "\";\n";
-            $jsVar .= "FBInfo.user.email = \"" . filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL) . "\";\n";
-            $jsVar .= "FBInfo.user.photo = \"$FBimg\";\n";
-            
-            $_SESSION['FBuserInfo'] = Array(
-                'id' => $FBuser_profile['id'],
-                'name' => $FBuser_profile['name'],
-                'email' => filter_var($FBuser_profile['email'], FILTER_SANITIZE_EMAIL),
-                'photo' => $FBimg
-            );
+    /* stackoverflow */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'stackoverflow') {
+    
+        $_SESSION['oauth']['identService'] = 'stackoverflow';
         
-        } catch (FacebookApiException $e) {
-            error_log($e);
-            $FBuser = null;
-            $jsVar .= 'FBInfo = {};';
-            $jsVar .= 'FBInfo.libel = "<a href='.$facebook->getLoginUrl().'><img src=\"themes/img/signInWithFacebook.png\" /></a>";';
-        }
-    } else {
-        $jsVar .= 'FBInfo = {};';
-        $jsVar .= 'FBInfo.libel = "<a href='.$facebook->getLoginUrl().'><img src=\"themes/img/signInWithFacebook.png\" /></a>";';
+        $stack = new Oauth_stackoverflow();
+        
+        $stack->RequestCode();
+    }
+
+    if( $_SESSION['oauth']['identService'] == 'stackoverflow' && isset($_GET['code']) ) {
+        
+        $stack = new Oauth_stackoverflow();
+        $access_token = $stack->RequestToken($_GET['code']);
+        
+        $user = $stack->getUserInfo($access_token);
+        
+        $jsVar .= "
+        
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$user->items[0]->user_id."\", 
+            auth.login     = \"".$user->items[0]->display_name."\", 
+            auth.email     = \"\";
+        
+        ";
+        
+    }
+    
+    /* facebook */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'facebook') {
+    
+        $_SESSION['oauth']['identService'] = 'facebook';
+        
+        $facebook = new Oauth_facebook();
+        
+        $facebook->RequestCode();
+    }
+
+    if( $_SESSION['oauth']['identService'] == 'facebook' && isset($_GET['code']) ) {
+        
+        $facebook = new Oauth_facebook();
+        $access_token = $facebook->RequestToken($_GET['code']);
+        
+        $user = $facebook->getUserInfo($access_token);
+        
+        $jsVar .= "
+        
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$user->id."\", 
+            auth.login     = \"".$user->name."\", 
+            auth.email     = \"".$user->email."\";
+        
+        ";
+        
     }
     
     
+    /* google */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'google') {
     
+        $_SESSION['oauth']['identService'] = 'google';
+        
+        $google = new Oauth_google();
+        
+        $google->RequestCode();
+    }
+
+    if( $_SESSION['oauth']['identService'] == 'google' && isset($_GET['code']) ) {
+        
+        $google = new Oauth_google();
+        $access_token = $google->RequestToken($_GET['code']);
+        
+        $user = $google->getUserInfo($access_token);
+        
+        $jsVar .= "
+        
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$user->id."\", 
+            auth.login     = \"".$user->displayName."\", 
+            auth.email     = \"".$user->emails[0]->value."\";
+        
+        ";
+        
+    }
+    
+    
+    /* linkedin */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'linkedin') {
+    
+        $_SESSION['oauth']['identService'] = 'linkedin';
+        
+        $linkedin = new Oauth_linkedin();
+        
+        $linkedin->RequestCode();
+    }
+
+    if( $_SESSION['oauth']['identService'] == 'linkedin' && isset($_GET['code']) ) {
+        
+        $linkedin = new Oauth_linkedin();
+        $access_token = $linkedin->RequestToken($_GET['code']);
+        
+        $user = $linkedin->getUserInfo($access_token);
+        
+        $jsVar .= "
+        
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".md5($user['profil'])."\", 
+            auth.login     = \"".$user['profil']."\", 
+            auth.email     = \"".$user['email']."\";
+        
+        ";
+        
+    }
     
     echo headerTemplate();
     echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');

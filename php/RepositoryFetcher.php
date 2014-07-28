@@ -1078,13 +1078,31 @@ class RepositoryFetcher
 
                 }
 
-                if( $userData['data']['authService'] == 'google' ) {
-                    $iconUser = 'iconGoogle';
-                } else if( $userData['data']['authService'] == 'facebook' ) {
-                    $iconUser = 'iconFacebook';
-                } else {
-                    $iconUser = 'iconUser';
+                switch($userData['data']['authService'])
+                {
+                    case 'google':
+                        $iconUser = 'iconGoogle';
+                        break;
+                    case 'facebook':
+                        $iconUser = 'iconFacebook';
+                        break;
+                    case 'github':
+                        $iconUser = 'iconGithub';
+                        break;
+                    case 'stackoverflow':
+                        $iconUser = 'iconStackoverflow';
+                        break;
+                    case 'linkedin':
+                        $iconUser = 'iconLinkedin';
+                        break;
+                    case 'instagram':
+                        $iconUser = 'iconInstagram';
+                        break;
+                        
+                    default:
+                        $iconUser = 'iconUser';
                 }
+                
                 $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
                 $result[] = array(
                     'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),
@@ -1191,13 +1209,31 @@ class RepositoryFetcher
                     );
                 }
 
-                if( $userData['data']['authService'] == 'google' ) {
-                    $iconUser = 'iconGoogle';
-                } else if( $userData['data']['authService'] == 'facebook' ) {
-                    $iconUser = 'iconFacebook';
-                } else {
-                    $iconUser = 'iconUser';
+                switch($userData['data']['authService'])
+                {
+                    case 'google':
+                        $iconUser = 'iconGoogle';
+                        break;
+                    case 'facebook':
+                        $iconUser = 'iconFacebook';
+                        break;
+                    case 'github':
+                        $iconUser = 'iconGithub';
+                        break;
+                    case 'stackoverflow':
+                        $iconUser = 'iconStackoverflow';
+                        break;
+                    case 'linkedin':
+                        $iconUser = 'iconLinkedin';
+                        break;
+                    case 'instagram':
+                        $iconUser = 'iconInstagram';
+                        break;
+                        
+                    default:
+                        $iconUser = 'iconUser';
                 }
+                
                 $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
                 $result[] = array(
                     'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),

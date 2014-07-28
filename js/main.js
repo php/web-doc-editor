@@ -648,9 +648,18 @@ var PhDOE = function()
                                         } else if( PhDOE.user.authService == 'VCS' ) {
                                             libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'google' ) {
-                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                            libelContent = '<img src="themes/img/auth_google.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'facebook' ) {
-                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                            libelContent = '<img src="themes/img/auth_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        }
+                                        else if( PhDOE.user.authService == 'github' ) {
+                                            libelContent = '<img src="themes/img/auth_github.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'stackoverflow' ) {
+                                            libelContent = '<img src="themes/img/auth_stackoverflow.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'linkedin' ) {
+                                            libelContent = '<img src="themes/img/auth_linkedin.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'instagram' ) {
+                                            libelContent = '<img src="themes/img/auth_instagram.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         }
                                         loginLibelEl.dom.innerHTML = libelContent;
                                         

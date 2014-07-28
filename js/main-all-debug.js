@@ -5446,8 +5446,7 @@ Ext.override(Ext.form.Field, {
         this.initValue();
     }
       
-});
-/*!
+});/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -21666,9 +21665,17 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             img = '';
             
             if( authService == 'google' ) {
-                img = '<img src="themes/img/google.png" style="vertical-align: middle;"> ';
+                img = '<img src="themes/img/auth_google.png" style="vertical-align: middle;"> ';
             } else if( authService == 'facebook' ) {
-                img = '<img src="themes/img/icon_facebook.png" style="vertical-align: middle;"> ';
+                img = '<img src="themes/img/auth_facebook.png" style="vertical-align: middle;"> ';
+            } else if( authService == 'github' ) {
+                img = '<img src="themes/img/auth_github.png" style="vertical-align: middle;"> ';
+            } else if( authService == 'stackoverflow' ) {
+                img = '<img src="themes/img/auth_stackoverflow.png" style="vertical-align: middle;"> ';
+            } else if( authService == 'linkedin' ) {
+                img = '<img src="themes/img/auth_linkedin.png" style="vertical-align: middle;"> ';
+            } else if( authService == 'instagram' ) {
+                img = '<img src="themes/img/auth_instagram.png" style="vertical-align: middle;"> ';
             }
             
             return img + String.format(
@@ -26499,9 +26506,18 @@ var PhDOE = function()
                                         } else if( PhDOE.user.authService == 'VCS' ) {
                                             libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'google' ) {
-                                            libelContent = '<img src="themes/img/google.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                            libelContent = '<img src="themes/img/auth_google.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'facebook' ) {
-                                            libelContent = '<img src="themes/img/icon_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                            libelContent = '<img src="themes/img/auth_facebook.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        }
+                                        else if( PhDOE.user.authService == 'github' ) {
+                                            libelContent = '<img src="themes/img/auth_github.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'stackoverflow' ) {
+                                            libelContent = '<img src="themes/img/auth_stackoverflow.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'linkedin' ) {
+                                            libelContent = '<img src="themes/img/auth_linkedin.png" style="vertical-align:middle"> '+PhDOE.user.login;
+                                        } else if( PhDOE.user.authService == 'instagram' ) {
+                                            libelContent = '<img src="themes/img/auth_instagram.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         }
                                         loginLibelEl.dom.innerHTML = libelContent;
                                         

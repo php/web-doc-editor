@@ -107,7 +107,7 @@
 .iconErasePersonalData { background-image: url(./img/list-remove-user.png)      !important;}
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
 .iconExternalData      { background-image: url(./img/svn-update.png)            !important;}
-.iconFacebook          { background-image: url(./img/icon_facebook.png)         !important;}
+.iconFacebook          { background-image: url(./img/auth_facebook.png)         !important;}
 .iconFiles             { background-image: url(./img/page.png)                  !important;} 
 .iconFilesError        { background-image: url(./img/security-medium.png)       !important;}
 .iconFilesNeedReviewed { background-image: url(./img/document-edit.png)         !important;}
@@ -119,13 +119,16 @@
 .iconFolderClose       { background-image: url(./img/folder.gif)                !important;}
 .iconFolderNew         { background-image: url(./img/folder-favorites.png)      !important;}
 .iconForward           { background-image: url(./img/media-seek-forward.png)    !important;}
-.iconGoogle            { background-image: url(./img/google.png)                !important;}
+.iconGithub            { background-image: url(./img/auth_github.png)           !important;}
+.iconGoogle            { background-image: url(./img/auth_google.png)           !important;}
 .iconGraphic           { background-image: url(./img/chart_pie.png)             !important;}
 .iconHelp              { background-image: url(./img/help-browser.png)          !important;}
 .iconIndent            { background-image: url(./img/format-indent-more.png)    !important;}
 .iconInfo              { background-image: url(./img/help-about.png)            !important;}
 .iconInsertCode        { background-image: url(./img/page_code.png)             !important;}
+.iconInstagram         { background-image: url(./img/auth_instagram.png)        !important;}
 .iconLineWrapping      { background-image: url(./img/line-wrapping.png)         !important;}
+.iconLinkedin          { background-image: url(./img/auth_linkedin.png)         !important;}
 .iconLogOut            { background-image: url(./img/system-shutdown.png)       !important;}
 .iconLoading           { background-image: url(./img/loading.gif)               !important;}
 .iconMenu              { background-image: url(./img/edit-text-frame-update.png)!important;}
@@ -148,6 +151,7 @@
 .iconScrollBar         { background-image: url(./img/ui-scroll-bar.png)         !important;}
 .iconSendEmail         { background-image: url(./img/mail-message-new.png)      !important;}
 .iconSpellCheck        { background-image: url(./img/tools-check-spelling.png)  !important;}
+.iconStackoverflow     { background-image: url(./img/auth_stackoverflow.png)    !important;}
 .iconStartRefresh      { background-image: url(./img/go-last.png)               !important;}
 .iconSummary           { background-image: url(./img/align-vertical-bottom-out.png) !important;}
 .iconSwitchLang        { background-image: url(./img/system-switch-user.png)    !important;}

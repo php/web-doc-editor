@@ -88,20 +88,6 @@ class ExtJsController
         $authService   = $this->getRequestVariable('authService');
         $authServiceID   = $this->getRequestVariable('authServiceID');
 
-        // If we use google, we use all informations via $_SESSION
-        if( $authService == 'google' ) {
-            $authServiceID = $_SESSION['GGuserInfo']['id'];
-            $vcsLogin = $_SESSION['GGuserInfo']['name'];
-            $email = $_SESSION['GGuserInfo']['email'];
-        }
-        
-        // If we use google, we use all informations via $_SESSION
-        if( $authService == 'facebook' ) {
-            $authServiceID = $_SESSION['FBuserInfo']['id'];
-            $vcsLogin = $_SESSION['FBuserInfo']['name'];
-            $email = $_SESSION['FBuserInfo']['email'];
-        }
-
         $response = $am->login($project, $vcsLogin, $vcsPasswd, $email, $lang, $authService, $authServiceID);
 
         if ($response['state'] === true) {

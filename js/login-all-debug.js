@@ -131,8 +131,7 @@ Ext.override(Ext.form.Field, {
         this.initValue();
     }
       
-});
-// create namespace for plugins
+});// create namespace for plugins
 Ext.namespace('Ext.ux.plugins');
 
 /**
@@ -594,6 +593,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
             Ext.getCmp('login-form-vcsLogin').setValue(name);
             Ext.getCmp('login-form-vcsLogin').disable();
             Ext.getCmp('login-form-vcsPasswd').disable();
+            Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_'+service+'.png" style="vertical-align: middle" /> <b>' + service.ucFirst() +'</b>', false);
             
             if( email ) {
                 Ext.getCmp('login-form-email').setValue(email);
@@ -609,8 +609,8 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
             if (!win) {
                 win = new Ext.Window({
                     layout      : 'border',
-                    width       : 380,
-                    height      : 270,
+                    width       : 440,
+                    height      : 300,
                     closable    : false,
                     closeAction : 'hide',
                     resizable   : false,
@@ -621,6 +621,15 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         show: function(w) {
                             win.drawers.e.show();
                             win.drawers.e.setHeight(240);
+                        },
+                        afterrender: function(w) {
+                            
+                            if( auth && auth.service ) {
+                                
+                                PhDOE_loginPage.externalCredentials(auth.service, auth.login, auth.serviceID, auth.email);
+                                
+                            }
+                            
                         }
                     },
                     plugins     : [
@@ -637,68 +646,10 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             side      : 'e',
                             animate   : true,
                             resizable : false,
-                            width     : 270,
+                            width     : 140,
                             height    : 250,
-                            items: [{
-                                xtype:'panel',
-                                layout:'accordion',
-                                border: false,
-                                autoHeight: true,
-                                defaults: {
-                                    bodyStyle: 'padding:15px;'
-                                },
-                                layoutConfig: {
-                                    animate: true,
-                                    border: false,
-                                    height: 100
-                                },
-                                items: [{
-                                    title: 'Facebook',
-                                    id:'accordion-fb',
-                                    layout:'fit',
-                                    iconCls:'iconFacebook',
-                                    html: '<div id="facebook-box"></div><div id="facebook-box2"></div>',
-                                    listeners: {
-                                        resize: function(c) {
-                                            c.setHeight(100);
-                                        },
-                                        afterrender: function(c)
-                                        {
-                                            document.getElementById('facebook-box').innerHTML = FBInfo.libel;
-                                            // Is there already a connection ?
-                                            if( FBInfo.user )
-                                            {
-                                                document.getElementById('facebook-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'facebook\', \''+FBInfo.user.name+'\', \''+FBInfo.user.id+'\',  \''+FBInfo.user.email+'\')">Use this credentials</a>';
-                                            }
-                                            
-
-                                        }
-                                    }
-                                },{
-                                    scope: this,
-                                    title: 'Google',
-                                    iconCls:'iconGoogle',
-                                    id:'accordion-google',
-                                    html: '<div id="google-box"></div><div id="google-box2"></div>',
-                                    listeners: {
-                                        resize: function(c)
-                                        {
-                                            c.setHeight(100);
-                                        },
-                                        afterrender: function(cmp)
-                                        {
-                                            document.getElementById('google-box').innerHTML = googleInfo.libel;
-                                            // Is there already a connection ?
-                                            if( googleInfo.user )
-                                            {
-                                                //this.scope.externalCredentials('google', googleInfo.user.name, googleInfo.user.id, googleInfo.user.email);
-                                                document.getElementById('google-box2').innerHTML = '<a href="#" onclick="PhDOE_loginPage.externalCredentials(\'google\', \''+googleInfo.user.name+'\', \''+googleInfo.user.id+'\',  \''+googleInfo.user.email+'\')">Use this credentials</a>';
-                                            }
-                                        }
-                                    }
-                                }
-                                ]
-                            }]
+                            bodyStyle : 'margin: 10px;',
+                            html      : '<div id="auth-login"><a href="?oauth=facebook" title="Facebook"><img src="themes/img/auth_facebook_40.png" /></a> <a href="?oauth=github" title="Github"><img src="themes/img/auth_github_40.png" /></a><br/><a href="?oauth=google" title="Google"><img src="themes/img/auth_google_40.png" /></a> <a href="?oauth=linkedin" title="Linkedin"><img src="themes/img/auth_linkedin_40.png" /></a><br/><a href="?oauth=stackoverflow" title="Stackoverflow"><img src="themes/img/auth_stackoverflow_40.png" /></a> <a href="?oauth=instagram" title="Instagram"><img src="themes/img/auth_instagram_40.png" /></a></div>'
                         })
                     ],
                     items : [{
@@ -715,7 +666,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         url         : './do/login',
                         bodyStyle   : 'padding:5px 5px 0',
                         border      : false,
-                        height      : 140,
+                        height      : 170,
                         width       : 350,
                         labelWidth  : 110,
                         defaults    : { width : 217 },
@@ -765,7 +716,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 }
                             }
                         }, {
-                            fieldLabel      : 'VCS login',
+                            fieldLabel      : 'Login',
                             name            : 'vcsLogin',
                             value           : ( Ext.util.Cookies.get("loginApp") ) ? Ext.util.Cookies.get("loginApp") : 'anonymous',
                             id              : 'login-form-vcsLogin',
@@ -815,7 +766,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 }
                             }
                         }, {
-                            fieldLabel      : 'VCS password',
+                            fieldLabel      : 'Password',
                             name            : 'vcsPassword',
                             id              : 'login-form-vcsPasswd',
                             inputType       : 'password',
@@ -843,7 +794,13 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                     }
                                 }
                             }
-                        }, {
+                        },{
+                            xtype           : 'label',
+                            fieldLabel      : 'Auth. Service',
+                            id              : 'login-form-auth',
+                            name            : 'authService',
+                            html            : '<img src="themes/img/auth_php.png" style="vertical-align: middle" /> <b>Php.net</b>'
+                        },{
                             xtype           : 'iconcombo',
                             width           : 235,
                             fieldLabel      : 'Language module',
@@ -959,6 +916,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             
                             Ext.getCmp('login-form-vcsPasswd').enable();
                             Ext.getCmp('login-form-vcsPasswd').setValue('');
+                            Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_php.png" style="vertical-align: middle" /> <b>Php.net</b>', false);
                             
                             this.authService = 'VCS';
                             this.authServiceID = '';
@@ -967,7 +925,6 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                 Ext.getCmp('login-form-vcsLogin').setValue(Ext.util.Cookies.get("loginApp"));
                                 Ext.getCmp('login-btn').setText('Login');
                                 Ext.getCmp('login-form-email').setValue(Ext.util.Cookies.get("email"));
-                                
                                 
                             } else {
                                 Ext.getCmp('login-form-vcsLogin').setValue('anonymous');
