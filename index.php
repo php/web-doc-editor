@@ -101,7 +101,7 @@ $jsVar .= "\nvar auth = {};\n";
 if (!isset($_SESSION['userID']))
 {
     // Init var
-    $_SESSION['oauth'] = array();
+    if( !isset($_SESSION['oauth']) )  $_SESSION['oauth'] = array();
     
     /* instagram */
     if( isset($_GET['oauth']) && $_GET['oauth'] == 'instagram') {
