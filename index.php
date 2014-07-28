@@ -113,7 +113,7 @@ if (!isset($_SESSION['userID']))
         $instagram->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
         
         $instagram = new Oauth_instagram();
         $access_token = $instagram->RequestToken($_GET['code']);
@@ -138,7 +138,7 @@ if (!isset($_SESSION['userID']))
         $git->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'github' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'github' && isset($_GET['code']) ) {
         
         $git = new Oauth_github();
         $access_token = $git->RequestToken($_GET['code']);
@@ -165,7 +165,7 @@ if (!isset($_SESSION['userID']))
         $stack->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'stackoverflow' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'stackoverflow' && isset($_GET['code']) ) {
         
         $stack = new Oauth_stackoverflow();
         $access_token = $stack->RequestToken($_GET['code']);
@@ -193,7 +193,7 @@ if (!isset($_SESSION['userID']))
         $facebook->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'facebook' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'facebook' && isset($_GET['code']) ) {
         
         $facebook = new Oauth_facebook();
         $access_token = $facebook->RequestToken($_GET['code']);
@@ -222,7 +222,7 @@ if (!isset($_SESSION['userID']))
         $google->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'google' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'google' && isset($_GET['code']) ) {
         
         $google = new Oauth_google();
         $access_token = $google->RequestToken($_GET['code']);
@@ -251,7 +251,7 @@ if (!isset($_SESSION['userID']))
         $linkedin->RequestCode();
     }
 
-    if( $_SESSION['oauth']['identService'] == 'linkedin' && isset($_GET['code']) ) {
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'linkedin' && isset($_GET['code']) ) {
         
         $linkedin = new Oauth_linkedin();
         $access_token = $linkedin->RequestToken($_GET['code']);
