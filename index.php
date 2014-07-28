@@ -3,6 +3,7 @@
 session_start();
 
 require_once dirname(__FILE__) . '/php/html.templates.php';
+require_once dirname(__FILE__) . '/php/Conf.php';
 require_once dirname(__FILE__) . '/php/oauth.php';
 
 // Perm link management
@@ -100,6 +101,8 @@ $jsVar .= "\nvar auth = {};\n";
 // Log the user in if needed
 if (!isset($_SESSION['userID']))
 {
+    $Conf = Config::getInstance()->getConf();
+    
     // Init var
     if( !isset($_SESSION['oauth']) )  $_SESSION['oauth'] = array();
     
@@ -108,14 +111,14 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'instagram';
         
-        $instagram = new Oauth_instagram();
+        $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
         
         $instagram->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
         
-        $instagram = new Oauth_instagram();
+        $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
         $access_token = $instagram->RequestToken($_GET['code']);
         
         $jsVar .= "
@@ -133,14 +136,15 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'github';
         
-        $git = new Oauth_github();
+        $git = new Oauth_github($Conf['GLOBAL_CONFIGURATION']['oauth.github.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.github.clientSecret']);
         
         $git->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'github' && isset($_GET['code']) ) {
         
-        $git = new Oauth_github();
+        $git = new Oauth_github($Conf['GLOBAL_CONFIGURATION']['oauth.github.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.github.clientSecret']);
+        
         $access_token = $git->RequestToken($_GET['code']);
         $user = $git->getUserInfo($access_token);
         
@@ -160,14 +164,14 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'stackoverflow';
         
-        $stack = new Oauth_stackoverflow();
+        $stack = new Oauth_stackoverflow($Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientSecret'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientKey']);
         
         $stack->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'stackoverflow' && isset($_GET['code']) ) {
         
-        $stack = new Oauth_stackoverflow();
+        $stack = new Oauth_stackoverflow($Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientSecret'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientKey']);
         $access_token = $stack->RequestToken($_GET['code']);
         
         $user = $stack->getUserInfo($access_token);
@@ -188,14 +192,14 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'facebook';
         
-        $facebook = new Oauth_facebook();
+        $facebook = new Oauth_facebook($Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientSecret']);
         
         $facebook->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'facebook' && isset($_GET['code']) ) {
         
-        $facebook = new Oauth_facebook();
+        $facebook = new Oauth_facebook($Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientSecret']);
         $access_token = $facebook->RequestToken($_GET['code']);
         
         $user = $facebook->getUserInfo($access_token);
@@ -217,14 +221,14 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'google';
         
-        $google = new Oauth_google();
+        $google = new Oauth_google($Conf['GLOBAL_CONFIGURATION']['oauth.google.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.google.clientSecret']);
         
         $google->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'google' && isset($_GET['code']) ) {
         
-        $google = new Oauth_google();
+        $google = new Oauth_google($Conf['GLOBAL_CONFIGURATION']['oauth.google.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.google.clientSecret']);
         $access_token = $google->RequestToken($_GET['code']);
         
         $user = $google->getUserInfo($access_token);
@@ -246,14 +250,14 @@ if (!isset($_SESSION['userID']))
     
         $_SESSION['oauth']['identService'] = 'linkedin';
         
-        $linkedin = new Oauth_linkedin();
+        $linkedin = new Oauth_linkedin($Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientSecret']);
         
         $linkedin->RequestCode();
     }
 
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'linkedin' && isset($_GET['code']) ) {
         
-        $linkedin = new Oauth_linkedin();
+        $linkedin = new Oauth_linkedin($Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientSecret']);
         $access_token = $linkedin->RequestToken($_GET['code']);
         
         $user = $linkedin->getUserInfo($access_token);
