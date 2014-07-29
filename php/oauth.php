@@ -418,7 +418,8 @@ class Oauth_linkedin
         curl_setopt_array($curl, array(
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_USERAGENT => 'Php Docbook Online Editor'
+            CURLOPT_USERAGENT => 'Php Docbook Online Editor',
+            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
         
         $resp = curl_exec($curl);
