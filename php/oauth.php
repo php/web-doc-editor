@@ -25,7 +25,7 @@ class Oauth_github
             'response_type' => 'code',
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirect_uri,
-            'scope' => 'user'
+            'scope' => 'user:email'
         );
 
         $forward_url = $this->serveurURL . '?' . http_build_query($query_params);
