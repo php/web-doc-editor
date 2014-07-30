@@ -151,7 +151,7 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
             auth.serviceID = \"".$user->id."\", 
-            auth.login     = \"".$user->login."\", 
+            auth.login     = \"".$user->name."\", 
             auth.email     = \"".$user->email."\";
         
         ";
@@ -180,7 +180,7 @@ if (!isset($_SESSION['userID']))
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
             auth.serviceID = \"".$user->items[0]->user_id."\", 
-            auth.login     = \"".$user->items[0]->display_name."\", 
+            auth.login     = \"".utf8_encode(html_entity_decode($user->items[0]->display_name))."\", 
             auth.email     = \"\";
         
         ";
