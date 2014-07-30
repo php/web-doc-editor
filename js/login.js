@@ -446,7 +446,7 @@ var PhDOE_loginPage = function()
                     // We put the elephpants !
                     Ext.each(this.data.items, function(item) {
                         
-                        Ext.DomHelper.append('images', {
+                        Ext.DomHelper.append('elephpants-images', {
                             tag: 'a',
                             href: item.data.link, 
                             html: '<img src="'+ item.data.img +'" />', 

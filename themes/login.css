@@ -20,7 +20,7 @@
 
 .x-form-field-wrap .project-php, .x-form-field-wrap .project-pear {
     top: 5px;
-    left: 5px;
+    left: 4px;
 }
 
 .project-php {
@@ -51,31 +51,30 @@
     float: left;
 }
 
-#fb-use-credentials {
-    cursor: pointer;
-    text-decoration:underline; 
+#auth-login img {
+    margin: 5px;
 }
 
-#elephpants {
-    margin: auto;
-    /*overflow: hidden;*/
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+#login-form-project {
+    padding-left: 26px !important;
 }
 
-#images {
+/* {{{ ElePHPants */
+
+#elephpants-images {
     height: 75px;
     text-align: center;
     white-space: nowrap;
 }
 
-#auth-login img {
-    margin: 5px;
+#elephpants {
+    margin: auto;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 
-/* {{{ ElePHPants */
 #elephpants img {
   opacity: 0.5;
   transition: all 0.2s ease-in-out;

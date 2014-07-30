@@ -953,7 +953,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                     // We put the elephpants !
                     Ext.each(this.data.items, function(item) {
                         
-                        Ext.DomHelper.append('images', {
+                        Ext.DomHelper.append('elephpants-images', {
                             tag: 'a',
                             href: item.data.link, 
                             html: '<img src="'+ item.data.img +'" />', 
