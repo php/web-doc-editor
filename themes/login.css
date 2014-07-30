@@ -53,6 +53,12 @@
 
 #auth-login img {
     margin: 5px;
+    padding: 2px;
+    border: 2px solid transparent;
+}
+
+#auth-login img:hover {
+  opacity: 1 !important;
 }
 
 #login-form-project {
@@ -72,6 +78,17 @@
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+.oauth-enable {
+    border: 2px solid #94b7e6 !important;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.oauth-disable {
+    opacity: 0.5;
 }
 
 
