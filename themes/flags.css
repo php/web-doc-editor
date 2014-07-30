@@ -3,9 +3,14 @@
 *
 */
 
-.x-form-field-wrap .flags, .mainMenuLang {
+.mainMenuLang {
     top: 5px !important;
     left: 1px !important;
+}
+
+.x-form-field-wrap .flags {
+    top: 6px !important;
+    left: 5px !important;
 }
 
 .flags {
