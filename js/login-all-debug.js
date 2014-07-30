@@ -784,7 +784,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         }, {
                             fieldLabel      : 'Login',
                             name            : 'vcsLogin',
-                            value           : ( Ext.util.Cookies.get("loginApp") ) ? Ext.util.Cookies.get("loginApp") : 'anonymous',
+                            value           : ( loginApp ) ? loginApp : 'anonymous',
                             id              : 'login-form-vcsLogin',
                             enableKeyEvents : true,
                             listeners       : {
@@ -926,7 +926,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             }
                         }
                     }, '->', {
-                        text      :  ( Ext.util.Cookies.get("loginApp") && Ext.util.Cookies.get("loginApp") != 'anonymous' ) ? 'Login' : 'Anonymous login',
+                        text      :  ( loginApp && loginApp != 'anonymous' ) ? 'Login' : 'Anonymous login',
                         id        : 'login-btn',
                         disabled  : false,
                         listeners : {
@@ -987,8 +987,8 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             this.authService = 'VCS';
                             this.authServiceID = '';
                             
-                            if( Ext.util.Cookies.get("loginApp") ) {
-                                Ext.getCmp('login-form-vcsLogin').setValue(Ext.util.Cookies.get("loginApp"));
+                            if( loginApp ) {
+                                Ext.getCmp('login-form-vcsLogin').setValue(loginApp);
                                 Ext.getCmp('login-btn').setText('Login');
                                 Ext.getCmp('login-form-email').setValue(Ext.util.Cookies.get("email"));
                                 

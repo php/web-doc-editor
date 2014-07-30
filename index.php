@@ -32,12 +32,12 @@ if (isset($_REQUEST['perm'])) {
         $r = RepositoryFetcher::getInstance()->getFileByXmlID($_lang, $xmlid);
 
         if ( $r ) {
-            $jsVar = 'var directAccess = {"link":"perm", "lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"};';
+            $jsVar = "\n".'var directAccess = {"link":"perm", "lang":"'.$r->lang.'", "path":"'.$r->path.'", "name":"'.$r->name.'", "project":"'.$_project.'"},';
         } else {
-            $jsVar = 'var directAccess = false;';
+            $jsVar = "\n".'var directAccess = false,';
         }
     } else {
-        $jsVar = 'var directAccess = false;';
+        $jsVar = "\n".'var directAccess = false,';
     }
 
 } else if (isset($_REQUEST['patch'])) {
@@ -54,7 +54,7 @@ if (isset($_REQUEST['perm'])) {
     $fileName = $_patch[count($_patch)-1];
     $filePath = substr($patch, 0, (strlen($patch)-strlen($fileName)));
     
-    $jsVar = 'var directAccess = {"link":"patch", "lang":"en", "path":"'.htmlspecialchars($filePath).'", "name":"'.htmlspecialchars($fileName).'", "project":"'.htmlspecialchars($_project).'"};';
+    $jsVar = "\n".'var directAccess = {"link":"patch", "lang":"en", "path":"'.htmlspecialchars($filePath).'", "name":"'.htmlspecialchars($fileName).'", "project":"'.htmlspecialchars($_project).'"},';
 
 } else if (isset($_REQUEST['patchID'])) {
 
@@ -69,7 +69,7 @@ if (isset($_REQUEST['perm'])) {
     
     $patchInfo = RepositoryManager::getInstance()->getPatchInfo($patchID);
     
-    $jsVar = 'var directAccess = {"link":"patchID", "lang":"en", "patchID":"'.htmlspecialchars($patchID).'", "patchName":"'.htmlspecialchars($patchInfo->name).'", "project":"'.htmlspecialchars($_project).'"};';
+    $jsVar = "\n".'var directAccess = {"link":"patchID", "lang":"en", "patchID":"'.htmlspecialchars($patchID).'", "patchName":"'.htmlspecialchars($patchInfo->name).'", "project":"'.htmlspecialchars($_project).'"},';
 
 } else if (isset($_REQUEST['action'])) {
     
@@ -82,21 +82,25 @@ if (isset($_REQUEST['perm'])) {
     // Set the project
     ProjectManager::getInstance()->setProject($_project);
     
-    $jsVar = 'var directAccess = {
+    $jsVar = "\n".'var directAccess = {
         "project":"'.htmlspecialchars($_project).'",
         "action": "'.htmlspecialchars($_action).'",
         "idDB": "'.htmlspecialchars($_idDB).'"
-    };';
+    },';
     
 } else {
-    $jsVar = 'var directAccess = false;';
+    $jsVar = "\nvar directAccess = false,";
 }
 
-
-
-
 // Init auth var
-$jsVar .= "\nvar auth = {};\n";
+if( isset($_COOKIE['loginApp']) ) {
+    $jsVar .= " loginApp = \"".utf8_decode(html_entity_decode($_COOKIE['loginApp']))."\",";
+} else {
+    $jsVar .= " loginApp = false,";
+}
+
+$jsVar .= " auth = {};\n";
+
 
 // Log the user in if needed
 if (!isset($_SESSION['userID']))
