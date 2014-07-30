@@ -94,7 +94,7 @@ if (isset($_REQUEST['perm'])) {
 
 // Init auth var
 if( isset($_COOKIE['loginApp']) ) {
-    $jsVar .= " loginApp = \"".utf8_decode(html_entity_decode($_COOKIE['loginApp']))."\",";
+    $jsVar .= " loginApp = \"".html_entity_decode($_COOKIE['loginApp'])."\",";
 } else {
     $jsVar .= " loginApp = false,";
 }
