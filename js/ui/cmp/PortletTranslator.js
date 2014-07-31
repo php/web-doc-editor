@@ -240,6 +240,12 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     lang             : this.lang,
     EmailPrompt      : new ui.cmp.EmailPrompt(),
+    listeners        : {
+        afterrender: function(p) {
+            p.ownerCt.setHeight(p.height + 200);
+            p.ownerCt.doLayout();
+        }
+    },
                                  
     onRowDblClick : function(grid, rowIndex)
     {

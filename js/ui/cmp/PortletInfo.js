@@ -209,7 +209,12 @@ ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
     autoHeight       : true,
     store            : ui.cmp._PortletInfo.store,
     columns          : ui.cmp._PortletInfo.gridColumns,
-
+    listeners        : {
+        afterrender: function(p) {
+            p.ownerCt.setHeight(p.height + 60);
+            p.ownerCt.doLayout();
+        }
+    },
     initComponent : function()
     {
         Ext.apply(this, {
