@@ -646,10 +646,34 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             side      : 'e',
                             animate   : true,
                             resizable : false,
-                            width     : 150,
-                            height    : 250,
+                            width     : 210,
+                            height    : 200,
                             bodyStyle : 'margin: 10px;',
-                            html      : '<div id="auth-login"><a href="?oauth=facebook" title="Facebook"><img id="auth-img-fb" src="themes/img/auth_facebook_40.png" class="" /></a> <a href="?oauth=github" title="Github"><img id="auth-img-github" src="themes/img/auth_github_40.png" class="" /></a><br/><a href="?oauth=google" title="Google"><img id="auth-img-google" src="themes/img/auth_google_40.png" /></a> <a href="?oauth=linkedin" title="Linkedin"><img id="auth-img-linkedin" src="themes/img/auth_linkedin_40.png" /></a><br/><a href="?oauth=stackoverflow" title="Stackoverflow"><img id="auth-img-stackoverflow" src="themes/img/auth_stackoverflow_40.png" /></a> <a href="?oauth=instagram" title="Instagram"><img id="auth-img-instagram" src="themes/img/auth_instagram_40.png" /></a></div>',
+                            html      : '<div id="auth-login">'+
+                                        '<a href="?oauth=facebook" title="Facebook">'+
+                                            '<img id="auth-img-fb" src="themes/img/auth_facebook_40.png" class="" />'+
+                                        '</a> '+
+                                        '<a href="?oauth=github" title="Github">'+
+                                            '<img id="auth-img-github" src="themes/img/auth_github_40.png" class="" />'+
+                                        '</a>'+
+                                        '<a href="?oauth=google" title="Google">'+
+                                            '<img id="auth-img-google" src="themes/img/auth_google_40.png" />'+
+                                        '</a> '+
+                                        '<br/>'+
+                                        '<a href="?oauth=linkedin" title="Linkedin">'+
+                                            '<img id="auth-img-linkedin" src="themes/img/auth_linkedin_40.png" />'+
+                                        '</a>'+
+                                        '<a href="?oauth=stackoverflow" title="Stackoverflow">'+
+                                            '<img id="auth-img-stackoverflow" src="themes/img/auth_stackoverflow_40.png" />'+
+                                        '</a>'+
+                                        '<a href="?oauth=instagram" title="Instagram">'+
+                                            '<img id="auth-img-instagram" src="themes/img/auth_instagram_40.png" />'+
+                                        '</a>'+
+                                        '<br/>'+
+                                        '<a href="?oauth=twitter" title="Twitter">'+
+                                            '<img id="auth-img-twitter" src="themes/img/auth_twitter_40.png" />'+
+                                        '</a>'+
+                                        '</div>',
                             listeners: {
                                     afterrender: function() {
                                         
@@ -663,6 +687,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "github" :
                                                     Ext.get('auth-img-fb').addClass('oauth-disable');
@@ -671,6 +696,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "google" :
                                                     Ext.get('auth-img-fb').addClass('oauth-disable');
@@ -679,6 +705,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "linkedin" :
                                                     Ext.get('auth-img-fb').addClass('oauth-disable');
@@ -687,6 +714,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-enable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "stackoverflow" :
                                                     Ext.get('auth-img-fb').addClass('oauth-disable');
@@ -695,6 +723,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-enable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "instagram" :
                                                     Ext.get('auth-img-fb').addClass('oauth-disable');
@@ -703,6 +732,16 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                                     Ext.get('auth-img-instagram').addClass('oauth-enable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
+                                                    break;
+                                                case "twitter" :
+                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
+                                                    Ext.get('auth-img-github').addClass('oauth-disable');
+                                                    Ext.get('auth-img-google').addClass('oauth-disable');
+                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
+                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
+                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                                    Ext.get('auth-img-twitter').addClass('oauth-enable');
                                                     break;
                                             }
                                         
@@ -713,6 +752,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                             Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                             Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
                                             Ext.get('auth-img-instagram').addClass('oauth-disable');
+                                            Ext.get('auth-img-twitter').addClass('oauth-disable');
                                         }
                                     }
                             }

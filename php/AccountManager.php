@@ -417,7 +417,8 @@ class AccountManager
                  $this->authService == 'github' ||
                  $this->authService == 'stackoverflow' ||
                  $this->authService == 'linkedin' ||
-                 $this->authService == 'instagram'
+                 $this->authService == 'instagram' ||
+                 $this->authService == 'twitter'
                  
                ) {
         

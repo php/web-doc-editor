@@ -119,6 +119,8 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
                 img = '<img src="themes/img/auth_linkedin.png" style="vertical-align: middle;"> ';
             } else if( authService == 'instagram' ) {
                 img = '<img src="themes/img/auth_instagram.png" style="vertical-align: middle;"> ';
+            } else if( authService == 'twitter' ) {
+                img = '<img src="themes/img/auth_twitter.png" style="vertical-align: middle;"> ';
             }
             
             return img + String.format(

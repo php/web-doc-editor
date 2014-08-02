@@ -1098,6 +1098,9 @@ class RepositoryFetcher
                     case 'instagram':
                         $iconUser = 'iconInstagram';
                         break;
+                    case 'twitter':
+                        $iconUser = 'iconTwitter';
+                        break;
                         
                     default:
                         $iconUser = 'iconUser';
@@ -1228,6 +1231,9 @@ class RepositoryFetcher
                         break;
                     case 'instagram':
                         $iconUser = 'iconInstagram';
+                        break;
+                    case 'twitter':
+                        $iconUser = 'iconTwitter';
                         break;
                         
                     default:

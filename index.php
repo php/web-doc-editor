@@ -277,6 +277,42 @@ if (!isset($_SESSION['userID']))
         
     }
     
+    /* twitter */
+    if( isset($_GET['oauth']) && $_GET['oauth'] == 'twitter') {
+    
+        require_once dirname(__FILE__) . '/php/oauth/twitter/twitteroauth.php';
+        
+        $_SESSION['oauth']['identService'] = 'twitter';
+        
+        $connection = new TwitterOAuth($Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientSecret']);
+        
+        $temporary_credentials = $connection->getRequestToken($Conf['GLOBAL_CONFIGURATION']['oauth.twitter.redirectURL']);
+        $redirect_url = $connection->getAuthorizeURL($temporary_credentials);
+        
+        header('Location: ' . $redirect_url);
+        exit;
+        
+    }
+
+    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'twitter' && isset($_GET['oauth_token']) ) {
+        require_once dirname(__FILE__) . '/php/oauth/twitter/twitteroauth.php';
+        
+        
+        $connection = new TwitterOAuth($Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientSecret'], $_GET['oauth_token'],$_GET['oauth_verifier']);
+        
+        $token_credentials = $connection->getAccessToken($_GET['oauth_verifier']);
+        $account = $connection->get('account/verify_credentials');
+        
+        $jsVar .= "
+        
+            auth.service   = \"".$_SESSION['oauth']['identService']."\",
+            auth.serviceID = \"".$account->id_str."\", 
+            auth.login     = \"".$account->name."\", 
+            auth.email     = \"\";
+        
+        ";
+    }
+    
     echo headerTemplate();
     echo cssLoadTemplate('js/ExtJs/resources/css/ext-all.css');
     echo cssLoadTemplate('themes/login-all.css');
