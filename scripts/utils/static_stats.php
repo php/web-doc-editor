@@ -2,18 +2,14 @@
 
 require_once dirname(__FILE__) . '/../../php/DBConnection.php';
 
-
 $nowDate = new DateTime();
 
 $year = ( isset($_GET['d']) ) ? $_GET['d'] : $nowDate->format('Y');
 
 $db = DBConnection::getInstance();
 
-
-
 $s = "select * from staticValue WHERE type='info' and YEAR(`date`)='".$year."'";
 $r = $db->query($s, array());
-
 
 $info = array(
     "nbCon"=> array(
@@ -21,7 +17,11 @@ $info = array(
         "authService" => array(
                 "VCS" => 0,
                 "google" => 0,
-                "facebook" => 0
+                "facebook" => 0,
+                "github" => 0,
+                "instagram" => 0,
+                "stackoverflow" => 0,
+                "linkedin" => 0
             )
         ),
     "byMonth"=>Array()
@@ -84,7 +84,17 @@ while( $a = $r->fetch_object()) {
 }
 
 echo "<h1 style=\"text-align: center\">Year : ".$year."</h1>";
-echo '<div id="top"><a href="?d=2010">2010</a> - <a href="?d=2011">2011</a> - <a href="?d=2012">2012</a></div>';
+echo '<div id="top">';
+
+for( $i=2010; $i <= $nowDate->format('Y'); $i++ ) {
+ 
+    echo '<a href="?d='.$i.'">'.$i.'</a>';
+    if( $i != $nowDate->format('Y') ) echo ' - ';
+}
+
+//<a href="?d=2010">2010</a> - <a href="?d=2011">2011</a> - <a href="?d=2012">2012</a>
+
+echo '</div>';
 echo "<h1>All language</h1>";
 echo "<table border=1>";
 echo "<tr>";
@@ -175,7 +185,17 @@ echo "<tr>";
 echo "</tr>";
 
 
-echo "</table>(Nb connexion per auth Service : Google => ".$info["nbCon"]["authService"]["google"]."; Facebook => ".$info["nbCon"]["authService"]["facebook"]."; VCS => ".$info["nbCon"]["authService"]["VCS"].")<br>";
+echo "</table>(Nb connexion per auth Service : 
+
+Google => ".$info["nbCon"]["authService"]["google"]."; 
+Facebook => ".$info["nbCon"]["authService"]["facebook"]."; 
+Github => ".$info["nbCon"]["authService"]["github"]."; 
+Instagram => ".$info["nbCon"]["authService"]["instagram"]."; 
+Stackoverflow => ".$info["nbCon"]["authService"]["stackoverflow"]."; 
+Linkedin => ".$info["nbCon"]["authService"]["linkedin"]."; 
+VCS => ".$info["nbCon"]["authService"]["VCS"].";
+
+)<br>";
 
 while( list($lang, $v) = each($availableLang)) {
     
