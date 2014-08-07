@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/../../php/DBConnection.php';
 
 $nowDate = new DateTime();
 
-$year = ( isset($_GET['d']) ) ? $_GET['d'] : $nowDate->format('Y');
+$year = (isset($_GET['d']) ? (integer) $_GET['d'] : $nowDate->format('Y'));
 
 $db = DBConnection::getInstance();
 
