@@ -360,6 +360,7 @@ var i18n = new Array();
   i18n["Default language, if available"] = "Langage par défaut, si disponible";
   i18n["English"] = "Anglais";
   i18n["French"] = "Français";
+  i18n["Ukraine"] = "Ukraine";
   i18n["Russian"] = "Russe";
   i18n["Spanish"] = "Espagnole";
   i18n["Black"] = "Noir";
