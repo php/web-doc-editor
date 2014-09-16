@@ -61,7 +61,7 @@ class RepositoryManager
         28 => Array('code' => 'es',    'iconCls' => 'flags flag-es',    'name' => 'Spanish'),
         29 => Array('code' => 'sv',    'iconCls' => 'flags flag-se',    'name' => 'Swedish'),
         30 => Array('code' => 'tr',    'iconCls' => 'flags flag-tr',    'name' => 'Turkish'),
-        31 => Array('code' => 'uk',    'iconCls' => 'flags flag-uk',    'name' => 'Ukraine')
+        31 => Array('code' => 'uk',    'iconCls' => 'flags flag-uk',    'name' => 'Ukrainian')
     );
 
     public $existingLanguage = array();
