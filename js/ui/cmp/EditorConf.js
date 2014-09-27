@@ -111,8 +111,8 @@ ui.cmp._EditorConf.uiLangStore = new Ext.data.SimpleStore({
         ['fr',      _('French')],
         ['ru',      _('Russian')],
         ['es',      _('Spanish')],
-	      ['ar',      _('Arabic')],
-	      ['uk',      _('Ukrainian')]
+        ['ar',      _('Arabic')],
+        ['uk',      _('Ukrainian')]
     ]
 });
 
