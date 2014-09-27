@@ -334,6 +334,7 @@ var i18n = new Array();
   i18n["English"] = "Английский";
   i18n["French"] = "Французский";
   i18n["Russian"] = "Русский";
+  i18n["Ukrainian"] = "Украинский";
   i18n["Spanish"] = "Испанский";
   i18n["Black"] = "Черный";
   i18n["Default"] = "По умолчанию";
