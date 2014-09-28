@@ -127,8 +127,8 @@ if (!isset($_SESSION['userID']))
         
         $jsVar .= "
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$access_token->user->id."\", 
-            auth.login     = \"".$access_token->user->full_name."\", 
+            auth.serviceID = \"".htmlspecialchars($access_token->user->id)."\", 
+            auth.login     = \"".htmlspecialchars($access_token->user->full_name)."\", 
             auth.email     = \"\";
         
         ";
@@ -154,9 +154,9 @@ if (!isset($_SESSION['userID']))
         
         $jsVar .= "
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$user->id."\", 
-            auth.login     = \"".$user->name."\", 
-            auth.email     = \"".$user->email."\";
+            auth.serviceID = \"".htmlspecialchars($user->id)."\", 
+            auth.login     = \"".htmlspecialchars($user->name)."\", 
+            auth.email     = \"".htmlspecialchars($user->email)."\";
         
         ";
         
@@ -183,8 +183,8 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$user->items[0]->user_id."\", 
-            auth.login     = \"".utf8_encode(html_entity_decode($user->items[0]->display_name))."\", 
+            auth.serviceID = \"".htmlspecialchars($user->items[0]->user_id)."\", 
+            auth.login     = \"".htmlspecialchars(utf8_encode(html_entity_decode($user->items[0]->display_name)))."\", 
             auth.email     = \"\";
         
         ";
@@ -211,9 +211,9 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$user->id."\", 
-            auth.login     = \"".$user->name."\", 
-            auth.email     = \"".$user->email."\";
+            auth.serviceID = \"".htmlspecialchars($user->id)."\", 
+            auth.login     = \"".htmlspecialchars($user->name)."\", 
+            auth.email     = \"".htmlspecialchars($user->email)."\";
         
         ";
         
@@ -240,9 +240,9 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$user->id."\", 
-            auth.login     = \"".$user->displayName."\", 
-            auth.email     = \"".$user->emails[0]->value."\";
+            auth.serviceID = \"".htmlspecialchars($user->id)."\", 
+            auth.login     = \"".htmlspecialchars($user->displayName)."\", 
+            auth.email     = \"".htmlspecialchars($user->emails[0]->value)."\";
         
         ";
         
@@ -269,9 +269,9 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".md5($user['profil'])."\", 
-            auth.login     = \"".$user['profil']."\", 
-            auth.email     = \"".$user['email']."\";
+            auth.serviceID = \"".htmlspecialchars(md5($user['profil']))."\", 
+            auth.login     = \"".htmlspecialchars($user['profil'])."\", 
+            auth.email     = \"".htmlspecialchars($user['email'])."\";
         
         ";
         
@@ -306,8 +306,8 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".$account->id_str."\", 
-            auth.login     = \"".$account->name."\", 
+            auth.serviceID = \"".htmlspecialchars($account->id_str)."\", 
+            auth.login     = \"".htmlspecialchars($account->name)."\", 
             auth.email     = \"\";
         
         ";
