@@ -135,11 +135,12 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletInfo.js
-  i18n["Information"] = "Інформація";
-  i18n["General"] = "Основне";
-  i18n["Usage information"] = "Інформація використання редактора";
+  i18n["Information"] = "Статистика активності";
+  i18n["General"] = "Журнал підключень";
+  i18n["Usage information"] = "Загальна статистика активності";
   i18n["Month:"] = "Місяць:";
-  i18n["Nb. connexion:"] = "№ підключення:";
+  i18n["Nb. connexion:"] = "Кількість підключень:";
+  i18n["Nb. commit:"] = "Кількість комітів:";
   i18n["Since"] = "З";
   i18n["{0} year(s)"] = "{0} років";
   i18n["{0} month(s)"] = "{0} місяців";
@@ -299,7 +300,7 @@ var i18n = new Array();
   i18n["Diff for patch: {0}"] = "Відмінності (diff) для патча: {0}";
   i18n["Patch Name: "] = "Ім'я патча: ";
   i18n["Documentation page not available"] = "Сторінка Документації не доступна";
-  i18n["Nb lines of contexte: "] = "Номер ліній контекста: ";
+  i18n["Nb lines of contexte: "] = "Число ліній контекста: ";
   i18n["Ignore changes in the amount of white space"] = "Ігнорувати зміни, що стосуються кількості пробілів";
   i18n["Option <b>b</b> for the diff command"] = "Параметр <b>b</b> для команди diff";
   i18n["Ignore all white space"] = "Ігнорувати всі пробіли";
@@ -764,3 +765,4 @@ var i18n = new Array();
   i18n["Put into this patch:"] = "Покласти в цей патч:";
   i18n["Delete this change"] = "Видалити цю зміну";
   i18n["Modified file"] = "Змінений файл";
+  
