@@ -12,6 +12,7 @@ var i18n = new Array();
   i18n["File system error. Check read/write permissions under data folder."] = "Помилка файлової системи. Перевірте права на читання/запис для каталога data.";
   i18n["Main menu"] = "Головне меню";
   i18n["Topic:"] = "Тема:";
+  i18n["{0} Topic:"] = "{0} Тема:";
   i18n["Defined by {0}, {1}"] = "Встановив {0}, {1}";
   i18n["Files need translate"] = "Файли, які потребують перекладу";
   i18n["Files need update"] = "Файли, які потребують оновлення";
@@ -84,6 +85,7 @@ var i18n = new Array();
   i18n["You have no patch currently. You must create one."] = "У вас поки що немає патчів. Потрібно створити.";
   i18n["Diff for file: {0}"] = "Відмінності для файла: {0}";
   i18n["Administrator menu"] = "Меню адміністратора";
+  i18n["There is some file unsaved. Please, save it before start a commit."] = "Існують незбережені файли. Будь-ласка, збережіть їх перед початком коміту";
 
   
 // In file: ../../js/ui/component/PatchesTreeGrid.js
@@ -134,6 +136,10 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/PortletInfo.js
   i18n["Information"] = "Інформація";
+  i18n["General"] = "Основне";
+  i18n["Usage information"] = "Інформація використання редактора";
+  i18n["Month:"] = "Місяць:";
+  i18n["Nb. connexion:"] = "№ підключення:";
   i18n["Since"] = "З";
   i18n["{0} year(s)"] = "{0} років";
   i18n["{0} month(s)"] = "{0} місяців";
@@ -150,6 +156,7 @@ var i18n = new Array();
   i18n["{0} committed {1} new folder(s) in the {2} language"] = "{2} | {0} закомітив {1} нових папок в модулі мови {2}";
   i18n["{0} committed {1} file(s) ({2} new, {3} update, {4} delete) in the language {5}"] = "{5} | {0} закомітив {1} файлів (створено: {2}, оновлено: {3}, видалено: {4}) в модулі мови {5}";
   i18n["{0} changed file\'s owner"] = "{0} змінив власника файла";
+  i18n["Usage statistics were calculated"] = "Статистику використання редактора було перераховано";
 
 
 // In file: ../../js/ui/component/ErrorFileGrid.js
@@ -176,6 +183,20 @@ var i18n = new Array();
   i18n["Lang:"] = "Мова:";
   i18n["Total:"] = "Всього:";
   i18n["files"] = "файлів";
+  i18n["Bulgarian"] = "Болгарська";
+  i18n["German"] = "Німецька";
+  i18n["Persian"] = "Перська";
+  i18n["Hungarian"] = "Угорська";
+  i18n["Italian"] = "Італійська";
+  i18n["Japanese"] = "Японська";
+  i18n["Korean"] = "Корейська";
+  i18n["Polish"] = "Польська";
+  i18n["Brazilian Portuguese"] = "Бразильська Португальська";
+  i18n["Romanian"] = "Румунська";
+  i18n["Serbian"] = "Сербська";
+  i18n["Turkish"] = "Турецька";
+  i18n["Ukrainian"] = "Українська";
+  i18n["Chinese (Simplified)"] = "Китайська (Спрощена)";
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
@@ -277,6 +298,13 @@ var i18n = new Array();
   i18n["Direct link to this patch"] = "Прямий лінк на цей патч";
   i18n["Diff for patch: {0}"] = "Відмінності (diff) для патча: {0}";
   i18n["Patch Name: "] = "Ім'я патча: ";
+  i18n["Documentation page not available"] = "Сторінка Документації не доступна";
+  i18n["Nb lines of contexte: "] = "Номер ліній контекста: ";
+  i18n["Ignore changes in the amount of white space"] = "Ігнорувати зміни, що стосуються кількості пробілів";
+  i18n["Option <b>b</b> for the diff command"] = "Параметр <b>b</b> для команди diff";
+  i18n["Ignore all white space"] = "Ігнорувати всі пробіли";
+  i18n["Option <b>w</b> for the diff command"] = "Параметр <b>w</b> для команди diff";
+  i18n["Display the preview panel"]= "Показати попередню панель";
 
 
 // In file: ../../js/ui/component/FilePanel.js
@@ -297,8 +325,9 @@ var i18n = new Array();
   i18n["Examples section"] = "Розділ \"Examples\"";
   i18n["Notes section"] = "Розділ \"Notes\"";
   i18n["SeeAlso section"] = "Розділ \"SeeAlso\"";
+  i18n["Enable line wrapping"] = "Дозволити перенесення рядка";
   i18n["<b>Enable / Disable</b> spellChecking"] = "<b>Розблокувати / Заблокувати</b>  перевірку орфографії";
-  i18n["<b>Re-indent</b> all this file"] = "<b>Переформатувати</b> цей файл";
+  i18n["Re-indent all this file"] = "Переформатувати цей файл";
   i18n["Synchronize scroll bars"] = "Синхронізувати полоси прокрутки";
   i18n["Line: "] = "Рядок: ";
   i18n["Col: "] = "Колонка: ";
@@ -456,6 +485,7 @@ var i18n = new Array();
   i18n["Documentation"] = "Документація";
   i18n["About"] = "Про програму";
   i18n["Chat with us on IRC !"] = "Заходьте до нас в IRC-чат!";
+  i18n["Help"] = "Допомога";
 
 
 // In file: ../../js/ui/component/VCSLogGrid.js
@@ -533,6 +563,7 @@ var i18n = new Array();
   i18n["Mode Xmlpure by Dror Ben-Gai"] = "Модифікація Xmlpure від Dror Ben-Gai";
 //  i18n["Web IRC Chat"] = "Web IRC чат";
   i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit за те, що надали їхній IRC Premium віджет";
+  i18n["Getting started with this editor:"] = "Приступати до роботи з цього редактора:";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
@@ -572,6 +603,16 @@ var i18n = new Array();
   i18n["check in progress..."] = "Відбувається перевірка...";
   i18n["Connection lost"] = "Зв'язок втрачено";
   i18n["Retrying in {0} second(s)."] = "Повторне підключення через {0} секунд.";
+  i18n["Update in progress"] = "Зараз відбувається оновлення";
+  i18n["There is a global update in progress.<br/>Please, wait...<br/><br/><em>This window will close automatically at the end of the process</em>"] = "Зараз відбувається глобальне оновлення<br/>Будь-ласка, зачекайте...<br/><br/><em>Це вікно буде закрито автоматично після завершення процесу</em>";
+  i18n["1/8 - VCS update"] = "1/8 - Оновлення сховища VCS";
+  i18n["2/8 - Cleaning the database"] = "2/8 - Очищення бази даних";
+  i18n["3/8 - Apply the revcheck"] = "3/8 - Задіяно перевірку ревізій";
+  i18n["4/8 - Check for errors"] = "4/8 - Перевірка на помилки";
+  i18n["5/8 - Searching for files who are not in EN"] = "5/8 - Пошук файлів, які не представлені в EN";
+  i18n["6/8 - Update translators info"] = "6/8 - Оновлення інформації про перекладачів";
+  i18n["7/8 - Compute all statistics"] = "7/8 - Перерахунок всієї статистики";
+  i18n["8/8 - Generate statics revcheck\'s pages"] = "8/8 - Генерація статистики сторінок з перевіркою ревізій";
 
 
 // In file: ../../js/ui/task/UpdateSingleFolderTask.js
@@ -626,6 +667,9 @@ var i18n = new Array();
   i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "Файл було змінено {0} (анонімним користувачем), але ви можете змінювати його, оскільки ви авторизований користувач.";
   i18n["File modified by {0}."] = "Файл було змінено {0}.";
 
+// In file: ../../js/ui/task/MoveToPatch.js
+  i18n["Error. Is this file(s) is(are) own by you ?"] = "Помилка. Цей файл належить вам?";
+  i18n["Patches unknow for this project or for this user"] = "Невідомий патч для цього проекта або для цього користувача.";
 
 // In file: ../../js/ui/task/UpdateConfTask.js
   i18n["Option saved"] = "Опцію збережено";
@@ -705,6 +749,18 @@ var i18n = new Array();
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "Ця діє закриє файл та скасує локальні зміни. Файл буде повернено до попереднього стану, в якому він перебуває на VCS-сервері.";
   i18n["Validate this patch"] = "Взяти цей патч на перевірку";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Ця дія змінить власника редагувань та зареєструє їх під вашим іменем. Файл з'явиться під вашим іменем та ви зможете закомітити його.";
+  i18n["Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?"] = "Відхиливши цей патч, ви видалите відповідні зміни.<br>Ви впевнені, що хочете зробити це?";
 
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Проглянути";
+
+// In file: ../../js/ux/codemirror2/lib/util/search.js
+  i18n["Search"] = "Пошук";
+  i18n["Use /re/ syntax for regexp search"] = "Використовуйте синтаксис /re/ для пошуку по регулярними виразам";
+    
+// In file: ../../js/ui/cmp/DirectActionWin.js
+  i18n["Live action"] = "Пряма дія";
+  i18n["This live action didn't exist"] = "Такої прямої дії не існує";
+  i18n["Put into this patch:"] = "Покласти в цей патч:";
+  i18n["Delete this change"] = "Видалити цю зміну";
+  i18n["Modified file"] = "Змінений файл";
