@@ -16,7 +16,9 @@ function debug($mess)
     $mess = '['.@date('d/m/Y H:i:s').'] by '
             .$am->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
 
-    $fp = fopen($appConf[$project]['vcs.path'].'../.debug', 'a+');
+    $debugURI = ( isset($appConf[$project]) ) ? $appConf[$project]['vcs.path'].'../.debug' : $appConf['GLOBAL_CONFIGURATION']['data.path'].'/.debug';
+            
+    $fp = fopen($debugURI, 'a+');
     fwrite($fp, $mess);
     fclose($fp);
 }
