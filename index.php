@@ -5,6 +5,7 @@ session_start();
 require_once dirname(__FILE__) . '/php/html.templates.php';
 require_once dirname(__FILE__) . '/php/Conf.php';
 require_once dirname(__FILE__) . '/php/oauth.php';
+require_once dirname(__FILE__) . '/php/utility.php';
 
 // Perm link management
 if (isset($_REQUEST['perm'])) {
@@ -236,7 +237,7 @@ if (!isset($_SESSION['userID']))
         $access_token = $google->RequestToken($_GET['code']);
         
         $user = $google->getUserInfo($access_token);
-        
+        debug(json_encode($user));
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
