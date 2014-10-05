@@ -237,12 +237,14 @@ if (!isset($_SESSION['userID']))
         $access_token = $google->RequestToken($_GET['code']);
         
         $user = $google->getUserInfo($access_token);
-        debug(json_encode($user));
+        
+        $displayName = ( trim($user->displayName) == "" ) ? $user->emails[0]->value : $user->displayName;
+        
         $jsVar .= "
         
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
             auth.serviceID = \"".htmlspecialchars($user->id)."\", 
-            auth.login     = \"".htmlspecialchars($user->displayName)."\", 
+            auth.login     = \"".htmlspecialchars($displayName)."\", 
             auth.email     = \"".htmlspecialchars($user->emails[0]->value)."\";
         
         ";
