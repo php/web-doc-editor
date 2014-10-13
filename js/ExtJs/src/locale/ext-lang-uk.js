@@ -242,7 +242,7 @@ if(Ext.grid.GridView){
       sortDescText : "Сортувати по спаданню",
       lockText     : "Закріпити стовпець",
       unlockText   : "Відкріпити стовпець",
-      columnsText  : "Стовпці"
+      columnsText  : "Колонки"
    });
 }
 

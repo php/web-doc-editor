@@ -141,7 +141,7 @@ var i18n = new Array();
   i18n["Month:"] = "Місяць:";
   i18n["Nb. connexion:"] = "Кількість підключень:";
   i18n["Nb. commit:"] = "Кількість комітів:";
-  i18n["Since"] = "З";
+  i18n["Since"] = "Коли";
   i18n["{0} year(s)"] = "{0} років";
   i18n["{0} month(s)"] = "{0} місяців";
   i18n["{0} week(s)"] = "{0} неділь";
@@ -177,6 +177,14 @@ var i18n = new Array();
   i18n["en File: "] = "Англійський файл: ";
   i18n["Filter: "] = "Фільтр: ";
   i18n["Your filter must contain at least 3 characters"] = "Ваш фільтр повинен містити більше 3 символів";
+  // сам додав
+  i18n["Check for errors in {0}"] = "Перевірка помилок в {0}";
+  i18n["Throw if the number of <b>{0}</b> tags is different in the english version."] = "Видається, якщо число тегів <b>{0}</b> відрізняється від англійської версії.";
+  i18n["Throw if the value of the attribute <b>{0}</b> is different in the english version."] = "Видається, якщо значення атрибуту <b>{0}</b> відрізняється від англійської версії.";
+  i18n["Throw if there is a space or a period at the end of refpurpose value."] = "Видається, якщо значення всередині блоку тегів <b>refpurpose</b> має в кінці пробіл або крапку.";
+  i18n["value in En : {1}"] = "значення в англійській версії : {1}";
+  i18n["value in Uk : {1}"] = "значення в українській версії : {1}";
+  i18n["uk File: "] = "Український файл: ";
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
@@ -277,7 +285,7 @@ var i18n = new Array();
   i18n["Update all files from VCS"] = "Оновити всі файли з VCS";
   i18n["This may take time. Thank you for your patience..."] = "Це може зайняти деякий час. Дякуємо за терпіння...";
   i18n["Apply all tools"] = "Застосувати всі інструменти";
-  i18n["Reload data"] = "Перезавантажити дані";
+  i18n["Reload data"] = "Оновити дані";
   i18n["Start"] = "Почати";
   i18n["update in progress..."] = "оновлення в прогресі...";
 
@@ -339,8 +347,8 @@ var i18n = new Array();
   i18n["<b>Save as</b> a patch"] = "<b>Зберегти як</b> патч";
   i18n["modified"] = "змінено";
   i18n["<b>Check</b> XML with XmlLint"] = "<b>Перевірити</b> XML за допомогою XmlLint";
-  i18n["<b>Expand</b> in a popup"] = "<b>Розкрити</b> в спливаючому вікні";
-  i18n["<b>Preview</b> in a popup"] = "<b>Проглянути</b> в спливаючому вікні";
+  i18n["<b>Expand</b> in a popup"] = "<b>Розгорнути</b> в окремому вікні";
+  i18n["<b>Preview</b> in a popup"] = "<b>Проглянути</b> в окремому вікні";
   i18n["You must save your file in order to preview the result."] = "Необхідно зберегти файл, щоб можна було оглянути попередній результат.";
   i18n["Open for editing in a new Tab"] = "Відкрити для редагування в новій вкладці";
   i18n["Editor option"] = "Опції редактора";
@@ -377,7 +385,7 @@ var i18n = new Array();
   i18n["Gray"] = "Сірий";
   i18n["Gray Extend"] = "Сірий розширений";
   i18n["Indigo"] = "Індіго";
-  i18n["Midnight"] = "Північ";
+  i18n["Midnight"] = "Опівночі";
   i18n["Olive"] = "Олива";
   i18n["Purple"] = "Фіолетовий";
   i18n["SilverCherry"] = "Срібна Вишня";
@@ -393,7 +401,7 @@ var i18n = new Array();
   i18n["External Data"] = "Зовнішні Дані";
   i18n["About mails"] = "Про пошту";
   i18n["Load mail at startUp"] = "Завантажувати пошту при старті";
-  i18n["About bugs"] = "Про баги";
+  i18n["About bugs"] = "Про неполадки";
   i18n["Load bugs at startUp"] = "Завантажувати баги при старті";
   i18n["Menu"] = "Меню";
   i18n["Nb files to display"] = "Немає файлів для відображення";
@@ -481,7 +489,7 @@ var i18n = new Array();
   i18n["Thank you for using this application !"] = "Дякуємо, що користуєтесь цим застосунком!";
   i18n["Log out"] = "Вийти";
   i18n["Are you sure you want to logout?"] = "Ви дійсно хочете вийти?";
-  i18n["Report bugs"] = "Повідомити про баги";
+  i18n["Report bugs"] = "Повідомити про неполадки";
   i18n["Documentation"] = "Документація";
   i18n["About"] = "Про програму";
   i18n["Chat with us on IRC !"] = "Заходьте до нас в IRC-чат!";
@@ -531,15 +539,15 @@ var i18n = new Array();
   i18n["Total"] = "Всього";
   i18n["File status type"] = "Тип статуса файлів";
   i18n["Number of files"] = "Кількість файлів";
-  i18n["Percent of files"] = "% файлів";
+  i18n["Percent of files"] = "% від файлів";
   i18n["Size of files (kB)"] = "Розмір файлів (kB)";
-  i18n["Percent of size"] = "% розмір";
+  i18n["Percent of size"] = "% від розміру";
 
 
 // In file: ../../js/ui/component/PortletLocalMail.js
   i18n["Title"] = "Назва";
   i18n["Error when loading mails from this mailing list !"] = "Сталась помилка при завантаженні листів з цього списку розсилки!";
-  i18n["Mail from {0}"] = "Пошта від {0}";
+  i18n["Mail from {0}"] = "Пошта для {0}";
 
 
 // In file: ../../js/ui/component/CheckBuildPrompt.js
@@ -558,12 +566,12 @@ var i18n = new Array();
   i18n["Icon pack"] = "Набір іконок";
   i18n["License"] = "Ліцензія";
   i18n["Help and support"] = "Підтримка";
-  i18n["Mailing list:"] = "Список розсилки:";
+  i18n["Mailing list:"] = "Список розсилки: ";
   i18n["IRC:"] = "IRC: ";
   i18n["Mode Xmlpure by Dror Ben-Gai"] = "Модифікація Xmlpure від Dror Ben-Gai";
 //  i18n["Web IRC Chat"] = "Web IRC чат";
   i18n["Mibbit for donating their Premium IRC widget"] = "Mibbit за те, що надали їхній IRC Premium віджет";
-  i18n["Getting started with this editor:"] = "Приступати до роботи з цього редактора:";
+  i18n["Getting started with this editor:"] = "Приступати до роботи з цього редактора: ";
 
 
 // In file: ../../js/ui/component/NotInENGrid.js
@@ -707,16 +715,16 @@ var i18n = new Array();
 
 
 // In file: ../../ux/others/main_specific/Ext.ux.UserNotes.js
-  i18n["Notes (<b>{0}</b>)"] = "Зауваження (<b>{0}</b>)";
-  i18n["Add a new note"] = "Додати нове зауваження";
+  i18n["Notes (<b>{0}</b>)"] = "Замітка (<b>{0}</b>)";
+  i18n["Add a new note"] = "Додати нове замітка";
   i18n["Add"] = "Додати";
-  i18n["Delete this note"] = "Видалити це зауваження";
-  i18n["No user notes"] = "Відсутні замітки, залишені користувачами";
-  i18n["Right click to add a new note"] = "Клікніть правою кнопкою миші, щоб додати нове зауваження";
-  i18n["Note added"] = "Зауваження додано";
-  i18n["The note was added successfully !"] = "Зауваження було успішно додано!";
-  i18n["Note deleted"] = "Зауваження видалено";
-  i18n["The note was deleted successfully !"] = "Зауваження було успішно видалено!";
+  i18n["Delete this note"] = "Видалити це замітка";
+  i18n["No user notes"] = "Покищо користувачі не залишили зауважень";
+  i18n["Right click to add a new note"] = "Клікніть правою кнопкою миші, щоб додати нове замітка";
+  i18n["Note added"] = "Замітка додано";
+  i18n["The note was added successfully !"] = "Замітка було успішно додано!";
+  i18n["Note deleted"] = "Замітка видалено";
+  i18n["The note was deleted successfully !"] = "Замітка було успішно видалено!";
   
   
 // In file: ../../js/ui/task/CheckXml.js
