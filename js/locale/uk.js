@@ -367,11 +367,10 @@ var i18n = new Array();
   i18n["Module \"Files need reviewed\""] = "Модуль \"Файли, які потрібно оглянути\"";
   i18n["Force an UI language"] = "Переключити мову інтерфейса";
   i18n["Default language, if available"] = "Мова за промовчанням, якщо доступна";
-  i18n["English"] = "Англійський";
+  i18n["English"] = "Англійська";
   i18n["Ukrainian"] = "Українська";
-  i18n["French"] = "Французський";
-//  i18n["Russian"] = "Русский"; =)
-  i18n["Spanish"] = "Іспанський";
+  i18n["French"] = "Французська";
+  i18n["Spanish"] = "Іспанська";
   i18n["Black"] = "Чорний";
   i18n["Default"] = "За промовчанням";
   i18n["DarkGray"] = "Темносірий";
