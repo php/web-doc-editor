@@ -130,7 +130,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationGraph.js
-  i18n["Graphics"] = "Графіки";
+  i18n["Graphics"] = "Графік стану перекладу для поточної мови у % від кількості файлів";
   i18n["Refresh this graph"] = "Оновити цей графік";
 
 
@@ -142,13 +142,13 @@ var i18n = new Array();
   i18n["Nb. connexion:"] = "Кількість підключень:";
   i18n["Nb. commit:"] = "Кількість комітів:";
   i18n["Since"] = "Коли";
-  i18n["{0} year(s)"] = "{0} років";
-  i18n["{0} month(s)"] = "{0} місяців";
-  i18n["{0} week(s)"] = "{0} неділь";
-  i18n["{0} day(s)"] = "{0} днів";
-  i18n["{0} hour(s)"] = "{0} годин";
-  i18n["{0} minute(s)"] = "{0} хвилин";
-  i18n["{0} second(s)"] = "{0} секунд";
+  i18n["{0} year(s)"] = "{0} рок.";
+  i18n["{0} month(s)"] = "{0} міс.";
+  i18n["{0} week(s)"] = "{0} нед.";
+  i18n["{0} day(s)"] = "{0} дн.";
+  i18n["{0} hour(s)"] = "{0} год.";
+  i18n["{0} minute(s)"] = "{0} хв.";
+  i18n["{0} second(s)"] = "{0} сек.";
   i18n["Less than one second"] = "Менше секунди назад";
   i18n["{0} check all entitites"] = "{0} перевірити всі сутності";
   i18n["{0} updated app's data"] = "{0} оновлено дані застосунку";
@@ -188,7 +188,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
-  i18n["Graphics for all languages"] = "Графіки для всіх мов";
+  i18n["Graphics for all languages"] = "Графік стану перекладу для всіх мов";
   i18n["Lang:"] = "Мова:";
   i18n["Total:"] = "Всього:";
   i18n["files"] = "файлів";
@@ -257,14 +257,14 @@ var i18n = new Array();
   i18n["{0} Reviewers"] = "{0} Оглядачів";
   i18n["No reviewer"] = "Немає оглядачів";
   i18n["Name"] = "Ім'я";
-  i18n["Email"] = "Email";
+  i18n["Email"] = "Адреса";
   i18n["Nick"] = "Нік";
   i18n["VCS"] = "VCS";
   i18n["UptoDate"] = "Оновлено";
   i18n["Stale"] = "Застаріло";
   i18n["Sum"] = "Всього";
-  i18n["Send an email to the {0}"] = "Відправити email {0}";
-  i18n["Send an email to {0}"] = "Відправити email {0}";
+  i18n["Send an email to the {0}"] = "Відправити лист {0}";
+  i18n["Send an email to {0}"] = "Відправити лист {0}";
   i18n["Translators"] = "Перекладачі";
   i18n["Reviewers"] = "Оглядачі";
   i18n["Must be reviewed"] = "Необхідний огляд";
@@ -273,8 +273,8 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/BuildStatus.js
-  i18n["Last failed build for {0}"] = "Остання невдала побудова для {0}";
-  i18n["Last failed build for the documentation {0}"] = "Остання невдала побудова для документації {0}";
+  i18n["Last failed build for {0}"] = "Остання невдала збірка для {0}";
+  i18n["Last failed build for the documentation {0}"] = "Остання невдала збірка для документації {0}";
   i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Це повідомлення журнала надто велике та буде скорочено. Використовуйте наступну кнопку для завантаження повної версії вмісту.";
   i18n["Download the full content of this log"] = "Скачати повну версію вмісту цього повідомлення";
   i18n["Language"] = "Мова";
@@ -295,9 +295,9 @@ var i18n = new Array();
   i18n["Open in a new Tab"] = "Відкрити в новій вкладці";
   i18n["Open the related file"] = "Відкрити відповідний файл";
   i18n["Summary"] = "Підсумок";
-  i18n["Error when loading open bugs from Php.net !"] = "Сталась помилка при завантаженні відкритих багів з php.net!";
-  i18n["No open bugs"] = "Немає відкритих багів";
-  i18n["Open bugs for {0}"] = "Відкриті баги для {0}";
+  i18n["Error when loading open bugs from Php.net !"] = "Сталась помилка при завантаженні відкритих неполадок з php.net!";
+  i18n["No open bugs"] = "Немає відкритих неполадок";
+  i18n["Open bugs for {0}"] = "Відкриті неполадки для {0}";
 
 
 // In file: ../../js/ui/component/MainPanel.js
@@ -402,7 +402,7 @@ var i18n = new Array();
   i18n["About mails"] = "Про пошту";
   i18n["Load mail at startUp"] = "Завантажувати пошту при старті";
   i18n["About bugs"] = "Про неполадки";
-  i18n["Load bugs at startUp"] = "Завантажувати баги при старті";
+  i18n["Load bugs at startUp"] = "Завантажувати звіти про неполадки при старті";
   i18n["Menu"] = "Меню";
   i18n["Nb files to display"] = "Немає файлів для відображення";
   i18n["files to display"] = "файлів для відображення";
@@ -450,7 +450,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/EmailPrompt.js
-  i18n["Send an email"] = "Відправити лист";
+  i18n["Send an email"] = "Написати лист";
   i18n["Send"] = "Відправити";
   i18n["Status"] = "Статус";
   i18n["Email sent to {0} with success!"] = "Лист було успішно відправлено {0}!";
@@ -470,8 +470,8 @@ var i18n = new Array();
   i18n["Build tools"] = "Інструменти збірки";
   i18n["Check build"] = "Перевірити збірку";
   i18n["Verify if there is a check in progress. Please, wait..."] = "Перевіряємо, чи перевірка вже в прогресі. Будь-ласка, очікуйте...";
-  i18n["Show last failed build"] = "Показати останню невдалу побудову.";
-  i18n["Last failed build"] = "Остання невдала побудова";
+  i18n["Show last failed build"] = "Показати останню невдалу збірку.";
+  i18n["Last failed build"] = "Остання невдала збірка";
   i18n["EN tools"] = "EN інструменти";
   i18n["Script check entities"] = "Скрипт перевірки сутностей";
   i18n["View the last result"] = "Проглянути останні результати";
@@ -539,9 +539,9 @@ var i18n = new Array();
   i18n["Total"] = "Всього";
   i18n["File status type"] = "Тип статуса файлів";
   i18n["Number of files"] = "Кількість файлів";
-  i18n["Percent of files"] = "% від файлів";
+  i18n["Percent of files"] = "% від кількості файлів";
   i18n["Size of files (kB)"] = "Розмір файлів (kB)";
-  i18n["Percent of size"] = "% від розміру";
+  i18n["Percent of size"] = "% від розміру файлів";
 
 
 // In file: ../../js/ui/component/PortletLocalMail.js
