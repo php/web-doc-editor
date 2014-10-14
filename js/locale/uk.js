@@ -179,11 +179,11 @@ var i18n = new Array();
   i18n["Your filter must contain at least 3 characters"] = "Ваш фільтр повинен містити більше 3 символів";
   // сам додав
   i18n["Check for errors in {0}"] = "Перевірка помилок в {0}";
-  i18n["Throw if the number of <b>{0}</b> tags is different in the english version."] = "Видається, якщо число тегів <b>{0}</b> відрізняється від англійської версії.";
-  i18n["Throw if the value of the attribute <b>{0}</b> is different in the english version."] = "Видається, якщо значення атрибуту <b>{0}</b> відрізняється від англійської версії.";
+  i18n["Throw if the number of <b>Para</b> tags is different in the english version."] = "Видається, якщо число тегів <b>Para</b> відрізняється від англійської версії.";
+  i18n["Throw if the value of the attribute <b>linkend</b> is different in the english version."] = "Видається, якщо значення атрибуту <b>linkend</b> відрізняється від англійської версії.";
   i18n["Throw if there is a space or a period at the end of refpurpose value."] = "Видається, якщо значення всередині блоку тегів <b>refpurpose</b> має в кінці пробіл або крапку.";
-  i18n["value in En : {1}"] = "значення в англійській версії : {1}";
-  i18n["value in Uk : {1}"] = "значення в українській версії : {1}";
+  i18n["value in En : {0}"] = "значення в англійській версії : {0}";
+  i18n["value in Uk : {0}"] = "значення в українській версії : {0}";
   i18n["uk File: "] = "Український файл: ";
 
 
@@ -219,7 +219,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/RepositoryTree.js
-  i18n["Repository"] = "Репозиторій";
+  i18n["Repository"] = "Сховище";
   i18n["Collapse"] = "Згорнути";
   i18n["Expand"] = "Розгорнути";
   i18n["Open the same file in <b>{0}</b>"] = "Відкрити відповідний файл в <b>{0}</b>";
@@ -716,15 +716,15 @@ var i18n = new Array();
 
 // In file: ../../ux/others/main_specific/Ext.ux.UserNotes.js
   i18n["Notes (<b>{0}</b>)"] = "Замітка (<b>{0}</b>)";
-  i18n["Add a new note"] = "Додати нове замітка";
+  i18n["Add a new note"] = "Додати нову замітку";
   i18n["Add"] = "Додати";
-  i18n["Delete this note"] = "Видалити це замітка";
-  i18n["No user notes"] = "Покищо користувачі не залишили зауважень";
-  i18n["Right click to add a new note"] = "Клікніть правою кнопкою миші, щоб додати нове замітка";
-  i18n["Note added"] = "Замітка додано";
-  i18n["The note was added successfully !"] = "Замітка було успішно додано!";
-  i18n["Note deleted"] = "Замітка видалено";
-  i18n["The note was deleted successfully !"] = "Замітка було успішно видалено!";
+  i18n["Delete this note"] = "Видалити цю замітку";
+  i18n["No user notes"] = "Покищо користувачі не залишили заміток";
+  i18n["Right click to add a new note"] = "Клікніть правою кнопкою миші, щоб додати нову замітку";
+  i18n["Note added"] = "Замітку додано";
+  i18n["The note was added successfully !"] = "Замітку було успішно додано!";
+  i18n["Note deleted"] = "Замітку видалено";
+  i18n["The note was deleted successfully !"] = "Замітку було успішно видалено!";
   
   
 // In file: ../../js/ui/task/CheckXml.js
