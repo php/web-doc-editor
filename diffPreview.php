@@ -34,7 +34,7 @@
   ?>
   
   
-    <p class="msg"><?php echo $msg; ?></p>
+    <p class="msg"><?php echo htmlspecialchars($msg); ?></p>
   </body>
   
 </html>

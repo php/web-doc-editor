@@ -64,7 +64,7 @@ Date.dayNames = [
 if(Ext.MessageBox){
    Ext.MessageBox.buttonText = {
       ok     : "OK",
-      cancel : "Відміна",
+      cancel : "Скасувати",
       yes    : "Так",
       no     : "Ні"
    };
@@ -87,13 +87,13 @@ if(Ext.DatePicker){
       disabledDatesText : "",
       monthNames        : Date.monthNames,
       dayNames          : Date.dayNames,
-      nextText          : 'Наступний місяць (Control+Вправо)',
-      prevText          : 'Попередній місяць (Control+Вліво)',
-      monthYearText     : 'Вибір місяця (Control+Вверх/Вниз для вибору року)',
+      nextText          : 'Наступний місяць (Ctrl+Вправо)',
+      prevText          : 'Попередній місяць (Ctrl+Вліво)',
+      monthYearText     : 'Вибір місяця (Ctrl+Вверх/Вниз для вибору року)',
       todayTip          : "{0} (Пробіл)",
       format            : "d.m.y",
       okText            : "&#160;OK&#160;",
-      cancelText        : "Відміна",
+      cancelText        : "Скасувати",
       startDay          : 1
    });
 }
@@ -107,8 +107,8 @@ if(Ext.PagingToolbar){
       nextText       : "Наступна сторінка",
       lastText       : "Остання сторінка",
       refreshText    : "Освіжити",
-      displayMsg     : "Відображення записів з {0} по {1}, всього {2}",
-      emptyMsg       : 'Дані для відображення відсутні'
+      displayMsg     : "Показ записів з {0} по {1}, всього {2}",
+      emptyMsg       : 'Дані для показу відсутні'
    });
 }
 
@@ -188,7 +188,7 @@ if(Ext.form.HtmlEditor){
                cls: 'x-html-editor-tip'
            },
            backcolor : {
-               title: 'Заливка',
+               title: 'Фон',
                text: 'Змінити колір фону для виділеного тексту або абзацу.',
                cls: 'x-html-editor-tip'
            },
@@ -242,7 +242,7 @@ if(Ext.grid.GridView){
       sortDescText : "Сортувати по спаданню",
       lockText     : "Закріпити стовпець",
       unlockText   : "Відкріпити стовпець",
-      columnsText  : "Стовпці"
+      columnsText  : "Колонки"
    });
 }
 
@@ -256,8 +256,8 @@ if(Ext.grid.PropertyColumnModel){
 
 if(Ext.layout.BorderLayout && Ext.layout.BorderLayout.SplitRegion){
    Ext.apply(Ext.layout.BorderLayout.SplitRegion.prototype, {
-      splitTip            : "Тягніть для зміни розміру.",
-      collapsibleSplitTip : "Тягніть для зміни розміру. Подвійний клік сховає панель."
+      splitTip            : "Перетягуйте, щоб змінити розмір.",
+      collapsibleSplitTip : "Перетягуйте, щоб змінити розмір. Подвійний клік сховає панель."
    });
 }
 
