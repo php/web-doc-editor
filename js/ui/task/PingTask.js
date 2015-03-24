@@ -161,7 +161,7 @@ ui.task.PingTask.prototype.onUpdateData = function(statut)
                 libelStatut = _('4/8 - Check for errors');
                 break;
             case 'notInEN':
-                libelStatut = _('5/8 - Searching for files who are not in EN');
+                libelStatut = _('5/8 - Searching for files that are not in EN');
                 break;
             case 'updateTranslatorInfo':
                 libelStatut = _('6/8 - Update translators info');
