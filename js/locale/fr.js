@@ -662,7 +662,7 @@ var i18n = new Array();
   i18n["Warning"] = "Alerte";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "L'éditeur a modifié automatiquement le fichier {0} en UTF-8.";
   i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";  
-  i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "Fichier modifié par {0} (utilisateur anonyme) mais vu que vous êtes un utilisateur authentifié, vous pouvez le modifier.";
+  i18n["File modified by {0} but you are an authenticated user, so you can modify it."] = "Fichier modifié par {0} mais vu que vous êtes un utilisateur authentifié, vous pouvez le modifier.";
   i18n["File modified by {0}."] = "Fichier modifié par {0}.";
 
 

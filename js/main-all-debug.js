@@ -11190,11 +11190,11 @@ ui.task.GetFileTask = function(config)
             // If we ask for the original content, we don't display this message
             if( o.fileModified && !readOriginal  && ( PhDOE.user.userID !== fileModifiedInfo.userID )) {
 
-                // If the current user is an authenticate user with karma & the user who have modified this file dont have karma, we allow to modify this file
-                if( !fileModifiedInfo.haveKarma  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'workInProgress' ) {
+                // If the current user is an authenticate user with karma, we allow to modify this file
+                if( PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'workInProgress' ) {
                     Ext.MessageBox.show({
                         title   : _('Information'),
-                        msg     : String.format(_('File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
+                        msg     : String.format(_('File modified by {0} but you are an authenticated user, so you can modify it.'), fileModifiedInfo.user),
                         buttons : Ext.MessageBox.OK,
                         icon    : Ext.MessageBox.INFO
                     });

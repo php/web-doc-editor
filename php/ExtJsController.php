@@ -1148,8 +1148,8 @@ class ExtJsController
             if( $am->userID == $infoModified->userID ) {
                     // We can modify it, it's mine ;)
             } else {
-                    // If he don't have karma and current user have karma, the current can modify it.
-                    if( $am->haveKarma && !$infoModified->haveKarma ) {
+                    // If the current user have karma, he can modify it.
+                    if( $am->haveKarma ) {
                             // The current user can modify it
                     } else {
                             // We must trow an error. We can't modify it.
