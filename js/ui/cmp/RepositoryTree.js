@@ -34,20 +34,20 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
         disabled: true,
         handler: function(){
             var cmp = Ext.getCmp('win-add-new-file'), parentFolder = cmp.node.id, newFileName = cmp.items.items[1].getValue(), skeleton = cmp.items.items[2].getValue();
-            
+
             if (cmp.node.findChild("id", parentFolder + "/" + newFileName)) {
                 // This file already exist.
                 PhDOE.winForbidden('file_already_exist');
                 return true;
             }
-            
+
             cmp.openFile(parentFolder + "/", newFileName, skeleton);
             cmp.close();
             return true;
-            
+
         }
     }],
-    
+
     openFile: function(FilePath, FileName, skeleton){
         var FileID = Ext.util.md5('FNT-' + FilePath + FileName), storeRecord = {
             data: {
@@ -56,24 +56,24 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
             }
         }, // simulate a needCommit option to fit with the classic comportement of FNT panel
         t = FilePath.split('/'), FileLang;
-        
+
         t.shift();
-        
+
         FileLang = t[0];
-        
+
         t.shift();
         t.pop();
-        
+
         FilePath = '/' + t.join('/') + '/';
         if (FilePath === "//") {
             FilePath = "/";
         }
-        
+
         FileID = Ext.util.md5('FNT-' + FilePath + FileName);
-        
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
-        
+
             Ext.getCmp('main-panel').add({
                 id: 'FNT-' + FileID,
                 layout: 'border',
@@ -109,7 +109,7 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
         }
         Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
     },
-    
+
     initComponent: function(){
         Ext.apply(this, {
             items: [{
@@ -153,7 +153,7 @@ ui.cmp._RepositoryTree.winAddNewFile = Ext.extend(Ext.Window, {
                         if (c.ownerCt.items.items[1].getValue() === "") {
                             c.ownerCt.items.items[1].setValue(r.data.name);
                         }
-                        
+
                     }
                 },
                 valueField: 'path',
@@ -185,7 +185,7 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
             var cmp = Ext.getCmp('win-add-new-folder'),
                 parentFolder = cmp.node.id,
                 newFolderName = cmp.items.items[1].getValue();
-            
+
             XHR({
                 params: {
                     task: 'addNewFolder',
@@ -194,16 +194,16 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
                 },
                 success: function(){
                     Ext.getCmp('win-add-new-folder').close();
-                    
+
                     cmp.node.reload();
-                    
+
                     // Notify
-                    PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !'), newFolderName, parentFolder));
+                    PhDOE.notify('info', _('Folder created'), String.format(_('Folder <br><br><b>{0}</b><br><br> was created successfully under {1} !'), newFolderName, parentFolder));
                 },
                 failure: function(r){
                     //Ext.getCmp('win-add-new-folder').close();
                     var o = Ext.util.JSON.decode(r.responseText);
-                    
+
                     if (o.type) {
                         PhDOE.winForbidden(o.type);
                     }
@@ -235,7 +235,7 @@ ui.cmp._RepositoryTree.winAddNewFolder = Ext.extend(Ext.Window, {
                 }
             }, {
                 xtype: 'box',
-                html: _('Info: This new folder won\'t be commited until a new file will be commited into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
+                html: _('Info: This new folder won\'t be committed until a new file will be committed into it. If you don\'t commit any new file into it until 8 days, it will be automatically deleted.')
             }]
         });
         ui.cmp._RepositoryTree.winAddNewFolder.superclass.initComponent.call(this);
@@ -273,7 +273,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-                    
+
                     //... and fire the update processus
                     new ui.task.UpdateSingleFolderTask(this.node);
                 }
@@ -286,7 +286,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-                    
+
                     // We display the Add New Folder window
                     var win = new ui.cmp._RepositoryTree.winAddNewFolder({
                         node: this.node
@@ -302,7 +302,7 @@ Ext.extend(ui.cmp._RepositoryTree.menu.folder, Ext.menu.Menu, {
                 handler: function(){
                     // We start by expand this node.
                     this.node.expand();
-                    
+
                     // We display the Add New Folder window
                     var win = new ui.cmp._RepositoryTree.winAddNewFile({
                         node: this.node
@@ -324,14 +324,14 @@ ui.cmp._RepositoryTree.menu.file = function(config){
 Ext.extend(ui.cmp._RepositoryTree.menu.file, Ext.menu.Menu, {
     init: function(){
         var FileName = this.node.attributes.text, t = this.node.attributes.id.split('/'), FileLang, FilePath;
-        
+
         t.shift();
         FileLang = t[0];
         t.shift();
         t.pop();
-        
+
         FilePath = t.join('/') + '/';
-        
+
         Ext.apply(this, {
             items: [{
                 text: '<b>' + _('Edit in a new tab') + '</b>',
@@ -370,37 +370,37 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
     containerScroll: true,
     root: ui.cmp._RepositoryTree.root,
     loader: ui.cmp._RepositoryTree.loader,
-    
+
     onContextMenu: function(node, e){
         e.stopEvent();
         node.select();
-        
+
         if (node.attributes.type === 'folder' || node.isRoot) {
             new ui.cmp._RepositoryTree.menu.folder({
                 node: node
             }).showAt(e.getXY());
         }
-        else 
+        else
             if (node.attributes.type === 'file') {
                 new ui.cmp._RepositoryTree.menu.file({
                     node: node
                 }).showAt(e.getXY());
             }
     },
-    
+
     onDblClick: function(node){
         if (node.attributes.type === 'file') // files only
         {
             this.openFile('byId', node.attributes.id, false);
         }
     },
-    
+
     openFile: function(ftype, first, second){
-        
+
         // Here, first argument is fpath and second, fname
         if (ftype === 'byPath') {
             Ext.getCmp('acc-all-files').expand();
-            
+
             var fpath = first, fname = second, t = fpath.split('/'), cb = function(node){
                 node.ensureVisible();
                 if (t[0] && t[0] !== '') {
@@ -426,35 +426,35 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
             };
             this.root.expand(false, true, cb.createDelegate(this));
         }
-        
+
         // Here, first argument is a nodeID. Second arguments don't exist
         if (ftype === 'byId') {
             var node = this.getNodeById(first), FilePath = node.attributes.id, extension = node.attributes.extension, t, FileID, FileLang, FileName, parser, panelWest, panelCenter;
-            
+
             // CleanUp the path
             t = FilePath.split('/');
             t.shift();
-            
+
             FileName = t.pop();
-            
+
             FileLang = t.shift();
             FilePath = (t.length > 0) ? '/' + t.join('/') + '/' : '/';
-            
+
             FileID = Ext.util.md5('AF-' + FileLang + FilePath + FileName);
-            
+
             // Render only if this tab don't exist yet
             if (!Ext.getCmp('main-panel').findById('AF-' + FileID)) {
-            
+
                 if (extension !== 'html') {
                     parser = extension;
                 }
                 else {
                     parser = 'xml';
                 }
-                
+
                 if (extension === 'gif' || extension === 'png' || extension === 'jpg') {
                     panelWest = {};
-                    
+
                     panelCenter = {
                         id: 'AF' + '-ALL-FILE-' + FileID, // We fake the content ID to allow closing this panel
                         xtype: 'panel',
@@ -475,10 +475,10 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         csrfToken +
                         '" />'
                     };
-                    
+
                 }
                 else {
-                
+
                     panelWest = {
                         xtype: 'panel',
                         region: 'west',
@@ -563,7 +563,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                             }]
                         }
                     };
-                    
+
                     panelCenter = new ui.cmp.FilePanel({
                         id: 'AF' + '-ALL-PANEL-' + FileID,
                         region: 'center',
@@ -582,7 +582,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                         syncScroll: false
                     });
                 }
-                
+
                 Ext.getCmp('main-panel').add({
                     id: 'AF-' + FileID,
                     layout: 'border',
@@ -602,7 +602,7 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
             Ext.getCmp('main-panel').setActiveTab('AF-' + FileID);
         }
     },
-    
+
     initComponent: function(){
         Ext.apply(this, {
             tbar: [_('Search: '), ' ', new Ext.form.TwinTriggerField({
@@ -627,23 +627,23 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
                     this.triggers[0].hide();
                     this.setSize(180, 10);
                     instance.root.setText(_('Repository'));
-                    
+
                     // clear search
                     delete instance.loader.baseParams.search;
                     instance.root.reload();
                 },
                 onTrigger2Click: function(){
                     var instance = ui.cmp._RepositoryTree.instance, v = this.getValue();
-                    
+
                     if (v === '' || v.length < 3) {
                         this.markInvalid(_('Your search must contain at least 3 characters'));
                         return;
                     }
                     this.clearInvalid();
-                    
+
                     this.triggers[0].show();
                     this.setSize(180, 10);
-                    
+
                     // carry search
                     instance.loader.baseParams.search = v;
                     instance.root.reload(function(){
@@ -653,10 +653,10 @@ ui.cmp.RepositoryTree = Ext.extend(Ext.ux.MultiSelectTreePanel, {
             })]
         });
         ui.cmp.RepositoryTree.superclass.initComponent.call(this);
-        
+
         this.on('contextmenu', this.onContextMenu, this);
         this.on('dblclick', this.onDblClick, this);
-        
+
         new Ext.tree.TreeSorter(this, {
             folderSort: true
         });

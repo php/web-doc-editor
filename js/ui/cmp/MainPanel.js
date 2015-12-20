@@ -59,7 +59,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
-                
+
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FEfilePendingOpen[0]) {
@@ -73,7 +73,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             if( cmp.panLANGLoaded && cmp.panENLoaded && cmp.panVCSLang && cmp.panVCSEn ) {
 
                 cmp.tabLoaded = true;
-                
+
                 cmp.panLANGLoaded = cmp.panENLoaded = cmp.panVCSLang = cmp.panVCSEn = false;
 
                 if (PhDOE.FNRfilePendingOpen[0]) {
@@ -88,7 +88,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             if( cmp.panLANGLoaded ) {
 
                 cmp.tabLoaded = true;
-                
+
                 cmp.panLANGLoaded = false;
                 if (PhDOE.FNIENfilePendingOpen[0]) {
                     ui.cmp.NotInENGrid.getInstance().openFile(PhDOE.FNIENfilePendingOpen[0].id);
@@ -102,7 +102,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             if( cmp.panLoaded && cmp.panVCS && cmp.panEntities && cmp.panAcronyms ) {
 
                 cmp.tabLoaded = true;
-                
+
                 cmp.panLoaded = cmp.panVCS = false;
                 if (PhDOE.AFfilePendingOpen[0]) {
                     ui.cmp.RepositoryTree.getInstance().openFile(
@@ -120,7 +120,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             if( cmp.panPatchLoaded && cmp.panOriginLoaded  && cmp.panVCS && cmp.panPatchContent ) {
 
                 cmp.tabLoaded = true;
-                
+
                 cmp.panPatchLoaded = cmp.panOriginLoaded  = cmp.panVCS = cmp.panPatchContent = false;
                 if (PhDOE.PPfilePendingOpen[0]) {
                     ui.cmp.PendingPatchGrid.getInstance().openFile(PhDOE.PPfilePendingOpen[0].id);
@@ -171,7 +171,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
     {
         new ui.cmp.DirectActionWin(opt);
     },
-    
+
     // Need confirm if we want to close a tab and the content have been modified.
     onBeforeRemove : function(tabpanel, tab)
     {
@@ -243,11 +243,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             patchURI,
             FileMD5  = Ext.util.md5(patchName+patchID+FilePath+FileName),
             tabTIP, toolTip, tBar, previewPanelHeight, previewUrl, loadDataPatch, optNbLine, optB, optW;
-        
+
         optNbLine = (Ext.util.Cookies.get('optNbLine') || 3);
         optB = ( Ext.util.Cookies.get('optB') && Ext.util.Cookies.get('optB') == 'true' ) ? true : false;
         optW = ( Ext.util.Cookies.get('optW') && Ext.util.Cookies.get('optW') == 'true' ) ? true : false;
-        
+
         // tabTIP
         if( patchID != '' ) {
             tabTIP = String.format(_('Diff for patch: {0}'), patchName);
@@ -258,10 +258,10 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             patchURI = './do/downloadPatch?FilePath=' + FilePath + '&FileName=' + FileName + '&csrfToken=' + csrfToken;
             toolTip = _('Download the diff as a patch');
         }
-            
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('diff_panel_' + FileMD5)) {
-        
+
             // Prepare the tbar
             tBar = [{
                 xtype : 'buttongroup',
@@ -283,11 +283,11 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                         window.location.href = patchURI;
                     }
                 }]
-                
+
             },
-            
+
             (( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) ?
-            
+
             {
                 xtype : 'buttongroup',
                 items: [{
@@ -302,10 +302,10 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                             fpath: FilePath,
                             fname: FileName
                         });
-                        
+
                         // We close this window
                         Ext.getCmp('main-panel').remove('diff_panel_' + FileMD5);
-                        
+
                     }
                 },{
                     xtype:'button',
@@ -320,7 +320,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                         });
                     }
                 }]
-                
+
             } : '' ), '->',{
                 xtype : 'buttongroup',
                 items: [{
@@ -337,17 +337,17 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                       {
                           Ext.getCmp('diff_panel_' + FileMD5).items.items[1].collapse(true);
                       }
-                      
+
                       // Save this configuration option
                       new ui.task.UpdateConfTask({
                           module:'diff',
                           itemName  : 'displayPreviewPanel',
                           value : pressed
                       });
-                      
+
                   }
                 }]
-                
+
             },{
                 xtype : 'buttongroup',
                 items: [{
@@ -356,30 +356,30 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                   handler: function()
                   {
                       var expire;
-                      
+
                       // Get opt & store into cookies
-                      
+
                       optNbLine = this.ownerCt.items.items[2].getValue();
                       optB = this.ownerCt.items.items[4].getValue();
                       optW = this.ownerCt.items.items[7].getValue();
                       expire = new Date().add(Date.YEAR,1);
-                      
+
                       Ext.util.Cookies.set('optNbLine', optNbLine, expire);
                       Ext.util.Cookies.set('optB', optB, expire);
                       Ext.util.Cookies.set('optW', optW, expire);
-                      
+
                       loadDataPatch();
                   }
                 },{
                   xtype:'tbtext',
-                  text: _('Nb lines of contexte: ')
+                  text: _('Nb lines of context: ')
                 },{
                     xtype:'spinnerfield',
                     width : 60,
                     hideLabel: true,
                     minValue: 3,
                     value: optNbLine
-                    
+
                 },{
                     xtype:'tbseparator'
                 },{
@@ -416,17 +416,17 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                   }
                 }]
             }
-                
+
             ];
-            
+
             previewPanelHeight = Ext.getCmp('main-panel').getHeight() - 200;
-            
+
             // Load diff data only if FilePath & FileName exist
             if( FilePath !== '' && FileName !== '' )
             {
                 previewUrl = 'http://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php';
-                
+
                 XHR({
                     params: {
                         task: 'getURLToOriginalManualPage',
@@ -434,34 +434,34 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     },
                     success: function(r) {
                         var o = Ext.util.JSON.decode(r.responseText), frameSite, urlSite;
-                        
+
                         if( o.url === '404' ) {
-                            
+
                             urlSite = 'http://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
-                            
+
                             previewPanelHeight = 60;
-                            
+
                             if( Ext.getCmp('diff_panel_' + FileMD5).items.items[1] )
                             {
                                 Ext.getCmp('diff_panel_' + FileMD5).items.items[1].setHeight(previewPanelHeight);
                                 Ext.getCmp('diff_panel_' + FileMD5).doLayout();
                             }
-                                 
-                            
+
+
                         } else {
                             urlSite = o.url;
                         }
-                        
+
                         // We get the iFrame witch contains the original documentation page
                         frameSite = Ext.getCmp('diff_panel_' + FileMD5).items.items[1].items.items[0];
-                        
+
                         // We set the URL
                         frameSite.setUrl(urlSite);
                     }
-                });  
+                });
             } else {
                 previewUrl = 'http://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
@@ -469,8 +469,8 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                                 });
                 previewPanelHeight = 60;
             }
-            
-            
+
+
             // Add tab for the diff
             Ext.getCmp('main-panel').add({
                 layout: 'border',
@@ -498,17 +498,17 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     items: [ new Ext.ux.IFrameComponent({ id: Ext.id(), url: previewUrl }) ]
                 }]
             });
-            
+
             // We need to activate HERE this tab, otherwise, we can't mask it (el() is not defined)
             Ext.getCmp('main-panel').setActiveTab('diff_panel_' + FileMD5);
-            
-            
+
+
             loadDataPatch = function()
             {
                 Ext.get('diff_panel_' + FileMD5).mask('<img src="themes/img/loading.gif" ' +
                 'style="vertical-align: middle;" />' +
                 _('Please, wait...'));
-                
+
                 // Load diff data
                 XHR({
                     params: {
@@ -524,7 +524,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     success: function(r){
                         var o = Ext.util.JSON.decode(r.responseText),
                             patchPermLink='';
-                        
+
                         if( patchID == '' ) {
                             patchPermLink = '<a href="http://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
@@ -536,16 +536,16 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                                     '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
                         }
-                        
+
                         // We add the perm link into the content
                         o.content = patchPermLink + o.content;
-                        
+
                         // We display in diff div
                         Ext.get('diff_content_' + FileMD5).dom.innerHTML = o.content;
                         Ext.get('diff_panel_' + FileMD5).unmask();
                     }
                 });
-                
+
             };
             loadDataPatch();
 

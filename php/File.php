@@ -113,7 +113,7 @@ class File
         
         $originalContent = ( is_file($this->full_path) ) ? file_get_contents($this->full_path) : file_get_contents($this->full_path_fallback);
 
-        // We search for new line caracters and mark it ! (Google API delete new line)
+        // We search for new line characters and mark it ! (Google API delete new line)
         $originalContent = str_replace("\n", "[@]", $originalContent);
 
         $lang = AccountManager::getInstance()->vcsLang;

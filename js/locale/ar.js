@@ -34,14 +34,14 @@ var i18n = new Array();
   i18n["Language: "] = "اللغة:";
   i18n["Total number of your files"] = "إجمالي عدد ملفاتك";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "لقد استخدمت حروفاً تتطلب اعتماد ترميز UTF-8 على غرار معلومات الملف الرأسية.<br>يرجى إلغاء هذه الحروف أو تغيير الترميز إلى  UTF-8 ; على سبيل المثال:<br><br><center><i><?xml version=\'1.0\' encoding=\'utf-8\'?></i></center>";
-  i18n["It seems that you have inserted some tabs caracters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "يبدو أنك قد أدخلت بعض الفراغات باستخدم زر الجدولة tabs. يرجى استبدالها بالمسافة.<br>تلميح: تستطيع استخدام أمر \"إعادة تصفيف هذا الملف\" للقيام بذلك تلقائياً.";
+  i18n["It seems that you have inserted some tabs characters into this file. Please, replace each one by one space.<br>Tip: You can use the \"Re-indent all this file\" button to replace all tabs by spaces."] = "يبدو أنك قد أدخلت بعض الفراغات باستخدم زر الجدولة tabs. يرجى استبدالها بالمسافة.<br>تلميح: تستطيع استخدام أمر \"إعادة تصفيف هذا الملف\" للقيام بذلك تلقائياً.";
   i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "لا تستطيع تعديل هذا الملف لأنه معدل من قبل مستخدم آخر. يرجى التواصل مع الإدارة حتى تتمكن من تعديله.";
   i18n["The patch you want to delete doesn't exist."] = "حزمة الملفات التي ترغب في حذفها غير موجودة.";
   i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "حزمة الملفات التي ترغب في حذفها مسجلة باسم مستخدم آخر. فقط المستخدم صاحب الحزمة أو المدير العام يستطيع حذفها.";
   i18n["This action is available to global administrators only."] = "هذا الإجراء متاح فقط للمدير العام.";
   i18n["This action is available to global administrators or to administrators for this language only."] = "هذا الإجراء متاح فقط للمدير العام أو من له صلاحية إدارة هذه اللغة.";
   i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "الملف الذي تريد إلغاء ترجمته ليس متاحاً لك.<br>تستطيع تنفيذ هذا الإجراء على ملفاتك فقط.";
-  
+
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "اضغط بنقر مزدوج على المربع لفتح تحديد الملف";
   i18n["Extension"] = "التوسعة";
@@ -68,7 +68,7 @@ var i18n = new Array();
   i18n["Estimated progress"] = "تقدير نسبة الإنجاز";
   i18n["{0}% complete"] = "{0}% منجز";
   i18n["Set the progress..."] = "تحديد نسبة الإنجاز...";
-  i18n["View diff"] = "عرض الاختلافات";  
+  i18n["View diff"] = "عرض الاختلافات";
   i18n["Download the diff as a patch"] = "تحميل الاختلافات على شكل حزمة";
   i18n["Clear this change"] = "إلغاء هذا التعديل";
   i18n["Cancel this deletion"] = "تراجع عن هذا الحذف";
@@ -84,8 +84,8 @@ var i18n = new Array();
   i18n["You have no patch currently. You must create one."] = "ليست لديك حزمة حالياً. يجب أن تنشئ حزمة.";
   i18n["Diff for file: {0}"] = "الاختلافات للملف: {0}";
   i18n["Administrator menu"] = "قائمة الإدارة";
-  
-  
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "عدل وصف هذه الحزمة:";
   i18n["Delete this patch"] = "احذف هذه الحزمة";
@@ -104,7 +104,7 @@ var i18n = new Array();
   i18n["Patch name"] = "اسم الحزمة";
   i18n["Patch description"] = "وصف الحزمة";
   i18n["This description will be the default during the validation of the patch by a valid user."] = "هذا الوصف سيكون افتراضياً لهذه الحزمة عند مراجعتها من قبل مستخدم معرف.";
-  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "إذا تم تسجيل بريد إلكتروني سوف تتم مراسلتك لإبلاغك عند اعتماد هذه الحزمة.";
+  i18n["If provided, an email will be send to you to inform that the patch is committed."] = "إذا تم تسجيل بريد إلكتروني سوف تتم مراسلتك لإبلاغك عند اعتماد هذه الحزمة.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "تم حذف الحزمة";
@@ -139,7 +139,7 @@ var i18n = new Array();
   i18n["{0} minute(s)"] = "{0} دقيقة/دقائق";
   i18n["{0} second(s)"] = "{0} ثانية/ثواني";
   i18n["Less than one second"] = "أقل من ثانية واحدة";
-  i18n["{0} check all entitites"] = "{0} فحص كل المكونات";
+  i18n["{0} check all entities"] = "{0} فحص كل المكونات";
   i18n["{0} updated app's data"] = "{0} حدث بيانات التطبيقات";
   i18n["{0} logged out"] = "{0} قام بتسجيل الخروج";
   i18n["{0} is logged in using the {1} language"] = "{0} قام بتسجيل الدخول ضمن لغة {1}";
@@ -175,7 +175,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
-  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "اضغط على أحد الصفوف لعرض المحتويات.<br>اضغط بشكل مزدوج لإدخالها في الموضع الحالي.";
+  i18n["Click on a row to display the content of the entity.<br>Double-click on it to insert it at the cursor position."] = "اضغط على أحد الصفوف لعرض المحتويات.<br>اضغط بشكل مزدوج لإدخالها في الموضع الحالي.";
   i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "اضغط على أحد الصفوف لعرض محتويات المصطلح.<br>اضغط بشكل مزدوج لإدخالها في الموضع الحالي";
   i18n["Items"] = "عناصر";
   i18n["From"] = "من";
@@ -202,8 +202,8 @@ var i18n = new Array();
   i18n["Parent Folder"] = "المجلد الأعلى";
   i18n["Name for the new folder"] = "اسم المجلد الجديد";
   i18n["Folder created"] = "تم إنشاء المجلد";
-  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "معلومات: لن يتم اعتماد المجلد الجديد حتى يتم اعتماد ملف جديد فيه. إذا لم يتم اعتماد أي ملفات فيها خلال 8 أيام فسيتم حذفه تلقائياً";
-  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "المجلد <br><br><b>{0}</b><br><br> تم إنشاؤه بنجاح في {1} !";
+  i18n["Info: This new folder won't be committed until a new file will be committed into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "معلومات: لن يتم اعتماد المجلد الجديد حتى يتم اعتماد ملف جديد فيه. إذا لم يتم اعتماد أي ملفات فيها خلال 8 أيام فسيتم حذفه تلقائياً";
+  i18n["Folder <br><br><b>{0}</b><br><br> was created successfully under {1} !"] = "المجلد <br><br><b>{0}</b><br><br> تم إنشاؤه بنجاح في {1} !";
   i18n["This folder already exists in the current folder."] = "هذا المجلد موجود مسبقاً ضمن المجلد الحالي.";
 
   i18n["Add a new file"] = "إضافة ملف جديد";
@@ -460,7 +460,7 @@ var i18n = new Array();
   i18n["{0} word"] = "{0} كلمة";
   i18n["Last User Update"] = "آخر تحديث من قبل المستخدم";
   i18n["Last Date Update"] = "تاريخ آخر تحديث";
-  i18n["Word in dictionnary added/updated"] = "تمت إضافة/تحديث كلمة في القاموس";
+  i18n["Word in dictionary added/updated"] = "تمت إضافة/تحديث كلمة في القاموس";
   i18n["The word have been added/updated successfully !"] = "تمت إضافة/تحديث كلمة في القاموس بنجاح !";
   i18n["Word deleted"] = "تم حذف الكلمة";
   i18n["The word was deleted successfully !"] = "تم حذف الكلمة بنجاح !";
@@ -601,7 +601,7 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "رابط دائم لهذه الصفحة";
   i18n["Warning"] = "تحذير";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "قام المحرر بتغيير الملف {0} تتلقائياً إلى ترميز UTF-8 .";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "الملف <b> {0}</b> يحتوي على رموز الجدولة TAB.<br>قام المحرر باستبدالها إلى مسافة.";  
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "الملف <b> {0}</b> يحتوي على رموز الجدولة TAB.<br>قام المحرر باستبدالها إلى مسافة.";
   i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "هذا الملف معدل من قبل {0} (مستخدم غير معرف) ولكن أنت مستخدم معرف لك الصلاحية لتعديله.";
   i18n["File modified by {0}."] = "هذا الملف معدل من قبل {0}.";
 
@@ -651,28 +651,28 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "تمت إضافة الملاحظة بنجاح !";
   i18n["Note deleted"] = "تم حذف الملاحظة";
   i18n["The note was deleted successfully !"] = "تم حذف الملاحظة بنجاح !";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "فحص XML. يرجى الانتظار...";
   i18n["XML check"] = "فحص XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "سطر";
   i18n["Libel"] = "صياغة";
   i18n["XML Errors"] = "XML Errors";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "مالك الملف حالياً";
   i18n["Action"] = "إجراء";
   i18n["New owner"] = "مالك جديد";
   i18n["Change file's owner"] = "تغيير مالك الملف";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "تم تغيير مالك الملف";
   i18n["The owner for this file have been changed successfully !"] = "تم تغيير مالك الملف بنجاح !";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "التالي";
   i18n["Anonymous patch manager"] = "مدير حزم ملفات المستخدمين غير المعرفين";
@@ -683,6 +683,6 @@ var i18n = new Array();
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "هذا الإجراء سيغلق الملف، ويلغي التعديلات التي تمت عليه. وسيعيد الملف إلى حالته الأصلية المحفوظة على خادم VCS.";
   i18n["Validate this patch"] = "مراجعة الملف";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "هذا الإجراء سيغير ملكية الملف إليك. سوف يظهر الملف تحت اسمك وسيمكنك اعتماده.";
-  
+
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "استعراض";

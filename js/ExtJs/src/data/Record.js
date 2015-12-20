@@ -220,7 +220,7 @@ rec.{@link #commit}(); // updates the view
         var encode = Ext.isPrimitive(value) ? String : Ext.encode;
         if(encode(this.data[name]) == encode(value)) {
             return;
-        }        
+        }
         this.dirty = true;
         if(!this.modified){
             this.modified = {};
@@ -335,7 +335,7 @@ rec.{@link #commit}(); // updates the view
     },
 
     /**
-     * Gets a hash of only the fields that have been modified since this Record was created or commited.
+     * Gets a hash of only the fields that have been modified since this Record was created or committed.
      * @return Object
      */
     getChanges : function(){
@@ -361,7 +361,7 @@ rec.{@link #commit}(); // updates the view
     /**
      * Creates a copy (clone) of this Record.
      * @param {String} id (optional) A new Record id, defaults to the id
-     * of the record being copied. See <code>{@link #id}</code>. 
+     * of the record being copied. See <code>{@link #id}</code>.
      * To generate a phantom record with a new id use:<pre><code>
 var rec = record.copy(); // clone the record
 Ext.data.Record.id(rec); // automatically generate a unique sequential id

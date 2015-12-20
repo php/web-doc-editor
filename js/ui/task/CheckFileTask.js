@@ -32,7 +32,7 @@ ui.task.CheckFileTask = function(config)
             Ext.getBody().unmask();
             
             // Display a warning
-            Ext.MessageBox.alert(_('Error'), _('An error occured while checking this file for errors. Please, try again.'));
+            Ext.MessageBox.alert(_('Error'), _('An error occurred while checking this file for errors. Please, try again.'));
         },
         success : function(r)
         {

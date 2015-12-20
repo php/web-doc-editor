@@ -34,15 +34,15 @@ var i18n = new Array();
   i18n["Project: "] = "Projet : ";
   i18n["Language: "] = "Langue : ";
   i18n["Total number of your files"] = "Nombre total de vos fichiers";
-  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'ent-ête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter toutle fichier\" pour remplacer toutes les tabulations par des espaces.";
+  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Vous avez utilisé des caractères qui nécessitent l'utilisation de l'encodage UTF-8 contrairement à ce qu'indique l'en-tête XML.<br>Veuillez supprimer ces caractères ou bien indiquer l'utilisation de l'encodage UTF-8 dans l'en-tête XML, e.g. :<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
+  i18n["It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "Il semble que vous ayez introduit des tabulations dans ce fichier. Vous devez les remplacer par des espaces.<br>Astuce : Vous pouvez utiliser le bouton \"Ré-indenter tout le fichier\" pour remplacer toutes les tabulations par des espaces.";
   i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "Vous ne pouvez pas modifier ce fichier car il l\'a déjà été par un autre utilisateur. Contactez un administrateur si vous voulez outrepasser cette restriction.";
   i18n["The patch you want to delete doesn't exist."] = "Le patch que vous voulez effacer n'existe pas.";
   i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "Le patch que vous voulez effacer ne vous appartient pas. Seul l'utilisateur l'ayant créé ou un administrateur global peut l'effacer.";
   i18n["This action is available to global administrators only."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
   i18n["This action is available to global administrators or to administrators for this language only."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
   i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "Le fichier dont vous souhaitez effacer les modifications ne vous appartient pas.<br>Vous ne pouvez faire cette action que sur les fichiers vous appartenant.";
-  
+
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
   i18n["Extension"] = "Extension";
@@ -69,7 +69,7 @@ var i18n = new Array();
   i18n["Estimated progress"] = "Progression estimée";
   i18n["{0}% complete"] = "{0}% terminé";
   i18n["Set the progress..."] = "Définir la progression...";
-  i18n["View diff"] = "Voir la différence";  
+  i18n["View diff"] = "Voir la différence";
   i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
   i18n["Clear this change"] = "Effacer cette modification";
   i18n["Cancel this deletion"] = "Annuler cette suppression";
@@ -86,8 +86,8 @@ var i18n = new Array();
   i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
   i18n["Administrator menu"] = "Menu Administrateur";
   i18n["There is some file unsaved. Please, save it before start a commit."] = "Il y a un fichier non sauvegardé. Veuillez le sauvegarder avant de commencer un commit.";
-  
-  
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Éditer la description de ce patch";
   i18n["Delete this patch"] = "Effacer ce patch";
@@ -106,7 +106,7 @@ var i18n = new Array();
   i18n["Patch name"] = "Nom du patch";
   i18n["Patch description"] = "Description du patch";
   i18n["This description will be the default during the validation of the patch by a valid user."] = "Cette description sera celle par défaut lors de la validation du patch par un utilisateur autorisé.";
-  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Si fourni, un email vous sera envoyé afin de vous informer que le patch a été validé.";
+  i18n["If provided, an email will be send to you to inform that the patch is committed."] = "Si fourni, un email vous sera envoyé afin de vous informer que le patch a été validé.";
 
 // In file: ../../js/ui/task/DeletePatchTask.js
   i18n["Patch deleted"] = "Patch effacé";
@@ -145,7 +145,7 @@ var i18n = new Array();
   i18n["{0} minute(s)"] = "{0} minute(s)";
   i18n["{0} second(s)"] = "{0} seconde(s)";
   i18n["Less than one second"] = "Moins d'une seconde";
-  i18n["{0} check all entitites"] = "{0} a vérifié toutes les entitiés";
+  i18n["{0} check all entities"] = "{0} a vérifié toutes les entités";
   i18n["{0} updated app's data"] = "{0} a mis à jour les données de l'application";
   i18n["{0} logged out"] = "{0} s'est déconnecté";
   i18n["{0} is logged in using the {1} language"] = "{0} s'est connecté en langue {1}";
@@ -195,12 +195,12 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
-  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
+  i18n["Click on a row to display the content of the entity.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'entité.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
   i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Cliquez sur une ligne pour afficher le contenu de l'acronyme.<br>Double-cliquez dessus pour l'insérer à la position courante du curseur.";
   i18n["Items"] = "Éléments";
   i18n["From"] = "Depuis";
   i18n["<b>Load/Refresh</b>"] = "<b>Charger/Rafraîchir</b>";
-  i18n["Entities & acronyms"] = "Entitiés & Acronymes";
+  i18n["Entities & acronyms"] = "Entités & Acronymes";
   i18n["Acronyms"] = "Acronymes";
 
 
@@ -222,8 +222,8 @@ var i18n = new Array();
   i18n["Parent Folder"] = "Dossier parent";
   i18n["Name for the new folder"] = "Nom du nouveau dossier";
   i18n["Folder created"] = "Dossier créé";
-  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info : Ce nouveau dossier ne sera pas commité tant qu'un nouveau fichier n'y sera pas commité. Si vous ne commitez aucun nouveau fichier dans ce dossier, il sera automatiquement supprimé sous 8 jours.";
-  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Le dossier <br><br><b>{0}</b><br><br> a été créé avec succès sous {1} !";
+  i18n["Info: This new folder won't be committed until a new file will be committed into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Info : Ce nouveau dossier ne sera pas commité tant qu'un nouveau fichier n'y sera pas commité. Si vous ne commitez aucun nouveau fichier dans ce dossier, il sera automatiquement supprimé sous 8 jours.";
+  i18n["Folder <br><br><b>{0}</b><br><br> was created successfully under {1} !"] = "Le dossier <br><br><b>{0}</b><br><br> a été créé avec succès sous {1} !";
   i18n["This folder already exists in the current folder."] = "Ce dossier existe déjà dans le dossier courant.";
 
   i18n["Add a new file"] = "Ajouter un nouveau fichier";
@@ -235,7 +235,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/CheckEntitiesPrompt.js
   i18n["Check entities"] = "Vérification des entités";
   i18n["Go !"] = "Commencer !";
-  i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclancher une vérification de toutes les entitiés.<br><br>Cette vérification prend un certain temps.";
+  i18n["You're about to check all entities.<br><br>This action takes time."] = "Vous êtes sur le point de déclencher une vérification de toutes les entités.<br><br>Cette vérification prend un certain temps.";
 
 
 // In file: ../../js/ui/component/PortletTranslator.js
@@ -261,7 +261,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/BuildStatus.js
   i18n["Last failed build for {0}"] = "Dernier échec pour {0}";
   i18n["Last failed build for the documentation {0}"] = "Dernier échec pour la documentation {0}";
-  i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le boutton ci-dessous pour télécharger le contenu complet.";
+  i18n["This log is too large and have been truncated. Use the following button to download the full content of it."] = "Cet historique est trop volumineux et a été tronqué. Utilisez le bouton ci-dessous pour télécharger le contenu complet.";
   i18n["Download the full content of this log"] = "Télécharger le contenu complet de l'historique";
   i18n["Language"] = "Langage";
 
@@ -277,7 +277,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletBugs.js
-  i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le boutton \"Rafraîchir\" !";
+  i18n["You must manually load this data.<br>Use the refresh button !"] = "Vous devez charger manuellement ces données.<br>Utilisez le bouton \"Rafraîchir\" !";
   i18n["Open in a new Tab"] = "Ouvrir dans un nouvel onglet";
   i18n["Open the related file"] = "Ouvrir le fichier associé";
   i18n["Summary"] = "Résumé";
@@ -294,7 +294,7 @@ var i18n = new Array();
   i18n["Diff for patch: {0}"] = "Différence pour le patch : {0}";
   i18n["Patch Name: "] = "Nom du patch : ";
   i18n["Documentation page not available"] = "La page de la documentation n'est pas disponible";
-  i18n["Nb lines of contexte: "] = "Nombre de lignes de contexte : ";
+  i18n["# of context lines: "] = "Nombre de lignes de contexte : ";
   i18n["Ignore changes in the amount of white space"] = "Ignorer les modifications dans le nombre d'espaces";
   i18n["Option <b>b</b> for the diff command"] = "Option <b>b</b> de la commande diff";
   i18n["Ignore all white space"] = "Ignorer toute modification sur les espaces blancs";
@@ -416,7 +416,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/CheckEntities.js
-  i18n["Entities"] = "Entitiés";
+  i18n["Entities"] = "Entités";
   i18n["Url"] = "Url";
   i18n["Result"] = "Résultat";
   i18n["Status: "] = "Statut : ";
@@ -500,9 +500,9 @@ var i18n = new Array();
   i18n["Delete this word"] = "Effacer ce mot";
   i18n["En word"] = "Mot En";
   i18n["{0} word"] = "Mot {0}";
-  i18n["Last User Update"] = "Dernière éditon par";
-  i18n["Last Date Update"] = "Dernière éditon le";
-  i18n["Word in dictionnary added/updated"] = "Mot du dictionnaire ajouté/mis à jour";
+  i18n["Last User Update"] = "Dernière édition par";
+  i18n["Last Date Update"] = "Dernière édition le";
+  i18n["Word in dictionary added/updated"] = "Mot du dictionnaire ajouté/mis à jour";
   i18n["The word have been added/updated successfully !"] = "Le mot a été ajouté/mis à jour avec succès !";
   i18n["Word deleted"] = "Mot effacé";
   i18n["The word was deleted successfully !"] = "Le mot a été effacé avec succès !";
@@ -551,7 +551,7 @@ var i18n = new Array();
   i18n["Credits"] = "Remerciements";
   i18n["Javascript FrameWork"] = "Bibliothèque Javascript";
   i18n["Code editor"] = "Éditeur de code";
-  i18n["Icon pack"] = "Les icones";
+  i18n["Icon pack"] = "Les icônes";
   i18n["License"] = "Licence";
   i18n["Help and support"] = "Aide et support";
   i18n["Mailing list:"] = "Liste de diffusion :";
@@ -628,7 +628,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/MoveToPatch.js
   i18n["Error. Is this file(s) is(are) own by you ?"] = "Erreur. Est-ce que ce ou ces fichiers vous appartiennent ?";
-  i18n["Patches unknow for this project or for this user"] = "Ce patch n'existe pas pour ce projet ou pour cet utilisateur.";
+  i18n["Patches unknown for this project or for this user"] = "Ce patch n'existe pas pour ce projet ou pour cet utilisateur.";
 
 
 // In file: ../../js/ui/task/SavePatchTask.js
@@ -661,7 +661,7 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "Lien permanent vers cette page";
   i18n["Warning"] = "Alerte";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "L'éditeur a modifié automatiquement le fichier {0} en UTF-8.";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";  
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
   i18n["File modified by {0} but you are an authenticated user, so you can modify it."] = "Fichier modifié par {0} mais vu que vous êtes un utilisateur authentifié, vous pouvez le modifier.";
   i18n["File modified by {0}."] = "Fichier modifié par {0}.";
 
@@ -685,7 +685,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/CheckFileTask.js
   i18n["Checking for error. Please, wait..."] = "Vérification du fichier. Veuillez patienter...";
-  i18n["An error occured while checking this file for errors. Please, try again."] = "Une erreur est survenue lors de la vérification des erreurs. Veuillez ré-essayer.";
+  i18n["An error occurred while checking this file for errors. Please, try again."] = "Une erreur est survenue lors de la vérification des erreurs. Veuillez ré-essayer.";
   i18n["Check for errors"] = "Vérification du fichier";
   i18n["There is no error."] = "Il n'y a aucune erreur.";
 
@@ -707,33 +707,33 @@ var i18n = new Array();
   i18n["Add"] = "Ajouter";
   i18n["Delete this note"] = "Effacer cette note";
   i18n["No user notes"] = "Aucune note utilisateur";
-  i18n["Right click to add a new note"] = "Faîtes un clic droit pour en ajouter une";
+  i18n["Right click to add a new note"] = "Faites un clic droit pour en ajouter une";
   i18n["Note added"] = "Note ajoutée";
   i18n["The note was added successfully !"] = "La note a été ajoutée avec succès !";
   i18n["Note deleted"] = "Note effacée";
   i18n["The note was deleted successfully !"] = "La note a été effacée avec succès !";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Vérification XML. Veuillez patienter...";
   i18n["XML check"] = "Vérification XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Ligne";
   i18n["Libel"] = "Libellé";
   i18n["XML Errors"] = "Erreurs XML";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "Propriétaire actuel";
   i18n["Action"] = "Action";
   i18n["New owner"] = "Nouveau propriétaire";
   i18n["Change file's owner"] = "Modification du propriétaire d'un fichier";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "Propriétaire modifié";
   i18n["The owner for this file have been changed successfully !"] = "Le propriétaire de ce fichier a été modifié avec succès !";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "Suivant";
   i18n["Anonymous patch manager"] = "Gestionnaire de patch anonyme";
@@ -745,18 +745,18 @@ var i18n = new Array();
   i18n["Validate this patch"] = "Valider ce patch";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Cette action fera que vous deviendrez le propriétaire de ce fichier. Il apparaîtra sous votre nom et vous pourrez commiter la modification.";
   i18n["Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?"] = "En rejetant ce patch, vous êtes sur le point de supprimer cette modification.<br>Êtes-vous sûr de vouloir faire cela ?";
-  
+
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Prévisualisation";
-  
+
 // In file: ../../js/ux/codemirror2/lib/util/search.js
   i18n["Search"] = "Recherche ";
   i18n["Use /re/ syntax for regexp search"] = "Utiliser la syntaxe /re/ pour une recherche utilisant les expressions rationnelles";
-  
+
 // In file: ../../js/ui/cmp/DirectActionWin.js
   i18n["Live action"] = "Action en direct";
   i18n["This live action didn't exist"] = "Cette action n'existe pas";
   i18n["Put into this patch:"] = "Placer dans ce patach :";
   i18n["Delete this change"] = "Effacer cette modification";
   i18n["Modified file"] = "Fichier modifié";
-  
+

@@ -35,7 +35,7 @@ var i18n = new Array();
   i18n["Language: "] = "Мова: ";
   i18n["Total number of your files"] = "Загальна кількість ваших файлів";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "Ви використали символи, для яких необхідно використовувати UTF-8, незважаючи на зазначений XML заголовок.<br>Будь-ласка, видаліть ці символи, або змініть заголовок в XML файлі на UTF-8 ; наприклад, так:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "Здається, що ви додали символи табуляції в цей файл. Будь-ласка, замініть кожен з них одним пробілом.<br>Підказка: Ви можете використовувати кнопку \"Переформатувати цей файл\" для заміни всіх символів табуляції пробілами.";
+  i18n["It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "Здається, що ви додали символи табуляції в цей файл. Будь-ласка, замініть кожен з них одним пробілом.<br>Підказка: Ви можете використовувати кнопку \"Переформатувати цей файл\" для заміни всіх символів табуляції пробілами.";
   i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "Вам недоступне редагування цього файла, оскільки його було змінено іншим користувачем. Зв'яжіться з адміністратором, якщо ви хочете змінити його.";
   i18n["The patch you want to delete doesn't exist."] = "Патч, який ви хочете видалити, не існує.";
   i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "Патч, який ви хочете видалити, вам не належить. Тільки автор патча або глобальний адміністратор можуть видалити його.";
@@ -87,7 +87,7 @@ var i18n = new Array();
   i18n["Administrator menu"] = "Меню адміністратора";
   i18n["There is some file unsaved. Please, save it before start a commit."] = "Існують незбережені файли. Будь-ласка, збережіть їх перед початком коміту";
 
-  
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Редагувати опис цього патча";
   i18n["Delete this patch"] = "Видалити цей патч";
@@ -106,7 +106,7 @@ var i18n = new Array();
   i18n["Patch name"] = "Ім'я патча";
   i18n["Patch description"] = "Опис патча";
   i18n["This description will be the default during the validation of the patch by a valid user."] = "Цей опис буде за промовчанням під час затвердження патча дійсного користувача.";
-  i18n["If provided, an email will be send to you to inform that the patch is commited."] = "Якщо ви залишили свою електронну адресу, то вам буде відправлено сповіщення про коміт даного патча.";
+  i18n["If provided, an email will be send to you to inform that the patch is committed."] = "Якщо ви залишили свою електронну адресу, то вам буде відправлено сповіщення про коміт даного патча.";
 
 
 // In file: ../../js/ui/component/ExecDiff.js
@@ -150,7 +150,7 @@ var i18n = new Array();
   i18n["{0} minute(s)"] = "{0} хв.";
   i18n["{0} second(s)"] = "{0} сек.";
   i18n["Less than one second"] = "Менше секунди назад";
-  i18n["{0} check all entitites"] = "{0} перевірити всі сутності";
+  i18n["{0} check all entities"] = "{0} перевірити всі сутності";
   i18n["{0} updated app's data"] = "{0} оновлено дані застосунку";
   i18n["{0} logged out"] = "{0} вийшов";
   i18n["{0} is logged in using the {1} language"] = "{1} | {0} увійшов в модуль мови {1}";
@@ -209,7 +209,7 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
-  i18n["Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position."] = "Для показу вмісту сутності, клікніть по рядку.<br>Подвійний-клік вставить її в позицію курсора.";
+  i18n["Click on a row to display the content of the entity.<br>Double-click on it to insert it at the cursor position."] = "Для показу вмісту сутності, клікніть по рядку.<br>Подвійний-клік вставить її в позицію курсора.";
   i18n["Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position."] = "Для показу вмісту акроніма, клікніть по рядку.<br>Подвійний-клік вставить його в позицію курсора.";
   i18n["Items"] = "Елементи";
   i18n["From"] = "Із";
@@ -236,8 +236,8 @@ var i18n = new Array();
   i18n["Parent Folder"] = "Батьківська папка";
   i18n["Name for the new folder"] = "Назва нової папки";
   i18n["Folder created"] = "Папку створено";
-  i18n["Info: This new folder won't be commited until a new file will be commited into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Інфо: Новостворена папка не буде закомічена, допоки в ній не буде закомічено новий файл. Якщо ви не закомітите будь-який файл в ній на протязі 8 днів, її буде автоматично видалено";
-  i18n["Folder <br><br><b>{0}</b><br><br> was created sucessfully under {1} !"] = "Папка <br><br><b>{0}</b><br><br> була успішно створена в {1}!";
+  i18n["Info: This new folder won't be committed until a new file will be committed into it. If you don't commit any new file into it until 8 days, it will be automatically deleted."] = "Інфо: Новостворена папка не буде закомічена, допоки в ній не буде закомічено новий файл. Якщо ви не закомітите будь-який файл в ній на протязі 8 днів, її буде автоматично видалено";
+  i18n["Folder <br><br><b>{0}</b><br><br> was created successfully under {1} !"] = "Папка <br><br><b>{0}</b><br><br> була успішно створена в {1}!";
   i18n["This folder already exists in the current folder."] = "Ця папка вже існує в поточній директорії.";
 
   i18n["Add a new file"] = "Додати новий файл";
@@ -308,7 +308,7 @@ var i18n = new Array();
   i18n["Diff for patch: {0}"] = "Відмінності (diff) для патча: {0}";
   i18n["Patch Name: "] = "Ім'я патча: ";
   i18n["Documentation page not available"] = "Сторінка Документації не доступна";
-  i18n["Nb lines of contexte: "] = "Число ліній контекста: ";
+  i18n["# of context lines: "] = "Число ліній контекста: ";
   i18n["Ignore changes in the amount of white space"] = "Ігнорувати зміни, що стосуються кількості пробілів";
   i18n["Option <b>b</b> for the diff command"] = "Параметр <b>b</b> для команди diff";
   i18n["Ignore all white space"] = "Ігнорувати всі пробіли";
@@ -514,7 +514,7 @@ var i18n = new Array();
   i18n["{0} word"] = "Слово {0}";
   i18n["Last User Update"] = "Користувач, що востаннє оновив";
   i18n["Last Date Update"] = "Дата останнього оновлення";
-  i18n["Word in dictionnary added/updated"] = "Слово в словнику додано/оновлено.";
+  i18n["Word in dictionary added/updated"] = "Слово в словнику додано/оновлено.";
   i18n["The word have been added/updated successfully !"] = "Слово було успішно додано/оновлено!";
   i18n["Word deleted"] = "Слово було видалено";
   i18n["The word was deleted successfully !"] = "Слово було успішно видалено!";
@@ -677,7 +677,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/MoveToPatch.js
   i18n["Error. Is this file(s) is(are) own by you ?"] = "Помилка. Цей файл належить вам?";
-  i18n["Patches unknow for this project or for this user"] = "Невідомий патч для цього проекта або для цього користувача.";
+  i18n["Patches unknown for this project or for this user"] = "Невідомий патч для цього проекта або для цього користувача.";
 
 // In file: ../../js/ui/task/UpdateConfTask.js
   i18n["Option saved"] = "Опцію збережено";
@@ -698,7 +698,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/task/CheckFileTask.js
   i18n["Checking for error. Please, wait..."] = "Перевірка на помилки. Будь-ласка, почекайте...";
-  i18n["An error occured while checking this file for errors. Please, try again."] = "Під час перевірки файла на помилки, сталась помилка. Будь-ласка, спробуйте знову.";
+  i18n["An error occurred while checking this file for errors. Please, try again."] = "Під час перевірки файла на помилки, сталась помилка. Будь-ласка, спробуйте знову.";
   i18n["Check for errors"] = "Перевірка на помилки";
   i18n["There is no error."] = "Помилок немає.";
 
@@ -725,13 +725,13 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "Замітку було успішно додано!";
   i18n["Note deleted"] = "Замітку видалено";
   i18n["The note was deleted successfully !"] = "Замітку було успішно видалено!";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Перевірка XML. Будь-ласка, почекайте...";
   i18n["XML check"] = "Перевірка XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Рядок";
   i18n["Libel"] = "Слово";
@@ -765,11 +765,10 @@ var i18n = new Array();
 // In file: ../../js/ux/codemirror2/lib/util/search.js
   i18n["Search"] = "Пошук";
   i18n["Use /re/ syntax for regexp search"] = "Використовуйте синтаксис /re/ для пошуку по регулярними виразам";
-    
+
 // In file: ../../js/ui/cmp/DirectActionWin.js
   i18n["Live action"] = "Пряма дія";
   i18n["This live action didn't exist"] = "Такої прямої дії не існує";
   i18n["Put into this patch:"] = "Покласти в цей патч:";
   i18n["Delete this change"] = "Видалити цю зміну";
   i18n["Modified file"] = "Змінений файл";
-  

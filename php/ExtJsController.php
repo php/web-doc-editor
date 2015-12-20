@@ -1171,7 +1171,7 @@ class ExtJsController
             $fileContent = iconv("UTF-8", $charset, $fileContent);
         }
 
-        // We detect tab caracters and trow an error if we find one.
+        // We detect tab characters and trow an error if we find one.
         if( strstr("\t", $fileContent) ) {
             return JsonResponseBuilder::failure(
                 array(
