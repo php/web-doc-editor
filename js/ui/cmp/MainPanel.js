@@ -372,7 +372,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                   }
                 },{
                   xtype:'tbtext',
-                  text: _('Nb lines of context: ')
+                  text: _('# of context lines: ')
                 },{
                     xtype:'spinnerfield',
                     width : 60,
