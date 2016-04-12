@@ -26,7 +26,7 @@ while( list($key, $project) = each($availableProject) ) {
         continue;
     }
 
-    echo "enter into ".$project['code']."\n";
+    echo "project ".$project['code']."\n";
 
     // We must delete this var to be re-generated
     unset($rm->existingLanguage);
@@ -39,12 +39,11 @@ while( list($key, $project) = each($availableProject) ) {
     // For all language, we check the build
     foreach ($existingLanguage as $lang) {
 
-        echo "Is there some work to send to the ".$lang["code"]." list ?\n";
-
         $lang = $lang["code"];
 
-        $data = $rf->getRawWork($lang);
+        echo " language $lang\n";
 
+        $data = $rf->getRawWork($lang);
 
         // What we must do when the build failed
         //if( $data["total"] != 0 ) {
@@ -131,9 +130,8 @@ This email is send automatically by the Php Docbook Online Editor.
             // We send an email for this failed build
             AccountManager::getInstance()->email($to, $subject, $msg, $to, 'list');
 
-            echo "email send !\n";
-
-            }
+            echo "  sent email to $to\n";
+        }
     }
 }
 ?>
