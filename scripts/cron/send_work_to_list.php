@@ -103,6 +103,7 @@ Please review, then commit or delete these patches.
             $msg .= "\n
             => Put this change into your patches : https://edit.php.net/?project=php&action=putIntoMyPatches&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
             => Delete this change: https://edit.php.net/?project=php&action=deleteThisChange&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
+            => Raw patch: https://edit.php.net/diffRaw.php?project=php&lang=".$lang."&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
             ";
             
             $msg .="\n";
