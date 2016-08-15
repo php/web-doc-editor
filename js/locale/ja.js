@@ -5,43 +5,43 @@
 var i18n = new Array();
 
 // In file: ../../js/main.js
-  i18n["Refresh"] = "Refresh";
-  i18n["Forbidden"] = "Forbidden";
-  i18n["You can't do this action as anonymous user."] = "You can't do this action as anonymous user.";
-  i18n["Error"] = "Error";
-  i18n["File system error. Check read/write permissions under data folder."] = "File system error. Check read/write permissions under data folder.";
-  i18n["Main menu"] = "Main menu";
-  i18n["Topic:"] = "Topic:";
+  i18n["Refresh"] = "リフレッシュ";
+  i18n["Forbidden"] = "アクセス禁止";
+  i18n["You can't do this action as anonymous user."] = "匿名ユーザーはこの操作を行えません。";
+  i18n["Error"] = "エラー";
+  i18n["File system error. Check read/write permissions under data folder."] = "ファイルシステムエラー。データフォルダへのアクセス権をチェックしてください。";
+  i18n["Main menu"] = "メインメニュー";
+  i18n["Topic:"] = "トピック:";
   i18n["{0} Topic:"] = "{0} Topic:";
   i18n["Defined by {0}, {1}"] = "Defined by {0}, {1}";
-  i18n["Files need translate"] = "Files need translate";
-  i18n["Files need update"] = "Files need update";
-  i18n["Error in current translation"] = "Error in current translation";
-  i18n["Files need reviewed"] = "Files need reviewed";
-  i18n["Not in EN tree"] = "Not in EN tree";
-  i18n["All files"] = "All files";
+  i18n["Files need translate"] = "未翻訳のファイル";
+  i18n["Files need update"] = "更新を要するファイル";
+  i18n["Error in current translation"] = "現在の翻訳のエラー";
+  i18n["Files need reviewed"] = "レビューを要するファイル";
+  i18n["Not in EN tree"] = "英語版に存在しないファイル";
+  i18n["All files"] = "すべてのファイル";
   i18n["Open the Log Message Manager"] = "Open the Log Message Manager";
-  i18n["Work in progress"] = "Work in progress";
-  i18n["Patches for review"] = "Patches for review";
-  i18n["Google translation"] = "Google translation";
-  i18n["Home"] = "Home";
-  i18n["Connected as"] = "Connected as";
-  i18n["Connected using"] = "Connected using";
-  i18n["anonymous"] = "anonymous";
-  i18n["Administrator"] = "Administrator";
-  i18n["You are a global Administrator"] = "You are a global Administrator";
-  i18n["You are an administrator for this language"] = "You are an administrator for this language";
-  i18n["Project: "] = "Project: ";
-  i18n["Language: "] = "Language: ";
-  i18n["Total number of your files"] = "Total number of your files";
-  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces.";
-  i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it.";
-  i18n["The patch you want to delete doesn't exist."] = "The patch you want to delete doesn't exist.";
-  i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it.";
-  i18n["This action is available to global administrators only."] = "This action is available to global administrators only.";
-  i18n["This action is available to global administrators or to administrators for this language only."] = "This action is available to global administrators or to administrators for this language only.";
-  i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files.";
+  i18n["Work in progress"] = "作業中";
+  i18n["Patches for review"] = "レビュー待ちのパッチ";
+  i18n["Google translation"] = "Google翻訳";
+  i18n["Home"] = "ホーム";
+  i18n["Connected as"] = "接続中のユーザー";
+  i18n["Connected using"] = "次のアカウントで接続中: ";
+  i18n["anonymous"] = "匿名";
+  i18n["Administrator"] = "管理者";
+  i18n["You are a global Administrator"] = "あなたはシステム管理者です";
+  i18n["You are an administrator for this language"] = "あなたはこの言語の管理者です";
+  i18n["Project: "] = "プロジェクト: ";
+  i18n["Language: "] = "言語: ";
+  i18n["Total number of your files"] = "ファイルの総数";
+  i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "UTF-8を要する文字を使っていますが、XMLヘッダーにそれが設定されていません。<br>当該文字を削除するか、XMLファイルのヘッダーを以下のようにUTF-8に変更してください。<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
+  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "このファイルにはタブ文字が含まれているようです。半角スペースに置き換えてください。<br>ヒント: \"ファイル全体の再インデント\" ボタンを使うと、すべてのタブ文字を半角スペースに変換します。";
+  i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "別のユーザーが変更しているため、このファイルを書き換えることはできません。書き換えたい場合は、管理者に連絡してください。";
+  i18n["The patch you want to delete doesn't exist."] = "指定されたパッチは存在しません。";
+  i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "指定されたパッチは他のユーザーが作ったものです。パッチを削除できるのは、パッチの作者かシステム管理者だけです。";
+  i18n["This action is available to global administrators only."] = "この操作はシステム管理者しか行えません。";
+  i18n["This action is available to global administrators or to administrators for this language only."] = "この操作は、システム管理者あるいはこの言語の管理者しか行えません。";
+  i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "ローカルでの変更を取り消そうとしているファイルは他のユーザーが作ったものです。<br>この操作は、自分が作ったファイルに対してだけ行えます。";
   
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-click the cell to open the file selection";
@@ -126,8 +126,8 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationGraph.js
-  i18n["Graphics"] = "Graphics";
-  i18n["Refresh this graph"] = "Refresh this graph";
+  i18n["Graphics"] = "グラフ";
+  i18n["Refresh this graph"] = "このグラフを更新する";
 
 
 // In file: ../../js/ui/component/PortletInfo.js
@@ -175,23 +175,23 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslationsGraph.js
-  i18n["Graphics for all languages"] = "Graphics for all languages";
-  i18n["Lang:"] = "Lang:";
-  i18n["Total:"] = "Total:";
-  i18n["files"] = "files";
-  i18n["Bulgarian"] = "Bulgarian";
-  i18n["German"] = "German";
-  i18n["Persian"] = "Persian";
-  i18n["Hungarian"] = "Hungarian";
-  i18n["Italian"] = "Italian";
-  i18n["Japanese"] = "Japanese";
-  i18n["Korean"] = "Korean";
-  i18n["Polish"] = "Polish";
-  i18n["Brazilian Portuguese"] = "Brazilian Portuguese";
-  i18n["Romanian"] = "Romanian";
-  i18n["Serbian"] = "Serbian";
-  i18n["Turkish"] = "Turkish";
-  i18n["Chinese (Simplified)"] = "Chinese (Simplified)";
+  i18n["Graphics for all languages"] = "全言語のグラフ";
+  i18n["Lang:"] = "言語:";
+  i18n["Total:"] = "合計:";
+  i18n["files"] = "ファイル";
+  i18n["Bulgarian"] = "ブルガリア語";
+  i18n["German"] = "ドイツ語";
+  i18n["Persian"] = "ペルシア語";
+  i18n["Hungarian"] = "ハンガリー語";
+  i18n["Italian"] = "イタリア語";
+  i18n["Japanese"] = "日本語";
+  i18n["Korean"] = "韓国語";
+  i18n["Polish"] = "ポーランド語";
+  i18n["Brazilian Portuguese"] = "ポルトガル語（ブラジル）";
+  i18n["Romanian"] = "ルーマニア語";
+  i18n["Serbian"] = "セルビア語";
+  i18n["Turkish"] = "トルコ語";
+  i18n["Chinese (Simplified)"] = "中国語（簡体字）";
 
 
 // In file: ../../js/ui/component/EntitiesAcronymsPanel.js
@@ -239,23 +239,23 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletTranslator.js
-  i18n["{0} Translators"] = "{0} Translators";
-  i18n["{0} Reviewers"] = "{0} Reviewers";
-  i18n["No reviewer"] = "No reviewer";
-  i18n["Name"] = "Name";
+  i18n["{0} Translators"] = "翻訳者 {0} 名";
+  i18n["{0} Reviewers"] = "レビューア {0} 名";
+  i18n["No reviewer"] = "レビューアなし";
+  i18n["Name"] = "名前";
   i18n["Email"] = "Email";
   i18n["Nick"] = "Nick";
   i18n["VCS"] = "VCS";
-  i18n["UptoDate"] = "UptoDate";
-  i18n["Stale"] = "Stale";
-  i18n["Sum"] = "Sum";
-  i18n["Send an email to the {0}"] = "Send an email to the {0}";
-  i18n["Send an email to {0}"] = "Send an email to {0}";
-  i18n["Translators"] = "Translators";
-  i18n["Reviewers"] = "Reviewers";
-  i18n["Must be reviewed"] = "Must be reviewed";
-  i18n["Translators & Reviewer"] = "Translators & Reviewer";
-  i18n["Refresh this grid"] = "Refresh this grid";
+  i18n["UptoDate"] = "最新";
+  i18n["Stale"] = "要更新";
+  i18n["Sum"] = "合計";
+  i18n["Send an email to the {0}"] = "{0} にメールを送る";
+  i18n["Send an email to {0}"] = "{0} にメールを送る";
+  i18n["Translators"] = "翻訳者";
+  i18n["Reviewers"] = "レビューア";
+  i18n["Must be reviewed"] = "要レビュー";
+  i18n["Translators & Reviewer"] = "翻訳者とレビューア";
+  i18n["Refresh this grid"] = "このグリッドを更新する";
 
 
 // In file: ../../js/ui/component/BuildStatus.js
@@ -277,13 +277,13 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletBugs.js
-  i18n["You must manually load this data.<br>Use the refresh button !"] = "You must manually load this data.<br>Use the refresh button !";
-  i18n["Open in a new Tab"] = "Open in a new Tab";
-  i18n["Open the related file"] = "Open the related file";
-  i18n["Summary"] = "Summary";
-  i18n["Error when loading open bugs from Php.net !"] = "Error when loading open bugs from Php.net !";
-  i18n["No open bugs"] = "No open bugs";
-  i18n["Open bugs for {0}"] = "Open bugs for {0}";
+  i18n["You must manually load this data.<br>Use the refresh button !"] = "このデータは手動で読み込む必要があります。<br>右上の更新ボタンを押してください。";
+  i18n["Open in a new Tab"] = "新しいタブで開く";
+  i18n["Open the related file"] = "関連するファイルを開く";
+  i18n["Summary"] = "概要";
+  i18n["Error when loading open bugs from Php.net !"] = "Php.netからのバグ情報の読み込みに失敗しました!";
+  i18n["No open bugs"] = "未対応のバグはありません";
+  i18n["Open bugs for {0}"] = "{0} の未対応のバグ";
 
 
 // In file: ../../js/ui/component/MainPanel.js
@@ -321,7 +321,7 @@ var i18n = new Array();
   i18n["Notes section"] = "Notes section";
   i18n["SeeAlso section"] = "SeeAlso section";
   i18n["Enable line wrapping"] = "Enable line wrapping";
-  i18n["Re-indent all this file"] = "Re-indent all this file";
+  i18n["Re-indent all this file"] = "ファイル全体の再インデント";
   i18n["Synchronize scroll bars"] = "Synchronize scroll bars";
   i18n["Line: "] = "Line: ";
   i18n["Col: "] = "Col: ";
@@ -533,9 +533,9 @@ var i18n = new Array();
 
 
 // In file: ../../js/ui/component/PortletLocalMail.js
-  i18n["Title"] = "Title";
-  i18n["Error when loading mails from this mailing list !"] = "Error when loading mails from this mailing list !";
-  i18n["Mail from {0}"] = "Mail from {0}";
+  i18n["Title"] = "件名";
+  i18n["Error when loading mails from this mailing list !"] = "メーリングリストからのメールの読み込みに失敗しました!";
+  i18n["Mail from {0}"] = "{0} への投稿";
 
 
 // In file: ../../js/ui/component/CheckBuildPrompt.js
