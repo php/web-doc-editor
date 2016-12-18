@@ -83,7 +83,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             user = record.data.value.user;
 
             return String.format(
-                    _('{0} check all entitites'),
+                    _('{0} check all entities'),
                     user);
 
         break;

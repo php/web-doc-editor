@@ -55,7 +55,7 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                                     patchID      : win.patchID
                                 });
                             }
-                            
+
                             // If there is some node to Add, we call this.
                             if (win.nodesToAdd) {
                                     ui.task.MoveToPatch({
@@ -66,7 +66,7 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                                             nodesToAdd: win.nodesToAdd
                                     });
                             }
-                            
+
                             // We reload the patchList store
                             PhDOE.user.patchList.reload();
                         }
@@ -100,7 +100,7 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                 },{
                     name       : 'email',
                     fieldLabel : _('Email'),
-                   tooltipText : _('If provided, an email will be send to you to inform that the patch is commited.'),
+                   tooltipText : _('If provided, an email will be send to you to inform that the patch is committed.'),
                     anchor     : '100%',
                     value      : this.patchEmail
                 }]

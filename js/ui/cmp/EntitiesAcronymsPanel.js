@@ -168,7 +168,7 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
         var panelDesc;
 
         if( this.dataType === 'entities' ) {
-            panelDesc = _('Click on a row to display the content of the entitie.<br>Double-click on it to insert it at the cursor position.');
+            panelDesc = _('Click on a row to display the content of the entity.<br>Double-click on it to insert it at the cursor position.');
         } else if( this.dataType === 'acronyms' ) {
             panelDesc = _('Click on a row to display the content of the acronym.<br>Double-click on it to insert it at the cursor position.');
         }

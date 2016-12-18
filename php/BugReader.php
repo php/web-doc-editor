@@ -75,7 +75,7 @@ class BugReader {
 
                 $result[$i]['xmlID'] = ( isset($match[1]) ) ? $match[1] : false;
 
-                // We remove all caracters except xmlid (after and before)
+                // We remove all characters except xmlid (after and before)
                 if( $result[$i]['xmlID'] ) {
                     $match = array();
                     preg_match('/function\.(.[^%]*)/es', $result[$i]['xmlID'], $match);
