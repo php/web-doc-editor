@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/DBConnection.php';
 /**
  * A class to check the entities
  * Original checkent script have been written by Georg Richter <georg@php.net> & Gabor Hojsty <goba@php.net>
- * you can found it here : http://svn.php.net/viewvc/web/doc/trunk/scripts/checkent.php?view=markup
+ * you can found it here : https://svn.php.net/viewvc/web/doc/trunk/scripts/checkent.php?view=markup
  *
  */
 class ToolsCheckEntities {

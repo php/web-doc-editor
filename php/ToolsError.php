@@ -1299,7 +1299,7 @@ class ToolsError
      * Add an entry into the error's stack if a missing <initializer> tag was found
      *
      * This is the convertion of the following script :
-     * http://svn.php.net/viewvc/phpdoc/doc-base/trunk/scripts/check-missing-initializers.php?view=markup
+     * https://svn.php.net/viewvc/phpdoc/doc-base/trunk/scripts/check-missing-initializers.php?view=markup
      *
      * This method is only available for EN files.
      */
