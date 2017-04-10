@@ -424,7 +424,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             // Load diff data only if FilePath & FileName exist
             if( FilePath !== '' && FileName !== '' )
             {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php';
                 
                 XHR({
@@ -437,7 +437,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                         
                         if( o.url === '404' ) {
                             
-                            urlSite = 'http://' + window.location.host + ':' +
+                            urlSite = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
@@ -463,7 +463,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     }
                 });  
             } else {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
