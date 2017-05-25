@@ -83,20 +83,7 @@ class SvnClient
         $full_host = ($port == 443 ? 'ssl://' : '') . $host;
         $uri  = '/' . $appConf[$project]['vcs.server.repos'] . '!svn/act/'.$uuid;
 
-        $ping = sprintf('MKACTIVITY %s HTTP/1.1
-Host: %s
-User-Agent: PhpDocumentation Online Editor
-Connection: TE
-TE: trailers
-Accept-Encoding: gzip
-DAV: http://subversion.tigris.org/xmlns/dav/svn/depth
-DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo
-DAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops
-Content-Length: 0
-Accept-Encoding: gzip
-
-', $uri, $host);
-
+        $ping = sprintf("MKACTIVITY %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: PhpDocumentation Online Editor\r\nConnection: TE\r\nTE: trailers\r\nAccept-Encoding: gzip\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/depth\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops\r\nContent-Length: 0\r\nAccept-Encoding: gzip\r\n\r\n", $uri, $host);
 
         $h = @fsockopen($full_host, $port);
         if( !$h ) { return 'svn.php.net seems to be down !'; }
@@ -126,20 +113,7 @@ Accept-Encoding: gzip
         $A2 = md5($data['request'].':'.$uri);
         $response = md5($A1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$A2);
 
-        $pong = sprintf('MKACTIVITY %s HTTP/1.1
-Host: %s
-User-Agent: PhpDocumentation Online Editor
-Connection: TE
-TE: trailers
-Accept-Encoding: gzip
-DAV: http://subversion.tigris.org/xmlns/dav/svn/depth
-DAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo
-DAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops
-Content-Length: 0
-Accept-Encoding: gzip
-Authorization: Digest username="%s", realm="%s", nonce="%s", uri="%s", response="%s", algorithm="MD5", cnonce="%s", nc=00000001, qop="%s"
-
-', $uri, $host, $username, $data['realm'], $data['nonce'], $uri, $response, $data['cnonce'], $data['qop']);
+        $pong = sprintf("MKACTIVITY %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: PhpDocumentation Online Editor\r\nConnection: TE\r\nTE: trailers\r\nAccept-Encoding: gzip\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/depth\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/mergeinfo\r\nDAV: http://subversion.tigris.org/xmlns/dav/svn/log-revprops\r\nContent-Length: 0\r\nAccept-Encoding: gzip\r\nAuthorization: Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", response=\"%s\", algorithm=\"MD5\", cnonce=\"%s\", nc=00000001, qop=\"%s\"\r\n\r\n", $uri, $host, $username, $data['realm'], $data['nonce'], $uri, $response, $data['cnonce'], $data['qop']);
 
         $h = @fsockopen($full_host, $port);
         fwrite($h, $pong);
