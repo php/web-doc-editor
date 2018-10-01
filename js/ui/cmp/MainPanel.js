@@ -526,12 +526,12 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                             patchPermLink='';
                         
                         if( patchID == '' ) {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
                         } else {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
