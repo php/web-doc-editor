@@ -5,14 +5,14 @@
  *
  */
 class BugReader {
-    
+
     /**
      * The lang
      *
      * @var string
      */
     private $lang;
-    
+
     /**
      * Initialise
      *
@@ -22,10 +22,10 @@ class BugReader {
     {
         $this->lang   = $lang;
     }
-    
+
     /**
      * Get all open bugs for this LANG.
-     * 
+     *
      * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs
      */
     function getOpenBugs()
@@ -83,7 +83,7 @@ class BugReader {
                         $result[$i]['xmlID'] = $match[1];
                     }
                 }
-                
+
 
                 $i++;
             }
@@ -91,5 +91,5 @@ class BugReader {
         return $result;
 
     }
-    
+
 }

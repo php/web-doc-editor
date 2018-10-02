@@ -55,12 +55,12 @@ while( list($key, $project) = each($availableProject) ) {
 
         $lock = new LockFile('project_'.$pm->project.'_lock_check_build_'.$lang);
         if ($lock->lock()) {
-            
+
             $return = $rm->checkBuild($lang);
 
             // What we must do when the build failed
             if( $return["state"] == "ko" ) {
-                
+
                 $msg = "Your documentation is broken. The build is done on Friday.
 
         Please, try to fix it *quickly*.
@@ -74,7 +74,7 @@ while( list($key, $project) = each($availableProject) ) {
         --
         This email is send automatically by the Php Docbook Online Editor.
         ";
-        
+
                 //Usefull for language like pt_BR for example, because doc-pt_br don't exist, it's doc-pt-br
                 $emailLang = str_replace("_", "-", strtolower($lang));
 

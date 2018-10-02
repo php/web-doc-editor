@@ -68,10 +68,10 @@ class ToolsXmllint
             $return[$numResult][$tmp] = $this->rawErrors[$i];
 
             if( $tmp != 2 ) {
-                $tmp ++;                
+                $tmp ++;
             } else {
                 $tmp = 0;
-                $numResult ++;                
+                $numResult ++;
             }
         }
 
@@ -80,7 +80,7 @@ class ToolsXmllint
 
         // We check all errors
         for( $i=0; $i < count($return); $i++) {
-            
+
             // We skip the filename in the first element of the array
             $return[$i][0] = substr($return[$i][0], strlen($this->XmlFileName), strlen($return[$i][0]));
 
@@ -107,7 +107,7 @@ class ToolsXmllint
         }
 
         return empty($result) ? 'no_error' : $result;
-        
+
     }
 
 }

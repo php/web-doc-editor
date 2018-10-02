@@ -80,7 +80,7 @@ Below is a list of URL entities that are experiencing fatal errors:
         }
 
         $msg .= "
--- 
+--
 https://edit.php.net/
 This email was generated on ".@date('M, n, Y', strtotime($r['node'][0]['date']))." and sent automatically
 by the PHP DocBook Online Editor

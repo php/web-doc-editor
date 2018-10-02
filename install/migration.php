@@ -27,7 +27,7 @@ while( list($key, $project) = each($availableProject) ) {
     $project = $am->project;
 
     // Get all modified files
-    
+
         $s = 'SELECT
                 *
              FROM
@@ -45,7 +45,7 @@ while( list($key, $project) = each($availableProject) ) {
 
             $destFolder = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'-new/'.$a['lang'].$a['path'];
             $fromFolder = $appConf['GLOBAL_CONFIGURATION']['data.path'].$appConf[$project]['vcs.module'].'/'.$a['lang'].$a['path'];
-            
+
             echo 'Dest folder : '.$destFolder."\r\n";
             echo 'From folder : '.$fromFolder."\r\n";
 

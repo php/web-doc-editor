@@ -34,7 +34,7 @@ class SaferExec
         ob_start();
         passthru($command, $return_var);
         $output = explode(PHP_EOL, ob_get_clean());
-        
+
     }
 }
 

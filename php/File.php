@@ -17,15 +17,15 @@ class File
     public $full_new_path;
 
     public $full_path_fallback;
-    
+
     public $full_path_dir;
     public $full_new_path_dir;
-    
+
     public $isDir;
     public $isFile;
 
     private $conn;
-    
+
     /**
      * Constructor will normalize the lang and the path as specified as parameters.
      * The path can be a folder or a file.
@@ -46,11 +46,11 @@ class File
         $this->lang = $lang = trim($lang, '/');
         $path = trim($path, '.');
         $path = trim($path, '/');
-        
+
         // Find if the path is a folder or a file. As it, if the path contains an extension, we assume the path is a file.
         // Else, it's a folder.
         $path_parts = pathinfo($path);
-        
+
         if( !isset($path_parts['extension']) ) {
             $this->isDir = true;
             $this->isFile = false;
@@ -63,11 +63,11 @@ class File
             $this->name = $path_parts['basename'];
             $path = $path_parts['dirname'];
         }
-        
+
         $path = trim($path, '.');
         $path = trim($path, '/');
         $path = trim($path, '.');
-        
+
         if (strlen($path) > 0) {
             $this->path = "/$path/";
 
@@ -91,7 +91,7 @@ class File
             $this->full_path_fallback = $appConf[$project]['vcs.path'].'en/'.$this->name;
         }
 
-        $this->conn = DBConnection::getInstance();        
+        $this->conn = DBConnection::getInstance();
     }
 
     public function exist()
@@ -110,7 +110,7 @@ class File
     {
         // We must check if the file exist.
         // For example, when we start a translation, save it, and then open it from work in progress module, the path don't exist and we must use the fallback path for translation
-        
+
         $originalContent = ( is_file($this->full_path) ) ? file_get_contents($this->full_path) : file_get_contents($this->full_path_fallback);
 
         // We search for new line caracters and mark it ! (Google API delete new line)
@@ -133,7 +133,7 @@ class File
         $translation = str_replace("&quot;", '"', $translation);
         $translation = str_replace("&lt;"  , '<', $translation);
         $translation = str_replace("&gt;"  , '>', $translation);
-        
+
         // CLeanUp entities. Google return it like this : & Reftitle.parameters;. We convert it like this : &reftitle.parameters;
         $translation = preg_replace_callback("/(&)\s(.)(.[^;]*?)(;)/s",
             create_function(
@@ -141,13 +141,13 @@ class File
                 'return $matches[1].strtolower($matches[2]).$matches[3].$matches[4];'
             ),
         $translation);
-        
+
         // We remove extra space after :: operator
         $translation = preg_replace("/(\w+)(::)(\s)(\w+)/s", "$1$2$4", $translation);
-        
+
         // We delete space into tab like this </ b>
         $translation = preg_replace("/(<\/\s(\w+[^>]*)>)/s", "</$2>", $translation);
-        
+
         // We delete space just after an open tag, and just before a close tag, like this <b> foo </b>
         $translation = preg_replace("/(<(\w+[^>]*)>)(\s?)(.[^>]*?)(\s?)(<\/(\\2)>)/s", "<$2>$4</$7>", $translation);
 
@@ -168,7 +168,7 @@ class File
             $isModified = $this->isModified();
             $isModified = (bool) $isModified;
         }
-        
+
         $path = ($readOriginal || !$isModified)
                 ? $this->full_path
                 : $this->full_new_path;
@@ -214,7 +214,7 @@ class File
     /**
      * Create a new folder locally & register it to pendingCommit
      * If $path is provided, it is used to create the according path. Else, we use the current folder's path.
-     * 
+     *
      * @param string $path The path to create. By default, we use the current path.
      * @return boolean TRUE if the path have been created successfully, FALSE otherwise.
      */
@@ -223,7 +223,7 @@ class File
        $am      = AccountManager::getInstance();
        $appConf = $am->appConf;
        $project = $am->project;
-       
+
        if( !$path ) {
            $path = $this->path;
        }
@@ -421,31 +421,31 @@ class File
 
     public function diff($optNbLine=3, $optB=false, $optW=false)
     {
-        
+
         // $optNbLine need to be an integer, >= 3
         $optNbLine = (int) $optNbLine;
         if( $optNbLine < 3 ) $optNbLine = 3;
-        
+
         // $optB & $optW need to be a boolean
         $optB = ($optB == 'true') ? true : false;
         $optW = ($optW == 'true') ? true : false;
-        
+
         $_optB = ( $optB == 'true' ) ? ' -b' : '';
         $_optW = ( $optW == 'true' ) ? ' -w' : '';
-        
+
         /* Diff option (from man page) :
         * U : output NUM (default 3) lines of unified context
-        * 
+        *
         * N : treat absent files as empty
-        * 
+        *
         * b : ignore changes in the amount of white space
         * Ne pas tenir compte des différences concernant des espaces blancs.
-        * 
+        *
         * w : ignore all white space
         * Ignorer les espaces blancs lors de la comparaison de lignes.
-        * 
+        *
         */
-        
+
         $commands = array(
             new ExecStatement(
                 'diff -uN -U '.$optNbLine.' '.$_optB.$_optW.' --label %s --label %s %s %s',

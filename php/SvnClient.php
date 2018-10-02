@@ -308,11 +308,11 @@ class SvnClient
             $o['revision'] = str_replace('r', '', $infos[0]);
             $o['author']   = $infos[1];
             $o['date']     = str_replace('-', '/', array_shift(explode(' +', $infos[2])));
-            
+
             if( $tmp = strstr($o['date'], " /", true) ) {
                 $o['date'] = $tmp;
             }
-            
+
             $o['content']  = str_replace("\n", '<br/>', trim(implode('<br/>', $contents)));
 
             $final[] = $o;
@@ -436,7 +436,7 @@ class SvnClient
 
         // Info we must store into DB
         $info = array();
-        
+
         $pathLogFile = $this->createCommitLogFile($log);
 
         $create_stack = array();
@@ -569,13 +569,13 @@ class SvnClient
 
         return array('err' => $err, 'output' => $output);
     }
-    
+
     public function checkKeyWords($lang,$filePath,$fileName)
     {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
-        
+
         $goodSVNKeywords = Array(
             0 => "Id",
             1 => "Rev",
@@ -592,14 +592,14 @@ class SvnClient
         $goodSVNEolStyle = Array(
             0 => "native"
             );
-            
+
         $result = array(
             "keyWords" => false,
             "EolStyle" => false
             );
         $isDirty = false;
-        
-        
+
+
         $commands = array(
             new ExecStatement('cd %s', array($appConf[$project]['vcs.path'].$lang.$filePath)),
             new ExecStatement('svn proplist --xml --verbose %s', array($fileName))
@@ -613,73 +613,73 @@ class SvnClient
         }
 
         $outputXML = implode("\n", $output)."\n";
-        
+
         $content = trim($outputXML);
         $content = str_replace("\r", " ", $content);
         $content = str_replace("\n", " ", $content);
-        
+
         $content = simplexml_load_string($content);
-        
+
         $keywords = array();
-        
+
         for( $i=0; $i < count($content->target->property); $i++) {
 
             $attributName = "";
             $attributValue = "";
-            
+
             $attributName = $content->target->property[$i]->attributes();
             $attributValue = (string) $content->target->property[$i][0];
-            
+
             $attributName = explode(":",$attributName);
             $attributName = $attributName[1];
-            
+
             $attributValue = explode(" ",$attributValue);
-            
+
             $keywords[$attributName] = $attributValue;
-            
+
         }
 
         // For keywords
         if( isset($keywords["keywords"]) ) {
-            
+
             $diffKeywords = array_diff($goodSVNKeywords, $keywords["keywords"]);
-            
+
             if( ! empty($diffKeywords) ) {
-                
+
                 $result['keyWords'] = implode(' ',$diffKeywords);
                 $isDirty = true;
             }
-            
+
         } else {
             $result['keyWords'] = implode(' ',$goodSVNKeywords);
             $isDirty = true;
         }
-        
+
         // For eol-style
         if( isset($keywords["eol-style"]) ) {
-            
+
             $diffEolStyle = array_diff($goodSVNEolStyle, $keywords["eol-style"]);
-            
+
             if( ! empty($diffEolStyle) ) {
-                
+
                 $result['EolStyle'] = implode(' ',$diffEolStyle);
                 $isDirty = true;
-                
+
             }
-            
+
         } else {
             $result['EolStyle'] = implode(' ',$goodSVNEolStyle);
             $isDirty = true;
         }
-        
+
         // We send the result
         if( $isDirty ) {
             return $result;
         } else {
             return false;
         }
-        
-        
+
+
     }
 }
 

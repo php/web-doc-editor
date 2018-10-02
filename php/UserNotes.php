@@ -89,7 +89,7 @@ class UserNotes {
         );
         $r = $this->conn->query($s, $params);
         $a = $r->fetch_object();
-        
+
         if( $a->user == $vcsLogin ) {
             // We can delete it
             $s = 'DELETE FROM

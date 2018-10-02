@@ -1,7 +1,7 @@
 <?php
-/* 
- * 
- * 
+/*
+ *
+ *
  */
 
 class EntitiesAcronymsFetcher {
@@ -45,7 +45,7 @@ class EntitiesAcronymsFetcher {
             if( empty($file) || !$content = file_get_contents($file) ) {
                 continue;
             }
-            
+
             preg_match_all('/<varlistentry>(.*?)<term>(.*?)<\/term>(.*?)<simpara>(.*?)<\/simpara>(.*?)<\/varlistentry>/s', $content, $match);
 
             $from = explode('/',$file);
@@ -72,14 +72,14 @@ class EntitiesAcronymsFetcher {
         $files = explode("|", $appConf[$project]['entities.usedbyeditor.location']);
 
         $this->entities = array();
-            
+
         $count = 0;
         while( list($k, $file) = each($files))
-        {        
+        {
             if( empty($file) || !$content = file_get_contents($file) ) {
                 continue;
             }
-            
+
             preg_match_all('/<!ENTITY\s(.*?)\s(\'|")(.*?)(\2)>/s', $content, $match);
 
             $from = explode('/',$file);

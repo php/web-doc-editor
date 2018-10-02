@@ -197,7 +197,7 @@
 /* Tabs */
 
 .x-tab-panel-header, .x-tab-panel-footer {
-	
+
 	background: #444a7d;
 	border-color:#4f657b;
 }
@@ -429,7 +429,7 @@ body.x-body-masked .x-window-mc, body.x-body-masked .x-window-plain .x-window-mc
 
 /* Forms */
 .x-form-text, textarea.x-form-field {
-	border:1px solid #9ab; 
+	border:1px solid #9ab;
 }
 .x-trigger-wrap-focus .x-form-trigger {
 	border-bottom:1px solid #4a7192;

@@ -108,7 +108,7 @@ class TranslatorStatistic
                 FROM
                     `files`
                 WHERE
-                    `lang` = "%s" AND 
+                    `lang` = "%s" AND
                     `revision` = `en_revision` AND
                     `project` = "%s"
                 GROUP BY
@@ -163,7 +163,7 @@ class TranslatorStatistic
                 FROM
                     `files`
                 WHERE
-                    `lang` = "%s" AND 
+                    `lang` = "%s" AND
                     `revision` = `en_revision` AND
                     `reviewed` = "yes" AND
                     `project` = "%s"
@@ -224,12 +224,12 @@ class TranslatorStatistic
                     `lang` = "%s"
                 AND
                     `en_revision` != `revision`
-                AND 
+                AND
                     `size` is not NULL
                 AND
                     `project` = "%s"
                 GROUP BY
-                    `maintainer`    
+                    `maintainer`
                 ORDER BY
                     `maintainer`
             ';
@@ -288,14 +288,14 @@ class TranslatorStatistic
 
                 WHERE
                     `lang` = "%s" AND
-                    `en_revision` = `revision` AND 
+                    `en_revision` = `revision` AND
                     `reviewed` != "yes" AND
                     `size` is not NULL AND
                     `project` = "%s"
 
                 GROUP BY
                     `reviewed_maintainer`
-    
+
                 ORDER BY
                     `reviewed_maintainer`
             ';

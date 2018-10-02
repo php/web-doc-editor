@@ -64,32 +64,32 @@ class GTranslate
         /**
         * Google Translate(TM) Api endpoint
         * @access private
-        * @var String 
+        * @var String
         */
         private $url = "http://ajax.googleapis.com/ajax/services/language/translate";
-        
+
         /**
         * Google Translate (TM) Api Version
         * @access private
-        * @var String 
-        */      
+        * @var String
+        */
         private $api_version = "1.0";
 
         /**
         * Comunication Transport Method
         * Available: http / curl
         * @access private
-        * @var String 
+        * @var String
         */
         private $request_type = "http";
 
         /**
         * Path to available languages file
         * @access private
-        * @var String 
+        * @var String
         */
         private $available_languages_file       = "languages.ini";
-        
+
         /**
         * Holder to the parse of the ini file
         * @access private
@@ -99,7 +99,7 @@ class GTranslate
 
         /**
         * Google Translate api key
-        * @access private 
+        * @access private
         * @var string
         */
         private $api_key = null;
@@ -169,9 +169,9 @@ class GTranslate
                 }
                 return false;
         }
-        
+
         /**
-        * Query the Google(TM) endpoint 
+        * Query the Google(TM) endpoint
         * @access private
         * @param array $lang_pair
         * @param array $string
@@ -186,7 +186,7 @@ class GTranslate
         }
 
         /**
-        * Query Wrapper for Http Transport 
+        * Query Wrapper for Http Transport
         * @access private
         * @param String $url
         * returns String $response
@@ -197,8 +197,8 @@ class GTranslate
                 return GTranslate::evalResponse(json_decode(file_get_contents($this->url."?".$url)));
         }
 
-        /**     
-        * Query Wrapper for Curl Transport 
+        /**
+        * Query Wrapper for Curl Transport
         * @access private
         * @param String $url
         * returns String $response
@@ -217,9 +217,9 @@ class GTranslate
                 return GTranslate::evalResponse(json_decode($body));
         }
 
-        /**     
+        /**
         * Response Evaluator, validates the response
-        * Throws an exception on error 
+        * Throws an exception on error
         * @access private
         * @param String $json_response
         * returns String $response
@@ -241,9 +241,9 @@ class GTranslate
         }
 
 
-        /**     
+        /**
         * Validates if the language pair is valid
-        * Throws an exception on error 
+        * Throws an exception on error
         * @access private
         * @param Array $languages
         * returns Array $response Array with formated languages pair
@@ -259,7 +259,7 @@ class GTranslate
                 $valid_languages        =       false;
                 if( TRUE == in_array($languages[0],$language_list_v) AND TRUE == in_array($languages[1],$language_list_v) )
                 {
-                        $valid_languages        =       true;   
+                        $valid_languages        =       true;
                 }
 
                 if( FALSE === $valid_languages AND TRUE == in_array($languages[0],$language_list_k) AND TRUE == in_array($languages[1],$language_list_k) )
@@ -300,7 +300,7 @@ class GTranslate
             return $this->query($languages,$string);
         }
 
-        /**     
+        /**
         * Magic method to understande translation comman
         * Evaluates methods like language_to_language
         * @access public

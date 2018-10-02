@@ -2,8 +2,8 @@
 
 /**
  * MicrosoftTranslator - A PHP Wrapper for Microsoft JSON Translator API
- * 
- * @category    Translation 
+ *
+ * @category    Translation
  * @author      Renjith Pillai
  * @link        http://www.renjith.co.in
  * @copyright   2012 Renjith Pillai
@@ -138,7 +138,7 @@ public function translate($from, $to, $text, $format = 'Raw' )
     $request = $this->getRequest(self::TRANSLATE );
 
     $response = file_get_contents( $request, 0, $this->context );
-    
+
     if(!empty($response) && isset($response)){
         $this->getSuccessResponse($response);
     } else {
@@ -152,20 +152,20 @@ public function translate($from, $to, $text, $format = 'Raw' )
  */
 public function getLanguagesSelectBox($selectBox){
     //some how Raw format gives a single string of all countries and user changing format doesnt make sense here as output is html
-    $this->format = 'json';    
-    $request = $this->getRequest( self::GET_LANG); 
+    $this->format = 'json';
+    $request = $this->getRequest( self::GET_LANG);
     if( ! $response = $this->getCache( self::LANG_CACHE_FILE )) {
         $response = file_get_contents( $request, 0, $this->context );
         $this->putToCache( self::LANG_CACHE_FILE, $response );
     }
     $objResponse = json_decode($response);
-    
+
     if(!empty($objResponse) && isset($objResponse)){
         $this->getSuccessResponse($objResponse, $selectBox);
     } else {
         $this->getErrorResponse($objResponse, self::UNEXPECTED_ERROR, $missing );
     }
-    
+
 }
 /**
  * Encodes request in desirable format for Microsoft translator
@@ -189,30 +189,30 @@ private function getSuccessResponse($response, $selectBox = ''){
         $this->response->translation = $response;
         // Fot instance if you need both Raw and Json format
         if($this->format == 'Raw') {
-            $this->response->jsonResponse = !function_exists('json_decode') ? $this->response : json_encode($this->response); 
-        } 
+            $this->response->jsonResponse = !function_exists('json_decode') ? $this->response : json_encode($this->response);
+        }
     }  elseif($this->requestInvoked == self::GET_LANG ) {
         //currently it directly give selctbox
         $this->response->languageSelectBox = $this->getSelectBox($response,$selectBox);
-        
+
     }
 }
 
 private function getSelectBox($response,$selectBox) {
-    
+
     $options = '';
     foreach($response->d->results as $values ) {
 
         if(isset( $values->Code )) {
             $options.= "<option value='".$values->Code."'>".$values->Code."</option>";
-            
+
         }
     }
 
     $select = "<select id ='".$selectBox['id']."' name='".$selectBox['name']. "'class='".$selectBox['class']."'>";
     $select.= $options;
     $select.= "</select>";
-    
+
     return $select;
 }
 /**
@@ -223,11 +223,11 @@ private function getSelectBox($response,$selectBox) {
  * @param unknown_type $param
  */
 private function getErrorResponse($response, $reason , $param){
-    
-    $this->response = new stdClass();    
+
+    $this->response = new stdClass();
     $this->response->status = self::ERROR ;
-    $this->response->errorReason = str_replace("%s", $param, $reason); 
-    $this->response->jsonResponse = !function_exists('json_decode') ? $this->response : json_encode($this->response);        
+    $this->response->errorReason = str_replace("%s", $param, $reason);
+    $this->response->jsonResponse = !function_exists('json_decode') ? $this->response : json_encode($this->response);
 
 
 }
@@ -249,8 +249,8 @@ private function getRequest($type)
         $request = $this->serviceRootURL. $type.'?'. $params;
     } elseif ($type == self::GET_LANG ){
         $request = $this->serviceRootURL. $type.'?'. $top.'&'. $format;
-    }    
-    
+    }
+
     return $request ;
 }
 /**
@@ -265,8 +265,8 @@ private function getContext()
             'request_fulluri' => true,
             'header'  => "Authorization: Basic " . base64_encode($this->accountKey . ":" . $this->accountKey)
         )
-    )); 
-    
+    ));
+
     return $context;
 }
 
@@ -279,7 +279,7 @@ private function putToCache($file, $toCache) {
                 fwrite($handle, $toCache);
                 fclose($handle);
             }
-            
+
         } catch (Exception $e) {
              die ('put to cache failed ' . $e->getMessage());
         }
@@ -291,14 +291,14 @@ private function getCache($file) {
         if(is_dir(self::CACHE_DIRECTORY) && file_exists(self::CACHE_DIRECTORY . $file)) {
             $handle = fopen(self::CACHE_DIRECTORY . $file, "r");
             $contents = '';
-            
-            while (!feof($handle)) 
+
+            while (!feof($handle))
             {
                 $contents .= fread($handle, 8192);
             }
-            
+
             fclose($handle);
-            
+
             return $contents;
         } else {
             return false;

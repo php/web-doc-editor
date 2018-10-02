@@ -25,7 +25,7 @@ function menu()
     global $menu;
     fwrite(STDOUT, $menu);
     $choice = fgets(STDIN);
-    
+
     switch($choice) {
         case 1: goUpdateCVS();
             break;
@@ -39,17 +39,17 @@ function menu()
 
 function goUpdateCVS() {
     global $availableProject, $rm, $pm;
-    
+
     reset($availableProject);
-    
+
     echo "Start Update CVS repository....\n";
-    
+
     while( list($key, $project) = each($availableProject) )
     {
         $pm->setProject($project['code']);
-        
+
         echo "for project -".$project['code']."-\n";
-        
+
         unset($rm->existingLanguage);
         $pm->setProject($project['code']);
         $startTime = new DateTime();
@@ -57,67 +57,67 @@ function goUpdateCVS() {
         $rm->updateRepository();
         $endTime = new DateTime();
         $endTimeStamp = $endTime->getTimestamp();
-        
+
     } // while
-    
+
     echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )\n";
     menu();
 }
 
 function goRevCheck() {
     global $availableProject, $rm, $pm, $conn;
-    
+
     reset($availableProject);
-    
+
     echo "Start Apply Revcheck....\n";
-    
+
     while( list($key, $project) = each($availableProject) )
     {
         $pm->setProject($project['code']);
-        
+
         // We cleanUp the database for this project
         $conn->query("DELETE FROM `files` WHERE `project`='%s'", array($project['code']));
         $conn->query("OPTIMIZE TABLE `files` ", array());
-        
+
         echo "for project -".$project['code']."-\n";
-        
+
         $startTime = new DateTime();
         $startTimeStamp = $startTime->getTimestamp();
-        
+
         $rm->applyRevCheck();
-        
+
         $endTime = new DateTime();
         $endTimeStamp = $endTime->getTimestamp();
-        
+
     } // while
-    
+
     echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )\n";
     menu();
 }
 
 function goErrorTools() {
     global $availableProject, $rm, $pm;
-    
+
     reset($availableProject);
-    
+
     echo "Start Error Tools....\n";
-    
+
     while( list($key, $project) = each($availableProject) )
     {
         $pm->setProject($project['code']);
-        
+
         echo "for project -".$project['code']."-\n";
-        
+
         $startTime = new DateTime();
         $startTimeStamp = $startTime->getTimestamp();
-        
+
         $rm->applyOnlyTools();
-        
+
         $endTime = new DateTime();
         $endTimeStamp = $endTime->getTimestamp();
-        
+
     } // while
-    
+
     echo "done ! ( ".time2string($endTimeStamp-$startTimeStamp)." )\n";
     menu();
 }
@@ -148,8 +148,8 @@ menu();
 
 
 
-//fwrite(STDOUT, "Bye\n\n");       // Output - Some text   
-exit(0);    
+//fwrite(STDOUT, "Bye\n\n");       // Output - Some text
+exit(0);
 
 
 ?>

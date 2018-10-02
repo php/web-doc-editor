@@ -51,13 +51,13 @@ class Config
 
                // First, we load the configuration file for this project
                $this->conf[strtoupper($t[1])] = parse_ini_file($p.$entry);
-               
+
                // Second, we try to load a local configuration file for this project
                // This file must have this name, for example, PHP project : local.project.php.ini
                if( is_file($p.'local.'.$entry) ) {
                     $this->conf[strtoupper($t[1])] = array_merge( $this->conf[strtoupper($t[1])], parse_ini_file($p.'local.'.$entry) );
                 }
-               
+
             }
         }
         $d->close();
@@ -76,7 +76,7 @@ class Config
                     $new_val = $v;
                     for( $i=0; $i < count($match[0]); $i++ ) {
 
-                        $new_val = str_replace(  $match[0][$i], 
+                        $new_val = str_replace(  $match[0][$i],
                                                  $this->conf[$match[1][$i]][$match[2][$i]],
                                                  $new_val
                         );

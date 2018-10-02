@@ -25,32 +25,32 @@ class UsageStatistics {
     {
         $this->conn = DBConnection::getInstance();
     }
-    
+
     public function computeAll($startYear)
     {
         $_date = new DateTime($startYear.'-01-01');
         $now = new DateTime();
         $intervalle = new DateInterval('P1M');
         $now->add($intervalle); // We add one month to all wile statment to compute current month
-        
+
         while( $_date->format('Y-m') != $now->format('Y-m') ) {
-            
+
             echo 'Compute usage stats for '.$_date->format('Y-m').'...';
             $this->computeMonth($_date->format('Y-m'));
             echo "Done !\n";
-            
+
             $_date->add($intervalle);
-            
+
         }
-        
-        
+
+
     }
 
     public function computeMonth($yearMonth)
     {
         $am = AccountManager::getInstance();
         $project = $am->project;
-        
+
         echo 'Compute usage stats for '.$yearMonth.'...';
 
         // We get all info for this Year-Month
@@ -58,7 +58,7 @@ class UsageStatistics {
         $tmp = explode('-', $yearMonth);
         $year = $tmp[0];
         $month = $tmp[1];
-        
+
         $s = 'SELECT
                   *
               FROM
@@ -68,7 +68,7 @@ class UsageStatistics {
                   YEAR(`date`) = "%s" AND
                   MONTH(`date`) = "%s" AND
                   `project` = "%s"';
-                  
+
        $params = array(
            $year,
            $month,
@@ -90,11 +90,11 @@ class UsageStatistics {
             "nbDeletedFiles"=>0,
             "nbUpdatedFiles"=>0
         );
-        
+
         while ($a = $r->fetch_object())
         {
             $i = "";
-            
+
             // for connexions
             if( $a->field == "login" )
             {
@@ -102,7 +102,7 @@ class UsageStatistics {
                 $stats["nbCon"]["authService"][$i->authService] ++;
                 $stats["nbCon"]["total"] ++;
             }
-            
+
             // for commit
             if( $a->field == "commitFiles" )
             {
@@ -111,11 +111,11 @@ class UsageStatistics {
                 $stats['nbDeletedFiles'] += $i->nbFilesDelete;
                 $stats['nbUpdatedFiles'] += $i->nbFilesUpdate;
             }
-            
+
         }
 
         // Now we have stats for this Year-Month, we add it to DB
-        
+
         $this->addModStat('nbCon', 'Total', $stats["nbCon"]["total"], $yearMonth);
         $this->addModStat('nbCon', 'VCS', $stats["nbCon"]["authService"]["VCS"], $yearMonth);
         $this->addModStat('nbCon', 'google', $stats["nbCon"]["authService"]["google"], $yearMonth);
@@ -123,19 +123,19 @@ class UsageStatistics {
         $this->addModStat('nbCreatedFiles', '', $stats["nbCreatedFiles"], $yearMonth);
         $this->addModStat('nbDeletedFiles', '', $stats["nbDeletedFiles"], $yearMonth);
         $this->addModStat('nbUpdatedFiles', '', $stats["nbUpdatedFiles"], $yearMonth);
-        
+
         echo "Done !\n";
     }
-    
+
     private function addModStat($type, $subType, $value, $yearMonth)
     {
         $am = AccountManager::getInstance();
         $project = $am->project;
-        
+
         $tmp = explode('-', $yearMonth);
         $year = $tmp[0];
         $month = $tmp[1];
-        
+
         $s = '
             SELECT
                 id
@@ -158,7 +158,7 @@ class UsageStatistics {
 
         $r = $this->conn->query($s, $params);
         $nb = $r->num_rows;
-        
+
         if( $nb == 0 ) {
             // It's the first time we compute stats for this Year-Month. We add them into DB
             $s = 'INSERT INTO
@@ -176,7 +176,7 @@ class UsageStatistics {
                       "%s",
                       "%s"
                   )';
-                  
+
             $params = array(
                 $project,
                 $type,
@@ -185,10 +185,10 @@ class UsageStatistics {
                 $year.'-'.$month.'-01'
             );
             $r = $this->conn->query($s, $params);
-            
+
         } else {
             $a = $r->fetch_object();
-            
+
             // It's not the first time, we update the record
             $s = 'UPDATE
                       `usageStatistics`
@@ -197,16 +197,16 @@ class UsageStatistics {
                   WHERE
                       `id`="%s"
                   ';
-                  
+
             $params = array(
                 $value,
                 $a->id
             );
-            
+
             $r = $this->conn->query($s, $params);
-            
+
         }
-        
+
     }
 }
 

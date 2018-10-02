@@ -6,14 +6,14 @@
  */
 class NewsReader
 {
-    
+
     /**
      * The lang
      *
      * @var string
      */
     private $lang;
-    
+
     /**
      * Initialise
      *
@@ -23,10 +23,10 @@ class NewsReader
     {
         $this->lang   = $lang;
     }
-    
+
     /**
      * Get all news for this LANG.
-     * 
+     *
      * @return An indexed array (id, title, description, link, pubDate) readable by ExtJs, or false if an error occurs
      */
     function getLastNews()
@@ -63,6 +63,6 @@ class NewsReader
         return $result;
 
     }
-    
+
 }
 ?>

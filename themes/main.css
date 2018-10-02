@@ -108,7 +108,7 @@
 .iconError             { background-image: url(./img/exclamation.gif)           !important;}
 .iconExternalData      { background-image: url(./img/svn-update.png)            !important;}
 .iconFacebook          { background-image: url(./img/auth_facebook.png)         !important;}
-.iconFiles             { background-image: url(./img/page.png)                  !important;} 
+.iconFiles             { background-image: url(./img/page.png)                  !important;}
 .iconFilesError        { background-image: url(./img/security-medium.png)       !important;}
 .iconFilesNeedReviewed { background-image: url(./img/document-edit.png)         !important;}
 .iconFilesNeedTranslate{ background-image: url(./img/page_add.png)              !important;}

@@ -1,7 +1,7 @@
 <?php
 /*
  *  A class to manage a dictionary
- * 
+ *
  */
 
 require_once dirname(__FILE__) . '/DBConnection.php';

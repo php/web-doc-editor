@@ -24,7 +24,7 @@ while( list($key, $project) = each($availableProject) ) {
 
     // Define it as a project
     $pm->setProject($project['code']);
-    
+
     // Just for the first run - We check if the usageStatistics table is empty
     $s = 'SELECT COUNT(*) as total FROM `usageStatistics`';
     $r = $db->query($s, array());
@@ -32,7 +32,7 @@ while( list($key, $project) = each($availableProject) ) {
 
     if( $a->total == 0 ) {
         $us->computeAll('2010'); // Place here the Year we want to start to compute statistics (this Year was included)
-        
+
         $rm->setStaticValue('info', 'computeUsageStatistics', '', true);
         exit;
     }
@@ -42,7 +42,7 @@ while( list($key, $project) = each($availableProject) ) {
     $yesterday->sub(new DateInterval('P1D'));
 
     $us->computeMonth($yesterday->format('Y-m'));
-        
+
     $rm->setStaticValue('info', 'computeUsageStatistics', '', true);
 
 }

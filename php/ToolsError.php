@@ -134,7 +134,7 @@ class ToolsError
             } else {
                 $this->setParams($nodes[$i]['lang_content'], '', 'en', $FilePath, $FileName, '');
             }
-            
+
             $this->clearError();
             $this->run();
 
@@ -248,7 +248,7 @@ class ToolsError
             $project,
             $this->lang
         );
-        
+
         $r    = $this->conn->query($s, $params);
         $node = array();
 
@@ -796,30 +796,30 @@ class ToolsError
     {
         $reg = '/<phpdoc:classref (.[^>]*)>/s';
         $reg2 = '/(.*?)="(.*?)"/s';
-        
+
         $en_PhpdocClassref = $match = $_match = array();
-        
+
         preg_match($reg, $this->en_content, $_match);
         if( !isset($_match[1]) ) $_match[1]=false;
         preg_match_all($reg2, $_match[1], $match);
-        
+
         for( $i=0; $i < count($match[1]); $i++ ) {
             $en_PhpdocClassref[trim($match[1][$i])] = $match[2][$i];
         }
-    
+
         $lang_PhpdocClassref = $match = $_match = array();
-        
+
         preg_match($reg, $this->lang_content, $_match);
         if( !isset($_match[1]) ) $_match[1]=false;
         preg_match_all($reg2, $_match[1], $match);
-        
+
         for( $i=0; $i < count($match[1]); $i++ ) {
             $lang_PhpdocClassref[trim($match[1][$i])] = $match[2][$i];
         }
 
         $en_PhpdocClassref["xml:id"] = isset($en_PhpdocClassref["xml:id"]) ? $en_PhpdocClassref["xml:id"] : false;
         $lang_PhpdocClassref["xml:id"] = isset($lang_PhpdocClassref["xml:id"]) ? $lang_PhpdocClassref["xml:id"] : false;
-        
+
         if ($en_PhpdocClassref["xml:id"] != $lang_PhpdocClassref["xml:id"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xml:id"],
@@ -828,10 +828,10 @@ class ToolsError
             ));
 
         }
-        
+
         $en_PhpdocClassref["xmlns:phpdoc"] = isset($en_PhpdocClassref["xmlns:phpdoc"]) ? $en_PhpdocClassref["xmlns:phpdoc"] : false;
         $lang_PhpdocClassref["xmlns:phpdoc"] = isset($lang_PhpdocClassref["xmlns:phpdoc"]) ? $lang_PhpdocClassref["xmlns:phpdoc"] : false;
-        
+
         if ($en_PhpdocClassref["xmlns:phpdoc"] != $lang_PhpdocClassref["xmlns:phpdoc"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns:phpdoc"],
@@ -843,7 +843,7 @@ class ToolsError
 
         $en_PhpdocClassref["xmlns"] = isset($en_PhpdocClassref["xmlns"]) ? $en_PhpdocClassref["xmlns"] : false;
         $lang_PhpdocClassref["xmlns"] = isset($lang_PhpdocClassref["xmlns"]) ? $lang_PhpdocClassref["xmlns"] : false;
-        
+
         if ($en_PhpdocClassref["xmlns"] != $lang_PhpdocClassref["xmlns"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns"],
@@ -855,7 +855,7 @@ class ToolsError
 
         $en_PhpdocClassref["xmlns:xlink"] = isset($en_PhpdocClassref["xmlns:xlink"]) ? $en_PhpdocClassref["xmlns:xlink"] : false;
         $lang_PhpdocClassref["xmlns:xlink"] = isset($lang_PhpdocClassref["xmlns:xlink"]) ? $lang_PhpdocClassref["xmlns:xlink"] : false;
-        
+
         if ($en_PhpdocClassref["xmlns:xlink"] != $lang_PhpdocClassref["xmlns:xlink"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns:xlink"],
@@ -866,7 +866,7 @@ class ToolsError
 
         $en_PhpdocClassref["xmlns:xi"] = isset($en_PhpdocClassref["xmlns:xi"]) ? $en_PhpdocClassref["xmlns:xi"] : false;
         $lang_PhpdocClassref["xmlns:xi"] = isset($lang_PhpdocClassref["xmlns:xi"]) ? $lang_PhpdocClassref["xmlns:xi"] : false;
-        
+
         if ($en_PhpdocClassref["xmlns:xi"] != $lang_PhpdocClassref["xmlns:xi"] ) {
             $this->addError(array(
                 "value_en"   => $en_PhpdocClassref["xmlns:xi"],
@@ -1872,7 +1872,7 @@ class ToolsError
 
                 if (!isset($lang_methodsynopsis[$i]['methodname']['modifier'])) { $lang_methodsynopsis[$i]['methodname']['modifier'] = ''; }
                 if ($en_methodsynopsis[$i]['methodname']['modifier'] != $lang_methodsynopsis[$i]['methodname']['modifier'] ) {
-                    
+
                     $this->addError(array(
                         'value_en'   => $en_methodsynopsis[$i]['methodname']['modifier'],
                         'value_lang' => $lang_methodsynopsis[$i]['methodname']['modifier'],
@@ -1997,26 +1997,26 @@ class ToolsError
     function checkVCSKeyWords()
     {
         $result = VCSFactory::getInstance()->checkKeyWords($this->lang,$this->filePath,$this->fileName);
-        
+
         if( $result ) {
-            
+
             $errLibel = "";
-            
+
             if( $result["keyWords"] ) {
                 $errLibel .= "keyWords : ".$result["keyWords"]." ; ";
             }
             if( $result["EolStyle"] ) {
                 $errLibel .= "EolStyle : ".$result["EolStyle"]." ; ";
             }
-            
+
             $this->addError(array(
                     'value_en'   => $errLibel,
                     'value_lang' => '',
                     'type'       => 'VCSKeyWordsEolStyle'
             ));
-            
+
         }
-        
+
     }
 
     /**
@@ -2024,11 +2024,11 @@ class ToolsError
      * Add an entry into the error's stack if MemberShip's Comment isn't the same as EN version
      *
      */
-    
+
     function checkMembershipComment()
     {
         $reg = '/<!-- Membership: (.*?) -->/s';
-        
+
         $en_MembershipComment = array();
         $match = array();
         preg_match($reg, $this->en_content_with_comment, $match);
@@ -2040,15 +2040,15 @@ class ToolsError
         $lang_MembershipComment = (isset($match[1])) ? $match[1] : false;
 
         if( $en_MembershipComment != $lang_MembershipComment ) {
-            
+
             $this->addError(array(
                     'value_en'   => $en_MembershipComment,
                     'value_lang' => $lang_MembershipComment,
                     'type'       => 'MembershipComment'
             ));
-            
+
         }
-        
+
     }
 
     /**
@@ -2056,11 +2056,11 @@ class ToolsError
      * Add an entry into the error's stack if Purpose's Comment isn't the same as EN version
      *
      */
-    
+
     function checkPurposeComment()
     {
         $reg = '/<!-- Purpose: (.*?) -->/s';
-        
+
         $en_MembershipComment = array();
         $match = array();
         preg_match($reg, $this->en_content_with_comment, $match);
@@ -2072,29 +2072,29 @@ class ToolsError
         $lang_MembershipComment = (isset($match[1])) ? $match[1] : false;
 
         if( $en_MembershipComment != $lang_MembershipComment ) {
-            
+
             $this->addError(array(
                     'value_en'   => $en_MembershipComment,
                     'value_lang' => $lang_MembershipComment,
                     'type'       => 'PurposeComment'
             ));
-            
+
         }
-        
+
     }
 
     /**
      * Check PhpDoc Tag
-     * 
+     *
      */
-    
+
     function checkPhpDocTag()
     {
         $reg = '/<\?phpdoc\s(.*?)="(.*?)"\s?\?>/s';
-        
+
         $en_PhpDocTag = array();
         preg_match_all($reg, $this->en_content, $en_PhpDocTag);
-        
+
         $lang_PhpDocTag = array();
         preg_match_all($reg, $this->lang_content, $lang_PhpDocTag);
 
@@ -2104,21 +2104,21 @@ class ToolsError
                     'value_lang' => count($lang_PhpDocTag[0]),
                     'type'       => 'PhpDocTagNb'
             ));
-            
+
         } else {
             for( $i=0; $i < count($en_PhpDocTag[0]); $i++ ) {
-            
+
                 if( $en_PhpDocTag[1][$i] != $lang_PhpDocTag[1][$i] ||
                     $en_PhpDocTag[2][$i] != $lang_PhpDocTag[2][$i] ) {
-                
+
                     $this->addError(array(
                             'value_en'   => $en_PhpDocTag[0][$i],
                             'value_lang' => $lang_PhpDocTag[0][$i],
                             'type'       => 'PhpDocTagError'
                     ));
-                
+
                 }
-                
+
             }
         }
     } // checkPhpDocTag

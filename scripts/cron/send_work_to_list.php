@@ -57,24 +57,24 @@ There are contributions within the online editor queue for this language.
 Please review, then commit or delete these patches.
 
 ";
-    
+
     /*
     if( $data['workInProgress']['nb'] != 0 ) {
         $msg .= "    Work in progress : \n    -----------------------\n";
-        
+
         for( $i=0; $i < count($data['workInProgress']['data']); $i++) {
             $msg .= "        * (".$data['workInProgress']['data'][$i]['type'].") On ".$data['workInProgress']['data'][$i]['date']." by ".$data['workInProgress']['data'][$i]['user']." : ".$data['workInProgress']['data'][$i]['filePath']."\n";
         }
         $msg .="\n\n";
     }
     */
-    
+
     if( $data['PatchesForReview']['nb'] != 0 ) {
         $msg .= "    Patches for review : \n    -----------------------\n\n";
-        
+
         for( $i=0; $i < count($data['PatchesForReview']['data']); $i++)
         {
-            
+
             switch($data['PatchesForReview']['data'][$i]['type']) {
                 case 'update' :
                     $libelMod = 'Modified';
@@ -86,12 +86,12 @@ Please review, then commit or delete these patches.
                     $libelMod = 'Deleted';
                     break;
             };
-            
+
             $msg .= $libelMod.": ".$data['PatchesForReview']['data'][$i]['fileFullPath']."\n";
             $msg .= "By: ".$data['PatchesForReview']['data'][$i]['user']." on ".$data['PatchesForReview']['data'][$i]['date']."\n";
-            
+
             $msg .= "===================================================================\n";
-            
+
             // We get the diff
             $file = new File(
                 $data['PatchesForReview']['data'][$i]['fileLang'],
@@ -99,27 +99,27 @@ Please review, then commit or delete these patches.
                 );
             $r = $file->diff();
             $msg .= implode("\n", $r);
-            
+
             $msg .= "\n
             => Put this change into your patches : https://edit.php.net/?project=php&action=putIntoMyPatches&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
             => Delete this change: https://edit.php.net/?project=php&action=deleteThisChange&idDB=".$data['PatchesForReview']['data'][$i]['idDB']."
             ";
-            
+
             $msg .="\n";
             $msg .= "                                          ------------------------------------------------------------------\n\n";
         }
         $msg .="\n\n";
-        
+
     }
-    
-    
-    
+
+
+
     $msg .= "
--- 
+--
 https://edit.php.net/
 This email is send automatically by the Php Docbook Online Editor.
     ";
-    
+
             //Usefull for language like pt_BR for example, because doc-pt_br don't exist, it's doc-pt-br
             $emailLang = str_replace("_", "-", strtolower($lang));
 

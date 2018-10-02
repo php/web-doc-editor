@@ -205,7 +205,7 @@ class ToolsCheckEntities {
                     $status = 0;
                     $child = pcntl_wait($status);
                     --$children;
-                }        
+                }
             }
 
             while ($children) {
@@ -213,7 +213,7 @@ class ToolsCheckEntities {
                 $child = pcntl_wait($status);
                 --$children;
             }
-            
+
         } else {
             // no forking
             // walk through entities found

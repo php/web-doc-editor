@@ -17,7 +17,7 @@ function debug($mess)
             .$am->vcsLogin.' : '.str_replace("\r\n", " ", $mess)."\n";
 
     $debugURI = ( isset($appConf[$project]) ) ? $appConf[$project]['vcs.path'].'../.debug' : $appConf['GLOBAL_CONFIGURATION']['data.path'].'/.debug';
-            
+
     $fp = fopen($debugURI, 'a+');
     fwrite($fp, $mess);
     fclose($fp);
@@ -35,7 +35,7 @@ function errlog($mess)
     $fp = fopen($appConf[$project]['vcs.path'].'../.errlog', 'a+');
     fwrite($fp, $mess);
     fclose($fp);
-    
+
     // Send me all error for debug warning
     $am->email(
         'yannick.torres@gmail.com',
@@ -44,7 +44,7 @@ function errlog($mess)
         'yannick@php.net',
         'others'
         );
-    
+
 }
 
 function elapsedTime($startDate, $endDate) {
@@ -119,7 +119,7 @@ function time2string($timeline) {
     $periods = array('hour' => 3600, 'minute' => 60, 'second' => 1);
 
     $ret = '';
-    
+
     foreach($periods AS $name => $seconds){
         $num = floor($timeline / $seconds);
         $timeline -= ($num * $seconds);
@@ -131,26 +131,26 @@ function time2string($timeline) {
 
 
 function getFlickr() {
-    
+
     $return = array();
-    
+
     $flickrRSS = 'https://api.flickr.com/services/feeds/groups_pool.gne?id=610963@N20&format=rss_200';
-    
+
     $xml = simplexml_load_file($flickrRSS);
-    
+
     foreach ($xml->channel->item as $item ) {
-        
+
         $namespaces = $item->getNameSpaces(true);
         $t = $item->children($namespaces['media'])->thumbnail->attributes();
         $thumbnail = $t['url'];
-        
+
         $return[] = array(
         'img' => (string)$thumbnail,
         'link' => (string)$item->link
         );
-        
-    } 
-    
+
+    }
+
     return $return;
 }
 

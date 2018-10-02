@@ -449,7 +449,7 @@ class RepositoryManager
 
         return $fileID;
     }
-    
+
     /**
      * Delete files from work in progress module.
      *
@@ -477,7 +477,7 @@ class RepositoryManager
             $this->conn->query($query, $params);
         }
     }
-    
+
     /**
      * Move some files into a specific patch.
      *
@@ -526,9 +526,9 @@ class RepositoryManager
             implode(',', array_map('intval', explode(',', $filesID)))
         );
         $r = $this->conn->query($s, $params);
-        
+
         if( $this->conn->affected_rows() < 1 ) {
-            
+
             // Either an error or this change is wanted by a VCS user
             if( !$am->isAnonymous )
             {
@@ -548,13 +548,13 @@ class RepositoryManager
                     implode(',', array_map('intval', explode(',', $filesID)))
                 );
                 $r = $this->conn->query($s, $params);
-                
+
                 if( $this->conn->affected_rows() < 1 ) {
                     return 'Error. Is this file(s) is(are) own by you ?';
                 } else {
                     return true;
                 }
-                
+
             } else {
                 return 'Error. Is this file(s) is(are) own by you ?';
             }
@@ -563,7 +563,7 @@ class RepositoryManager
         }
 
     }
-    
+
     /**
      * Move some files into work in progress module.
      *
@@ -592,7 +592,7 @@ class RepositoryManager
             implode(',', array_map('intval', explode(',', $filesID)))
         );
         $r = $this->conn->query($s, $params);
-        
+
         if( $this->conn->affected_rows() < 1 ) {
             return 'Error. Is this file(s) is(are) own by you ?';
         } else {
@@ -614,18 +614,18 @@ class RepositoryManager
 
         // We start by retrieve patch information
         $patchInfo = $this->getPatchInfo($patchID);
-        
+
         if( !$patchInfo ) {
             return 'patch_delete_dont_exist'; // the patch don't exist
         } else {
-            
+
             // We must check if we can delete this patch
             // Either this patch must be own by the current user or the current user is a global admin for this project
             if( $patchInfo->userID != $am->userID && !$am->isAdmin() ) {
                     return 'patch_delete_isnt_own_by_current_user';
             }
         }
-        
+
         // We start by change files for this patch.
         $s = 'UPDATE
                 `work`
@@ -676,7 +676,7 @@ class RepositoryManager
             $patchID
         );
         $r = $this->conn->query($s, $params);
-        
+
         if( $r->num_rows == 0 ) {
             return false;
         } else {
@@ -703,12 +703,12 @@ class RepositoryManager
             WHERE
                 `module` = \'PatchesForReview\' AND
                 `patchID` = "%s"';
-        
+
         $params = array(
             $patchID
         );
         $r = $this->conn->query($s, $params);
-        
+
         if( $r->num_rows == 0 ) {
             return false;
         } else {
@@ -716,11 +716,11 @@ class RepositoryManager
             while( $a = $r->fetch_object() ) {
                 $return[] = $a;
             }
-            
+
             return $return;
         }
     }
-    
+
     /**
      * Create a new patch for the current user.
      *
@@ -1246,7 +1246,7 @@ class RepositoryManager
         } else {
 
             $a = $r->fetch_object();
-            
+
             if($a->userID != $userID) {
                 return 'file_isnt_owned_by_current_user';
             }
@@ -1270,21 +1270,21 @@ class RepositoryManager
     public function clearLocalChangeByModifiedID($modifiedID)
     {
         $rf = RepositoryFetcher::getInstance();
-        
+
         // We retrieve modifiedID information
         $fileInfo = $rf->getModifiesById($modifiedID);
         $fileInfo = $fileInfo[0];
-        
+
         // If we are on root node, $fileInfo['path'] is empty. He must be "/".
         if( $fileInfo['path'] == '' ) $fileInfo['path'] = '/';
-        
+
         $info = $this->clearLocalChange(
             $fileInfo['type'], new File($fileInfo['lang'], $fileInfo['path'].$fileInfo['name'])
         );
-        
+
         return $info;
     }
-    
+
     /**
      * clear local change of a file.
      *
@@ -1323,20 +1323,20 @@ class RepositoryManager
                  `lang`           = '%s' AND
                  `path`           = '%s' AND
                  `name`           = '%s'";
-        
+
         $params = array(
               $project,
               $lang,
               $path,
               $name
         );
-        
+
         $r = $this->conn->query($s, $params);
-        
+
         if( $r->num_rows == 0 ) {
 
             return 'file_localchange_didnt_exist';
-            
+
         } else {
             $a = $r->fetch_object();
 
@@ -1344,9 +1344,9 @@ class RepositoryManager
             if($a->userID != $userID && $am->isAnonymous) {
                         return 'file_isnt_owned_by_current_user';
             }
-            
+
         }
-        
+
         $return['oldIdDB'] = $a->id;
 
         // We need delete row from work table
@@ -1686,17 +1686,17 @@ class RepositoryManager
     {
         $name = $file->name;
         $path = $file->path;
-        
+
         if( substr($name, -4) === '.new' ) {
             $toDisplay = true;
         } else {
             $toDisplay = false;
         }
-        
+
         $return = "needParsing : \n";
         $return .= " => name : $name\n";
         $return .= " => path : $path\n";
-        
+
         if (
             !$file->exist()
             || ( is_file($file->full_path) && !in_array(substr($name, -3), array('xml','ent')) )
@@ -1757,11 +1757,11 @@ class RepositoryManager
             $files = array();
 
             while (($name = readdir($dh)) !== false) {
-                
+
             	if( $name == '.' || $name == '..') {
                     continue;
                 }
-                
+
                 $file = new File($lang, $path.$name);
                 if (!$this->needParsing($file)) {
                     continue;
@@ -1772,7 +1772,7 @@ class RepositoryManager
                 } elseif ( $file->isFile ) {
                     $files[] = $file;
                 }
-                
+
             }
             @closedir($dh);
 
@@ -1817,11 +1817,11 @@ class RepositoryManager
             $files = array();
 
             while (($name = readdir($dh)) !== false) {
-            	
+
             	if( $name == '.' || $name == '..') {
             		continue;
             	}
-            	
+
                 $file = new File('en', $path.$name);
                 if (!$this->needParsing($file)) {
                     continue;
@@ -1834,7 +1834,7 @@ class RepositoryManager
                 }
             }
             closedir($dh);
-            
+
             foreach($files as $f) {
 
                 $en_size = intval(filesize($f->full_path) / 1024);
@@ -2006,7 +2006,7 @@ class RepositoryManager
 
                         /*
                         // Check for error in this file ONLY if this file is uptodate
-                        
+
                         if ($revision == $en_revision &&  $revision != 0 ) {
                             $error = new ToolsError();
                             $error->setParams(
@@ -2017,7 +2017,7 @@ class RepositoryManager
                             $error->saveError();
                         }
                         */
-                        
+
                     } else {
                         $query = 'INSERT INTO `files` (`project`, `lang`, `path`, `name`, `size`)
                                 VALUES ("%s", "%s", "%s", "%s", "%s")';
@@ -2099,20 +2099,20 @@ class RepositoryManager
             DBConnection::getInstance()->query($s, $params);
         }
     }
-    
+
     public function applyStaticRevcheck()
     {
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
-        
+
         $ExistingLanguage = $this->getExistingLanguage();
-        
+
         foreach( $ExistingLanguage as $lang ) {
 
             $lang = $lang["code"];
             if( $lang == 'en' ) { continue; }
-            
+
             $commands = array(
                 new ExecStatement('cd %s', array($appConf[$project]['vcs.path'])),
                 new ExecStatement($appConf['GLOBAL_CONFIGURATION']['php.bin'] . ' doc-base/scripts/revcheck.php %s > %s 2>&1', array($lang, $appConf['GLOBAL_CONFIGURATION']['data.path'].'revcheck/'.$lang.'.html'))
@@ -2120,7 +2120,7 @@ class RepositoryManager
             SaferExec::execMulti($commands);
         }
     }
-    
+
     /**
      * All we must do after a patch have been commited.
      *
@@ -2130,13 +2130,13 @@ class RepositoryManager
     {
         $am       = AccountManager::getInstance();
         $vcsLogin = $am->vcsLogin;
-        
+
         // We get patch Information
         $patchInfo = $this->getPatchInfo($patchID);
-        
+
         // We silently return if the patch didn't exist
         if( !$patchInfo ) return;
-        
+
         $to      = trim($patchInfo->email);
         $subject = '['.$patchInfo->project.'-DOC] - Patch named "'.$patchInfo->name.'" accepted';
         $msg     = <<<EOD
@@ -2147,7 +2147,7 @@ time to get updated, we would like to ask you to be a bit patient.
 
 Thank you for your submission, and for helping us make our documentation better.
 
--- 
+--
 {$vcsLogin}@php.net
 EOD;
 
@@ -2159,7 +2159,7 @@ EOD;
             $am->email($to, $subject, $msg);
         }
     }
-    
+
     /**
      * Create the folder how hold all modified files for this project.
      *
@@ -2182,65 +2182,65 @@ EOD;
             }
         }
     }
-    
+
     public function applyOnlyTools()
     {
         $am = AccountManager::getInstance();
-        
+
         // We start by cleaning up the database
         $this->conn->query("DELETE FROM `errorfiles` WHERE `project`='%s'", array($am->project));
-        
+
         // We start by all translation
-        
+
         // We select files how have revision=en_revision for this lang
         $query = 'SELECT * FROM files WHERE `project`="%s" AND `lang`!="%s" AND `revision`=`en_revision`';
-        
+
         $params = array(
             $am->project,
             'en'
         );
-        
+
         $r = $this->conn->query($query, $params);
-        
+
         while( $a = $r->fetch_object() )
         {
                 $error = new ToolsError();
-                
+
                 $fileEN = new File('en', $a->path.$a->name);
                 $ENContent = $fileEN->read(true);
-                
+
                 $fileLANG = new File($a->lang, $a->path.$a->name);
                 $LANGContent = $fileLANG->read(true);
-                
+
                 $error->setParams($ENContent, $LANGContent, $a->lang, $a->path, $a->name, '');
                 $error->run();
                 $error->saveError();
         }
-        
+
         //.... and now, EN files
         $query = 'SELECT * FROM files WHERE `project`="%s" AND `lang`="%s"';
-        
+
         $params = array(
             $am->project,
             'en'
         );
-        
+
         $r = $this->conn->query($query, $params);
-        
+
         while( $a = $r->fetch_object() )
         {
                 $error = new ToolsError();
-                
+
                 $fileEN = new File('en', $a->path.$a->name);
                 $ENContent = $fileEN->read(true);
-                
+
                 $error->setParams($ENContent, '', $a->lang, $a->path, $a->name, '');
                 $error->run();
                 $error->saveError();
         }
-        
+
     }
-    
+
 }
 
 ?>

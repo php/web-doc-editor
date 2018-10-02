@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML templates 
+ * HTML templates
  */
 
 /**
@@ -138,7 +138,7 @@ function cssLoadTemplate($href, $id = '')
 function footerTemplate($isLoginPage=false)
 {
     $elephpants = ( $isLoginPage ) ? '<div id="elephpants"><div id="elephpants-images"></div></div>' : '';
-    
+
     return <<<EOD
     $elephpants
  </body>

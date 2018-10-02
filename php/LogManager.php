@@ -134,7 +134,7 @@ class LogManager
         $am      = AccountManager::getInstance();
         $appConf = $am->appConf;
         $project = $am->project;
-        
+
         return $this->highlightBuildLog(file_get_contents($appConf[$project]['vcs.path'] . '../.' . basename($file)));
     }
 
@@ -158,7 +158,7 @@ class LogManager
      * Highlight buildLog with some colors.
      *
      * @param $content The content of the log we want to highlight
-     * @return The log highlighted 
+     * @return The log highlighted
      */
     public function highlightBuildLog($content)
     {

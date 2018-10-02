@@ -134,8 +134,8 @@ class RepositoryFetcher
                 (
                     ( `type`="nbCon" AND `subType`="Total" )
                     OR
-                    ( `type`="nbCreatedFiles" OR 
-                      `type`="nbDeletedFiles" OR 
+                    ( `type`="nbCreatedFiles" OR
+                      `type`="nbDeletedFiles" OR
                       `type`="nbUpdatedFiles" )
                 ) AND
                 YEAR(`yearMonth`) = %s
@@ -148,13 +148,13 @@ class RepositoryFetcher
         $r = $this->conn->query($s, $params);
 
         while ($a = $r->fetch_object()) {
-            
+
             // Init
             if( !isset($infos[$a->month]) ){
                 $infos[$a->month]['nbConTotal'] = 0;
                 $infos[$a->month]['nbCommitTotal'] = 0;
             }
-            
+
             if( $a->type == 'nbCon' && $a->subType == 'Total' ) {
                 $infos[$a->month]['nbConTotal'] = $a->value;
             } else {
@@ -165,28 +165,28 @@ class RepositoryFetcher
         $return = array();
         //
         for( $i=0; $i < 12; $i++ ) {
-            
+
             $return[$i]['id'] = $i+1;
             $return[$i]['month'] = $i+1;
-            
+
             // nbConTotal
             if( isset($infos[$i+1]['nbConTotal']) ) {
                 $return[$i]['nbConTotal'] = (int) $infos[$i+1]['nbConTotal'];
-                
+
             } else {
                 $return[$i]['nbConTotal'] = 0;
             }
-            
+
             // nbCommitTotal
             if( isset($infos[$i+1]['nbCommitTotal']) ) {
                 $return[$i]['nbCommitTotal'] = (int) $infos[$i+1]['nbCommitTotal'];
-                
+
             } else {
                 $return[$i]['nbCommitTotal'] = 0;
             }
-            
+
         }
-        
+
         return $return;
     }
 
@@ -230,10 +230,10 @@ class RepositoryFetcher
                 `work`.`name` as name,
                 `work`.`en_revision` as en_revision,
                 `work`.`maintainer` as maintainer,
-                
+
                 `work`.`reviewed` as reviewed,
                 `work`.`reviewed_maintainer` as reviewed_maintainer,
-                
+
                 `users`.`vcs_login` as user,
                 `users`.`anonymousIdent` as anonymousIdent
              FROM
@@ -743,8 +743,8 @@ class RepositoryFetcher
 
         return $a->total;
     }
-    
-    
+
+
     public function getPatchList()
     {
         $am = AccountManager::getInstance();
@@ -756,10 +756,10 @@ class RepositoryFetcher
                 `description`,
                 `email`,
                 `date`
-                
-            FROM 
+
+            FROM
                 `patches`
-                
+
             WHERE
                 `project`="%s" AND
                 `userID` = %s';
@@ -769,9 +769,9 @@ class RepositoryFetcher
         );
 
         $r = $this->conn->query($s, $params);
-        
+
         $result = array();
-        
+
         while ($a = $r->fetch_assoc()) {
             $result[] = $a;
         }
@@ -839,20 +839,20 @@ class RepositoryFetcher
                 `users`.`authService` as `authService`,
                 `work`.`date`,
                 `work`.`type`
-                
+
                 FROM
                 `work`,
                 `users`
-                
+
                 WHERE
                 `work`.`userID` = `users`.`userID` AND
                 `work`.`module` = "PatchesForReview" AND
                 `work`.`lang` = "%s" AND
                 `work`.`project`  = "%s"
-                
+
                 ORDER BY
                 `work`.`type`, `work`.`date`
-                
+
                 ';
         $params = array(
             $lang,
@@ -1101,11 +1101,11 @@ class RepositoryFetcher
                     case 'twitter':
                         $iconUser = 'iconTwitter';
                         break;
-                        
+
                     default:
                         $iconUser = 'iconUser';
                 }
-                
+
                 $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
                 $result[] = array(
                     'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),
@@ -1235,11 +1235,11 @@ class RepositoryFetcher
                     case 'twitter':
                         $iconUser = 'iconTwitter';
                         break;
-                        
+
                     default:
                         $iconUser = 'iconUser';
                 }
-                
+
                 $isAnonymous = ($userData['data']['authService'] != 'VCS' || $userData['data']['vcs_login'] == 'anonymous');
                 $result[] = array(
                     'task' => $userData['data']['vcs_login'] . ($userData['data']['vcs_login'] == 'anonymous' ? ' #'.$userId : ''),
@@ -1472,8 +1472,8 @@ TODO: Handle project here
 
                 $tmp = explode('.',$f);
                 $ext = array_pop($tmp);
-                
-                
+
+
                 $files[] = array(
                     'text'      => $f,
                     'id'        => $dir.$f,

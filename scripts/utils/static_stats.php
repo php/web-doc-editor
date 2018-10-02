@@ -26,68 +26,68 @@ $info = array(
         ),
     "byMonth"=>Array()
     );
-    
+
 $availableLang = Array();
 $availableUser = Array();
 
 while( $a = $r->fetch_object()) {
-    
+
     $month = date("m", strtotime($a->date));
     $year = date("Y", strtotime($a->date));
-    
+
     // pour les connexions
     if( $a->field == "login" ) {
-        
+
         $tmp = json_decode($a->value);
         $info["nbCon"]["authService"][$tmp->authService] ++;
         $info["nbCon"]["total"] ++;
-        
+
         $info["byMonth"][$month]['dataCon']['raw'][] = $a;
-        
+
         $info["byMonth"][$month]['nbCon'] ++;
-        
+
         $i = json_decode($a->value);
-        
+
         $info["byMonth"][$month]['dataCon']['perLang'][$i->lang] ++;
         $info["byMonth"][$month]['dataCon']['perUser'][$i->user] ++;
-        
+
         $availableLang[$i->lang] = 1;
         $availableUser[$i->user] = 1;
     }
-    
+
     // pour les commit
     if( $a->field == "commitFiles" ) {
         $i = json_decode($a->value);
         $info["byMonth"][$month]['dataCommit']['raw'][] = $i;
-        
+
         $info['nbFilesCreate'] += $i->nbFilesCreate;
         $info['nbFilesDelete'] += $i->nbFilesDelete;
         $info['nbFilesUpdate'] += $i->nbFilesUpdate;
-        
+
         $info["byMonth"][$month]['dataCommit']['nbFilesCreate']['total'] += $i->nbFilesCreate;
         $info["byMonth"][$month]['dataCommit']['nbFilesDelete']['total'] += $i->nbFilesDelete;
         $info["byMonth"][$month]['dataCommit']['nbFilesUpdate']['total'] += $i->nbFilesUpdate;
-        
+
         $info["byMonth"][$month]['dataCommit']['nbFilesCreate']['perLang'][$i->lang] += $i->nbFilesCreate;
         $info["byMonth"][$month]['dataCommit']['nbFilesDelete']['perLang'][$i->lang] += $i->nbFilesDelete;
         $info["byMonth"][$month]['dataCommit']['nbFilesUpdate']['perLang'][$i->lang] += $i->nbFilesUpdate;
-        
+
         $info["byMonth"][$month]['dataCommit']['nbFilesCreate']['perUser'][$i->user] += $i->nbFilesCreate;
         $info["byMonth"][$month]['dataCommit']['nbFilesDelete']['perUser'][$i->user] += $i->nbFilesDelete;
         $info["byMonth"][$month]['dataCommit']['nbFilesUpdate']['perUser'][$i->user] += $i->nbFilesUpdate;
-        
+
         $availableLang[$i->lang] = 1;
         $availableUser[$i->user] = 1;
     }
-    
-    
+
+
 }
 
 echo "<h1 style=\"text-align: center\">Year : ".$year."</h1>";
 echo '<div id="top">';
 
 for( $i=2010; $i <= $nowDate->format('Y'); $i++ ) {
- 
+
     echo '<a href="?d='.$i.'">'.$i.'</a>';
     if( $i != $nowDate->format('Y') ) echo ' - ';
 }
@@ -185,20 +185,20 @@ echo "<tr>";
 echo "</tr>";
 
 
-echo "</table>(Nb connexion per auth Service : 
+echo "</table>(Nb connexion per auth Service :
 
-Google => ".$info["nbCon"]["authService"]["google"]."; 
-Facebook => ".$info["nbCon"]["authService"]["facebook"]."; 
-Github => ".$info["nbCon"]["authService"]["github"]."; 
-Instagram => ".$info["nbCon"]["authService"]["instagram"]."; 
-Stackoverflow => ".$info["nbCon"]["authService"]["stackoverflow"]."; 
-Linkedin => ".$info["nbCon"]["authService"]["linkedin"]."; 
+Google => ".$info["nbCon"]["authService"]["google"].";
+Facebook => ".$info["nbCon"]["authService"]["facebook"].";
+Github => ".$info["nbCon"]["authService"]["github"].";
+Instagram => ".$info["nbCon"]["authService"]["instagram"].";
+Stackoverflow => ".$info["nbCon"]["authService"]["stackoverflow"].";
+Linkedin => ".$info["nbCon"]["authService"]["linkedin"].";
 VCS => ".$info["nbCon"]["authService"]["VCS"].";
 
 )<br>";
 
 while( list($lang, $v) = each($availableLang)) {
-    
+
     // Skip anonymous
     if( trim($lang) == '') continue;
 
@@ -294,10 +294,10 @@ while( list($lang, $v) = each($availableLang)) {
 
 
 while( list($user, $v) = each($availableUser)) {
-    
+
     // Skip anonymous
     if( substr($user, 0, 11) == 'anonymous #') continue;
-    
+
     echo "<h1>User : ".utf8_decode($user)." <a href=\"#top\" style=\"font-size:10px\">top</a></h1>";
     echo "<table border=1>";
     echo "<tr>";

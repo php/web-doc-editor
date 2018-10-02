@@ -98,11 +98,11 @@ class ExtJsController
             $value['user'] = $am->vcsLogin;
             $value['lang'] = $lang;
             $value['authService'] = $am->authService;
-            
+
             RepositoryManager::getInstance()->setStaticValue('info', 'login', json_encode($value), true);
 
             return JsonResponseBuilder::success();
-            
+
         } elseif ($response['state'] === false) {
 
             // This user is unknow from this server
@@ -110,7 +110,7 @@ class ExtJsController
               'msg'        => $response['msg'],
               'authMethod' => $response['authMethod']
             ));
-            
+
         } else {
             return JsonResponseBuilder::failure();
         }
@@ -176,7 +176,7 @@ class ExtJsController
         $filePath = "/".implode("/", $t).$newFolderName;
 
         $file = new File($fileLang, $filePath);
-        
+
         // We test if this folder not already exist
         if( $file->exist() )
         {
@@ -324,7 +324,7 @@ class ExtJsController
         if ( !$am->isGlobalAdmin() ) {
             return JsonResponseBuilder::failure(
                 array(
-                    'type' => 'action_only_global_admin'                                      
+                    'type' => 'action_only_global_admin'
                 )
             );
         }
@@ -399,22 +399,22 @@ class ExtJsController
         // TODO : find a way to detect modification into Work & patches modules
         //$data['NbPendingCommit'] = $rf->getNbPendingCommit();
         //$data['NbPendingPatch']  = $rf->getNbPendingPatch();
-        
+
         $data['topicInfo'] = $rf->getStaticValue('main_topic', '');
 
         $data['lastInfoDate'] = $rf->getLastInfoDate();
 
         // We get the update_data lock file
         $lockFile = new LockFile('project_' . $am->project . '_lock_update_data');
-        
+
         if( $lockFile->isLocked() ) {
             $updateData = $lockFile->readLock();
         } else {
             $updateData = false;
         }
-        
-        
-        
+
+
+
         $response = !isset($_SESSION['userID']) ? 'false' : 'pong';
 
         return JsonResponseBuilder::success(
@@ -785,13 +785,13 @@ class ExtJsController
         $str = str_replace("\n", "[@]", $str);
 
         $bing = new MicrosoftTranslator("0Iwzej5BJeHK/2nvHh7/uJyHLhmnyFJEAuOYOfJ1QLg=");
-        
+
         $bing->translate('en', $lang, $str);
-        
+
         $bing->response->jsonResponse;
-        
+
         preg_match("/<string xmlns=\"(.[^\"]*)\">(.*)?<\/string>/e", $bing->response->translation, $match);
-        
+
         // Replace new line mark
         $translation = str_replace("[@]", "<br>", $match[2]);
 
@@ -817,40 +817,40 @@ class ExtJsController
     public function getURLToOriginalManualPage()
     {
         $am = AccountManager::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
-        
+
         $fileFullPath = $this->getRequestVariable('fileFullPath');
-        
+
         $t = explode("/", $fileFullPath);
         $FileLang = array_shift($t);
         $FilePath = implode('/', $t);
-        
+
         $file = new File($FileLang, $FilePath);
         $info = $file->getInfo();
-        
+
         // Extract xmlId and take the first one
         $xmlID = '';
         $tmp = explode('|', $info['xmlid']);
         $xmlID = $tmp[0];
-        
+
         // Build the URL for the original Documentation
         $url = 'http://php.net/manual/'.$FileLang.'/'.$xmlID.'.php';
-        
+
         if( trim($xmlID) == '' || $FileLang == 'doc-base' ) {
             $url = '404';
         }
-        
+
         return JsonResponseBuilder::success(
             array(
                 'url' => $url
             )
         );
-        
+
     }
-    
+
     /**
      * Get information of a file by his xmlID
      */
@@ -888,11 +888,11 @@ class ExtJsController
     public function getFile()
     {
         $am = AccountManager::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
-        
+
         $appConf = $am->appConf;
         $project = $am->project;
 
@@ -921,16 +921,16 @@ class ExtJsController
             $skeleton = str_replace('..', '',  $skeleton);
             // $skeleton is the ful path of the file
             // It must start with this  : $appConf[$project]['skeletons.folder']
-            
+
             if( !isset($appConf[$project]['skeletons.folder']) ) {
                 return false;
             }
-            
+
             if( substr($skeleton, 0, strlen($appConf[$project]['skeletons.folder']) ) !=  $appConf[$project]['skeletons.folder'] ) {
                 return false;
             }
-            
-            
+
+
             $return['content'] = ( $skeleton == '-' ) ? '' : file_get_contents($skeleton);
             $return['warn_tab'] = false;
             $return['warn_encoding'] = false;
@@ -988,7 +988,7 @@ class ExtJsController
         {
             $return['warn_tab'] = false ;
         }
-        
+
         // We must check if this file isn't own by the current user
         $return['fileModified'] = $file->isModified();
 
@@ -1080,7 +1080,7 @@ class ExtJsController
     }
     /**
      * Save a file. The new file have an extension like ".new", and is saved in the same folder as the original.
-     * 
+     *
      * @HERE : The new file no more have an extension '.new'. Now, it's saved into 'module-name-'new folder, with the same folder's hierarchie
      *
      *
@@ -1089,7 +1089,7 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
         $tx = new ToolsXmllint();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
@@ -1122,11 +1122,11 @@ class ExtJsController
 
         // Replace &nbsp; by space
         $fileContent = str_replace("&nbsp;", "", $fileContent);
-        
+
         // We check the Xml consistence only for .xml file
         if( substr($fileName, -3) == 'xml' ) {
             $xmlError = $tx->checkForError($fileContent);
-            
+
             if( $xmlError != 'no_error' ) {
                 return JsonResponseBuilder::failure(
                         array(
@@ -1135,15 +1135,15 @@ class ExtJsController
                 );
             }
         }
-        
+
         // Get file object
         $file = new File($fileLang, $filePath.$fileName);
-        
+
         // Rules to allow this file to be saved or not.
         if( $infoModified = $file->isModified() ) {
 
             $infoModified = json_decode($infoModified);
-            
+
             // If the user who have modified this file isn't the current one
             if( $am->userID == $infoModified->userID ) {
                     // We can modify it, it's mine ;)
@@ -1153,7 +1153,7 @@ class ExtJsController
                             // The current user can modify it
                     } else {
                             // We must trow an error. We can't modify it.
-                            
+
                         return JsonResponseBuilder::failure(
                                 array(
                                     'type' => 'save_you_cant_modify_it'
@@ -1162,7 +1162,7 @@ class ExtJsController
                     }
             }
         }
-        
+
         // Detect encoding
         $charset = $file->getEncoding($fileContent);
 
@@ -1220,7 +1220,7 @@ class ExtJsController
                $er = $file->save($fileContent);
 
                if( $er['state'] ) {
-               	
+
                    $r = RepositoryManager::getInstance()->addProgressWork(
                        $file, $info['rev'], $info['en-rev'], $info['reviewed'], $info['reviewed_maintainer'], $info['maintainer'], 'new'
                    );
@@ -1392,7 +1392,7 @@ class ExtJsController
             $optNbLine = $this->getRequestVariable('optNbLine');
             $optB = $this->getRequestVariable('optB');
             $optW = $this->getRequestVariable('optW');
-            
+
             if ($patchID) {
                 $r = File::patchDiff($patchID);
             } else {
@@ -1450,9 +1450,9 @@ class ExtJsController
             )
         );
     }
-    
+
     /**
-     * 
+     *
      */
     public function setFileOwner()
     {
@@ -1462,23 +1462,23 @@ class ExtJsController
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
-        
+
         $fileIdDB = $this->getRequestVariable('fileIdDB');
         $newOwnerID = $this->getRequestVariable('newOwnerID');
-        
+
         $fileInfo = $rf->getModifiesById($fileIdDB);
-        
+
         // This user must be a global admin or the admin for this lang
         // Or if the owner of this file is an anonymous and the current user is a valid user
-        
+
         if($am->isAdmin(true))
         {
             $am->setFileOwner($fileIdDB, $newOwnerID);
-            
+
             $value = array();
             $value['user'] = $am->vcsLogin;
             RepositoryManager::getInstance()->setStaticValue('info', 'changeFilesOwner', json_encode($value), true);
-            
+
             return JsonResponseBuilder::success();
         } else {
             return JsonResponseBuilder::failure(
@@ -1488,7 +1488,7 @@ class ExtJsController
             );
         }
     }
-    
+
     /**
      * Get the commit log Message after a VCS commit.
      */
@@ -1526,11 +1526,11 @@ class ExtJsController
 
         // If we are on root node, FilePath is empty. He must be "/".
         if( $FilePath == '' ) $FilePath = '/';
-        
+
         $info = RepositoryManager::getInstance()->clearLocalChange(
             $FileType, new File($FileLang, $FilePath.$FileName)
         );
-        
+
         if(is_array($info)) {
             return JsonResponseBuilder::success(
                 array(
@@ -1624,7 +1624,7 @@ class ExtJsController
                 )
             );
         }
-        
+
         $xmlDetails = $this->getRequestVariable('xmlDetails');
         $return = "";
 
@@ -1769,7 +1769,7 @@ class ExtJsController
         // Manage log message (add new or ignore it if this message already exist for this user)
         LogManager::getInstance()->addCommitLog($logMessage);
 
-        
+
         // We send an email only if this commit is from a patch
         if( $patchID ) {
             $rm->postPatchCommit($patchID);
@@ -1831,7 +1831,7 @@ class ExtJsController
     public function setTopic()
     {
         $am = AccountManager::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
@@ -1839,20 +1839,20 @@ class ExtJsController
         if (!$am->haveKarma) {
             return JsonResponseBuilder::failure();
         }
-        
+
         $content = $this->getRequestVariable('content');
         $isLang = (bool) ($this->getRequestVariable('lang') == 'lang');
-        
+
         $params = Array(
             'content' => $content,
             'author' => $am->vcsLogin,
             'topicDate' => @date('Y-m-d H:i:s')
         );
-        
+
         RepositoryManager::getInstance()->setStaticValue('main_topic', $isLang ? $am->vcsLang : '', json_encode($params));
-        
+
         return JsonResponseBuilder::success($params);
-        
+
     }
     /**
      * Send an email.
@@ -1901,7 +1901,7 @@ class ExtJsController
     {
         $am = AccountManager::getInstance();
         $rf = RepositoryFetcher::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
@@ -2128,7 +2128,7 @@ class ExtJsController
         $patchID = $this->getRequestVariable('patchID');
 
         $r = RepositoryManager::getInstance()->deletePatch($patchID);
-        
+
         if( $r === true ) {
             return JsonResponseBuilder::success();
         } else {
@@ -2141,7 +2141,7 @@ class ExtJsController
     }
     /**
      * Get patch List for a the current user
-     * 
+     *
      */
     public function getPatchList()
     {
@@ -2150,7 +2150,7 @@ class ExtJsController
         }
 
         $r = RepositoryFetcher::getInstance()->getPatchList();
-        
+
         return JsonResponseBuilder::success(
             array(
                 'nbItems' => count($r),
@@ -2166,7 +2166,7 @@ class ExtJsController
     public function managePatch()
     {
         $rm = RepositoryManager::getInstance();
-        
+
         if (!AccountManager::getInstance()->isLogged()) {
             return JsonResponseBuilder::failure();
         }
@@ -2608,7 +2608,7 @@ class ExtJsController
     }
 
     /**
-     * 
+     *
      */
     public function previewFile()
     {
@@ -2635,32 +2635,32 @@ class ExtJsController
         );
 
     }
-    
+
     /**
-     * 
+     *
      */
     public function getDirectActionData()
     {
         $am = AccountManager::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
 
         $rf = RepositoryFetcher::getInstance();
-        
+
         $action = $this->getRequestVariable('action');
         $idDB = $this->getRequestVariable('idDB');
-        
+
         $fileInfo = $rf->getModifiesById($idDB);
         $fileInfo = $fileInfo[0];
-        
+
         // We get the diff
         $file = new File(
                 $fileInfo['lang'],
                 $fileInfo['path'].$fileInfo['name']
                 );
-        
+
         return JsonResponseBuilder::success(
             array(
                 'fileInfo' => $fileInfo,
@@ -2670,27 +2670,27 @@ class ExtJsController
         );
 
     }
-    
+
     /**
-     * 
+     *
      */
     public function setDirectAction()
     {
         $am = AccountManager::getInstance();
-        
+
         if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
-        
+
         $action = $this->getRequestVariable('action');
         $patchID = $this->getRequestVariable('patchID');
         $idDB = $this->getRequestVariable('idDB');
-        
-        
+
+
         if( $action == 'putIntoMyPatches' )
         {
             $r = RepositoryManager::getInstance()->moveToPatch($patchID, $idDB);
-            
+
             if( $r === true ) {
                 return JsonResponseBuilder::success();
             } else {
@@ -2700,13 +2700,13 @@ class ExtJsController
                     )
                 );
             }
-            
+
         }
-        
+
         if( $action == 'deleteThisChange' )
         {
             $r = RepositoryManager::getInstance()->clearLocalChangeByModifiedID($idDB);
-            
+
             if( is_array($r) ) {
                 return JsonResponseBuilder::success();
             } else {
@@ -2716,25 +2716,25 @@ class ExtJsController
                     )
                 );
             }
-            
+
         }
 
     }
-    
+
     /**
-     * 
+     *
      */
     public function getElephpants()
     {
         //$r = RepositoryManager::getInstance()->moveToPatch();
-        
+
         $r = getFlickr();
-        
+
         return JsonResponseBuilder::success(
             Array(
                 'Items' => $r
             )
-            
+
         );
 
     }
