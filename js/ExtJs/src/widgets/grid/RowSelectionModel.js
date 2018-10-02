@@ -21,7 +21,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
      * allowing multiple selections)
      */
     singleSelect : false,
-    
+
     constructor : function(config){
         Ext.apply(this, config);
         this.selections = new Ext.util.MixedCollection(false, function(o){
@@ -58,7 +58,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
 	        /**
 	         * @event rowdeselect
 	         * Fires when a row is deselected.  To prevent deselection
-	         * {@link Ext.grid.AbstractSelectionModel#lock lock the selections}. 
+	         * {@link Ext.grid.AbstractSelectionModel#lock lock the selections}.
 	         * @param {SelectionModel} this
 	         * @param {Number} rowIndex
 	         * @param {Record} record
@@ -81,7 +81,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
         }
 
         this.rowNav = new Ext.KeyNav(this.grid.getGridEl(), {
-            up: this.onKeyPress, 
+            up: this.onKeyPress,
             down: this.onKeyPress,
             scope: this
         });
@@ -93,7 +93,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
             rowremoved: this.onRemove
         });
     },
-    
+
     onKeyPress : function(e, name){
         var up = name == 'up',
             method = up ? 'selectPrevious' : 'selectNext',
@@ -118,9 +118,9 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
         var ds = this.grid.store,
             s = this.getSelections(),
             i = 0,
-            len = s.length, 
+            len = s.length,
             index, r;
-            
+
         this.silent = true;
         this.clearSelections(true);
         for(; i < len; i++){
@@ -262,7 +262,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
         var s = this.getSelections(),
             i = 0,
             len = s.length;
-            
+
         for(; i < len; i++){
             if(fn.call(scope || this, s[i], i) === false){
                 return false;
@@ -297,7 +297,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
 
     /**
      * Selects all rows if the selection model
-     * {@link Ext.grid.AbstractSelectionModel#isLocked is not locked}. 
+     * {@link Ext.grid.AbstractSelectionModel#isLocked is not locked}.
      */
     selectAll : function(){
         if(this.isLocked()){
@@ -402,7 +402,7 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
 
     /**
      * Deselects a range of rows if the selection model
-     * {@link Ext.grid.AbstractSelectionModel#isLocked is not locked}.  
+     * {@link Ext.grid.AbstractSelectionModel#isLocked is not locked}.
      * All rows in between startRow and endRow are also deselected.
      * @param {Number} startRow The index of the first row in the range
      * @param {Number} endRow The index of the last row in the range
@@ -485,14 +485,14 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
 
     // private
     onEditorKey : function(field, e){
-        var k = e.getKey(), 
-            newCell, 
-            g = this.grid, 
+        var k = e.getKey(),
+            newCell,
+            g = this.grid,
             last = g.lastEdit,
             ed = g.activeEditor,
             shift = e.shiftKey,
             ae, last, r, c;
-            
+
         if(k == e.TAB){
             e.stopEvent();
             ed.completeEdit();
@@ -526,13 +526,13 @@ Ext.grid.RowSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
             g.startEditing(r, c);
         }
     },
-    
+
     onEditorSelect: function(row, lastRow){
         if(lastRow != row){
             this.selectRow(row); // *** highlight newly-selected cell and update selection
         }
     },
-    
+
     destroy : function(){
         Ext.destroy(this.rowNav);
         this.rowNav = null;

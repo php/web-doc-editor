@@ -7,38 +7,38 @@
 /**
  * @class Ext.direct.RemotingProvider
  * @extends Ext.direct.JsonProvider
- * 
+ *
  * <p>The {@link Ext.direct.RemotingProvider RemotingProvider} exposes access to
  * server side methods on the client (a remote procedure call (RPC) type of
  * connection where the client can initiate a procedure on the server).</p>
- * 
+ *
  * <p>This allows for code to be organized in a fashion that is maintainable,
  * while providing a clear path between client and server, something that is
  * not always apparent when using URLs.</p>
- * 
+ *
  * <p>To accomplish this the server-side needs to describe what classes and methods
  * are available on the client-side. This configuration will typically be
  * outputted by the server-side Ext.Direct stack when the API description is built.</p>
  */
-Ext.direct.RemotingProvider = Ext.extend(Ext.direct.JsonProvider, {       
+Ext.direct.RemotingProvider = Ext.extend(Ext.direct.JsonProvider, {
     /**
      * @cfg {Object} actions
      * Object literal defining the server side actions and methods. For example, if
      * the Provider is configured with:
      * <pre><code>
-"actions":{ // each property within the 'actions' object represents a server side Class 
-    "TestAction":[ // array of methods within each server side Class to be   
+"actions":{ // each property within the 'actions' object represents a server side Class
+    "TestAction":[ // array of methods within each server side Class to be
     {              // stubbed out on client
-        "name":"doEcho", 
-        "len":1            
+        "name":"doEcho",
+        "len":1
     },{
         "name":"multiply",// name of method
         "len":2           // The number of parameters that will be used to create an
                           // array of data to send to the server side function.
-                          // Ensure the server sends back a Number, not a String. 
+                          // Ensure the server sends back a Number, not a String.
     },{
         "name":"doForm",
-        "formHandler":true, // direct the client to use specialized form handling method 
+        "formHandler":true, // direct the client to use specialized form handling method
         "len":1
     }]
 }
@@ -58,7 +58,7 @@ TestAction.multiply(
         var method = t.method; // server side method called
         if(e.status){
             var answer = Ext.encode(result); // 8
-    
+
         }else{
             var msg = e.message; // failure message
         }
@@ -67,27 +67,27 @@ TestAction.multiply(
      * </code></pre>
      * In the example above, the server side "multiply" function will be passed two
      * arguments (2 and 4).  The "multiply" method should return the value 8 which will be
-     * available as the <tt>result</tt> in the example above. 
+     * available as the <tt>result</tt> in the example above.
      */
-    
+
     /**
      * @cfg {String/Object} namespace
      * Namespace for the Remoting Provider (defaults to the browser global scope of <i>window</i>).
      * Explicitly specify the namespace Object, or specify a String to have a
      * {@link Ext#namespace namespace created} implicitly.
      */
-    
+
     /**
      * @cfg {String} url
-     * <b>Required<b>. The url to connect to the {@link Ext.Direct} server-side router. 
+     * <b>Required<b>. The url to connect to the {@link Ext.Direct} server-side router.
      */
-    
+
     /**
      * @cfg {String} enableUrlEncode
      * Specify which param will hold the arguments for the method.
      * Defaults to <tt>'data'</tt>.
      */
-    
+
     /**
      * @cfg {Number/Boolean} enableBuffer
      * <p><tt>true</tt> or <tt>false</tt> to enable or disable combining of method
@@ -99,13 +99,13 @@ TestAction.multiply(
      * to the server.</p>
      */
     enableBuffer: 10,
-    
+
     /**
      * @cfg {Number} maxRetries
      * Number of times to re-attempt delivery on failure of a call. Defaults to <tt>1</tt>.
      */
     maxRetries: 1,
-    
+
     /**
      * @cfg {Number} timeout
      * The timeout to use for each request. Defaults to <tt>undefined</tt>.
@@ -123,8 +123,8 @@ TestAction.multiply(
              * @param {Ext.direct.RemotingProvider} provider
              * @param {Ext.Direct.Transaction} transaction
              * @param {Object} meta The meta data
-             */            
-            'beforecall',            
+             */
+            'beforecall',
             /**
              * @event call
              * Fires immediately after the request to the server-side is sent. This does
@@ -132,7 +132,7 @@ TestAction.multiply(
              * @param {Ext.direct.RemotingProvider} provider
              * @param {Ext.Direct.Transaction} transaction
              * @param {Object} meta The meta data
-             */            
+             */
             'call'
         );
         this.namespace = (Ext.isString(this.namespace)) ? Ext.ns(this.namespace) : this.namespace || window;
@@ -316,7 +316,7 @@ TestAction.multiply(
                     extType: 'rpc',
                     extUpload: String(isUpload)
                 };
-            
+
             // change made from typeof callback check to callback.params
             // to support addl param passing in DirectSubmit EAC 6/2
             Ext.apply(t, {
@@ -328,7 +328,7 @@ TestAction.multiply(
             this.processForm(t);
         }
     },
-    
+
     processForm: function(t){
         Ext.Ajax.request({
             url: this.url,

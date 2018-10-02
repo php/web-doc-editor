@@ -74,7 +74,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      */
     /**
      * @cfg {String} itemSelector
-     * <b>This is a required setting</b>. A simple CSS selector (e.g. <tt>div.some-class</tt> or 
+     * <b>This is a required setting</b>. A simple CSS selector (e.g. <tt>div.some-class</tt> or
      * <tt>span:first-child</tt>) that will be used to determine what nodes this DataView will be
      * working with.
      */
@@ -122,7 +122,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      * @cfg {Boolean} trackOver True to enable mouseenter and mouseleave events
      */
     trackOver: false,
-    
+
     /**
      * @cfg {Boolean} blockRefresh Set this to true to ignore datachanged events on the bound store. This is useful if
      * you wish to provide custom transition animations via a plugin (defaults to false)
@@ -262,7 +262,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
         this.clearSelections(false, true);
         var el = this.getTemplateTarget(),
             records = this.store.getRange();
-            
+
         el.update('');
         if(records.length < 1){
             if(!this.deferEmptyText || this.hasSkippedEmptyText){
@@ -384,7 +384,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
             ns[i].viewIndex = i;
         }
     },
-    
+
     /**
      * Returns the store associated with this DataView.
      * @return {Ext.data.Store} The store
@@ -430,7 +430,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
             this.refresh();
         }
     },
-    
+
     /**
      * @private
      * Calls this.refresh if this.blockRefresh is not true
@@ -569,11 +569,11 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      * @return {Array} An array of numeric indexes
      */
     getSelectedIndexes : function(){
-        var indexes = [], 
+        var indexes = [],
             selected = this.selected.elements,
             i = 0,
             len = selected.length;
-            
+
         for(; i < len; i++){
             indexes.push(selected[i].viewIndex);
         }
@@ -594,10 +594,10 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      * @return {Array} records The {@link Ext.data.Record} objects
      */
     getRecords : function(nodes){
-        var records = [], 
+        var records = [],
             i = 0,
             len = nodes.length;
-            
+
         for(; i < len; i++){
             records[records.length] = this.store.getAt(nodes[i].viewIndex);
         }
@@ -706,7 +706,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
 
     /**
      * Gets a template node.
-     * @param {HTMLElement/String/Number/Ext.data.Record} nodeInfo An HTMLElement template node, index of a template node, 
+     * @param {HTMLElement/String/Number/Ext.data.Record} nodeInfo An HTMLElement template node, index of a template node,
      * the id of a template node or the record associated with the node.
      * @return {HTMLElement} The node or null if it wasn't found
      */
@@ -732,7 +732,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
         var ns = this.all.elements,
             nodes = [],
             i;
-            
+
         start = start || 0;
         end = !Ext.isDefined(end) ? Math.max(ns.length - 1, 0) : end;
         if(start <= end){

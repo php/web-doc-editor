@@ -13,7 +13,7 @@
  * @param {Node} root (optional) The root node
  */
 Ext.data.Tree = Ext.extend(Ext.util.Observable, {
-    
+
     constructor: function(root){
         this.nodeHash = {};
         /**
@@ -97,9 +97,9 @@ Ext.data.Tree = Ext.extend(Ext.util.Observable, {
              */
             "beforeinsert"
         );
-        Ext.data.Tree.superclass.constructor.call(this);        
+        Ext.data.Tree.superclass.constructor.call(this);
     },
-    
+
     /**
      * @cfg {String} pathSeparator
      * The token used to separate paths in node ids (defaults to '/').
@@ -165,7 +165,7 @@ Ext.data.Tree = Ext.extend(Ext.util.Observable, {
  * @param {Object} attributes The attributes/config for the node
  */
 Ext.data.Node = Ext.extend(Ext.util.Observable, {
-    
+
     constructor: function(attributes){
         /**
          * The attributes supplied for the node. You can use this property to access any custom attributes you supplied.
@@ -280,9 +280,9 @@ Ext.data.Node = Ext.extend(Ext.util.Observable, {
             "beforeinsert" : true
         });
         this.listeners = this.attributes.listeners;
-        Ext.data.Node.superclass.constructor.call(this);    
+        Ext.data.Node.superclass.constructor.call(this);
     },
-    
+
     // private
     fireEvent : function(evtName){
         // first do standard event for this node
@@ -772,7 +772,7 @@ Ext.data.Node = Ext.extend(Ext.util.Observable, {
                     return res;
                 }
             }
-            
+
         }
         return null;
     },

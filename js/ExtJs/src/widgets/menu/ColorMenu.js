@@ -15,13 +15,13 @@
  * applied to the <tt><b>initialConfig</b></tt> property of the ColorMenu.
  * Applying {@link Ext.ColorPalette ColorPalette} configuration settings to
  * <b><tt>this</tt></b> will <b>not</b> affect the ColorPalette's configuration.</li>
- * </ul></div> * 
+ * </ul></div> *
  * @xtype colormenu
  */
  Ext.menu.ColorMenu = Ext.extend(Ext.menu.Menu, {
-    /** 
+    /**
      * @cfg {Boolean} enableScrolling
-     * @hide 
+     * @hide
      */
     enableScrolling : false,
     /**
@@ -36,47 +36,47 @@
      * @cfg {Object} scope
      * The scope (<tt><b>this</b></tt> reference) in which the <code>{@link #handler}</code>
      * function will be called.  Defaults to this ColorMenu instance.
-     */    
-    
-    /** 
+     */
+
+    /**
      * @cfg {Boolean} hideOnClick
      * False to continue showing the menu after a color is selected, defaults to true.
      */
     hideOnClick : true,
-    
+
     cls : 'x-color-menu',
-    
-    /** 
+
+    /**
      * @cfg {String} paletteId
      * An id to assign to the underlying color palette. Defaults to <tt>null</tt>.
      */
     paletteId : null,
-    
-    /** 
+
+    /**
      * @cfg {Number} maxHeight
-     * @hide 
+     * @hide
      */
-    /** 
+    /**
      * @cfg {Number} scrollIncrement
-     * @hide 
+     * @hide
      */
     /**
      * @property palette
      * @type ColorPalette
      * The {@link Ext.ColorPalette} instance for this ColorMenu
      */
-    
-    
+
+
     /**
      * @event click
      * @hide
      */
-    
+
     /**
      * @event itemclick
      * @hide
      */
-    
+
     initComponent : function(){
         Ext.apply(this, {
             plain: true,

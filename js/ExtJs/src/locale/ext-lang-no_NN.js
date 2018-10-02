@@ -8,7 +8,7 @@
  *
  * Norwegian translation (Nynorsk: no-NN)
  * By Tore Kjørsvik 21-January-2008
- *  
+ *
  */
 
 Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">Lastar...</div>';

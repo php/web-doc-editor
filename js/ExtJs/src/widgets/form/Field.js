@@ -441,7 +441,7 @@ var form = new Ext.form.FormPanel({
              return false;
          }
      },
-    
+
     /**
      * Runs this field's validators and returns an array of error messages for any validation failures.
      * This is called internally during validation and would not usually need to be used manually.
@@ -486,10 +486,10 @@ var form = new Ext.form.FormPanel({
                 }
             }
         }
-        
+
         this.setActiveError(msg);
     },
-    
+
     /**
      * Clear any invalid styles/messages for this field
      */
@@ -509,7 +509,7 @@ var form = new Ext.form.FormPanel({
                 }
             }
         }
-        
+
         this.unsetActiveError();
     },
 
@@ -524,7 +524,7 @@ var form = new Ext.form.FormPanel({
         this.activeError = msg;
         if (suppressEvent !== true) this.fireEvent('invalid', this, msg);
     },
-    
+
     /**
      * Clears the activeError and fires the 'valid' event. This is called internally by clearInvalid and would not
      * usually need to be called manually

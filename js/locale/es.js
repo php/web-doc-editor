@@ -40,7 +40,7 @@ var i18n = new Array();
   i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "El parche que quiere eliminar no está creado por ud. Solamente lo puede eliminar el usuario que creó el parche o un administrador global.";
   i18n["This action is available to global administrators only."] = "Esta acción solamente está disponible por el administrador global.";
   i18n["This action is available to global administrators or to administrators for this language only."] = "Esta acción está solamente disponible por el administrador global o el administrador de este idioma.";
-  i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "El fichero el que quiere deshacer las modificaciones no fue creado por ud.<br>Solamente puede realizar esta acción si el fichero es suyo.";  
+  i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "El fichero el que quiere deshacer las modificaciones no fue creado por ud.<br>Solamente puede realizar esta acción si el fichero es suyo.";
 
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Doble clic en la celda para abrir la selección de ficheros";
@@ -68,24 +68,24 @@ var i18n = new Array();
   i18n["Estimated progress"] = "Progreso estimado";
   i18n["{0}% complete"] = "{0}% completado";
   i18n["Set the progress..."] = "Definir progreso...";
-  i18n["View diff"] = "Ver la diferencia";  
+  i18n["View diff"] = "Ver la diferencia";
   i18n["Download the diff as a patch"] = "Descargar la diferencia como parche";
   i18n["Clear this change"] = "Descartar cambio";
-  i18n["Cancel this deletion"] = "Cancelar esta eliminación";  
+  i18n["Cancel this deletion"] = "Cancelar esta eliminación";
   i18n["Submit all files for review in patch:"] = "Enviar todos los ficheros para revisar como parche:";
   i18n["Submit all files in this directory in patch:"] = "Enviar todos los ficheros de este directorio como parche:";
   i18n["Submit as patch for review in:"] = "Enviar como parche para ser revisado en:";
-  i18n["Create a new patch"] = "Crear nuevo parche";  
+  i18n["Create a new patch"] = "Crear nuevo parche";
   i18n["Commit..."] = "Validar...";
   i18n["...this file"] = "...este fichero";
   i18n["...all files from this folder"] = "...todos los ficheros de este directorio";
   i18n["...all files from this patch"] = "...todos los ficheros de este parche";
-  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";  
+  i18n["...all files modified by me"] = "...todos los ficheros modificados por mi";
   i18n["You have no patch currently. You must create one."] = "Actualmente no tiene ningún parche. Debe crear uno.";
   i18n["Diff for file: {0}"] = "Diferencia para el fichero : {0}";
-  i18n["Administrator menu"] = "Menú de Administrador"; 
-  
-  
+  i18n["Administrator menu"] = "Menú de Administrador";
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Editar la descripción de este parche";
   i18n["Delete this patch"] = "Eliminar este parche";
@@ -139,7 +139,7 @@ var i18n = new Array();
   i18n["{0} hour(s)"] = "{0} hora(s)";
   i18n["{0} minute(s)"] = "{0} minuto(s)";
   i18n["{0} second(s)"] = "{0} segundo(s)";
-  i18n["Less than one second"] = "Menos de un segundo";   
+  i18n["Less than one second"] = "Menos de un segundo";
   i18n["{0} check all entitites"] = "{0} comprobar todas las entidades";
   i18n["{0} updated app's data"] = "{0} datos actualizados de la aplicación";
   i18n["{0} logged out"] = "{0} se ha desconectado";
@@ -321,7 +321,7 @@ var i18n = new Array();
 
 // In file: ../../js/ui/component/EditorConf.js
   i18n["Main"] = "Principal";
-  i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";  
+  i18n["Module \"All files\""] = "Módulo \"Todos los ficheros\"";
   i18n["Module \"Files need translate\""] = "Módulo \"Ficheros a traducir\"";
   i18n["Module \"Files need update\""] = "Módulo \"Ficheros a actualizar\"";
   i18n["Module \"Files with error\""] = "Módulo \"Ficheros con errores\"";
@@ -548,7 +548,7 @@ var i18n = new Array();
   i18n["... of the {0} file"] = "... del fichero {0}";
   i18n["Need Update: in {0}"] = "Fichero que necesita actualización: en {0}";
   i18n["{0} revision"] = "Revisión {0}";
-  
+
   i18n["File EN modified by me"] = "Fichero EN modificado por mi";
   i18n["File EN modified by {0}"] = "Fichero EN modificado por {0}";
 
@@ -593,7 +593,7 @@ var i18n = new Array();
   i18n["The log message is required."] = "El comentario para el histórico es obligatorio.";
   i18n["You must choose at least one file."] = "Debe escoger almenos un fichero.";
   i18n["There are {0} files to close before commit.<br><br>{1}<br/><br/>Would you like me to close them for you ?"] = "Hay {0} ficheros pendientes de ser cerrados antes de cometer.<br><br>{1}<br/><br/>¿Quiere cerrarlos automáticamente?";
-  i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?"] = "Hay un {0} fichero pendiente de ser cerrado antes de cometer. ¿Quiere cerrarlo automáticamente?"; 
+  i18n["There is {0} file to close before commit.<br><br>{1}<br/><br/>Would you like me to close it for you ?"] = "Hay un {0} fichero pendiente de ser cerrado antes de cometer. ¿Quiere cerrarlo automáticamente?";
 // In file: ../../js/ui/task/MarkDeleteTask.js
   i18n["This action will mark this file as need deleted.<br/><br/>You need commit this change to take it effect.<br/><br/>Please, confirm this action."] = "¿Desea marcar este fichero como pendiente de eliminar?<br/><br/>Necesita hacer commit para que este cambio tenga efecto.<br/><br/>Por favor, confirme esta acción.";
 
@@ -657,28 +657,28 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "¡La nota fue añadida satisfactoriamente!";
   i18n["Note deleted"] = "Nota eliminada";
   i18n["The note was deleted successfully !"] = "¡La nota fue eliminada satisfactoriamente!";
-    
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Comprobando XML. Por favor espere...";
   i18n["XML check"] = "Comprobar XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Línea";
   i18n["Libel"] = "Descripción";
   i18n["XML Errors"] = "Errores XML";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "Propietario actual";
   i18n["Action"] = "Acción";
   i18n["New owner"] = "Nuevo propietario";
   i18n["Change file's owner"] = "Cambiar el propietario del fichero";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "Propietario modificado";
   i18n["The owner for this file have been changed successfully !"] = "¡El propietario de este ficheros se ha cambiado satisfactoriamente!";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "Siguiente";
   i18n["Anonymous patch manager"] = "Gestor de parches anónimos";

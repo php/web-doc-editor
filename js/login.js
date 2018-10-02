@@ -78,20 +78,20 @@ var PhDOE_loginPage = function()
         },
 
         externalCredentials : function(service, name, id, email) {
-        
+
             this.authService = service;
             this.authServiceID = id;
-            
+
             // Name is always given
             Ext.getCmp('login-form-vcsLogin').setValue(name);
             Ext.getCmp('login-form-vcsLogin').disable();
             Ext.getCmp('login-form-vcsPasswd').disable();
             Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_'+service+'.png" style="vertical-align: middle" /> <b>' + service.ucFirst() +'</b>', false);
-            
+
             if( email ) {
                 Ext.getCmp('login-form-email').setValue(email);
             }
-            
+
             Ext.getCmp('login-btn').setText('Anonymous login');
         },
 
@@ -116,13 +116,13 @@ var PhDOE_loginPage = function()
                             win.drawers.e.setHeight(240);
                         },
                         afterrender: function(w) {
-                            
+
                             if( auth && auth.service ) {
-                                
+
                                 PhDOE_loginPage.externalCredentials(auth.service, auth.login, auth.serviceID, auth.email);
-                                
+
                             }
-                            
+
                         }
                     },
                     plugins     : [
@@ -169,9 +169,9 @@ var PhDOE_loginPage = function()
                                         '</div>',
                             listeners: {
                                     afterrender: function() {
-                                        
+
                                         if( auth.service ) {
-                                        
+
                                             switch(auth.service) {
                                                 case "facebook" :
                                                     Ext.get('auth-img-fb').addClass('oauth-enable');
@@ -237,7 +237,7 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-twitter').addClass('oauth-enable');
                                                     break;
                                             }
-                                        
+
                                         } else {
                                             Ext.get('auth-img-fb').addClass('oauth-disable');
                                             Ext.get('auth-img-github').addClass('oauth-disable');
@@ -296,11 +296,11 @@ var PhDOE_loginPage = function()
                                         c.setValue(directAccess.project);
                                         c.collapse();
                                         c.disable();
-                                        
+
                                         // Get the URI for svn account request
                                         var url = c.store.getById(directAccess.project.toLowerCase()).data.request_account_uri;
                                         Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                                        
+
                                     } else {
                                         c.setValue('php');
 
@@ -476,7 +476,7 @@ var PhDOE_loginPage = function()
                                             project : Ext.getCmp('login-form-project').getValue(),
                                             authService: PhDOE_loginPage.authService,
                                             authServiceID: PhDOE_loginPage.authServiceID
-                                            
+
                                         },
                                         waitTitle : 'Connecting',
                                         waitMsg   : 'Sending data...',
@@ -510,52 +510,52 @@ var PhDOE_loginPage = function()
                         scope: this,
                         text: 'Reset',
                         handler: function() {
-                        
+
                             Ext.getCmp('login-form-vcsLogin').enable();
-                            
+
                             Ext.getCmp('login-form-vcsPasswd').enable();
                             Ext.getCmp('login-form-vcsPasswd').setValue('');
                             Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_php.png" style="vertical-align: middle" /> <b>Php.net</b>', false);
-                            
+
                             this.authService = 'VCS';
                             this.authServiceID = '';
-                            
+
                             if( loginApp ) {
                                 Ext.getCmp('login-form-vcsLogin').setValue(loginApp);
                                 Ext.getCmp('login-btn').setText('Login');
                                 Ext.getCmp('login-form-email').setValue(Ext.util.Cookies.get("email"));
-                                
+
                             } else {
                                 Ext.getCmp('login-form-vcsLogin').setValue('anonymous');
                                 Ext.getCmp('login-btn').setText('Anonymous login');
                                 Ext.getCmp('login-form-email').setValue('');
                             }
-                            
+
                         }
                     }]
                 });
             }
 
             win.show();
-            
+
             //
 
             // Remove the global loading message
             Ext.get('loading').remove();
             Ext.fly('loading-mask').fadeOut({ remove : true });
-            
+
             // We load flickR
             this.storeFlickr.load({
-                
+
                 callback: function() {
-                    
+
                     // We put the elephpants !
                     Ext.each(this.data.items, function(item) {
-                        
+
                         Ext.DomHelper.append('elephpants-images', {
                             tag: 'a',
-                            href: item.data.link, 
-                            html: '<img src="'+ item.data.img +'" />', 
+                            href: item.data.link,
+                            html: '<img src="'+ item.data.img +'" />',
                             target: '_blank'
                         });
                     });

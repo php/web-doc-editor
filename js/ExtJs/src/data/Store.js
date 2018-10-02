@@ -258,7 +258,7 @@ sortInfo: {
         dir : 'dir'
     },
 
-    isDestroyed: false,    
+    isDestroyed: false,
     hasMultiSort: false,
 
     // private
@@ -270,18 +270,18 @@ sortInfo: {
          * @type Boolean
          * True if this store is currently sorted by more than one field/direction combination.
          */
-        
+
         /**
          * @property isDestroyed
          * @type Boolean
          * True if the store has been destroyed already. Read only
          */
-        
+
         this.data = new Ext.util.MixedCollection(false);
         this.data.getKey = function(o){
             return o.id;
         };
-        
+
 
         // temporary removed-records cache
         this.removed = [];
@@ -627,29 +627,29 @@ sortInfo: {
      */
     add : function(records) {
         var i, len, record, index;
-        
+
         records = [].concat(records);
         if (records.length < 1) {
             return;
         }
-        
+
         for (i = 0, len = records.length; i < len; i++) {
             record = records[i];
-            
+
             record.join(this);
-            
+
             if (record.dirty || record.phantom) {
                 this.modified.push(record);
             }
         }
-        
+
         index = this.data.length;
         this.data.addAll(records);
-        
+
         if (this.snapshot) {
             this.snapshot.addAll(records);
         }
-        
+
         this.fireEvent('add', this, records, index);
     },
 
@@ -662,7 +662,7 @@ sortInfo: {
         var index = this.findInsertIndex(record);
         this.insert(index, record);
     },
-    
+
     /**
      * @private
      * Update a record within the store with a new reference
@@ -746,23 +746,23 @@ sortInfo: {
      */
     insert : function(index, records) {
         var i, len, record;
-        
+
         records = [].concat(records);
         for (i = 0, len = records.length; i < len; i++) {
             record = records[i];
-            
+
             this.data.insert(index + i, record);
             record.join(this);
-            
+
             if (record.dirty || record.phantom) {
                 this.modified.push(record);
             }
         }
-        
+
         if (this.snapshot) {
             this.snapshot.addAll(records);
         }
-        
+
         this.fireEvent('add', this, records, index);
     },
 
@@ -901,13 +901,13 @@ sortInfo: {
         var modified = this.modified,
             length   = records.length,
             record, i;
-        
+
         for (i = 0; i < length; i++) {
             record = records[i];
-            
+
             if (record.phantom && record.isValid()) {
                 record.markDirty();  // <-- Mark new records dirty (Ed: why?)
-                
+
                 if (modified.indexOf(record) == -1) {
                     modified.push(record);
                 }
@@ -1254,7 +1254,7 @@ myStore.reload(lastOptions);
     // Called as a callback by the Reader during a load operation.
     loadRecords : function(o, options, success){
         var i, len;
-        
+
         if (this.isDestroyed === true) {
             return;
         }
@@ -1392,7 +1392,7 @@ myStore.reload(lastOptions);
         for (var i=0, j = sorters.length; i < j; i++) {
             sortFns.push(this.createSortFunction(sorters[i].field, sorters[i].direction));
         }
-        
+
         if (sortFns.length == 0) {
             return;
         }
@@ -1559,7 +1559,7 @@ myStore.reload(lastOptions);
             sorters  : sorters,
             direction: direction
         };
-        
+
         if (this.remoteSort) {
             this.singleSort(sorters[0].field, sorters[0].direction);
 
@@ -1885,11 +1885,11 @@ myStore.reload(lastOptions);
         var modified = this.modified.slice(0),
             length   = modified.length,
             i;
-            
+
         for (i = 0; i < length; i++){
             modified[i].commit();
         }
-        
+
         this.modified = [];
         this.removed  = [];
     },
@@ -1903,16 +1903,16 @@ myStore.reload(lastOptions);
             mLength  = modified.length,
             rLength  = removed.length,
             i;
-        
+
         for (i = 0; i < mLength; i++) {
             modified[i].reject();
         }
-        
+
         for (i = 0; i < rLength; i++) {
             this.insert(removed[i].lastIndex || 0, removed[i]);
             removed[i].reject();
         }
-        
+
         this.modified = [];
         this.removed  = [];
     },

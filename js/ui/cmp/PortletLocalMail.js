@@ -196,7 +196,7 @@ ui.cmp.PortletLocalMail = Ext.extend(Ext.ux.Portlet,
     initComponent: function(config)
     {
         this.id = 'portletLocalMail';
-        
+
         Ext.apply(this, config);
         ui.cmp.PortletLocalMail.superclass.initComponent.apply(this);
 

@@ -28,7 +28,7 @@ Ext.ProgressBar = Ext.extend(Ext.BoxComponent, {
     * The base CSS class to apply to the progress bar's wrapper element (defaults to 'x-progress')
     */
     baseCls : 'x-progress',
-    
+
     /**
     * @cfg {Boolean} animate
     * True to animate the progress bar during transitions (defaults to false)
@@ -72,7 +72,7 @@ Ext.ProgressBar = Ext.extend(Ext.BoxComponent, {
 
         this.el = position ? tpl.insertBefore(position, {cls: this.baseCls}, true)
             : tpl.append(ct, {cls: this.baseCls}, true);
-                
+
         if(this.id){
             this.el.dom.id = this.id;
         }
@@ -93,7 +93,7 @@ Ext.ProgressBar = Ext.extend(Ext.BoxComponent, {
         }
         this.progressBar.setHeight(inner.offsetHeight);
     },
-    
+
     // private
     afterRender : function(){
         Ext.ProgressBar.superclass.afterRender.call(this);
@@ -147,7 +147,7 @@ duration   Number        The length of time in milliseconds that the progress ba
 interval   Number        The length of time in milliseconds between each progress update
                          (defaults to 1000 ms)
 animate    Boolean       Whether to animate the transition of the progress bar. If this value is
-                         not specified, the default for the class is used.                                                   
+                         not specified, the default for the class is used.
 increment  Number        The number of progress update segments to display within the progress
                          bar (defaults to 10).  If the bar reaches the end and is still
                          updating, it will automatically wrap back to the beginning.
@@ -235,7 +235,7 @@ myAction.on('complete', function(){
         }
         return this;
     },
-    
+
     /**
      * Synchronizes the inner bar width to the proper proportion of the total componet width based
      * on the current progress {@link #value}.  This will be called automatically when the ProgressBar
@@ -282,7 +282,7 @@ myAction.on('complete', function(){
         }
         return this;
     },
-    
+
     // private
     clearTimer : function(){
         if(this.waitTimer){
@@ -291,7 +291,7 @@ myAction.on('complete', function(){
             this.waitTimer = null;
         }
     },
-    
+
     onDestroy: function(){
         this.clearTimer();
         if(this.rendered){

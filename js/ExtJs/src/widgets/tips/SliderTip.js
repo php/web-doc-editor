@@ -33,7 +33,7 @@ new Ext.Slider({
 Ext.slider.Tip = Ext.extend(Ext.Tip, {
     minWidth: 10,
     offsets : [0, -10],
-    
+
     init: function(slider) {
         slider.on({
             scope    : this,
@@ -43,10 +43,10 @@ Ext.slider.Tip = Ext.extend(Ext.Tip, {
             destroy  : this.destroy
         });
     },
-    
+
     /**
      * @private
-     * Called whenever a dragstart or drag event is received on the associated Thumb. 
+     * Called whenever a dragstart or drag event is received on the associated Thumb.
      * Aligns the Tip with the Thumb's new position.
      * @param {Ext.slider.MultiSlider} slider The slider
      * @param {Ext.EventObject} e The Event object

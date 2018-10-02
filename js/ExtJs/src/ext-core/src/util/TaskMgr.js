@@ -15,7 +15,7 @@
 // Start a simple clock task that updates a div once per second
 var updateClock = function(){
     Ext.fly('clock').update(new Date().format('g:i:s A'));
-} 
+}
 var task = {
     run: updateClock,
     interval: 1000 //1 second
@@ -31,15 +31,15 @@ Ext.TaskMgr.start({
 
  * </code></pre>
  * <p>See the {@link #start} method for details about how to configure a task object.</p>
- * Also see {@link Ext.util.DelayedTask}. 
- * 
+ * Also see {@link Ext.util.DelayedTask}.
+ *
  * @constructor
  * @param {Number} interval (optional) The minimum precision in milliseconds supported by this TaskRunner instance
  * (defaults to 10)
  */
 Ext.util.TaskRunner = function(interval){
     interval = interval || 10;
-    var tasks = [], 
+    var tasks = [],
     	removeQueue = [],
     	id = 0,
     	running = false,
@@ -66,12 +66,12 @@ Ext.util.TaskRunner = function(interval){
 	            t.onStop.apply(t.scope || t);
 	        }
 	    },
-	    
+
     	// private
     	runTasks = function(){
 	    	var rqLen = removeQueue.length,
-	    		now = new Date().getTime();	    			    		
-	    
+	    		now = new Date().getTime();
+
 	        if(rqLen > 0){
 	            for(var i = 0; i < rqLen; i++){
 	                tasks.remove(removeQueue[i]);
@@ -81,7 +81,7 @@ Ext.util.TaskRunner = function(interval){
 	                stopThread();
 	                return;
 	            }
-	        }	        
+	        }
 	        for(var i = 0, t, itime, rt, len = tasks.length; i < len; ++i){
 	            t = tasks[i];
 	            itime = now - t.taskRunTime;

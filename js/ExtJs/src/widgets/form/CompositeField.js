@@ -72,12 +72,12 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
      * True to combine errors from the individual fields into a single error message at the CompositeField level (defaults to true)
      */
     combineErrors: true,
-    
+
     /**
      * @cfg {String} labelConnector The string to use when joining segments of the built label together (defaults to ', ')
      */
     labelConnector: ', ',
-    
+
     /**
      * @cfg {Object} defaults Any default properties to assign to the child fields.
      */
@@ -91,7 +91,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
 
         for (var i=0, j = items.length; i < j; i++) {
             item = items[i];
-            
+
             if (!Ext.isEmpty(item.ref)){
                 item.ref = '../' + item.ref;
             }
@@ -128,7 +128,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
         });
 
         Ext.form.CompositeField.superclass.initComponent.apply(this, arguments);
-        
+
         this.innerCt = new Ext.Container({
             layout  : 'hbox',
             items   : this.items,
@@ -137,7 +137,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
             ownerCt: this
         });
         this.innerCt.ownerCt = undefined;
-        
+
         var fields = this.innerCt.findBy(function(c) {
             return c.isFormField;
         }, this);
@@ -149,7 +149,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
          */
         this.items = new Ext.util.MixedCollection();
         this.items.addAll(fields);
-        
+
     },
 
     /**
@@ -198,7 +198,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
     onFieldMarkInvalid: function(field, message) {
         var name  = field.getName(),
             error = {
-                field: name, 
+                field: name,
                 errorName: field.fieldLabel || name,
                 error: message
             };
@@ -318,7 +318,7 @@ Ext.form.CompositeField = Ext.extend(Ext.form.Field, {
             this.clearInvalid();
         }).defer(50, this);
     },
-    
+
     /**
      * Calls clearInvalid on all child fields. This is a convenience function and should not often need to be called
      * as fields usually take care of clearing themselves

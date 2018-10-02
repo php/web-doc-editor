@@ -114,8 +114,8 @@ map.addBinding({
             scope = config.scope;
 
 	if (config.stopEvent) {
-	    this.stopEvent = config.stopEvent;    
-	}	
+	    this.stopEvent = config.stopEvent;
+	}
 
         if(typeof keyCode == "string"){
             var ks = [];
@@ -126,7 +126,7 @@ map.addBinding({
             keyCode = ks;
         }
         var keyArray = Ext.isArray(keyCode);
-        
+
         var handler = function(e){
             if(this.checkModifiers(config, e)){
                 var k = e.getKey();
@@ -152,7 +152,7 @@ map.addBinding({
         };
         this.bindings.push(handler);
 	},
-    
+
     // private
     checkModifiers: function(config, e){
         var val, key, keys = ['shift', 'ctrl', 'alt'];
@@ -231,7 +231,7 @@ map.addBinding({
 		    this.enabled = false;
 		}
 	},
-    
+
     /**
      * Convenience function for setting disabled/enabled by boolean.
      * @param {Boolean} disabled

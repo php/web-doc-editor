@@ -25,10 +25,10 @@
  * <code>{@link Ext.form.Field#validationDelay validationDelay}</code>, and
  * <code>{@link Ext.form.Field#validationEvent validationEvent}</code> : modify how/when validation is triggered</li>
  * </ul></div>
- * 
+ *
  * @constructor Creates a new TextField
  * @param {Object} config Configuration options
- * 
+ *
  * @xtype textfield
  */
 Ext.form.TextField = Ext.extend(Ext.form.Field,  {
@@ -213,9 +213,9 @@ var myField = new Ext.form.NumberField({
         else if(this.validationEvent !== false && this.validationEvent != 'blur'){
         	this.mon(this.el, this.validationEvent, this.validate, this, {buffer: this.validationDelay});
         }
-        if(this.selectOnFocus || this.emptyText){            
+        if(this.selectOnFocus || this.emptyText){
             this.mon(this.el, 'mousedown', this.onMouseDown, this);
-            
+
             if(this.emptyText){
                 this.applyEmptyText();
             }
@@ -236,7 +236,7 @@ var myField = new Ext.form.NumberField({
             });
         }
     },
-    
+
     onMouseDown: function(e){
         if(!this.hasFocus){
             this.mon(this.el, 'mouseup', Ext.emptyFn, this, { single: true, preventDefault: true });
@@ -259,7 +259,7 @@ var myField = new Ext.form.NumberField({
             this.validationTask.delay(this.validationDelay);
         }
     },
-    
+
     //private
     onDisable: function(){
         Ext.form.TextField.superclass.onDisable.call(this);
@@ -267,7 +267,7 @@ var myField = new Ext.form.NumberField({
             this.el.dom.unselectable = 'on';
         }
     },
-    
+
     //private
     onEnable: function(){
         Ext.form.TextField.superclass.onEnable.call(this);
@@ -282,7 +282,7 @@ var myField = new Ext.form.NumberField({
             this.autoSize();
         }
     },
-    
+
     // private
     doAutoSize : function(e){
         return !e.isNavKeyPress();
@@ -373,7 +373,7 @@ var myField = new Ext.form.NumberField({
      * <p>Validates a value according to the field's validation rules and returns an array of errors
      * for any failing validations. Validation rules are processed in the following order:</p>
      * <div class="mdetail-params"><ul>
-     * 
+     *
      * <li><b>1. Field specific validator</b>
      * <div class="sub-desc">
      * <p>A validator offers a way to customize and reuse a validation specification.
@@ -385,36 +385,36 @@ var myField = new Ext.form.NumberField({
      * <li>a String to represent the invalid message if invalid (validation halts).</li>
      * </ul></div>
      * </div></li>
-     * 
+     *
      * <li><b>2. Basic Validation</b>
      * <div class="sub-desc">
      * <p>If the <code>{@link #validator}</code> has not halted validation,
      * basic validation proceeds as follows:</p>
-     * 
+     *
      * <div class="mdetail-params"><ul>
-     * 
+     *
      * <li><code>{@link #allowBlank}</code> : (Invalid message =
      * <code>{@link #emptyText}</code>)<div class="sub-desc">
      * Depending on the configuration of <code>{@link #allowBlank}</code>, a
      * blank field will cause validation to halt at this step and return
-     * Boolean true or false accordingly.  
+     * Boolean true or false accordingly.
      * </div></li>
-     * 
+     *
      * <li><code>{@link #minLength}</code> : (Invalid message =
      * <code>{@link #minLengthText}</code>)<div class="sub-desc">
      * If the passed value does not satisfy the <code>{@link #minLength}</code>
      * specified, validation halts.
      * </div></li>
-     * 
+     *
      * <li><code>{@link #maxLength}</code> : (Invalid message =
      * <code>{@link #maxLengthText}</code>)<div class="sub-desc">
      * If the passed value does not satisfy the <code>{@link #maxLength}</code>
      * specified, validation halts.
      * </div></li>
-     * 
+     *
      * </ul></div>
      * </div></li>
-     * 
+     *
      * <li><b>3. Preconfigured Validation Types (VTypes)</b>
      * <div class="sub-desc">
      * <p>If none of the prior validation steps halts validation, a field
@@ -425,7 +425,7 @@ var myField = new Ext.form.NumberField({
      * Keystrokes on the field will be filtered according to the VTypes
      * vtype Mask property.</p>
      * </div></li>
-     * 
+     *
      * <li><b>4. Field specific regex test</b>
      * <div class="sub-desc">
      * <p>If none of the prior validation steps halts validation, a field's
@@ -433,22 +433,22 @@ var myField = new Ext.form.NumberField({
      * The invalid message for this test is configured with
      * <code>{@link #regexText}</code>.</p>
      * </div></li>
-     * 
+     *
      * @param {Mixed} value The value to validate. The processed raw value will be used if nothing is passed
      * @return {Array} Array of any validation errors
      */
     getErrors: function(value) {
         var errors = Ext.form.TextField.superclass.getErrors.apply(this, arguments);
-        
-        value = Ext.isDefined(value) ? value : this.processValue(this.getRawValue());        
-        
+
+        value = Ext.isDefined(value) ? value : this.processValue(this.getRawValue());
+
         if (Ext.isFunction(this.validator)) {
             var msg = this.validator(value);
             if (msg !== true) {
                 errors.push(msg);
             }
         }
-        
+
         if (value.length < 1 || value === this.emptyText) {
             if (this.allowBlank) {
                 //if value is blank and allowBlank is true, there cannot be any additional errors
@@ -457,30 +457,30 @@ var myField = new Ext.form.NumberField({
                 errors.push(this.blankText);
             }
         }
-        
+
         if (!this.allowBlank && (value.length < 1 || value === this.emptyText)) { // if it's blank
             errors.push(this.blankText);
         }
-        
+
         if (value.length < this.minLength) {
             errors.push(String.format(this.minLengthText, this.minLength));
         }
-        
+
         if (value.length > this.maxLength) {
             errors.push(String.format(this.maxLengthText, this.maxLength));
         }
-        
+
         if (this.vtype) {
             var vt = Ext.form.VTypes;
             if(!vt[this.vtype](value, this)){
                 errors.push(this.vtypeText || vt[this.vtype +'Text']);
             }
         }
-        
+
         if (this.regex && !this.regex.test(value)) {
             errors.push(this.regexText);
         }
-        
+
         return errors;
     },
 
@@ -536,7 +536,7 @@ var myField = new Ext.form.NumberField({
         this.el.setWidth(w);
         this.fireEvent('autosize', this, w);
     },
-	
+
 	onDestroy: function(){
 		if(this.validationTask){
 			this.validationTask.cancel();

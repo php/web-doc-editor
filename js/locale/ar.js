@@ -41,7 +41,7 @@ var i18n = new Array();
   i18n["This action is available to global administrators only."] = "هذا الإجراء متاح فقط للمدير العام.";
   i18n["This action is available to global administrators or to administrators for this language only."] = "هذا الإجراء متاح فقط للمدير العام أو من له صلاحية إدارة هذه اللغة.";
   i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "الملف الذي تريد إلغاء ترجمته ليس متاحاً لك.<br>تستطيع تنفيذ هذا الإجراء على ملفاتك فقط.";
-  
+
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "اضغط بنقر مزدوج على المربع لفتح تحديد الملف";
   i18n["Extension"] = "التوسعة";
@@ -68,7 +68,7 @@ var i18n = new Array();
   i18n["Estimated progress"] = "تقدير نسبة الإنجاز";
   i18n["{0}% complete"] = "{0}% منجز";
   i18n["Set the progress..."] = "تحديد نسبة الإنجاز...";
-  i18n["View diff"] = "عرض الاختلافات";  
+  i18n["View diff"] = "عرض الاختلافات";
   i18n["Download the diff as a patch"] = "تحميل الاختلافات على شكل حزمة";
   i18n["Clear this change"] = "إلغاء هذا التعديل";
   i18n["Cancel this deletion"] = "تراجع عن هذا الحذف";
@@ -84,8 +84,8 @@ var i18n = new Array();
   i18n["You have no patch currently. You must create one."] = "ليست لديك حزمة حالياً. يجب أن تنشئ حزمة.";
   i18n["Diff for file: {0}"] = "الاختلافات للملف: {0}";
   i18n["Administrator menu"] = "قائمة الإدارة";
-  
-  
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "عدل وصف هذه الحزمة:";
   i18n["Delete this patch"] = "احذف هذه الحزمة";
@@ -601,7 +601,7 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "رابط دائم لهذه الصفحة";
   i18n["Warning"] = "تحذير";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "قام المحرر بتغيير الملف {0} تتلقائياً إلى ترميز UTF-8 .";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "الملف <b> {0}</b> يحتوي على رموز الجدولة TAB.<br>قام المحرر باستبدالها إلى مسافة.";  
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "الملف <b> {0}</b> يحتوي على رموز الجدولة TAB.<br>قام المحرر باستبدالها إلى مسافة.";
   i18n["File modified by {0} (anonymous user) but you are an authenticated user, so you can modify it."] = "هذا الملف معدل من قبل {0} (مستخدم غير معرف) ولكن أنت مستخدم معرف لك الصلاحية لتعديله.";
   i18n["File modified by {0}."] = "هذا الملف معدل من قبل {0}.";
 
@@ -651,28 +651,28 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "تمت إضافة الملاحظة بنجاح !";
   i18n["Note deleted"] = "تم حذف الملاحظة";
   i18n["The note was deleted successfully !"] = "تم حذف الملاحظة بنجاح !";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "فحص XML. يرجى الانتظار...";
   i18n["XML check"] = "فحص XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "سطر";
   i18n["Libel"] = "صياغة";
   i18n["XML Errors"] = "XML Errors";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "مالك الملف حالياً";
   i18n["Action"] = "إجراء";
   i18n["New owner"] = "مالك جديد";
   i18n["Change file's owner"] = "تغيير مالك الملف";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "تم تغيير مالك الملف";
   i18n["The owner for this file have been changed successfully !"] = "تم تغيير مالك الملف بنجاح !";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "التالي";
   i18n["Anonymous patch manager"] = "مدير حزم ملفات المستخدمين غير المعرفين";
@@ -683,6 +683,6 @@ var i18n = new Array();
   i18n["This action will close this file, and clear the local change. This file will return into his original version, as it is on VCS server."] = "هذا الإجراء سيغلق الملف، ويلغي التعديلات التي تمت عليه. وسيعيد الملف إلى حالته الأصلية المحفوظة على خادم VCS.";
   i18n["Validate this patch"] = "مراجعة الملف";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "هذا الإجراء سيغير ملكية الملف إليك. سوف يظهر الملف تحت اسمك وسيمكنك اعتماده.";
-  
+
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "استعراض";

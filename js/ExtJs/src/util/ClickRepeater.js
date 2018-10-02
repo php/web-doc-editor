@@ -34,7 +34,7 @@
  @param {Object} config
  */
 Ext.util.ClickRepeater = Ext.extend(Ext.util.Observable, {
-    
+
     constructor : function(el, config){
         this.el = Ext.get(el);
         this.el.unselectable();
@@ -75,9 +75,9 @@ Ext.util.ClickRepeater = Ext.extend(Ext.util.Observable, {
             this.on("click", this.handler,  this.scope || this);
         }
 
-        Ext.util.ClickRepeater.superclass.constructor.call(this);        
+        Ext.util.ClickRepeater.superclass.constructor.call(this);
     },
-    
+
     interval : 20,
     delay: 250,
     preventDefault : true,

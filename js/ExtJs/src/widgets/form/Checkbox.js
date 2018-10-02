@@ -160,7 +160,7 @@ Ext.form.Checkbox = Ext.extend(Ext.form.Field,  {
     setValue : function(v){
         var checked = this.checked,
             inputVal = this.inputValue;
-            
+
         this.checked = (v === true || v === 'true' || v == '1' || (inputVal ? v == inputVal : String(v).toLowerCase() == 'on'));
         if(this.rendered){
             this.el.dom.checked = this.checked;

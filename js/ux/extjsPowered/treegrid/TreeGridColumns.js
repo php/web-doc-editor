@@ -6,10 +6,10 @@
  */
 (function() {
     Ext.override(Ext.list.Column, {
-        init : function() {    
+        init : function() {
             var types = Ext.data.Types,
                 st = this.sortType;
-                    
+
             if(this.type){
                 if(Ext.isString(this.type)){
                     this.type = Ext.data.Types[this.type.toUpperCase()] || types.AUTO;

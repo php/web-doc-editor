@@ -613,19 +613,19 @@ tb.{@link #doLayout}();             // refresh the layout
             length = args.length,
             result = [],
             i, c;
-        
+
         this.initItems();
-        
+
         if (length > 2) {
             for (i = length - 1; i >= 1; --i) {
                 result.push(this.insert(index, args[i]));
             }
             return result;
         }
-        
+
         c = this.lookupComponent(this.applyDefaults(comp));
         index = Math.min(index, this.items.length);
-        
+
         if (this.fireEvent('beforeadd', this, c, index) !== false && this.onBeforeAdd(c) !== false) {
             if (c.ownerCt == this) {
                 this.items.remove(c);
@@ -635,7 +635,7 @@ tb.{@link #doLayout}();             // refresh the layout
             this.onAdd(c);
             this.fireEvent('add', this, c, index);
         }
-        
+
         return c;
     },
 
@@ -932,7 +932,7 @@ tb.{@link #doLayout}();             // refresh the layout
      * @return Ext.Component
      */
     findById : function(id){
-        var m = null, 
+        var m = null,
             ct = this;
         this.cascade(function(c){
             if(ct != c && c.id === id){

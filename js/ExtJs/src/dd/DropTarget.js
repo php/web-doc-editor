@@ -14,20 +14,20 @@
  * @param {Object} config
  */
 Ext.dd.DropTarget = Ext.extend(Ext.dd.DDTarget, {
-    
+
     constructor : function(el, config){
         this.el = Ext.get(el);
-    
+
         Ext.apply(this, config);
-    
+
         if(this.containerScroll){
             Ext.dd.ScrollManager.register(this.el);
         }
-    
-        Ext.dd.DropTarget.superclass.constructor.call(this, this.el.dom, this.ddGroup || this.group, 
-              {isTarget: true});        
+
+        Ext.dd.DropTarget.superclass.constructor.call(this, this.el.dom, this.ddGroup || this.group,
+              {isTarget: true});
     },
-    
+
     /**
      * @cfg {String} ddGroup
      * A named drag drop group to which this object belongs.  If a group is specified, then this object will only
@@ -112,7 +112,7 @@ Ext.dd.DropTarget = Ext.extend(Ext.dd.DDTarget, {
     notifyDrop : function(dd, e, data){
         return false;
     },
-    
+
     destroy : function(){
         Ext.dd.DropTarget.superclass.destroy.call(this);
         if(this.containerScroll){

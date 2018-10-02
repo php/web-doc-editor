@@ -12,13 +12,13 @@
  * and cached in the {@link Ext.data.Record#fields fields} property of the created Record constructor's <b>prototype.</b></p>
  */
 Ext.data.Field = Ext.extend(Object, {
-    
+
     constructor : function(config){
         if(Ext.isString(config)){
             config = {name: config};
         }
         Ext.apply(this, config);
-        
+
         var types = Ext.data.Types,
             st = this.sortType,
             t;
@@ -42,7 +42,7 @@ Ext.data.Field = Ext.extend(Object, {
             this.convert = this.type.convert;
         }
     },
-    
+
     /**
      * @cfg {String} name
      * The name by which the field is referenced within the Record. This is referenced by, for example,
@@ -130,14 +130,14 @@ var myData = [
      * javascript millisecond timestamp. See {@link Date}</p>
      */
     dateFormat: null,
-    
+
     /**
      * @cfg {Boolean} useNull
      * <p>(Optional) Use when converting received data into a Number type (either int or float). If the value cannot be parsed,
      * null will be used if useNull is true, otherwise the value will be 0. Defaults to <tt>false</tt>
      */
     useNull: false,
-    
+
     /**
      * @cfg {Mixed} defaultValue
      * (Optional) The default value used <b>when a Record is being created by a {@link Ext.data.Reader Reader}</b>

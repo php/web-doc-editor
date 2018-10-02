@@ -8,7 +8,7 @@
 // This is a support class used internally by the Grid components
 Ext.grid.SplitDragZone = Ext.extend(Ext.dd.DDProxy, {
     fly: Ext.Element.fly,
-    
+
     constructor : function(grid, hd, hd2){
         this.grid = grid;
         this.view = grid.getView();

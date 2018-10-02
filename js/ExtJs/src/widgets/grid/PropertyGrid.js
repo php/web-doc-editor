@@ -39,7 +39,7 @@ Ext.grid.PropertyRecord = Ext.data.Record.create([
  * @param {Object} source The source data config object
  */
 Ext.grid.PropertyStore = Ext.extend(Ext.util.Observable, {
-    
+
     constructor : function(grid, source){
         this.grid = grid;
         this.store = new Ext.data.Store({
@@ -49,9 +49,9 @@ Ext.grid.PropertyStore = Ext.extend(Ext.util.Observable, {
         if(source){
             this.setSource(source);
         }
-        Ext.grid.PropertyStore.superclass.constructor.call(this);    
+        Ext.grid.PropertyStore.superclass.constructor.call(this);
     },
-    
+
     // protected - should only be called by the grid.  Use grid.setSource instead.
     setSource : function(o){
         this.source = o;
@@ -104,7 +104,7 @@ Ext.grid.PropertyStore = Ext.extend(Ext.util.Observable, {
 
         }
     },
-    
+
     // private
     remove : function(prop){
         var r = this.getRec(prop);
@@ -113,7 +113,7 @@ Ext.grid.PropertyStore = Ext.extend(Ext.util.Observable, {
             delete this.source[prop];
         }
     },
-    
+
     // private
     getRec : function(prop){
         return this.store.getById(prop);
@@ -140,18 +140,18 @@ Ext.grid.PropertyColumnModel = Ext.extend(Ext.grid.ColumnModel, {
     dateFormat : 'm/j/Y',
     trueText: 'true',
     falseText: 'false',
-    
+
     constructor : function(grid, store){
         var g = Ext.grid,
 	        f = Ext.form;
-	        
+
 	    this.grid = grid;
 	    g.PropertyColumnModel.superclass.constructor.call(this, [
 	        {header: this.nameText, width:50, sortable: true, dataIndex:'name', id: 'name', menuDisabled:true},
 	        {header: this.valueText, width:50, resizable:false, dataIndex: 'value', id: 'value', menuDisabled:true}
 	    ]);
 	    this.store = store;
-	
+
 	    var bfield = new f.Field({
 	        autoCreate: {tag: 'select', children: [
 	            {tag: 'option', value: 'true', html: this.trueText},
@@ -223,7 +223,7 @@ Ext.grid.PropertyColumnModel = Ext.extend(Ext.grid.ColumnModel, {
     // private
     getCellEditor : function(colIndex, rowIndex){
         var p = this.store.getProperty(rowIndex),
-            n = p.data.name, 
+            n = p.data.name,
             val = p.data.value;
         if(this.grid.customEditors[n]){
             return this.grid.customEditors[n];
@@ -245,7 +245,7 @@ Ext.grid.PropertyColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         this.destroyEditors(this.editors);
         this.destroyEditors(this.grid.customEditors);
     },
-    
+
     destroyEditors: function(editors){
         for(var ed in editors){
             Ext.destroy(editors[ed]);
@@ -429,7 +429,7 @@ grid.setSource({
     getSource : function(){
         return this.propStore.getSource();
     },
-    
+
     /**
      * Sets the value of a property.
      * @param {String} prop The name of the property to set
@@ -437,9 +437,9 @@ grid.setSource({
      * @param {Boolean} create (Optional) True to create the property if it doesn't already exist. Defaults to <tt>false</tt>.
      */
     setProperty : function(prop, value, create){
-        this.propStore.setValue(prop, value, create);    
+        this.propStore.setValue(prop, value, create);
     },
-    
+
     /**
      * Removes a property from the grid.
      * @param {String} prop The name of the property to remove

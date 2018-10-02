@@ -8,19 +8,19 @@
  * Ext Core Library Examples 3.0 Beta
  * http://extjs.com/
  * Copyright(c) 2006-2009, Ext JS, LLC.
- * 
+ *
  * The MIT License
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  */
 
 Ext.ns('Ext.ux');
@@ -74,7 +74,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
                 .addClass('ux-menu-link-parent')
                 .createChild({tag: 'span', cls: 'ux-menu-arrow'});
         });
-        
+
         this.el.select('li:first-child>a').addClass('ux-menu-link-first');
         this.el.select('li:last-child>a').addClass('ux-menu-link-last');
 
@@ -88,7 +88,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
 
         var subs = this.el.select('ul');
         subs.addClass('ux-menu-sub');
-        
+
         //ie6 and ie7/ie8 quirksmode need iframes behind the submenus
         if(Ext.isBorderBox || Ext.isIE7) {
             subs.each(function(item) {
@@ -97,7 +97,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
                     .setHeight(item.getHeight());
             });
         }
-        
+
         subs.addClass('ux-menu-hidden');
     },
 
@@ -146,8 +146,8 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
         if(!item.child('ul').hasClass('ux-menu-hidden')) {
             return;
         }
-        
-        me.showTask.delay(me.delay*1000, false, false, [item]);   
+
+        me.showTask.delay(me.delay*1000, false, false, [item]);
     },
 
     showMenu : function(item) {
@@ -197,7 +197,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
                 break
             }
         }
-        
+
         this.fireEvent('show', item, menu, this);
     },
 
@@ -217,7 +217,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
     hideAll: function() {
         this.manageSiblings(this.el);
     },
-    
+
     setCurrent: function() {
         var els = this.el.query('.' + this.currentClass);
         if(!els.length) {
@@ -251,7 +251,7 @@ Ext.ux.Menu = Ext.extend(Ext.util.Observable, {
         else {
             this.el.select('ul').each(fixWidth);
         }
-        
+
     }
 });
 

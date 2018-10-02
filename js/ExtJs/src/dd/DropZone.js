@@ -31,18 +31,18 @@ myGridPanel.on('render', function() {
         },
 
 //      On entry into a target node, highlight that node.
-        onNodeEnter : function(target, dd, e, data){ 
+        onNodeEnter : function(target, dd, e, data){
             Ext.fly(target).addClass('my-row-highlight-class');
         },
 
 //      On exit from a target node, unhighlight that node.
-        onNodeOut : function(target, dd, e, data){ 
+        onNodeOut : function(target, dd, e, data){
             Ext.fly(target).removeClass('my-row-highlight-class');
         },
 
 //      While over a target node, return the default drop allowed class which
 //      places a "tick" icon into the drag proxy.
-        onNodeOver : function(target, dd, e, data){ 
+        onNodeOver : function(target, dd, e, data){
             return Ext.dd.DropZone.prototype.dropAllowed;
         },
 
@@ -88,14 +88,14 @@ Ext.extend(Ext.dd.DropZone, Ext.dd.DropTarget, {
      * that has either been registered or detected by a configured implementation of {@link #getTargetFromEvent}.
      * This method has no default implementation and should be overridden to provide
      * node-specific processing if necessary.
-     * @param {Object} nodeData The custom data associated with the drop node (this is the same value returned from 
+     * @param {Object} nodeData The custom data associated with the drop node (this is the same value returned from
      * {@link #getTargetFromEvent} for this node)
      * @param {Ext.dd.DragSource} source The drag source that was dragged over this drop zone
      * @param {Event} e The event
      * @param {Object} data An object containing arbitrary data supplied by the drag source
      */
     onNodeEnter : function(n, dd, e, data){
-        
+
     },
 
     /**
@@ -126,7 +126,7 @@ Ext.extend(Ext.dd.DropZone, Ext.dd.DropTarget, {
      * @param {Object} data An object containing arbitrary data supplied by the drag source
      */
     onNodeOut : function(n, dd, e, data){
-        
+
     },
 
     /**
@@ -258,5 +258,5 @@ Ext.extend(Ext.dd.DropZone, Ext.dd.DropTarget, {
     // private
     triggerCacheRefresh : function(){
         Ext.dd.DDM.refreshCache(this.groups);
-    }  
+    }
 });

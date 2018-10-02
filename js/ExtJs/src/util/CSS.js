@@ -74,7 +74,7 @@ Ext.util.CSS = function(){
        ss.setAttribute("href", url);
        doc.getElementsByTagName("head")[0].appendChild(ss);
    },
-   
+
    /**
     * Refresh the rule cache if you have dynamically added stylesheets
     * @return {Object} An object (hash) of rules indexed by selector
@@ -95,7 +95,7 @@ Ext.util.CSS = function(){
            }
        }catch(e){}
    },
-   
+
    /**
     * Gets all css rules for the document
     * @param {Boolean} refreshCache true to refresh the internal cache
@@ -108,12 +108,12 @@ Ext.util.CSS = function(){
    			for(var i =0, len = ds.length; i < len; i++){
    			    try{
     		        this.cacheStyleSheet(ds[i]);
-    		    }catch(e){} 
+    		    }catch(e){}
 	        }
    		}
    		return rules;
    	},
-   	
+
    	/**
     * Gets an an individual CSS rule by selector(s)
     * @param {String/Array} selector The CSS selector or an array of selectors to try. The first selector that is found is returned.
@@ -132,8 +132,8 @@ Ext.util.CSS = function(){
 		}
 		return null;
    	},
-   	
-   	
+
+
    	/**
     * Updates a rule property
     * @param {String/Array} selector If it's an array it tries each selector until it finds one. Stops immediately once one is found.
@@ -157,5 +157,5 @@ Ext.util.CSS = function(){
    		}
    		return false;
    	}
-   };	
+   };
 }();

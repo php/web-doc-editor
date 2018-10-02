@@ -8,7 +8,7 @@
  * @class Ext.dd.ScrollManager
  * <p>Provides automatic scrolling of overflow regions in the page during drag operations.</p>
  * <p>The ScrollManager configs will be used as the defaults for any scroll container registered with it,
- * but you can also override most of the configs per scroll container by adding a 
+ * but you can also override most of the configs per scroll container by adding a
  * <tt>ddScrollConfig</tt> object to the target element that contains these properties: {@link #hthresh},
  * {@link #vthresh}, {@link #increment} and {@link #frequency}.  Example usage:
  * <pre><code>
@@ -29,18 +29,18 @@ Ext.dd.ScrollManager = function(){
     var els = {};
     var dragEl = null;
     var proc = {};
-    
+
     var onStop = function(e){
         dragEl = null;
         clearProc();
     };
-    
+
     var triggerRefresh = function(){
         if(ddm.dragCurrent){
              ddm.refreshCache(ddm.dragCurrent.groups);
         }
     };
-    
+
     var doScroll = function(){
         if(ddm.dragCurrent){
             var dds = Ext.dd.ScrollManager;
@@ -55,7 +55,7 @@ Ext.dd.ScrollManager = function(){
             }
         }
     };
-    
+
     var clearProc = function(){
         if(proc.id){
             clearInterval(proc.id);
@@ -78,7 +78,7 @@ Ext.dd.ScrollManager = function(){
             proc.id = setInterval(doScroll, freq);
         }
     };
-    
+
     var onFire = function(e, isDrop){
         if(isDrop || !ddm.dragCurrent){ return; }
         var dds = Ext.dd.ScrollManager;
@@ -87,7 +87,7 @@ Ext.dd.ScrollManager = function(){
             // refresh regions on drag start
             dds.refreshCache();
         }
-        
+
         var xy = Ext.lib.Event.getXY(e);
         var pt = new Ext.lib.Point(xy[0], xy[1]);
         for(var id in els){
@@ -119,10 +119,10 @@ Ext.dd.ScrollManager = function(){
         }
         clearProc();
     };
-    
+
     ddm.fireEvents = ddm.fireEvents.createSequence(onFire, ddm);
     ddm.stopDrag = ddm.stopDrag.createSequence(onStop, ddm);
-    
+
     return {
         /**
          * Registers new overflow element(s) to auto scroll
@@ -138,7 +138,7 @@ Ext.dd.ScrollManager = function(){
                 els[el.id] = el;
             }
         },
-        
+
         /**
          * Unregisters overflow element(s) so they are no longer scrolled
          * @param {Mixed/Array} el The id of or the element to be removed or an array of either
@@ -153,7 +153,7 @@ Ext.dd.ScrollManager = function(){
                 delete els[el.id];
             }
         },
-        
+
         /**
          * The number of pixels from the top or bottom edge of a container the pointer needs to be to
          * trigger scrolling (defaults to 25)
@@ -172,33 +172,33 @@ Ext.dd.ScrollManager = function(){
          * @type Number
          */
         increment : 100,
-        
+
         /**
          * The frequency of scrolls in milliseconds (defaults to 500)
          * @type Number
          */
         frequency : 500,
-        
+
         /**
          * True to animate the scroll (defaults to true)
          * @type Boolean
          */
         animate: true,
-        
+
         /**
-         * The animation duration in seconds - 
+         * The animation duration in seconds -
          * MUST BE less than Ext.dd.ScrollManager.frequency! (defaults to .4)
          * @type Number
          */
         animDuration: .4,
-        
+
         /**
-         * The named drag drop {@link Ext.dd.DragSource#ddGroup group} to which this container belongs (defaults to undefined). 
+         * The named drag drop {@link Ext.dd.DragSource#ddGroup group} to which this container belongs (defaults to undefined).
          * If a ddGroup is specified, then container scrolling will only occur when a dragged object is in the same ddGroup.
          * @type String
          */
         ddGroup: undefined,
-        
+
         /**
          * Manually trigger a cache refresh.
          */

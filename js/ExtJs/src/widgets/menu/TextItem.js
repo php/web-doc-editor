@@ -26,7 +26,7 @@ Ext.menu.TextItem = Ext.extend(Ext.menu.BaseItem, {
      * @cfg {String} itemCls The default CSS class to use for text items (defaults to "x-menu-text")
      */
     itemCls : "x-menu-text",
-    
+
     constructor : function(config) {
         if (typeof config == 'string') {
             config = {

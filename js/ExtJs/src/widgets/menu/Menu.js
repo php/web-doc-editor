@@ -433,7 +433,7 @@ Ext.menu.Menu = Ext.extend(Ext.Container, {
         }else{
             max = this.getHeight();
         }
-        // Always respect maxHeight 
+        // Always respect maxHeight
         if (this.maxHeight){
             max = Math.min(this.maxHeight, max);
         }

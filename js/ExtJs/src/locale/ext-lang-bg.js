@@ -9,7 +9,7 @@
  *
  * By Георги Костадинов, Калгари, Канада
  * 10 October 2007
- * By Nedko Penev 
+ * By Nedko Penev
  * 26 October 2007
  *
  * (utf-8 encoding)

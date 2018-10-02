@@ -352,7 +352,7 @@ Ext.extend(Ext.form.Action.Submit, Ext.form.Action, {
                             f.items.each(setupEmptyFields);
                         }
                     };
-                    
+
                 fields.each(setupEmptyFields);
             }
             Ext.Ajax.request(Ext.apply(this.createCallback(o), {

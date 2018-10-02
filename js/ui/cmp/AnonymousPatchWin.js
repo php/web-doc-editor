@@ -92,15 +92,15 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
         {
             var win = this.ownerCt.ownerCt,
                 choice = win.items.items[0].getForm().getValues().choice;
-            
+
             switch(choice) {
-                
+
                 case 'continue':
                     win.close();
                     break;
-                    
+
                 case 'reject':
-                    
+
                     Ext.MessageBox.confirm(
                         _('Confirm'),
                         _('Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?'),
@@ -120,9 +120,9 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
                         }
                     );
                     break;
-                    
+
                 case 'validate':
-                    
+
                     //We change the file owner
                     ui.task.ChangeFileOwner({
                         fileIdDB : win.fidDB,
@@ -144,9 +144,9 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
                 fname: this.fname
             })]
         });
-        
+
         ui.cmp.AnonymousPatchWin.superclass.initComponent.call(this);
-        
+
         this.show();
     }
 });

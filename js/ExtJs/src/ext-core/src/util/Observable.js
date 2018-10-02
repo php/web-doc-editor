@@ -226,7 +226,7 @@ myGridPanel.on({
             e,
             oe,
             ce;
-            
+
         if (typeof eventName == 'object') {
             o = eventName;
             for (e in o) {

@@ -32,9 +32,9 @@ Ext.data.JsonWriter = Ext.extend(Ext.data.DataWriter, {
  * </code></pre> Defaults to <tt>false</tt>
      */
     encodeDelete: false,
-    
+
     constructor : function(config){
-        Ext.data.JsonWriter.superclass.constructor.call(this, config);    
+        Ext.data.JsonWriter.superclass.constructor.call(this, config);
     },
 
     /**

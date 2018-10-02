@@ -129,7 +129,7 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
 
         // We remove all data who are in the store
         ui.cmp._CommitPrompt.store.removeAll();
-        
+
         for (i = 0; i < this.files.length; ++i) {
 
             ui.cmp._CommitPrompt.store.insert(0,

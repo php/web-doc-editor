@@ -56,7 +56,7 @@ var store = new Ext.data.XmlStore({
 &#60/ItemSearchResponse>
  * </code></pre>
  * An object literal of this form could also be used as the {@link #data} config option.</p>
- * <p><b>Note:</b> Although not listed here, this class accepts all of the configuration options of 
+ * <p><b>Note:</b> Although not listed here, this class accepts all of the configuration options of
  * <b>{@link Ext.data.XmlReader XmlReader}</b>.</p>
  * @constructor
  * @param {Object} config

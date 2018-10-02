@@ -19,14 +19,14 @@ Ext.data.SortTypes = {
     none : function(s){
         return s;
     },
-    
+
     /**
      * The regular expression used to strip tags
      * @type {RegExp}
      * @property
      */
     stripTagsRE : /<\/?[^>]+>/gi,
-    
+
     /**
      * Strips all HTML tags to sort on text only
      * @param {Mixed} s The value being converted
@@ -35,7 +35,7 @@ Ext.data.SortTypes = {
     asText : function(s){
         return String(s).replace(this.stripTagsRE, "");
     },
-    
+
     /**
      * Strips all HTML tags to sort on text only - Case insensitive
      * @param {Mixed} s The value being converted
@@ -44,7 +44,7 @@ Ext.data.SortTypes = {
     asUCText : function(s){
         return String(s).toUpperCase().replace(this.stripTagsRE, "");
     },
-    
+
     /**
      * Case insensitive string
      * @param {Mixed} s The value being converted
@@ -53,7 +53,7 @@ Ext.data.SortTypes = {
     asUCString : function(s) {
     	return String(s).toUpperCase();
     },
-    
+
     /**
      * Date sorting
      * @param {Mixed} s The value being converted
@@ -68,7 +68,7 @@ Ext.data.SortTypes = {
         }
     	return Date.parse(String(s));
     },
-    
+
     /**
      * Float sorting
      * @param {Mixed} s The value being converted
@@ -78,7 +78,7 @@ Ext.data.SortTypes = {
     	var val = parseFloat(String(s).replace(/,/g, ""));
     	return isNaN(val) ? 0 : val;
     },
-    
+
     /**
      * Integer sorting
      * @param {Mixed} s The value being converted

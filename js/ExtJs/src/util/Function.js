@@ -35,7 +35,7 @@ sayHiToFriend('Brian'); // alerts "Hi, Brian"
      * <b>If omitted, defaults to the scope in which the original function is called or the browser window.</b>
      * @return {Function} The new function
      */
-    createInterceptor: function(origFn, newFn, scope) { 
+    createInterceptor: function(origFn, newFn, scope) {
         var method = origFn;
         if (!Ext.isFunction(newFn)) {
             return origFn;
@@ -149,7 +149,7 @@ Ext.defer(function(){
      * Create a combined function call sequence of the original function + the passed function.
      * The resulting function returns the results of the original function.
      * The passed fcn is called with the parameters of the original function. Example usage:
-     * 
+     *
 
 var sayHi = function(name){
     alert('Hi, ' + name);
@@ -184,7 +184,7 @@ sayGoodbye('Fred'); // both alerts show
 };
 
 /**
- * Shorthand for {@link Ext.util.Functions#defer}   
+ * Shorthand for {@link Ext.util.Functions#defer}
  * @param {Function} fn The function to defer.
  * @param {Number} millis The number of milliseconds for the setTimeout call (if less than or equal to 0 the function is executed immediately)
  * @param {Object} scope (optional) The scope (<code><b>this</b></code> reference) in which the function is executed.
@@ -200,7 +200,7 @@ sayGoodbye('Fred'); // both alerts show
 Ext.defer = Ext.util.Functions.defer;
 
 /**
- * Shorthand for {@link Ext.util.Functions#createInterceptor}   
+ * Shorthand for {@link Ext.util.Functions#createInterceptor}
  * @param {Function} origFn The original function.
  * @param {Function} newFn The function to call before the original
  * @param {Object} scope (optional) The scope (<code><b>this</b></code> reference) in which the passed function is executed.

@@ -43,18 +43,18 @@ Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
         var hw = 5,
             x = e.getPageX(),
             hd = e.getTarget('.x-treegrid-hd', 3, true);
-        
-        if(hd){                                 
+
+        if(hd){
             var r = hd.getRegion(),
                 ss = hd.dom.style,
                 pn = hd.dom.parentNode;
-            
+
             if(x - r.left <= hw && hd.dom !== pn.firstChild) {
                 var ps = hd.dom.previousSibling;
                 while(ps && Ext.fly(ps).hasClass('x-treegrid-hd-hidden')) {
                     ps = ps.previousSibling;
                 }
-                if(ps) {                    
+                if(ps) {
                     this.activeHd = Ext.get(ps);
     				ss.cursor = Ext.isWebKit ? 'e-resize' : 'col-resize';
                 }
@@ -65,7 +65,7 @@ Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
                 }
                 if(ns) {
                     this.activeHd = Ext.get(ns);
-    				ss.cursor = Ext.isWebKit ? 'w-resize' : 'col-resize';                    
+    				ss.cursor = Ext.isWebKit ? 'w-resize' : 'col-resize';
                 }
             } else{
                 delete this.activeHd;
@@ -103,13 +103,13 @@ Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
     onEnd : function(e){
         var nw = this.proxy.getWidth(),
             tree = this.tree;
-        
+
         this.proxy.remove();
         delete this.dragHd;
-        
+
         tree.columns[this.hdIndex].width = nw;
         tree.updateColumnWidths();
-        
+
         setTimeout(function(){
             tree.headersDisabled = false;
         }, 100);

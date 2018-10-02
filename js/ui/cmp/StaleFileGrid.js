@@ -36,29 +36,29 @@ ui.cmp._StaleFileGrid.store = new Ext.data.GroupingStore({
     groupField: 'path',
     listeners: {
         datachanged: function(ds){
-            
+
             var nbItems = ds.getCount(),
                 nbItemsForCurrentUser = false;
-            
+
             if( PhDOE.user.haveKarma )
             {
                 ds.each(function(record) {
-                    
+
                     if( record.data.maintainer == PhDOE.user.login ) {
                         nbItemsForCurrentUser ++;
                     }
-                    
+
                 }, this);
-                
+
             }
-            
+
             if( nbItemsForCurrentUser )
             {
                 Ext.getDom('acc-need-update-nb').innerHTML = nbItems + ' - '+ String.format(_('{0} mine'), nbItemsForCurrentUser);
             } else {
                 Ext.getDom('acc-need-update-nb').innerHTML = nbItems;
             }
-            
+
         }
     }
 });
@@ -77,14 +77,14 @@ ui.cmp._StaleFileGrid.view = new Ext.grid.GroupingView({
     deferEmptyText: false,
     getRowClass: function(r){
         if ( r.data.fileModified ) {
-        
+
             var infoLang = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
-            
+
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-            
+
             return ((infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
-        
+
         return false;
     },
     emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>'
@@ -97,15 +97,15 @@ ui.cmp._StaleFileGrid.columns = [{
     sortable: true,
     dataIndex: 'name',
     renderer: function(v, metada, r){
-    
+
         var mess = '', infoLang, userToCompare;
-        
+
         userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-        
+
         if (r.data.fileModified) {
-        
+
             infoLang = Ext.util.JSON.decode(r.data.fileModified);
-            
+
             if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
@@ -113,7 +113,7 @@ ui.cmp._StaleFileGrid.columns = [{
                 mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
-        
+
         if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
@@ -188,14 +188,14 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
     border: false,
     enableDragDrop: true,
     ddGroup: 'mainPanelDDGroup',
-    
+
     onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-        
+
         var data = this.store.getAt(rowIndex).data, FilePath = data.path, FileName = data.name;
-        
+
         this.getSelectionModel().selectRow(rowIndex);
-        
+
         new ui.cmp._StaleFileGrid.menu({
             hideDiffMenu: ( data.fileModified === false ),
             grid: this,
@@ -206,14 +206,14 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
             fname: FileName
         }).showAt(e.getXY());
     },
-    
+
     onRowDblClick: function(grid, rowIndex){
         this.openFile(this.store.getAt(rowIndex).data.id);
     },
-    
+
     openFile: function(rowId){
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, en_revision = storeRecord.data.en_revision, revision = storeRecord.data.revision, originalRevision = storeRecord.data.original_revision, FileID = Ext.util.md5('FNU-' + PhDOE.user.lang + FilePath + FileName), diff = '';
-        
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNU-' + FileID))
         {
@@ -223,7 +223,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
             else if (PhDOE.user.conf.needUpdate.diffMethod === "using-exec") {
                     diff = ui.cmp.ExecDiff;
             }
-            
+
             Ext.getCmp('main-panel').add({
                 id: 'FNU-' + FileID,
                 layout: 'border',
@@ -279,7 +279,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             }
                         },
                         resize: function(a, b, newHeight){
-                        
+
                             if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.needUpdate.diffPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
                                     module     : 'needUpdate',
@@ -404,10 +404,10 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
         }
         Ext.getCmp('main-panel').setActiveTab('FNU-' + FileID);
     },
-    
+
     initComponent: function(){
         ui.cmp._StaleFileGrid.columns[2].header = String.format(_('{0} revision'), Ext.util.Format.uppercase(PhDOE.user.lang));
-        
+
         Ext.apply(this, {
             columns: ui.cmp._StaleFileGrid.columns,
             store: ui.cmp._StaleFileGrid.store,
@@ -435,7 +435,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 onTrigger2Click: function(){
                     var v = this.getValue(), regexp;
-                    
+
                     if (v === '' || v.length < 3) {
                         this.markInvalid(_('Your filter must contain at least 3 characters'));
                         return;
@@ -443,12 +443,12 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     this.clearInvalid();
                     this.triggers[0].show();
                     this.setSize(180, 10);
-                    
+
                     regexp = new RegExp(v, 'i');
-                    
+
                     // We filter on 'path', 'name', 'revision', 'en_revision', 'maintainer'
                     ui.cmp._StaleFileGrid.instance.store.filterBy(function(record){
-                    
+
                         if (regexp.test(record.data.path) ||
                         regexp.test(record.data.name) ||
                         regexp.test(record.data.revision) ||
@@ -464,7 +464,7 @@ ui.cmp.StaleFileGrid = Ext.extend(Ext.grid.GridPanel, {
             })]
         });
         ui.cmp.StaleFileGrid.superclass.initComponent.call(this);
-        
+
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick', this.onRowDblClick, this);
     }

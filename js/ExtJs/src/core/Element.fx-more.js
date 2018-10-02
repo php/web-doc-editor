@@ -26,11 +26,11 @@ Ext.Element.addMethods(
             isVisible : function(deep) {
                 var vis = !this.isStyle(VISIBILITY, HIDDEN) && !this.isStyle(DISPLAY, NONE),
                     p   = this.dom.parentNode;
-                
+
                 if (deep !== true || !vis) {
                     return vis;
                 }
-                
+
                 while (p && !(/^body/i.test(p.tagName))) {
                     if (!Ext.fly(p, '_isVisible').isVisible()) {
                         return false;
@@ -55,11 +55,11 @@ Ext.Element.addMethods(
              */
             enableDisplayMode : function(display) {
                 this.setVisibilityMode(Ext.Element.DISPLAY);
-                
+
                 if (!Ext.isEmpty(display)) {
                     data(this.dom, 'originalDisplay', display);
                 }
-                
+
                 return this;
             },
 
@@ -93,7 +93,7 @@ Ext.Element.addMethods(
 
                 me.addClass(XMASKED);
                 mask.setDisplayed(true);
-                
+
                 if (typeof msg == 'string') {
                     var mm = dh.append(dom, {cls : EXTELMASKMSG, cn:{tag:'div'}}, true);
                     data(dom, 'maskMsg', mm);
@@ -102,12 +102,12 @@ Ext.Element.addMethods(
                     mm.setDisplayed(true);
                     mm.center(me);
                 }
-                
+
                 // ie will not expand full height automatically
                 if (Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && me.getStyle('height') == 'auto') {
                     mask.setSize(undefined, me.getHeight());
                 }
-                
+
                 return mask;
             },
 
@@ -125,7 +125,7 @@ Ext.Element.addMethods(
                         maskMsg.remove();
                         data(dom, 'maskMsg', undefined);
                     }
-                    
+
                     mask.remove();
                     data(dom, 'mask', undefined);
                     me.removeClass([XMASKED, XMASKEDRELATIVE]);
@@ -149,7 +149,7 @@ Ext.Element.addMethods(
             createShim : function() {
                 var el = document.createElement('iframe'),
                     shim;
-                
+
                 el.frameBorder = '0';
                 el.className = 'ext-shim';
                 el.src = Ext.SSL_SECURE_URL;

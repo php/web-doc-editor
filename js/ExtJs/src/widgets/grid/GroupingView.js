@@ -150,7 +150,7 @@ var grid = new Ext.grid.GridPanel({
      * @cfg {Function} groupRenderer This property must be configured in the {@link Ext.grid.Column} for
      * each column.
      */
-    
+
     /**
      * @cfg {Boolean} cancelEditOnToggle True to cancel any editing when the group header is toggled. Defaults to <tt>true</tt>.
      */
@@ -273,7 +273,7 @@ var grid = new Ext.grid.GridPanel({
 
             // remove trailing '-hd'
             groupValue = groupValue.substr(0, groupValue.length - 3);
-            
+
             // also need to check for empty groups
             if(groupValue || emptyRe.test(hd.id)){
                 this.grid.fireEvent('group' + name, this.grid, field, groupValue, e);
@@ -388,7 +388,7 @@ var grid = new Ext.grid.GridPanel({
             this.updateGroupWidths();
         }
     },
-    
+
     afterRenderUI: function () {
         Ext.grid.GroupingView.superclass.afterRenderUI.call(this);
 
@@ -400,7 +400,7 @@ var grid = new Ext.grid.GridPanel({
                 scope: this,
                 iconCls:'x-group-by-icon'
             });
-            
+
             if (this.enableNoGroups) {
                 this.hmenu.add({
                     itemId:'showGroups',
@@ -410,7 +410,7 @@ var grid = new Ext.grid.GridPanel({
                     scope: this
                 });
             }
-            
+
             this.hmenu.on('beforeshow', this.beforeMenuShow, this);
         }
     },

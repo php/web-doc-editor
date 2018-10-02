@@ -12,37 +12,37 @@ function() {
 	var GETDOM = Ext.getDom,
 		GET = Ext.get,
 		DH = Ext.DomHelper;
-	
+
 	return {
 	    /**
 	     * Appends the passed element(s) to this element
 	     * @param {String/HTMLElement/Array/Element/CompositeElement} el
 	     * @return {Ext.Element} this
 	     */
-	    appendChild: function(el){        
-	        return GET(el).appendTo(this);        
+	    appendChild: function(el){
+	        return GET(el).appendTo(this);
 	    },
-	
+
 	    /**
 	     * Appends this element to the passed element
 	     * @param {Mixed} el The new parent element
 	     * @return {Ext.Element} this
 	     */
-	    appendTo: function(el){        
-	        GETDOM(el).appendChild(this.dom);        
+	    appendTo: function(el){
+	        GETDOM(el).appendChild(this.dom);
 	        return this;
 	    },
-	
+
 	    /**
 	     * Inserts this element before the passed element in the DOM
 	     * @param {Mixed} el The element before which this element will be inserted
 	     * @return {Ext.Element} this
 	     */
-	    insertBefore: function(el){  	          
+	    insertBefore: function(el){
 	        (el = GETDOM(el)).parentNode.insertBefore(this.dom, el);
 	        return this;
 	    },
-	
+
 	    /**
 	     * Inserts this element after the passed element in the DOM
 	     * @param {Mixed} el The element to insert after
@@ -52,7 +52,7 @@ function() {
 	        (el = GETDOM(el)).parentNode.insertBefore(this.dom, el.nextSibling);
 	        return this;
 	    },
-	
+
 	    /**
 	     * Inserts (or creates) an element (or DomHelper config) as the first child of this element
 	     * @param {Mixed/Object} el The id or element to insert or a DomHelper config to create and insert
@@ -68,7 +68,7 @@ function() {
                 return this.createChild(el, this.dom.firstChild, returnDom);
             }
         },
-	
+
 	    /**
 	     * Replaces the passed element with this element
 	     * @param {Mixed} el The element to replace
@@ -80,7 +80,7 @@ function() {
 	        el.remove();
 	        return this;
 	    },
-	
+
 	    /**
 	     * Replaces this element with the passed element
 	     * @param {Mixed/Object} el The new element or a DomHelper config of an element to create
@@ -88,21 +88,21 @@ function() {
 	     */
 	    replaceWith: function(el){
 		    var me = this;
-                
+
             if(el.nodeType || el.dom || typeof el == 'string'){
                 el = GETDOM(el);
                 me.dom.parentNode.insertBefore(el, me.dom);
             }else{
                 el = DH.insertBefore(me.dom, el);
             }
-	        
+
 	        delete Ext.elCache[me.id];
-	        Ext.removeNode(me.dom);      
+	        Ext.removeNode(me.dom);
 	        me.id = Ext.id(me.dom = el);
-	        Ext.Element.addToCache(me.isFlyweight ? new Ext.Element(me.dom) : me);     
+	        Ext.Element.addToCache(me.isFlyweight ? new Ext.Element(me.dom) : me);
             return me;
 	    },
-	    
+
 		/**
 		 * Creates the passed DomHelper config and appends it to this element or optionally inserts it before the passed child element.
 		 * @param {Object} config DomHelper element config object.  If no tag is specified (e.g., {tag:'input'}) then a div will be
@@ -113,23 +113,23 @@ function() {
 		 */
 		createChild: function(config, insertBefore, returnDom){
 		    config = config || {tag:'div'};
-		    return insertBefore ? 
-		    	   DH.insertBefore(insertBefore, config, returnDom !== true) :	
+		    return insertBefore ?
+		    	   DH.insertBefore(insertBefore, config, returnDom !== true) :
 		    	   DH[!this.dom.firstChild ? 'overwrite' : 'append'](this.dom, config,  returnDom !== true);
 		},
-		
+
 		/**
 		 * Creates and wraps this element with another element
 		 * @param {Object} config (optional) DomHelper element config object for the wrapper element or null for an empty div
 		 * @param {Boolean} returnDom (optional) True to return the raw DOM element instead of Ext.Element
 		 * @return {HTMLElement/Element} The newly created wrapper element
 		 */
-		wrap: function(config, returnDom){        
+		wrap: function(config, returnDom){
 		    var newEl = DH.insertBefore(this.dom, config || {tag: "div"}, !returnDom);
 		    newEl.dom ? newEl.dom.appendChild(this.dom) : newEl.appendChild(this.dom);
 		    return newEl;
 		},
-		
+
 		/**
 		 * Inserts an html fragment into this element
 		 * @param {String} where Where to insert the html in relation to this element - beforeBegin, afterBegin, beforeEnd, afterEnd.

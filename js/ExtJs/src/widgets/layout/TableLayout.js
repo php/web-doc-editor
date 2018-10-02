@@ -104,7 +104,7 @@ Ext.layout.TableLayout = Ext.extend(Ext.layout.ContainerLayout, {
         this.currentColumn = 0;
         this.cells = [];
     },
-    
+
     // private
     onLayout : function(ct, target){
         var cs = ct.items.items, len = cs.length, c, i;
@@ -195,7 +195,7 @@ Ext.layout.TableLayout = Ext.extend(Ext.layout.ContainerLayout, {
     isValidParent : function(c, target){
         return c.getPositionEl().up('table', 5).dom.parentNode === (target.dom || target);
     },
-    
+
     destroy: function(){
         delete this.table;
         Ext.layout.TableLayout.superclass.destroy.call(this);

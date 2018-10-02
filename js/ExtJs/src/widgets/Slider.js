@@ -13,7 +13,7 @@ Ext.ns('Ext.slider');
  * be created internally by an {@link Ext.slider.MultiSlider Ext.Slider}.
  */
 Ext.slider.Thumb = Ext.extend(Object, {
-    
+
     /**
      * True while the thumb is in a drag operation
      * @type Boolean
@@ -166,7 +166,7 @@ Ext.slider.Thumb = Ext.extend(Object, {
             slider.fireEvent('changecomplete', slider, value, this);
         }
     },
-    
+
     /**
      * @private
      * Destroys the thumb
@@ -492,7 +492,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     getNearest: function(local, prop) {
         var localValue = prop == 'top' ? this.innerEl.getHeight() - local[prop] : local[prop],
             clickValue = this.reverseValue(localValue),
-            nearestDistance = (this.maxValue - this.minValue) + 5, //add a small fudge for the end of the slider 
+            nearestDistance = (this.maxValue - this.minValue) + 5, //add a small fudge for the end of the slider
             index = 0,
             nearest = null;
 
@@ -627,7 +627,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
             thumbs = this.thumbs,
             len = thumbs.length,
             t;
-            
+
         for(; i < len; ++i){
             t = thumbs[i];
             t.value = t.value < val ? val : t.value;
@@ -646,7 +646,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
             thumbs = this.thumbs,
             len = thumbs.length,
             t;
-            
+
         for(; i < len; ++i){
             t = thumbs[i];
             t.value = t.value > val ? val : t.value;
@@ -724,13 +724,13 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         var thumbs = this.thumbs,
             len = thumbs.length,
             i = 0;
-            
+
         /*
          * If we happen to be animating during a resize, the position of the thumb will likely be off
          * when the animation stops. As such, just stop any animations before syncing the thumbs.
          */
         for(; i < len; ++i){
-            thumbs[i].el.stopFx();    
+            thumbs[i].el.stopFx();
         }
         // check to see if we're using an auto width
         if(Ext.isNumber(w)){
@@ -906,11 +906,11 @@ Ext.slider.SingleSlider = Ext.extend(Ext.slider.MultiSlider, {
     syncThumb : function() {
         return Ext.slider.SingleSlider.superclass.syncThumb.apply(this, [0].concat(arguments));
     },
-    
+
     // private
     getNearest : function(){
         // Since there's only 1 thumb, it's always the nearest
-        return this.thumbs[0];    
+        return this.thumbs[0];
     }
 });
 

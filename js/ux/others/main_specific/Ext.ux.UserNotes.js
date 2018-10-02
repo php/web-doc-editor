@@ -58,7 +58,7 @@ Ext.ux.UserNotes = Ext.extend(Ext.Button, {
                             {
                                 var mainBtn = this.ownerCt.ownerCt.scope,
                                 win = this.ownerCt.ownerCt;
-                        
+
                                 // Stay the mainMenu open event a clic
                                 mainBtn.menu.show(mainBtn.el);
 
@@ -101,7 +101,7 @@ Ext.ux.UserNotes = Ext.extend(Ext.Button, {
 
                                 // Stay the mainMenu open event a clic
                                 mainBtn.menu.show(mainBtn.el);
-                        
+
                                 this.ownerCt.ownerCt.hide();
                             }
                         }]

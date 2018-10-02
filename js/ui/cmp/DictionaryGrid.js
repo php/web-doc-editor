@@ -3,7 +3,7 @@ Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
 //------------------------------------------------------------------------------
 // DictionaryGrid internals
 ui.cmp._DictionaryGrid.store = Ext.extend(Ext.data.Store,
-{    
+{
     proxy    : new Ext.data.HttpProxy({
         url : "./do/getDictionaryWords"
     }),
@@ -62,7 +62,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
                     record.set('lastDate', Date.parseDate(o.dateUpdate, 'Y-m-d H:i:s'));
 
                     record.commit();
-                    
+
                     // Notify
                     PhDOE.notify('info', _('Word in dictionary added/updated'), _('The word have been added/updated successfully !'));
                 },
@@ -72,7 +72,7 @@ ui.cmp._DictionaryGrid.editor = Ext.extend(Ext.ux.grid.RowEditor,
                 }
             });
         },
-        canceledit: function(editor) {            
+        canceledit: function(editor) {
             // If we cancel Edit on a new word
             if( editor.record.data.id === "new" ) {
                 editor.record.store.remove(editor.record);
@@ -117,7 +117,7 @@ ui.cmp._DictionaryGrid.menu = Ext.extend(Ext.menu.Menu,
                             wordId : this.grid.store.getAt(this.rowIdx).data.id
                         },
                         success : function()
-                        {                            
+                        {
                             this.grid.store.remove(this.grid.store.getAt(this.rowIdx));
 
                             // Notify

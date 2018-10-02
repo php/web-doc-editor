@@ -63,14 +63,14 @@ myDataView.on('render', function(v) {
  * @param {Object} config
  */
 Ext.dd.DragZone = Ext.extend(Ext.dd.DragSource, {
-    
+
     constructor : function(el, config){
         Ext.dd.DragZone.superclass.constructor.call(this, el, config);
         if(this.containerScroll){
             Ext.dd.ScrollManager.register(this.el);
         }
     },
-    
+
     /**
      * This property contains the data representing the dragged object. This data is set up by the implementation
      * of the {@link #getDragData} method. It must contain a <tt>ddel</tt> property, but can contain
@@ -98,7 +98,7 @@ Ext.dd.DragZone = Ext.extend(Ext.dd.DragSource, {
     getDragData : function(e){
         return Ext.dd.Registry.getHandleFromEvent(e);
     },
-    
+
     /**
      * Called once drag threshold has been reached to initialize the proxy element. By default, it clones the
      * this.dragData.ddel
@@ -111,9 +111,9 @@ Ext.dd.DragZone = Ext.extend(Ext.dd.DragSource, {
         this.onStartDrag(x, y);
         return true;
     },
-    
+
     /**
-     * Called after a repair of an invalid drop. By default, highlights this.dragData.ddel 
+     * Called after a repair of an invalid drop. By default, highlights this.dragData.ddel
      */
     afterRepair : function(){
         if(Ext.enableFx){
@@ -129,9 +129,9 @@ Ext.dd.DragZone = Ext.extend(Ext.dd.DragSource, {
      * @return {Array} The xy location (e.g. [100, 200])
      */
     getRepairXY : function(e){
-        return Ext.Element.fly(this.dragData.ddel).getXY();  
+        return Ext.Element.fly(this.dragData.ddel).getXY();
     },
-    
+
     destroy : function(){
         Ext.dd.DragZone.superclass.destroy.call(this);
         if(this.containerScroll){

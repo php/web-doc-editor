@@ -21,9 +21,9 @@ ui.cmp.PreviewFile = Ext.extend(Ext.Window,
     initComponent : function()
     {
         var win = this;
-        
+
         ui.cmp.PreviewFile.superclass.initComponent.call(this);
-        
+
         XHR({
             params  : {
                 task : 'previewFile',
@@ -32,22 +32,22 @@ ui.cmp.PreviewFile = Ext.extend(Ext.Window,
             success : function(r)
             {
                 var o = Ext.util.JSON.decode(r.responseText), frame;
-                
+
                 // We add a random string to the URL to not display the file cache
                 o.url = o.url + '?' + Math.random();
-                
+
                 frame = new Ext.ux.IFrameComponent({ id: 'frame-previewFile', url: o.url });
-                
+
                 win.add(
                     frame
                 );
                 win.show();
-                
+
             },
             failure : function()
             {
             }
         });
-        
+
     }
 });

@@ -72,12 +72,12 @@ Ext.grid.AbstractSelectionModel = Ext.extend(Ext.util.Observable,  {
             this.locked = false;
             var g = this.grid,
                 gv;
-                
+
             // If the grid has been set, then the view is already initialized.
             if(g){
                 gv = g.getView();
                 gv.un('beforerefresh', this.sortUnLock, this);
-                gv.un('refresh', this.sortLock, this);    
+                gv.un('refresh', this.sortLock, this);
             }else{
                 delete this.lockOnInit;
             }

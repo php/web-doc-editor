@@ -129,13 +129,13 @@ Ext.tree.TreeEventModel.prototype = {
             this.checkContainerEvent(e, 'contextmenu');
         }
     },
-    
+
     checkContainerEvent: function(e, type){
         if(this.disabled){
             e.stopEvent();
             return false;
         }
-        this.onContainerEvent(e, type);    
+        this.onContainerEvent(e, type);
     },
 
     onContainerEvent: function(e, type){

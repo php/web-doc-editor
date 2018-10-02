@@ -10,10 +10,10 @@
  * The default single selection for a TreePanel.
  */
 Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
-    
+
     constructor : function(config){
         this.selNode = null;
-   
+
         this.addEvents(
             /**
              * @event selectionchange
@@ -34,19 +34,19 @@ Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
         );
 
         Ext.apply(this, config);
-        Ext.tree.DefaultSelectionModel.superclass.constructor.call(this);    
+        Ext.tree.DefaultSelectionModel.superclass.constructor.call(this);
     },
-    
+
     init : function(tree){
         this.tree = tree;
         tree.mon(tree.getTreeEl(), 'keydown', this.onKeyDown, this);
         tree.on('click', this.onNodeClick, this);
     },
-    
+
     onNodeClick : function(node, e){
         this.select(node);
     },
-    
+
     /**
      * Select a node.
      * @param {TreeNode} node The node to select
@@ -70,7 +70,7 @@ Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
         }
         return node;
     },
-    
+
     /**
      * Deselect a node.
      * @param {TreeNode} node The node to unselect
@@ -79,9 +79,9 @@ Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
     unselect : function(node, silent){
         if(this.selNode == node){
             this.clearSelections(silent);
-        }    
+        }
     },
-    
+
     /**
      * Clear all selections
      * @param {Boolean} silent True to stop the selectionchange event from firing.
@@ -97,22 +97,22 @@ Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
         }
         return n;
     },
-    
+
     /**
      * Get the selected node
      * @return {TreeNode} The selected node
      */
     getSelectedNode : function(){
-        return this.selNode;    
+        return this.selNode;
     },
-    
+
     /**
      * Returns true if the node is selected
      * @param {TreeNode} node The node to check
      * @return {Boolean}
      */
     isSelected : function(node){
-        return this.selNode == node;  
+        return this.selNode == node;
     },
 
     /**
@@ -212,7 +212,7 @@ Ext.tree.DefaultSelectionModel = Ext.extend(Ext.util.Observable, {
  * Multi selection for a TreePanel.
  */
 Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
-    
+
     constructor : function(config){
         this.selNodes = [];
         this.selMap = {};
@@ -226,15 +226,15 @@ Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
             'selectionchange'
         );
         Ext.apply(this, config);
-        Ext.tree.MultiSelectionModel.superclass.constructor.call(this);    
+        Ext.tree.MultiSelectionModel.superclass.constructor.call(this);
     },
-    
+
     init : function(tree){
         this.tree = tree;
         tree.mon(tree.getTreeEl(), 'keydown', this.onKeyDown, this);
         tree.on('click', this.onNodeClick, this);
     },
-    
+
     onNodeClick : function(node, e){
         if(e.ctrlKey && this.isSelected(node)){
             this.unselect(node);
@@ -242,7 +242,7 @@ Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
             this.select(node, e, e.ctrlKey);
         }
     },
-    
+
     /**
      * Select a node.
      * @param {TreeNode} node The node to select
@@ -265,7 +265,7 @@ Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
         this.fireEvent('selectionchange', this, this.selNodes);
         return node;
     },
-    
+
     /**
      * Deselect a node.
      * @param {TreeNode} node The node to unselect
@@ -282,7 +282,7 @@ Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
             this.fireEvent('selectionchange', this, this.selNodes);
         }
     },
-    
+
     /**
      * Clear all selections
      */
@@ -299,16 +299,16 @@ Ext.tree.MultiSelectionModel = Ext.extend(Ext.util.Observable, {
             }
         }
     },
-    
+
     /**
      * Returns true if the node is selected
      * @param {TreeNode} node The node to check
      * @return {Boolean}
      */
     isSelected : function(node){
-        return this.selMap[node.id] ? true : false;  
+        return this.selMap[node.id] ? true : false;
     },
-    
+
     /**
      * Returns an array of the selected nodes
      * @return {Array}

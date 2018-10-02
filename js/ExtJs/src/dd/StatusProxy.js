@@ -20,7 +20,7 @@ Ext.dd.StatusProxy = function(config){
                 {tag: "div", cls: "x-dd-drop-icon"},
                 {tag: "div", cls: "x-dd-drag-ghost"}
             ]
-        }, 
+        },
         shadow: !config || config.shadow !== false
     });
     this.ghost = Ext.get(this.el.dom.childNodes[1]);
@@ -77,7 +77,7 @@ Ext.dd.StatusProxy.prototype = {
             html.style.margin = "0";
             this.ghost.dom.appendChild(html);
         }
-        var el = this.ghost.dom.firstChild; 
+        var el = this.ghost.dom.firstChild;
         if(el){
             Ext.fly(el).setStyle('float', 'none');
         }
@@ -168,8 +168,8 @@ Ext.dd.StatusProxy.prototype = {
         this.callback = null;
         this.scope = null;
     },
-    
+
     destroy: function(){
-        Ext.destroy(this.ghost, this.el);    
+        Ext.destroy(this.ghost, this.el);
     }
 };

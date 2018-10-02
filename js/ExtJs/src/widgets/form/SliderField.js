@@ -15,23 +15,23 @@
  * @xtype sliderfield
  */
 Ext.form.SliderField = Ext.extend(Ext.form.Field, {
-    
+
     /**
      * @cfg {Boolean} useTips
      * True to use an Ext.slider.Tip to display tips for the value. Defaults to <tt>true</tt>.
      */
     useTips : true,
-    
+
     /**
      * @cfg {Function} tipText
      * A function used to display custom text for the slider tip. Defaults to <tt>null</tt>, which will
      * use the default on the plugin.
      */
     tipText : null,
-    
+
     // private override
     actionMode: 'wrap',
-    
+
     /**
      * Initialize the component.
      * @private
@@ -40,7 +40,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         var cfg = Ext.copyTo({
             id: this.id + '-slider'
         }, this.initialConfig, ['vertical', 'minValue', 'maxValue', 'decimalPrecision', 'keyIncrement', 'increment', 'clickToChange', 'animate']);
-        
+
         // only can use it if it exists.
         if (this.useTips) {
             var plug = this.tipText ? {getText: this.tipText} : {};
@@ -48,8 +48,8 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         }
         this.slider = new Ext.Slider(cfg);
         Ext.form.SliderField.superclass.initComponent.call(this);
-    },    
-    
+    },
+
     /**
      * Set up the hidden field
      * @param {Object} ct The container to render to.
@@ -61,14 +61,14 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
             id: this.id,
             name: this.name,
             type: 'hidden',
-            tag: 'input'    
+            tag: 'input'
         };
         Ext.form.SliderField.superclass.onRender.call(this, ct, position);
         this.wrap = this.el.wrap({cls: 'x-form-field-wrap'});
         this.resizeEl = this.positionEl = this.wrap;
         this.slider.render(this.wrap);
     },
-    
+
     /**
      * Ensure that the slider size is set automatically when the field resizes.
      * @param {Object} w The width
@@ -79,18 +79,18 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      */
     onResize : function(w, h, aw, ah){
         Ext.form.SliderField.superclass.onResize.call(this, w, h, aw, ah);
-        this.slider.setSize(w, h);    
+        this.slider.setSize(w, h);
     },
-    
+
     /**
      * Initialize any events for this class.
      * @private
      */
     initEvents : function(){
         Ext.form.SliderField.superclass.initEvents.call(this);
-        this.slider.on('change', this.onChange, this);   
+        this.slider.on('change', this.onChange, this);
     },
-    
+
     /**
      * Utility method to set the value of the field when the slider changes.
      * @param {Object} slider The slider object.
@@ -100,7 +100,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
     onChange : function(slider, v){
         this.setValue(v, undefined, true);
     },
-    
+
     /**
      * Enable the slider when the field is enabled.
      * @private
@@ -109,16 +109,16 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         Ext.form.SliderField.superclass.onEnable.call(this);
         this.slider.enable();
     },
-    
+
     /**
      * Disable the slider when the field is disabled.
      * @private
      */
     onDisable : function(){
         Ext.form.SliderField.superclass.onDisable.call(this);
-        this.slider.disable();    
+        this.slider.disable();
     },
-    
+
     /**
      * Ensure the slider is destroyed when the field is destroyed.
      * @private
@@ -127,7 +127,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         Ext.destroy(this.slider);
         Ext.form.SliderField.superclass.beforeDestroy.call(this);
     },
-    
+
     /**
      * If a side icon is shown, do alignment to the slider
      * @private
@@ -135,7 +135,7 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
     alignErrorIcon : function(){
         this.errorIcon.alignTo(this.slider.el, 'tl-tr', [2, 0]);
     },
-    
+
     /**
      * Sets the minimum field value.
      * @param {Number} v The new minimum value.
@@ -143,9 +143,9 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      */
     setMinValue : function(v){
         this.slider.setMinValue(v);
-        return this;    
+        return this;
     },
-    
+
     /**
      * Sets the maximum field value.
      * @param {Number} v The new maximum value.
@@ -153,9 +153,9 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
      */
     setMaxValue : function(v){
         this.slider.setMaxValue(v);
-        return this;    
+        return this;
     },
-    
+
     /**
      * Sets the value for this field.
      * @param {Number} v The new value.
@@ -170,13 +170,13 @@ Ext.form.SliderField = Ext.extend(Ext.form.Field, {
         }
         return Ext.form.SliderField.superclass.setValue.call(this, this.slider.getValue());
     },
-    
+
     /**
      * Gets the current value for this field.
      * @return {Number} The current value.
      */
     getValue : function(){
-        return this.slider.getValue();    
+        return this.slider.getValue();
     }
 });
 

@@ -4,7 +4,7 @@
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
-	
+
 	if (Ext.isIE) {
         function fnCleanUp() {
             var p = Function.prototype;

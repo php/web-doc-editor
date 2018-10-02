@@ -12,7 +12,7 @@
  * @param {Object} config
  */
 if(Ext.dd.DropZone){
-    
+
 Ext.tree.TreeDropZone = function(tree, config){
     /**
      * @cfg {Boolean} allowParentInsert
@@ -111,7 +111,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
         overEvent.source = dd;
         overEvent.rawEvent = e;
         overEvent.dropNode = dropNode;
-        overEvent.cancel = false;  
+        overEvent.cancel = false;
         var result = this.tree.fireEvent("nodedragover", overEvent);
         return overEvent.cancel === false && result !== false;
     },
@@ -147,7 +147,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
     onNodeEnter : function(n, dd, e, data){
         this.cancelExpand();
     },
-    
+
     onContainerOver : function(dd, e, data) {
         if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {
             return this.dropAllowed;
@@ -159,14 +159,14 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
     onNodeOver : function(n, dd, e, data){
         var pt = this.getDropPoint(e, n, dd);
         var node = n.node;
-        
+
         // auto node expand check
         if(!this.expandProcId && pt == "append" && node.hasChildNodes() && !n.node.isExpanded()){
             this.queueExpand(node);
         }else if(pt != "append"){
             this.cancelExpand();
         }
-        
+
         // set the insert point style on the target node
         var returnCls = this.dropNotAllowed;
         if(this.isValidDropPoint(n, pt, dd, e, data)){
@@ -211,17 +211,17 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
         var dropNode = data.node || (dd.getTreeNode ? dd.getTreeNode(data, targetNode, point, e) : null);
         return this.processDrop(targetNode, data, point, dd, e, dropNode);
     },
-    
+
     onContainerDrop : function(dd, e, data){
         if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {
-            var targetNode = this.tree.getRootNode();       
+            var targetNode = this.tree.getRootNode();
             targetNode.ui.startDrop();
             var dropNode = data.node || (dd.getTreeNode ? dd.getTreeNode(data, targetNode, 'append', e) : null);
             return this.processDrop(targetNode, data, 'append', dd, e, dropNode);
         }
         return false;
     },
-    
+
     // private
     processDrop: function(target, data, point, dd, e, dropNode){
         var dropEvent = {
@@ -240,7 +240,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
             target.ui.endDrop();
             return dropEvent.dropStatus;
         }
-    
+
         target = dropEvent.target;
         if(point == 'append' && !target.isExpanded()){
             target.expand(false, null, function(){
@@ -315,7 +315,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
             data.node.ui.highlight();
         }
         this.hideProxy();
-    }    
+    }
 });
 
 }

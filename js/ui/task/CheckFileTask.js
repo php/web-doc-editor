@@ -7,7 +7,7 @@ ui.task.CheckFileTask = function(config)
 
     // We need to stop ping test during this process
     ui.task.PingTask.getInstance().cancel();
-    
+
     Ext.getBody().mask(
         '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
         _('Checking for error. Please, wait...')
@@ -27,10 +27,10 @@ ui.task.CheckFileTask = function(config)
         {
             // Re-enable TaskPing
             ui.task.PingTask.getInstance().delay(30000);
-            
+
             // Un-mask the body
             Ext.getBody().unmask();
-            
+
             // Display a warning
             Ext.MessageBox.alert(_('Error'), _('An error occured while checking this file for errors. Please, try again.'));
         },
@@ -38,7 +38,7 @@ ui.task.CheckFileTask = function(config)
         {
             // Re-enable TaskPing
             ui.task.PingTask.getInstance().delay(30000);
-            
+
             // Un-mask the body
             Ext.getBody().unmask();
 

@@ -9,7 +9,7 @@
  * Revised by efege, 2007-04-15.
  * Revised by Rafaga2k 10-01-2007 (mm/dd/yyyy)
  * Revised by FeDe 12-13-2007 (mm/dd/yyyy)
- * Synchronized with 2.2 version of ext-lang-en.js (provided by Condor 8 aug 2008) 
+ * Synchronized with 2.2 version of ext-lang-en.js (provided by Condor 8 aug 2008)
  *     by halkon_polako 14-aug-2008
  */
 

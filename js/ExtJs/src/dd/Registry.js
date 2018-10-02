@@ -11,8 +11,8 @@
  * @singleton
  */
 Ext.dd.Registry = function(){
-    var elements = {}; 
-    var handles = {}; 
+    var elements = {};
+    var handles = {};
     var autoIdSeed = 0;
 
     var getId = function(el, autogen){
@@ -26,7 +26,7 @@ Ext.dd.Registry = function(){
         }
         return id;
     };
-    
+
     return {
     /**
      * Resgister a drag drop element

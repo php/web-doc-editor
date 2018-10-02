@@ -26,18 +26,18 @@ els.setWidth(100).hide(true);
 </code></pre>
  */
 Ext.CompositeElement = Ext.extend(Ext.CompositeElementLite, {
-    
+
     constructor : function(els, root){
         this.elements = [];
         this.add(els, root);
     },
-    
+
     // private
     getElement : function(el){
         // In this case just return it, since we already have a reference to it
         return el;
     },
-    
+
     // private
     transformElement : function(el){
         return Ext.get(el);

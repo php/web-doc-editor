@@ -104,7 +104,7 @@ Ext.KeyNav.prototype = {
         27 : "esc",
         9  : "tab"
     },
-    
+
     stopKeyUp: function(e) {
         var k = e.getKey();
 
@@ -114,12 +114,12 @@ Ext.KeyNav.prototype = {
             e.stopEvent();
         }
     },
-    
+
     /**
      * Destroy this KeyNav (this is the same as calling disable).
      */
     destroy: function(){
-        this.disable();    
+        this.disable();
     },
 
 	/**
@@ -151,7 +151,7 @@ Ext.KeyNav.prototype = {
             this.disabled = true;
         }
     },
-    
+
     /**
      * Convenience function for setting disabled/enabled by boolean.
      * @param {Boolean} disabled
@@ -159,7 +159,7 @@ Ext.KeyNav.prototype = {
     setDisabled : function(disabled){
         this[disabled ? "disable" : "enable"]();
     },
-    
+
     // private
     isKeydown: function(){
         return this.forceKeyDown || Ext.EventManager.useKeydown;

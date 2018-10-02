@@ -46,14 +46,14 @@ ui.cmp._PendingTranslateGrid.view = new Ext.grid.GroupingView({
     deferEmptyText: false,
     getRowClass: function(r){
         if (r.data.fileModified) {
-        
+
             var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
-            
+
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-            
+
             return (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
-        
+
         return false;
     },
     emptyText: '<div style="text-align: center;">' + _('No Files') + '</div>'
@@ -67,18 +67,18 @@ ui.cmp._PendingTranslateGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, metada, r){
         if (r.data.fileModified) {
-        
+
             var info = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
-            
+
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-            
+
             if (info.user === userToCompare && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File modified by me') + "'>" + v + "</span>";
             }
             else {
                 return "<span ext:qtip='" + String.format(_('File modified by {0}'), info.user) + "'>" + v + "</span>";
             }
-            
+
         }
         else {
             return v;
@@ -122,35 +122,35 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
     enableDragDrop: true,
     ddGroup: 'mainPanelDDGroup',
     border: false,
-    
+
     onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-        
+
         grid.getSelectionModel().selectRow(rowIndex);
-        
+
         new ui.cmp._PendingTranslateGrid.menu({
             grid: grid,
             event: e,
             rowIdx: rowIndex
         }).showAt(e.getXY());
     },
-    
+
     onRowDblClick: function(grid, rowIndex){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-    
+
     openFile: function(rowId){
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNT-' + PhDOE.user.lang + FilePath + FileName), isSecondPanel;
-        
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNT-' + FileID)) {
-        
+
             if( PhDOE.user.conf.newFile.secondPanel == 'google' || PhDOE.user.conf.newFile.secondPanel == 'originalFile' ) {
                 isSecondPanel = true;
             } else {
                 isSecondPanel = false;
             }
-            
+
             Ext.getCmp('main-panel').add({
                 id: 'FNT-' + FileID,
                 layout: 'border',
@@ -290,7 +290,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
         }
         Ext.getCmp('main-panel').setActiveTab('FNT-' + FileID);
     },
-    
+
     initComponent: function(){
         Ext.apply(this, {
             columns: ui.cmp._PendingTranslateGrid.columns,
@@ -319,7 +319,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 onTrigger2Click: function(){
                     var v = this.getValue(), regexp;
-                    
+
                     if (v === '' || v.length < 3) {
                         this.markInvalid(_('Your filter must contain at least 3 characters'));
                         return;
@@ -327,12 +327,12 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
                     this.clearInvalid();
                     this.triggers[0].show();
                     this.setSize(180, 10);
-                    
+
                     regexp = new RegExp(v, 'i');
-                    
+
                     // We filter on 'path' and 'name'
                     ui.cmp._PendingTranslateGrid.instance.store.filterBy(function(record){
-                    
+
                         if (regexp.test(record.data.path) || regexp.test(record.data.name)) {
                             return true;
                         }
@@ -344,7 +344,7 @@ ui.cmp.PendingTranslateGrid = Ext.extend(Ext.grid.GridPanel, {
             })]
         });
         ui.cmp.PendingTranslateGrid.superclass.initComponent.call(this);
-        
+
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick', this.onRowDblClick, this);
     }

@@ -33,7 +33,7 @@ Ext.Element.addMethods({
      * @return {Object} An object containing the scroll position in the format {left: (scrollLeft), top: (scrollTop)}
      */
     getScroll : function(){
-        var d = this.dom, 
+        var d = this.dom,
             doc = document,
             body = doc.body,
             docElement = doc.documentElement,
@@ -43,7 +43,7 @@ Ext.Element.addMethods({
 
         if(d == doc || d == body){
             if(Ext.isIE && Ext.isStrict){
-                l = docElement.scrollLeft; 
+                l = docElement.scrollLeft;
                 t = docElement.scrollTop;
             }else{
                 l = window.pageXOffset;

@@ -327,25 +327,25 @@ Ext.form.TwinTriggerField = Ext.extend(Ext.form.TriggerField, {
     getTrigger : function(index){
         return this.triggers[index];
     },
-    
+
     afterRender: function(){
         Ext.form.TwinTriggerField.superclass.afterRender.call(this);
         var triggers = this.triggers,
             i = 0,
             len = triggers.length;
-            
+
         for(; i < len; ++i){
             if(this['hideTrigger' + (i + 1)]){
                     triggers[i].hide();
                 }
 
-        }    
+        }
     },
 
     initTrigger : function(){
         var ts = this.trigger.select('.x-form-trigger', true),
             triggerField = this;
-            
+
         ts.each(function(t, all, index){
             var triggerIndex = 'Trigger'+(index+1);
             t.hide = function(){

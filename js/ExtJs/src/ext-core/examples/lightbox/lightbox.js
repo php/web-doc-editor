@@ -43,7 +43,7 @@ Ext.ux.Lightbox = (function(){
             els.overlay = Ext.DomHelper.append(document.body, {
                 id: 'ux-lightbox-overlay'
             }, true);
-            
+
             var lightboxTpl = new Ext.Template(this.getTemplate());
             els.lightbox = lightboxTpl.append(document.body, {}, true);
 
@@ -178,13 +178,13 @@ Ext.ux.Lightbox = (function(){
                     }).show();
 
                     this.setImage(index);
-                    
-                    this.fireEvent('open', images[index]);                                        
+
+                    this.fireEvent('open', images[index]);
                 },
                 scope: this
             });
         },
-        
+
         setViewSize: function(){
             var viewSize = this.getViewSize();
             els.overlay.setStyle({
@@ -199,8 +199,8 @@ Ext.ux.Lightbox = (function(){
 
         setImage: function(index){
             activeImage = index;
-                      
-            this.disableKeyNav();            
+
+            this.disableKeyNav();
             if (this.animate) {
                 els.loading.show();
             }
@@ -240,7 +240,7 @@ Ext.ux.Lightbox = (function(){
 
                 this.showImage();
             };
-            
+
             if (hDiff != 0 || wDiff != 0) {
                 els.outerImageContainer.shift({
                     height: hNew,
@@ -271,7 +271,7 @@ Ext.ux.Lightbox = (function(){
         updateDetails: function(){
             var detailsWidth = els.data.getWidth(true) - els.navClose.getWidth() - 10;
             els.details.setWidth((detailsWidth > 0 ? detailsWidth : 0) + 'px');
-            
+
             els.caption.update(images[activeImage][1]);
 
             els.caption.show();

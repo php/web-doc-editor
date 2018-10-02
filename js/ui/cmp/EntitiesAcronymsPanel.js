@@ -14,7 +14,7 @@ ui.cmp._EntitiesAcronymsPanel.grid = Ext.extend(Ext.grid.GridPanel,
     },
 
     onRowDblClick: function(grid)
-    {        
+    {
         var data           = grid.getSelectionModel().getSelected().data,
             cmp            = Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid),
             cursorPosition = Ext.util.JSON.decode(cmp.getCursorPosition()),

@@ -19,9 +19,9 @@
  * @xtype datemenu
  */
  Ext.menu.DateMenu = Ext.extend(Ext.menu.Menu, {
-    /** 
+    /**
      * @cfg {Boolean} enableScrolling
-     * @hide 
+     * @hide
      */
     enableScrolling : false,
     /**
@@ -36,26 +36,26 @@
      * @cfg {Object} scope
      * The scope (<tt><b>this</b></tt> reference) in which the <code>{@link #handler}</code>
      * function will be called.  Defaults to this DateMenu instance.
-     */    
-    /** 
+     */
+    /**
      * @cfg {Boolean} hideOnClick
      * False to continue showing the menu after a date is selected, defaults to true.
      */
     hideOnClick : true,
-    
-    /** 
+
+    /**
      * @cfg {String} pickerId
      * An id to assign to the underlying date picker. Defaults to <tt>null</tt>.
      */
     pickerId : null,
-    
-    /** 
+
+    /**
      * @cfg {Number} maxHeight
-     * @hide 
+     * @hide
      */
-    /** 
+    /**
      * @cfg {Number} scrollIncrement
-     * @hide 
+     * @hide
      */
     /**
      * The {@link Ext.DatePicker} instance for this DateMenu
@@ -63,12 +63,12 @@
      * @type DatePicker
      */
     cls : 'x-date-menu',
-    
+
     /**
      * @event click
      * @hide
      */
-    
+
     /**
      * @event itemclick
      * @hide
@@ -122,4 +122,3 @@
     }
  });
  Ext.reg('datemenu', Ext.menu.DateMenu);
- 

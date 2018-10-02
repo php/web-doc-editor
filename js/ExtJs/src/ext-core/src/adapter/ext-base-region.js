@@ -40,7 +40,7 @@
                 return new Ext.lib.Region(t, r, b, l);
             }
         },
-        
+
         union : function(region) {
 	        var me = this,
             	t = Math.min(me.top, region.top),

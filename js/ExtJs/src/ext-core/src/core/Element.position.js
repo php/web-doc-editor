@@ -61,7 +61,7 @@ Ext.Element.addMethods({
      * @param {Boolean/Object} animate (optional) True for the default animation, or a standard Element animation config object
      * @return {Ext.Element} this
      */
-    setX : function(x, animate){	    
+    setX : function(x, animate){
 	    return this.setXY([x, this.getY()], this.animTest(arguments, animate, 1));
     },
 
@@ -71,7 +71,7 @@ Ext.Element.addMethods({
      * @param {Boolean/Object} animate (optional) True for the default animation, or a standard Element animation config object
      * @return {Ext.Element} this
      */
-    setY : function(y, animate){	    
+    setY : function(y, animate){
 	    return this.setXY([this.getX(), y], this.animTest(arguments, animate, 1));
     },
 
@@ -153,9 +153,9 @@ Ext.Element.addMethods({
      * @return {Ext.Element} this
      */
     moveTo : function(x, y, animate){
-        return this.setXY([x, y], this.animTest(arguments, animate, 2));        
-    },    
-    
+        return this.setXY([x, y], this.animTest(arguments, animate, 2));
+    },
+
     /**
      * Gets the left X coordinate
      * @param {Boolean} local True to get the local css position instead of page coordinate
@@ -204,9 +204,9 @@ Ext.Element.addMethods({
     */
     position : function(pos, zIndex, x, y){
 	    var me = this;
-	    
-        if(!pos && me.isStyle(POSITION, STATIC)){           
-            me.setStyle(POSITION, RELATIVE);           
+
+        if(!pos && me.isStyle(POSITION, STATIC)){
+            me.setStyle(POSITION, RELATIVE);
         } else if(pos) {
             me.setStyle(POSITION, pos);
         }
@@ -251,7 +251,7 @@ Ext.Element.addMethods({
             "z-index" : this.getStyle(ZINDEX)
         };
     },
-    
+
     /**
     * Set positioning with an object returned by getPositioning().
     * @param {Object} posCfg
@@ -260,26 +260,26 @@ Ext.Element.addMethods({
     setPositioning : function(pc){
 	    var me = this,
 	    	style = me.dom.style;
-	    	
+
         me.setStyle(pc);
-        
+
         if(pc.right == AUTO){
             style.right = "";
         }
         if(pc.bottom == AUTO){
             style.bottom = "";
         }
-        
+
         return me;
-    },    
-	
+    },
+
     /**
      * Translates the passed page coordinates into left/top css values for this element
      * @param {Number/Array} x The page x or an array containing [x, y]
      * @param {Number} y (optional) The page y, required if x is not an array
      * @return {Object} An object with left and top properties. e.g. {left: (value), top: (value)}
      */
-    translatePoints : function(x, y){        	     
+    translatePoints : function(x, y){
 	    y = isNaN(x[1]) ? y : x[1];
         x = isNaN(x[0]) ? x : x[0];
         var me = this,
@@ -287,13 +287,13 @@ Ext.Element.addMethods({
         	o = me.getXY(),
         	l = parseInt(me.getStyle(LEFT), 10),
         	t = parseInt(me.getStyle(TOP), 10);
-        
-        l = !isNaN(l) ? l : (relative ? 0 : me.dom.offsetLeft);
-        t = !isNaN(t) ? t : (relative ? 0 : me.dom.offsetTop);        
 
-        return {left: (x - o[0] + l), top: (y - o[1] + t)}; 
+        l = !isNaN(l) ? l : (relative ? 0 : me.dom.offsetLeft);
+        t = !isNaN(t) ? t : (relative ? 0 : me.dom.offsetTop);
+
+        return {left: (x - o[0] + l), top: (y - o[1] + t)};
     },
-    
+
     animTest : function(args, animate, i) {
         return !!animate && this.preanim ? this.preanim(args, i) : false;
     }

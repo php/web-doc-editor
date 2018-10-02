@@ -690,7 +690,7 @@ dt = Date.parseDate("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
                     }
                 }
             }
-            
+
             if (last) {
                 calc.push(last);
             }
@@ -806,7 +806,7 @@ dt = Date.parseDate("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
             s:"(\\d{1,2})"
         },
         /**
-         * In the am/pm parsing routines, we allow both upper and lower case 
+         * In the am/pm parsing routines, we allow both upper and lower case
          * even though it doesn't exactly match the spec. It gives much more flexibility
          * in being able to specify case insensitive regexes.
          */

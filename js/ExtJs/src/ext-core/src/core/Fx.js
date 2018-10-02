@@ -51,7 +51,7 @@
         setQueue = function(id, value){
             queues[id] = value;
         };
-        
+
 //Notifies Element that fx methods are available
 Ext.enableFx = TRUE;
 
@@ -61,7 +61,7 @@ Ext.enableFx = TRUE;
  * to the {@link Ext.Element} interface when included, so all effects calls should be performed via {@link Ext.Element}.
  * Conversely, since the effects are not actually defined in {@link Ext.Element}, Ext.Fx <b>must</b> be
  * {@link Ext#enableFx included} in order for the Element effects to work.</p><br/>
- * 
+ *
  * <p><b><u>Method Chaining</u></b></p>
  * <p>It is important to note that although the Fx methods and many non-Fx Element methods support "method chaining" in that
  * they return the Element object itself as the method return value, it is not always possible to mix the two in a single
@@ -87,7 +87,7 @@ br     The bottom right corner
 </pre>
  * <b>Note</b>: some Fx methods accept specific custom config parameters.  The options shown in the Config Options
  * section below are common options that can be passed to any Fx method unless otherwise noted.</b>
- * 
+ *
  * @cfg {Function} callback A function called when the effect is finished.  Note that effects are queued internally by the
  * Fx class, so a callback is not required to specify another effect -- effects can simply be chained together
  * and called in sequence (see note for <b><u>Method Chaining</u></b> above), for example:<pre><code>
@@ -95,9 +95,9 @@ br     The bottom right corner
  * </code></pre>
  * The callback is intended for any additional code that should run once a particular effect has completed. The Element
  * being operated upon is passed as the first parameter.
- * 
+ *
  * @cfg {Object} scope The scope (<code>this</code> reference) in which the <tt>{@link #callback}</tt> function is executed. Defaults to the browser window.
- * 
+ *
  * @cfg {String} easing A valid Ext.lib.Easing value for the effect:</p><div class="mdetail-params"><ul>
  * <li><b><tt>backBoth</tt></b></li>
  * <li><b><tt>backIn</tt></b></li>
@@ -119,12 +119,12 @@ br     The bottom right corner
  *
  * @cfg {String} afterCls A css class to apply after the effect
  * @cfg {Number} duration The length of time (in seconds) that the effect should last
- * 
+ *
  * @cfg {Number} endOpacity Only applicable for {@link #fadeIn} or {@link #fadeOut}, a number between
  * <tt>0</tt> and <tt>1</tt> inclusive to configure the ending opacity value.
- *  
+ *
  * @cfg {Boolean} remove Whether the Element should be removed from the DOM and destroyed after the effect finishes
- * @cfg {Boolean} useDisplay Whether to use the <i>display</i> CSS property instead of <i>visibility</i> when hiding Elements (only applies to 
+ * @cfg {Boolean} useDisplay Whether to use the <i>display</i> CSS property instead of <i>visibility</i> when hiding Elements (only applies to
  * effects that end with the element being visually hidden, ignored otherwise)
  * @cfg {String/Object/Function} afterStyle A style specification string, e.g. <tt>"width:100px"</tt>, or an object
  * in the form <tt>{width:"100px"}</tt>, or a function which returns such a specification that will be applied to the
@@ -134,13 +134,13 @@ br     The bottom right corner
  * @cfg {Boolean} stopFx Whether preceding effects should be stopped and removed before running current effect (only applies to non blocking effects)
  */
 Ext.Fx = {
-    
+
     // private - calls the function taking arguments from the argHash based on the key.  Returns the return value of the function.
     //           this is useful for replacing switch statements (for example).
     switchStatements : function(key, fn, argHash){
         return fn.apply(this, argHash[key]);
     },
-    
+
     /**
      * Slides the element into view.  An anchor point can be optionally passed to set the point of
      * origin for the slide effect.  This function automatically handles wrapping the element with
@@ -163,44 +163,44 @@ el.slideIn('t', {
      * @param {Object} options (optional) Object literal with any of the Fx config options
      * @return {Ext.Element} The Element
      */
-    slideIn : function(anchor, o){ 
+    slideIn : function(anchor, o){
         o = getObject(o);
         var me = this,
             dom = me.dom,
             st = dom.style,
             xy,
             r,
-            b,              
-            wrap,               
+            b,
+            wrap,
             after,
             st,
-            args, 
+            args,
             pt,
             bw,
             bh;
-            
+
         anchor = anchor || "t";
 
-        me.queueFx(o, function(){            
+        me.queueFx(o, function(){
             xy = fly(dom).getXY();
             // fix display to visibility
-            fly(dom).fixDisplay();            
-            
+            fly(dom).fixDisplay();
+
             // restore values after effect
-            r = fly(dom).getFxRestore();      
+            r = fly(dom).getFxRestore();
             b = {x: xy[0], y: xy[1], 0: xy[0], 1: xy[1], width: dom.offsetWidth, height: dom.offsetHeight};
             b.right = b.x + b.width;
             b.bottom = b.y + b.height;
-            
+
             // fixed size for slide
-            fly(dom).setWidth(b.width).setHeight(b.height);            
-            
+            fly(dom).setWidth(b.width).setHeight(b.height);
+
             // wrap if needed
             wrap = fly(dom).fxWrap(r.pos, o, HIDDEN);
-            
+
             st.visibility = VISIBLE;
             st.position = ABSOLUTE;
-            
+
             // clear out temp styles after slide and unwrap
             function after(){
                  fly(dom).fxUnwrap(wrap, r.pos, o);
@@ -208,19 +208,19 @@ el.slideIn('t', {
                  st.height = r.height;
                  fly(dom).afterFx(o);
             }
-            
-            // time to calculate the positions        
-            pt = {to: [b.x, b.y]}; 
+
+            // time to calculate the positions
+            pt = {to: [b.x, b.y]};
             bw = {to: b.width};
             bh = {to: b.height};
-                
-            function argCalc(wrap, style, ww, wh, sXY, sXYval, s1, s2, w, h, p){                    
+
+            function argCalc(wrap, style, ww, wh, sXY, sXYval, s1, s2, w, h, p){
                 var ret = {};
                 fly(wrap).setWidth(ww).setHeight(wh);
                 if(fly(wrap)[sXY]){
-                    fly(wrap)[sXY](sXYval);                  
+                    fly(wrap)[sXY](sXYval);
                 }
-                style[s1] = style[s2] = "0";                    
+                style[s1] = style[s2] = "0";
                 if(w){
                     ret.width = w;
                 }
@@ -243,7 +243,7 @@ el.slideIn('t', {
                     br : [wrap, st, 0, 0, SETXY, [b.right, b.bottom], LEFT, TOP, bw, bh, pt],
                     tr : [wrap, st, 0, 0, SETX, b.x + b.width, LEFT, BOTTOM, bw, bh, pt]
                 });
-            
+
             st.visibility = VISIBLE;
             fly(wrap).show();
 
@@ -251,17 +251,17 @@ el.slideIn('t', {
                 o,
                 MOTION,
                 .5,
-                EASEOUT, 
+                EASEOUT,
                 after);
         });
         return me;
     },
-    
+
     /**
      * Slides the element out of view.  An anchor point can be optionally passed to set the end point
-     * for the slide effect.  When the effect is completed, the element will be hidden (visibility = 
+     * for the slide effect.  When the effect is completed, the element will be hidden (visibility =
      * 'hidden') but block elements will still take up space in the document.  The element must be removed
-     * from the DOM using the 'remove' config option if desired.  This function automatically handles 
+     * from the DOM using the 'remove' config option if desired.  This function automatically handles
      * wrapping the element with a fixed-size container if needed.  See the Fx class overview for valid anchor point options.
      * Usage:
      *<pre><code>
@@ -293,51 +293,51 @@ el.slideOut('t', {
             r,
             b,
             a,
-            zero = {to: 0}; 
-                    
+            zero = {to: 0};
+
         anchor = anchor || "t";
 
         me.queueFx(o, function(){
-            
+
             // restore values after effect
-            r = fly(dom).getFxRestore(); 
+            r = fly(dom).getFxRestore();
             b = {x: xy[0], y: xy[1], 0: xy[0], 1: xy[1], width: dom.offsetWidth, height: dom.offsetHeight};
             b.right = b.x + b.width;
             b.bottom = b.y + b.height;
-                
-            // fixed size for slide   
+
+            // fixed size for slide
             fly(dom).setWidth(b.width).setHeight(b.height);
 
             // wrap if needed
             wrap = fly(dom).fxWrap(r.pos, o, VISIBLE);
-                
+
             st.visibility = VISIBLE;
             st.position = ABSOLUTE;
-            fly(wrap).setWidth(b.width).setHeight(b.height);            
+            fly(wrap).setWidth(b.width).setHeight(b.height);
 
             function after(){
-                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();                
+                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();
                 fly(dom).fxUnwrap(wrap, r.pos, o);
                 st.width = r.width;
                 st.height = r.height;
                 fly(dom).afterFx(o);
-            }            
-            
-            function argCalc(style, s1, s2, p1, v1, p2, v2, p3, v3){                    
+            }
+
+            function argCalc(style, s1, s2, p1, v1, p2, v2, p3, v3){
                 var ret = {};
-                
+
                 style[s1] = style[s2] = "0";
-                ret[p1] = v1;               
+                ret[p1] = v1;
                 if(p2){
-                    ret[p2] = v2;               
+                    ret[p2] = v2;
                 }
                 if(p3){
                     ret[p3] = v3;
                 }
-                
+
                 return ret;
             };
-            
+
             a = fly(dom).switchStatements(anchor.toLowerCase(), argCalc, {
                 t  : [st, LEFT, BOTTOM, HEIGHT, zero],
                 l  : [st, RIGHT, TOP, WIDTH, zero],
@@ -348,20 +348,20 @@ el.slideOut('t', {
                 br : [st, LEFT, TOP, WIDTH, zero, HEIGHT, zero, POINTS, {to : [b.x + b.width, b.bottom]}],
                 tr : [st, LEFT, BOTTOM, WIDTH, zero, HEIGHT, zero, POINTS, {to : [b.right, b.y]}]
             });
-            
+
             arguments.callee.anim = fly(wrap).fxanim(a,
                 o,
                 MOTION,
                 .5,
-                EASEOUT, 
+                EASEOUT,
                 after);
         });
         return me;
     },
 
     /**
-     * Fades the element out while slowly expanding it in all directions.  When the effect is completed, the 
-     * element will be hidden (visibility = 'hidden') but block elements will still take up space in the document. 
+     * Fades the element out while slowly expanding it in all directions.  When the effect is completed, the
+     * element will be hidden (visibility = 'hidden') but block elements will still take up space in the document.
      * The element must be removed from the DOM using the 'remove' config option if desired.
      * Usage:
      *<pre><code>
@@ -395,17 +395,17 @@ el.puff({
             fly(dom).show();
 
             // restore values after effect
-            r = fly(dom).getFxRestore();                   
-            
+            r = fly(dom).getFxRestore();
+
             function after(){
-                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();                  
-                fly(dom).clearOpacity();  
+                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();
+                fly(dom).clearOpacity();
                 fly(dom).setPositioning(r.pos);
                 st.width = r.width;
                 st.height = r.height;
                 st.fontSize = '';
                 fly(dom).afterFx(o);
-            }   
+            }
 
             arguments.callee.anim = fly(dom).fxanim({
                     width : {to : fly(dom).adjustWidth(width * 2)},
@@ -425,7 +425,7 @@ el.puff({
 
     /**
      * Blinks the element as if it was clicked and then collapses on its center (similar to switching off a television).
-     * When the effect is completed, the element will be hidden (visibility = 'hidden') but block elements will still 
+     * When the effect is completed, the element will be hidden (visibility = 'hidden') but block elements will still
      * take up space in the document. The element must be removed from the DOM using the 'remove' config option if desired.
      * Usage:
      *<pre><code>
@@ -456,32 +456,32 @@ el.switchOff({
 
             // restore values after effect
             r = fly(dom).getFxRestore();
-                
+
             function after(){
-                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();  
+                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();
                 fly(dom).clearOpacity();
                 fly(dom).setPositioning(r.pos);
                 st.width = r.width;
-                st.height = r.height;   
+                st.height = r.height;
                 fly(dom).afterFx(o);
             };
 
-            fly(dom).fxanim({opacity : {to : 0.3}}, 
-                NULL, 
-                NULL, 
-                .1, 
-                NULL, 
-                function(){                                 
+            fly(dom).fxanim({opacity : {to : 0.3}},
+                NULL,
+                NULL,
+                .1,
+                NULL,
+                function(){
                     fly(dom).clearOpacity();
-                        (function(){                            
+                        (function(){
                             fly(dom).fxanim({
                                 height : {to : 1},
                                 points : {by : [0, fly(dom).getHeight() * .5]}
-                            }, 
-                            o, 
-                            MOTION, 
-                            0.3, 
-                            'easeIn', 
+                            },
+                            o,
+                            MOTION,
+                            0.3,
+                            'easeIn',
                             after);
                         }).defer(100);
                 });
@@ -512,7 +512,7 @@ el.highlight("ffff9c", {
      * @param {String} color (optional) The highlight color. Should be a 6 char hex color without the leading # (defaults to yellow: 'ffff9c')
      * @param {Object} options (optional) Object literal with any of the Fx config options
      * @return {Ext.Element} The Element
-     */ 
+     */
     highlight : function(color, o){
         o = getObject(o);
         var me = this,
@@ -528,14 +528,14 @@ el.highlight("ffff9c", {
             function after(){
                 dom.style[attr] = restore;
                 fly(dom).afterFx(o);
-            }            
+            }
             restore = dom.style[attr];
             a[attr] = {from: color || "ffff9c", to: o.endColor || fly(dom).getColor(attr) || "ffffff"};
             arguments.callee.anim = fly(dom).fxanim(a,
                 o,
                 'color',
                 1,
-                'easeIn', 
+                'easeIn',
                 after);
         });
         return me;
@@ -573,7 +573,7 @@ el.frame("C3DAF9", 1, {
             color = color || '#C3DAF9';
             if(color.length == 6){
                 color = '#' + color;
-            }            
+            }
             count = count || 1;
             fly(dom).show();
 
@@ -589,8 +589,8 @@ el.frame("C3DAF9", 1, {
                     });
                     return proxy.queueFx({}, animFn);
                 };
-            
-            
+
+
             arguments.callee.anim = {
                 isAnimated: true,
                 stop: function() {
@@ -598,7 +598,7 @@ el.frame("C3DAF9", 1, {
                     proxy.stopFx();
                 }
             };
-            
+
             function animFn(){
                 var scale = Ext.isBorderBox ? 2 : 1;
                 active = proxy.anim({
@@ -637,7 +637,7 @@ el.pause(1);
     * @param {Number} seconds The length of time to pause (in seconds)
     * @return {Ext.Element} The Element
     */
-    pause : function(seconds){        
+    pause : function(seconds){
         var dom = this.dom,
             t;
 
@@ -682,7 +682,7 @@ el.fadeIn({
         var me = this,
             dom = me.dom,
             to = o.endOpacity || 1;
-        
+
         me.queueFx(o, function(){
             fly(dom).setOpacity(0);
             fly(dom).fixDisplay();
@@ -727,21 +727,21 @@ el.fadeOut({
         var me = this,
             dom = me.dom,
             style = dom.style,
-            to = o.endOpacity || 0;         
-        
-        me.queueFx(o, function(){  
-            arguments.callee.anim = fly(dom).fxanim({ 
+            to = o.endOpacity || 0;
+
+        me.queueFx(o, function(){
+            arguments.callee.anim = fly(dom).fxanim({
                 opacity : {to : to}},
-                o, 
-                NULL, 
-                .5, 
-                EASEOUT, 
+                o,
+                NULL,
+                .5,
+                EASEOUT,
                 function(){
                     if(to == 0){
-                        Ext.Element.data(dom, 'visibilityMode') == Ext.Element.DISPLAY || o.useDisplay ? 
+                        Ext.Element.data(dom, 'visibilityMode') == Ext.Element.DISPLAY || o.useDisplay ?
                             style.display = "none" :
                             style.visibility = HIDDEN;
-                            
+
                         fly(dom).clearOpacity();
                     }
                     fly(dom).afterFx(o);
@@ -783,7 +783,7 @@ el.scale(
 
    /**
     * Animates the transition of any combination of an element's dimensions, xy position and/or opacity.
-    * Any of these properties not specified in the config object will not be changed.  This effect 
+    * Any of these properties not specified in the config object will not be changed.  This effect
     * requires that at least one new dimension, position or opacity setting must be passed in on
     * the config object in order for the function to have any effect.
     * Usage:
@@ -809,28 +809,28 @@ el.shift({
         o = getObject(o);
         var dom = this.dom,
             a = {};
-                
+
         this.queueFx(o, function(){
             for (var prop in o) {
-                if (o[prop] != UNDEFINED) {                                                 
-                    a[prop] = {to : o[prop]};                   
+                if (o[prop] != UNDEFINED) {
+                    a[prop] = {to : o[prop]};
                 }
-            } 
-            
+            }
+
             a.width ? a.width.to = fly(dom).adjustWidth(o.width) : a;
-            a.height ? a.height.to = fly(dom).adjustWidth(o.height) : a;   
-            
+            a.height ? a.height.to = fly(dom).adjustWidth(o.height) : a;
+
             if (a.x || a.y || a.xy) {
-                a.points = a.xy || 
+                a.points = a.xy ||
                            {to : [ a.x ? a.x.to : fly(dom).getX(),
-                                   a.y ? a.y.to : fly(dom).getY()]};                  
+                                   a.y ? a.y.to : fly(dom).getY()]};
             }
 
             arguments.callee.anim = fly(dom).fxanim(a,
-                o, 
-                MOTION, 
-                .35, 
-                EASEOUT, 
+                o,
+                MOTION,
+                .35,
+                EASEOUT,
                 function(){
                     fly(dom).afterFx(o);
                 });
@@ -839,7 +839,7 @@ el.shift({
     },
 
     /**
-     * Slides the element while fading it out of view.  An anchor point can be optionally passed to set the 
+     * Slides the element while fading it out of view.  An anchor point can be optionally passed to set the
      * ending point of the effect.
      * Usage:
      *<pre><code>
@@ -871,7 +871,7 @@ el.ghost('b', {
             r,
             w,
             h;
-            
+
         anchor = anchor || "b";
 
         me.queueFx(o, function(){
@@ -879,16 +879,16 @@ el.ghost('b', {
             r = fly(dom).getFxRestore();
             w = fly(dom).getWidth();
             h = fly(dom).getHeight();
-            
+
             function after(){
-                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();   
+                o.useDisplay ? fly(dom).setDisplayed(FALSE) : fly(dom).hide();
                 fly(dom).clearOpacity();
                 fly(dom).setPositioning(r.pos);
                 st.width = r.width;
                 st.height = r.height;
                 fly(dom).afterFx(o);
             }
-                
+
             pt.by = fly(dom).switchStatements(anchor.toLowerCase(), function(v1,v2){ return [v1, v2];}, {
                t  : [0, -h],
                l  : [-w, 0],
@@ -897,9 +897,9 @@ el.ghost('b', {
                tl : [-w, -h],
                bl : [-w, h],
                br : [w, h],
-               tr : [w, -h] 
+               tr : [w, -h]
             });
-                
+
             arguments.callee.anim = fly(dom).fxanim(a,
                 o,
                 MOTION,
@@ -940,7 +940,7 @@ el.ghost('b', {
     },
 
     /* @private */
-    nextFx : function(){        
+    nextFx : function(){
         var ef = getQueue(this.dom.id)[0];
         if(ef){
             ef.call(this);
@@ -1021,11 +1021,11 @@ el.ghost('b', {
     },
 
     /* @private */
-    fxWrap : function(pos, o, vis){ 
+    fxWrap : function(pos, o, vis){
         var dom = this.dom,
             wrap,
             wrapXY;
-        if(!o.wrap || !(wrap = Ext.getDom(o.wrap))){            
+        if(!o.wrap || !(wrap = Ext.getDom(o.wrap))){
             if(o.fixPosition){
                 wrapXY = fly(dom).getXY();
             }
@@ -1047,13 +1047,13 @@ el.ghost('b', {
     },
 
     /* @private */
-    fxUnwrap : function(wrap, pos, o){      
+    fxUnwrap : function(wrap, pos, o){
         var dom = this.dom;
         fly(dom).clearPositioning();
         fly(dom).setPositioning(pos);
         if(!o.wrap){
             var pn = fly(wrap).dom.parentNode;
-            pn.insertBefore(dom, wrap); 
+            pn.insertBefore(dom, wrap);
             fly(wrap).remove();
         }
     },
@@ -1069,7 +1069,7 @@ el.ghost('b', {
         var dom = this.dom,
             id = dom.id;
         if(o.afterStyle){
-            fly(dom).setStyle(o.afterStyle);            
+            fly(dom).setStyle(o.afterStyle);
         }
         if(o.afterCls){
             fly(dom).addClass(o.afterCls);
@@ -1091,11 +1091,11 @@ el.ghost('b', {
         animType = animType || 'run';
         opt = opt || {};
         var anim = Ext.lib.Anim[animType](
-                this.dom, 
+                this.dom,
                 args,
                 (opt.duration || defaultDur) || .35,
                 (opt.easing || defaultEase) || EASEOUT,
-                cb,            
+                cb,
                 this
             );
         opt.anim = anim;

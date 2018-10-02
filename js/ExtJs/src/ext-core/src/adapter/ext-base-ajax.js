@@ -164,7 +164,7 @@ Ext.lib.Ajax = function() {
         releaseObject(o);
         responseObject = null;
     }
-    
+
     function checkResponse(o, callback, conn, tId, poll, cbTimeout){
         if (conn && conn.readyState == 4) {
             clearInterval(poll[tId]);
@@ -177,11 +177,11 @@ Ext.lib.Ajax = function() {
             handleTransactionResponse(o, callback);
         }
     }
-    
+
     function checkTimeout(o, callback){
         pub.abort(o, callback, true);
     }
-    
+
 
     // private
     function handleReadyState(o, callback){
@@ -277,18 +277,18 @@ Ext.lib.Ajax = function() {
         },
 
         serializeForm : function(form) {
-            var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
-                hasSubmit = false, 
-                encoder = encodeURIComponent, 
-                name, 
-                data = '', 
-                type, 
+            var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements,
+                hasSubmit = false,
+                encoder = encodeURIComponent,
+                name,
+                data = '',
+                type,
                 hasValue;
-    
+
             Ext.each(fElements, function(element){
                 name = element.name;
                 type = element.type;
-        
+
                 if (!element.disabled && name) {
                     if (/select-(one|multiple)/i.test(type)) {
                         Ext.each(element.options, function(opt){

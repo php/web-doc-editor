@@ -8,7 +8,7 @@
  * Simplified Chinese translation
  * By DavidHu
  * 09 April 2007
- * 
+ *
  * update by andy_ghg
  * 2009-10-22 15:00:57
  */

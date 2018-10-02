@@ -226,7 +226,7 @@ Ext.util.Format = function() {
          */
         math : function(){
             var fns = {};
-            
+
             return function(v, a){
                 if (!fns[a]) {
                     fns[a] = new Function('v', 'return v ' + a + ';');
@@ -304,9 +304,9 @@ Ext.util.Format = function() {
             psplit = fnum.split('.');
 
             if (hasComma) {
-                var cnum = psplit[0], 
-                    parr = [], 
-                    j    = cnum.length, 
+                var cnum = psplit[0],
+                    parr = [],
+                    j    = cnum.length,
                     m    = Math.floor(j / 3),
                     n    = cnum.length % 3 || 3,
                     i;
@@ -315,7 +315,7 @@ Ext.util.Format = function() {
                     if (i != 0) {
                         n = 3;
                     }
-                    
+
                     parr[parr.length] = cnum.substr(i, n);
                     m -= 1;
                 }

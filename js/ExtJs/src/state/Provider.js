@@ -11,7 +11,7 @@
  * Provider interface.
  */
 Ext.state.Provider = Ext.extend(Ext.util.Observable, {
-    
+
     constructor : function(){
         /**
          * @event statechange
@@ -24,7 +24,7 @@ Ext.state.Provider = Ext.extend(Ext.util.Observable, {
         this.state = {};
         Ext.state.Provider.superclass.constructor.call(this);
     },
-    
+
     /**
      * Returns the current value for a key
      * @param {String} name The key name
@@ -124,7 +124,7 @@ Ext.state.Provider = Ext.extend(Ext.util.Observable, {
             len,
             key;
         if(v == null){
-            return 'e:1';    
+            return 'e:1';
         }else if(typeof v == 'number'){
             enc = 'n:' + v;
         }else if(typeof v == 'boolean'){

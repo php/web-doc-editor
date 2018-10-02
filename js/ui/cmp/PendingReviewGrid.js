@@ -46,13 +46,13 @@ ui.cmp._PendingReviewGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, m, r){
         var mess = '', infoLang, userToCompare;
-            
+
         userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-        
+
         if (r.data.fileModified) {
-        
+
             infoLang = Ext.util.JSON.decode(r.data.fileModified);
-            
+
             if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
@@ -60,7 +60,7 @@ ui.cmp._PendingReviewGrid.columns = [{
                 mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
-        
+
         if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
@@ -97,11 +97,11 @@ ui.cmp._PendingReviewGrid.view = new Ext.grid.GroupingView({
     '"]})',
     getRowClass: function(r){
         if (r.data.fileModified) {
-        
+
             var infoLang = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
-            
+
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-            
+
             return ((infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
@@ -121,7 +121,7 @@ ui.cmp._PendingReviewGrid.menu.group = function(config){
 Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
     iconCls: 'iconViewDiff',
     init: function(){
-        
+
         Ext.apply(this, {
             text: String.format(_('Open all files about {0} extension'), this.gname.ucFirst()),
             handler: function(){
@@ -130,7 +130,7 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
                 String.format(_('Open all files about {0} extension'), this.gname.ucFirst()) +
                 '. ' +
                 _('Please, wait...'));
-                
+
                 XHR({
                     params: {
                         task: 'getAllFilesAboutExtension',
@@ -138,21 +138,21 @@ Ext.extend(ui.cmp._PendingReviewGrid.menu.group, Ext.menu.Item, {
                     },
                     success: function(r){
                         var o = Ext.util.JSON.decode(r.responseText), i;
-                        
+
                         PhDOE.AFfilePendingOpen = [];
-                        
+
                         for (i = 0; i < o.files.length; i = i + 1) {
                             PhDOE.AFfilePendingOpen[i] = {
                                 fpath: PhDOE.user.lang + o.files[i].path,
                                 fname: o.files[i].name
                             };
                         }
-                        
+
                         // Start the first
                         ui.cmp.RepositoryTree.getInstance().openFile('byPath', PhDOE.AFfilePendingOpen[0].fpath, PhDOE.AFfilePendingOpen[0].fname);
-                        
+
                         PhDOE.AFfilePendingOpen.shift();
-                        
+
                         Ext.getBody().unmask();
                     }
                 });
@@ -211,14 +211,14 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
     ddGroup: 'mainPanelDDGroup',
     columns: ui.cmp._PendingReviewGrid.columns,
     view: ui.cmp._PendingReviewGrid.view,
-    
+
     onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-        
+
         var storeRecord = grid.store.getAt(rowIndex), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, fpath_split = FilePath.split('/');
-        
+
         grid.getSelectionModel().selectRow(rowIndex);
-        
+
         new ui.cmp._PendingReviewGrid.menu.main({
             grid: grid,
             rowIdx: rowIndex,
@@ -230,17 +230,17 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
             gname: (fpath_split[2]) ? fpath_split[2] : ''
         }).showAt(e.getXY());
     },
-    
+
     onRowDblClick: function(grid, rowIndex, e){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-    
+
     openFile: function(rowId){
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FNR-' + PhDOE.user.lang + FilePath + FileName);
-        
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FNR-' + FileID)) {
-        
+
             Ext.getCmp('main-panel').add({
                 id: 'FNR-' + FileID,
                 title: FileName,
@@ -376,7 +376,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
         }
         Ext.getCmp('main-panel').setActiveTab('FNR-' + FileID);
     },
-    
+
     initComponent: function(){
         Ext.apply(this, {
             store: ui.cmp._PendingReviewGrid.store,
@@ -404,7 +404,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 onTrigger2Click: function(){
                     var v = this.getValue(), regexp;
-                    
+
                     if (v === '' || v.length < 3) {
                         this.markInvalid(_('Your filter must contain at least 3 characters'));
                         return;
@@ -412,12 +412,12 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
                     this.clearInvalid();
                     this.triggers[0].show();
                     this.setSize(180, 10);
-                    
+
                     regexp = new RegExp(v, 'i');
-                    
+
                     // We filter on 'path', 'name', 'reviewed', 'maintainer'
                     ui.cmp._PendingReviewGrid.instance.store.filterBy(function(record){
-                    
+
                         if (regexp.test(record.data.path) ||
                         regexp.test(record.data.name) ||
                         regexp.test(record.data.reviewed) ||
@@ -432,7 +432,7 @@ ui.cmp.PendingReviewGrid = Ext.extend(Ext.grid.GridPanel, {
             })]
         });
         ui.cmp.PendingReviewGrid.superclass.initComponent.call(this);
-        
+
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick', this.onRowDblClick, this);
     }

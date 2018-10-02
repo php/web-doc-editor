@@ -87,7 +87,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
                     user);
 
         break;
-        
+
         case 'computeUsageStatistics' :
             return _('Usage statistics were calculated');
         break;
@@ -106,7 +106,7 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             lang = record.data.value.lang;
             authService = record.data.value.authService;
             img = '';
-            
+
             if( authService == 'google' ) {
                 img = '<img src="themes/img/auth_google.png" style="vertical-align: middle;"> ';
             } else if( authService == 'facebook' ) {
@@ -122,14 +122,14 @@ ui.cmp._PortletInfo.typeRenderer = function(value, md, record)
             } else if( authService == 'twitter' ) {
                 img = '<img src="themes/img/auth_twitter.png" style="vertical-align: middle;"> ';
             }
-            
+
             return img + String.format(
                     _('{0} is logged in using the {1} language'),
                     user,
                     lang.ucFirst());
 
         break;
-        
+
         // Commit
         case 'commitFolders' :
             user      = record.data.value.user;
@@ -181,14 +181,14 @@ ui.cmp._PortletInfo.gridColumns = [
         sortable  : false,
         dataIndex : 'elapsedTime',
         renderer  : function(v, m, r) {
-            
+
             if( !v ) {
                 v = _('Less than one second');
             } else {
                 v = String.format(_('{0} ' + v.units), v.value);
             }
             return "<span ext:qtip='" + r.data.date.format(_('Y-m-d, H:i')) + "'>" + v + "</span>";
-            
+
         }
     },{
         header    : _('Date'),
@@ -226,7 +226,7 @@ ui.cmp._PortletInfo.grid = Ext.extend(Ext.grid.GridPanel,
                 displayInfo: true
             })
         });
-        
+
         ui.cmp._PortletInfo.grid.superclass.initComponent.call(this);
     }
 });
@@ -286,14 +286,14 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
         ui.cmp.PortletInfo.superclass.initComponent.apply(this);
 
         this.Year = parseInt(new Date().format('Y'));
-        
+
         this.buildButton = function(from)
         {
             var yearForward = (this.Year + 1), yearBackward = (this.Year - 1),
                 btnForward = this.items.items[0].items.items[1].toolbars[0].items.items[2],
                 btnBackward = this.items.items[0].items.items[1].toolbars[0].items.items[0],
                 chart = this.items.items[0].items.items[1].items.items[0];
-            
+
             // On passe à l'année suivante / précédente
             if( from == 'Backward' ) {
                 ui.cmp._PortletInfo.storeUsage.setBaseParam('year', yearBackward);
@@ -302,28 +302,28 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
                 ui.cmp._PortletInfo.storeUsage.setBaseParam('year', yearForward);
                 this.Year = yearForward;
             }
-            
+
             ui.cmp._PortletInfo.storeUsage.load();
-            
+
             btnForward.setText(this.Year+1);
             btnBackward.setText(this.Year-1);
-            
+
             // Futur statistics don't exist !
             if( this.Year+1 > new Date().format('Y')) {
                 btnForward.disable();
             } else {
                 btnForward.enable();
             }
-            
+
             // Statistics before 2010 don't exist !
             if( this.Year-1 < 2010 ) {
                 btnBackward.disable();
             } else {
                 btnBackward.enable();
             }
-            
+
         };
-        
+
         this.add({
             xtype:'tabpanel',
             border: false,
@@ -411,15 +411,15 @@ ui.cmp.PortletInfo = Ext.extend(Ext.ux.Portlet,
                             }
                         },
                         tipRenderer: function(chart, record, index, series) {
-                            
+
                             if (series.yField == 'nbConTotal') {
                                 return _('Month:') + ' '+ Date.monthNames[record.data.month-1] + "\r" + _('Nb. connexion:') + ' ' + record.data.nbConTotal;
                             }
-                            
+
                             if (series.yField == 'nbCommitTotal') {
                                 return _('Month:') + ' '+ Date.monthNames[record.data.month-1] + "\r" + _('Nb. commit:') + ' ' + record.data.nbCommitTotal;
                             }
-                            
+
                         }
                     }]
                 }

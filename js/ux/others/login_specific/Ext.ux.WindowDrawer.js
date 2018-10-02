@@ -18,7 +18,7 @@ Ext.override(Ext.Window.DD, {
     startDrag : function()
     {
         var w = this.win, so, s;
-        
+
         w.fireEvent('ghost', []);
         this.proxy = w.ghost();
         if (w.constrain !== false) {

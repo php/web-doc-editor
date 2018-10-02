@@ -53,7 +53,7 @@ Ext.CycleButton = Ext.extend(Ext.SplitButton, {
      */
     /**
      * @cfg {String} forceIcon A css class which sets an image to be used as the static icon for this button.  This
-     * icon will always be displayed regardless of which item is selected in the dropdown list.  This overrides the 
+     * icon will always be displayed regardless of which item is selected in the dropdown list.  This overrides the
      * default behavior of changing the button's icon to match the selected item's icon on change.
      */
     /**
@@ -176,7 +176,7 @@ Ext.CycleButton = Ext.extend(Ext.SplitButton, {
         if(!m.hasLayout){
             m.doLayout();
         }
-        
+
         var nextIdx, checkItem;
         for (var i = 1; i < this.itemCount; i++) {
             nextIdx = (this.activeItem.itemIndex + i) % this.itemCount;

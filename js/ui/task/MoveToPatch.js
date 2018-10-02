@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.task');
 ui.task.MoveToPatch = function(config)
 {
         Ext.apply(this, config);
-        
+
         var filesID=[];
 
         Ext.each(this.nodesToAdd, function(node) {
@@ -26,7 +26,7 @@ ui.task.MoveToPatch = function(config)
             success : function()
             {
                 Ext.getBody().unmask();
-                
+
                 // We add this new patch, and nodesToAdd into Patches for review component
                 ui.cmp.PatchesTreeGrid.getInstance().addToPatch(this.patchID, this.patchName, this.nodesToAdd, this.patchDescription, this.patchEmail);
 

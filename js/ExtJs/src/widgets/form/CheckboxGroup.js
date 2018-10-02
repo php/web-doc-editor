@@ -236,7 +236,7 @@ Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
         });
         this.fireEvent('change', this, arr);
     },
-    
+
     /**
      * Runs CheckboxGroup's validations and returns an array of any errors. The only error by default
      * is if allowBlank is set to true and no items are checked.
@@ -244,19 +244,19 @@ Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
      */
     getErrors: function() {
         var errors = Ext.form.CheckboxGroup.superclass.getErrors.apply(this, arguments);
-        
+
         if (!this.allowBlank) {
             var blank = true;
-            
+
             this.eachItem(function(f){
                 if (f.checked) {
                     return (blank = false);
                 }
             });
-            
+
             if (blank) errors.push(this.blankText);
         }
-        
+
         return errors;
     },
 
@@ -268,14 +268,14 @@ Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
         }
 
         var dirty = false;
-        
+
         this.eachItem(function(item){
             if(item.isDirty()){
                 dirty = true;
                 return false;
             }
         });
-        
+
         return dirty;
     },
 

@@ -17,17 +17,17 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
      * which must always be present at the rightmost edge of the Container
      */
     afterCls: 'x-strip-right',
-    
+
     /**
      * @property noItemsMenuText
      * @type String
      * HTML fragment to render into the toolbar overflow menu if there are no items to display
      */
     noItemsMenuText : '<div class="x-toolbar-no-items">(None)</div>',
-    
+
     constructor: function(layout) {
         Ext.layout.boxOverflow.Menu.superclass.constructor.apply(this, arguments);
-        
+
         /**
          * @property menuItems
          * @type Array
@@ -35,7 +35,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
          */
         this.menuItems = [];
     },
-    
+
     /**
      * @private
      * Creates the beforeCt, innerCt and afterCt elements if they have not already been created
@@ -47,20 +47,20 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             this.afterCt  = this.layout.innerCt.insertSibling({cls: this.afterCls},  'before');
         }
     },
-    
+
     /**
      * @private
      */
     clearOverflow: function(calculations, targetSize) {
         var newWidth = targetSize.width + (this.afterCt ? this.afterCt.getWidth() : 0),
             items    = this.menuItems;
-        
+
         this.hideTrigger();
-        
+
         for (var index = 0, length = items.length; index < length; index++) {
             items.pop().component.show();
         }
-        
+
         return {
             targetSize: {
                 height: targetSize.height,
@@ -68,7 +68,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             }
         };
     },
-    
+
     /**
      * @private
      */
@@ -76,7 +76,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
         this.createMenu();
         this.menuTrigger.show();
     },
-    
+
     /**
      * @private
      */
@@ -85,7 +85,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             this.menuTrigger.hide();
         }
     },
-    
+
     /**
      * @private
      * Called before the overflow menu is shown. This constructs the menu's items, caching them for as long as it can.
@@ -99,17 +99,17 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
         var needsSep = function(group, item){
             return group.isXType('buttongroup') && !(item instanceof Ext.Toolbar.Separator);
         };
-        
+
         this.clearMenu();
         menu.removeAll();
-        
+
         for (var i = 0; i < len; i++) {
             item = items[i].component;
-            
+
             if (prev && (needsSep(item, prev) || needsSep(prev, item))) {
                 menu.add('-');
             }
-            
+
             this.addComponentToMenu(menu, item);
             prev = item;
         }
@@ -119,7 +119,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             menu.add(this.noItemsMenuText);
         }
     },
-    
+
     /**
      * @private
      * Returns a menu config for a given component. This config is used to create a menu item
@@ -183,7 +183,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             }
         }
     },
-    
+
     /**
      * @private
      * Deletes the sub-menu of each item in the expander menu. Submenus are created for items such as
@@ -197,7 +197,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             });
         }
     },
-    
+
     /**
      * @private
      * Creates the overflow trigger and menu used when enableOverflow is set to true and the items
@@ -206,7 +206,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
     createMenu: function() {
         if (!this.menuTrigger) {
             this.createInnerElements();
-            
+
             /**
              * @private
              * @property menu
@@ -236,7 +236,7 @@ Ext.layout.boxOverflow.Menu = Ext.extend(Ext.layout.boxOverflow.None, {
             });
         }
     },
-    
+
     /**
      * @private
      */
@@ -254,58 +254,58 @@ Ext.layout.boxOverflow.menu = Ext.layout.boxOverflow.Menu;
  * Description
  */
 Ext.layout.boxOverflow.HorizontalMenu = Ext.extend(Ext.layout.boxOverflow.Menu, {
-    
+
     constructor: function() {
         Ext.layout.boxOverflow.HorizontalMenu.superclass.constructor.apply(this, arguments);
-        
+
         var me = this,
             layout = me.layout,
             origFunction = layout.calculateChildBoxes;
-        
+
         layout.calculateChildBoxes = function(visibleItems, targetSize) {
             var calcs = origFunction.apply(layout, arguments),
                 meta  = calcs.meta,
                 items = me.menuItems;
-            
+
             //calculate the width of the items currently hidden solely because there is not enough space
             //to display them
             var hiddenWidth = 0;
             for (var index = 0, length = items.length; index < length; index++) {
                 hiddenWidth += items[index].width;
             }
-            
+
             meta.minimumWidth += hiddenWidth;
             meta.tooNarrow = meta.minimumWidth > targetSize.width;
-            
+
             return calcs;
-        };        
+        };
     },
-    
+
     handleOverflow: function(calculations, targetSize) {
         this.showTrigger();
-        
+
         var newWidth    = targetSize.width - this.afterCt.getWidth(),
             boxes       = calculations.boxes,
             usedWidth   = 0,
             recalculate = false;
-        
+
         //calculate the width of all visible items and any spare width
         for (var index = 0, length = boxes.length; index < length; index++) {
             usedWidth += boxes[index].width;
         }
-        
+
         var spareWidth = newWidth - usedWidth,
             showCount  = 0;
-        
+
         //see if we can re-show any of the hidden components
         for (var index = 0, length = this.menuItems.length; index < length; index++) {
             var hidden = this.menuItems[index],
                 comp   = hidden.component,
                 width  = hidden.width;
-            
+
             if (width < spareWidth) {
                 comp.show();
-                
+
                 spareWidth -= width;
                 showCount ++;
                 recalculate = true;
@@ -313,7 +313,7 @@ Ext.layout.boxOverflow.HorizontalMenu = Ext.extend(Ext.layout.boxOverflow.Menu, 
                 break;
             }
         }
-                
+
         if (recalculate) {
             this.menuItems = this.menuItems.slice(showCount);
         } else {
@@ -333,11 +333,11 @@ Ext.layout.boxOverflow.HorizontalMenu = Ext.extend(Ext.layout.boxOverflow.Menu, 
                 }
             }
         }
-        
+
         if (this.menuItems.length == 0) {
             this.hideTrigger();
         }
-        
+
         return {
             targetSize: {
                 height: targetSize.height,

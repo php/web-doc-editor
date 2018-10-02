@@ -68,13 +68,13 @@ Ext.form.DateField = Ext.extend(Ext.form.TriggerField,  {
      * the keyboard handler for spacebar that selects the current date (defaults to <tt>true</tt>).
      */
     showToday : true,
-    
+
     /**
      * @cfg {Number} startDay
      * Day index at which the week should begin, 0-based (defaults to 0, which is Sunday)
      */
     startDay : 0,
-    
+
     /**
      * @cfg {Date/String} minValue
      * The minimum allowed date. Can be either a Javascript date object or a string date in a

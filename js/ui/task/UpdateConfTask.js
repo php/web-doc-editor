@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.task');
 ui.task.UpdateConfTask = function(config)
 {
     Ext.apply(this, config);
-    
+
     // Apply modification in DB
     XHR({
         scope   : this,
@@ -18,7 +18,7 @@ ui.task.UpdateConfTask = function(config)
         {
             // Update userConf object
             PhDOE.user.conf[this.module][this.itemName] = this.value;
-            
+
             // If we touch this config option, we need to reload this store too
             if( this.module == "newFile" &&  this.itemName == "nbDisplay" ) {
                 ui.cmp.PendingTranslateGrid.getInstance().store.reload();
@@ -32,13 +32,13 @@ ui.task.UpdateConfTask = function(config)
             if( this.module == "reviewed" &&  this.itemName == "nbDisplay" ) {
                 ui.cmp.PendingReviewGrid.getInstance().store.reload();
             }
-            
+
             if( this.module == "main" &&  this.itemName == "displayENWork" ) {
                 ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload(function() {
                     ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
                 });
             }
-            
+
             // Notify
             if( this.notify !== false ) {
                 PhDOE.notify('info', _('Option saved'), _('Option has been saved successfully !'));

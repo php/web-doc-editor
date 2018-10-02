@@ -96,28 +96,28 @@ function XHR(config)
 
 Ext.override(Ext.form.Field, {
 
-    afterRender: function() {  
-     
+    afterRender: function() {
+
         var findLabel = function(field) {
             var wrapDiv = null;
             var label = null
 
             //find form-item and label
             wrapDiv = field.getEl().up("div.x-form-item");
-            
+
             if (wrapDiv) label = wrapDiv.child("label");
             if (label) return label;
         };
 
         if (this.tooltipText) {
             var label = findLabel(this);
-            
-            if (label) {                       
-                        
+
+            if (label) {
+
                 label.addClass(this.tooltipClass || "x-textfield-tooltip");
-                           
+
                 new Ext.ToolTip({
-                    target:  label,                   
+                    target:  label,
                     html: this.tooltipText,
                     //enabled: true,
                     trackMouse:true
@@ -125,12 +125,12 @@ Ext.override(Ext.form.Field, {
                 });
             }
         }
-        
-        Ext.form.Field.superclass.afterRender.call(this);    
-        this.initEvents();  
+
+        Ext.form.Field.superclass.afterRender.call(this);
+        this.initEvents();
         this.initValue();
     }
-      
+
 });// create namespace for plugins
 Ext.namespace('Ext.ux.plugins');
 
@@ -147,7 +147,7 @@ Ext.namespace('Ext.ux.plugins');
 Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
     initComponent : function()
     {
- 
+
         Ext.apply(this, {
             tpl:  '<tpl for=".">'
                 + '<div class="x-combo-list-item ux-icon-combo-item">'
@@ -155,28 +155,28 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
                 + '<div class="ux-icon-combo-value">{' + this.displayField + '}</div>'
                 + '</div></tpl>'
         });
- 
+
         // call parent initComponent
         Ext.ux.IconCombo.superclass.initComponent.call(this);
- 
+
     }, // end of function initComponent
- 
+
     onRender:function(ct, position)
     {
         // call parent onRender
         Ext.ux.IconCombo.superclass.onRender.call(this, ct, position);
- 
+
         // adjust styles
         this.wrap.applyStyles({position:'relative'});
         this.el.addClass('ux-icon-combo-input');
- 
+
         // add div for icon
         this.icon = Ext.DomHelper.append(this.el.up('div.x-form-field-wrap'), {
             tag: 'div', style:'position:absolute'
         });
 
     }, // end of function onRender
- 
+
     setIconCls : function()
     {
         var rec = this.store.query(this.valueField, this.getValue()).itemAt(0);
@@ -184,14 +184,14 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
             this.icon.className = rec.get(this.iconClsField);
         }
     }, // end of function setIconCls
- 
+
     setValue : function(value)
     {
         Ext.ux.IconCombo.superclass.setValue.call(this, value);
         this.setIconCls();
     } // end of function setValue
 });
- 
+
 // register xtype
 Ext.reg('iconcombo', Ext.ux.IconCombo);/*
  Author       : Jay Garcia
@@ -213,7 +213,7 @@ Ext.override(Ext.Window.DD, {
     startDrag : function()
     {
         var w = this.win, so, s;
-        
+
         w.fireEvent('ghost', []);
         this.proxy = w.ghost();
         if (w.constrain !== false) {
@@ -585,20 +585,20 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
         },
 
         externalCredentials : function(service, name, id, email) {
-        
+
             this.authService = service;
             this.authServiceID = id;
-            
+
             // Name is always given
             Ext.getCmp('login-form-vcsLogin').setValue(name);
             Ext.getCmp('login-form-vcsLogin').disable();
             Ext.getCmp('login-form-vcsPasswd').disable();
             Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_'+service+'.png" style="vertical-align: middle" /> <b>' + service.ucFirst() +'</b>', false);
-            
+
             if( email ) {
                 Ext.getCmp('login-form-email').setValue(email);
             }
-            
+
             Ext.getCmp('login-btn').setText('Anonymous login');
         },
 
@@ -623,13 +623,13 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                             win.drawers.e.setHeight(240);
                         },
                         afterrender: function(w) {
-                            
+
                             if( auth && auth.service ) {
-                                
+
                                 PhDOE_loginPage.externalCredentials(auth.service, auth.login, auth.serviceID, auth.email);
-                                
+
                             }
-                            
+
                         }
                     },
                     plugins     : [
@@ -676,9 +676,9 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                         '</div>',
                             listeners: {
                                     afterrender: function() {
-                                        
+
                                         if( auth.service ) {
-                                        
+
                                             switch(auth.service) {
                                                 case "facebook" :
                                                     Ext.get('auth-img-fb').addClass('oauth-enable');
@@ -744,7 +744,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                                     Ext.get('auth-img-twitter').addClass('oauth-enable');
                                                     break;
                                             }
-                                        
+
                                         } else {
                                             Ext.get('auth-img-fb').addClass('oauth-disable');
                                             Ext.get('auth-img-github').addClass('oauth-disable');
@@ -803,11 +803,11 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                         c.setValue(directAccess.project);
                                         c.collapse();
                                         c.disable();
-                                        
+
                                         // Get the URI for svn account request
                                         var url = c.store.getById(directAccess.project.toLowerCase()).data.request_account_uri;
                                         Ext.get("request-account").dom.innerHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                                        
+
                                     } else {
                                         c.setValue('php');
 
@@ -983,7 +983,7 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                                             project : Ext.getCmp('login-form-project').getValue(),
                                             authService: PhDOE_loginPage.authService,
                                             authServiceID: PhDOE_loginPage.authServiceID
-                                            
+
                                         },
                                         waitTitle : 'Connecting',
                                         waitMsg   : 'Sending data...',
@@ -1017,52 +1017,52 @@ Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = funct
                         scope: this,
                         text: 'Reset',
                         handler: function() {
-                        
+
                             Ext.getCmp('login-form-vcsLogin').enable();
-                            
+
                             Ext.getCmp('login-form-vcsPasswd').enable();
                             Ext.getCmp('login-form-vcsPasswd').setValue('');
                             Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_php.png" style="vertical-align: middle" /> <b>Php.net</b>', false);
-                            
+
                             this.authService = 'VCS';
                             this.authServiceID = '';
-                            
+
                             if( loginApp ) {
                                 Ext.getCmp('login-form-vcsLogin').setValue(loginApp);
                                 Ext.getCmp('login-btn').setText('Login');
                                 Ext.getCmp('login-form-email').setValue(Ext.util.Cookies.get("email"));
-                                
+
                             } else {
                                 Ext.getCmp('login-form-vcsLogin').setValue('anonymous');
                                 Ext.getCmp('login-btn').setText('Anonymous login');
                                 Ext.getCmp('login-form-email').setValue('');
                             }
-                            
+
                         }
                     }]
                 });
             }
 
             win.show();
-            
+
             //
 
             // Remove the global loading message
             Ext.get('loading').remove();
             Ext.fly('loading-mask').fadeOut({ remove : true });
-            
+
             // We load flickR
             this.storeFlickr.load({
-                
+
                 callback: function() {
-                    
+
                     // We put the elephpants !
                     Ext.each(this.data.items, function(item) {
-                        
+
                         Ext.DomHelper.append('elephpants-images', {
                             tag: 'a',
-                            href: item.data.link, 
-                            html: '<img src="'+ item.data.img +'" />', 
+                            href: item.data.link,
+                            html: '<img src="'+ item.data.img +'" />',
                             target: '_blank'
                         });
                     });

@@ -13,16 +13,16 @@ ui.cmp._PatchesTreeGrid.menu.users = function(config){
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.users, Ext.menu.Menu, {
     init: function(){
         var allFiles = [];
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
                 allFiles.push(node);
             }
         }, this);
-        
+
         Ext.apply(this, {
-        
+
             items: [{
                 scope: this,
                 text: String.format(_('Send an email to {0}'), "<b>" + this.node.attributes.task + "</b>"),
@@ -30,7 +30,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.users, Ext.menu.Menu, {
                 hidden: (this.node.attributes.task === PhDOE.user.login || !this.node.attributes.email),
                 handler: function(){
                     var win = new ui.cmp.EmailPrompt();
-                    
+
                     win.setData(this.node.attributes.task, this.node.attributes.email);
                     win.show(this.node.el);
                 }
@@ -73,15 +73,15 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
         currentUser = node.parentNode.attributes.task,
         currentUserIsAnonymous = node.parentNode.attributes.isAnonymous,
         currentUserHaveKarma = node.parentNode.attributes.haveKarma;
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
                 allFiles.push(node);
             }
         }, this);
-        
-        
+
+
         Ext.apply(this, {
             items: [{
                 text: _('Edit the description of this patch'),
@@ -145,9 +145,9 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 xtype: 'menuseparator',
                 hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma))
             },
-            
+
             // Commit item only when this patch belong to an anonymous user or user without karma and the current user is a valid VCS user with karma
-            
+
             new ui.cmp._WorkTreeGrid.menu.commit({
                 hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma)),
                 module: 'patches',
@@ -181,19 +181,19 @@ ui.cmp._PatchesTreeGrid.menu.folders = function(config){
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
     init: function(){
         var allFiles = [];
-        
+
         // We don't display all of this menu if the current user isn't the owner
         if (this.node.parentNode.parentNode.attributes.task !== PhDOE.user.login) {
             return false;
         }
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
                 allFiles.push(node);
             }
         }, this);
-        
+
         Ext.apply(this, {
             items: [{
                 text: _('Back all this folder to work in progress module'),
@@ -206,7 +206,7 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
             }, {
                 xtype: 'menuseparator',
                 hidden: !PhDOE.user.haveKarma
-            }, 
+            },
             new ui.cmp._WorkTreeGrid.menu.commit({
                 hidden: !PhDOE.user.haveKarma,
                 module: 'patches',
@@ -240,17 +240,17 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
             owner = this.node.parentNode.parentNode.parentNode.attributes.task,
             ownerHaveKarma = this.node.parentNode.parentNode.parentNode.attributes.haveKarma,
             tmp;
-        
+
         tmp = node.parentNode.attributes.task.split('/');
         FileLang = tmp[0];
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'folder' && node.attributes.type !== 'patch' && node.attributes.type !== 'user') {
                 allFiles.push(node);
             }
         }, this);
-        
+
         Ext.apply(this, {
             items: [{
                 text: '<b>' + ((FileType === 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
@@ -339,58 +339,58 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
 ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     onContextMenu: function(node, e){
         e.stopEvent();
-        
+
         var type = node.attributes.type, contextMenu;
-        
+
         switch (type) {
-        
+
             case "user":
                 node.select();
                 contextMenu = new ui.cmp._PatchesTreeGrid.menu.users({
                     node: node
                 });
                 break;
-                
+
             case "folder":
                 node.select();
                 contextMenu = new ui.cmp._PatchesTreeGrid.menu.folders({
                     node: node
                 });
                 break;
-                
+
             case "patch":
                 node.select();
                 contextMenu = new ui.cmp._PatchesTreeGrid.menu.patches({
                     node: node
                 });
                 break;
-                
+
             default: // Use default for file as the type can be update, delete or new
                 node.select();
                 contextMenu = new ui.cmp._PatchesTreeGrid.menu.files({
                     node: node
                 });
                 break;
-                
+
         }
-        
+
         contextMenu.showAt(e.getXY());
-        
+
     },
-    
+
     modPatchName: function(a)
     {
         var rootNode  = this.getRootNode(),
             patchNode = rootNode.findChild('idDB', a.patchID, true);
-            
+
         patchNode.setText(a.newPatchName);
         patchNode.attributes.patchDescription = a.newPatchDescription;
         patchNode.attributes.patchEmail = a.newPatchEmail;
         patchNode.attributes.task = a.newPatchName;
     },
-    
+
     initComponent: function(){
-    
+
         Ext.apply(this, {
             animate: true,
             //enableDD        : true,
@@ -409,27 +409,27 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 },
                 tpl: new Ext.XTemplate('{task:this.formatUserName}', {
                     formatUserName: function(v, data){
-                        
+
                         if( data.type === 'user' ) {
-                            
+
                             if( data.userID ) {
                                 data.qtip= _('userID: ') + data.userID;
                             }
                             return v;
                         }
-                        
+
                         if( data.type === 'patch' ) {
-                            
+
                             if( data.creationDate ) {
                                 data.qtip= _('Creation date: ') + Date.parseDate(data.creationDate, 'Y-m-d H:i:s').format(_('Y-m-d, H:i'));
                             }
-                            
+
                             return v;
                         }
-                        
+
                         return v;
                     }
-                    
+
                 })
             }, {
                 header: _('Last modified'),
@@ -454,108 +454,108 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 listeners: {
                     beforeload: function() {
                         Ext.getCmp('acc-patches').setIconClass('iconLoading');
-                        
+
                     },
                     load: function() {
                         Ext.getCmp('acc-patches').setIconClass('iconPatch');
                     }
                 }
-            }    
+            }
         });
         ui.cmp.PatchesTreeGrid.superclass.initComponent.call(this);
-        
+
         this.on('contextmenu', this.onContextMenu, this);
         this.on('resize', this.resizeCmp, this);
         this.on('dblclick', ui.cmp.WorkTreeGrid.getInstance().openFile, this);
-        
+
         this.getRootNode().on('beforechildrenrendered', function(){
             this.updateFilesCounter.defer(200, this);
         }, this);
     },
-    
+
     resizeCmp: function(c, a, b, w){
-    
+
         this.columns[0].width = w - (this.columns[1].width + 5);
         this.updateColumnWidths();
     },
-    
+
     deletePatch: function(patchID){
         var rootNode = this.getRootNode(), user, patches, folders, file, nodesToAdd = [], i, j, k, l;
-        
+
         for (i = 0; i < rootNode.childNodes.length; i++) {
             user = rootNode.childNodes[i];
-            
+
             for (j = 0; j < user.childNodes.length; j++) {
                 patches = user.childNodes[j];
-                
+
                 if (patches.attributes.idDB === patchID) {
-                
+
                     // If this patch contains some folders/Files, we get it to put into work in progress module
                     if (!Ext.isEmpty(patches.childNodes)) {
-                    
+
                         for (k = 0; k < patches.childNodes.length; k++) {
                             folders = patches.childNodes[k];
-                            
+
                             for (l = 0; l < folders.childNodes.length; l++) {
                                 file = folders.childNodes[k];
                                 nodesToAdd.push(file);
                             }
                         }
-                        
+
                         // We put this files to work in progress module
                         ui.cmp.WorkTreeGrid.getInstance().addToWork(nodesToAdd);
-                        
+
                     }
-                    
+
                     // Now, we remove this patches
                     patches.remove(true);
-                    
+
                     // Is Folder contains some others child ? If not, we remove this user too.
                     if (Ext.isEmpty(user.childNodes)) {
                         user.remove(true);
                     }
-                    
+
                     // We update the FilesCounter
                     this.updateFilesCounter();
-                    
+
                     return;
-                    
-                    
+
+
                 }
             }
         }
     },
-    
+
     delRecord: function(fid){
         var rootNode = this.getRootNode(), user, patches, folder, file, i, j, g, h;
-        
+
         for (i = 0; i < rootNode.childNodes.length; i++) {
             user = rootNode.childNodes[i];
-            
+
             for (j = 0; j < user.childNodes.length; j++) {
                 patches = user.childNodes[j];
-                
+
                 for (g = 0; g < patches.childNodes.length; g++) {
                     folder = patches.childNodes[g];
-                    
+
                     for (h = 0; h < folder.childNodes.length; h++) {
                         file = folder.childNodes[h];
-                        
+
                         // We can't use === operator here. Sometimes, fid is a string, Sometimes, it's an integer ( see Bug #55316 )
                         if (file.attributes.idDB == fid) {
-                            
+
                             file.remove(true);
-                            
+
                             // Is Folder contains some others child ?
                             if (Ext.isEmpty(folder.childNodes)) {
-                            
+
                                 folder.remove(true);
-                                
+
                                 // Is User contains some others child ?
                                 if (Ext.isEmpty(user.childNodes)) {
-                                
+
                                     user.remove(true);
-                                    
+
                                     this.updateFilesCounter();
                                     return;
                                 }
@@ -567,48 +567,48 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                         }
                     }
                 }
-                
+
             }
         }
-        
+
         // We update the FilesCounter
         this.updateFilesCounter();
     },
-    
+
     getUserPatchesList: function(){
         var rootNode = this.getRootNode(), userNode = rootNode.findChild('task', PhDOE.user.login), patchesList = [];
-        
+
         // We start by searching if this user have a node
         if (!userNode) {
             return false;
         }
         else {
-        
+
             if (!userNode.hasChildNodes()) {
                 return false;
             }
             else {
-            
+
                 userNode.eachChild(function(node){
                     patchesList.push(node);
                 }, this);
-                
+
                 return patchesList;
             }
         }
     },
-    
+
     addToPatch: function(PatchID, PatchName, nodesToAdd, PatchDescription, PatchEmail){
         var rootNode, userNode, PatchNode, folderNode, type, iconCls, fileNode, nowDate, i;
-        
+
         rootNode = this.getRootNode();
-        
+
         // We start by searching if this user have a node
         userNode = rootNode.findChild('task', PhDOE.user.login);
-        
+
         // If the user node don't exist, we create it
         if (!userNode) {
-        
+
             userNode = new Ext.tree.TreeNode({
                 task: PhDOE.user.login,
                 type: 'user',
@@ -616,17 +616,17 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 iconCls: 'iconUser',
                 expanded: true
             });
-            
+
             rootNode.appendChild(userNode);
             rootNode.expand(); // This allow to show our new node
         }
-        
+
         // We search now into this user the right patch
         PatchNode = userNode.findChild('task', PatchName);
-        
+
         // If this folder don't exist, we create it
         if (!PatchNode) {
-        
+
             PatchNode = new Ext.tree.TreeNode({
                 task: PatchName,
                 patchDescription:PatchDescription,
@@ -636,37 +636,37 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 expanded: true,
                 idDB: PatchID
             });
-            
+
             userNode.appendChild(PatchNode);
             userNode.expand(); // This allow to show our new node
         }
-        
+
         /* Now, our patch exist into the tree. If there is some files to add in, we add it now */
         if (nodesToAdd) {
-        
+
             // We walk into the nodes to add
             for (i = 0; i < nodesToAdd.length; i++) {
-            
+
                 // We search now into this patch the right folder
                 folderNode = PatchNode.findChild('task', nodesToAdd[i].parentNode.attributes.task);
-                
+
                 // If this folder don't exist, we create it
                 if (!folderNode) {
-                
+
                     folderNode = new Ext.tree.TreeNode({
                         task: nodesToAdd[i].parentNode.attributes.task,
                         type: 'folder',
                         iconCls: 'iconFolderOpen',
                         expanded: true
                     });
-                    
+
                     PatchNode.appendChild(folderNode);
                     PatchNode.expand(); // This allow to show our new node
                 }
-                
+
                 // We add now this file into this folder
                 type = nodesToAdd[i].attributes.type;
-                
+
                 if (type === 'update') {
                     iconCls = 'iconRefresh';
                 }
@@ -676,9 +676,9 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 if (type === 'delete') {
                     iconCls = 'iconTrash';
                 }
-                
+
                 nowDate = new Date();
-                
+
                 fileNode = new Ext.tree.TreeNode({
                     task: nodesToAdd[i].attributes.task,
                     type: type,
@@ -688,28 +688,28 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     progress: nodesToAdd[i].attributes.progress,
                     idDB: nodesToAdd[i].attributes.idDB
                 });
-                
+
                 folderNode.appendChild(fileNode);
                 folderNode.expand(); // This allow to show our new node
             }
-            
+
         } // End of adding folders/files into this patch
         // We update the FilesCounter
         this.updateFilesCounter();
-        
+
     },
-    
+
     addRecord: function(fid, fpath, fname, type){
         var rootNode, userNode, folderNode, fileNode, nowDate, iconCls;
-        
+
         rootNode = this.getRootNode();
-        
+
         // We start by searching if this user have a node
         userNode = rootNode.findChild('task', PhDOE.user.login);
-        
+
         // If the user node don't exist, we create it
         if (!userNode) {
-        
+
             userNode = new Ext.tree.TreeNode({
                 task: PhDOE.user.login,
                 type: 'user',
@@ -718,34 +718,34 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 expanded: true,
                 nbFiles: 1
             });
-            
+
             rootNode.appendChild(userNode);
             rootNode.expand(); // This allow to show our new node
         }
-        
+
         // We search now into this user the right folder
         folderNode = userNode.findChild('task', fpath);
-        
+
         // If this folder don't exist, we create it
         if (!folderNode) {
-        
+
             folderNode = new Ext.tree.TreeNode({
                 task: fpath,
                 type: 'folder',
                 iconCls: 'iconFolderOpen',
                 expanded: true
             });
-            
+
             userNode.appendChild(folderNode);
             userNode.expand(); // This allow to show our new node
         }
-        
+
         // We search now into this folder the right file
         fileNode = folderNode.findChild('task', fname);
-        
+
         // If this folder don't exist, we create it
         if (!fileNode) {
-        
+
             if (type === 'update') {
                 iconCls = 'iconRefresh';
             }
@@ -755,9 +755,9 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
             if (type === 'delete') {
                 iconCls = 'iconTrash';
             }
-            
+
             nowDate = new Date();
-            
+
             fileNode = new Ext.tree.TreeNode({
                 task: fname,
                 type: type,
@@ -767,18 +767,18 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 progress: 100,
                 idDB: fid
             });
-            
+
             folderNode.appendChild(fileNode);
             folderNode.expand(); // This allow to show our new node
         }
-        
+
         // We update the FilesCounter
         this.updateFilesCounter();
     },
-    
+
     countFiles: function(){
         var rootNode = this.getRootNode(), nbFiles = 0, user, folder, files, i, j, h, g;
-        
+
         rootNode.cascade(function(node){
                 if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
                         if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
@@ -786,15 +786,15 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                         }
                 }
         }, this);
-        
+
         return nbFiles;
     },
-    
+
     updateFilesCounter: function(){
         var count = this.countFiles();
-        
+
         Ext.getDom('acc-patches-nb').innerHTML = count;
-        
+
     }
 });
 

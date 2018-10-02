@@ -55,7 +55,7 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                                     patchID      : win.patchID
                                 });
                             }
-                            
+
                             // If there is some node to Add, we call this.
                             if (win.nodesToAdd) {
                                     ui.task.MoveToPatch({
@@ -66,7 +66,7 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
                                             nodesToAdd: win.nodesToAdd
                                     });
                             }
-                            
+
                             // We reload the patchList store
                             PhDOE.user.patchList.reload();
                         }

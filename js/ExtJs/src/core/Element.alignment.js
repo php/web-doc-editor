@@ -23,12 +23,12 @@ Ext.Element.addMethods({
         //especially for anchored animations that change the el size.
 		anchor = (anchor || "tl").toLowerCase();
         s = s || {};
-        
-        var me = this,        
+
+        var me = this,
         	vp = me.dom == document.body || me.dom == document,
         	w = s.width || vp ? Ext.lib.Dom.getViewWidth() : me.getWidth(),
-        	h = s.height || vp ? Ext.lib.Dom.getViewHeight() : me.getHeight(),         	        	
-        	xy,       	
+        	h = s.height || vp ? Ext.lib.Dom.getViewHeight() : me.getHeight(),
+        	xy,
         	r = Math.round,
         	o = me.getXY(),
         	scroll = me.getScroll(),
@@ -40,14 +40,14 @@ Ext.Element.addMethods({
 	        	l  : [0, r(h * 0.5)],
 	        	r  : [w, r(h * 0.5)],
 	        	b  : [r(w * 0.5), h],
-	        	tl : [0, 0],	
+	        	tl : [0, 0],
 	        	bl : [0, h],
 	        	br : [w, h],
 	        	tr : [w, 0]
         	};
-        
-        xy = hash[anchor];	
-        return [xy[0] + extraX, xy[1] + extraY]; 
+
+        xy = hash[anchor];
+        return [xy[0] + extraX, xy[1] + extraY];
     },
 
     /**
@@ -61,7 +61,7 @@ Ext.Element.addMethods({
      * @param {Function} callback The function to call after the animation finishes
      * @return {Ext.Element} this
      */
-    anchorTo : function(el, alignment, offsets, animate, monitorScroll, callback){        
+    anchorTo : function(el, alignment, offsets, animate, monitorScroll, callback){
 	    var me = this,
             dom = me.dom,
             scroll = !Ext.isEmpty(monitorScroll),
@@ -70,7 +70,7 @@ Ext.Element.addMethods({
                 Ext.callback(callback, Ext.fly(dom));
             },
             anchor = this.getAnchor();
-            
+
         // previous listener anchor, remove it
         this.removeAnchor();
         Ext.apply(anchor, {
@@ -79,7 +79,7 @@ Ext.Element.addMethods({
         });
 
         Ext.EventManager.onWindowResize(action, null);
-        
+
         if(scroll){
             Ext.EventManager.on(window, 'scroll', action, null,
                 {buffer: !isNaN(monitorScroll) ? monitorScroll : 50});
@@ -87,7 +87,7 @@ Ext.Element.addMethods({
         action.call(me); // align immediately
         return me;
     },
-    
+
     /**
      * Remove any anchor to this element. See {@link #anchorTo}.
      * @return {Ext.Element} this
@@ -95,7 +95,7 @@ Ext.Element.addMethods({
     removeAnchor : function(){
         var me = this,
             anchor = this.getAnchor();
-            
+
         if(anchor && anchor.fn){
             Ext.EventManager.removeResizeListener(anchor.fn);
             if(anchor.scroll){
@@ -105,7 +105,7 @@ Ext.Element.addMethods({
         }
         return me;
     },
-    
+
     // private
     getAnchor : function(){
         var data = Ext.Element.data,
@@ -114,7 +114,7 @@ Ext.Element.addMethods({
                 return;
             }
             var anchor = data(dom, '_anchor');
-            
+
         if(!anchor){
             anchor = data(dom, '_anchor', {});
         }
@@ -129,16 +129,16 @@ Ext.Element.addMethods({
      * @param {Array} offsets (optional) Offset the positioning by [x, y]
      * @return {Array} [x, y]
      */
-    getAlignToXY : function(el, p, o){	    
+    getAlignToXY : function(el, p, o){
         el = Ext.get(el);
-        
+
         if(!el || !el.dom){
             throw "Element.alignToXY with an element that doesn't exist";
         }
-        
+
         o = o || [0,0];
-        p = (!p || p == "?" ? "tl-bl?" : (!(/-/).test(p) && p !== "" ? "tl-" + p : p || "tl-bl")).toLowerCase();       
-                
+        p = (!p || p == "?" ? "tl-bl?" : (!(/-/).test(p) && p !== "" ? "tl-" + p : p || "tl-bl")).toLowerCase();
+
         var me = this,
         	d = me.dom,
         	a1,
@@ -152,7 +152,7 @@ Ext.Element.addMethods({
         	dw = Ext.lib.Dom.getViewWidth() -10, // 10px of margin for ie
         	dh = Ext.lib.Dom.getViewHeight()-10, // 10px of margin for ie
         	p1y,
-        	p1x,        	
+        	p1x,
         	p2y,
         	p2x,
         	swapY,
@@ -163,16 +163,16 @@ Ext.Element.addMethods({
         	scrollX = (docElement.scrollLeft || docBody.scrollLeft || 0)+5,
         	scrollY = (docElement.scrollTop || docBody.scrollTop || 0)+5,
         	c = false, //constrain to viewport
-        	p1 = "", 
+        	p1 = "",
         	p2 = "",
         	m = p.match(/^([a-z]+)-([a-z]+)(\?)?$/);
-        
+
         if(!m){
            throw "Element.alignTo with an invalid alignment " + p;
         }
-        
-        p1 = m[1]; 
-        p2 = m[2]; 
+
+        p1 = m[1];
+        p2 = m[2];
         c = !!m[3];
 
         //Subtract the aligned el's internal xy from the target's offset xy
@@ -183,10 +183,10 @@ Ext.Element.addMethods({
         x = a2[0] - a1[0] + o[0];
         y = a2[1] - a1[1] + o[1];
 
-        if(c){    
+        if(c){
 	       w = me.getWidth();
            h = me.getHeight();
-           r = el.getRegion();       
+           r = el.getRegion();
            //If we are at a viewport boundary and the aligned el is anchored on a target border that is
            //perpendicular to the vp border, allow the aligned el to slide on that border,
            //otherwise swap the aligned el to the opposite border of the target.
@@ -195,8 +195,8 @@ Ext.Element.addMethods({
            p2y = p2.charAt(0);
            p2x = p2.charAt(p2.length-1);
            swapY = ((p1y=="t" && p2y=="b") || (p1y=="b" && p2y=="t"));
-           swapX = ((p1x=="r" && p2x=="l") || (p1x=="l" && p2x=="r"));          
-           
+           swapX = ((p1x=="r" && p2x=="l") || (p1x=="l" && p2x=="r"));
+
 
            if (x + w > dw + scrollX) {
                 x = swapX ? r.left-w : dw+scrollX-w;
@@ -270,14 +270,14 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
         return me.setXY(me.getAlignToXY(element, position, offsets),
           		        me.preanim && !!animate ? me.preanim(arguments, 3) : false);
     },
-    
+
     // private ==>  used outside of core
     adjustForConstraints : function(xy, parent, offsets){
         return this.getConstrainToXY(parent || document, false, offsets, xy) ||  xy;
     },
 
     // private ==>  used outside of core
-    getConstrainToXY : function(el, local, offsets, proposedXY){   
+    getConstrainToXY : function(el, local, offsets, proposedXY){
 	    var os = {top:0, left:0, bottom:0, right: 0};
 
         return function(el, local, offsets, proposedXY){
@@ -311,7 +311,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
                 xy = proposedXY || (!local ? this.getXY() : [this.getLeft(true), this.getTop(true)]),
                 x = xy[0], y = xy[1],
                 offset = this.getConstrainOffset(),
-                w = this.dom.offsetWidth + offset, 
+                w = this.dom.offsetWidth + offset,
                 h = this.dom.offsetHeight + offset;
 
             // only move it if it needs it
@@ -338,9 +338,9 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
             return moved ? [x, y] : false;
         };
     }(),
-	    
-	    
-	        
+
+
+
 //         el = Ext.get(el);
 //         offsets = Ext.applyIf(offsets || {}, {top : 0, left : 0, bottom : 0, right : 0});
 
@@ -348,10 +348,10 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
 //         	doc = document,
 //         	s = el.getScroll(),
 //         	vxy = el.getXY(),
-//         	vx = offsets.left + s.left, 
-//         	vy = offsets.top + s.top,            	
-//         	vw = -offsets.right, 
-//         	vh = -offsets.bottom, 
+//         	vx = offsets.left + s.left,
+//         	vy = offsets.top + s.top,
+//         	vw = -offsets.right,
+//         	vh = -offsets.bottom,
 //         	vr,
 //         	vb,
 //         	xy = proposedXY || (!local ? me.getXY() : [me.getLeft(true), me.getTop(true)]),
@@ -359,15 +359,15 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
 //         	y = xy[1],
 //         	w = me.dom.offsetWidth, h = me.dom.offsetHeight,
 //         	moved = false; // only move it if it needs it
-//       
-//         	
+//
+//
 //         if(el.dom == doc.body || el.dom == doc){
 //             vw += Ext.lib.Dom.getViewWidth();
 //             vh += Ext.lib.Dom.getViewHeight();
 //         }else{
 //             vw += el.dom.clientWidth;
 //             vh += el.dom.clientHeight;
-//             if(!local){                    
+//             if(!local){
 //                 vx += vxy[0];
 //                 vy += vxy[1];
 //             }
@@ -398,7 +398,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
     getConstrainOffset : function(){
         return 0;
     },
-    
+
     /**
     * Calculates the x, y to center this element on the screen
     * @return {Array} The x, y values [x, y]
@@ -412,6 +412,6 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
     * @param {Mixed} centerIn (optional) The element in which to center the element.
     */
     center : function(centerIn){
-        return this.alignTo(centerIn || document, 'c-c');        
-    }    
+        return this.alignTo(centerIn || document, 'c-c');
+    }
 });

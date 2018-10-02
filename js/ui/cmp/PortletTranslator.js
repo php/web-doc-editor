@@ -26,14 +26,14 @@ ui.cmp._PortletTranslator.store = new Ext.data.Store({
     }),
     listeners: {
         load: function() {
-            
+
             var NbLines = this.getCount(),
                 linesHeight = NbLines*20;
-            
+
             ui.cmp.PortletTranslator.getInstance().setHeight(linesHeight + 124);
             ui.cmp.PortletTranslator.getInstance().doLayout();
-            
-            
+
+
         }
     }
 });
@@ -246,7 +246,7 @@ ui.cmp._PortletTranslator.grid = Ext.extend(Ext.grid.GridPanel,
             p.ownerCt.doLayout();
         }
     },
-                                 
+
     onRowDblClick : function(grid, rowIndex)
     {
 
@@ -343,7 +343,7 @@ ui.cmp._PortletReviewer.grid = Ext.extend(Ext.grid.GridPanel,
     sm               : new Ext.grid.RowSelectionModel({singleSelect:true}),
     lang             : this.lang,
     EmailPrompt      : new ui.cmp.EmailPrompt(),
-                                 
+
     onRowDblClick : function(grid, rowIndex)
     {
 
@@ -479,7 +479,7 @@ ui.cmp.PortletTranslator = Ext.extend(Ext.ux.Portlet,
     initComponent : function(config)
     {
         this.id = 'portletTranslator';
-        
+
         Ext.apply(this, config);
         ui.cmp.PortletTranslator.superclass.initComponent.apply(this);
 

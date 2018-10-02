@@ -366,7 +366,7 @@ Ext.Ajax.request({
                 name: id,
                 cls: 'x-hidden',
                 src: Ext.SSL_SECURE_URL
-            }); 
+            });
 
             doc.body.appendChild(frame);
 

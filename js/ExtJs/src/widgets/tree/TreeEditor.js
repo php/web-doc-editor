@@ -18,7 +18,7 @@
 Ext.tree.TreeEditor = function(tree, fc, config){
     fc = fc || {};
     var field = fc.events ? fc : new Ext.form.TextField(fc);
-    
+
     Ext.tree.TreeEditor.superclass.constructor.call(this, field, config);
 
     this.tree = tree;
@@ -75,14 +75,14 @@ Ext.extend(Ext.tree.TreeEditor, Ext.Editor, {
             beforeclick: this.beforeNodeClick,
             dblclick   : this.onNodeDblClick
         });
-        
+
         this.on({
             scope          : this,
             complete       : this.updateNode,
             beforestartedit: this.fitToTree,
             specialkey     : this.onSpecialKey
         });
-        
+
         this.on('startedit', this.bindScroll, this, {delay:10});
     },
 
@@ -166,7 +166,7 @@ Ext.extend(Ext.tree.TreeEditor, Ext.Editor, {
             this.completeEdit();
         }
     },
-    
+
     onDestroy : function(){
         clearTimeout(this.autoEditTimer);
         Ext.tree.TreeEditor.superclass.onDestroy.call(this);

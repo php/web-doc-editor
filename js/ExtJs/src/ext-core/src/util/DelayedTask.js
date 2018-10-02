@@ -18,15 +18,15 @@
 var task = new Ext.util.DelayedTask(function(){
     alert(Ext.getDom('myInputField').value.length);
 });
-// Wait 500ms before calling our function. If the user presses another key 
+// Wait 500ms before calling our function. If the user presses another key
 // during that 500ms, it will be cancelled and we'll wait another 500ms.
 Ext.get('myInputField').on('keypress', function(){
-    task.{@link #delay}(500); 
+    task.{@link #delay}(500);
 });
- * </code></pre> 
+ * </code></pre>
  * <p>Note that we are using a DelayedTask here to illustrate a point. The configuration
  * option <tt>buffer</tt> for {@link Ext.util.Observable#addListener addListener/on} will
- * also setup a delayed task for you to buffer events.</p> 
+ * also setup a delayed task for you to buffer events.</p>
  * @constructor The parameters to this constructor serve as defaults and are not required.
  * @param {Function} fn (optional) The default function to call.
  * @param {Object} scope The default scope (The <code><b>this</b></code> reference) in which the
@@ -35,13 +35,13 @@ Ext.get('myInputField').on('keypress', function(){
  */
 Ext.util.DelayedTask = function(fn, scope, args){
     var me = this,
-    	id,    	
+    	id,
     	call = function(){
     		clearInterval(id);
 	        id = null;
 	        fn.apply(scope, args || []);
 	    };
-	    
+
     /**
      * Cancels any pending timeout and queues a new one
      * @param {Number} delay The milliseconds to delay

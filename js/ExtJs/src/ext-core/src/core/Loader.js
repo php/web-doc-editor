@@ -25,7 +25,7 @@ Ext.Loader = Ext.apply({}, {
             numFiles    = fileList.length,
             loadedFiles = 0,
             me          = this;
-        
+
         /**
          * Loads a particular file from the fileList by index. This is used when preserving order
          */
@@ -34,14 +34,14 @@ Ext.Loader = Ext.apply({}, {
                 me.buildScriptTag(fileList[index], onFileLoaded)
             );
         };
-        
+
         /**
          * Callback function which is called after each file has been loaded. This calls the callback
          * passed to load once the final file in the fileList has been loaded
          */
         var onFileLoaded = function() {
             loadedFiles ++;
-            
+
             //if this was the last file, call the callback, otherwise load the next file
             if (numFiles == loadedFiles && typeof callback == 'function') {
                 callback.call(scope);
@@ -51,7 +51,7 @@ Ext.Loader = Ext.apply({}, {
                 }
             }
         };
-        
+
         if (preserveOrder === true) {
             loadFileIndex.call(this, 0);
         } else {
@@ -59,13 +59,13 @@ Ext.Loader = Ext.apply({}, {
             Ext.each(fileList, function(file, index) {
                 fragment.appendChild(
                     this.buildScriptTag(file, onFileLoaded)
-                );  
+                );
             }, this);
-            
+
             head.appendChild(fragment);
         }
     },
-    
+
     /**
      * @private
      * Creates and returns a script tag, but does not place it into the document. If a callback function
@@ -78,7 +78,7 @@ Ext.Loader = Ext.apply({}, {
         var script  = document.createElement('script');
         script.type = "text/javascript";
         script.src  = filename;
-        
+
         //IE has a different way of handling &lt;script&gt; loads, so we need to check for it here
         if (script.readyState) {
             script.onreadystatechange = function() {
@@ -89,8 +89,8 @@ Ext.Loader = Ext.apply({}, {
             };
         } else {
             script.onload = callback;
-        }    
-        
+        }
+
         return script;
     }
 });

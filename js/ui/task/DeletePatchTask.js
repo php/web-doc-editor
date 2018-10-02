@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.task');
 ui.task.DeletePatchTask = function(config)
 {
         Ext.apply(this, config);
-        
+
         Ext.getBody().mask(
             '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
             _('Please, wait...')
@@ -37,7 +37,7 @@ ui.task.DeletePatchTask = function(config)
                     PhDOE.winForbidden(o.err);
                 } else {
                     PhDOE.winForbidden();
-                }   
+                }
             }
         });
 };

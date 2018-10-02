@@ -17,16 +17,16 @@ ui.task.setTopicTask = function(config)
         {
             var o = Ext.util.JSON.decode(r.responseText),
                 topic = PhDOE.topic[isLang ? 'lang' : 'global'];
-            
+
             // We update the topic information
             topic.author = o.author;
             topic.content = o.content;
             topic.topicDate = Date.parseDate(o.topicDate, 'Y-m-d H:i:s');
             topic.topicDate = topic.topicDate.format(_('Y-m-d, H:i'));
-            
+
             // We set the topic
             PhDOE.setTopic(isLang);
-            
+
         }
     });
 };

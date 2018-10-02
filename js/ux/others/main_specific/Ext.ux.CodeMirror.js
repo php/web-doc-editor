@@ -1,5 +1,5 @@
 Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
-    
+
     lineWrapping: false,
     previousLine: false,
     readOnly: false,
@@ -7,14 +7,14 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     documentDurty: false,
     mode: (this.parser || 'xml'),
     theme: (this.theme === 'undefined') ? 'default' : this.theme,
-    
+
     initComponent : function()
     {
         this.initialized = false;
         Ext.ux.CodeMirror.superclass.initComponent.apply(this, arguments);
 
         this.theme = ( Ext.isDefined(this.theme) ) ? this.theme  :'default';
-        
+
         // Handle the parser
         // In cm2, parser is the "mode" config.
         switch( this.mode ) {
@@ -22,32 +22,32 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
             case 'htm' :
                 this.mode = 'text/html';
                 break;
-                
+
             case 'css' :
                 this.mode = 'text/css';
                 break;
-                
+
             case 'php' :
                 this.mode = 'application/x-httpd-php';
                 break;
-                
+
             case 'xml' :
             case 'ent' :
                 this.mode = {name: 'xml',alignCDATA:true};
                 break;
-                
+
             case 'bat' :
                 this.mode = 'text/x-clojure';
                 break;
-                
+
             case 'README' :
                 this.mode = 'text/x-rst';
                 break;
-                
+
             default : this.mode = {name: 'xmlpure'};
                 break;
         };
-        
+
         // Add some events
         this.addEvents('initialize');
         this.addEvents('codemodified');
@@ -59,7 +59,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         this.ownerCt.on('resize', function(c, width, height) {
             this.fireEvent('resize', this, width, height);
         }, this);
-        
+
         this.on({
             resize: function(cmp, width, height)
             {
@@ -91,15 +91,15 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                                 e.preventDefault();
                                 me.onSave();
                             }
-                                
-                            
+
+
                             var cursor = c.getCursor();
                             me.fireEvent('cursormove', cursor.line, cursor.ch);
                         },
                         onCursorActivity: function(c)
                         {
                             var cursor = c.getCursor();
-                            
+
                             // We highlight the current line
                             if( me.previousLine !== false ) {
                                 c.setLineClass(me.previousLine, null);
@@ -118,9 +118,9 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
             }
         });
-        
+
     },
-    
+
     focus: function() {
         if (this.initialized) {
                 return this.codeEditor.focus();
@@ -150,7 +150,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
         var curLine = this.codeEditor.getLine(line);
         this.codeEditor.setLine(line, curLine+"\n"+text);
     },
-    
+
     manageCodeChange: function()
     {
         var originalContent = this.originalContent,
@@ -164,7 +164,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
                     this.fireEvent('coderestored');
                     this.documentDurty = false;
                 }
-                
+
             } else {
 
                 // Enable the Undo Btn if it exist (don't exist when we open a fil in readOnly mode
@@ -227,7 +227,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     {
         var EditorEl = this.el.child('.CodeMirror-scroll');
         EditorEl.dom.scrollTop = position;
-        
+
     },
 
     setOriginalContent : function(content)
@@ -242,7 +242,7 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
     },
 
     setOption: function(optionName, optionValue) {
-        
+
         if (this.initialized) {
                 this.codeEditor.setOption(optionName, optionValue);
         }
@@ -267,12 +267,12 @@ Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
         // Enable the Redo btn
         Ext.getCmp(this.id + '-btn-redo').enable();
-        
+
         // Is there more undo history ? If not, we disable this btn
         if( this.codeEditor.historySize().undo == 0 ) {
             Ext.getCmp(this.id + '-btn-undo').disable();
         }
     }
-    
+
 });
 Ext.reg('codemirror', Ext.ux.CodeMirror);

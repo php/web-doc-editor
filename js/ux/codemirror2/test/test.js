@@ -170,7 +170,7 @@ testCM("posFromIndex", function(cm) {
     eq(pos.ch, example.ch);
     if (example.index >= 0 && example.index < 64)
       eq(cm.indexFromPos(pos), example.index);
-  }  
+  }
 });
 
 testCM("undo", function(cm) {

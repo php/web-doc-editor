@@ -13,7 +13,7 @@ Ext.Element.addMethods(function(){
 		PREVIOUSSIBLING = 'previousSibling',
 		DQ = Ext.DomQuery,
 		GET = Ext.get;
-	
+
 	return {
 		/**
 	     * Looks at this node and then at parent nodes for a match of the passed simple selector (e.g. div.some-class or span:first-child)
@@ -24,9 +24,9 @@ Ext.Element.addMethods(function(){
 	     */
 	    findParent : function(simpleSelector, maxDepth, returnEl){
 	        var p = this.dom,
-	        	b = document.body, 
-	        	depth = 0, 	        	
-	        	stopEl;	        
+	        	b = document.body,
+	        	depth = 0,
+	        	stopEl;
             if(Ext.isGecko && Object.prototype.toString.call(p) == '[object XULElement]') {
                 return null;
             }
@@ -44,7 +44,7 @@ Ext.Element.addMethods(function(){
 	        }
 	        return null;
 	    },
-	
+
 	    /**
 	     * Looks at parent nodes for a match of the passed simple selector (e.g. div.some-class or span:first-child)
 	     * @param {String} selector The simple selector to test
@@ -57,7 +57,7 @@ Ext.Element.addMethods(function(){
 	        var p = Ext.fly(this.dom.parentNode, '_internal');
 	        return p ? p.findParent(simpleSelector, maxDepth, returnEl) : null;
 	    },
-	
+
 	    /**
 	     * Walks up the dom looking for a parent node that matches the passed simple selector (e.g. div.some-class or span:first-child).
 	     * This is a shortcut for findParentNode() that always returns an Ext.Element.
@@ -69,7 +69,7 @@ Ext.Element.addMethods(function(){
 	    up : function(simpleSelector, maxDepth){
 	        return this.findParentNode(simpleSelector, maxDepth, true);
 	    },
-	
+
 	    /**
 	     * Creates a {@link Ext.CompositeElement} for child nodes based on the passed CSS selector (the selector should not contain an id).
 	     * @param {String} selector The CSS selector
@@ -78,7 +78,7 @@ Ext.Element.addMethods(function(){
 	    select : function(selector){
 	        return Ext.Element.select(selector, this.dom);
 	    },
-	
+
 	    /**
 	     * Selects child nodes based on the passed CSS selector (the selector should not contain an id).
 	     * @param {String} selector The CSS selector
@@ -87,7 +87,7 @@ Ext.Element.addMethods(function(){
 	    query : function(selector){
 	        return DQ.select(selector, this.dom);
 	    },
-	
+
 	    /**
 	     * Selects a single child at any depth below this element based on the passed CSS selector (the selector should not contain an id).
 	     * @param {String} selector The CSS selector
@@ -98,7 +98,7 @@ Ext.Element.addMethods(function(){
 	        var n = DQ.selectNode(selector, this.dom);
 	        return returnDom ? n : GET(n);
 	    },
-	
+
 	    /**
 	     * Selects a single *direct* child based on the passed CSS selector (the selector should not contain an id).
 	     * @param {String} selector The CSS selector
@@ -109,7 +109,7 @@ Ext.Element.addMethods(function(){
 	        var n = DQ.selectNode(" > " + selector, this.dom);
 	        return returnDom ? n : GET(n);
 	    },
-	
+
 		 /**
 	     * Gets the parent node for this element, optionally chaining up trying to match a selector
 	     * @param {String} selector (optional) Find a parent node that matches the passed simple selector
@@ -119,7 +119,7 @@ Ext.Element.addMethods(function(){
 	    parent : function(selector, returnDom){
 	        return this.matchNode(PARENTNODE, PARENTNODE, selector, returnDom);
 	    },
-	
+
 	     /**
 	     * Gets the next sibling, skipping text nodes
 	     * @param {String} selector (optional) Find the next sibling that matches the passed simple selector
@@ -129,7 +129,7 @@ Ext.Element.addMethods(function(){
 	    next : function(selector, returnDom){
 	        return this.matchNode(NEXTSIBLING, NEXTSIBLING, selector, returnDom);
 	    },
-	
+
 	    /**
 	     * Gets the previous sibling, skipping text nodes
 	     * @param {String} selector (optional) Find the previous sibling that matches the passed simple selector
@@ -139,8 +139,8 @@ Ext.Element.addMethods(function(){
 	    prev : function(selector, returnDom){
 	        return this.matchNode(PREVIOUSSIBLING, PREVIOUSSIBLING, selector, returnDom);
 	    },
-	
-	
+
+
 	    /**
 	     * Gets the first child, skipping text nodes
 	     * @param {String} selector (optional) Find the next sibling that matches the passed simple selector
@@ -150,7 +150,7 @@ Ext.Element.addMethods(function(){
 	    first : function(selector, returnDom){
 	        return this.matchNode(NEXTSIBLING, 'firstChild', selector, returnDom);
 	    },
-	
+
 	    /**
 	     * Gets the last child, skipping text nodes
 	     * @param {String} selector (optional) Find the previous sibling that matches the passed simple selector
@@ -160,7 +160,7 @@ Ext.Element.addMethods(function(){
 	    last : function(selector, returnDom){
 	        return this.matchNode(PREVIOUSSIBLING, 'lastChild', selector, returnDom);
 	    },
-	    
+
 	    matchNode : function(dir, start, selector, returnDom){
 	        var n = this.dom[start];
 	        while(n){
@@ -170,6 +170,6 @@ Ext.Element.addMethods(function(){
 	            n = n[dir];
 	        }
 	        return null;
-	    }	
+	    }
     };
 }());

@@ -39,7 +39,7 @@ Ext.ColorPalette = Ext.extend(Ext.Component, {
     value : null,
     /**
      * @cfg {String} clickEvent
-     * The DOM event that will cause a color to be selected. This can be any valid event name (dblclick, contextmenu). 
+     * The DOM event that will cause a color to be selected. This can be any valid event name (dblclick, contextmenu).
      * Defaults to <tt>'click'</tt>.
      */
     clickEvent :'click',
@@ -90,7 +90,7 @@ cp.colors = ['000000', '993300', '333300'];
      * The scope (<tt><b>this</b></tt> reference) in which the <code>{@link #handler}</code>
      * function will be called.  Defaults to this ColorPalette instance.
      */
-    
+
     // private
     initComponent : function(){
         Ext.ColorPalette.superclass.initComponent.call(this);
@@ -106,7 +106,7 @@ cp.colors = ['000000', '993300', '333300'];
 
         if(this.handler){
             this.on('select', this.handler, this.scope, true);
-        }    
+        }
     },
 
     // private

@@ -15,11 +15,11 @@ ui.cmp.Chat = Ext.extend(Ext.Window,
     initComponent : function()
     {
         var chatLogin = PhDOE.user.login;
-        
+
         if( PhDOE.user.isAnonymous ) {
             chatLogin = 'an%3F%3F%3F';
         }
-        
+
         Ext.apply(this,
         {
             title : _('Chat with us on IRC !'),

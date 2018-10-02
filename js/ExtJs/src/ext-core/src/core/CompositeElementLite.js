@@ -212,7 +212,7 @@ Ext.CompositeElementLite.prototype = {
                 els[els.length] = me.transformElement(el);
             }
         });
-        
+
         me.elements = els;
         return me;
     },

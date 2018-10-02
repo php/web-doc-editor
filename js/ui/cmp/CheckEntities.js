@@ -30,7 +30,7 @@ ui.cmp._CheckEntities.rendererEntities = function(value, metadata)
 
 // CheckDoc Grid columns definition
 ui.cmp._CheckEntities.columns = [
-    new Ext.grid.RowNumberer(), 
+    new Ext.grid.RowNumberer(),
     {
         id        : 'entities',
         header    : _('Entities'),

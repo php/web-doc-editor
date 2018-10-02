@@ -531,11 +531,11 @@ new Ext.tree.TreePanel({
         }
         return node;
     },
-    
+
     clearInnerCt : function(){
-        this.innerCt.update('');    
+        this.innerCt.update('');
     },
-    
+
     // private
     renderRoot : function(){
         this.root.render();
@@ -782,7 +782,7 @@ new Ext.tree.TreePanel({
         this.nodeHash = this.root = this.loader = null;
         Ext.tree.TreePanel.superclass.beforeDestroy.call(this);
     },
-    
+
     /**
      * Destroy the root node. Not included by itself because we need to pass the silent parameter.
      * @private

@@ -31,7 +31,7 @@ Ext.form.TextArea = Ext.extend(Ext.form.TextField,  {
 
     /**
      * @cfg {Boolean} preventScrollbars <tt>true</tt> to prevent scrollbars from appearing regardless of how much text is
-     * in the field. This option is only relevant when {@link #grow} is <tt>true</tt>. Equivalent to setting overflow: hidden, defaults to 
+     * in the field. This option is only relevant when {@link #grow} is <tt>true</tt>. Equivalent to setting overflow: hidden, defaults to
      * <tt>false</tt>.
      */
     preventScrollbars: false,
@@ -73,14 +73,14 @@ Ext.form.TextArea = Ext.extend(Ext.form.TextField,  {
             this.fireEvent("specialkey", this, e);
         }
     },
-    
+
     // private
     doAutoSize : function(e){
         return !e.isNavKeyPress() || e.getKey() == e.ENTER;
     },
-    
+
     // inherit docs
-    filterValidation: function(e) {            
+    filterValidation: function(e) {
         if(!e.isNavKeyPress() || (!this.enterIsSpecial && e.keyCode == e.ENTER)){
             this.validationTask.delay(this.validationDelay);
         }
@@ -98,7 +98,7 @@ Ext.form.TextArea = Ext.extend(Ext.form.TextField,  {
             v = Ext.util.Format.htmlEncode(el.dom.value),
             ts = this.textSizeEl,
             h;
-            
+
         Ext.fly(ts).setWidth(this.el.getWidth());
         if(v.length < 1){
             v = "&#160;&#160;";

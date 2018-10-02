@@ -67,13 +67,13 @@ ui.cmp._ErrorFileGrid.columns = [{
     dataIndex: 'name',
     renderer: function(v, metada, r){
         var mess = '', infoEN, infoLang, userToCompare;
-        
+
         userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-        
+
         if (r.data.fileModified) {
-        
+
             infoLang = Ext.util.JSON.decode(r.data.fileModified);
-            
+
             if (infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent) {
                 mess += String.format(_('File {0} modified by me'), PhDOE.user.lang.ucFirst());
             }
@@ -81,7 +81,7 @@ ui.cmp._ErrorFileGrid.columns = [{
                 mess += String.format(_('File {0} modified by {1}'), PhDOE.user.lang.ucFirst(), infoLang.user);
             }
         }
-        
+
         if (mess !== '') {
             return "<span ext:qtip='" + mess + "'>" + v + "</span>";
         }
@@ -120,11 +120,11 @@ ui.cmp._ErrorFileGrid.view = new Ext.grid.GroupingView({
     '"]})',
     getRowClass: function(r){
         if (r.data.fileModified) {
-        
+
             var infoLang = Ext.util.JSON.decode(r.data.fileModified), userToCompare;
-            
+
             userToCompare = (PhDOE.user.isAnonymous) ? 'anonymous' : PhDOE.user.login;
-            
+
             return ((infoLang.user === userToCompare && infoLang.anonymousIdent === PhDOE.user.anonymousIdent)) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
@@ -166,7 +166,7 @@ Ext.extend(ui.cmp._ErrorFileGrid.menu, Ext.menu.Menu, {
                 iconCls: 'iconHelp',
                 handler: function(){
                     if (!Ext.getCmp('main-panel').findById('FE-help')) {
-                    
+
                         Ext.getCmp('main-panel').add({
                             id: 'FE-help',
                             title: _('About error type'),
@@ -175,7 +175,7 @@ Ext.extend(ui.cmp._ErrorFileGrid.menu, Ext.menu.Menu, {
                             autoScroll: true,
                             autoLoad: './error'
                         });
-                        
+
                     }
                     Ext.getCmp('main-panel').setActiveTab('FE-help');
                 }
@@ -199,14 +199,14 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
             grid.view.refresh();
         }
     },
-    
+
     onRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-        
+
         var data = grid.store.getAt(rowIndex).data, FilePath = data.path, FileName = data.name;
-        
+
         grid.getSelectionModel().selectRow(rowIndex);
-        
+
         new ui.cmp._ErrorFileGrid.menu({
             hideDiffMenu: (data.fileModified === false),
             grid: grid,
@@ -217,26 +217,26 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
             fname: FileName
         }).showAt(e.getXY());
     },
-    
+
     onRowDblClick: function(grid, rowIndex, e){
         this.openFile(grid.store.getAt(rowIndex).data.id);
     },
-    
+
     openFile: function(rowId){
         var storeRecord = this.store.getById(rowId), FilePath = storeRecord.data.path, FileName = storeRecord.data.name, FileID = Ext.util.md5('FE-' + PhDOE.user.lang + FilePath + FileName), error = [], vcsPanel, filePanel;
-        
+
         // Render only if this tab don't exist yet
         if (!Ext.getCmp('main-panel').findById('FE-' + FileID)) {
-        
+
             // Find all error for this file to pass to error_type.php page
             error = [];
-            
+
             this.store.each(function(record){
                 if (record.data.path === FilePath && record.data.name === FileName && !error[record.data.type]) {
                     error.push(record.data.type);
                 }
             });
-            
+
             vcsPanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.VCSLogGrid({
                 layout: 'fit',
                 title: String.format(_('{0} Log'), PhDOE.user.lang.ucFirst()),
@@ -262,7 +262,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 fname: FileName,
                 loadStore: PhDOE.user.conf.error.toolsPanelLogLoad
             })];
-            
+
             filePanel = (PhDOE.user.lang === 'en') ? [new ui.cmp.FilePanel({
                 id: 'FE-LANG-PANEL-' + FileID,
                 region: 'center',
@@ -314,7 +314,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 syncScroll: true,
                 syncScrollConf: { module : 'error', itemName : 'syncScrollbars' }
             })];
-            
+
             Ext.getCmp('main-panel').add({
                 id: 'FE-' + FileID,
                 title: FileName,
@@ -372,7 +372,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                             }
                         },
                         resize: function(a, b, newHeight){
-                        
+
                             if (this.ownerCt.tabLoaded && newHeight && newHeight > 50 && newHeight != PhDOE.user.conf.error.descPanelHeight) { // As the type is different, we can't use !== to compare with !
                                 new ui.task.UpdateConfTask({
                                     module     : 'error',
@@ -463,7 +463,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
         }
         Ext.getCmp('main-panel').setActiveTab('FE-' + FileID);
     },
-    
+
     initComponent: function(){
         Ext.apply(this, {
             store: ui.cmp._ErrorFileGrid.store,
@@ -472,13 +472,13 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 width: 180,
                 hideTrigger1: true,
                 enableKeyEvents: true,
-                
+
                 validateOnBlur: false,
                 validationEvent: false,
-                
+
                 trigger1Class: 'x-form-clear-trigger',
                 trigger2Class: 'x-form-search-trigger',
-                
+
                 listeners: {
                     keypress: function(f, e){
                         if (e.getKey() === e.ENTER) {
@@ -494,7 +494,7 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 onTrigger2Click: function(){
                     var v = this.getValue(), regexp;
-                    
+
                     if (v === '' || v.length < 3) {
                         this.markInvalid(_('Your filter must contain at least 3 characters'));
                         return;
@@ -502,12 +502,12 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
                     this.clearInvalid();
                     this.triggers[0].show();
                     this.setSize(180, 10);
-                    
+
                     regexp = new RegExp(v, 'i');
-                    
+
                     // We filter on 'path', 'name', 'maintainer' and 'type'
                     ui.cmp._ErrorFileGrid.instance.store.filterBy(function(record){
-                    
+
                         if (regexp.test(record.data.path) ||
                         regexp.test(record.data.name) ||
                         regexp.test(record.data.maintainer) ||
@@ -522,15 +522,15 @@ ui.cmp.ErrorFileGrid = Ext.extend(Ext.grid.GridPanel, {
             })]
         });
         ui.cmp.ErrorFileGrid.superclass.initComponent.call(this);
-        
+
         this.on('rowcontextmenu', this.onRowContextMenu, this);
         this.on('rowdblclick', this.onRowDblClick, this);
-        
+
         // For EN, we hide the column 'maintainer'
         if (PhDOE.user.lang === 'en') {
             this.getColumnModel().setHidden(2, true);
         }
-        
+
     }
 });
 

@@ -22,7 +22,7 @@ Ext.Element.addMethods({
                 e.preventDefault();
             }
         }
-        
+
         if (Ext.isArray(eventName)) {
             Ext.each(eventName, function(e) {
                  me.on(e, fn);
@@ -72,7 +72,7 @@ Ext.Element.addMethods({
             }
             n = nx;
         }
-        
+
         Ext.Element.data(dom, 'isCleaned', true);
         return me;
     },
@@ -85,7 +85,7 @@ Ext.Element.addMethods({
     load : function() {
         var updateManager = this.getUpdater();
         updateManager.update.apply(updateManager, arguments);
-        
+
         return this;
     },
 
@@ -155,12 +155,12 @@ Ext.Element.addMethods({
                     }
                 }
             }
-            
+
             el = DOC.getElementById(id);
             if (el) {
                 Ext.removeNode(el);
             }
-            
+
             if (typeof callback == 'function') {
                 callback();
             }

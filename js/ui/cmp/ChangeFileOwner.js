@@ -38,13 +38,13 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         {
             var win = this.ownerCt.ownerCt,
                 newOwnerID = win.items.items[1].items.items[0].getValue();
-            
+
             new ui.task.ChangeFileOwner({
                 fileIdDB : win.fileIdDB,
                 newOwnerID : newOwnerID,
                 from     : win
             });
-            
+
         }
     },{
         text    : _('Close'),
@@ -58,7 +58,7 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
     initComponent : function()
     {
         var win = this;
-        
+
         Ext.apply(this,
         {
             defaults: {
@@ -110,9 +110,9 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
                 }]
             }]
         });
-        
+
         ui.cmp.ChangeFileOwner.superclass.initComponent.call(this);
-        
+
         this.show();
     }
 });

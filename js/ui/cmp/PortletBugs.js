@@ -152,11 +152,11 @@ ui.cmp._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
 
     },
 
-    togglePreview : function(show) 
+    togglePreview : function(show)
     {
         this.view.showPreview = show;
         this.view.refresh();
-    }, 
+    },
 
     initComponent : function(config)
     {
@@ -164,7 +164,7 @@ ui.cmp._PortletBugs.grid = Ext.extend(Ext.grid.GridPanel,
         this.tbar = [{
             text          : _('Summary'),
             pressed       : false,
-            enableToggle  : true, 
+            enableToggle  : true,
             iconCls       : 'iconSummary',
             scope         : this,
             toggleHandler : function(btn, pressed){
@@ -246,9 +246,9 @@ ui.cmp.PortletBugs = Ext.extend(Ext.ux.Portlet,
     {
         this.id = 'portletBugs';
         this.title   = String.format(_('Open bugs for {0}'), 'doc-' + this.lang);
-        
+
         Ext.apply(this, config);
-        
+
         ui.cmp.PortletBugs.superclass.initComponent.apply(this);
         this.add(new ui.cmp._PortletBugs.grid());
 

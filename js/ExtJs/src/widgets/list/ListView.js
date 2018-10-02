@@ -327,7 +327,7 @@ Ext.list.ListView = Ext.extend(Ext.DataView, {
             header = this.innerHd.dom,
             scrollWidth = w - Ext.num(this.scrollOffset, Ext.getScrollBarWidth()) + 'px',
             parentNode;
-            
+
         if(!body){
             return;
         }
@@ -359,7 +359,7 @@ Ext.list.ListView = Ext.extend(Ext.DataView, {
 
     findHeaderIndex : function(header){
         header = header.dom || header;
-        var parentNode = header.parentNode, 
+        var parentNode = header.parentNode,
             children = parentNode.parentNode.childNodes,
             i = 0,
             c;
@@ -376,7 +376,7 @@ Ext.list.ListView = Ext.extend(Ext.DataView, {
             i = 0,
             columns = this.columns,
             len = columns.length;
-            
+
         for(; i < len; i++){
             els[i].style.width = (columns[i].width*100) + '%';
         }

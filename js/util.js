@@ -96,28 +96,28 @@ function XHR(config)
 
 Ext.override(Ext.form.Field, {
 
-    afterRender: function() {  
-     
+    afterRender: function() {
+
         var findLabel = function(field) {
             var wrapDiv = null;
             var label = null
 
             //find form-item and label
             wrapDiv = field.getEl().up("div.x-form-item");
-            
+
             if (wrapDiv) label = wrapDiv.child("label");
             if (label) return label;
         };
 
         if (this.tooltipText) {
             var label = findLabel(this);
-            
-            if (label) {                       
-                        
+
+            if (label) {
+
                 label.addClass(this.tooltipClass || "x-textfield-tooltip");
-                           
+
                 new Ext.ToolTip({
-                    target:  label,                   
+                    target:  label,
                     html: this.tooltipText,
                     //enabled: true,
                     trackMouse:true
@@ -125,10 +125,10 @@ Ext.override(Ext.form.Field, {
                 });
             }
         }
-        
-        Ext.form.Field.superclass.afterRender.call(this);    
-        this.initEvents();  
+
+        Ext.form.Field.superclass.afterRender.call(this);
+        this.initEvents();
         this.initValue();
     }
-      
+
 });

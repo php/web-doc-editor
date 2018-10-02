@@ -42,7 +42,7 @@ var i18n = new Array();
   i18n["This action is available to global administrators only."] = "この操作はシステム管理者しか行えません。";
   i18n["This action is available to global administrators or to administrators for this language only."] = "この操作は、システム管理者あるいはこの言語の管理者しか行えません。";
   i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "ローカルでの変更を取り消そうとしているファイルは他のユーザーが作ったものです。<br>この操作は、自分が作ったファイルに対してだけ行えます。";
-  
+
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-click the cell to open the file selection";
   i18n["Extension"] = "Extension";
@@ -69,7 +69,7 @@ var i18n = new Array();
   i18n["Estimated progress"] = "Estimated progress";
   i18n["{0}% complete"] = "{0}% complete";
   i18n["Set the progress..."] = "Set the progress...";
-  i18n["View diff"] = "View diff";  
+  i18n["View diff"] = "View diff";
   i18n["Download the diff as a patch"] = "Download the diff as a patch";
   i18n["Clear this change"] = "Clear this change";
   i18n["Cancel this deletion"] = "Cancel this deletion";
@@ -86,8 +86,8 @@ var i18n = new Array();
   i18n["Diff for file: {0}"] = "Diff for file: {0}";
   i18n["Administrator menu"] = "Administrator menu";
   i18n["There is some file unsaved. Please, save it before start a commit."] = "There is some file unsaved. Please, save it before start a commit.";
-  
-  
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Edit the description of this patch";
   i18n["Delete this patch"] = "Delete this patch";
@@ -661,7 +661,7 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "Permanent link to this page";
   i18n["Warning"] = "Warning";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "The editor have modified automatically the file {0} into UTF-8 encoding.";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.";  
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters.";
   i18n["File modified by {0} but you are an authenticated user, so you can modify it."] = "File modified by {0} but you are an authenticated user, so you can modify it.";
   i18n["File modified by {0}."] = "File modified by {0}.";
 
@@ -712,28 +712,28 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "The note was added successfully !";
   i18n["Note deleted"] = "Note deleted";
   i18n["The note was deleted successfully !"] = "The note was deleted successfully !";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "XML check. Please, wait...";
   i18n["XML check"] = "XML check";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Line";
   i18n["Libel"] = "Libel";
   i18n["XML Errors"] = "XML Errors";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "Current owner";
   i18n["Action"] = "Action";
   i18n["New owner"] = "New owner";
   i18n["Change file's owner"] = "Change file's owner";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "Owner changed";
   i18n["The owner for this file have been changed successfully !"] = "The owner for this file have been changed successfully !";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "Next";
   i18n["Anonymous patch manager"] = "Anonymous patch manager";
@@ -745,18 +745,18 @@ var i18n = new Array();
   i18n["Validate this patch"] = "Validate this patch";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it.";
   i18n["Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?"] = "Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?";
-  
+
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Preview";
-  
+
 // In file: ../../js/ux/codemirror2/lib/util/search.js
   i18n["Search"] = "Search";
   i18n["Use /re/ syntax for regexp search"] = "Use /re/ syntax for regexp search";
-  
+
 // In file: ../../js/ui/cmp/DirectActionWin.js
   i18n["Live action"] = "Live action";
   i18n["This live action didn't exist"] = "This live action didn't exist";
   i18n["Put into this patch:"] = "Put into this patch:";
   i18n["Delete this change"] = "Delete this change";
   i18n["Modified file"] = "Modified file";
-  
+

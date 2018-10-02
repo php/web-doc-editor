@@ -19,28 +19,28 @@ new Ext.grid.PivotGrid({
     }
 });
 </code></pre>
- * <p>Currently {@link #title} and {@link #getCellCls} are the only configuration options accepted by PivotGridView. All other 
+ * <p>Currently {@link #title} and {@link #getCellCls} are the only configuration options accepted by PivotGridView. All other
  * interaction is performed via the {@link Ext.grid.PivotGrid PivotGrid} class.</p>
  */
 Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
-    
+
     /**
      * The CSS class added to all group header cells. Defaults to 'grid-hd-group-cell'
      * @property colHeaderCellCls
      * @type String
      */
     colHeaderCellCls: 'grid-hd-group-cell',
-    
+
     /**
      * @cfg {String} title Optional title to be placed in the top left corner of the PivotGrid. Defaults to an empty string.
      */
     title: '',
-    
+
     /**
      * @cfg {Function} getCellCls Optional function which should return a CSS class name for each cell value. This is useful when
      * color coding cells based on their value. Defaults to undefined.
      */
-    
+
     /**
      * Returns the headers to be rendered at the top of the grid. Should be a 2-dimensional array, where each item specifies the number
      * of columns it groups (column in this case refers to normal grid columns). In the example below we have 5 city groups, which are
@@ -71,11 +71,11 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     getColumnHeaders: function() {
         return this.grid.topAxis.buildHeaders();;
     },
-    
+
     /**
      * Returns the headers to be rendered on the left of the grid. Should be a 2-dimensional array, where each item specifies the number
-     * of rows it groups. In the example below we have 5 city groups, which are each part of a continent supergroup. The rowspan for each 
-     * city group refers to the number of normal grid columns that group spans, so in this case the grid would be expected to have a 
+     * of rows it groups. In the example below we have 5 city groups, which are each part of a continent supergroup. The rowspan for each
+     * city group refers to the number of normal grid columns that group spans, so in this case the grid would be expected to have a
      * total of 12 rows:
 <pre><code>
 [
@@ -106,7 +106,7 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     getRowHeaders: function() {
         return this.grid.leftAxis.buildHeaders();
     },
-    
+
     /**
      * @private
      * Renders rows between start and end indexes
@@ -128,15 +128,15 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
             meta          = {},
             tstyle        = 'width:' + this.getGridInnerWidth() + 'px;',
             colBuffer, column, i;
-        
+
         startRow = startRow || 0;
         endRow   = Ext.isDefined(endRow) ? endRow : rowCount - 1;
-        
+
         for (i = 0; i < rowCount; i++) {
             row = rows[i];
             colCount  = row.length;
             colBuffer = [];
-            
+
             rowIndex = startRow + i;
 
             //build up each column's HTML
@@ -150,18 +150,18 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
                 if (Ext.isEmpty(meta.value)) {
                     meta.value = '&#160;';
                 }
-                
+
                 if (hasRenderer) {
                     meta.value = renderer(meta.value);
                 }
-                
+
                 if (hasGetCellCls) {
                     meta.css += getCellCls(meta.value) + ' ';
                 }
 
                 colBuffer[colBuffer.length] = cellTemplate.apply(meta);
             }
-            
+
             rowBuffer[rowBuffer.length] = rowTemplate.apply({
                 tstyle: tstyle,
                 cols  : colCount,
@@ -169,10 +169,10 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
                 alt   : ''
             });
         }
-        
+
         return rowBuffer.join("");
     },
-    
+
     /**
      * The master template to use when rendering the GridView. Has a default template
      * @property Ext.Template
@@ -198,43 +198,43 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
             '<div class="x-grid3-resize-proxy">&#160;</div>',
         '</div>'
     ),
-    
+
     /**
      * @private
      * Adds a gcell template to the internal templates object. This is used to render the headers in a multi-level column header.
      */
     initTemplates: function() {
         Ext.grid.PivotGridView.superclass.initTemplates.apply(this, arguments);
-        
+
         var templates = this.templates || {};
         if (!templates.gcell) {
             templates.gcell = new Ext.XTemplate(
                 '<td class="x-grid3-hd x-grid3-gcell x-grid3-td-{id} ux-grid-hd-group-row-{row} ' + this.colHeaderCellCls + '" style="{style}">',
-                    '<div {tooltip} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">', 
+                    '<div {tooltip} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">',
                         this.grid.enableHdMenu ? '<a class="x-grid3-hd-btn" href="#"></a>' : '', '{value}',
                     '</div>',
                 '</td>'
             );
         }
-        
+
         this.templates = templates;
         this.hrowRe = new RegExp("ux-grid-hd-group-row-(\\d+)", "");
     },
-    
+
     /**
      * @private
      * Sets up the reference to the row headers element
      */
     initElements: function() {
         Ext.grid.PivotGridView.superclass.initElements.apply(this, arguments);
-        
+
         /**
          * @property rowHeadersEl
          * @type Ext.Element
          * The element containing all row headers
          */
         this.rowHeadersEl = new Ext.Element(this.scroller.child('div.x-grid3-row-headers'));
-        
+
         /**
          * @property headerTitleEl
          * @type Ext.Element
@@ -242,17 +242,17 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
          */
         this.headerTitleEl = new Ext.Element(this.mainHd.child('div.x-grid3-header-title'));
     },
-    
+
     /**
      * @private
      * Takes row headers into account when calculating total available width
      */
     getGridInnerWidth: function() {
         var previousWidth = Ext.grid.PivotGridView.superclass.getGridInnerWidth.apply(this, arguments);
-        
+
         return previousWidth - this.getTotalRowHeaderWidth();
     },
-    
+
     /**
      * Returns the total width of all row headers as specified by {@link #getRowHeaders}
      * @return {Number} The total width
@@ -262,14 +262,14 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
             length  = headers.length,
             total   = 0,
             i;
-        
+
         for (i = 0; i< length; i++) {
             total += headers[i].width;
         }
-        
+
         return total;
     },
-    
+
     /**
      * @private
      * Returns the total height of all column headers
@@ -278,7 +278,7 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     getTotalColumnHeaderHeight: function() {
         return this.getColumnHeaders().length * 21;
     },
-    
+
     /**
      * @private
      * Slight specialisation of the GridView renderUI - just adds the row headers
@@ -286,27 +286,27 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     renderUI : function() {
         var templates  = this.templates,
             innerWidth = this.getGridInnerWidth();
-            
+
         return templates.master.apply({
             body  : templates.body.apply({rows:'&#160;'}),
             ostyle: 'width:' + innerWidth + 'px',
             bstyle: 'width:' + innerWidth + 'px'
         });
     },
-    
+
     /**
      * @private
      * Make sure that the headers and rows are all sized correctly during layout
      */
     onLayout: function(width, height) {
         Ext.grid.PivotGridView.superclass.onLayout.apply(this, arguments);
-        
+
         var width = this.getGridInnerWidth();
-        
+
         this.resizeColumnHeaders(width);
         this.resizeAllRows(width);
     },
-    
+
     /**
      * Refreshs the grid UI
      * @param {Boolean} headersToo (optional) True to also refresh the headers
@@ -314,7 +314,7 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     refresh : function(headersToo) {
         this.fireEvent('beforerefresh', this);
         this.grid.stopEditing(true);
-        
+
         var result = this.renderBody();
         this.mainBody.update(result).setWidth(this.getGridInnerWidth());
         if (headersToo === true) {
@@ -326,19 +326,19 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
         this.applyEmptyText();
         this.fireEvent('refresh', this);
     },
-    
+
     /**
      * @private
      * Bypasses GridView's renderHeaders as they are taken care of separately by the PivotAxis instances
      */
     renderHeaders: Ext.emptyFn,
-    
+
     /**
      * @private
      * Taken care of by PivotAxis
      */
     fitColumns: Ext.emptyFn,
-    
+
     /**
      * @private
      * Called on layout, ensures that the width of each column header is correct. Omitting this can lead to faulty
@@ -347,12 +347,12 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
      */
     resizeColumnHeaders: function(width) {
         var topAxis = this.grid.topAxis;
-        
+
         if (topAxis.rendered) {
             topAxis.el.setWidth(width);
         }
     },
-    
+
     /**
      * @private
      * Sets the row header div to the correct width. Should be called after rendering and reconfiguration of headers
@@ -360,15 +360,15 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     resizeRowHeaders: function() {
         var rowHeaderWidth = this.getTotalRowHeaderWidth(),
             marginStyle    = String.format("margin-left: {0}px;", rowHeaderWidth);
-        
+
         this.rowHeadersEl.setWidth(rowHeaderWidth);
         this.mainBody.applyStyles(marginStyle);
         Ext.fly(this.innerHd).applyStyles(marginStyle);
-        
+
         this.headerTitleEl.setWidth(rowHeaderWidth);
         this.headerTitleEl.setHeight(this.getTotalColumnHeaderHeight());
     },
-    
+
     /**
      * @private
      * Resizes all rendered rows to the given width. Usually called by onLayout
@@ -378,13 +378,13 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
         var rows   = this.getRows(),
             length = rows.length,
             i;
-        
+
         for (i = 0; i < length; i++) {
             Ext.fly(rows[i]).setWidth(width);
             Ext.fly(rows[i]).child('table').setWidth(width);
         }
     },
-    
+
     /**
      * @private
      * Updates the Row Headers, deferring the updating of Column Headers to GridView
@@ -393,21 +393,21 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
         this.renderGroupRowHeaders();
         this.renderGroupColumnHeaders();
     },
-    
+
     /**
      * @private
      * Renders all row header groups at all levels based on the structure fetched from {@link #getGroupRowHeaders}
      */
     renderGroupRowHeaders: function() {
         var leftAxis = this.grid.leftAxis;
-        
+
         this.resizeRowHeaders();
         leftAxis.rendered = false;
         leftAxis.render(this.rowHeadersEl);
-        
+
         this.setTitle(this.title);
     },
-    
+
     /**
      * Sets the title text in the top left segment of the PivotGridView
      * @param {String} title The title
@@ -415,18 +415,18 @@ Ext.grid.PivotGridView = Ext.extend(Ext.grid.GridView, {
     setTitle: function(title) {
         this.headerTitleEl.child('span').dom.innerHTML = title;
     },
-    
+
     /**
      * @private
      * Renders all column header groups at all levels based on the structure fetched from {@link #getColumnHeaders}
      */
     renderGroupColumnHeaders: function() {
         var topAxis = this.grid.topAxis;
-        
+
         topAxis.rendered = false;
         topAxis.render(this.innerHd.firstChild);
     },
-    
+
     /**
      * @private
      * Overridden to test whether the user is hovering over a group cell, in which case we don't show the menu

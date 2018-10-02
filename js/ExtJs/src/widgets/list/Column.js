@@ -20,19 +20,19 @@ Ext.list.Column = Ext.extend(Object, {
      * Defaults to true.
      */
     isColumn: true,
-    
+
     /**
      * @cfg {String} align
      * Set the CSS text-align property of the column. Defaults to <tt>'left'</tt>.
-     */        
+     */
     align: 'left',
     /**
      * @cfg {String} header Optional. The header text to be used as innerHTML
      * (html tags are accepted) to display in the ListView.  <b>Note</b>: to
      * have a clickable header with no text displayed use <tt>'&#160;'</tt>.
-     */    
+     */
     header: '',
-    
+
     /**
      * @cfg {Number} width Optional. Percentage of the container width
      * this column should be allocated.  Columns that have no width specified will be
@@ -40,7 +40,7 @@ Ext.list.Column = Ext.extend(Object, {
      * advantage of the full container width, leave the width of at least one column undefined.
      * Note that if you do not want to take up the full width of the container, the width of
      * every column needs to be explicitly defined.
-     */    
+     */
     width: null,
 
     /**
@@ -48,7 +48,7 @@ Ext.list.Column = Ext.extend(Object, {
      * row for this column.
      */
     cls: '',
-    
+
     /**
      * @cfg {String} tpl Optional. Specify a string to pass as the
      * configuration string for {@link Ext.XTemplate}.  By default an {@link Ext.XTemplate}
@@ -60,7 +60,7 @@ Ext.list.Column = Ext.extend(Object, {
      * ListViews's {@link Ext.data.Store}'s {@link Ext.data.Record} definition from
      * which to draw the column's value.</p>
      */
-    
+
     constructor : function(c){
         if(!c.tpl){
             c.tpl = new Ext.XTemplate('{' + c.dataIndex + '}');
@@ -68,7 +68,7 @@ Ext.list.Column = Ext.extend(Object, {
         else if(Ext.isString(c.tpl)){
             c.tpl = new Ext.XTemplate(c.tpl);
         }
-        
+
         Ext.apply(this, c);
     }
 });
@@ -86,11 +86,11 @@ Ext.list.NumberColumn = Ext.extend(Ext.list.Column, {
      * @cfg {String} format
      * A formatting string as used by {@link Ext.util.Format#number} to format a numeric value for this Column
      * (defaults to <tt>'0,000.00'</tt>).
-     */    
+     */
     format: '0,000.00',
-    
+
     constructor : function(c) {
-        c.tpl = c.tpl || new Ext.XTemplate('{' + c.dataIndex + ':number("' + (c.format || this.format) + '")}');       
+        c.tpl = c.tpl || new Ext.XTemplate('{' + c.dataIndex + ':number("' + (c.format || this.format) + '")}');
         Ext.list.NumberColumn.superclass.constructor.call(this, c);
     }
 });
@@ -107,7 +107,7 @@ Ext.reg('lvnumbercolumn', Ext.list.NumberColumn);
 Ext.list.DateColumn = Ext.extend(Ext.list.Column, {
     format: 'm/d/Y',
     constructor : function(c) {
-        c.tpl = c.tpl || new Ext.XTemplate('{' + c.dataIndex + ':date("' + (c.format || this.format) + '")}');      
+        c.tpl = c.tpl || new Ext.XTemplate('{' + c.dataIndex + ':date("' + (c.format || this.format) + '")}');
         Ext.list.DateColumn.superclass.constructor.call(this, c);
     }
 });
@@ -136,10 +136,10 @@ Ext.list.BooleanColumn = Ext.extend(Ext.list.Column, {
      * The string returned by the renderer when the column value is undefined (defaults to <tt>'&#160;'</tt>).
      */
     undefinedText: '&#160;',
-    
+
     constructor : function(c) {
         c.tpl = c.tpl || new Ext.XTemplate('{' + c.dataIndex + ':this.format}');
-        
+
         var t = this.trueText, f = this.falseText, u = this.undefinedText;
         c.tpl.format = function(v){
             if(v === undefined){
@@ -150,7 +150,7 @@ Ext.list.BooleanColumn = Ext.extend(Ext.list.Column, {
             }
             return t;
         };
-        
+
         Ext.list.DateColumn.superclass.constructor.call(this, c);
     }
 });

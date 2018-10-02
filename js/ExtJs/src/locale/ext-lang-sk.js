@@ -8,7 +8,7 @@
  * List compiled by mystix on the extjs.com forums.
  * Thank you Mystix!
  */
- 
+
  /*  Slovak Translation by Michal Thomka
   *  14 April 2007
   */

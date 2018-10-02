@@ -149,7 +149,7 @@ Ext.form.ComboBox = Ext.extend(Ext.form.TriggerField, {
      */
     /**
      * @cfg {String} hiddenId If <tt>{@link #hiddenName}</tt> is specified, <tt>hiddenId</tt> can also be provided
-     * to give the hidden field a unique id.  The <tt>hiddenId</tt> and combo {@link Ext.Component#id id} should be 
+     * to give the hidden field a unique id.  The <tt>hiddenId</tt> and combo {@link Ext.Component#id id} should be
      * different, since no two DOM nodes should share the same id.
      */
     /**
@@ -519,7 +519,7 @@ var combo = new Ext.form.ComboBox({
         }
         return zindex;
     },
-    
+
     getZIndex : function(listParent){
         listParent = listParent || Ext.getDom(this.getListParent() || Ext.getBody());
         var zindex = parseInt(Ext.fly(listParent).getStyle('z-index'), 10);

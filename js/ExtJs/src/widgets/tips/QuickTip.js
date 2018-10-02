@@ -80,7 +80,7 @@ Ext.QuickTip = Ext.extend(Ext.ToolTip, {
     unregister : function(el){
         delete this.targets[Ext.id(el)];
     },
-    
+
     /**
      * Hides a visible tip or cancels an impending show for a particular element.
      * @param {String/HTMLElement/Element} el The element that is the target of the tip.
@@ -96,10 +96,10 @@ Ext.QuickTip = Ext.extend(Ext.ToolTip, {
             this.clearTimer('show');
         }
     },
-    
+
     getTipCfg: function(e) {
-        var t = e.getTarget(), 
-            ttp, 
+        var t = e.getTarget(),
+            ttp,
             cfg;
         if(this.interceptTitles && t.title && Ext.isString(t.title)){
             ttp = t.title;
@@ -149,7 +149,7 @@ Ext.QuickTip = Ext.extend(Ext.ToolTip, {
                 title: et.getAttribute(cfg.title, ns),
                 cls: et.getAttribute(cfg.cls, ns),
                 align: et.getAttribute(cfg.align, ns)
-                
+
             };
             this.anchor = et.getAttribute(cfg.anchor, ns);
             if(this.anchor){

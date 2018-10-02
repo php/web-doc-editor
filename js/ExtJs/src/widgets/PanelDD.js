@@ -13,13 +13,13 @@
  * @param config Configuration options
  */
 Ext.dd.PanelProxy  = Ext.extend(Object, {
-    
+
     constructor : function(panel, config){
         this.panel = panel;
         this.id = this.panel.id +'-ddproxy';
-        Ext.apply(this, config);        
+        Ext.apply(this, config);
     },
-    
+
     /**
      * @cfg {Boolean} insertProxy True to insert a placeholder proxy element while dragging the panel,
      * false to drag with no proxy (defaults to true).
@@ -111,7 +111,7 @@ Ext.dd.PanelProxy  = Ext.extend(Object, {
 
 // private - DD implementation for Panels
 Ext.Panel.DD = Ext.extend(Ext.dd.DragSource, {
-    
+
     constructor : function(panel, cfg){
         this.panel = panel;
         this.dragData = {panel: panel};
@@ -124,9 +124,9 @@ Ext.Panel.DD = Ext.extend(Ext.dd.DragSource, {
             el = panel.header;
         }
         el.setStyle('cursor', 'move');
-        this.scroll = false;        
+        this.scroll = false;
     },
-    
+
     showFrame: Ext.emptyFn,
     startDrag: Ext.emptyFn,
     b4StartDrag: function(x, y) {

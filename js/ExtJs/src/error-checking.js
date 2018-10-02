@@ -7,16 +7,16 @@
 Ext.ns('Ext.debug');
 Ext.debug.Assistant = function(){
     var enabled = true;
-        
+
     return {
         enable: function(){
             enabled = true;
         },
-        
+
         disable: function(){
             enabled = false;
         },
-        
+
         init : function(classes){
             var klass,
                 intercept = false,
@@ -34,13 +34,13 @@ Ext.debug.Assistant = function(){
                         }
                     }, this);
                 }
-            }, this);  
+            }, this);
         },
-        
+
         namespaceExists: function(name){
             var parent = window,
                 exists = true;
-                
+
             Ext.each(name.split('.'), function(n){
                 if(!Ext.isDefined(parent[n])){
                     exists = false;
@@ -50,31 +50,31 @@ Ext.debug.Assistant = function(){
             });
             return exists;
         },
-        
+
         getClass : function(name){
             var parent = window;
             Ext.each(name.split('.'), function(n){
                 parent = parent[n];
-            });  
+            });
             return parent;
         },
-        
+
         warn: function(){
             if(enabled && window.console){
                 console.warn.apply(console, arguments);
             }
         },
-        
+
         error: function(){
             if(enabled && window.console){
                 console.error.apply(console, arguments);
             }
         },
-        
+
         addPrototypeCheck : function(cls, method, fn, intercept){
             return (cls.prototype[method] = cls.prototype[method][intercept ? 'createInterceptor' : 'createSequence'](fn));
         },
-        
+
         addInstanceCheck : function(cls, method, fn, intercept){
             return (cls[method] = cls[method][intercept ? 'createInterceptor' : 'createSequence'](fn));
         }
@@ -84,7 +84,7 @@ Ext.debug.Assistant = function(){
 (function(){
     var A = Ext.debug.Assistant,
         cls = [];
-        
+
     cls.push({
         name: 'Ext.util.Observable',
         checks: [{
@@ -114,7 +114,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.Component',
         checks: [{
@@ -124,7 +124,7 @@ Ext.debug.Assistant = function(){
                 if(!container && !this.el){
                     A.error('Unable to render to container', this, container);
                 }
-            
+
                 if(this.contentEl){
                     var el = Ext.getDom(this.contentEl);
                     if(!el){
@@ -135,7 +135,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.Container',
         checks: [{
@@ -151,7 +151,7 @@ Ext.debug.Assistant = function(){
                 if(c.applyTo){
                     A.warn('Using applyTo while adding an item to a Container. You should use the add() method or put the item in the items configuration', c, this);
                 }
-                
+
                 var type = this.layout.type;
                 if(type == 'container' || type == 'auto'){
                     A.warn('A non sizing layout is being used in a container that has child components. This means the child components will not be sized.', this);
@@ -176,7 +176,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.DataView',
         checks: [{
@@ -191,11 +191,11 @@ Ext.debug.Assistant = function(){
             fn: function(){
                 if(!this.store){
                     A.error('No store attached to DataView', this);
-                } 
+                }
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.Window',
         checks: [{
@@ -205,11 +205,11 @@ Ext.debug.Assistant = function(){
                 if(this.isDestroyed){
                     A.error('Trying to show a destroyed window. If you want to reuse the window, look at the closeAction configuration.', this);
                     return false;
-                } 
+                }
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.grid.GridPanel',
         checks: [{
@@ -224,17 +224,17 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.grid.GridView',
         checks: [{
             name: 'autoExpand',
             intercept: true,
             fn: function(){
-                var g = this.grid, 
+                var g = this.grid,
                 cm = this.cm;
                 if(!this.userResized && g.autoExpandColumn){
-                    var tw = cm.getTotalWidth(false), 
+                    var tw = cm.getTotalWidth(false),
                         aw = this.grid.getGridEl().getWidth(true) - this.getScrollOffset();
                     if(tw != aw){
                         var ci = cm.getIndexById(g.autoExpandColumn);
@@ -247,7 +247,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.chart.Chart',
         checks: [{
@@ -259,7 +259,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.tree.TreePanel',
         checks: [{
@@ -273,7 +273,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext',
         instance: true,
@@ -284,11 +284,11 @@ Ext.debug.Assistant = function(){
                 if(arguments.length == 2 && !arguments[0]){
                     A.error('Invalid base class passed to extend', arguments[0]);
                     return false;
-                }    
+                }
                 if(arguments.length == 3){
                     if(!arguments[0]){
                         A.error('Invalid class to extend', arguments[0]);
-                        return false;    
+                        return false;
                     }else if(!arguments[1]){
                         A.error('Invalid base class passed to extend', arguments[1]);
                         return false;
@@ -304,9 +304,9 @@ Ext.debug.Assistant = function(){
                     return false;
                 }
             }
-        }]    
+        }]
     });
-    
+
     cls.push({
         name: 'Ext.ComponentMgr',
         instance: true,
@@ -339,7 +339,7 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     cls.push({
         name: 'Ext.layout.FitLayout',
         checks: [{
@@ -353,12 +353,12 @@ Ext.debug.Assistant = function(){
             }
         }]
     });
-    
+
     if(Ext.BLANK_IMAGE_URL == 'http:/' + '/www.extjs.com/s.gif'){
         A.warn('You should set the Ext.BLANK_IMAGE_URL to reference a local copy.');
     }
-    
+
     A.init(cls);
-    
-        
+
+
 })();

@@ -20,7 +20,7 @@ Ext.util.JSON = new (function(){
                 if (useNative === null) {
                     useNative = Ext.USE_NATIVE_JSON && window.JSON && JSON.toString() == '[object JSON]';
                 }
-        
+
                 return useNative;
             };
         }(),
@@ -28,7 +28,7 @@ Ext.util.JSON = new (function(){
             return n < 10 ? "0" + n : n;
         },
         doDecode = function(json){
-            return eval("(" + json + ")");    
+            return eval("(" + json + ")");
         },
         doEncode = function(o){
             if(!Ext.isDefined(o) || o === null){
@@ -69,7 +69,7 @@ Ext.util.JSON = new (function(){
                 }
                 a.push("}");
                 return a.join("");
-            }    
+            }
         },
         m = {
             "\b": '\\b',

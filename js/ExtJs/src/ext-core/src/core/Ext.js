@@ -554,19 +554,19 @@ function(el){
         getBody : function(){
             return Ext.get(DOC.body || DOC.documentElement);
         },
-        
+
         /**
          * Returns the current document body as an {@link Ext.Element}.
          * @return Ext.Element The document body
          */
         getHead : function() {
             var head;
-            
+
             return function() {
                 if (head == undefined) {
                     head = Ext.get(DOC.getElementsByTagName("head")[0]);
                 }
-                
+
                 return head;
             };
         }(),

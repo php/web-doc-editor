@@ -513,8 +513,8 @@ ul.x-tab-strip-bottom{
     background-image:url(../images/access/button/s-arrow-noline.gif);
 }
 
-.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split, 
-.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split 
+.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split,
+.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split
 {
     background-image:url(../images/access/button/s-arrow-o.gif);
 }
@@ -523,8 +523,8 @@ ul.x-tab-strip-bottom{
     background-image:url(../images/access/button/s-arrow-b-noline.gif);
 }
 
-.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split-bottom, 
-.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split-bottom 
+.x-toolbar .x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-click .x-btn-mc em.x-btn-split-bottom,
+.x-toolbar .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-toolbar .x-btn-pressed .x-btn-mc em.x-btn-split-bottom
 {
     background-image:url(../images/access/button/s-arrow-bo.gif);
 }
@@ -1469,7 +1469,7 @@ a.x-menu-item {
 
 .x-panel-header {
     color:#fff;
-	font-weight:bold; 
+	font-weight:bold;
     font-size: 14px;
     font-family: tahoma,arial,verdana,sans-serif;
     border-color:#18181a;

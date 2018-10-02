@@ -22,10 +22,10 @@ Ext.menu.Separator = Ext.extend(Ext.menu.BaseItem, {
      * @cfg {Boolean} hideOnClick True to hide the containing menu after this item is clicked (defaults to false)
      */
     hideOnClick : false,
-    
-    /** 
+
+    /**
      * @cfg {String} activeClass
-     * @hide 
+     * @hide
      */
     activeClass: '',
 

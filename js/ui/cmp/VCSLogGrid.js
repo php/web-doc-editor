@@ -176,7 +176,7 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
             store   : store,
             columns : columns,
             view    : new Ext.grid.GridView({
-                forceFit      : true, 
+                forceFit      : true,
                 emptyText     : '<div style="text-align: center">' + _('You must manually load this data.<br>Use the refresh button !') + '<br><br>'+_('(You can change this behavior by setting an option in the configuration window)') + '</div>',
                 deferEmptyText: false
             }),

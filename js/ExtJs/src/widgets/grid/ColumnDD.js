@@ -8,7 +8,7 @@
 // This is a support class used internally by the Grid components
 Ext.grid.HeaderDragZone = Ext.extend(Ext.dd.DragZone, {
     maxDragWidth: 120,
-    
+
     constructor : function(grid, hd, hd2){
         this.grid = grid;
         this.view = grid.getView();
@@ -20,7 +20,7 @@ Ext.grid.HeaderDragZone = Ext.extend(Ext.dd.DragZone, {
         }
         this.scroll = false;
     },
-    
+
     getDragData : function(e){
         var t = Ext.lib.Event.getTarget(e),
             h = this.view.findHeaderCell(t);
@@ -48,7 +48,7 @@ Ext.grid.HeaderDragZone = Ext.extend(Ext.dd.DragZone, {
     afterInvalidDrop : function(){
         this.completeDrop();
     },
-    
+
     completeDrop: function(){
         var v = this.view,
             disabled = this.dragHeadersDisabled;
@@ -63,7 +63,7 @@ Ext.grid.HeaderDragZone = Ext.extend(Ext.dd.DragZone, {
 Ext.grid.HeaderDropZone = Ext.extend(Ext.dd.DropZone, {
     proxyOffsets : [-4, -9],
     fly: Ext.Element.fly,
-    
+
     constructor : function(grid, hd, hd2){
         this.grid = grid;
         this.view = grid.getView();
@@ -119,8 +119,8 @@ Ext.grid.HeaderDropZone = Ext.extend(Ext.dd.DropZone, {
     positionIndicator : function(h, n, e){
         var x = Ext.lib.Event.getPageX(e),
             r = Ext.lib.Dom.getRegion(n.firstChild),
-            px, 
-            pt, 
+            px,
+            pt,
             py = r.top + this.proxyOffsets[1];
         if((r.right - x) <= (r.right-r.left)/2){
             px = r.right+this.view.borderWidth;
@@ -191,12 +191,12 @@ Ext.grid.HeaderDropZone = Ext.extend(Ext.dd.DropZone, {
 });
 
 Ext.grid.GridView.ColumnDragZone = Ext.extend(Ext.grid.HeaderDragZone, {
-    
+
     constructor : function(grid, hd){
         Ext.grid.GridView.ColumnDragZone.superclass.constructor.call(this, grid, hd, null);
         this.proxy.el.addClass('x-grid3-col-dd');
     },
-    
+
     handleMouseDown : function(e){
     },
 

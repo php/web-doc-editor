@@ -32,7 +32,7 @@ ui.cmp._MainMenu.store.on('load', function(store)
     Ext.getDom('Info-Language').innerHTML =  _(store.getById(PhDOE.user.lang).data.name);
 
     Ext.getDom('Topic-Language').innerHTML = String.format(_('{0} Topic:'), _(store.getById(PhDOE.user.lang).data.name));
-    
+
     store.each(function(record) {
 
         var tmp = new Ext.menu.Item({
@@ -40,7 +40,7 @@ ui.cmp._MainMenu.store.on('load', function(store)
             iconCls : 'mainMenuLang flags ' + record.data.iconCls,
             disabled: (record.data.code === PhDOE.user.lang),
             handler : function() {
-                
+
                 XHR({
                     params  : { task : 'switchLang', lang: record.data.code },
                     success : function()
@@ -398,11 +398,11 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                     if (!Ext.getCmp('main-panel').findById('tab-chat')) {
 
                         var chatLogin = PhDOE.user.login;
-                        
+
                         if( PhDOE.user.isAnonymous ) {
                             chatLogin = 'an%3F%3F%3F';
                         }
-                        
+
                         Ext.getCmp('main-panel').add({
                             id         : 'tab-chat',
                             xtype      : 'panel',
@@ -415,7 +415,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
                     }
 
                     Ext.getCmp('main-panel').setActiveTab('tab-chat');
-                    
+
                 }
             }, '-', {
                 id      : 'winabout-btn',

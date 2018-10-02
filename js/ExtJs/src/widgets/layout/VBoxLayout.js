@@ -87,9 +87,9 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
 
             //used to cache the calculated size and position values for each child item
             boxes        = [],
-            
+
             //used in the for loops below, just declared here for brevity
-            child, childWidth, childHeight, childSize, childMargins, canLayout, i, calcs, flexedWidth, 
+            child, childWidth, childHeight, childSize, childMargins, canLayout, i, calcs, flexedWidth,
             horizMargins, vertMargins, stretchWidth;
 
         //gather the total flex of all flexed items and the width taken up by fixed width items
@@ -119,7 +119,7 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
                     childHeight = childSize.height;
                 }
             }
-            
+
             childMargins = child.margins;
             vertMargins  = childMargins.top + childMargins.bottom;
 
@@ -144,13 +144,13 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
                 width    : childWidth || undefined
             });
         }
-                
+
         var shortfall = desiredHeight - height,
             tooNarrow = minimumHeight > height;
 
         //the height available to the flexed items
         var availableHeight = Math.max(0, (height - nonFlexHeight - paddingVert));
-        
+
         if (tooNarrow) {
             for (i = 0, length = visibleCount; i < length; i++) {
                 boxes[i].height = visibleItems[i].minHeight || visibleItems[i].height || boxes[i].height;
@@ -176,7 +176,7 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
                         boxes[index].height = minHeight;
                     } else {
                         minHeights.push({
-                            minHeight: minHeight, 
+                            minHeight: minHeight,
                             available: boxes[index].height - minHeight,
                             index    : index
                         });
@@ -215,7 +215,7 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
                 //temporary variables used in the flex height calculations below
                 var remainingHeight = availableHeight,
                     remainingFlex   = totalFlex;
-                
+
                 //calculate the height of each flexed item
                 for (i = 0; i < visibleCount; i++) {
                     child = visibleItems[i];
@@ -250,11 +250,11 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
             childMargins = child.margins;
             topOffset   += childMargins.top;
             horizMargins = childMargins.left + childMargins.right;
-            
+
 
             calcs.left = leftOffset + childMargins.left;
             calcs.top  = topOffset;
-            
+
             switch (this.align) {
                 case 'stretch':
                     stretchWidth = availWidth - horizMargins;
@@ -275,7 +275,7 @@ Ext.layout.VBoxLayout = Ext.extend(Ext.layout.BoxLayout, {
 
             topOffset += calcs.height + childMargins.bottom;
         }
-        
+
         return {
             boxes: boxes,
             meta : {

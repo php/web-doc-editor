@@ -14,24 +14,24 @@
  * in response to detected drag operations. These are onBeforeStart, onStart, onDrag and onEnd.
  * See {@link Ext.slider.MultiSlider}'s initEvents function for an example implementation.
  */
-Ext.dd.DragTracker = Ext.extend(Ext.util.Observable,  {    
+Ext.dd.DragTracker = Ext.extend(Ext.util.Observable,  {
     /**
      * @cfg {Boolean} active
 	 * Defaults to <tt>false</tt>.
-	 */	
+	 */
     active: false,
     /**
      * @cfg {Number} tolerance
 	 * Number of pixels the drag target must be moved before dragging is considered to have started. Defaults to <tt>5</tt>.
-	 */	
+	 */
     tolerance: 5,
     /**
      * @cfg {Boolean/Number} autoStart
 	 * Defaults to <tt>false</tt>. Specify <tt>true</tt> to defer trigger start by 1000 ms.
 	 * Specify a Number for the number of milliseconds to defer trigger start.
-	 */	
+	 */
     autoStart: false,
-    
+
     constructor : function(config){
         Ext.apply(this, config);
 	    this.addEvents(
@@ -72,9 +72,9 @@ Ext.dd.DragTracker = Ext.extend(Ext.util.Observable,  {
 	         */
 	        'drag'
 	    );
-	
+
 	    this.dragRegion = new Ext.lib.Region(0,0,0,0);
-	
+
 	    if(this.el){
 	        this.initEl(this.el);
 	    }
@@ -137,7 +137,7 @@ Ext.dd.DragTracker = Ext.extend(Ext.util.Observable,  {
     onMouseUp: function(e) {
         var doc = Ext.getDoc(),
             wasActive = this.active;
-            
+
         doc.un('mousemove', this.onMouseMove, this);
         doc.un('mouseup', this.onMouseUp, this);
         doc.un('selectstart', this.stopSelect, this);
@@ -170,7 +170,7 @@ Ext.dd.DragTracker = Ext.extend(Ext.util.Observable,  {
         e.stopEvent();
         return false;
     },
-    
+
     /**
      * Template method which should be overridden by each DragTracker instance. Called when the user first clicks and
      * holds the mouse button down. Return false to disallow the drag

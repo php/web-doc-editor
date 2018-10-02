@@ -36,7 +36,7 @@ Ext.grid.RowNumberer = Ext.extend(Object, {
      * @hide
      */
     sortable: false,
-    
+
     constructor : function(config){
         Ext.apply(this, config);
         if(this.rowspan){

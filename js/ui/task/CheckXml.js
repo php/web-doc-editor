@@ -20,14 +20,14 @@ ui.task.CheckXml = function(config)
 
             // Remove wait msg
             msg.hide();
-            
+
             // Is there some errors ?
             if( o.errors !== 'no_error' ) {
-                
+
                 new ui.cmp.CheckXmlWin({
                     errors : o.errors
                 });
-                
+
             } else {
                 PhDOE.notify('info', _('XML check'), _('There is no error.'));
             }

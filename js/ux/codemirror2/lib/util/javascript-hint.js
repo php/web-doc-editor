@@ -2,7 +2,7 @@
   function forEach(arr, f) {
     for (var i = 0, e = arr.length; i < e; ++i) f(arr[i]);
   }
-  
+
   function arrayContains(arr, item) {
     if (!Array.prototype.indexOf) {
       var i = arr.length;
@@ -15,7 +15,7 @@
     }
     return arr.indexOf(item) != -1;
   }
-  
+
   CodeMirror.javascriptHint = function(editor) {
     // Find the token at the cursor
     var cur = editor.getCursor(), token = editor.getTokenAt(cur), tprop = token;

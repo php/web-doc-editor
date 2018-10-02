@@ -10,7 +10,7 @@
  * This class provides the basic implementation for <i>single</i> <b>cell</b> selection in a grid.
  * The object stored as the selection contains the following properties:
  * <div class="mdetail-params"><ul>
- * <li><b>cell</b> : see {@link #getSelectedCell} 
+ * <li><b>cell</b> : see {@link #getSelectedCell}
  * <li><b>record</b> : Ext.data.record The {@link Ext.data.Record Record}
  * which provides the data for the row containing the selection</li>
  * </ul></div>
@@ -18,12 +18,12 @@
  * @param {Object} config The object containing the configuration of this model.
  */
 Ext.grid.CellSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
-    
+
     constructor : function(config){
         Ext.apply(this, config);
 
 	    this.selection = null;
-	
+
 	    this.addEvents(
 	        /**
 	         * @event beforecellselect
@@ -47,14 +47,14 @@ Ext.grid.CellSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
 	         * @param {SelectionModel} this
 	         * @param {Object} selection null for no selection or an object with two properties
 	         * <div class="mdetail-params"><ul>
-	         * <li><b>cell</b> : see {@link #getSelectedCell} 
+	         * <li><b>cell</b> : see {@link #getSelectedCell}
 	         * <li><b>record</b> : Ext.data.record<p class="sub-desc">The {@link Ext.data.Record Record}
 	         * which provides the data for the row containing the selection</p></li>
 	         * </ul></div>
 	         */
 	        "selectionchange"
 	    );
-	
+
 	    Ext.grid.CellSelectionModel.superclass.constructor.call(this);
     },
 
@@ -96,7 +96,7 @@ Ext.grid.CellSelectionModel = Ext.extend(Ext.grid.AbstractSelectionModel,  {
      * (e.g., [0, 0]), or null if none selected. The array has elements:
      * <div class="mdetail-params"><ul>
      * <li><b>rowIndex</b> : Number<p class="sub-desc">The index of the selected row</p></li>
-     * <li><b>cellIndex</b> : Number<p class="sub-desc">The index of the selected cell. 
+     * <li><b>cellIndex</b> : Number<p class="sub-desc">The index of the selected cell.
      * Due to possible column reordering, the cellIndex should <b>not</b> be used as an
      * index into the Record's data. Instead, use the cellIndex to determine the <i>name</i>
      * of the selected cell and use the field name to retrieve the data value from the record:<pre><code>
@@ -181,7 +181,7 @@ var data = record.get(fieldName);
     isSelectable : function(rowIndex, colIndex, cm){
         return !cm.isHidden(colIndex);
     },
-    
+
     // private
     onEditorKey: function(field, e){
         if(e.getKey() == e.TAB){
@@ -194,7 +194,7 @@ var data = record.get(fieldName);
         if(!e.isNavKeyPress()){
             return;
         }
-        
+
         var k = e.getKey(),
             g = this.grid,
             s = this.selection,
@@ -233,7 +233,7 @@ var data = record.get(fieldName);
         cell = s.cell;  // currently selected cell
         r = cell[0];    // current row
         c = cell[1];    // current column
-        
+
         switch(k){
             case e.TAB:
                 if(e.shiftKey){

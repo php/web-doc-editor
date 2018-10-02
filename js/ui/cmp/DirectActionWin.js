@@ -35,18 +35,18 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
         {
             // Get value
             var action, patchID, idDB, win = this.ownerCt.ownerCt;
-            
+
             action = win.items.items[1].items.items[0].getValue();
             patchID = win.items.items[1].items.items[1].getValue();
             idDB = win.idDB;
-            
+
             // We need a patch with this action
             if( action == 'putIntoMyPatches' && patchID == '' ) {
                 win.items.items[1].items.items[1].markInvalid();
                 win.items.items[1].items.items[1].focus();
                 return;
             }
-            
+
             XHR({
                 scope: this,
                 params: {
@@ -57,16 +57,16 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
                 },
                 success: function(r) {
                     var o = Ext.util.JSON.decode(r.responseText);
-                    
+
                     // We reload some stores
                     ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload();
                     ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
-                    
+
                     // We close this window
                     win.close();
                 }
             });
-            
+
         }
     },'->',{
         text    : _('Close'),
@@ -75,13 +75,13 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
             this.ownerCt.ownerCt.close();
         }
     }],
-    
+
     displayData: function(info)
     {
         this.items.items[0].setText(info.fileInfo.lang + info.fileInfo.path + info.fileInfo.name + ' ' + _('by') + ' <b>' + info.userInfo.vcs_login + '</b> ' + _('on') + ' ' + info.fileInfo.date, false);
-        
+
         this.items.items[2].update(info.vcsDiff);
-        
+
         // We select the right action
         this.items.items[1].items.items[0].setValue(this.action);
         // Do we need to display patchList and Add button ?
@@ -91,7 +91,7 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
             //this.items.items[1].items.items[2].hide();
             Ext.getCmp('Action-win-btn-add-new-patch').hide();
         }
-        
+
         if( this.action == 'putIntoMyPatches' )
         {
             this.items.items[1].items.items[1].show();
@@ -99,7 +99,7 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
             Ext.getCmp('Action-win-btn-add-new-patch').show();
         }
     },
-    
+
     initComponent : function()
     {
         Ext.apply(this,
@@ -136,7 +136,7 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
                                 combo.ownerCt.items.items[1].hide();
                                 combo.ownerCt.items.items[2].hide();
                             }
-                            
+
                             if( record.data.actionID == 'putIntoMyPatches' )
                             {
                                 combo.ownerCt.items.items[1].show();
@@ -183,22 +183,22 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
                         },
                         success: function(r) {
                             var o = Ext.util.JSON.decode(r.responseText);
-                            
+
                             if( !o.fileInfo ) {
                                 this.close();
                                 PhDOE.notify('error', _('Live action'), _('This live action didn\'t exist'));
                                 return;
                             }
-                            
+
                             this.displayData(o);
                         }
-                    });  
+                    });
                 }
             }
         });
-        
+
         ui.cmp.DirectActionWin.superclass.initComponent.call(this);
-        
+
         this.show();
     }
 });

@@ -1,15 +1,15 @@
 /*
  * By Jake Knerr - Copyright 2010 - supersonicecho@gmail.com
- * 
+ *
  * Version 1.0
- * 
+ *
  * LICENSE
  * GPL v3
- * 
+ *
  */
- 
+
 Ext.ux.SlidingTabPanel = Ext.extend(Ext.TabPanel, {
-	
+
 	initTab: function(item, index){
 		Ext.ux.SlidingTabPanel.superclass.initTab.call(this, item, index);
 
@@ -24,24 +24,24 @@ Ext.ux.SlidingTabPanel = Ext.extend(Ext.TabPanel, {
 			tabpanel:this // Pass a reference to the tabpanel for each dragObject
 		});
 	}
-	
+
 });
 
 Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
-	
+
 	// Constructor
 	constructor: function() {
 		Ext.ux.DDSlidingTab.superclass.constructor.apply(this, arguments);
 		this.setYConstraint(0,0,0); // Lock the proxy to its initial Y coordinate
-		
+
 		// Create a convenient reference to the tab's tabpanel
 		this.tabpanel = this.config.tabpanel;
-		
+
 		// Set the slide duration
 		this.slideDuration = this.tabpanel.slideDuration;
 		if(!this.slideDuration) this.slideDuration = .1;
 	}
-	
+
 	// Pseudo Private Methods
 	,handleMouseDown: function(e, oDD){
 		if(this.primaryButtonOnly && e.button != 0) return;
@@ -66,24 +66,24 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 
 		Ext.dd.DDM.useCache = false; // Disable caching of element location
 		Ext.dd.DDM.mode = 1; // Point mode
-		
+
 		this.proxyWrapper = Ext.get(this.getDragEl()); // Grab a reference to the proxy element we are creating
 		this.proxyWrapper.update(); // Clear out the proxy's nodes
 		this.proxyWrapper.applyStyles('z-index:1001;border:0 none;');
 		this.proxyWrapper.addClass('tab-proxy');
-			
+
 			// Use 2 nested divs to mimic the default tab styling
 			// You may need to customize the proxy to get it to look like your custom tabpanel if you use a bunch of custom css classes and styles
 		this.stripWrap = this.proxyWrapper.insertHtml('afterBegin', '<div class="x-tab-strip x-tab-strip-top"></div>', true);
 		this.dragEl = this.stripWrap.insertHtml('afterBegin','<div></div>', true);
-		
+
 		this.tab = Ext.get(this.getEl()); // Grab a reference to the tab being dragged
 		this.tab.applyStyles('visibility:hidden;'); // Hide the tab being dragged
-		
+
 		// Insert the html and css classes for the dragged tab into the proxy
 		this.dragEl.insertHtml('afterBegin', this.tab.dom.innerHTML, false);
-		this.dragEl.dom.className = this.tab.dom.className; 
-		
+		this.dragEl.dom.className = this.tab.dom.className;
+
 		// Constrain the proxy drag in the X coordinate to the tabpanel
 		var panelWidth = this.tabpanel.el.getWidth();
 		var panelX = this.tabpanel.el.getX();
@@ -96,7 +96,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 	}
 	,onDragOver: function(e, targetArr) {
 		e.stopEvent();
-		
+
 		// Grab the tab you have dragged the proxy over
 		var target = Ext.get(targetArr[0].id);
 		var targetWidth = target.getWidth();
@@ -132,7 +132,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 				target.applyStyles('visibility:visible;');
 			}
 			,scope:this
-		}); 
+		});
 	}
 	,createSliderProxy: function(targetX, target) {
 		var sliderWrapperEl = Ext.getBody().insertHtml('afterBegin', '<div class="tab-proxy" style="position:absolute;visibility:visible;z-index:999;left:' + targetX + 'px;"></div>', true);
@@ -150,7 +150,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 	,endDrag: function(e){
 		var elX 		= this.tab.getX();
 		this.proxyWrapper.applyStyles('visibility:visible;');
-		
+
 		// Animate the dragProxy to the proper position
 		this.proxyWrapper.shift({
 			x: elX
@@ -159,7 +159,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 			,callback: function() {
 				this.proxyWrapper.applyStyles('visibility:hidden;');
 				this.tab.applyStyles('visibility:visible;');
-				
+
 				// Cleanup
 				this.stripWrap.remove();
 				this.dragEl.remove();
@@ -169,7 +169,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 			}
 			,scope:this
 		});
-		
+
 		Ext.dd.DDM.useCache = true;
 
                 this.reorderTab();

@@ -37,7 +37,7 @@ Ext.menu.CheckItem = Ext.extend(Ext.menu.Item, {
 
     // private
     ctype: "Ext.menu.CheckItem",
-    
+
     initComponent : function(){
         Ext.menu.CheckItem.superclass.initComponent.call(this);
 	    this.addEvents(

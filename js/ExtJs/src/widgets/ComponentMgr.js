@@ -73,36 +73,36 @@ Ext.ComponentMgr = function(){
          * @type {MixedCollection}
          */
         all : all,
-        
+
         /**
          * The xtypes that have been registered with the component manager.
          * @type {Object}
          */
         types : types,
-        
+
         /**
          * The ptypes that have been registered with the component manager.
          * @type {Object}
          */
         ptypes: ptypes,
-        
+
         /**
          * Checks if a Component type is registered.
          * @param {Ext.Component} xtype The mnemonic string by which the Component class may be looked up
          * @return {Boolean} Whether the type is registered.
          */
         isRegistered : function(xtype){
-            return types[xtype] !== undefined;    
+            return types[xtype] !== undefined;
         },
-        
+
         /**
          * Checks if a Plugin type is registered.
          * @param {Ext.Component} ptype The mnemonic string by which the Plugin class may be looked up
          * @return {Boolean} Whether the type is registered.
          */
         isPluginRegistered : function(ptype){
-            return ptypes[ptype] !== undefined;    
-        },        
+            return ptypes[ptype] !== undefined;
+        },
 
         /**
          * <p>Registers a new Component constructor, keyed by a new
@@ -156,10 +156,10 @@ Ext.ComponentMgr = function(){
         createPlugin : function(config, defaultType){
             var PluginCls = ptypes[config.ptype || defaultType];
             if (PluginCls.init) {
-                return PluginCls;                
+                return PluginCls;
             } else {
                 return new PluginCls(config);
-            }            
+            }
         }
     };
 }();

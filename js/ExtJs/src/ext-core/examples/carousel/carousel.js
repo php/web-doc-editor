@@ -43,7 +43,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
 
         this.el = Ext.get(elId);
         this.slides = this.els = [];
-        
+
         if(this.autoPlay || this.showPlayButton) {
             this.wrap = true;
         };
@@ -62,7 +62,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
 
     initMarkup: function() {
         var dh = Ext.DomHelper;
-        
+
         this.carouselSize = 0;
         var items = this.el.select(this.itemSelector);
         this.els.container = dh.append(this.el, {cls: 'ux-carousel-container'}, true);
@@ -85,7 +85,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
         });
 
         this.els.caption.setWidth((this.slideWidth - (this.els.navNext.getWidth()*2) - (this.showPlayButton ? this.els.navPlay.getWidth() : 0) - 20) + 'px')
-        
+
         items.appendTo(this.els.slidesWrap).each(function(item) {
             item = item.wrap({cls: 'ux-carousel-slide'});
             this.slides.push(item);
@@ -102,7 +102,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
         this.els.navPrev.on('click', function(ev) {
             ev.preventDefault();
             var target = ev.getTarget();
-            target.blur();            
+            target.blur();
             if(Ext.fly(target).hasClass('ux-carousel-nav-disabled')) return;
             this.prev();
         }, this);
@@ -179,10 +179,10 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
         }
         this.setSlide(this.activeSlide - 1);
 
-        this.fireEvent('prev', this.activeSlide);        
-        return this; 
+        this.fireEvent('prev', this.activeSlide);
+        return this;
     },
-    
+
     next: function() {
         if(this.fireEvent('beforenext') === false) {
             return;
@@ -192,8 +192,8 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
         }
         this.setSlide(this.activeSlide + 1);
 
-        this.fireEvent('next', this.activeSlide);        
-        return this;         
+        this.fireEvent('next', this.activeSlide);
+        return this;
     },
 
     play: function() {
@@ -206,7 +206,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
                 interval: this.interval*1000,
                 scope: this
             };
-            
+
             this.playTaskBuffer = this.playTaskBuffer || new Ext.util.DelayedTask(function() {
                 Ext.TaskMgr.start(this.playTask);
             }, this);
@@ -217,7 +217,7 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
                 this.els.navPlay.addClass('ux-carousel-playing');
             }
             this.fireEvent('play');
-        }        
+        }
         return this;
     },
 
@@ -230,10 +230,10 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
                 this.els.navPlay.removeClass('ux-carousel-playing');
             }
             this.fireEvent('pause');
-        }        
+        }
         return this;
     },
-        
+
     clear: function() {
         this.els.slidesWrap.update('');
         this.slides = [];
@@ -241,17 +241,17 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
         this.pause();
         return this;
     },
-    
+
     add: function(el, refresh) {
         var item = Ext.fly(el).appendTo(this.els.slidesWrap).wrap({cls: 'ux-carousel-slide'});
         item.setWidth(this.slideWidth + 'px').setHeight(this.slideHeight + 'px');
-        this.slides.push(item);                        
+        this.slides.push(item);
         if(refresh) {
             this.refresh();
-        }        
+        }
         return this;
     },
-    
+
     refresh: function() {
         this.carouselSize = this.slides.length;
         this.els.slidesWrap.setWidth((this.slideWidth * this.carouselSize) + 'px');
@@ -259,10 +259,10 @@ Ext.ux.Carousel = Ext.extend(Ext.util.Observable, {
             if(!this.hideNavigation) this.els.navigation.show();
             this.activeSlide = 0;
             this.setSlide(0, true);
-        }                
-        return this;        
+        }
+        return this;
     },
-    
+
     setSlide: function(index, initial) {
         if(!this.wrap && !this.slides[index]) {
             return;

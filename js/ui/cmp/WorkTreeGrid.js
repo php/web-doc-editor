@@ -11,15 +11,15 @@ ui.cmp._WorkTreeGrid.SetProgress = new Ext.util.DelayedTask(function(){
 
 
 ui.cmp._WorkTreeGrid.isNotSavedFile = function(config) {
-    
+
     var needToBeSaved = false;
-    
+
     Ext.each(Ext.getCmp('main-panel').items.items, function(tab) {
-        
+
         if( tab.isModified === true )
         {
              needToBeSaved = true;
-             
+
              Ext.MessageBox.show({
                 title   : _('Warning'),
                 icon    : Ext.MessageBox.INFO,
@@ -29,13 +29,13 @@ ui.cmp._WorkTreeGrid.isNotSavedFile = function(config) {
                     Ext.getCmp('main-panel').setActiveTab(tab.id);
                 }
              });
-             
+
              return false;
-             
+
         }
-        
+
     }, this);
-    
+
     if( ! needToBeSaved ) {
         config.commitWindow.show();
     }
@@ -51,7 +51,7 @@ ui.cmp._WorkTreeGrid.menu.admin = function(config){
     ui.cmp._WorkTreeGrid.menu.admin.superclass.constructor.call(this);
 };
 Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
-    
+
     listeners: {
         afterrender: function(){
             ui.cmp._WorkTreeGrid.menu.usersPatch({
@@ -59,13 +59,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
             });
         }
     },
-    
+
     init: function() {
-        
+
         var allFiles = [], items;
-        
+
         allFiles.push(this.node);
-        
+
         switch(this.from) {
             case 'file' :
                 items = [{
@@ -106,7 +106,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                     }
                 }];
                 break;
-                
+
             case 'patch' :
                 items = [{
                     scope: this,
@@ -121,7 +121,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.admin, Ext.menu.Item, {
                 }];
                 break;
         }
-        
+
         Ext.apply(this, {
             text: _('Administrator menu'),
             iconCls: 'iconAdmin',
@@ -161,7 +161,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     hidden: (this.from === 'user' || this.from === 'folder' || this.from === 'patch' || this.from === 'anonymousPatch'),
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
-                        
+
                         var file = [{
                             fid: Ext.util.md5(this.folderNode.attributes.task + this.node.attributes.task),
                             fpath: this.folderNode.attributes.task,
@@ -171,7 +171,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                             fdate: Date.parseDate(this.node.attributes.last_modified,'Y-m-d H:i:s'),
                             fby: this.userNode.attributes.task
                         }];
-                        
+
                         ui.cmp._WorkTreeGrid.isNotSavedFile({
                                 commitWindow: new ui.cmp.CommitPrompt({
                                                     files: file
@@ -185,7 +185,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];
-                        
+
                         this.folderNode.cascade(function(node){
                             if (node.attributes.type !== 'folder' && node.attributes.type !== 'user') {
                                 files.push({
@@ -199,13 +199,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                 });
                             }
                         }, this);
-                        
+
                         ui.cmp._WorkTreeGrid.isNotSavedFile({
                                 commitWindow: new ui.cmp.CommitPrompt({
                                                     files: files
                                               })
                         });
-                        
+
                     }
                 }, {
                     scope: this,
@@ -214,25 +214,25 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [], defaultCommitMessage = '', patchID = false, anonymousName;
-                        
+
                         // We build the default commit message for a commit issue from an anonymous patch
                         if( this.from === 'anonymousPatch' )
                         {
                             anonymousName = this.patchNode.parentNode.attributes.task;
-                            
+
                             // We must remove # caracter from the automatic comment to avoid bug system problem.
                             // See this thread : http://news.php.net/php.doc/969384624
-                            
+
                             if( this.patchNode.parentNode.attributes.isAnonymous ) {
                                 anonymousName = 'anonymous ' + this.patchNode.parentNode.attributes.userID;
                             }
-                            
+
                             defaultCommitMessage = this.patchNode.attributes.patchDescription + "\n\n-- \nProvided by " + anonymousName + ' ('+this.patchNode.attributes.patchEmail+')';
-                            
+
                             patchID = this.patchNode.attributes.idDB;
-                            
+
                         }
-                        
+
                         this.patchNode.cascade(function(node){
                             if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
                                 files.push({
@@ -246,7 +246,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                 });
                             }
                         }, this);
-                        
+
                         ui.cmp._WorkTreeGrid.isNotSavedFile({
                                 commitWindow: new ui.cmp.CommitPrompt({
                                                     files: files,
@@ -254,7 +254,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                                     patchID: patchID
                                               })
                         });
-                        
+
                     }
                 }, {
                     scope: this,
@@ -263,7 +263,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                     iconCls: 'iconCommitFileVcs',
                     handler: function(){
                         var files = [];
-                        
+
                         this.userNode.cascade(function(node){
                             if (node.attributes.type !== 'folder' && node.attributes.type !== 'user' && node.attributes.type !== 'patch') {
                                 files.push({
@@ -277,13 +277,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
                                 });
                             }
                         }, this);
-                        
+
                         ui.cmp._WorkTreeGrid.isNotSavedFile({
                                 commitWindow: new ui.cmp.CommitPrompt({
                                                     files: files
                                               })
                         });
-                        
+
                     }
                 }]
             })
@@ -293,19 +293,19 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.commit, Ext.menu.Item, {
 
 ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
     Ext.apply(this, config);
-    
+
     var menu = Ext.getCmp(this.menuID), newItem, patchesList;
-    
+
     // We remove all this menu
     menu.removeAll();
     menu.doLayout();
-    
+
     patchesList = ui.cmp.PatchesTreeGrid.getInstance().getUserPatchesList();
-    
+
     if (patchesList) {
-    
+
         Ext.each(patchesList, function(item){
-        
+
             newItem = new Ext.menu.Item({
                 id: Ext.id(),
                 text: item.attributes.task,
@@ -318,9 +318,9 @@ ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
                 }
             });
             menu.add(newItem);
-            
+
         }, this);
-        
+
     }
     else {
         newItem = new Ext.menu.Item({
@@ -329,7 +329,7 @@ ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
         });
         menu.add(newItem);
     }
-    
+
     // Set the default action : Add a new patch
     newItem = new Ext.menu.Item({
         text: _('Create a new patch'),
@@ -343,7 +343,7 @@ ui.cmp._WorkTreeGrid.menu.usersPatch = function(config){
         }
     });
     menu.add('-', newItem);
-    
+
     menu.doLayout();
     menu.itemRendered = true;
 
@@ -367,17 +367,17 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             }
         }
     },
-    
+
     init: function(){
         var allFiles = [], items;
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'user' && node.attributes.type !== 'folder') {
                 allFiles.push(node);
             }
         }, this);
-        
+
         items = (this.node.attributes.task === PhDOE.user.login) ? [{
             text: _('Submit all files for review in patch:'),
             iconCls: 'iconPendingPatch',
@@ -392,7 +392,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
         }, {
             xtype: 'menuseparator',
             hidden: !PhDOE.user.haveKarma
-        }, 
+        },
 
 
         new ui.cmp._WorkTreeGrid.menu.commit({
@@ -409,12 +409,12 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.users, Ext.menu.Menu, {
             hidden: !this.node.attributes.email,
             handler: function(){
                 var win = new ui.cmp.EmailPrompt();
-                
+
                 win.setData(this.node.attributes.task, this.node.attributes.email);
                 win.show(this.node.el);
             }
         }];
-        
+
         Ext.apply(this, {
             items: items
         });
@@ -431,7 +431,7 @@ ui.cmp._WorkTreeGrid.menu.folders = function(config){
 Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
     listeners: {
         show: function(){
-        
+
             if (this.node.parentNode.attributes.task === PhDOE.user.login) {
                 ui.cmp._WorkTreeGrid.menu.usersPatch({
                     menuID: 'foldersPatchesMenu'
@@ -439,23 +439,23 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.folders, Ext.menu.Menu, {
             }
         }
     },
-    
+
     init: function(){
         var allFiles = [];
-        
+
         // We don't display all of this menu if the current user isn't the owner
         if (this.node.parentNode.attributes.task !== PhDOE.user.login) {
             return false;
         }
-        
+
         // We search for files to pass to patch
         this.node.cascade(function(node){
             if (node.attributes.type !== 'folder') {
                 allFiles.push(node);
             }
         }, this);
-        
-        
+
+
         Ext.apply(this, {
             items: [{
                 text: _('Submit all files in this directory in patch:'),
@@ -500,7 +500,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             });
         }
     },
-    
+
     init: function(){
         var node = this.node,
             FileType = node.attributes.type,
@@ -511,13 +511,13 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
             owner = node.parentNode.parentNode.attributes.task,
             allFiles = [],
             tmp;
-        
+
         // Get the lang of this file
         tmp = node.parentNode.attributes.task.split('/');
         FileLang = tmp[0];
-        
+
         allFiles.push(this.node);
-        
+
         Ext.apply(this, {
             items: [{
                 text: '<b>' + ((FileType === 'delete') ? _('View in a new tab') : _('Edit in a new tab')) + '</b>',
@@ -558,11 +558,11 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                         }),
                         refreshNodeColumns: function(n){
                             var t = n.getOwnerTree(), a = n.attributes, cols = t.columns, el = n.ui.getEl().firstChild, cells = el.childNodes, i, d, v, len;
-                            
+
                             for (i = 1, len = cols.length; i < len; i++) {
                                 d = cols[i].dataIndex;
                                 v = (a[d] !== null) ? a[d] : '';
-                                
+
                                 if (cols[i].tpl && cols[i].tpl.html === "{progress:this.formatProgress}") {
                                     cells[i].firstChild.innerHTML = cols[i].tpl.apply('out:' + v);
                                 }
@@ -573,7 +573,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                             change: function(s, n){
                                 this.node.attributes.progress = n;
                                 s.refreshNodeColumns(this.node);
-                                
+
                                 ui.cmp._WorkTreeGrid.SetProgress.delay(1000, null, this);
                             }
                         }
@@ -613,7 +613,7 @@ Ext.extend(ui.cmp._WorkTreeGrid.menu.files, Ext.menu.Menu, {
                 iconCls: 'iconPageDelete',
                 hidden: owner !== PhDOE.user.login,
                 handler: function(){
-                    
+
                     new ui.task.ClearLocalChangeTask({
                         ftype: FileType,
                         fpath: FilePath,
@@ -653,23 +653,23 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
     onContextMenu: function(node, e){
         e.stopEvent();
         var selectedNodes, NBselectedNodes, type, contextMenu;
-        
+
         selectedNodes = this.getSelectionModel().getSelectedNodes();
         NBselectedNodes = selectedNodes.length;
-        
+
         // We clean up the multi-selection and keep only files own by the current user
         if( NBselectedNodes > 1 ) {
-            
+
             for( var i=0; i < NBselectedNodes; i++ ) {
-                
+
                 if( selectedNodes[i].attributes.type == 'folder' || selectedNodes[i].attributes.type == 'user') {
                     selectedNodes[i].unselect(true);
                 }
-                
+
                 if( selectedNodes[i].attributes.type != 'folder' && selectedNodes[i].attributes.type != 'user') {
-                    
+
                     var fileOwner = selectedNodes[i].parentNode.parentNode.attributes.task;
-                    
+
                     if( fileOwner != PhDOE.user.login ) {
                         selectedNodes[i].unselect(true);
                     }
@@ -678,12 +678,12 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
             selectedNodes = this.getSelectionModel().getSelectedNodes();
             NBselectedNodes = selectedNodes.length;
         }
-        
+
         // Now we have only owns files selected
         if( NBselectedNodes > 1 ) {
-            
+
             contextMenu = new Ext.menu.Menu({
-                
+
                 listeners: {
                     show: function() {
                         ui.cmp._WorkTreeGrid.menu.usersPatch({
@@ -705,14 +705,14 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 }]
             });
             contextMenu.showAt(e.getXY());
-            
+
             return;
         }
-        
+
         type = node.attributes.type;
-        
+
         switch (type) {
-        
+
             case "user":
                 // We only select this row/ If there is multi-selection, this clear the selection and select only the current one.
                 node.select();
@@ -720,35 +720,35 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     node: node
                 });
                 break;
-                
+
             case "folder":
                 node.select();
                 contextMenu = new ui.cmp._WorkTreeGrid.menu.folders({
                     node: node
                 });
                 break;
-                
+
             default: // Use default for file as the type can be update, delete or new
                 node.select();
                 contextMenu = new ui.cmp._WorkTreeGrid.menu.files({
                     node: node
                 });
                 break;
-                
+
         }
-        
+
         contextMenu.showAt(e.getXY());
-        
+
     },
-    
+
     initComponent: function(){
-        
+
         function renderProgress(v, p){
             p.css += ' x-grid3-progresscol';
-            
+
             return String.format('<div class="x-progress-wrap"><div class="x-progress-inner"><div class="x-progress-bar{0}" style="width:{1}%;">{2}</div></div>', this.getStyle(v), (v / this.ceiling) * 100, this.getText(v));
         }
-        
+
         Ext.apply(this, {
             animate: true,
             useArrows: true,
@@ -771,7 +771,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                         }
                         return v;
                     }
-                    
+
                 })
             }, {
                 header: _('Last modified'),
@@ -794,27 +794,27 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 align: 'center',
                 tpl: new Ext.XTemplate('{progress:this.formatProgress}', {
                     formatProgress: function(v, v2){
-                    
+
                         // We re-use this template from the slider. So, we must use this hack to pass the new value
                         if (Ext.util.Format.substr(v2, 0, 4) === 'out:') {
                             var t = v2.split(':');
                             v = t[1];
                         }
-                        
+
                         if (!v && v !== 0) {
                             return '';
                         }
-                        
+
                         function getText(v){
                             var textClass = (v < (100 / 2)) ? 'x-progress-text-back' : 'x-progress-text-front' +
                             (Ext.isIE6 ? '-ie6' : ''), text;
-                            
+
                             // ugly hack to deal with IE6 issue
                             text = String.format('</div><div class="x-progress-text {0}" style="width:100%;" id="{1}">{2}</div></div>', textClass, Ext.id(), v + '%');
-                            
+
                             return (v < (100 / 1.05)) ? text.substring(0, text.length - 6) : text.substr(6);
                         }
-                        
+
                         function getStyle(v){
                             if (v <= 100 && v > (100 * 0.67)) {
                                 return '-green';
@@ -827,11 +827,11 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                             }
                             return '';
                         }
-                        
+
                         return String.format('<div class="x-progress-wrap"><div class="x-progress-inner"><div class="x-progress-bar{0}" style="width:{1}%;">{2}</div></div>', getStyle(v), (v / 100) * 100, getText(v));
                     }
                 })
-            
+
             }],
             loader: {
                 dataUrl: './do/getWork',
@@ -841,7 +841,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 listeners: {
                     beforeload: function() {
                         Ext.getCmp('acc-work-in-progress').setIconClass('iconLoading');
-                        
+
                     },
                     load: function() {
                         Ext.getCmp('acc-work-in-progress').setIconClass('iconWorkInProgress');
@@ -850,49 +850,49 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
             }
         });
         ui.cmp.WorkTreeGrid.superclass.initComponent.call(this);
-        
+
         this.on('contextmenu', this.onContextMenu, this);
         this.on('resize', this.resizeCmp, this);
         this.on('dblclick', this.openFile, this);
-        
+
         this.getRootNode().on('beforechildrenrendered', function(){
             this.updateFilesCounter.defer(200, this);
         }, this);
     },
-    
+
     resizeCmp: function(c, a, b, w){
-    
+
         this.columns[0].width = w - (this.columns[1].width + this.columns[2].width + 5);
         this.updateColumnWidths();
     },
-                  
+
     delRecord: function(fid){
         var rootNode = this.getRootNode(), i, j, h, user, folder, file;
-        
+
         for (i = 0; i < rootNode.childNodes.length; i++) {
             user = rootNode.childNodes[i];
-            
+
             for (j = 0; j < user.childNodes.length; j++) {
                 folder = user.childNodes[j];
-                
+
                 for (h = 0; h < folder.childNodes.length; h++) {
                     file = folder.childNodes[h];
-                    
+
                     // We can't use === operator here. Sometimes, fid is a string, Sometimes, it's an integer ( see Bug #55316 )
                     if (file.attributes.idDB == fid) {
-                    
+
                         file.remove(true);
-                        
+
                         // Is Folder contains some others child ?
                         if (Ext.isEmpty(folder.childNodes)) {
-                        
+
                             folder.remove(true);
-                            
+
                             // Is User contains some others child ?
                             if (Ext.isEmpty(user.childNodes)) {
-                            
+
                                 user.remove(true);
-                                
+
                                 this.updateFilesCounter();
                                 return;
                             }
@@ -903,25 +903,25 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                         return;
                     }
                 }
-                
+
             }
         }
-        
+
         // We update the FilesCounter
         this.updateFilesCounter();
     },
-    
+
     addToWork: function(nodesToAdd){
         var rootNode, userNode, folderNode, type, iconCls, fileNode, nowDate, i;
-        
+
         rootNode = this.getRootNode();
-        
+
         // We start by searching if this user have a node
         userNode = rootNode.findChild('task', PhDOE.user.login);
-        
+
         // If the user node don't exist, we create it
         if (!userNode) {
-        
+
             userNode = new Ext.tree.TreeNode({
                 task: PhDOE.user.login,
                 type: 'user',
@@ -929,36 +929,36 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 iconCls: 'iconUser',
                 expanded: true
             });
-            
+
             rootNode.appendChild(userNode);
             rootNode.expand(); // This allow to show our new node
         }
-        
+
         if (nodesToAdd) {
-        
+
             // We walk into the nodes to add
             for (i = 0; i < nodesToAdd.length; i++) {
-            
+
                 // We search now into this patch the right folder
                 folderNode = userNode.findChild('task', nodesToAdd[i].parentNode.attributes.task);
-                
+
                 // If this folder don't exist, we create it
                 if (!folderNode) {
-                
+
                     folderNode = new Ext.tree.TreeNode({
                         task: nodesToAdd[i].parentNode.attributes.task,
                         type: 'folder',
                         iconCls: 'iconFolderOpen',
                         expanded: true
                     });
-                    
+
                     userNode.appendChild(folderNode);
                     userNode.expand(); // This allow to show our new node
                 }
-                
+
                 // We add now this file into this folder
                 type = nodesToAdd[i].attributes.type;
-                
+
                 if (type === 'update') {
                     iconCls = 'iconRefresh';
                 }
@@ -968,9 +968,9 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 if (type === 'delete') {
                     iconCls = 'iconTrash';
                 }
-                
+
                 nowDate = new Date();
-                
+
                 fileNode = new Ext.tree.TreeNode({
                     task: nodesToAdd[i].attributes.task,
                     type: type,
@@ -980,26 +980,26 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     progress: nodesToAdd[i].attributes.progress,
                     idDB: nodesToAdd[i].attributes.idDB
                 });
-                
+
                 folderNode.appendChild(fileNode);
                 folderNode.expand(); // This allow to show our new node
             }
-            
+
         } // End of adding folders/files into this patch
         // We update the FilesCounter
         this.updateFilesCounter();
-        
+
     },
-    
+
     addRecord: function(fid, fpath, fname, type){
         var rootNode = this.getRootNode(), userNode, folderNode, fileNode, nowDate, iconCls;
-        
+
         // We start by searching if this user have a node
         userNode = rootNode.findChild('task', PhDOE.user.login);
-        
+
         // If the user node don't exist, we create it
         if (!userNode) {
-        
+
             userNode = new Ext.tree.TreeNode({
                 task: PhDOE.user.login,
                 type: 'user',
@@ -1008,34 +1008,34 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 expanded: true,
                 nbFiles: 1
             });
-            
+
             rootNode.appendChild(userNode);
             rootNode.expand(); // This allow to show our new node
         }
-        
+
         // We search now into this user the right folder
         folderNode = userNode.findChild('task', fpath);
-        
+
         // If this folder don't exist, we create it
         if (!folderNode) {
-        
+
             folderNode = new Ext.tree.TreeNode({
                 task: fpath,
                 type: 'folder',
                 iconCls: 'iconFolderOpen',
                 expanded: true
             });
-            
+
             userNode.appendChild(folderNode);
             userNode.expand(); // This allow to show our new node
         }
-        
+
         // We search now into this folder the right file
         fileNode = folderNode.findChild('task', fname);
-        
+
         // If this folder don't exist, we create it
         if (!fileNode) {
-        
+
             if (type === 'update') {
                 iconCls = 'iconRefresh';
             }
@@ -1045,9 +1045,9 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
             if (type === 'delete') {
                 iconCls = 'iconTrash';
             }
-            
+
             nowDate = new Date();
-            
+
             fileNode = new Ext.tree.TreeNode({
                 task: fname,
                 type: type,
@@ -1057,18 +1057,18 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                 progress: 100,
                 idDB: fid
             });
-            
+
             folderNode.appendChild(fileNode);
             folderNode.expand(); // This allow to show our new node
         }
-        
+
         // We update the FilesCounter
         this.updateFilesCounter();
     },
-    
+
     countFiles: function(){
         var rootNode = this.getRootNode(), nbFiles = 0;
-        
+
         rootNode.cascade(function(node){
             if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' ) {
                 if (node.parentNode.parentNode.attributes.task === PhDOE.user.login) {
@@ -1079,27 +1079,27 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
 
         return nbFiles;
     },
-    
+
     updateFilesCounter: function(){
         var count = this.countFiles();
-        
+
         Ext.getDom('acc-work-in-progress-nb').innerHTML = count;
-        
+
     },
-    
+
     openFile: function(node){
         var FileType = node.attributes.type, FilePath = node.parentNode.attributes.task, FileName = node.attributes.task, tmp;
-        
+
         if (FileType === 'user' || FileType === 'folder') {
             return false;
         }
-        
+
         tmp = FilePath.split('/');
         FileLang = tmp[0];
         tmp.shift();
-        
+
         FilePath = "/" + tmp.join('/');
-        
+
         switch (FileType) {
             case "new":
                 // Find the id of this row into PendingTranslateGrid.store and open it !
@@ -1110,43 +1110,43 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                     }
                 });
                 break;
-                
+
             case "delete":
                 // Find the id of this row into NotInENGrid.store and open it !
                 ui.cmp.NotInENGrid.getInstance().store.each(function(row){
-                
+
                     if ((row.data.path) === FilePath && row.data.name === FileName) {
                         ui.cmp.NotInENGrid.getInstance().openFile(row.data.id);
                         return;
                     }
                 });
                 break;
-                
+
             case "update":
                 // For EN file, we open this new file into the "All files" module
                 if (FileLang === 'en') {
                     ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang + FilePath, FileName);
                 }
                 else {
-                
+
                     found = false;
-                    
+
                     // Find the id of this row into StaleFileGrid.store and open it !
                     ui.cmp.StaleFileGrid.getInstance().store.each(function(row){
-                    
+
                         if ((row.data.path) === FilePath && row.data.name === FileName) {
                             ui.cmp.StaleFileGrid.getInstance().openFile(row.data.id);
                             found = true;
                             return;
                         }
                     });
-                    
+
                     // If we haven't found this file in StaleFileGrid, we try into File in error grid.
                     if (!found) {
-                    
+
                         // Find the id of this row into ErrorFileGrid.store and open it !
                         ui.cmp.ErrorFileGrid.getInstance().store.each(function(row){
-                        
+
                             if ((row.data.path) === FilePath && row.data.name === FileName) {
                                 ui.cmp.ErrorFileGrid.getInstance().openFile(row.data.id);
                                 found = true;
@@ -1154,13 +1154,13 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                             }
                         });
                     }
-                    
+
                     // If we haven't found this file in File in error grid, we search in Pending Reviewed grid.
                     if (!found) {
-                    
+
                         // Find the id of this row into PendingReviewGrid.store and open it !
                         ui.cmp.PendingReviewGrid.getInstance().store.each(function(row){
-                        
+
                             if ((row.data.path) === FilePath && row.data.name === FileName) {
                                 ui.cmp.PendingReviewGrid.getInstance().openFile(row.data.id);
                                 found = true;
@@ -1168,7 +1168,7 @@ ui.cmp.WorkTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
                             }
                         });
                     }
-                    
+
                     // FallBack : We open it into "All files" modules
                     if (!found) {
                         ui.cmp.RepositoryTree.getInstance().openFile('byPath', FileLang + FilePath, FileName);

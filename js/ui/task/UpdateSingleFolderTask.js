@@ -37,7 +37,7 @@ ui.task._UpdateSingleFolderTask.poll = new Ext.util.DelayedTask(function()
         failure : function(response)
         {
             var o = Ext.util.JSON.decode(response.responseText);
-            
+
             if (o && o.success === false) {
                 new ui.task._UpdateSingleFolderTask.getUpdateFolderResponse(node);
 
@@ -92,7 +92,7 @@ ui.task._UpdateSingleFolderTask.update = function(node)
         },
         success : function(r)
         {
-            var o = Ext.util.JSON.decode(r.responseText);            
+            var o = Ext.util.JSON.decode(r.responseText);
             ui.task._UpdateSingleFolderTask.afterUpdate(o, node);
         },
         failure : function(r)

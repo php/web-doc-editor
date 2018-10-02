@@ -18,7 +18,7 @@
  * {@link Ext.tree.TreeNode#getUI}
  */
 Ext.tree.TreeNodeUI = Ext.extend(Object, {
-    
+
     constructor : function(node){
         Ext.apply(this, {
             node: node,
@@ -26,10 +26,10 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
             animating: false,
             wasLeaf: true,
             ecc: 'x-tree-ec-icon x-tree-elbow',
-            emptyIcon: Ext.BLANK_IMAGE_URL    
+            emptyIcon: Ext.BLANK_IMAGE_URL
         });
     },
-    
+
     // private
     removeChild : function(node){
         if(this.rendered){
@@ -53,14 +53,14 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
             this.textNode.innerHTML = text;
         }
     },
-    
+
     // private
     onIconClsChange : function(node, cls, oldCls){
         if(this.rendered){
             Ext.fly(this.iconNode).replaceClass(oldCls, cls);
         }
     },
-    
+
     // private
     onIconChange : function(node, icon){
         if(this.rendered){
@@ -70,7 +70,7 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
             Ext.fly(this.iconNode)[empty ? 'removeClass' : 'addClass']('x-tree-node-inline-icon');
         }
     },
-    
+
     // private
     onTipChange : function(node, tip, title){
         if(this.rendered){
@@ -88,7 +88,7 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
             }
         }
     },
-    
+
     // private
     onHrefChange : function(node, href, target){
         if(this.rendered){
@@ -98,12 +98,12 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
             }
         }
     },
-    
+
     // private
     onClsChange : function(node, cls, oldCls){
         if(this.rendered){
             Ext.fly(this.elNode).replaceClass(oldCls, cls);
-        }    
+        }
     },
 
     // private
@@ -511,7 +511,7 @@ Ext.tree.TreeNodeUI = Ext.extend(Object, {
         this.anchor = cs[index];
         this.textNode = cs[index].firstChild;
     },
-    
+
     /**
      * @private Gets a normalized href for the node.
      * @param {String} href

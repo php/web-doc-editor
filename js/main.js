@@ -42,9 +42,9 @@ var PhDOE = function()
                 })
             })
         },
-        
+
         updateDataProgress: false,
-        
+
         topic : {
             global: {
                 author: '',
@@ -57,8 +57,8 @@ var PhDOE = function()
                 topicDate: ''
             }
         },
-        
-        
+
+
         /**
          * Hold application's variable such as name, version or configuration
          */
@@ -115,7 +115,7 @@ var PhDOE = function()
                 hideDelay   :  5000
             });
 
-            _notify.show(document); 
+            _notify.show(document);
 
         },
 
@@ -210,7 +210,7 @@ var PhDOE = function()
                     });
                 }
             }
-            
+
             if( directAccess.action )
             {
                 Ext.getCmp('main-panel').openDirectAction({
@@ -237,7 +237,7 @@ var PhDOE = function()
             if( this.user.conf.main.loadBugsAtStartUp ) {
                 ui.cmp.PortletBugs.getInstance().reloadData();
             }
-            
+
             // We set the Topic
             PhDOE.setTopic();
             PhDOE.setTopic(true);
@@ -372,30 +372,30 @@ var PhDOE = function()
                 isLang: isLang
             });
         },
-        
+
         setTopic: function(isLang) {
             var topic = PhDOE.topic[isLang ? 'lang' : 'global'];
             Ext.get('topic-info-content' + (isLang ? '-lang' : '')).dom.innerHTML = topic.content;
             Ext.get('topic-info-user' + (isLang ? '-lang' : '')).dom.innerHTML = String.format(_('Defined by {0}, {1}'), topic.author,topic.topicDate);
-            
+
         },
-        
+
         drawInterface: function()
         {
             var portal, portalEN, portalLANG, mainContentLeft=[], mainContentRight=[], allPortlet=[];
-            
+
             // Default value for portalEN & portalLANG sort
 
             portalEN = {
                 'col1' : ["portletLocalMail","portletBugs"],
                 'col2' : ["portletInfo","portletTranslationsGraph"]
             };
-            
+
             portalLANG = {
                 'col1' : ["portletSummary","portletTranslator","portletLocalMail","portletBugs"],
                 'col2' : ["portletInfo","portletTranslationGraph","portletTranslationsGraph"]
             };
-            
+
             // Get user conf
             if ( PhDOE.user.lang === 'en' ) {
                 portal = (PhDOE.user.conf.main.portalSortEN) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortEN) : portalEN;
@@ -408,7 +408,7 @@ var PhDOE = function()
             else
             {
                 portal = (PhDOE.user.conf.main.portalSortLANG) ? Ext.util.JSON.decode(PhDOE.user.conf.main.portalSortLANG) : portalLANG;
-                
+
                 allPortlet["portletSummary"] = ui.cmp.PortletSummary.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletTranslator"] = ui.cmp.PortletTranslator.getInstance({lang: PhDOE.user.lang});
                 allPortlet["portletLocalMail"] = ui.cmp.PortletLocalMail.getInstance({lang: PhDOE.user.lang});
@@ -569,7 +569,7 @@ var PhDOE = function()
                             handler : function() {
                                 ui.cmp.WorkTreeGrid.getInstance().getRootNode().reload();
                             }
-                            
+
                         }]
                     }, {
                         id        : 'acc-patches',
@@ -579,7 +579,7 @@ var PhDOE = function()
                             handler : function() {
                                 ui.cmp.PatchesTreeGrid.getInstance().getRootNode().reload();
                             }
-                            
+
                         },{
                             id      : 'gear',
                             hidden  : PhDOE.user.haveKarma,
@@ -636,12 +636,12 @@ var PhDOE = function()
                                      '</div></div></div><div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div></div><div class="x-box-like"><g:plusone size="medium" width="20"></g:plusone><br/><div class="fb-like" data-send="false" data-layout="button_count" data-width="40" data-show-faces="false"></div></div>',
                                  listeners: {
                                     afterrender: function(cmp) {
-                                    
+
                                         var ttContent='', libelContent='', loginLibelEl, content;
-                                        
+
                                         // Build libel content
                                         loginLibelEl = Ext.get('loginLibel');
-                                        
+
                                         if( PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin ) {
                                             loginLibelEl.addClass('userAdmin');
                                             libelContent = '<img src="themes/img/icon_php.png" style="vertical-align:middle"> '+PhDOE.user.login;
@@ -664,19 +664,19 @@ var PhDOE = function()
                                             libelContent = '<img src="themes/img/auth_twitter.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         }
                                         loginLibelEl.dom.innerHTML = libelContent;
-                                        
+
                                         // Build tooltip content
-                                        
+
                                         content = _('Connected using') +' '+ PhDOE.user.authService + '<br>';
-                                        
+
                                         content += (PhDOE.user.isGlobalAdmin) ? _('You are a global Administrator')+'<br>' : '';
                                         content += (PhDOE.user.isLangAdmin) ? _('You are an administrator for this language')+'<br>' : '';
-                                        
+
                                         new Ext.ToolTip({
                                             target: 'loginLibel',
                                             anchor: 'top',
                                             html: content
-                                        }); 
+                                        });
                                     }
                                  }
                             },{
@@ -741,7 +741,7 @@ var PhDOE = function()
                                     }
                                 }
                             }]
-                            
+
 
                         }, {
                             xtype  : 'portal',
@@ -764,7 +764,7 @@ var PhDOE = function()
                                         id = a.portal.items.items[0].items.items[i].id;
                                         col1Sort.push(id);
                                     }
-                                    
+
                                     // Column 2
                                     for( var j=0; j < a.portal.items.items[1].items.items.length; j++ ) {
                                         id = a.portal.items.items[1].items.items[j].id;
@@ -775,7 +775,7 @@ var PhDOE = function()
                                         'col1' : col1Sort,
                                         'col2' : col2Sort
                                     };
-                                    
+
                                     // We store this config var into portalSortEN for EN users, and portalSortLANG for LANG users
 
                                     new ui.task.UpdateConfTask({
@@ -784,7 +784,7 @@ var PhDOE = function()
                                         value : Ext.util.JSON.encode(portal),
                                         notify: false
                                     });
-                                    
+
                                 }
                             }
                         }]
@@ -805,7 +805,7 @@ var PhDOE = function()
                                 nodeID: data.nodes[i].attributes.id
                             };
                         }
-                        
+
                         // Start the first
                         ui.cmp.RepositoryTree.getInstance().openFile(
                             'byId',
@@ -886,7 +886,7 @@ var PhDOE = function()
                     return true;
                 }
             });
-            
+
             // Call Js for Facebook-like button
             (function(d, s, id) {
                 var js, fjs = d.getElementsByTagName(s)[0];
@@ -895,8 +895,8 @@ var PhDOE = function()
                 js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=128417830579090";
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
-            
-            
+
+
             window.___gcfg = {
                 lang: 'en-US',
                 size: 'medium',
@@ -908,7 +908,7 @@ var PhDOE = function()
                 po.src = 'https://apis.google.com/js/plusone.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
             })();
-            
+
             // Load all store & remove the mask after all store are loaded
             this.loadAllStore();
 

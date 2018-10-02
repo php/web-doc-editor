@@ -17,15 +17,15 @@ Ext.dd.DragSource = function(el, config){
     if(!this.dragData){
         this.dragData = {};
     }
-    
+
     Ext.apply(this, config);
-    
+
     if(!this.proxy){
         this.proxy = new Ext.dd.StatusProxy();
     }
-    Ext.dd.DragSource.superclass.constructor.call(this, this.el.dom, this.ddGroup || this.group, 
+    Ext.dd.DragSource.superclass.constructor.call(this, this.el.dom, this.ddGroup || this.group,
           {dragElId : this.proxy.id, resizeFrame: false, isTarget: false, scroll: this.scroll === true});
-    
+
     this.dragging = false;
 };
 
@@ -65,7 +65,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
             }else{
                 this.proxy.setStatus(this.dropAllowed);
             }
-            
+
             if(this.afterDragEnter){
                 /**
                  * An empty function by default, but provided so that you can perform a custom action
@@ -167,7 +167,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
     beforeDragOut : function(target, e, id){
         return true;
     },
-    
+
     // private
     onDragDrop : function(e, id){
         var target = this.cachedTarget || Ext.dd.DragDropMgr.getDDById(id);
@@ -181,7 +181,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
             }else{
                 this.onValidDrop(target, e, id);
             }
-            
+
             if(this.afterDragDrop){
                 /**
                  * An empty function by default, but provided so that you can perform a custom action
@@ -216,7 +216,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
             /**
              * An empty function by default, but provided so that you can perform a custom action
              * after a valid drop has occurred by providing an implementation.
-             * @param {Object} target The target DD 
+             * @param {Object} target The target DD
              * @param {Event} e The event object
              * @param {String} id The id of the dropped element
              * @method afterInvalidDrop
@@ -227,7 +227,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
 
     // private
     getRepairXY : function(e, data){
-        return this.el.getXY();  
+        return this.el.getXY();
     },
 
     // private
@@ -283,7 +283,7 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
             this.dragData = data;
             this.proxy.stop();
             Ext.dd.DragSource.superclass.handleMouseDown.apply(this, arguments);
-        } 
+        }
     },
 
     /**
@@ -328,14 +328,14 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
      * @return {Ext.dd.StatusProxy} proxy The StatusProxy
      */
     getProxy : function(){
-        return this.proxy;  
+        return this.proxy;
     },
 
     /**
      * Hides the drag source's {@link Ext.dd.StatusProxy}
      */
     hideProxy : function(){
-        this.proxy.hide();  
+        this.proxy.hide();
         this.proxy.reset(true);
         this.dragging = false;
     },
@@ -357,12 +357,12 @@ Ext.extend(Ext.dd.DragSource, Ext.dd.DDProxy, {
     // private
     onEndDrag : function(data, e){
     },
-    
+
     // private - pin to cursor
     autoOffset : function(x, y) {
         this.setDelta(-12, -20);
     },
-    
+
     destroy: function(){
         Ext.dd.DragSource.superclass.destroy.call(this);
         Ext.destroy(this.proxy);

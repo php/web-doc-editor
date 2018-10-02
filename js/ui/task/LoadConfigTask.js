@@ -37,7 +37,7 @@ ui.task.LoadConfigTask = function(config)
                 PhDOE.topic.global.topicDate = Date.parseDate(o.mess.topicInfo.global.topicDate, 'Y-m-d H:i:s');
                 PhDOE.topic.global.topicDate = PhDOE.topic.global.topicDate.format(_('Y-m-d, H:i'));
             }
-            
+
             //For the theme, we apply it.
             Ext.get('appTheme').dom.href = PhDOE.user.conf.main.theme;
 
@@ -46,10 +46,10 @@ ui.task.LoadConfigTask = function(config)
                 PhDOE.user.conf.diff = {};
                 PhDOE.user.conf.diff.displayPreviewPanel = true;
             }
-            
+
             // Draw the interface
             PhDOE.drawInterface();
-            
+
         }
     });
 };

@@ -30,7 +30,7 @@
  * @param {Object} config The configuration object
  */
 Ext.state.CookieProvider = Ext.extend(Ext.state.Provider, {
-    
+
     constructor : function(config){
         Ext.state.CookieProvider.superclass.constructor.call(this);
         this.path = "/";
@@ -40,7 +40,7 @@ Ext.state.CookieProvider = Ext.extend(Ext.state.Provider, {
         Ext.apply(this, config);
         this.state = this.readCookies();
     },
-    
+
     // private
     set : function(name, value){
         if(typeof value == "undefined" || value === null){

@@ -75,25 +75,25 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
         if (Ext.isString(this.defaultMargins)) {
             this.defaultMargins = this.parseMargins(this.defaultMargins);
         }
-        
+
         var handler = this.overflowHandler;
-        
+
         if (typeof handler == 'string') {
             handler = {
                 type: handler
             };
         }
-        
+
         var handlerType = 'none';
         if (handler && handler.type != undefined) {
             handlerType = handler.type;
         }
-        
+
         var constructor = Ext.layout.boxOverflow[handlerType];
         if (constructor[this.type]) {
             constructor = constructor[this.type];
         }
-        
+
         this.overflowHandler = new constructor(this, handler);
     },
 
@@ -110,19 +110,19 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
             calcs = this.calculateChildBoxes(items, tSize),
             boxes = calcs.boxes,
             meta  = calcs.meta;
-        
+
         //invoke the overflow handler, if one is configured
         if (tSize.width > 0) {
             var handler = this.overflowHandler,
                 method  = meta.tooNarrow ? 'handleOverflow' : 'clearOverflow';
-            
+
             var results = handler[method](calcs, tSize);
-            
+
             if (results) {
                 if (results.targetSize) {
                     tSize = results.targetSize;
                 }
-                
+
                 if (results.recalculate) {
                     items = this.getVisibleItems(container);
                     calcs = this.calculateChildBoxes(items, tSize);
@@ -130,7 +130,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
                 }
             }
         }
-        
+
         /**
          * @private
          * @property layoutTargetLastSize
@@ -139,7 +139,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
          * BoxLayout subclasses during their onLayout run.
          */
         this.layoutTargetLastSize = tSize;
-        
+
         /**
          * @private
          * @property childBoxCache
@@ -148,7 +148,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
          * within the Box layout.
          */
         this.childBoxCache = calcs;
-        
+
         this.updateInnerCtSize(tSize, calcs);
         this.updateChildBoxes(boxes);
 
@@ -164,7 +164,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
         for (var i = 0, length = boxes.length; i < length; i++) {
             var box  = boxes[i],
                 comp = box.component;
-            
+
             if (box.dirtySize) {
                 comp.setSize(box.width, box.height);
             }
@@ -172,7 +172,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
             if (isNaN(box.left) || isNaN(box.top)) {
                 continue;
             }
-            
+
             comp.setPosition(box.left, box.top);
         }
     },
@@ -192,7 +192,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
             padding = this.padding,
             width   = tSize.width,
             height  = tSize.height;
-        
+
         if (this.type == 'hbox') {
             var innerCtWidth  = width,
                 innerCtHeight = calcs.meta.maxHeight + padding.top + padding.bottom;
@@ -278,7 +278,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
 
     getLayoutTargetSize : function() {
         var target = this.container.getLayoutTarget(), ret;
-        
+
         if (target) {
             ret = target.getViewSize();
 
@@ -292,7 +292,7 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
             ret.width  -= target.getPadding('lr');
             ret.height -= target.getPadding('tb');
         }
-        
+
         return ret;
     },
 
@@ -305,13 +305,13 @@ Ext.layout.BoxLayout = Ext.extend(Ext.layout.ContainerLayout, {
         }
         Ext.layout.BoxLayout.superclass.renderItem.apply(this, arguments);
     },
-    
+
     /**
      * @private
      */
     destroy: function() {
         Ext.destroy(this.overflowHandler);
-        
+
         Ext.layout.BoxLayout.superclass.destroy.apply(this, arguments);
     }
 });
@@ -331,12 +331,12 @@ Ext.ns('Ext.layout.boxOverflow');
 Ext.layout.boxOverflow.None = Ext.extend(Object, {
     constructor: function(layout, config) {
         this.layout = layout;
-        
+
         Ext.apply(this, config || {});
     },
-    
+
     handleOverflow: Ext.emptyFn,
-    
+
     clearOverflow: Ext.emptyFn
 });
 

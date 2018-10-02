@@ -99,7 +99,7 @@ Ext.Action = Ext.extend(Object, {
         this.itemId = config.itemId = (config.itemId || config.id || Ext.id());
         this.items = [];
     },
-    
+
     // private
     isAction : true,
 
@@ -161,7 +161,7 @@ Ext.Action = Ext.extend(Object, {
     },
 
     /**
-     * Returns true if the components using this action are currently disabled, else returns false.  
+     * Returns true if the components using this action are currently disabled, else returns false.
      */
     isDisabled : function(){
         return this.initialConfig.disabled;
@@ -192,7 +192,7 @@ Ext.Action = Ext.extend(Object, {
     },
 
     /**
-     * Returns true if the components using this action are currently hidden, else returns false.  
+     * Returns true if the components using this action are currently hidden, else returns false.
      */
     isHidden : function(){
         return this.initialConfig.hidden;

@@ -24,7 +24,7 @@ new Ext.tree.TreeSorter(myTree, {
  * @param {Object} config
  */
 Ext.tree.TreeSorter = Ext.extend(Object, {
-    
+
     constructor: function(tree, config){
         /**
      * @cfg {Boolean} folderSort True to sort leaf nodes under non-leaf nodes (defaults to false)
@@ -72,7 +72,7 @@ Ext.tree.TreeSorter = Ext.extend(Object, {
     this.sortFn = function(n1, n2){
         var attr1 = n1.attributes,
             attr2 = n2.attributes;
-            
+
         if(folderSort){
             if(attr1[leafAttr] && !attr2[leafAttr]){
                 return 1;
@@ -85,7 +85,7 @@ Ext.tree.TreeSorter = Ext.extend(Object, {
             prop2 = attr2[prop],
             v1 = sortType ? sortType(prop1) : (caseSensitive ? prop1 : prop1.toUpperCase());
             v2 = sortType ? sortType(prop2) : (caseSensitive ? prop2 : prop2.toUpperCase());
-            
+
         if(v1 < v2){
             return desc ? 1 : -1;
         }else if(v1 > v2){
@@ -94,7 +94,7 @@ Ext.tree.TreeSorter = Ext.extend(Object, {
         return 0;
     };
     },
-    
+
     doSort : function(node){
         node.sort(this.sortFn);
     },
@@ -110,5 +110,5 @@ Ext.tree.TreeSorter = Ext.extend(Object, {
         if(p && p.childrenRendered){
             this.doSort.defer(1, this, [p]);
         }
-    }    
+    }
 });

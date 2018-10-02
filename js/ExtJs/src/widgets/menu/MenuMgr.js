@@ -161,7 +161,7 @@ Ext.menu.MenuMgr = function(){
                groups[g].remove(menuItem);
            }
        },
-       
+
        // private
        onCheckChange: function(item, state){
            if(item.group && state){
@@ -169,7 +169,7 @@ Ext.menu.MenuMgr = function(){
                    i = 0,
                    len = group.length,
                    current;
-                   
+
                for(; i < len; i++){
                    current = group[i];
                    if(current != item){

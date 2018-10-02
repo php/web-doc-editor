@@ -14,13 +14,13 @@ Ext.util.Cookies = {
      * Create a cookie with the specified name and value. Additional settings
      * for the cookie may be optionally specified (for example: expiration,
      * access restriction, SSL).
-     * @param {String} name The name of the cookie to set. 
+     * @param {String} name The name of the cookie to set.
      * @param {Mixed} value The value to set for the cookie.
      * @param {Object} expires (Optional) Specify an expiration date the
      * cookie is to persist until.  Note that the specified Date object will
-     * be converted to Greenwich Mean Time (GMT). 
+     * be converted to Greenwich Mean Time (GMT).
      * @param {String} path (Optional) Setting a path on the cookie restricts
-     * access to pages that match that path. Defaults to all pages (<tt>'/'</tt>). 
+     * access to pages that match that path. Defaults to all pages (<tt>'/'</tt>).
      * @param {String} domain (Optional) Setting a domain restricts access to
      * pages on a given domain (typically used to allow cookie access across
      * subdomains). For example, "extjs.com" will create a cookie that can be
@@ -75,7 +75,7 @@ Ext.util.Cookies = {
 
     /**
      * Removes a cookie with the provided name from the browser
-     * if found by setting its expiration date to sometime in the past. 
+     * if found by setting its expiration date to sometime in the past.
      * @param {String} name The name of the cookie to remove
      */
     clear : function(name){

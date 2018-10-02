@@ -206,7 +206,7 @@ Ext.Element.addMethods(function(){
                     prop = chkCache(prop);
                     out = (v = el.style[prop]) ? v :
                            (cs = view.getComputedStyle(el, "")) ? cs[prop] : null;
-                           
+
                     // Ignore cases when the margin is correctly reported as 0, the bug only shows
                     // numbers larger.
                     if(prop == 'marginRight' && out != '0px' && !supports.correctRightMargin){
@@ -215,7 +215,7 @@ Ext.Element.addMethods(function(){
                         out = view.getComputedStyle(el, '').marginRight;
                         el.style.display = display;
                     }
-                    
+
                     if(prop == 'backgroundColor' && out == 'rgba(0, 0, 0, 0)' && !supports.correctTransparentColor){
                         out = 'transparent';
                     }
@@ -279,7 +279,7 @@ Ext.Element.addMethods(function(){
          */
         setStyle : function(prop, value){
             var tmp, style;
-            
+
             if (typeof prop != 'object') {
                 tmp = {};
                 tmp[prop] = value;

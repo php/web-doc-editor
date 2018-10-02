@@ -85,7 +85,7 @@ var i18n = new Array();
   i18n["Diff for file: {0}"] = "Различия для файла: {0}";
   i18n["Administrator menu"] = "Меню администратора";
 
-  
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Редактировать описание этого патча";
   i18n["Delete this patch"] = "Удалить этот патч";
@@ -671,13 +671,13 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "Замечание было успешно добавлено!";
   i18n["Note deleted"] = "Замечание удалено";
   i18n["The note was deleted successfully !"] = "Замечание было успешно удалено!";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Проверка XML. Пожалуйста, подождите...";
   i18n["XML check"] = "Проверка XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Строка";
   i18n["Libel"] = "Слово";

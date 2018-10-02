@@ -838,7 +838,7 @@ new Ext.Panel({
      * The initial set of data to apply to the <code>{@link #tpl}</code> to
      * update the content area of the Component.
      */
-    
+
     /**
      * @cfg {Array} bubbleEvents
      * <p>An array of events that, when fired, should be bubbled to any parent container.
@@ -1566,7 +1566,7 @@ var isBoxInstance = t.isXType('box', true); // false, not a direct BoxComponent 
      * <pre><code>
 var c = new Ext.Component();
 console.log(c.isXType(c));
-console.log(c.isXType(Ext.Component)); 
+console.log(c.isXType(Ext.Component));
 </code></pre>
      * @param {Boolean} shallow (optional) False to check whether this Component is descended from the xtype (this is
      * the default), or true to check whether this Component is directly of the specified xtype.
@@ -1633,7 +1633,7 @@ alert(t.getXTypes());  // alerts 'component/box/field/textfield'
             return c.isXType(xtype, shallow);
         });
     },
-    
+
     /**
      * Bubbles up the component/container heirarchy, calling the specified function with each component. The scope (<i>this</i>) of
      * function call will be the scope provided or the current component. The arguments to the function

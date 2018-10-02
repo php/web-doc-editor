@@ -8,8 +8,8 @@ ui.task.ClearLocalChangeTask = function(config)
     var ftype = this.ftype,
         fpath = this.fpath,
         fname = this.fname;
-    
-    
+
+
     goClear = function() {
         Ext.getBody().mask(
             '<img src="themes/img/loading.gif" style="vertical-align: middle;" /> ' +
@@ -44,14 +44,14 @@ ui.task.ClearLocalChangeTask = function(config)
                 ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.oldIdDB);
 
                 /** Common action for EN and LANG file **/
-                
+
                 // find open node in All Files modules
                 node = false;
                 node = ui.cmp.RepositoryTree.getInstance().getNodeById('/'+fpath+fname);
                 if (node) {
                     node.getUI().removeClass(['fileModifiedByMe','fileModifiedByAnother']);
                 }
-                    
+
                 /** Action for EN file **/
                 if( o.lang === 'en' && ftype === 'update' ) {
 
@@ -143,14 +143,14 @@ ui.task.ClearLocalChangeTask = function(config)
                 Ext.getBody().unmask();
 
                 var o = Ext.util.JSON.decode(r.responseText);
-                
-                if( o.err ) { 
+
+                if( o.err ) {
                     PhDOE.winForbidden(o.err);
                 }
             }
         });
     };
-    
+
     if( Ext.isDefined(this.noConfirm) ) {
         goClear();
     } else {

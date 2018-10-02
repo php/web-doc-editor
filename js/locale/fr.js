@@ -42,7 +42,7 @@ var i18n = new Array();
   i18n["This action is available to global administrators only."] = "Cette action n'est disponible qu'aux administrateurs globaux.";
   i18n["This action is available to global administrators or to administrators for this language only."] = "Cette action n'est disponible qu'aux administrateurs globaux ou aux administrateurs pour cette langue.";
   i18n["The file for which you want to clear local changes isn't owned by you.<br>You can only perform this action on your own files."] = "Le fichier dont vous souhaitez effacer les modifications ne vous appartient pas.<br>Vous ne pouvez faire cette action que sur les fichiers vous appartenant.";
-  
+
 // In file: ../../js/ui/component/CheckDoc.js
   i18n["Double-click the cell to open the file selection"] = "Double-cliquez sur la cellule pour ouvrir la fenêtre de sélection de fichiers";
   i18n["Extension"] = "Extension";
@@ -69,7 +69,7 @@ var i18n = new Array();
   i18n["Estimated progress"] = "Progression estimée";
   i18n["{0}% complete"] = "{0}% terminé";
   i18n["Set the progress..."] = "Définir la progression...";
-  i18n["View diff"] = "Voir la différence";  
+  i18n["View diff"] = "Voir la différence";
   i18n["Download the diff as a patch"] = "Télécharger la différence sous la forme d'un patch";
   i18n["Clear this change"] = "Effacer cette modification";
   i18n["Cancel this deletion"] = "Annuler cette suppression";
@@ -86,8 +86,8 @@ var i18n = new Array();
   i18n["Diff for file: {0}"] = "Différence pour le fichier : {0}";
   i18n["Administrator menu"] = "Menu Administrateur";
   i18n["There is some file unsaved. Please, save it before start a commit."] = "Il y a un fichier non sauvegardé. Veuillez le sauvegarder avant de commencer un commit.";
-  
-  
+
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Éditer la description de ce patch";
   i18n["Delete this patch"] = "Effacer ce patch";
@@ -661,7 +661,7 @@ var i18n = new Array();
   i18n["Permanent link to this page"] = "Lien permanent vers cette page";
   i18n["Warning"] = "Alerte";
   i18n["The editor have modified automatically the file {0} into UTF-8 encoding."] = "L'éditeur a modifié automatiquement le fichier {0} en UTF-8.";
-  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";  
+  i18n["The file <b> {0}</b> contains some tab characters.<br>The editor have replace it with space characters."] = "Le fichier {0} contient des caractères de tabulation.<br>L'éditeur les a automatiquement remplacé par des espaces.";
   i18n["File modified by {0} but you are an authenticated user, so you can modify it."] = "Fichier modifié par {0} mais vu que vous êtes un utilisateur authentifié, vous pouvez le modifier.";
   i18n["File modified by {0}."] = "Fichier modifié par {0}.";
 
@@ -712,28 +712,28 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "La note a été ajoutée avec succès !";
   i18n["Note deleted"] = "Note effacée";
   i18n["The note was deleted successfully !"] = "La note a été effacée avec succès !";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Vérification XML. Veuillez patienter...";
   i18n["XML check"] = "Vérification XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Ligne";
   i18n["Libel"] = "Libellé";
   i18n["XML Errors"] = "Erreurs XML";
-  
+
 // In file: ../../js/ui/cmp/ChangeFileOwner.js
   i18n["Current owner"] = "Propriétaire actuel";
   i18n["Action"] = "Action";
   i18n["New owner"] = "Nouveau propriétaire";
   i18n["Change file's owner"] = "Modification du propriétaire d'un fichier";
-  
+
 // In file: ../../js/ui/task/ChangeFileOwner.js
   i18n["Owner changed"] = "Propriétaire modifié";
   i18n["The owner for this file have been changed successfully !"] = "Le propriétaire de ce fichier a été modifié avec succès !";
-  
+
 // In file: ../../js/ui/cmp/AnonymousPatchWin.js
   i18n["Next"] = "Suivant";
   i18n["Anonymous patch manager"] = "Gestionnaire de patch anonyme";
@@ -745,18 +745,18 @@ var i18n = new Array();
   i18n["Validate this patch"] = "Valider ce patch";
   i18n["This action changes the owner of the modification and register it under your name. The file will appear under your name and you can then commit it."] = "Cette action fera que vous deviendrez le propriétaire de ce fichier. Il apparaîtra sous votre nom et vous pourrez commiter la modification.";
   i18n["Rejecting this patch, you are about to delete this change.<br>Are you sure you want to do that?"] = "En rejetant ce patch, vous êtes sur le point de supprimer cette modification.<br>Êtes-vous sûr de vouloir faire cela ?";
-  
+
 // In file: ../../js/ui/cmp/PreviewFile.js
   i18n["Preview"] = "Prévisualisation";
-  
+
 // In file: ../../js/ux/codemirror2/lib/util/search.js
   i18n["Search"] = "Recherche ";
   i18n["Use /re/ syntax for regexp search"] = "Utiliser la syntaxe /re/ pour une recherche utilisant les expressions rationnelles";
-  
+
 // In file: ../../js/ui/cmp/DirectActionWin.js
   i18n["Live action"] = "Action en direct";
   i18n["This live action didn't exist"] = "Cette action n'existe pas";
   i18n["Put into this patch:"] = "Placer dans ce patach :";
   i18n["Delete this change"] = "Effacer cette modification";
   i18n["Modified file"] = "Fichier modifié";
-  
+

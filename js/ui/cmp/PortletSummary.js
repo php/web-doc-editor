@@ -103,7 +103,7 @@ ui.cmp._PortletSummary.grid = Ext.extend(Ext.grid.GridPanel,
         if( id === 2 ) {
             Ext.getCmp('acc-need-update').expand();
         }
-        
+
         // Available for translation
         if( id === 3 ) {
             Ext.getCmp('acc-need-translate').expand();
@@ -156,7 +156,7 @@ ui.cmp.PortletSummary = Ext.extend(Ext.ux.Portlet,
     initComponent : function(config)
     {
         this.id = 'portletSummary';
-        
+
         Ext.apply(this, config);
         ui.cmp.PortletSummary.superclass.initComponent.apply(this);
 

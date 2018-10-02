@@ -169,8 +169,8 @@ viewConfig: {
     borderWidth : 2,
     tdClass : 'x-grid3-cell',
     hdCls : 'x-grid3-hd',
-    
-    
+
+
     /**
      * @cfg {Boolean} markDirty True to show the dirty cell indicator when a cell has been modified. Defaults to <tt>true</tt>.
      */
@@ -180,7 +180,7 @@ viewConfig: {
      * @cfg {Number} cellSelectorDepth The number of levels to search for cells in event delegation (defaults to <tt>4</tt>)
      */
     cellSelectorDepth : 4,
-    
+
     /**
      * @cfg {Number} rowSelectorDepth The number of levels to search for rows in event delegation (defaults to <tt>10</tt>)
      */
@@ -195,7 +195,7 @@ viewConfig: {
      * @cfg {String} cellSelector The selector used to find cells internally (defaults to <tt>'td.x-grid3-cell'</tt>)
      */
     cellSelector : 'td.x-grid3-cell',
-    
+
     /**
      * @cfg {String} rowSelector The selector used to find rows internally (defaults to <tt>'div.x-grid3-row'</tt>)
      */
@@ -210,12 +210,12 @@ viewConfig: {
     firstRowCls: 'x-grid3-row-first',
     lastRowCls: 'x-grid3-row-last',
     rowClsRe: /(?:^|\s+)x-grid3-row-(first|last|alt)(?:\s+|$)/g,
-    
+
     /**
      * @cfg {String} headerMenuOpenCls The CSS class to add to the header cell when its menu is visible. Defaults to 'x-grid3-hd-menu-open'
      */
     headerMenuOpenCls: 'x-grid3-hd-menu-open',
-    
+
     /**
      * @cfg {String} rowOverCls The CSS class added to each row when it is hovered over. Defaults to 'x-grid3-row-over'
      */
@@ -223,7 +223,7 @@ viewConfig: {
 
     constructor : function(config) {
         Ext.apply(this, config);
-        
+
         // These events are only used internally by the grid components
         this.addEvents(
             /**
@@ -234,7 +234,7 @@ viewConfig: {
              * @param {Ext.data.Record} record The Record to be removed
              */
             'beforerowremoved',
-            
+
             /**
              * @event beforerowsinserted
              * Internal UI Event. Fired before rows are inserted.
@@ -243,14 +243,14 @@ viewConfig: {
              * @param {Number} lastRow The index of the last row to be inserted.
              */
             'beforerowsinserted',
-            
+
             /**
              * @event beforerefresh
              * Internal UI Event. Fired before the view is refreshed.
              * @param {Ext.grid.GridView} view
              */
             'beforerefresh',
-            
+
             /**
              * @event rowremoved
              * Internal UI Event. Fired after a row is removed.
@@ -259,7 +259,7 @@ viewConfig: {
              * @param {Ext.data.Record} record The Record that was removed
              */
             'rowremoved',
-            
+
             /**
              * @event rowsinserted
              * Internal UI Event. Fired after rows are inserted.
@@ -268,7 +268,7 @@ viewConfig: {
              * @param {Number} lastRow The index of the last row inserted.
              */
             'rowsinserted',
-            
+
             /**
              * @event rowupdated
              * Internal UI Event. Fired after a row has been updated.
@@ -277,7 +277,7 @@ viewConfig: {
              * @param {Ext.data.record} record The Record backing the row updated.
              */
             'rowupdated',
-            
+
             /**
              * @event refresh
              * Internal UI Event. Fired after the GridView's body has been refreshed.
@@ -285,12 +285,12 @@ viewConfig: {
              */
             'refresh'
         );
-        
+
         Ext.grid.GridView.superclass.constructor.call(this);
     },
 
     /* -------------------------------- UI Specific ----------------------------- */
-    
+
     /**
      * The master template to use when rendering the GridView. Has a default template
      * @property Ext.Template
@@ -314,7 +314,7 @@ viewConfig: {
             '<div class="x-grid3-resize-proxy">&#160;</div>',
         '</div>'
     ),
-    
+
     /**
      * The template to use when rendering headers. Has a default template
      * @property headerTpl
@@ -327,14 +327,14 @@ viewConfig: {
             '</thead>',
         '</table>'
     ),
-    
+
     /**
      * The template to use when rendering the body. Has a default template
      * @property bodyTpl
      * @type Ext.Template
      */
     bodyTpl: new Ext.Template('{rows}'),
-    
+
     /**
      * The template to use to render each cell. Has a default template
      * @property cellTpl
@@ -345,7 +345,7 @@ viewConfig: {
             '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
         '</td>'
     ),
-    
+
     /**
      * @private
      * Provides default templates if they are not given for this particular instance. Most of the templates are defined on
@@ -354,17 +354,17 @@ viewConfig: {
     initTemplates : function() {
         var templates = this.templates || {},
             template, name,
-            
+
             headerCellTpl = new Ext.Template(
                 '<td class="x-grid3-hd x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
-                    '<div {tooltip} {attr} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">', 
+                    '<div {tooltip} {attr} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">',
                         this.grid.enableHdMenu ? '<a class="x-grid3-hd-btn" href="#"></a>' : '',
                         '{value}',
                         '<img alt="" class="x-grid3-sort-icon" src="', Ext.BLANK_IMAGE_URL, '" />',
                     '</div>',
                 '</td>'
             ),
-        
+
             rowBodyText = [
                 '<tr class="x-grid3-row-body-tr" style="{bodyStyle}">',
                     '<td colspan="{cols}" class="x-grid3-body-cell" tabIndex="0" hidefocus="on">',
@@ -372,7 +372,7 @@ viewConfig: {
                     '</td>',
                 '</tr>'
             ].join(""),
-        
+
             innerText = [
                 '<table class="x-grid3-row-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
                      '<tbody>',
@@ -381,7 +381,7 @@ viewConfig: {
                      '</tbody>',
                 '</table>'
             ].join("");
-        
+
         Ext.applyIf(templates, {
             hcell   : headerCellTpl,
             cell    : this.cellTpl,
@@ -394,7 +394,7 @@ viewConfig: {
 
         for (name in templates) {
             template = templates[name];
-            
+
             if (template && Ext.isFunction(template.compile) && !template.compiled) {
                 template.disableFormats = true;
                 template.compile();
@@ -432,22 +432,22 @@ viewConfig: {
             mainWrap = new Element(el.child('div.x-grid3-viewport')),
             mainHd   = new Element(mainWrap.child('div.x-grid3-header')),
             scroller = new Element(mainWrap.child('div.x-grid3-scroller'));
-        
+
         if (this.grid.hideHeaders) {
             mainHd.setDisplayed(false);
         }
-        
+
         if (this.forceFit) {
             scroller.setStyle('overflow-x', 'hidden');
         }
-        
+
         /**
          * <i>Read-only</i>. The GridView's body Element which encapsulates all rows in the Grid.
          * This {@link Ext.Element Element} is only available after the GridPanel has been rendered.
          * @type Ext.Element
          * @property mainBody
          */
-        
+
         Ext.apply(this, {
             el      : el,
             mainWrap: mainWrap,
@@ -456,11 +456,11 @@ viewConfig: {
             innerHd : mainHd.child('div.x-grid3-header-inner').dom,
             mainBody: new Element(Element.fly(scroller).child('div.x-grid3-body')),
             focusEl : new Element(Element.fly(scroller).child('a')),
-            
+
             resizeMarker: new Element(el.child('div.x-grid3-resize-marker')),
             resizeProxy : new Element(el.child('div.x-grid3-resize-proxy'))
         });
-        
+
         this.focusEl.swallowEvent('click', true);
     },
 
@@ -488,7 +488,7 @@ viewConfig: {
     findCellIndex : function(el, requiredCls) {
         var cell = this.findCell(el),
             hasCls;
-        
+
         if (cell) {
             hasCls = this.fly(cell).hasClass(requiredCls);
             if (!requiredCls || hasCls) {
@@ -502,7 +502,7 @@ viewConfig: {
     getCellIndex : function(el) {
         if (el) {
             var match = el.className.match(this.colRe);
-            
+
             if (match && match[1]) {
                 return this.cm.getIndexById(match[1]);
             }
@@ -553,7 +553,7 @@ viewConfig: {
         if (!el) {
             return false;
         }
-        
+
         return this.fly(el).findParent(this.rowBodySelector, this.rowBodySelectorDepth);
     },
 
@@ -575,7 +575,7 @@ viewConfig: {
      * @return {HtmlElement} The td at the specified coordinates.
      */
     getCell : function(row, col) {
-        return Ext.fly(this.getRow(row)).query(this.cellSelector)[col]; 
+        return Ext.fly(this.getRow(row)).query(this.cellSelector)[col];
     },
 
     /**
@@ -615,22 +615,22 @@ viewConfig: {
     removeRows : function(firstRow, lastRow) {
         var bd = this.mainBody.dom,
             rowIndex;
-            
+
         for (rowIndex = firstRow; rowIndex <= lastRow; rowIndex++){
             Ext.removeNode(bd.childNodes[firstRow]);
         }
-        
+
         this.syncFocusEl(firstRow);
     },
 
     /* ----------------------------------- Scrolling functions -------------------------------------------*/
-    
+
     // private
     getScrollState : function() {
         var sb = this.scroller.dom;
-        
+
         return {
-            left: sb.scrollLeft, 
+            left: sb.scrollLeft,
             top : sb.scrollTop
         };
     },
@@ -647,7 +647,7 @@ viewConfig: {
      */
     scrollToTop : function() {
         var dom = this.scroller.dom;
-        
+
         dom.scrollTop  = 0;
         dom.scrollLeft = 0;
     },
@@ -663,11 +663,11 @@ viewConfig: {
     syncHeaderScroll : function() {
         var innerHd    = this.innerHd,
             scrollLeft = this.scroller.dom.scrollLeft;
-        
+
         innerHd.scrollLeft = scrollLeft;
         innerHd.scrollLeft = scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
     },
-    
+
     /**
      * @private
      * Ensures the given column has the given icon class
@@ -676,7 +676,7 @@ viewConfig: {
         var sortClasses = this.sortClasses,
             sortClass   = sortClasses[dir == "DESC" ? 1 : 0],
             headers     = this.mainHd.select('td').removeClass(sortClasses);
-        
+
         headers.item(col).addClass(sortClass);
     },
 
@@ -691,29 +691,29 @@ viewConfig: {
             rowCount   = rows.length,
             widths     = [],
             row, rowFirstChild, trow, i, j;
-        
+
         for (i = 0; i < colCount; i++) {
             widths[i] = this.getColumnWidth(i);
             this.getHeaderCell(i).style.width = widths[i];
         }
-        
+
         this.updateHeaderWidth();
-        
+
         for (i = 0; i < rowCount; i++) {
             row = rows[i];
             row.style.width = totalWidth;
             rowFirstChild = row.firstChild;
-            
+
             if (rowFirstChild) {
                 rowFirstChild.style.width = totalWidth;
                 trow = rowFirstChild.rows[0];
-                
+
                 for (j = 0; j < colCount; j++) {
                     trow.childNodes[j].style.width = widths[j];
                 }
             }
         }
-        
+
         this.onAllColumnWidthsUpdated(widths, totalWidth);
     },
 
@@ -729,24 +729,24 @@ viewConfig: {
             nodes       = this.getRows(),
             nodeCount   = nodes.length,
             row, i, firstChild;
-        
+
         this.updateHeaderWidth();
         headerCell.style.width = columnWidth;
-        
+
         for (i = 0; i < nodeCount; i++) {
             row = nodes[i];
             firstChild = row.firstChild;
-            
+
             row.style.width = totalWidth;
             if (firstChild) {
                 firstChild.style.width = totalWidth;
                 firstChild.rows[0].childNodes[column].style.width = columnWidth;
             }
         }
-        
+
         this.onColumnWidthUpdated(column, columnWidth, totalWidth);
     },
-    
+
     /**
      * @private
      * Sets the hidden status of a given column.
@@ -760,21 +760,21 @@ viewConfig: {
             nodes      = this.getRows(),
             nodeCount  = nodes.length,
             row, rowFirstChild, i;
-        
+
         this.updateHeaderWidth();
         headerCell.style.display = display;
-        
+
         for (i = 0; i < nodeCount; i++) {
             row = nodes[i];
             row.style.width = totalWidth;
             rowFirstChild = row.firstChild;
-            
+
             if (rowFirstChild) {
                 rowFirstChild.style.width = totalWidth;
                 rowFirstChild.rows[0].childNodes[col].style.display = display;
             }
         }
-        
+
         this.onColumnHiddenUpdated(col, hidden, totalWidth);
         delete this.lastViewWidth; //recalc
         this.layout();
@@ -819,7 +819,7 @@ viewConfig: {
             //build up each column's HTML
             for (i = 0; i < colCount; i++) {
                 column = columns[i];
-                
+
                 meta.id    = column.id;
                 meta.css   = i === 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '');
                 meta.attr  = meta.cellAttr = '';
@@ -899,7 +899,7 @@ viewConfig: {
 
         Ext.fly(rows[length - 1]).addClass(this.lastRowCls);
     },
-    
+
     /**
      * @private
      */
@@ -907,17 +907,17 @@ viewConfig: {
         if (!this.ds || !this.cm) {
             return;
         }
-        
+
         this.mainBody.dom.innerHTML = this.renderBody() || '&#160;';
         this.processRows(0, true);
 
         if (this.deferEmptyText !== true) {
             this.applyEmptyText();
         }
-        
+
         this.grid.fireEvent('viewready', this.grid);
     },
-    
+
     /**
      * @private
      * This is always intended to be called after renderUI. Sets up listeners on the UI elements
@@ -925,7 +925,7 @@ viewConfig: {
      */
     afterRenderUI: function() {
         var grid = this.grid;
-        
+
         this.initElements();
 
         // get mousedowns early
@@ -939,7 +939,7 @@ viewConfig: {
         });
 
         this.scroller.on('scroll', this.syncScroll,  this);
-        
+
         if (grid.enableColumnResize !== false) {
             this.splitZone = new Ext.grid.GridView.SplitDragZone(grid, this.mainHd.dom);
         }
@@ -1061,31 +1061,31 @@ viewConfig: {
             gridHeight = gridSize.height,
             scroller   = this.scroller,
             scrollStyle, headerHeight, scrollHeight;
-        
+
         if (gridWidth < 20 || gridHeight < 20) {
             return;
         }
-        
+
         if (grid.autoHeight) {
             scrollStyle = scroller.dom.style;
             scrollStyle.overflow = 'visible';
-            
+
             if (Ext.isWebKit) {
                 scrollStyle.position = 'static';
             }
         } else {
             this.el.setSize(gridWidth, gridHeight);
-            
+
             headerHeight = this.mainHd.getHeight();
             scrollHeight = gridHeight - headerHeight;
-            
+
             scroller.setSize(gridWidth, scrollHeight);
-            
+
             if (this.innerHd) {
                 this.innerHd.style.width = (gridWidth) + "px";
             }
         }
-        
+
         if (this.forceFit || (initial === true && this.autoFill)) {
             if (this.lastViewWidth != gridWidth) {
                 this.fitColumns(false, false);
@@ -1095,7 +1095,7 @@ viewConfig: {
             this.autoExpand();
             this.syncHeaderScroll();
         }
-        
+
         this.onLayout(gridWidth, scrollHeight);
     },
 
@@ -1165,14 +1165,14 @@ viewConfig: {
             last       = colCount - 1,
             cells      = [],
             i, cssCls;
-        
+
         for (i = 0; i < colCount; i++) {
             if (i == 0) {
                 cssCls = 'x-grid3-cell-first ';
             } else {
                 cssCls = i == last ? 'x-grid3-cell-last ' : '';
             }
-            
+
             properties = {
                 id     : colModel.getColumnId(i),
                 value  : colModel.getColumnHeader(i) || '',
@@ -1180,16 +1180,16 @@ viewConfig: {
                 css    : cssCls,
                 tooltip: this.getColumnTooltip(i)
             };
-            
+
             if (colModel.config[i].align == 'right') {
                 properties.istyle = 'padding-right: 16px;';
             } else {
                 delete properties.istyle;
             }
-            
+
             cells[i] = headerTpl.apply(properties);
         }
-        
+
         return templates.header.apply({
             cells : cells.join(""),
             tstyle: String.format("width: {0};", this.getTotalWidth())
@@ -1208,7 +1208,7 @@ viewConfig: {
                 return 'title="' + tooltip + '"';
             }
         }
-        
+
         return '';
     },
 
@@ -1223,10 +1223,10 @@ viewConfig: {
      */
     updateHeaders : function() {
         this.innerHd.firstChild.innerHTML = this.renderHeaders();
-        
+
         this.updateHeaderWidth(false);
     },
-    
+
     /**
      * @private
      * Ensures that the header is sized to the total width available to it
@@ -1235,10 +1235,10 @@ viewConfig: {
     updateHeaderWidth: function(updateMain) {
         var innerHdChild = this.innerHd.firstChild,
             totalWidth   = this.getTotalWidth();
-        
+
         innerHdChild.style.width = this.getOffsetWidth();
         innerHdChild.firstChild.style.width = totalWidth;
-        
+
         if (updateMain !== false) {
             this.mainBody.dom.style.width = totalWidth;
         }
@@ -1259,9 +1259,9 @@ viewConfig: {
      */
     focusCell : function(row, col, hscroll) {
         this.syncFocusEl(this.ensureVisible(row, col, hscroll));
-        
+
         var focusEl = this.focusEl;
-        
+
         if (Ext.isGecko) {
             focusEl.focus();
         } else {
@@ -1277,11 +1277,11 @@ viewConfig: {
         if (!Ext.isNumber(row)) {
             row = row.rowIndex;
         }
-        
+
         if (!this.ds) {
             return null;
         }
-        
+
         if (row < 0 || row >= this.ds.getCount()) {
             return null;
         }
@@ -1291,12 +1291,12 @@ viewConfig: {
             colModel = this.cm,
             colCount = colModel.getColumnCount(),
             cellEl;
-            
+
         if (!(hscroll === false && col === 0)) {
             while (col < colCount && colModel.isHidden(col)) {
                 col++;
             }
-            
+
             cellEl = this.getCell(row, col);
         }
 
@@ -1312,10 +1312,10 @@ viewConfig: {
         if (!resolved) {
             return null;
         }
-        
+
         var cell = resolved.cell,
             row  = resolved.row;
-        
+
         if (cell) {
             return Ext.fly(cell).getXY();
         } else {
@@ -1329,17 +1329,17 @@ viewConfig: {
      */
     syncFocusEl : function(row, col, hscroll) {
         var xy = row;
-        
+
         if (!Ext.isArray(xy)) {
             row = Math.min(row, Math.max(0, this.getRows().length-1));
-            
+
             if (isNaN(row)) {
                 return;
             }
-            
+
             xy = this.getResolvedXY(this.resolveCell(row, col, hscroll));
         }
-        
+
         this.focusEl.setXY(xy || this.scroller.getXY());
     },
 
@@ -1348,7 +1348,7 @@ viewConfig: {
      */
     ensureVisible : function(row, col, hscroll) {
         var resolved = this.resolveCell(row, col, hscroll);
-        
+
         if (!resolved || !resolved.row) {
             return null;
         }
@@ -1384,14 +1384,14 @@ viewConfig: {
                 cright = cleft + cellEl.offsetWidth,
                 sleft  = parseInt(c.scrollLeft, 10),
                 sright = sleft + c.clientWidth;
-                
+
             if (cleft < sleft) {
                 c.scrollLeft = cleft;
             } else if(cright > sright) {
                 c.scrollLeft = cright-c.clientWidth;
             }
         }
-        
+
         return this.getResolvedXY(resolved);
     },
 
@@ -1433,7 +1433,7 @@ viewConfig: {
 
     /**
      * @private
-     * DEPRECATED - this doesn't appear to be called anywhere in the library, remove in 4.0. 
+     * DEPRECATED - this doesn't appear to be called anywhere in the library, remove in 4.0.
      */
     deleteRows : function(dm, firstRow, lastRow) {
         if (dm.getRowCount() < 1) {
@@ -1460,17 +1460,17 @@ viewConfig: {
             colConfig = colModel.config,
             style     = isHeader ? '' : colConfig[colIndex].css || '',
             align     = colConfig[colIndex].align;
-        
+
         style += String.format("width: {0};", this.getColumnWidth(colIndex));
-        
+
         if (colModel.isHidden(colIndex)) {
             style += 'display: none; ';
         }
-        
+
         if (align) {
             style += String.format("text-align: {0};", align);
         }
-        
+
         return style;
     },
 
@@ -1483,7 +1483,7 @@ viewConfig: {
     getColumnWidth : function(column) {
         var columnWidth = this.cm.getColumnWidth(column),
             borderWidth = this.borderWidth;
-        
+
         if (Ext.isNumber(columnWidth)) {
             if (Ext.isBorderBox || (Ext.isWebKit && !Ext.isSafari2)) {
                 return columnWidth + "px";
@@ -1498,7 +1498,7 @@ viewConfig: {
     /**
      * @private
      * Returns the total width of all visible columns
-     * @return {String} 
+     * @return {String}
      */
     getTotalWidth : function() {
         return this.cm.getTotalWidth() + 'px';
@@ -1523,63 +1523,63 @@ viewConfig: {
             extraCol      = 0,
             width         = 0,
             colWidth, fraction, i;
-        
+
         // not initialized, so don't screw up the default widths
         if (gridWidth < 20 || extraWidth === 0) {
             return false;
         }
-        
+
         var visibleColCount = colModel.getColumnCount(true),
             totalColCount   = colModel.getColumnCount(false),
             adjCount        = visibleColCount - (Ext.isNumber(omitColumn) ? 1 : 0);
-        
+
         if (adjCount === 0) {
             adjCount = 1;
             omitColumn = undefined;
         }
-        
+
         //FIXME: the algorithm used here is odd and potentially confusing. Includes this for loop and the while after it.
         for (i = 0; i < totalColCount; i++) {
             if (!colModel.isFixed(i) && i !== omitColumn) {
                 colWidth = colModel.getColumnWidth(i);
                 columns.push(i, colWidth);
-                
+
                 if (!colModel.isHidden(i)) {
                     extraCol = i;
                     width += colWidth;
                 }
             }
         }
-        
+
         fraction = (gridWidth - colModel.getTotalWidth()) / width;
-        
+
         while (columns.length) {
             colWidth = columns.pop();
             i        = columns.pop();
-            
+
             colModel.setColumnWidth(i, Math.max(grid.minColumnWidth, Math.floor(colWidth + colWidth * fraction)), true);
         }
-        
+
         //this has been changed above so remeasure now
         totalColWidth = colModel.getTotalWidth(false);
-        
+
         if (totalColWidth > gridWidth) {
             var adjustCol = (adjCount == visibleColCount) ? extraCol : omitColumn,
                 newWidth  = Math.max(1, colModel.getColumnWidth(adjustCol) - (totalColWidth - gridWidth));
-            
+
             colModel.setColumnWidth(adjustCol, newWidth, true);
         }
-        
+
         if (preventRefresh !== true) {
             this.updateAllColumnWidths();
         }
-        
+
         return true;
     },
 
     /**
      * @private
-     * Resizes the configured autoExpandColumn to take the available width after the other columns have 
+     * Resizes the configured autoExpandColumn to take the available width after the other columns have
      * been accounted for
      * @param {Boolean} preventUpdate True to prevent the resizing of all rows (defaults to false)
      */
@@ -1589,7 +1589,7 @@ viewConfig: {
             gridWidth        = this.getGridInnerWidth(),
             totalColumnWidth = colModel.getTotalWidth(false),
             autoExpandColumn = grid.autoExpandColumn;
-        
+
         if (!this.userResized && autoExpandColumn) {
             if (gridWidth != totalColumnWidth) {
                 //if we are not already using all available width, resize the autoExpandColumn
@@ -1597,10 +1597,10 @@ viewConfig: {
                     currentWidth = colModel.getColumnWidth(colIndex),
                     desiredWidth = gridWidth - totalColumnWidth + currentWidth,
                     newWidth     = Math.min(Math.max(desiredWidth, grid.autoExpandMin), grid.autoExpandMax);
-                
+
                 if (currentWidth != newWidth) {
                     colModel.setColumnWidth(colIndex, newWidth, true);
-                    
+
                     if (preventUpdate !== true) {
                         this.updateColumnWidth(colIndex, newWidth);
                     }
@@ -1608,7 +1608,7 @@ viewConfig: {
             }
         }
     },
-    
+
     /**
      * Returns the total internal width available to the grid, taking the scrollbar into account
      * @return {Number} The total width
@@ -1628,10 +1628,10 @@ viewConfig: {
             colCount = colModel.getColumnCount(),
             fields   = this.ds.fields,
             i, name;
-        
+
         for (i = 0; i < colCount; i++) {
             name = colModel.getDataIndex(i);
-            
+
             columns[i] = {
                 name    : Ext.isDefined(name) ? name : (fields.get(i) ? fields.get(i).name : undefined),
                 renderer: colModel.getRenderer(i),
@@ -1640,7 +1640,7 @@ viewConfig: {
                 style   : this.getColumnStyle(i)
             };
         }
-        
+
         return columns;
     },
 
@@ -1658,15 +1658,15 @@ viewConfig: {
             colCount = colModel.getColumnCount(),
             rowCount = store.getCount(),
             records;
-        
+
         if (rowCount < 1) {
             return '';
         }
-        
+
         startRow = startRow || 0;
         endRow   = Ext.isDefined(endRow) ? endRow : rowCount - 1;
         records  = store.getRange(startRow, endRow);
-        
+
         return this.doRender(this.getColumnData(), records, store, startRow, colCount, stripe);
     },
 
@@ -1692,29 +1692,29 @@ viewConfig: {
             colBuffer = [],
             cellTpl   = this.templates.cell,
             rowIndex, row, column, meta, css, i;
-        
+
         if (Ext.isNumber(record)) {
             rowIndex = record;
             record   = store.getAt(rowIndex);
         } else {
             rowIndex = store.indexOf(record);
         }
-        
+
         //the record could not be found
         if (!record || rowIndex < 0) {
             return;
         }
-        
+
         //builds each column in this row
         for (i = 0; i < colCount; i++) {
             column = columns[i];
-            
+
             if (i == 0) {
                 css = 'x-grid3-cell-first';
             } else {
                 css = (i == last) ? 'x-grid3-cell-last ' : '';
             }
-            
+
             meta = {
                 id      : column.id,
                 style   : column.style,
@@ -1724,34 +1724,34 @@ viewConfig: {
             };
             // Need to set this after, because we pass meta to the renderer
             meta.value = column.renderer.call(column.scope, record.data[column.name], meta, record, rowIndex, i, store);
-            
+
             if (Ext.isEmpty(meta.value)) {
                 meta.value = '&#160;';
             }
-            
+
             if (this.markDirty && record.dirty && typeof record.modified[column.name] != 'undefined') {
                 meta.css += ' x-grid3-dirty-cell';
             }
-            
+
             colBuffer[i] = cellTpl.apply(meta);
         }
-        
+
         row = this.getRow(rowIndex);
         row.className = '';
-        
+
         if (this.grid.stripeRows && ((rowIndex + 1) % 2 === 0)) {
             cls.push('x-grid3-row-alt');
         }
-        
+
         if (this.getRowClass) {
             rowParams.cols = colCount;
             cls.push(this.getRowClass(record, rowIndex, rowParams, store));
         }
-        
+
         this.fly(row).addClass(cls).setStyle(rowParams.tstyle);
         rowParams.cells = colBuffer.join("");
         row.innerHTML = this.templates.rowInner.apply(rowParams);
-        
+
         this.fireEvent('rowupdated', this, rowIndex, record);
     },
 
@@ -1837,16 +1837,16 @@ viewConfig: {
             scrollToTopTask = me.scrollToTopTask,
             columnDragData,
             columnDragProxy;
-        
+
         if (scrollToTopTask && scrollToTopTask.cancel) {
             scrollToTopTask.cancel();
         }
-        
+
         Ext.destroyMembers(me, 'colMenu', 'hmenu');
 
         me.initData(null, null);
         me.purgeListeners();
-        
+
         Ext.fly(me.innerHd).un("click", me.handleHdDown, me);
 
         if (grid.enableColumnMove) {
@@ -1862,16 +1862,16 @@ viewConfig: {
                 columnDragData.ddel,
                 columnDragData.header
             );
-            
+
             if (columnDragProxy.anim) {
                 Ext.destroy(columnDragProxy.anim);
             }
-            
+
             delete columnDragProxy.ghost;
             delete columnDragData.ddel;
             delete columnDragData.header;
             columnDrag.destroy();
-            
+
             delete Ext.dd.DDM.locationCache[columnDrag.id];
             delete columnDrag._domRef;
 
@@ -1929,7 +1929,7 @@ viewConfig: {
     render : function() {
         if (this.autoFill) {
             var ct = this.grid.ownerCt;
-            
+
             if (ct && ct.getLayout()) {
                 ct.on('afterlayout', function() {
                     this.fitColumns(true, true);
@@ -1942,14 +1942,14 @@ viewConfig: {
         } else if (this.grid.autoExpandColumn) {
             this.autoExpand(true);
         }
-        
+
         this.grid.getGridEl().dom.innerHTML = this.renderUI();
-        
+
         this.afterRenderUI();
     },
 
     /* --------------------------------- Model Events and Handlers --------------------------------*/
-    
+
     /**
      * @private
      * Binds a new Store and ColumnModel to this GridView. Removes any listeners from the old objects (if present)
@@ -1959,22 +1959,22 @@ viewConfig: {
      */
     initData : function(newStore, newColModel) {
         var me = this;
-        
+
         if (me.ds) {
             var oldStore = me.ds;
-            
+
             oldStore.un('add', me.onAdd, me);
             oldStore.un('load', me.onLoad, me);
             oldStore.un('clear', me.onClear, me);
             oldStore.un('remove', me.onRemove, me);
             oldStore.un('update', me.onUpdate, me);
             oldStore.un('datachanged', me.onDataChange, me);
-            
+
             if (oldStore !== newStore && oldStore.autoDestroy) {
                 oldStore.destroy();
             }
         }
-        
+
         if (newStore) {
             newStore.on({
                 scope      : me,
@@ -1986,20 +1986,20 @@ viewConfig: {
                 datachanged: me.onDataChange
             });
         }
-        
+
         if (me.cm) {
             var oldColModel = me.cm;
-            
+
             oldColModel.un('configchange', me.onColConfigChange, me);
             oldColModel.un('widthchange',  me.onColWidthChange, me);
             oldColModel.un('headerchange', me.onHeaderChange, me);
             oldColModel.un('hiddenchange', me.onHiddenChange, me);
             oldColModel.un('columnmoved',  me.onColumnMove, me);
         }
-        
+
         if (newColModel) {
             delete me.lastViewWidth;
-            
+
             newColModel.on({
                 scope       : me,
                 configchange: me.onColConfigChange,
@@ -2009,7 +2009,7 @@ viewConfig: {
                 columnmoved : me.onColumnMove
             });
         }
-        
+
         me.ds = newStore;
         me.cm = newColModel;
     },
@@ -2042,9 +2042,9 @@ viewConfig: {
         if (isUpdate !== true) {
             this.fireEvent('beforerowremoved', this, index, record);
         }
-        
+
         this.removeRow(index);
-        
+
         if (isUpdate !== true) {
             this.processRows(index);
             this.applyEmptyText();
@@ -2087,7 +2087,7 @@ viewConfig: {
         this.indexMap = null;
         this.refresh(true);
         this.restoreScroll(this.getScrollState());
-        
+
         this.afterMove(newIndex);
         this.grid.fireEvent('columnmove', oldIndex, newIndex);
     },
@@ -2123,7 +2123,7 @@ viewConfig: {
      */
     onRowOver : function(e, target) {
         var row = this.findRowIndex(target);
-        
+
         if (row !== false) {
             this.addRowClass(row, this.rowOverCls);
         }
@@ -2135,7 +2135,7 @@ viewConfig: {
      */
     onRowOut : function(e, target) {
         var row = this.findRowIndex(target);
-        
+
         if (row !== false && !e.within(this.getRow(row), true)) {
             this.removeRowClass(row, this.rowOverCls);
         }
@@ -2216,7 +2216,7 @@ viewConfig: {
             }
         }
     },
-    
+
     /**
      * @private
      * Attached as the 'itemclick' handler to the header menu and the column show/hide submenu (if available).
@@ -2238,7 +2238,7 @@ viewConfig: {
         }
         return true;
     },
-    
+
     /**
      * Called by handleHdMenuClick if any button except a sort ASC/DESC button was clicked. The default implementation provides
      * the column hide/show functionality based on the check state of the menu item. A different implementation can be provided
@@ -2266,7 +2266,7 @@ viewConfig: {
     handleHdDown : function(e, target) {
         if (Ext.fly(target).hasClass('x-grid3-hd-btn')) {
             e.stopEvent();
-            
+
             var colModel  = this.cm,
                 header    = this.findHeaderCell(target),
                 index     = this.getCellIndex(header),
@@ -2274,17 +2274,17 @@ viewConfig: {
                 menu      = this.hmenu,
                 menuItems = menu.items,
                 menuCls   = this.headerMenuOpenCls;
-            
+
             this.hdCtxIndex = index;
-            
+
             Ext.fly(header).addClass(menuCls);
             menuItems.get('asc').setDisabled(!sortable);
             menuItems.get('desc').setDisabled(!sortable);
-            
+
             menu.on('hide', function() {
                 Ext.fly(header).removeClass(menuCls);
             }, this, {single:true});
-            
+
             menu.show(target, 'tl-bl?');
         }
     },
@@ -2292,12 +2292,12 @@ viewConfig: {
     /**
      * @private
      * Attached to the headers' mousemove event. This figures out the CSS cursor to use based on where the mouse is currently
-     * pointed. If the mouse is currently hovered over the extreme left or extreme right of any header cell and the cell next 
+     * pointed. If the mouse is currently hovered over the extreme left or extreme right of any header cell and the cell next
      * to it is resizable it is given the resize cursor, otherwise the cursor is set to an empty string.
      */
     handleHdMove : function(e) {
         var header = this.findHeaderCell(this.activeHdRef);
-        
+
         if (header && !this.headersDisabled) {
             var handleWidth  = this.splitHandleWidth || 5,
                 activeRegion = this.activeHdRegion,
@@ -2305,7 +2305,7 @@ viewConfig: {
                 colModel     = this.cm,
                 cursor       = '',
                 pageX        = e.getPageX();
-                
+
             if (this.grid.enableColumnResize !== false) {
                 var activeHeaderIndex = this.activeHdIndex,
                     previousVisible   = this.getPreviousVisible(activeHeaderIndex),
@@ -2313,18 +2313,18 @@ viewConfig: {
                     previousResizable = previousVisible && colModel.isResizable(previousVisible),
                     inLeftResizer     = pageX - activeRegion.left <= handleWidth,
                     inRightResizer    = activeRegion.right - pageX <= (!this.activeHdBtn ? handleWidth : 2);
-                
+
                 if (inLeftResizer && previousResizable) {
                     cursor = Ext.isAir ? 'move' : Ext.isWebKit ? 'e-resize' : 'col-resize'; // col-resize not always supported
                 } else if (inRightResizer && currentResizable) {
                     cursor = Ext.isAir ? 'move' : Ext.isWebKit ? 'w-resize' : 'col-resize';
                 }
             }
-            
+
             headerStyle.cursor = cursor;
         }
     },
-    
+
     /**
      * @private
      * Returns the index of the nearest currently visible header to the left of the given index.
@@ -2348,18 +2348,18 @@ viewConfig: {
      */
     handleHdOver : function(e, target) {
         var header = this.findHeaderCell(target);
-        
+
         if (header && !this.headersDisabled) {
             var fly = this.fly(header);
-            
+
             this.activeHdRef = target;
             this.activeHdIndex = this.getCellIndex(header);
             this.activeHdRegion = fly.getRegion();
-            
+
             if (!this.isMenuDisabled(this.activeHdIndex, fly)) {
                 fly.addClass('x-grid3-hd-over');
                 this.activeHdBtn = fly.child('.x-grid3-hd-btn');
-                
+
                 if (this.activeHdBtn) {
                     this.activeHdBtn.dom.style.height = (header.firstChild.offsetHeight - 1) + 'px';
                 }
@@ -2373,14 +2373,14 @@ viewConfig: {
      */
     handleHdOut : function(e, target) {
         var header = this.findHeaderCell(target);
-        
+
         if (header && (!Ext.isIE || !e.within(header, true))) {
             this.activeHdRef = null;
             this.fly(header).removeClass('x-grid3-hd-over');
             header.style.cursor = '';
         }
     },
-    
+
     /**
      * @private
      * Used by {@link #handleHdOver} to determine whether or not to show the header menu class on cell hover
@@ -2400,7 +2400,7 @@ viewConfig: {
         var fc = this.mainBody.dom.firstChild;
         return fc && fc.nodeType == 1 && fc.className != 'x-grid-empty';
     },
-    
+
     /**
      * @private
      */
@@ -2461,13 +2461,13 @@ Ext.grid.GridView.SplitDragZone = Ext.extend(Ext.dd.DDProxy, {
     handleMouseDown : function(e){
         var t = this.view.findHeaderCell(e.getTarget());
         if(t && this.allowHeaderDrag(e)){
-            var xy = this.view.fly(t).getXY(), 
+            var xy = this.view.fly(t).getXY(),
                 x = xy[0],
-                exy = e.getXY(), 
+                exy = e.getXY(),
                 ex = exy[0],
-                w = t.offsetWidth, 
+                w = t.offsetWidth,
                 adjust = false;
-                
+
             if((ex - x) <= this.hw){
                 adjust = -1;
             }else if((x+w) - ex <= this.hw){
@@ -2504,7 +2504,7 @@ Ext.grid.GridView.SplitDragZone = Ext.extend(Ext.dd.DDProxy, {
             endX = Math.max(this.minX, e.getPageX()),
             diff = endX - this.startPos,
             disabled = this.dragHeadersDisabled;
-            
+
         v.onColumnSplitterMoved(this.cellIndex, this.cm.getColumnWidth(this.cellIndex)+diff);
         setTimeout(function(){
             v.headersDisabled = disabled;

@@ -55,7 +55,7 @@ ui.task.PingTask = function()
                     }
 
                     // This 3 modules is commun with EN and LANG
-					
+
 					// TODO : find a way to detect modification into WorkTreeGrid & Patches for review
 					/*
                     if( ui.cmp.PendingCommitGrid.getInstance().store.getCount() != o.totalData.NbPendingCommit ) {
@@ -70,23 +70,23 @@ ui.task.PingTask = function()
                     if( o.totalData.lastInfoDate !== PhDOE.lastInfoDate ) {
                         ui.cmp.PortletInfo.getInstance().store.reload();
                     }
-                    
+
                     // Update the topic if necessary
                     if( o.totalData.topicInfo ) {
-                        
+
                         o.totalData.topicInfo.topicDate = Date.parseDate(o.totalData.topicInfo.topicDate, 'Y-m-d H:i:s');
                         o.totalData.topicInfo.topicDate = o.totalData.topicInfo.topicDate.format(_('Y-m-d, H:i'));
-                        
+
                         if( o.totalData.topicInfo.topicDate != PhDOE.topic.topicDate ) {
                             PhDOE.topic.author = o.totalData.topicInfo.author;
                             PhDOE.topic.content = o.totalData.topicInfo.content;
                             PhDOE.topic.topicDate = o.totalData.topicInfo.topicDate;
-                            
+
                             PhDOE.setTopic();
-                            
+
                         }
                     }
-                    
+
                     // Is there an update in progress ?
                     this.onUpdateData(o.updateData);
 
@@ -114,7 +114,7 @@ ui.task.PingTask.prototype.cancel = function()
 ui.task.PingTask.prototype.onPingFailed = function()
 {
     this.cancel();
-    
+
     var winNotify = new Ext.ux.Notification({
         iconCls     : 'iconError',
         title       : _('Connection lost'),
@@ -123,12 +123,12 @@ ui.task.PingTask.prototype.onPingFailed = function()
     });
 
     winNotify.show(document);
-    
+
     this.delay(30000);
-    
+
     // Timer for the notification
     var timer = 29;
-    
+
     var task = new Ext.util.DelayedTask(function(){
         if( timer > 0 ) {
             winNotify.setMessage(String.format(_('Retrying in {0} second(s).'), timer));
@@ -144,7 +144,7 @@ ui.task.PingTask.prototype.onPingFailed = function()
 ui.task.PingTask.prototype.onUpdateData = function(statut)
 {
     var libelStatut;
-    
+
     if( statut )
     {
         switch(statut) {
@@ -173,8 +173,8 @@ ui.task.PingTask.prototype.onUpdateData = function(statut)
                 libelStatut = _('8/8 - Generate statics revcheck\'s pages');
                 break;
         };
-        
-        
+
+
         if( ! PhDOE.updateDataProgress )
         {
             PhDOE.updateDataProgress = new Ext.Window({
@@ -204,9 +204,9 @@ ui.task.PingTask.prototype.onUpdateData = function(statut)
                     items: [{
                         xtype:'progress',
                         width:386,
-                        text: libelStatut    
+                        text: libelStatut
                     }]
-                    
+
                 }]
             });
             PhDOE.updateDataProgress.items.items[1].items.items[0].wait({
@@ -214,7 +214,7 @@ ui.task.PingTask.prototype.onUpdateData = function(statut)
                 increment:15,
                 animate: true
             });
-            
+
             PhDOE.updateDataProgress.show();
             PhDOE.updateDataProgress.items.items[1].items.items[0].updateText(libelStatut);
         } else {
@@ -222,7 +222,7 @@ ui.task.PingTask.prototype.onUpdateData = function(statut)
             PhDOE.updateDataProgress.items.items[1].items.items[0].updateText(libelStatut);
         }
         //PhDOE.updateDataProgress.doLayout();
-        
+
     } else {
         if( PhDOE.updateDataProgress )
         {

@@ -24,7 +24,7 @@ Ext.QuickTips.init(); // to display button quicktips
 
 var myStore = new Ext.data.Store({
     reader: new Ext.data.JsonReader({
-        {@link Ext.data.JsonReader#totalProperty totalProperty}: 'results', 
+        {@link Ext.data.JsonReader#totalProperty totalProperty}: 'results',
         ...
     }),
     ...
@@ -52,14 +52,14 @@ var grid = new Ext.grid.GridPanel({
 store.load({
     params: {
         // specify params for the first page load if using paging
-        start: 0,          
+        start: 0,
         limit: myPageSize,
         // other params
         foo:   'bar'
     }
 });
  * </code></pre>
- * 
+ *
  * <p>If using {@link Ext.data.Store#autoLoad store's autoLoad} configuration:</p>
  * <pre><code>
 var myStore = new Ext.data.Store({
@@ -67,13 +67,13 @@ var myStore = new Ext.data.Store({
     ...
 });
  * </code></pre>
- * 
+ *
  * <p>The packet sent back from the server would have this form:</p>
  * <pre><code>
 {
     "success": true,
-    "results": 2000, 
-    "rows": [ // <b>*Note:</b> this must be an Array 
+    "results": 2000,
+    "rows": [ // <b>*Note:</b> this must be an Array
         { "id":  1, "name": "Bill", "occupation": "Gardener" },
         { "id":  2, "name":  "Ben", "occupation": "Horticulturalist" },
         ...

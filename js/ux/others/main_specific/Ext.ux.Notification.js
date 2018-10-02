@@ -86,6 +86,6 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
         });
     },
 
-    focus: Ext.emptyFn 
+    focus: Ext.emptyFn
 
-}); 
+});

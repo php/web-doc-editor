@@ -554,19 +554,19 @@ function(el){
         getBody : function(){
             return Ext.get(DOC.body || DOC.documentElement);
         },
-        
+
         /**
          * Returns the current document body as an {@link Ext.Element}.
          * @return Ext.Element The document body
          */
         getHead : function() {
             var head;
-            
+
             return function() {
                 if (head == undefined) {
                     head = Ext.get(DOC.getElementsByTagName("head")[0]);
                 }
-                
+
                 return head;
             };
         }(),
@@ -1060,7 +1060,7 @@ Ext.applyIf(Array.prototype, {
 // Start a simple clock task that updates a div once per second
 var updateClock = function(){
     Ext.fly('clock').update(new Date().format('g:i:s A'));
-} 
+}
 var task = {
     run: updateClock,
     interval: 1000 //1 second
@@ -1076,15 +1076,15 @@ Ext.TaskMgr.start({
 
  * </code></pre>
  * <p>See the {@link #start} method for details about how to configure a task object.</p>
- * Also see {@link Ext.util.DelayedTask}. 
- * 
+ * Also see {@link Ext.util.DelayedTask}.
+ *
  * @constructor
  * @param {Number} interval (optional) The minimum precision in milliseconds supported by this TaskRunner instance
  * (defaults to 10)
  */
 Ext.util.TaskRunner = function(interval){
     interval = interval || 10;
-    var tasks = [], 
+    var tasks = [],
     	removeQueue = [],
     	id = 0,
     	running = false,
@@ -1111,12 +1111,12 @@ Ext.util.TaskRunner = function(interval){
 	            t.onStop.apply(t.scope || t);
 	        }
 	    },
-	    
+
     	// private
     	runTasks = function(){
 	    	var rqLen = removeQueue.length,
-	    		now = new Date().getTime();	    			    		
-	    
+	    		now = new Date().getTime();
+
 	        if(rqLen > 0){
 	            for(var i = 0; i < rqLen; i++){
 	                tasks.remove(removeQueue[i]);
@@ -1126,7 +1126,7 @@ Ext.util.TaskRunner = function(interval){
 	                stopThread();
 	                return;
 	            }
-	        }	        
+	        }
 	        for(var i = 0, t, itime, rt, len = tasks.length; i < len; ++i){
 	            t = tasks[i];
 	            itime = now - t.taskRunTime;
@@ -1404,7 +1404,7 @@ Ext.lib.Event = {
 
     un : function(el, eventName, fn){
         if((eventName == 'mouseenter' || eventName == 'mouseleave') && !mouseEnterSupported){
-            var item = mouseCache[el.id], 
+            var item = mouseCache[el.id],
                 ev = item && item[eventName];
 
             if(ev){
@@ -1579,7 +1579,7 @@ YAHOO.util.Region.prototype.adjust = function(t, l, b, r){
     this.bottom += b;
     return this;
 };
-    
+
 YAHOO.util.Region.prototype.constrainTo = function(r) {
     this.top = this.top.constrain(r.top, r.bottom);
     this.bottom = this.bottom.constrain(r.top, r.bottom);

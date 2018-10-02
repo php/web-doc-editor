@@ -90,14 +90,14 @@ CodeMirror.defineMode("tiddlywiki", function (config, parserConfig) {
 	}
 
 	function jsTokenBase(stream, state) {
-		var sol = stream.sol(), 
+		var sol = stream.sol(),
 			ch, tch;
-			
+
 		state.block = false;	// indicates the start of a code block.
 
 		ch = stream.peek(); // don't eat, to make match simpler
-		
-		// check start of  blocks    
+
+		// check start of  blocks
 		if (sol && /[<\/\*{}\-]/.test(ch)) {
 			if (stream.match(reCodeBlockStart)) {
 				state.block = true;
@@ -180,7 +180,7 @@ CodeMirror.defineMode("tiddlywiki", function (config, parserConfig) {
 			if (stream.eat("%")) {
 				return chain(stream, state, twTokenComment);
 			}
-			else if (stream.eat("/")) { // 
+			else if (stream.eat("/")) { //
 				return chain(stream, state, twTokenEm);
 			}
 		}
@@ -254,7 +254,7 @@ CodeMirror.defineMode("tiddlywiki", function (config, parserConfig) {
 	// tw code
 	function twTokenCode(stream, state) {
 		var ch, sb = state.block;
-		
+
 		if (sb && stream.current()) {
 			return ret("code", "code");
 		}
@@ -301,12 +301,12 @@ CodeMirror.defineMode("tiddlywiki", function (config, parserConfig) {
 		return ret("text", "underlined");
 	}
 
-	// tw strike through text looks ugly 
+	// tw strike through text looks ugly
 	// TODO just strike through the first and last 2 chars if possible.
 	function twTokenStrike(stream, state) {
 		var maybeEnd = false,
 			ch, nr;
-			
+
 		while (ch = stream.next()) {
 			if (ch == "-" && maybeEnd) {
 				state.tokenize = jsTokenBase;

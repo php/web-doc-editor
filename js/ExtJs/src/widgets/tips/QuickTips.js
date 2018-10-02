@@ -75,11 +75,11 @@ Ext.QuickTips.register({
 Ext.QuickTips = function(){
     var tip,
         disabled = false;
-        
+
     return {
         /**
          * Initialize the global QuickTips instance and prepare any quick tips.
-         * @param {Boolean} autoRender True to render the QuickTips container immediately to preload images. (Defaults to true) 
+         * @param {Boolean} autoRender True to render the QuickTips container immediately to preload images. (Defaults to true)
          */
         init : function(autoRender){
             if(!tip){
@@ -90,7 +90,7 @@ Ext.QuickTips = function(){
                     return;
                 }
                 tip = new Ext.QuickTip({
-                    elements:'header,body', 
+                    elements:'header,body',
                     disabled: disabled
                 });
                 if(autoRender !== false){
@@ -98,15 +98,15 @@ Ext.QuickTips = function(){
                 }
             }
         },
-        
+
         // Protected method called by the dd classes
         ddDisable : function(){
             // don't disable it if we don't need to
             if(tip && !disabled){
                 tip.disable();
-            }    
+            }
         },
-        
+
         // Protected method called by the dd classes
         ddEnable : function(){
             // only enable it if it hasn't been disabled

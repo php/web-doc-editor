@@ -198,7 +198,7 @@ Ext.Button = Ext.extend(Ext.BoxComponent, {
             this.menu = Ext.menu.MenuMgr.get(this.menu);
             this.menu.ownerCt = this;
         }
-        
+
         Ext.Button.superclass.initComponent.call(this);
 
         this.addEvents(
@@ -261,7 +261,7 @@ Ext.Button = Ext.extend(Ext.BoxComponent, {
              */
             'menutriggerout'
         );
-        
+
         if (this.menu){
             this.menu.ownerCt = undefined;
         }
@@ -615,7 +615,7 @@ Ext.Button = Ext.extend(Ext.BoxComponent, {
     hasVisibleMenu : function(){
         return this.menu && this.menu.ownerCt == this && this.menu.isVisible();
     },
-    
+
     // private
     onRepeatClick : function(repeat, e){
         this.onClick(e);
@@ -641,7 +641,7 @@ Ext.Button = Ext.extend(Ext.BoxComponent, {
             }
         }
     },
-    
+
     // private
     doToggle: function(){
         if (this.enableToggle && (this.allowDepress !== false || !this.pressed)) {

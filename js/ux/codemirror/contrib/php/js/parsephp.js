@@ -399,12 +399,12 @@ var PHPParser = Editor.Parser = (function() {
     function namespacedef(token) {
       pass(require("t_string"), maybe_double_colon_def);
     }
-    
+
     function altsyntax(token){
     	if(token.content==':')
     		cont(altsyntaxBlock,poplex);
     }
-    
+
     function altsyntaxBlock(token){
     	if (token.type == "altsyntaxend") cont(require(';'));
       else pass(statement, altsyntaxBlock);

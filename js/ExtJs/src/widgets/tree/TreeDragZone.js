@@ -70,7 +70,7 @@ Ext.extend(Ext.tree.TreeDragZone, Ext.dd.DragZone, {
         sm.clearSelections();
         sm.select(this.dragData.node);
     },
-    
+
     // private
     afterRepair : function(){
         if (Ext.enableFx && this.tree.hlDrop) {

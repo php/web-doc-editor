@@ -178,13 +178,13 @@ Ext.Window = Ext.extend(Ext.Panel, {
      * {@link #collapsed}) when displayed (defaults to true).
      */
     expandOnShow : true,
-    
+
     /**
      * @cfg {Number} showAnimDuration The number of seconds that the window show animation takes if enabled.
      * Defaults to 0.25
      */
     showAnimDuration: 0.25,
-    
+
     /**
      * @cfg {Number} hideAnimDuration The number of seconds that the window hide animation takes if enabled.
      * Defaults to 0.25
@@ -999,14 +999,14 @@ Ext.reg('window', Ext.Window);
 
 // private - custom Window DD implementation
 Ext.Window.DD = Ext.extend(Ext.dd.DD, {
-    
+
     constructor : function(win){
         this.win = win;
         Ext.Window.DD.superclass.constructor.call(this, win.el.id, 'WindowDD-'+win.id);
         this.setHandleElId(win.header.id);
-        this.scroll = false;        
+        this.scroll = false;
     },
-    
+
     moveOnly:true,
     headerOffsets:[100, 25],
     startDrag : function(){

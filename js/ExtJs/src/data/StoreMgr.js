@@ -17,7 +17,7 @@ Ext.StoreMgr = Ext.apply(new Ext.util.MixedCollection(), {
 
     /**
      * Registers one or more Stores with the StoreMgr. You do not normally need to register stores
-     * manually.  Any store initialized with a {@link Ext.data.Store#storeId} will be auto-registered. 
+     * manually.  Any store initialized with a {@link Ext.data.Store#storeId} will be auto-registered.
      * @param {Ext.data.Store} store1 A Store instance
      * @param {Ext.data.Store} store2 (optional)
      * @param {Ext.data.Store} etc... (optional)

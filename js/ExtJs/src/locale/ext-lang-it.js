@@ -8,7 +8,7 @@
  * Italian translation
  * By eric_void
  * 04-10-2007, 11:25 AM
- * Updated by Federico Grilli 21/12/2007 
+ * Updated by Federico Grilli 21/12/2007
  */
 
 Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">Caricamento in corso...</div>';

@@ -232,7 +232,7 @@ ui.cmp._CheckDoc.FileWin = Ext.extend(Ext.Window,
             );
 
             PhDOE.AFfilePendingOpen.shift();
-            
+
             win.close();
         }
     }]
@@ -274,7 +274,7 @@ ui.cmp.CheckDoc = Ext.extend(Ext.grid.GridPanel,
         if (Ext.num(data, false) && data !== 0) {
 
             this.el.mask(_('Please, wait...'));
-            
+
             XHR({
                 params   : {
                     task      : 'getCheckDocFiles',

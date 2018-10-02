@@ -102,7 +102,7 @@ Ext.lib.Event = function() {
 
         if(!locked){
             locked = true;
-            
+
             for(i = 0; i < onAvailStack.length; ++i){
                 v = onAvailStack[i];
                 if(v && (element = doc.getElementById(v.id))){
@@ -313,7 +313,7 @@ Ext.lib.Event = function() {
 
         _load : function(e) {
             loadComplete = true;
-            
+
             if (Ext.isIE && e !== true) {
                 // IE8 complains that _load is null or not an object
                 // so lets remove self via arguments.callee

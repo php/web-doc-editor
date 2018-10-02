@@ -87,7 +87,7 @@ var i18n = new Array();
   i18n["Administrator menu"] = "Меню адміністратора";
   i18n["There is some file unsaved. Please, save it before start a commit."] = "Існують незбережені файли. Будь-ласка, збережіть їх перед початком коміту";
 
-  
+
 // In file: ../../js/ui/component/PatchesTreeGrid.js
   i18n["Edit the description of this patch"] = "Редагувати опис цього патча";
   i18n["Delete this patch"] = "Видалити цей патч";
@@ -725,13 +725,13 @@ var i18n = new Array();
   i18n["The note was added successfully !"] = "Замітку було успішно додано!";
   i18n["Note deleted"] = "Замітку видалено";
   i18n["The note was deleted successfully !"] = "Замітку було успішно видалено!";
-  
-  
+
+
 // In file: ../../js/ui/task/CheckXml.js
   i18n["XML check. Please, wait..."] = "Перевірка XML. Будь-ласка, почекайте...";
   i18n["XML check"] = "Перевірка XML";
-  
-  
+
+
 // In file: ../../js/ui/cmp/CheckXmlWin.js
   i18n["Line"] = "Рядок";
   i18n["Libel"] = "Слово";
@@ -765,11 +765,10 @@ var i18n = new Array();
 // In file: ../../js/ux/codemirror2/lib/util/search.js
   i18n["Search"] = "Пошук";
   i18n["Use /re/ syntax for regexp search"] = "Використовуйте синтаксис /re/ для пошуку по регулярними виразам";
-    
+
 // In file: ../../js/ui/cmp/DirectActionWin.js
   i18n["Live action"] = "Пряма дія";
   i18n["This live action didn't exist"] = "Такої прямої дії не існує";
   i18n["Put into this patch:"] = "Покласти в цей патч:";
   i18n["Delete this change"] = "Видалити цю зміну";
   i18n["Modified file"] = "Змінений файл";
-  

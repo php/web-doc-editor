@@ -4,7 +4,7 @@ Ext.namespace('ui','ui.task');
 ui.task.MoveToWork = function(config)
 {
         Ext.apply(this, config);
-        
+
         var filesID=[];
 
         Ext.each(this.nodesToAdd, function(node) {

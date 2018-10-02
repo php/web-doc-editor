@@ -34,7 +34,7 @@
  * @param {Object/String} attributes The attributes/config for the node or just a string with the text for the node
  */
 Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
-    
+
     constructor : function(attributes){
         attributes = attributes || {};
         if(Ext.isString(attributes)){
@@ -63,7 +63,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
          * @type Boolean
          */
         this.hidden = attributes.hidden === true;
-    
+
         this.addEvents(
             /**
             * @event textchange
@@ -157,16 +157,16 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
             */
             'beforechildrenrendered'
         );
-    
+
         var uiClass = this.attributes.uiProvider || this.defaultUI || Ext.tree.TreeNodeUI;
-    
+
         /**
          * Read-only. The UI for this node
          * @type TreeNodeUI
          */
-        this.ui = new uiClass(this);    
+        this.ui = new uiClass(this);
     },
-    
+
     preventHScroll : true,
     /**
      * Returns true if this node is expanded
@@ -277,7 +277,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
         }
         this.fireEvent('textchange', this, text, oldText);
     },
-    
+
     /**
      * Sets the icon class for this node.
      * @param {String} cls
@@ -289,7 +289,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
             this.ui.onIconClsChange(this, cls, old);
         }
     },
-    
+
     /**
      * Sets the tooltip for this node.
      * @param {String} tip The text for the tip
@@ -302,7 +302,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
             this.ui.onTipChange(this, tip, title);
         }
     },
-    
+
     /**
      * Sets the icon for this node.
      * @param {String} icon
@@ -313,7 +313,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
             this.ui.onIconChange(this, icon);
         }
     },
-    
+
     /**
      * Sets the href for the node.
      * @param {String} href The href to set
@@ -326,7 +326,7 @@ Ext.tree.TreeNode = Ext.extend(Ext.data.Node, {
             this.ui.onHrefChange(this, href, target);
         }
     },
-    
+
     /**
      * Sets the class on this node.
      * @param {String} cls

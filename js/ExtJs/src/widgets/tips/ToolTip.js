@@ -199,7 +199,7 @@ myGrid.on('render', function(grid) {
                 scrollY = (de.scrollTop || bd.scrollTop || 0) + 5,
                 axy = [xy[0] + offsets[0], xy[1] + offsets[1]],
                 sz = this.getSize();
-                
+
             this.anchorEl.removeClass(this.anchorCls);
 
             if(this.targetCounter < 2){
@@ -288,7 +288,7 @@ myGrid.on('render', function(grid) {
 
     // private
     getOffsets : function(){
-        var offsets, 
+        var offsets,
             ap = this.getAnchorPosition().charAt(0);
         if(this.anchorToTarget && !this.trackMouse){
             switch(ap){
@@ -494,7 +494,7 @@ myGrid.on('render', function(grid) {
             this.doEnable.defer(100, this);
         }
     },
-    
+
     // private
     doEnable : function(){
         if(!this.isDestroyed){
@@ -518,7 +518,7 @@ myGrid.on('render', function(grid) {
         }
         return {x : x, y: y};
     },
-    
+
     beforeDestroy : function(){
         this.clearTimers();
         Ext.destroy(this.anchorEl);
@@ -526,7 +526,7 @@ myGrid.on('render', function(grid) {
         delete this.target;
         delete this.anchorTarget;
         delete this.triggerElement;
-        Ext.ToolTip.superclass.beforeDestroy.call(this);    
+        Ext.ToolTip.superclass.beforeDestroy.call(this);
     },
 
     // private

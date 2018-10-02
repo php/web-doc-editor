@@ -54,12 +54,12 @@ Ext.menu.Item = Ext.extend(Ext.menu.BaseItem, {
      * @cfg {Number} showDelay Length of time in milliseconds to wait before showing this item (defaults to 200)
      */
     showDelay: 200,
-    
+
     /**
      * @cfg {String} altText The altText to use for the icon, if it exists. Defaults to <tt>''</tt>.
      */
     altText: '',
-    
+
     // doc'd in BaseItem
     hideDelay: 200,
 

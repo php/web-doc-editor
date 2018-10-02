@@ -16,7 +16,7 @@
 Ext.form.Hidden = Ext.extend(Ext.form.Field, {
     // private
     inputType : 'hidden',
-    
+
     shouldLayout: false,
 
     // private

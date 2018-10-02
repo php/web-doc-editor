@@ -11,8 +11,8 @@ Ext.apply(Ext.Element.prototype, function() {
 	var GETDOM = Ext.getDom,
 		GET = Ext.get,
 		DH = Ext.DomHelper;
-	
-	return {	
+
+	return {
 		/**
 	     * Inserts (or creates) the passed element (or DomHelper config) as a sibling of this element
 	     * @param {Mixed/Object/Array} el The id, element to insert or a DomHelper config to create and insert *or* an array of any of those.
@@ -25,7 +25,7 @@ Ext.apply(Ext.Element.prototype, function() {
 	        	rt,
                 isAfter = (where || 'before').toLowerCase() == 'after',
                 insertEl;
-	        	
+
 	        if(Ext.isArray(el)){
                 insertEl = me;
 	            Ext.each(el, function(e) {
@@ -36,9 +36,9 @@ Ext.apply(Ext.Element.prototype, function() {
 	            });
 	            return rt;
 	        }
-	                
+
 	        el = el || {};
-	       	
+
             if(el.nodeType || el.dom){
                 rt = me.dom.parentNode.insertBefore(GETDOM(el), isAfter ? me.dom.nextSibling : me.dom);
                 if (!returnDom) {
@@ -47,7 +47,7 @@ Ext.apply(Ext.Element.prototype, function() {
             }else{
                 if (isAfter && !me.dom.nextSibling) {
                     rt = DH.append(me.dom.parentNode, el, !returnDom);
-                } else {                    
+                } else {
                     rt = DH[isAfter ? 'insertAfter' : 'insertBefore'](me.dom, el, !returnDom);
                 }
             }

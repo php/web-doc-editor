@@ -68,27 +68,27 @@ Ext.list.ColumnResizer = Ext.extend(Ext.util.Observable, {
     },
 
     onStart: function(e){
-        
+
         var me = this,
             view = me.view,
             dragHeader = me.dragHd,
-            x = me.tracker.getXY()[0];            
-        
+            x = me.tracker.getXY()[0];
+
         me.proxy = view.el.createChild({cls:'x-list-resizer'});
         me.dragX = dragHeader.getX();
         me.headerIndex = view.findHeaderIndex(dragHeader);
-        
+
         me.headersDisabled = view.disableHeaders;
         view.disableHeaders = true;
-        
+
         me.proxy.setHeight(view.el.getHeight());
         me.proxy.setX(me.dragX);
         me.proxy.setWidth(x - me.dragX);
-        
+
         this.setBoundaries();
-        
+
     },
-    
+
     // Sets up the boundaries for the drag/drop operation
     setBoundaries: function(relativeX){
         var view = this.view,
@@ -102,7 +102,7 @@ Ext.list.ColumnResizer = Ext.extend(Ext.util.Observable, {
             minX = minWidth + relativeX,
             maxX = maxWidth + relativeX,
             header;
-          
+
         if (numColumns == 2) {
             this.minX = minX;
             this.maxX = maxX;
@@ -123,7 +123,7 @@ Ext.list.ColumnResizer = Ext.extend(Ext.util.Observable, {
     onDrag: function(e){
         var me = this,
             cursorX = me.tracker.getXY()[0].constrain(me.minX, me.maxX);
-            
+
         me.proxy.setWidth(cursorX - this.dragX);
     },
 
@@ -144,11 +144,11 @@ Ext.list.ColumnResizer = Ext.extend(Ext.util.Observable, {
 
         headerCol.width = newPercent;
         otherCol.width = totalPercent - newPercent;
-      
+
         delete this.dragHd;
         view.setHdWidths();
         view.refresh();
-        
+
         setTimeout(function(){
             view.disableHeaders = disabled;
         }, 100);

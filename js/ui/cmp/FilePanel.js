@@ -470,9 +470,9 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                     });
                 }
             }
-            
+
             /* Actually, codemirror2 don't support this. Desactivate it.
-            
+
             {
                 scope        : this,
                 tooltip      : _('<b>Enable / Disable</b> spellChecking'),
@@ -489,7 +489,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                         value     : btn.pressed,
                         notify    : false
                     });
-                    
+
                 } editorTheme
             },
             */
@@ -518,7 +518,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                     checkHandler: function(item, checked)
                     {
                         var wrappingValue = ( checked ) ? true : false;
-                        
+
                         Ext.getCmp(this.id_prefix + '-FILE-' + this.fid).setOption('lineWrapping', wrappingValue);
 
                         new ui.task.UpdateConfTask({
@@ -527,7 +527,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                             value     : checked,
                             notify    : false
                         });
-                        
+
                     }
                 },{
                     scope: this,
@@ -536,13 +536,13 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                     onThemeChange: function()
                     {
                         var editorCmp = Ext.getCmp(this.ownerCt.ownerCt.ownerCt.id_prefix + '-FILE-' + this.ownerCt.ownerCt.ownerCt.fid);
-                        
+
                         Ext.each(this.menu.items.items, function(item)
                         {
                             if( item.checked === true )
                             {
                                 editorCmp.switchTheme(item.themeName);
-                                
+
                                 new ui.task.UpdateConfTask({
                                     module    : 'main',
                                     itemName  : 'editorTheme',
@@ -551,7 +551,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                                 });
                             }
                         });
-                        
+
                     },
                     menu: {
                         items: [{
@@ -629,7 +629,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
                         }]
                     }
                 }]
-                
+
             }
             ]
         });
@@ -655,7 +655,7 @@ Ext.extend(ui.cmp._FilePanel.tbar.items.reindentTags, Ext.ButtonGroup,
 ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
 {
     activeScroll : false,  // scroll lock
-    
+
     goToPreviousTab : function()
     {
         var currentTabId = this.prefix+'-'+this.fid,
@@ -902,19 +902,19 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 {
                                     var codeMirrorMax =Ext.getCmp(id_prefix + '-FILE-' + this.fid + 'maximized'),
                                         currentCode = Ext.getCmp(id_prefix + '-FILE-' + this.fid).getValue();
-                                        
+
                                     // We set the current code into the maximized window editor
                                     codeMirrorMax.setValue(currentCode);
-                                    
+
                                     // We must wait until the winMax is rendered to rize the editor
                                     var waitTask = new Ext.util.DelayedTask(function(){
-                                        
+
                                         if( winMax.rendered ) {
                                             codeMirrorMax.resize(false, winMax.getInnerHeight()+89);
                                         } else {
                                             waitTask.delay(500);
                                         }
-                                        
+
                                     });
                                     waitTask.delay(500);
                                 }
@@ -1087,13 +1087,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                         if( this.readOnly ) {
                             return;
                         }
-                        
+
                         // We follow the same rules as defined in GetFileTask.js.
                         // So, if the toolsBar is disabled here, we just skeep this function and return asap.
                         if( Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-save').disabled ) {
                                 return;
                         }
-                        
+
                         var cmpFile  = Ext.getCmp(id_prefix + '-FILE-' + this.fid),
                             cmpPanel = Ext.getCmp(id_prefix + '-PANEL-' + this.fid);
 
@@ -1112,7 +1112,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 ' <t style="color:#ff0000; font-weight: bold;">*</t>'
                             );
                             Ext.getCmp(this.prefix + '-' + this.fid).isModified = true;
-                            
+
 
                             // Activate save button
                             Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-btn-save').enable();
@@ -1145,11 +1145,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                         opp_prefix = this.prefix + '-LANG';
                                     }
                                     break;
-                                    
+
                                 case 'LANG':
                                     opp_prefix = this.prefix + '-EN';
                                     break;
-                                    
+
                                 case 'TRANS':
                                     if( PhDOE.user.conf.newFile.secondPanel == 'google' ) {
                                         opp_prefix = this.prefix + '-GGTRANS';
@@ -1158,11 +1158,11 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                         opp_prefix = this.prefix + '-EN';
                                     }
                                     break;
-                                    
+
                                 case 'GGTRANS':
                                     opp_prefix = this.prefix + '-TRANS';
                                     break;
-                                    
+
                             }
 
                             opp_panel = Ext.getCmp(opp_prefix + '-PANEL-' + this.fid);

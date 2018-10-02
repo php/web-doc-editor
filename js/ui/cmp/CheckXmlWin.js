@@ -18,7 +18,7 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
             this.ownerCt.ownerCt.close();
         }
     }],
-    
+
     store : new Ext.data.JsonStore({
         root          : 'Items',
         totalProperty : 'nbItems',
@@ -27,17 +27,17 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
             {name : 'libel'}
         ]
     }),
-    
+
     addErrorsInStore : function() {
-        
+
         var record = Ext.data.Record.create({name: 'line'}, {name: 'libel'});
 
         this.store.removeAll();
-        
+
         for( i=0; i < this.errors.length; i++ ) {
             this.store.add( new record({'line': this.errors[i].line, 'libel' : this.errors[i].libel+"<br>"+Ext.util.Format.htmlEncode(this.errors[i].ctx1)}) );
         }
-        
+
         this.store.sort('line', 'desc');
     },
 
@@ -66,12 +66,12 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
                 })
             }]
         });
-        
+
         ui.cmp.CheckXmlWin.superclass.initComponent.call(this);
-        
+
         // We add errors into the store
         this.addErrorsInStore();
-        
+
         this.show();
     }
 });

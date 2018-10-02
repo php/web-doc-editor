@@ -9,7 +9,7 @@ ui.task._VCSCommitTask.getCommitResponse = function()
         success : function(response)
         {
             var o = Ext.util.JSON.decode(response.responseText);
-            
+
             ui.task._VCSCommitTask.afterCommit(o.mess);
         }
     });
@@ -29,7 +29,7 @@ ui.task._VCSCommitTask.poll = new Ext.util.DelayedTask(function()
         failure : function(response)
         {
             var o = Ext.util.JSON.decode(response.responseText);
-            
+
             if (o && o.success === false) {
                 new ui.task._VCSCommitTask.getCommitResponse();
 
@@ -139,7 +139,7 @@ ui.task._VCSCommitTask.commit = function(files, patchID)
         success : function(r)
         {
             var o = Ext.util.JSON.decode(r.responseText);
-            
+
             ui.task._VCSCommitTask.afterCommit(o.mess);
         },
         failure : function(r)

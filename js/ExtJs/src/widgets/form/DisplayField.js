@@ -53,7 +53,7 @@ Ext.form.DisplayField = Ext.extend(Ext.form.Field,  {
     getValue : function(){
         return this.getRawValue();
     },
-    
+
     getName: function() {
         return this.name;
     },
@@ -69,28 +69,28 @@ Ext.form.DisplayField = Ext.extend(Ext.form.Field,  {
         this.setRawValue(v);
         return this;
     }
-    /** 
-     * @cfg {String} inputType 
+    /**
+     * @cfg {String} inputType
      * @hide
      */
-    /** 
-     * @cfg {Boolean} disabled 
+    /**
+     * @cfg {Boolean} disabled
      * @hide
      */
-    /** 
-     * @cfg {Boolean} readOnly 
+    /**
+     * @cfg {Boolean} readOnly
      * @hide
      */
-    /** 
-     * @cfg {Boolean} validateOnBlur 
+    /**
+     * @cfg {Boolean} validateOnBlur
      * @hide
      */
-    /** 
-     * @cfg {Number} validationDelay 
+    /**
+     * @cfg {Number} validationDelay
      * @hide
      */
-    /** 
-     * @cfg {String/Boolean} validationEvent 
+    /**
+     * @cfg {String/Boolean} validationEvent
      * @hide
      */
 });

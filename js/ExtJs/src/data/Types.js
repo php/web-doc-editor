@@ -61,7 +61,7 @@ Ext.data.Types = new function(){
          * This should be overridden for localization.
          */
         stripRe: /[\$,%]/g,
-        
+
         /**
          * @type Object.
          * @property AUTO
@@ -98,7 +98,7 @@ Ext.data.Types = new function(){
             sortType: st.none,
             type: 'int'
         },
-        
+
         /**
          * @type Object.
          * @property FLOAT
@@ -113,7 +113,7 @@ Ext.data.Types = new function(){
             sortType: st.none,
             type: 'float'
         },
-        
+
         /**
          * @type Object.
          * @property BOOL
@@ -126,7 +126,7 @@ Ext.data.Types = new function(){
             sortType: st.none,
             type: 'bool'
         },
-        
+
         /**
          * @type Object.
          * @property DATE
@@ -159,7 +159,7 @@ Ext.data.Types = new function(){
             type: 'date'
         }
     });
-    
+
     Ext.apply(this, {
         /**
          * @type Object.
@@ -182,6 +182,6 @@ Ext.data.Types = new function(){
          * This data type means that the raw data is converted into a number before it is placed into a Record.
          * <p>The synonym <code>FLOAT</code> is equivalent.</p>
          */
-        NUMBER: this.FLOAT    
+        NUMBER: this.FLOAT
     });
 };

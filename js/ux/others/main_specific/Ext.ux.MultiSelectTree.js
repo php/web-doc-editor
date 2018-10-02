@@ -25,7 +25,7 @@
 
  *
  * If you are using Ext-JS 2.2.1 or earlier you need to add this override! (reported as a bug)
- 
+
 Ext.override(Ext.tree.TreeDropZone, {
 	completeDrop : function(de){
 		var ns = de.dropNode, p = de.point, t = de.target;
@@ -52,12 +52,12 @@ Ext.override(Ext.tree.TreeDropZone, {
 		t.ui.endDrop();
 		this.tree.fireEvent("nodedrop", de);
 	}
-	
-}); 
- 
+
+});
+
  *
  * Instantiate like a normal tree (except DD stuff is enabled by default)
- 
+
 	var tree = new Ext.ux.MultiSelectTreePanel({
 		autoScroll:true,
 		width:400,
@@ -94,10 +94,10 @@ Ext.override(Ext.tree.TreeDropZone, {
  *		- included onContainerOver and onContainerDrop code (awaiting ExtJS fix)
  *		- fixed several lingering postdrag selection bugs
  *		- fixed key events to respect shift/ctrl keys
- *		
+ *
  * Enjoy
  */
- 
+
 Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 
 	normalClick: false,
@@ -134,13 +134,13 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 				return;
 			}
 			this.normalClick = !e.shiftKey;
-			
+
 		} else {
 			this.select(node, e, e.ctrlKey);
 			this.normalClick = false;
 		}
 	},
-	
+
 	onMouseUp: function(node, e) {
 /* 		console.debug("SelModel onMouseUp this.normalClick "+node.id); */
 		if (this.normalClick) {
@@ -153,11 +153,11 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 //			}).defer(500, this)
 		}
 	},
-	
+
 	onDoubleClick: function() {
 /* 		console.debug("onDoubleClick"); */
 		this.normalClick = false;
-	},	
+	},
 
 	// private
 	// for comparing node order... (taken from quirksmode.org and googlecode)
@@ -165,11 +165,11 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 		function(node1, node2) {
 			// W3C DOM lvl 3 method (Gecko)
 			return 3 - (node1.ui.elNode.compareDocumentPosition(node2.ui.elNode) & 6);
-		} : 
-		(typeof document.documentElement.sourceIndex !== "undefined" ? 
+		} :
+		(typeof document.documentElement.sourceIndex !== "undefined" ?
 			function(node1, node2) {
 				// IE source index method
-				return node1.ui.elNode.sourceIndex - node2.ui.elNode.sourceIndex;	
+				return node1.ui.elNode.sourceIndex - node2.ui.elNode.sourceIndex;
 			} :
 			function(node1, node2) {
 				if (node1 == node2) return 0;
@@ -184,7 +184,7 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 				range2.collapse(true);
 
 				return range1.compareBoundaryPoints(Range.START_TO_END, range2);
-			}		
+			}
 		),
 
 	// private
@@ -303,7 +303,7 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 		}
 		return ret;
 	},
-	
+
 	// check for descendents when nodes are removed...
 	unselect: function(node, subnodes) {
 		if (subnodes) {
@@ -311,11 +311,11 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
 				if (this.selNodes[c].isAncestor(node)) {
 					Ext.ux.FixedMultiSelectionModel.superclass.unselect.call(this, this.selNodes[c]);
 				}
-			}		
+			}
 		}
 		return Ext.ux.FixedMultiSelectionModel.superclass.unselect.call(this, node);
 	},
-	
+
     /**
      * Selects the node above the selected node in the tree, intelligently walking the nodes
      * @return TreeNode The new selection
@@ -405,13 +405,13 @@ Ext.ux.FixedMultiSelectionModel = Ext.extend(Ext.tree.MultiSelectionModel, {
              break;
         };
     }
-    	
+
 });
 /*
 	Enhanced to support dragging multiple nodes...
-	
+
 	for extension refer to data.nodes instead of data.node
-	
+
 */
 Ext.ux.MultiSelectTreeDragZone = Ext.extend(Ext.tree.TreeDragZone, {
 
@@ -425,12 +425,12 @@ Ext.ux.MultiSelectTreeDragZone = Ext.extend(Ext.tree.TreeDragZone, {
 			}
 			return true;
 		} else if (data.node) {
-			if (data.node.draggable === false || data.node.disabled) return false			
+			if (data.node.draggable === false || data.node.disabled) return false
 		}
 		return false;
-		
+
 	},
-	
+
 	alignElWithMouse: function(el, iPageX, iPageY) {
 		Ext.ux.MultiSelectTreeDragZone.superclass.alignElWithMouse.apply(this, arguments);
 		// test if the proxy object is visible (indicating a drag)
@@ -441,7 +441,7 @@ Ext.ux.MultiSelectTreeDragZone = Ext.extend(Ext.tree.TreeDragZone, {
 			}
 		}
 	},
-	
+
 	onMouseUp: function(e) {
 		// if multiselection model, call mouseup code to reevaluate selection..
 		var selModel = this.tree.getSelectionModel();
@@ -454,7 +454,7 @@ Ext.ux.MultiSelectTreeDragZone = Ext.extend(Ext.tree.TreeDragZone, {
 		}
 		Ext.ux.MultiSelectTreeDragZone.superclass.onMouseUp.apply(this, arguments);
 	},
-	
+
 	// v1.0
 	// fixed to handle multiSelectionModel
 	// Data now calls SelectionModel.select instead of waiting for the click event
@@ -727,7 +727,7 @@ Ext.ux.MultiSelectTreeDropZone = Ext.extend(Ext.tree.TreeDropZone, {
 	// handle allowContainerDrop (appends nodes to the root node)
 	onContainerDrop : function(dd, e, data) {
 		if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {
-			var targetNode = this.tree.getRootNode();		
+			var targetNode = this.tree.getRootNode();
 			targetNode.ui.startDrop();
 			var dropNode = data.node || (dd.getTreeNode ? dd.getTreeNode(data, targetNode, "append", e) : null);
 			var dropEvent = {
@@ -746,7 +746,7 @@ Ext.ux.MultiSelectTreeDropZone = Ext.extend(Ext.tree.TreeDropZone, {
 				targetNode.ui.endDrop();
 				return dropEvent.dropStatus;
 			}
-	
+
 			targetNode = dropEvent.target;
 			if(!targetNode.isExpanded()){
 				targetNode.expand(false, null, function(){
@@ -759,7 +759,7 @@ Ext.ux.MultiSelectTreeDropZone = Ext.extend(Ext.tree.TreeDropZone, {
 		}
 		return false;
 	},
-	
+
 	// handle allowContaineDrop (treat as a drop to the root node)
 	onContainerOver : function(dd, e, data) {
 		if (this.allowContainerDrop && this.isValidDropPoint({ ddel: this.tree.getRootNode().ui.elNode, node: this.tree.getRootNode() }, "append", dd, e, data)) {

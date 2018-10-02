@@ -186,7 +186,7 @@ Ext.lib.Event = {
 
     un : function(el, eventName, fn){
         if((eventName == 'mouseenter' || eventName == 'mouseleave') && !mouseEnterSupported){
-            var item = mouseCache[el.id], 
+            var item = mouseCache[el.id],
                 ev = item && item[eventName];
 
             if(ev){
@@ -361,7 +361,7 @@ YAHOO.util.Region.prototype.adjust = function(t, l, b, r){
     this.bottom += b;
     return this;
 };
-    
+
 YAHOO.util.Region.prototype.constrainTo = function(r) {
     this.top = this.top.constrain(r.top, r.bottom);
     this.bottom = this.bottom.constrain(r.top, r.bottom);

@@ -42,8 +42,8 @@ ui.task.GetFileTask = function(config)
 
             // Remove the mask from the editor
             pEl.unmask();
-            
-                
+
+
             // We set the permLink (exclude for file patch)
             if( this.prefix === 'PP' ||
                 this.ftype  === 'TRANS' ||
@@ -81,7 +81,7 @@ ui.task.GetFileTask = function(config)
                 // Mark as dirty this editor now
                 f.fireEvent('codemodified');
                 f.documentDurty = true;
-                
+
             }
 
             if( o.warn_encoding && !this.freadOnly ) {
@@ -99,7 +99,7 @@ ui.task.GetFileTask = function(config)
                 // Mark as dirty this editor now
                 Ext.getCmp(id_prefix + '-FILE-' + this.fid +'-btn-save').enable();
             }
-            
+
             if( this.prefix === 'FNT' || this.prefix === 'FNIEN' ) { dataModified = 'fileModified'; }
             if( this.prefix === 'FNU' ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
             if( this.prefix === 'FE'  ) { dataModified = (this.ftype === 'LANG') ? 'fileModifiedLang' : 'fileModifiedEN'; }
@@ -108,7 +108,7 @@ ui.task.GetFileTask = function(config)
 
             // We ensure that this file have been marked as modified into the store
             // We exclude this check if we want to view an original file
-            
+
             if( o.fileModified && this.prefix !== 'AF' && !readOriginal ) {
                 this.storeRecord.set(dataModified, o.fileModified);
                 this.storeRecord.commit();
@@ -140,7 +140,7 @@ ui.task.GetFileTask = function(config)
                 }
                 //
                 else if( !fileModifiedInfo.haveKarma  && PhDOE.user.haveKarma && fileModifiedInfo.fromModule === 'PatchesForReview' ) {
-                    
+
                     new ui.cmp.AnonymousPatchWin({
                         fidDB: fileModifiedInfo.fidDB,
                         fid: this.fid,
@@ -150,9 +150,9 @@ ui.task.GetFileTask = function(config)
                         fname: this.fname,
                         curTab: Ext.getCmp(this.prefix + '-' + this.fid)
                     });
-                    
+
                 }
-                
+
                 else {
                     if( !this.freadOnly ) {
                         // We disable save group, undoRedo group, and tools group from the toolBars
@@ -160,9 +160,9 @@ ui.task.GetFileTask = function(config)
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-undoRedo').disable();
                         Ext.getCmp(id_prefix + '-FILE-' + this.fid + '-grp-tools').disable();
                     }
-                    
+
                     // If the current user isn't the user who have modified this file, we disable the panel
-                    
+
                     mess = Ext.MessageBox.show({
                         title   : _('Information'),
                         msg     : String.format(_('File modified by {0}.'), fileModifiedInfo.user),
@@ -173,37 +173,37 @@ ui.task.GetFileTask = function(config)
                     mess.getDialog().mask.alignTo(pEl.dom, "tl");
                 }
             } else {
-                
+
                 // This file haven't been modified by another user
                 if (id_prefix == 'FNT-TRANS') {
-                    
+
                     // We check if this tag isn't already into the document
                     var re = new RegExp('<!-- EN-Revision:'),
                         m = re.exec(o.content);
-                    
+
                     if( m == null ) {
-                        
+
                         // If the line n°1 is empty, we delete it.
                         if( Ext.isEmpty(f.getLine(1)) ) {
                             f.removeLine(1);
                         }
-                        
+
                         f.setLine(1, '<!-- $Revision: $ -->');
-                        
+
                         f.insertLine(1, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->');
                         f.insertLine(2, '<!-- Reviewed: no -->');
-                        
+
                         // Ensure the next line is an empty line
                         if( !Ext.isEmpty(f.getLine(4)) ) {
                             f.insertLine(3,'');
                         }
-                        
+
                         // Mark as dirty this editor now
                         f.manageCodeChange();
                     }
-                    
+
                 }
-                
+
             }
         },
         callback : function()

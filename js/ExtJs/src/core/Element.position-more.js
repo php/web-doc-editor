@@ -17,7 +17,7 @@ Ext.Element.addMethods({
      */
     setBox : function(box, adjust, animate){
         var me = this,
-        	w = box.width, 
+        	w = box.width,
         	h = box.height;
         if((adjust && !me.autoBoxAdjust) && !me.isBorderBox()){
            w -= (me.getBorderWidth("lr") + me.getPadding("lr"));
@@ -45,13 +45,13 @@ Ext.Element.addMethods({
      * The returned object may also be addressed as an Array where index 0 contains the X position
      * and index 1 contains the Y position. So the result may also be used for {@link #setXY}
      */
-	getBox : function(contentBox, local) {	    
+	getBox : function(contentBox, local) {
 	    var me = this,
         	xy,
         	left,
         	top,
         	getBorderWidth = me.getBorderWidth,
-        	getPadding = me.getPadding, 
+        	getPadding = me.getPadding,
         	l,
         	r,
         	t,
@@ -77,7 +77,7 @@ Ext.Element.addMethods({
         bx.bottom = bx.y + bx.height;
         return bx;
 	},
-	
+
     /**
      * Move this element relative to its current position.
      * @param {String} direction Possible values are: "l" (or "left"), "r" (or "right"), "t" (or "top", or "up"), "b" (or "bottom", or "down").
@@ -86,10 +86,10 @@ Ext.Element.addMethods({
      * @return {Ext.Element} this
      */
      move : function(direction, distance, animate){
-        var me = this,        	
+        var me = this,
         	xy = me.getXY(),
         	x = xy[0],
-        	y = xy[1],        	
+        	y = xy[1],
         	left = [x - distance, y],
         	right = [x + distance, y],
         	top = [x, y - distance],
@@ -102,15 +102,15 @@ Ext.Element.addMethods({
 	        	t : top,
 	        	top : top,
 	        	up : top,
-	        	b : bottom, 
+	        	b : bottom,
 	        	bottom : bottom,
-	        	down : bottom	        		
+	        	down : bottom
 	        };
-        
- 	    direction = direction.toLowerCase();    
+
+ 	    direction = direction.toLowerCase();
  	    me.moveTo(hash[direction][0], hash[direction][1], me.animTest.call(me, arguments, animate, 2));
     },
-    
+
     /**
      * Quick set left and top adding default units
      * @param {String} left The left CSS property value
@@ -124,7 +124,7 @@ Ext.Element.addMethods({
         style.top = me.addUnits(top);
         return me;
     },
-    
+
     /**
      * Returns the region of the given element.
      * The element must be part of the DOM tree to have a region (display:none or elements not appended return false).
@@ -133,7 +133,7 @@ Ext.Element.addMethods({
     getRegion : function(){
         return Ext.lib.Dom.getRegion(this.dom);
     },
-    
+
     /**
      * Sets the element's position and size in one shot. If animation is true then width, height, x and y will be animated concurrently.
      * @param {Number} x X value for new position (coordinates are page-based)
@@ -155,10 +155,10 @@ Ext.Element.addMethods({
             me.setSize(width, height);
             me.setLocation(x, y);
         } else {
-            me.anim({points: {to: [x, y]}, 
-            		 width: {to: me.adjustWidth(width)}, 
+            me.anim({points: {to: [x, y]},
+            		 width: {to: me.adjustWidth(width)},
             		 height: {to: me.adjustHeight(height)}},
-                     me.preanim(arguments, 4), 
+                     me.preanim(arguments, 4),
                      'motion');
         }
         return me;

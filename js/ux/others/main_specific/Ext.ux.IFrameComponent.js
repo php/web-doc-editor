@@ -1,11 +1,11 @@
 Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
-    
+
     frame: null,
-    
+
     setUrl : function(url) {
         this.frame.src = url;
     },
-    
+
     onRender : function(ct, position){
 
         ct.mask(

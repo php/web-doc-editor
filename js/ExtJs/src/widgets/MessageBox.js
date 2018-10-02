@@ -56,7 +56,7 @@ Ext.MessageBox = function(){
         if(opt && opt.cls){
             dlg.el.removeClass(opt.cls);
         }
-        progressBar.reset();        
+        progressBar.reset();
     };
 
     // private
@@ -102,7 +102,7 @@ Ext.MessageBox = function(){
         getDialog : function(titleText){
            if(!dlg){
                 var btns = [];
-                
+
                 buttons = {};
                 Ext.each(buttonNames, function(name){
                     btns.push(buttons[name] = new Ext.Button({
@@ -189,7 +189,7 @@ Ext.MessageBox = function(){
                 fw = dlg.getFrameWidth('lr'),
                 bw = dlg.body.getFrameWidth('lr'),
                 w;
-                
+
             w = Math.max(Math.min(opt.width || iw+mw+fw+bw, opt.maxWidth || this.maxWidth),
                     Math.max(opt.minWidth || this.minWidth, bwidth || 0));
 
@@ -200,7 +200,7 @@ Ext.MessageBox = function(){
                 progressBar.setSize(w-iw-fw-bw);
             }
             if(Ext.isIE && w == bwidth){
-                w += 4; //Add offset when the content width is smaller than the buttons.    
+                w += 4; //Add offset when the content width is smaller than the buttons.
             }
             msgEl.update(text || '&#160;');
             dlg.setSize(w, 'auto').center();
@@ -246,7 +246,7 @@ Ext.MessageBox = function(){
                     // unghost is a private function, but i saw no better solution
                     // to fix the locking problem when dragging while it closes
                     dlg.unghost(false, false);
-                } 
+                }
             }
             return this;
         },

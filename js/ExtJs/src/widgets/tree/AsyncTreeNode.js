@@ -9,7 +9,7 @@
  * @extends Ext.tree.TreeNode
  * @cfg {TreeLoader} loader A TreeLoader to be used by this node (defaults to the loader defined on the tree)
  * @constructor
- * @param {Object/String} attributes The attributes/config for the node or just a string with the text for the node 
+ * @param {Object/String} attributes The attributes/config for the node or just a string with the text for the node
  */
  Ext.tree.AsyncTreeNode = function(config){
     this.loaded = config && config.loaded === true;
@@ -59,15 +59,15 @@ Ext.extend(Ext.tree.AsyncTreeNode, Ext.tree.TreeNode, {
         }
         Ext.tree.AsyncTreeNode.superclass.expand.call(this, deep, anim, callback, scope);
     },
-    
+
     /**
      * Returns true if this node is currently loading
      * @return {Boolean}
      */
     isLoading : function(){
-        return this.loading;  
+        return this.loading;
     },
-    
+
     loadComplete : function(deep, anim, callback, scope){
         this.loading = false;
         this.loaded = true;
@@ -75,7 +75,7 @@ Ext.extend(Ext.tree.AsyncTreeNode, Ext.tree.TreeNode, {
         this.fireEvent("load", this);
         this.expand(deep, anim, callback, scope);
     },
-    
+
     /**
      * Returns true if this node has been loaded
      * @return {Boolean}
@@ -83,7 +83,7 @@ Ext.extend(Ext.tree.AsyncTreeNode, Ext.tree.TreeNode, {
     isLoaded : function(){
         return this.loaded;
     },
-    
+
     hasChildNodes : function(){
         if(!this.isLeaf() && !this.loaded){
             return true;

@@ -46,7 +46,7 @@ ui.task.SaveFileTask = function(config)
                     this.storeRecord.commit();
                 }
             }
-            
+
             if (this.prefix === 'FNR') {
                 // Update our store
                 if( this.ftype === 'EN' ) {
@@ -68,7 +68,7 @@ ui.task.SaveFileTask = function(config)
 
             // As the content have been modified, we need to change the originalContent to handle the "codemodified" action
             Ext.getCmp(this.prefix + '-' + this.ftype + '-FILE-' + this.fid).setOriginalContent(codeContent);
-            
+
             // Add this files into WorkTreeGrid. Before, we delete it from WorkTreeGrid if this file have been same by anothers users.
             ui.cmp.WorkTreeGrid.getInstance().delRecord(o.id);
             ui.cmp.PatchesTreeGrid.getInstance().delRecord(o.id);
@@ -113,24 +113,24 @@ ui.task.SaveFileTask = function(config)
 
             // Remove wait msg
             msg.hide();
-            
+
             // If there is some Xml error, we display the Xml window
             if( o.XmlError && o.XmlError != 'no_error' )
             {
                 // Display a message to inform that a file cann't be saved with some XML errors
                 Ext.MessageBox.alert(_('XML Errors'), _('There is somes XML\'s errors.<br /><br />You must fix it before saving this file.<br /><br />Valid this window to show this errors.'), function() {
-                    
+
                     new ui.cmp.CheckXmlWin({
                         errors : o.XmlError
                     });
-                    
+
                 });
             }
-            
+
             if( o.type ) {
                 PhDOE.winForbidden(o.type);
             }
-            
+
         }
     });
 };

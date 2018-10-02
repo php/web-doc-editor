@@ -11,20 +11,20 @@
  */
 Ext.AbstractManager = Ext.extend(Object, {
     typeName: 'type',
-    
+
     constructor: function(config) {
         Ext.apply(this, config || {});
-        
+
         /**
          * Contains all of the items currently managed
          * @property all
          * @type Ext.util.MixedCollection
          */
         this.all = new Ext.util.MixedCollection();
-        
+
         this.types = {};
     },
-    
+
     /**
      * Returns a component by {@link Ext.Component#id id}.
      * For additional details see {@link Ext.util.MixedCollection#get}.
@@ -35,7 +35,7 @@ Ext.AbstractManager = Ext.extend(Object, {
     get : function(id){
         return this.all.get(id);
     },
-    
+
     /**
      * Registers an item to be managed
      * @param {Mixed} item The item to register
@@ -43,15 +43,15 @@ Ext.AbstractManager = Ext.extend(Object, {
     register: function(item) {
         this.all.add(item);
     },
-    
+
     /**
      * Unregisters a component by removing it from this manager
      * @param {Mixed} item The item to unregister
      */
     unregister: function(item) {
-        this.all.remove(item);        
+        this.all.remove(item);
     },
-    
+
     /**
      * <p>Registers a new Component constructor, keyed by a new
      * {@link Ext.Component#xtype}.</p>
@@ -66,16 +66,16 @@ Ext.AbstractManager = Ext.extend(Object, {
         this.types[type] = cls;
         cls[this.typeName] = type;
     },
-    
+
     /**
      * Checks if a Component type is registered.
      * @param {Ext.Component} xtype The mnemonic string by which the Component class may be looked up
      * @return {Boolean} Whether the type is registered.
      */
     isRegistered : function(type){
-        return this.types[type] !== undefined;    
+        return this.types[type] !== undefined;
     },
-    
+
     /**
      * Creates and returns an instance of whatever this manager manages, based on the supplied type and config object
      * @param {Object} config The config object
@@ -85,14 +85,14 @@ Ext.AbstractManager = Ext.extend(Object, {
     create: function(config, defaultType) {
         var type        = config[this.typeName] || config.type || defaultType,
             Constructor = this.types[type];
-        
+
         if (Constructor == undefined) {
             throw new Error(String.format("The '{0}' type has not been registered with this manager", type));
         }
-        
+
         return new Constructor(config);
     },
-    
+
     /**
      * Registers a function that will be called when a Component with the specified id is added to the manager. This will happen on instantiation.
      * @param {String} id The component {@link Ext.Component#id id}
@@ -101,7 +101,7 @@ Ext.AbstractManager = Ext.extend(Object, {
      */
     onAvailable : function(id, fn, scope){
         var all = this.all;
-        
+
         all.on("add", function(index, o){
             if (o.id == id) {
                 fn.call(scope || o, o);

@@ -29,20 +29,20 @@ Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {
      * (defaults to 'You must select one item in this group')
      */
     blankText : 'You must select one item in this group',
-    
+
     // private
     defaultType : 'radio',
-    
+
     // private
     groupCls : 'x-form-radio-group',
-    
+
     /**
      * @event change
      * Fires when the state of a child radio changes.
      * @param {Ext.form.RadioGroup} this
      * @param {Ext.form.Radio} checked The checked radio
      */
-    
+
     /**
      * Gets the selected {@link Ext.form.Radio} in the group, if it exists.
      * @return {Ext.form.Radio} The selected radio.
@@ -57,7 +57,7 @@ Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {
         });
         return out;
     },
-    
+
     /**
      * Sets the checked radio in the group.
      * @param {String/Ext.form.Radio} id The radio to check.
@@ -81,14 +81,14 @@ Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {
             this.setValueForItem(id);
         }
     },
-    
+
     setValueForItem : function(val){
         val = String(val).split(',')[0];
         this.eachItem(function(item){
             item.setValue(val == item.inputValue);
         });
     },
-    
+
     // private
     fireChecked : function(){
         if(!this.checkTask){
@@ -96,7 +96,7 @@ Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {
         }
         this.checkTask.delay(10);
     },
-    
+
     // private
     bufferChecked : function(){
         var out = null;
@@ -108,7 +108,7 @@ Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {
         });
         this.fireEvent('change', this, out);
     },
-    
+
     onDestroy : function(){
         if(this.checkTask){
             this.checkTask.cancel();

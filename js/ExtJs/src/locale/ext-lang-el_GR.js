@@ -10,8 +10,8 @@
  * 27 Apr 2008
  *
  * Changes since previous (second) Version:
- * + added Date.shortMonthNames 
- * + added Date.getShortMonthName 
+ * + added Date.shortMonthNames
+ * + added Date.getShortMonthName
  * + added Date.monthNumbers
  * + added Ext.grid.GroupingView
  */
@@ -231,7 +231,7 @@ if(Ext.form.HtmlEditor){
            },
            forecolor : {
                title: 'Χρώμα Γραμματοσειράς',
-               text: 'Αλλάζετε το χρώμα στη γραμματοσειρά του προεπιλεγμένου κειμένου.',               
+               text: 'Αλλάζετε το χρώμα στη γραμματοσειρά του προεπιλεγμένου κειμένου.',
                cls: 'x-html-editor-tip'
            },
            justifyleft : {

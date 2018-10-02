@@ -33,7 +33,7 @@ Ext.Element.addMethods({
         }
         return me;
     },
-    
+
     /**
      * Scrolls this element into view within the passed container.
      * @param {Mixed} container (optional) The container element to scroll (defaults to document.body).  Should be a
@@ -80,7 +80,7 @@ Ext.Element.addMethods({
     scrollChildIntoView : function(child, hscroll) {
         Ext.fly(child, '_scrollChildIntoView').scrollIntoView(this, hscroll);
     },
-    
+
     /**
      * Scrolls this element the specified direction. Does bounds checking to make sure the scroll is
      * within this element's scrollable range.
@@ -107,7 +107,7 @@ Ext.Element.addMethods({
             };
             hash.d = hash.b;
             hash.u = hash.t;
-        
+
         direction = direction.substr(0, 1);
         if ((v = hash[direction]) > -1) {
             scrolled = true;

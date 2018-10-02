@@ -29,7 +29,7 @@ Ext.Layer = function(config, existingEl){
     config = config || {};
     var dh = Ext.DomHelper,
         cp = config.parentEl, pel = cp ? Ext.getDom(cp) : document.body;
-        
+
     if (existingEl) {
         this.dom = Ext.getDom(existingEl);
     }
@@ -245,9 +245,9 @@ Ext.extend(Ext.Layer, Ext.Element, {
         }
         return this;
     },
-    
+
     getConstrainOffset : function(){
-        return this.shadowOffset;    
+        return this.shadowOffset;
     },
 
     isVisible : function(){

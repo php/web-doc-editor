@@ -117,7 +117,7 @@ Ext.dd.DragDrop.prototype = {
 
     /**
      * An object who's property names identify HTML tags to be considered invalid as drag handles.
-     * A non-null property value identifies the tag as invalid. Defaults to the 
+     * A non-null property value identifies the tag as invalid. Defaults to the
      * following value which prevents drag operations from being initiated by &lt;a> elements:<pre><code>
 {
     A: "A"
@@ -529,7 +529,7 @@ Ext.dd.DragDrop.prototype = {
         var b = Ext.get(this.getEl()).getBox(),
             ce = Ext.get(constrainTo),
             s = ce.getScroll(),
-            c, 
+            c,
             cd = ce.dom;
         if(cd == document.body){
             c = { x: s.left, y: s.top, width: Ext.lib.Dom.getViewWidth(), height: Ext.lib.Dom.getViewHeight()};
@@ -1671,7 +1671,7 @@ Ext.dd.DragDropMgr = function() {
                 // so clean up first to avoid breaking the next drag
                 this.handleMouseUp(e);
             }
-            
+
             this.currentTarget = e.getTarget();
             this.dragCurrent = oDD;
 

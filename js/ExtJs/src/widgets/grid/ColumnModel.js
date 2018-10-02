@@ -129,7 +129,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	    } else {
 	        this.setConfig(config, true);
 	    }
-	    
+
 	    this.addEvents(
 	        /**
 	         * @event widthchange
@@ -142,7 +142,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	         * @param {Number} newWidth The new width
 	         */
 	        "widthchange",
-	        
+
 	        /**
 	         * @event headerchange
 	         * Fires when the text of a header changes.
@@ -151,7 +151,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	         * @param {String} newText The new header text
 	         */
 	        "headerchange",
-	        
+
 	        /**
 	         * @event hiddenchange
 	         * Fires when a column is hidden or "unhidden".
@@ -160,7 +160,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	         * @param {Boolean} hidden true if hidden, false otherwise
 	         */
 	        "hiddenchange",
-	        
+
 	        /**
 	         * @event columnmoved
 	         * Fires when a column is moved.
@@ -169,7 +169,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	         * @param {Number} newIndex
 	         */
 	        "columnmoved",
-	        
+
 	        /**
 	         * @event configchange
 	         * Fires when the configuration is changed
@@ -177,7 +177,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 	         */
 	        "configchange"
 	    );
-	    
+
 	    Ext.grid.ColumnModel.superclass.constructor.call(this);
     },
 
@@ -206,13 +206,13 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
      */
     setConfig : function(config, initial) {
         var i, c, len;
-        
+
         if (!initial) { // cleanup
             delete this.totalWidth;
-            
+
             for (i = 0, len = this.config.length; i < len; i++) {
                 c = this.config[i];
-                
+
                 if (c.setEditor) {
                     //check here, in case we have a special column like a CheckboxSelectionModel
                     c.setEditor(null);
@@ -231,21 +231,21 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
 
         for (i = 0, len = config.length; i < len; i++) {
             c = Ext.applyIf(config[i], this.defaults);
-            
+
             // if no id, create one using column's ordinal position
             if (Ext.isEmpty(c.id)) {
                 c.id = i;
             }
-            
+
             if (!c.isColumn) {
                 var Cls = Ext.grid.Column.types[c.xtype || 'gridcolumn'];
                 c = new Cls(c);
                 config[i] = c;
             }
-            
+
             this.lookup[c.id] = c;
         }
-        
+
         if (!initial) {
             this.fireEvent('configchange', this);
         }
@@ -282,7 +282,7 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
     moveColumn : function(oldIndex, newIndex) {
         var config = this.config,
             c      = config[oldIndex];
-            
+
         config.splice(oldIndex, 1);
         config.splice(newIndex, 0, c);
         this.dataMap = null;
@@ -298,17 +298,17 @@ Ext.grid.ColumnModel = Ext.extend(Ext.util.Observable, {
         var length = this.config.length,
             c = 0,
             i;
-        
+
         if (visibleOnly === true) {
             for (i = 0; i < length; i++) {
                 if (!this.isHidden(i)) {
                     c++;
                 }
             }
-            
+
             return c;
         }
-        
+
         return length;
     },
 
@@ -332,15 +332,15 @@ var columns = grid.getColumnModel().getColumnsBy(function(c){
             length = config.length,
             result = [],
             i, c;
-            
+
         for (i = 0; i < length; i++){
             c = config[i];
-            
+
             if (fn.call(scope || this, c, i) === true) {
                 result[result.length] = c;
             }
         }
-        
+
         return result;
     },
 
@@ -419,7 +419,7 @@ var columns = grid.getColumnModel().getColumnsBy(function(c){
     setColumnWidth : function(col, width, suppressEvent) {
         this.config[col].width = width;
         this.totalWidth = null;
-        
+
         if (!suppressEvent) {
              this.fireEvent("widthchange", this, col, width);
         }
@@ -594,7 +594,7 @@ var grid = new Ext.grid.GridPanel({
     isResizable : function(colIndex) {
         return colIndex >= 0 && this.config[colIndex].resizable !== false && this.config[colIndex].fixed !== true;
     },
-    
+
     /**
      * Sets if a column is hidden.
 <pre><code>

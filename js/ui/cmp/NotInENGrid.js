@@ -42,9 +42,9 @@ ui.cmp._NotInENGrid.columns = [{
     renderer  : function(v, m, r)
     {
         if( r.data.fileModified ) {
-        
+
             var info = Ext.util.JSON.decode(r.data.fileModified);
-			
+
             if(info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) {
                 return "<span ext:qtip='" + _('File removed by me') + "'>" + v + "</span>";
             } else {
@@ -72,9 +72,9 @@ ui.cmp._NotInENGrid.view = new Ext.grid.GroupingView({
     getRowClass   : function(r)
     {
         if ( r.data.fileModified ) {
-        
+
             var info = Ext.util.JSON.decode(r.data.fileModified);
-			
+
             return (info.user === PhDOE.user.login && info.anonymousIdent === PhDOE.user.anonymousIdent) ? 'fileModifiedByMe' : 'fileModifiedByAnother';
         }
         return false;
@@ -142,7 +142,7 @@ ui.cmp.NotInENGrid = Ext.extend(Ext.grid.GridPanel,
     onRowContextMenu : function(grid, rowIndex, e)
     {
         e.stopEvent();
-    
+
         grid.getSelectionModel().selectRow(rowIndex);
 
         new ui.cmp._NotInENGrid.menu({
