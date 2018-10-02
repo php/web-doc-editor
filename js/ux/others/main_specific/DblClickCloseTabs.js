@@ -24,5 +24,3 @@ Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 });
 
 Ext.preg( 'dblclickclosetabs', Ext.ux.DblClickCloseTabs );
-
-

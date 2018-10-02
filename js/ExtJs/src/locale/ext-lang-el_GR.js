@@ -306,4 +306,3 @@ if(Ext.layout.BorderLayout && Ext.layout.BorderLayout.SplitRegion){
       collapsibleSplitTip : "Σύρετε για αλλαγή μεγέθους. Διπλό κλικ για απόκρυψη."
    });
 }
-

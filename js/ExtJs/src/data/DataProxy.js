@@ -507,5 +507,3 @@ Ext.apply(Ext.data.DataProxy.Error.prototype, {
         'api-invalid': 'Recieved an invalid API-configuration.  Please ensure your proxy API-configuration contains only the actions from Ext.data.Api.actions.'
     }
 });
-
-

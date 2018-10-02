@@ -260,4 +260,3 @@ if(Ext.layout.BorderLayout && Ext.layout.BorderLayout.SplitRegion){
       collapsibleSplitTip : "Перетягуйте, щоб змінити розмір. Подвійний клік сховає панель."
    });
 }
-

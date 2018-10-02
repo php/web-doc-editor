@@ -94,4 +94,3 @@ if ($isCLI) {
     echo jsCallTemplate('document.getElementById("loading-msg").innerHTML = "Installation completed !";');
     echo footerTemplate();
 }
-

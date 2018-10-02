@@ -265,4 +265,3 @@ if(Ext.layout.BorderLayout && Ext.layout.BorderLayout.SplitRegion){
       collapsibleSplitTip : "크기변경을 위해 드래그, 숨기기 위해 더블클릭 하세요."
    });
 }
-

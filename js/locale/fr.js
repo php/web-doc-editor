@@ -759,4 +759,3 @@ var i18n = new Array();
   i18n["Put into this patch:"] = "Placer dans ce patach :";
   i18n["Delete this change"] = "Effacer cette modification";
   i18n["Modified file"] = "Fichier modifié";
-

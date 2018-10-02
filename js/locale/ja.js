@@ -759,4 +759,3 @@ var i18n = new Array();
   i18n["Put into this patch:"] = "Put into this patch:";
   i18n["Delete this change"] = "Delete this change";
   i18n["Modified file"] = "Modified file";
-

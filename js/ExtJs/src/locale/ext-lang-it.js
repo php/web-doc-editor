@@ -293,4 +293,3 @@ if(Ext.layout.BorderLayout && Ext.layout.BorderLayout.SplitRegion){
       collapsibleSplitTip : "Trascina per cambiare dimensioni. Doppio click per nascondere."
    });
 }
-

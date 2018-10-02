@@ -14,4 +14,3 @@
         libFlyweight.dom = el;
         return libFlyweight;
     }
-

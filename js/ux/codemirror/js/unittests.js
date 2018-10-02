@@ -41,4 +41,3 @@ function testSetStylesheet() {
 
 // Update this list of tests as new ones are added.
 var tests = ['testSetGet', 'testSetStylesheet'];
-
