@@ -37,7 +37,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                             '</div>' +
                             '<div id="phd-oe-about-info">' + PhDOE.app.name + //' ver ' + PhDOE.app.ver + '<br/>' +
                                 //'UI: ' + PhDOE.app.uiRevision + '<br/>' +
-                                ' Copyright &copy; 2008-' + new Date().getFullYear() + ' The PHP Group<br/>' +
+                                ' Copyright &copy; 2008-' + new Date().format('Y') + ' The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://git.php.net/?p=web/doc-editor.git;a=summary" target="_blank">others</a>') +
                             '</div>'
