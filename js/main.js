@@ -135,7 +135,7 @@ var PhDOE = function()
                     break;
                 case 'tabs_found' :
                     title = _('Error');
-                    mess  = _('It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
+                    mess  = _('It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
                     break;
                 case 'folder_already_exist' :
                     title = _('Error');

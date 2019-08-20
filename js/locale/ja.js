@@ -35,7 +35,7 @@ var i18n = new Array();
   i18n["Language: "] = "言語: ";
   i18n["Total number of your files"] = "ファイルの総数";
   i18n["You have used characters that require the use of UTF-8 despite the XML header.<br>Please delete these characters or change the header of the XML file to UTF-8 ; i.e.:<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>"] = "UTF-8を要する文字を使っていますが、XMLヘッダーにそれが設定されていません。<br>当該文字を削除するか、XMLファイルのヘッダーを以下のようにUTF-8に変更してください。<br><br><center><i>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;</i></center>";
-  i18n["It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "このファイルにはタブ文字が含まれているようです。半角スペースに置き換えてください。<br>ヒント: \"ファイル全体の再インデント\" ボタンを使うと、すべてのタブ文字を半角スペースに変換します。";
+  i18n["It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the \"Re-indent this entire file\" button to replace all tabs by spaces."] = "このファイルにはタブ文字が含まれているようです。半角スペースに置き換えてください。<br>ヒント: \"ファイル全体の再インデント\" ボタンを使うと、すべてのタブ文字を半角スペースに変換します。";
   i18n["You aren't allowed to modify this file as it has already been modified by different user. Contact an administrator if you want to be able to modify it."] = "別のユーザーが変更しているため、このファイルを書き換えることはできません。書き換えたい場合は、管理者に連絡してください。";
   i18n["The patch you want to delete doesn't exist."] = "指定されたパッチは存在しません。";
   i18n["The patch you want to delete isn't owned by you. Only the author of the patch or a global administrator can delete it."] = "指定されたパッチは他のユーザーが作ったものです。パッチを削除できるのは、パッチの作者かシステム管理者だけです。";
