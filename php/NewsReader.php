@@ -57,6 +57,12 @@ class NewsReader
             $result[$i]['title'] = (string) $item->title;
             $result[$i]['description'] = preg_replace('/(<a href[^>]+">)([^>]+)(<\/a>)/', "$2", (string) $item->description);
             $result[$i]['link'] = (string) $item->link;
+            
+            // If the link isn't with https, convert it
+            if( substr($result[$i]['link'], 0, 7) === 'http://' ) $result[$i]['link'] = substr_replace($result[$i]['link'], 'https://', 0, 7);
+            
+            
+            
             $result[$i]['pubDate'] = @date('Y/m/d H:i:s', @strtotime((string) $item->pubDate));
             $i++;
         }
