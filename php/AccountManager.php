@@ -427,7 +427,7 @@ class AccountManager
             $this->anonymousIdent = $this->authService.'-'.$this->authServiceID;
 
             // Register var
-            $this->vcsLogin  = $vcsLogin;
+            $this->vcsLogin  = htmlspecialchars($vcsLogin);
             $this->vcsPasswd = '';
             $this->vcsLang   = $lang;
             $this->email     = $email;
