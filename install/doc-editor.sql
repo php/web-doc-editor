@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `project` varchar(255) NOT NULL,
   `lang` varchar(10) NOT NULL,
-  `xmlid` varchar(255) DEFAULT NULL,
+  `xmlid` text,
   `path` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `revision` int(11) unsigned DEFAULT NULL,
