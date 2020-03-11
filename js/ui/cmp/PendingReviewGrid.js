@@ -24,6 +24,8 @@ ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore({
             name: 'maintainer'
         }, {
             name: 'fileModified'
+        }, {
+            name: 'translator'
         }]
     }),
     sortInfo: {
@@ -81,6 +83,10 @@ ui.cmp._PendingReviewGrid.columns = [{
 }, {
     header: _('Path'),
     dataIndex: 'path',
+    hidden: true
+}, {
+    header: _('Maintainer'),
+    dataIndex: 'translator',
     hidden: true
 }];
 

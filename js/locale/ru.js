@@ -487,6 +487,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/PendingReviewGrid.js
   i18n["Reviewer"] = "Вычитывающий";
   i18n["Reviewed"] = "Просмотрено";
+  i18n["Maintainer"] = "Сопровождающий";
   i18n["Open all files about {0} extension"] = "Открыть все файлы из расширения {0}";
   i18n["Need Reviewed in: {0}"] = "Необходимо просмотреть в: {0}";
 

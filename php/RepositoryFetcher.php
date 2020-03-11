@@ -468,6 +468,7 @@ class RepositoryFetcher
                 "id"   => $a->id,
                 "path" => $a->path,
                 "name" => $a->name,
+                "translator" => $a->maintainer,
             );
 
             if ( $isModifiedLang )
