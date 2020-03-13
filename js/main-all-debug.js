@@ -5313,7 +5313,8 @@ CodeMirror.defineMIME("text/x-rst", "rst");
       CodeMirror.connect(b, "focus", function() { ++blurring; });
     }
   });
-})();Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
+})();
+Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
 // Add ucFirst to string object
 String.prototype.ucFirst = function () {
@@ -5446,20 +5447,8 @@ Ext.override(Ext.form.Field, {
         this.initValue();
     }
 
-});/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
-Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
-    layout : 'anchor',
-    //autoEl : 'div',//already defined by Ext.Component
-    defaultType : 'portlet',
-    cls : 'x-portal-column'
 });
-
-Ext.reg('portalcolumn', Ext.ux.PortalColumn);/*!
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -5670,6 +5659,20 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
+Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
+    layout : 'anchor',
+    //autoEl : 'div',//already defined by Ext.Component
+    defaultType : 'portlet',
+    cls : 'x-portal-column'
+});
+
+Ext.reg('portalcolumn', Ext.ux.PortalColumn);
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
 Ext.ux.Portlet = Ext.extend(Ext.Panel, {
     anchor : '100%',
     frame : true,
@@ -5678,7 +5681,8 @@ Ext.ux.Portlet = Ext.extend(Ext.Panel, {
     cls : 'x-portlet'
 });
 
-Ext.reg('portlet', Ext.ux.Portlet);/*!
+Ext.reg('portlet', Ext.ux.Portlet);
+/*!
  * Ext JS Library 3.3.1
  * Copyright(c) 2006-2010 Sencha Inc.
  * licensing@sencha.com
@@ -6215,68 +6219,6 @@ Ext.preg('roweditor', Ext.ux.grid.RowEditor);
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
-Ext.ns('Ext.ux.form');
-
-/**
- * @class Ext.ux.form.SpinnerField
- * @extends Ext.form.NumberField
- * Creates a field utilizing Ext.ux.Spinner
- * @xtype spinnerfield
- */
-Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
-    actionMode: 'wrap',
-    deferHeight: true,
-    autoSize: Ext.emptyFn,
-    onBlur: Ext.emptyFn,
-    adjustSize: Ext.BoxComponent.prototype.adjustSize,
-
-	constructor: function(config) {
-		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
-
-		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
-
-		var plugins = config.plugins
-			? (Ext.isArray(config.plugins)
-				? config.plugins.push(spl)
-				: [config.plugins, spl])
-			: spl;
-
-		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
-	},
-
-    // private
-    getResizeEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    getPositionEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    alignErrorIcon: function(){
-        if (this.wrap) {
-            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
-        }
-    },
-
-    validateBlur: function(){
-        return true;
-    }
-});
-
-Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
-
-//backwards compat
-Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
-
-/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
 /**
  * @class Ext.ux.Spinner
  * @extends Ext.util.Observable
@@ -6708,7 +6650,69 @@ Ext.ux.Spinner = Ext.extend(Ext.util.Observable, {
 });
 
 //backwards compat
-Ext.form.Spinner = Ext.ux.Spinner;/*!
+Ext.form.Spinner = Ext.ux.Spinner;
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ns('Ext.ux.form');
+
+/**
+ * @class Ext.ux.form.SpinnerField
+ * @extends Ext.form.NumberField
+ * Creates a field utilizing Ext.ux.Spinner
+ * @xtype spinnerfield
+ */
+Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
+    actionMode: 'wrap',
+    deferHeight: true,
+    autoSize: Ext.emptyFn,
+    onBlur: Ext.emptyFn,
+    adjustSize: Ext.BoxComponent.prototype.adjustSize,
+
+	constructor: function(config) {
+		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
+
+		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
+
+		var plugins = config.plugins
+			? (Ext.isArray(config.plugins)
+				? config.plugins.push(spl)
+				: [config.plugins, spl])
+			: spl;
+
+		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
+	},
+
+    // private
+    getResizeEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    getPositionEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    alignErrorIcon: function(){
+        if (this.wrap) {
+            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        }
+    },
+
+    validateBlur: function(){
+        return true;
+    }
+});
+
+Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
+
+//backwards compat
+Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7409,7 +7413,8 @@ Ext.ux.tree.TreeGridSorter = Ext.extend(Ext.tree.TreeSorter, {
         var hds = this.tree.innerHd.select('td').removeClass(sc);
         hds.item(col).addClass(sc[dir == 'desc' ? 1 : 0]);
     }
-});/*!
+});
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7525,7 +7530,8 @@ Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
             tree.headersDisabled = false;
         }, 100);
     }
-});/*!
+});
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7631,7 +7637,8 @@ Ext.ux.tree.TreeGridRootNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 
     collapse : Ext.emptyFn,
     expand : Ext.emptyFn
-});/*!
+});
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7648,7 +7655,8 @@ Ext.ux.tree.TreeGridLoader = Ext.extend(Ext.tree.TreeLoader, {
         }
         return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
     }
-});/*!
+});
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -8141,7 +8149,8 @@ Ext.override(Ext.ux.tree.TreeGrid, {
       }
     }
   }
-});// Copyright (c) 2010 David Davis - http://xant.us/
+});
+// Copyright (c) 2010 David Davis - http://xant.us/
 // License: MIT
 Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 
@@ -8167,8 +8176,6 @@ Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 });
 
 Ext.preg( 'dblclickclosetabs', Ext.ux.DblClickCloseTabs );
-
-
 Ext.util.md5 = function(s, r, hexcase, chrsz)
 {
     r       = (typeof r       === "undefined" ? false:r);
@@ -8343,7 +8350,8 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     }
 
     return (r ? binl2str(core_md5(str2binl(s), s.length * chrsz)) : binl2hex(core_md5(str2binl(s), s.length * chrsz)));
-};Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
+};
+Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     lineWrapping: false,
     previousLine: false,
@@ -8620,233 +8628,8 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     }
 
 });
-Ext.reg('codemirror', Ext.ux.CodeMirror);Ext.ns('Ext.ux.grid');
-
-Ext.ux.grid.GridSummary = function(config) {
-        Ext.apply(this, config);
-};
-
-Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
-    init : function(grid) {
-        this.grid = grid;
-        this.cm = grid.getColumnModel();
-        this.view = grid.getView();
-
-        var v = this.view;
-
-        // override GridView's onLayout() method
-        v.onLayout = this.onLayout;
-
-        v.afterMethod('render', this.refreshSummary, this);
-        v.afterMethod('refresh', this.refreshSummary, this);
-        v.afterMethod('syncScroll', this.syncSummaryScroll, this);
-        v.afterMethod('onColumnWidthUpdated', this.doWidth, this);
-        v.afterMethod('onAllColumnWidthsUpdated', this.doAllWidths, this);
-        v.afterMethod('onColumnHiddenUpdated', this.doHidden, this);
-
-        // update summary row on store's add/remove/clear/update events
-        grid.store.on({
-            add: this.refreshSummary,
-            remove: this.refreshSummary,
-            clear: this.refreshSummary,
-            update: this.refreshSummary,
-            scope: this
-        });
-
-        if (!this.rowTpl) {
-            this.rowTpl = new Ext.Template(
-                '<div class="x-grid3-summary-row x-grid3-gridsummary-row-offset">',
-                    '<table class="x-grid3-summary-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
-                        '<tbody><tr>{cells}</tr></tbody>',
-                    '</table>',
-                '</div>'
-            );
-            this.rowTpl.disableFormats = true;
-        }
-        this.rowTpl.compile();
-
-        if (!this.cellTpl) {
-            this.cellTpl = new Ext.Template(
-                '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
-                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
-                "</td>"
-            );
-            this.cellTpl.disableFormats = true;
-        }
-        this.cellTpl.compile();
-    },
-
-    calculate : function(rs, cm) {
-        var data = {},
-            cfg  = cm.config,
-            i, cf, cname, j, r, len, jlen;
-
-        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
-            cf = cfg[i]; // get column's configuration
-            cname = cf.dataIndex; // get column dataIndex
-
-            // initialise grid summary row data for
-            // the current column being worked on
-            data[cname] = 0;
-
-            if (cf.summaryType) {
-                for (j = 0, jlen = rs.length; j < jlen; j++) {
-                    r = rs[j]; // get a single Record
-                    data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
-                }
-            }
-        }
-
-        return data;
-    },
-
-    onLayout : function(vw, vh) {
-        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
-            return;
-        }
-        // note: this method is scoped to the GridView
-        if (!this.grid.getGridEl().hasClass('x-grid-hide-gridsummary')) {
-            // readjust gridview's height only if grid summary row is visible
-            this.scroller.setHeight(vh - this.summary.getHeight());
-        }
-    },
-
-    syncSummaryScroll : function() {
-        var mb = this.view.scroller.dom;
-
-        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft;
-        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
-    },
-
-    doWidth : function(col, w, tw) {
-        var s = this.view.summary.dom;
-
-        s.firstChild.style.width = tw;
-        s.firstChild.rows[0].childNodes[col].style.width = w;
-    },
-
-    doAllWidths : function(ws, tw) {
-        var s    = this.view.summary.dom,
-            wlen = ws.length,
-            cells, j;
-
-        s.firstChild.style.width = tw;
-        cells = s.firstChild.rows[0].childNodes;
-
-        for (j = 0; j < wlen; j++) {
-            cells[j].style.width = ws[j];
-        }
-    },
-
-    doHidden : function(col, hidden, tw) {
-        var s = this.view.summary.dom,
-            display = hidden ? 'none' : '';
-
-        s.firstChild.style.width = tw;
-        s.firstChild.rows[0].childNodes[col].style.display = display;
-    },
-
-    renderSummary : function(o, cs, cm) {
-        cs = cs || this.view.getColumnData();
-        var cfg = cm.config,
-            buf = [],
-            last = cs.length - 1,
-            c, cf, p, i, len;
-
-        for (i = 0, len = cs.length; i < len; i++) {
-            c = cs[i];
-            cf = cfg[i];
-            p = {};
-
-            p.id = c.id;
-            p.style = c.style;
-            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
-
-            if (cf.summaryType || cf.summaryRenderer) {
-                p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
-            } else {
-                p.value = '';
-            }
-            if (p.value === undefined || p.value === "") {
-                p.value = "&#160;";
-            }
-            buf[buf.length] = this.cellTpl.apply(p);
-        }
-
-        return this.rowTpl.apply({
-            tstyle: 'width:' + this.view.getTotalWidth() + ';',
-            cells: buf.join('')
-        });
-    },
-
-    refreshSummary : function() {
-        var g = this.grid, ds = g.store,
-            cs = this.view.getColumnData(),
-            cm = this.cm,
-            rs = ds.getRange(),
-            data = this.calculate(rs, cm),
-            buf = this.renderSummary({data: data}, cs, cm);
-
-        if (!this.view.summaryWrap) {
-            this.view.summaryWrap = Ext.DomHelper.insertAfter(this.view.scroller, {
-                tag: 'div',
-                cls: 'x-grid3-gridsummary-row-inner'
-            }, true);
-        }
-        this.view.summary = this.view.summaryWrap.update(buf).first();
-    },
-
-    toggleSummary : function(visible) { // true to display summary row
-        var el = this.grid.getGridEl();
-
-        if (el) {
-            if (visible === undefined) {
-                visible = el.hasClass('x-grid-hide-gridsummary');
-            }
-            el[visible ? 'removeClass' : 'addClass']('x-grid-hide-gridsummary');
-
-            this.view.layout(); // readjust gridview height
-        }
-    },
-
-    getSummaryNode : function() {
-        return this.view.summary;
-    }
-});
-Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
-
-/*
- * all Calculation methods are called on each Record in the Store
- * with the following 5 parameters:
- *
- * v - cell value
- * record - reference to the current Record
- * colName - column name (i.e. the ColumnModel's dataIndex)
- * data - the cumulative data for the current column + summaryType up to the current Record
- * rowIdx - current row index
- */
-Ext.ux.grid.GridSummary.Calculations = {
-    sum : function(v, record, colName, data, rowIdx) {
-        return data[colName] + Ext.num(v, 0);
-    },
-
-    count : function(v, record, colName, data, rowIdx) {
-        return rowIdx + 1;
-    },
-
-    max : function(v, record, colName, data, rowIdx) {
-        return Math.max(Ext.num(v, 0), data[colName]);
-    },
-
-    min : function(v, record, colName, data, rowIdx) {
-        return Math.min(Ext.num(v, 0), data[colName]);
-    },
-
-    average : function(v, record, colName, data, rowIdx) {
-        var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
-        return rowIdx === count - 1 ? (t / count) : t;
-    }
-};Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+Ext.reg('codemirror', Ext.ux.CodeMirror);
+Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
 
     frame: null,
 
@@ -8881,7 +8664,8 @@ Ext.ux.grid.GridSummary.Calculations = {
         this.frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(this.frame);
 
     }
-});/*
+});
+/*
  * MultiSelectTreePanel v 1.1
  *
  * This work is derivative of Ext-JS 2.2. Much of the code is modified versions of default code.
@@ -9905,7 +9689,8 @@ Ext.ux.PanelCollapsedTitle = (function() {
     }
   };
   return this;
-})();/*
+})();
+/*
  * By Jake Knerr - Copyright 2010 - supersonicecho@gmail.com
  *
  * Version 1.0
@@ -10113,7 +9898,8 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
             }
 
         }
-});Ext.ux.UserNotes = Ext.extend(Ext.Button, {
+});
+Ext.ux.UserNotes = Ext.extend(Ext.Button, {
 
     originalTitle : _('Notes (<b>{0}</b>)'),
     text  : String.format(_('Notes (<b>{0}</b>)'), '-'),
@@ -10433,6 +10219,233 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 });
 
 Ext.reg('usernotes', Ext.ux.UserNotes);
+Ext.ns('Ext.ux.grid');
+
+Ext.ux.grid.GridSummary = function(config) {
+        Ext.apply(this, config);
+};
+
+Ext.extend(Ext.ux.grid.GridSummary, Ext.util.Observable, {
+    init : function(grid) {
+        this.grid = grid;
+        this.cm = grid.getColumnModel();
+        this.view = grid.getView();
+
+        var v = this.view;
+
+        // override GridView's onLayout() method
+        v.onLayout = this.onLayout;
+
+        v.afterMethod('render', this.refreshSummary, this);
+        v.afterMethod('refresh', this.refreshSummary, this);
+        v.afterMethod('syncScroll', this.syncSummaryScroll, this);
+        v.afterMethod('onColumnWidthUpdated', this.doWidth, this);
+        v.afterMethod('onAllColumnWidthsUpdated', this.doAllWidths, this);
+        v.afterMethod('onColumnHiddenUpdated', this.doHidden, this);
+
+        // update summary row on store's add/remove/clear/update events
+        grid.store.on({
+            add: this.refreshSummary,
+            remove: this.refreshSummary,
+            clear: this.refreshSummary,
+            update: this.refreshSummary,
+            scope: this
+        });
+
+        if (!this.rowTpl) {
+            this.rowTpl = new Ext.Template(
+                '<div class="x-grid3-summary-row x-grid3-gridsummary-row-offset">',
+                    '<table class="x-grid3-summary-table" border="0" cellspacing="0" cellpadding="0" style="{tstyle}">',
+                        '<tbody><tr>{cells}</tr></tbody>',
+                    '</table>',
+                '</div>'
+            );
+            this.rowTpl.disableFormats = true;
+        }
+        this.rowTpl.compile();
+
+        if (!this.cellTpl) {
+            this.cellTpl = new Ext.Template(
+                '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}">',
+                    '<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
+                "</td>"
+            );
+            this.cellTpl.disableFormats = true;
+        }
+        this.cellTpl.compile();
+    },
+
+    calculate : function(rs, cm) {
+        var data = {},
+            cfg  = cm.config,
+            i, cf, cname, j, r, len, jlen;
+
+        for (i = 0, len = cfg.length; i < len; i++) { // loop through all columns in ColumnModel
+            cf = cfg[i]; // get column's configuration
+            cname = cf.dataIndex; // get column dataIndex
+
+            // initialise grid summary row data for
+            // the current column being worked on
+            data[cname] = 0;
+
+            if (cf.summaryType) {
+                for (j = 0, jlen = rs.length; j < jlen; j++) {
+                    r = rs[j]; // get a single Record
+                    data[cname] = Ext.ux.grid.GridSummary.Calculations[cf.summaryType](r.get(cname), r, cname, data, j);
+                }
+            }
+        }
+
+        return data;
+    },
+
+    onLayout : function(vw, vh) {
+        if (Ext.type(vh) !== 'number') { // handles grid's height:'auto' config
+            return;
+        }
+        // note: this method is scoped to the GridView
+        if (!this.grid.getGridEl().hasClass('x-grid-hide-gridsummary')) {
+            // readjust gridview's height only if grid summary row is visible
+            this.scroller.setHeight(vh - this.summary.getHeight());
+        }
+    },
+
+    syncSummaryScroll : function() {
+        var mb = this.view.scroller.dom;
+
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft;
+        this.view.summaryWrap.dom.scrollLeft = mb.scrollLeft; // second time for IE (1/2 time first fails, other browsers ignore)
+    },
+
+    doWidth : function(col, w, tw) {
+        var s = this.view.summary.dom;
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.width = w;
+    },
+
+    doAllWidths : function(ws, tw) {
+        var s    = this.view.summary.dom,
+            wlen = ws.length,
+            cells, j;
+
+        s.firstChild.style.width = tw;
+        cells = s.firstChild.rows[0].childNodes;
+
+        for (j = 0; j < wlen; j++) {
+            cells[j].style.width = ws[j];
+        }
+    },
+
+    doHidden : function(col, hidden, tw) {
+        var s = this.view.summary.dom,
+            display = hidden ? 'none' : '';
+
+        s.firstChild.style.width = tw;
+        s.firstChild.rows[0].childNodes[col].style.display = display;
+    },
+
+    renderSummary : function(o, cs, cm) {
+        cs = cs || this.view.getColumnData();
+        var cfg = cm.config,
+            buf = [],
+            last = cs.length - 1,
+            c, cf, p, i, len;
+
+        for (i = 0, len = cs.length; i < len; i++) {
+            c = cs[i];
+            cf = cfg[i];
+            p = {};
+
+            p.id = c.id;
+            p.style = c.style;
+            p.css = i === 0 ? 'x-grid3-cell-first ' : (i === last ? 'x-grid3-cell-last ' : '');
+
+            if (cf.summaryType || cf.summaryRenderer) {
+                p.value = (cf.summaryRenderer || c.renderer)(o.data[c.name], p, o);
+            } else {
+                p.value = '';
+            }
+            if (p.value === undefined || p.value === "") {
+                p.value = "&#160;";
+            }
+            buf[buf.length] = this.cellTpl.apply(p);
+        }
+
+        return this.rowTpl.apply({
+            tstyle: 'width:' + this.view.getTotalWidth() + ';',
+            cells: buf.join('')
+        });
+    },
+
+    refreshSummary : function() {
+        var g = this.grid, ds = g.store,
+            cs = this.view.getColumnData(),
+            cm = this.cm,
+            rs = ds.getRange(),
+            data = this.calculate(rs, cm),
+            buf = this.renderSummary({data: data}, cs, cm);
+
+        if (!this.view.summaryWrap) {
+            this.view.summaryWrap = Ext.DomHelper.insertAfter(this.view.scroller, {
+                tag: 'div',
+                cls: 'x-grid3-gridsummary-row-inner'
+            }, true);
+        }
+        this.view.summary = this.view.summaryWrap.update(buf).first();
+    },
+
+    toggleSummary : function(visible) { // true to display summary row
+        var el = this.grid.getGridEl();
+
+        if (el) {
+            if (visible === undefined) {
+                visible = el.hasClass('x-grid-hide-gridsummary');
+            }
+            el[visible ? 'removeClass' : 'addClass']('x-grid-hide-gridsummary');
+
+            this.view.layout(); // readjust gridview height
+        }
+    },
+
+    getSummaryNode : function() {
+        return this.view.summary;
+    }
+});
+Ext.reg('gridsummary', Ext.ux.grid.GridSummary);
+
+/*
+ * all Calculation methods are called on each Record in the Store
+ * with the following 5 parameters:
+ *
+ * v - cell value
+ * record - reference to the current Record
+ * colName - column name (i.e. the ColumnModel's dataIndex)
+ * data - the cumulative data for the current column + summaryType up to the current Record
+ * rowIdx - current row index
+ */
+Ext.ux.grid.GridSummary.Calculations = {
+    sum : function(v, record, colName, data, rowIdx) {
+        return data[colName] + Ext.num(v, 0);
+    },
+
+    count : function(v, record, colName, data, rowIdx) {
+        return rowIdx + 1;
+    },
+
+    max : function(v, record, colName, data, rowIdx) {
+        return Math.max(Ext.num(v, 0), data[colName]);
+    },
+
+    min : function(v, record, colName, data, rowIdx) {
+        return Math.min(Ext.num(v, 0), data[colName]);
+    },
+
+    average : function(v, record, colName, data, rowIdx) {
+        var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
+        return rowIdx === count - 1 ? (t / count) : t;
+    }
+};
 Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
@@ -10662,7 +10675,8 @@ ui.task.CheckEntitiesTask = function()
             }
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeIdx}
 ui.task.CheckFileTask = function(config)
@@ -10752,7 +10766,8 @@ ui.task.CheckFileTask = function(config)
             ui.cmp.ErrorFileGrid.getInstance().store.reload();
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.CheckXml = function(config)
@@ -10794,7 +10809,8 @@ ui.task.CheckXml = function(config)
             msg.hide();
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { ftype, fpath, fname, noConfirm }
 ui.task.ClearLocalChangeTask = function(config)
@@ -10961,7 +10977,8 @@ ui.task.ClearLocalChangeTask = function(config)
             }, this
         );
     }
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { patchID }
 ui.task.DeletePatchTask = function(config)
@@ -11003,7 +11020,8 @@ ui.task.DeletePatchTask = function(config)
                 }
             }
         });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { str }
 ui.task.GetBingTranslation = function(config)
@@ -11059,7 +11077,8 @@ ui.task.GetFileInfoByXmlID = function(config)
             );
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { prefix, original, ftype, fid, fpath, fname }
 ui.task.GetFileTask = function(config)
@@ -11324,7 +11343,8 @@ ui.task.GetFileTask = function(config)
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { str }
 ui.task.GetGGTranslation = function(config)
@@ -11449,7 +11469,8 @@ ui.task.MarkDeleteTask = function(config)
             }
         }, this
     );
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { patchID, patchName, nodesToAdd }
 ui.task.MoveToPatch = function(config)
@@ -11497,7 +11518,8 @@ ui.task.MoveToPatch = function(config)
                 Ext.MessageBox.alert(_('Error'), _(o.err));
             }
         });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { patchID, patchName, nodesToAdd }
 ui.task.MoveToWork = function(config)
@@ -11544,7 +11566,8 @@ ui.task.MoveToWork = function(config)
                 Ext.MessageBox.alert('Error', o.err);
             }
         });
-};Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
+};
+Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
 
 ui.task.PingTask = function()
 {
@@ -11786,7 +11809,8 @@ ui.task.PingTask.getInstance = function()
         ui.task._PingTask.instance = new ui.task.PingTask();
     }
     return ui.task._PingTask.instance;
-};Ext.namespace('ui', 'ui.task');
+};
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.SaveFileTask = function(config)
@@ -11921,7 +11945,8 @@ ui.task.SaveFileTask = function(config)
 
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.SaveTransFileTask = function(config){
@@ -12033,38 +12058,8 @@ ui.task.SetFileProgressTask = function(config)
             }
         }
     });
-};Ext.namespace('ui','ui.task');
-
-// config - { item, value, [notify=true] }
-ui.task.setTopicTask = function(config)
-{
-    Ext.apply(this, config);
-    var isLang = this.isLang;
-    // Apply modification in DB
-    XHR({
-        scope   : this,
-        params  : {
-            task    : 'setTopic',
-            content : this.content,
-            lang : isLang ? 'lang' : 'global'
-        },
-        success : function(r)
-        {
-            var o = Ext.util.JSON.decode(r.responseText),
-                topic = PhDOE.topic[isLang ? 'lang' : 'global'];
-
-            // We update the topic information
-            topic.author = o.author;
-            topic.content = o.content;
-            topic.topicDate = Date.parseDate(o.topicDate, 'Y-m-d H:i:s');
-            topic.topicDate = topic.topicDate.format(_('Y-m-d, H:i'));
-
-            // We set the topic
-            PhDOE.setTopic(isLang);
-
-        }
-    });
-};Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
+};
+Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
 
 ui.task._SystemUpdateTask.refresh_ui = function()
 {
@@ -12188,7 +12183,8 @@ ui.task.SystemUpdateTask = function()
             }
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+Ext.namespace('ui','ui.task');
 
 // config - { item, value, [notify=true] }
 ui.task.UpdateConfTask = function(config)
@@ -12235,7 +12231,8 @@ ui.task.UpdateConfTask = function(config)
             }
         }
     });
-};Ext.namespace('ui','ui.task','ui.task._UpdateSingleFolderTask');
+};
+Ext.namespace('ui','ui.task','ui.task._UpdateSingleFolderTask');
 
 ui.task._UpdateSingleFolderTask.getUpdateFolderResponse = function(node)
 {
@@ -12359,7 +12356,8 @@ ui.task.UpdateSingleFolderTask = function(node)
         return;
     }
     ui.task._UpdateSingleFolderTask.update(node);
-};Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
+};
+Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
 
 ui.task._VCSCommitTask.getCommitResponse = function()
 {
@@ -12606,6 +12604,38 @@ ui.task.VCSCommitTask = function(config)
         ui.task._VCSCommitTask.commit(files, config.patchID);
     }
 };
+Ext.namespace('ui','ui.task');
+
+// config - { item, value, [notify=true] }
+ui.task.setTopicTask = function(config)
+{
+    Ext.apply(this, config);
+    var isLang = this.isLang;
+    // Apply modification in DB
+    XHR({
+        scope   : this,
+        params  : {
+            task    : 'setTopic',
+            content : this.content,
+            lang : isLang ? 'lang' : 'global'
+        },
+        success : function(r)
+        {
+            var o = Ext.util.JSON.decode(r.responseText),
+                topic = PhDOE.topic[isLang ? 'lang' : 'global'];
+
+            // We update the topic information
+            topic.author = o.author;
+            topic.content = o.content;
+            topic.topicDate = Date.parseDate(o.topicDate, 'Y-m-d H:i:s');
+            topic.topicDate = topic.topicDate.format(_('Y-m-d, H:i'));
+
+            // We set the topic
+            PhDOE.setTopic(isLang);
+
+        }
+    });
+};
 Ext.namespace('ui','ui.cmp');
 
 ui.cmp.About = Ext.extend(Ext.Window,
@@ -12645,7 +12675,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                             '</div>' +
                             '<div id="phd-oe-about-info">' + PhDOE.app.name + //' ver ' + PhDOE.app.ver + '<br/>' +
                                 //'UI: ' + PhDOE.app.uiRevision + '<br/>' +
-                                ' Copyright &copy; 2008-2012 The PHP Group<br/>' +
+                                ' Copyright &copy; 2008-' + new Date().format('Y') + ' The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://git.php.net/?p=web/doc-editor.git;a=summary" target="_blank">others</a>') +
                             '</div>'
@@ -12674,7 +12704,8 @@ ui.cmp.About = Ext.extend(Ext.Window,
         });
         ui.cmp.About.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._AnonymousPatchWin');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._AnonymousPatchWin');
 
 ui.cmp._AnonymousPatchWin.form = Ext.extend(Ext.FormPanel,
 {
@@ -12825,7 +12856,8 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 //------------------------------------------------------------------------------
 // BingTranslationPanel
@@ -12872,7 +12904,8 @@ ui.cmp.BingTranslationPanel = Ext.extend(Ext.FormPanel,
         });
         ui.cmp.BingTranslationPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
 
 //------------------------------------------------------------------------------
 // BuildStatus Internals
@@ -13212,7 +13245,8 @@ ui.cmp.Chat = Ext.extend(Ext.Window,
         });
         ui.cmp.Chat.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
@@ -13262,7 +13296,8 @@ ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CheckBuildPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CheckDoc');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._CheckDoc');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
@@ -13587,7 +13622,8 @@ ui.cmp.CheckDoc = Ext.extend(Ext.grid.GridPanel,
         this.on('celldblclick',    this.onCellDblClick,    this);
         this.on('cellcontextmenu', this.onCellContextMenu, this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CheckEntities');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._CheckEntities');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
@@ -13778,7 +13814,8 @@ ui.cmp.CheckEntities = Ext.extend(Ext.grid.GridPanel,
         this.on('rowcontextmenu', this.onContextClick, this);
         this.on('rowdblclick',    this.onRowdblclick,  this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
 {
@@ -13816,7 +13853,8 @@ ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CheckEntitiesPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
 {
@@ -13892,7 +13930,8 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
 
 ui.cmp._CommitLogManager.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
@@ -14068,7 +14107,8 @@ ui.cmp.CommitLogManager = Ext.extend(Ext.Window,
         });
         ui.cmp.CommitLogManager.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp', 'ui.cmp._CommitPrompt');
+});
+Ext.namespace('ui','ui.cmp', 'ui.cmp._CommitPrompt');
 
 ui.cmp._CommitPrompt.store = new Ext.data.GroupingStore(
 {
@@ -14266,7 +14306,8 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CommitPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
 
 //------------------------------------------------------------------------------
 // DictionaryGrid internals
@@ -14547,7 +14588,8 @@ ui.cmp.DictionaryGrid = Ext.extend(Ext.Panel,
         });
         ui.cmp.DictionaryGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
 {
@@ -14750,7 +14792,8 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf','ui.cmp._EditorCmd2Conf');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf','ui.cmp._EditorCmd2Conf');
 
 //------------------------------------------------------------------------------
 // EditorConf Win internals
@@ -16493,7 +16536,8 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
 
         ui.cmp.EntitiesAcronymsPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._ErrorFileGrid');
+});
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._ErrorFileGrid');
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid internals
@@ -18334,7 +18378,8 @@ ui.cmp.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
         });
         ui.cmp.GoogleTranslationPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._MainMenu');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._MainMenu');
 
 ui.cmp.MainMenu = function(config)
 {
@@ -19191,7 +19236,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             // Load diff data only if FilePath & FileName exist
             if( FilePath !== '' && FileName !== '' )
             {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php';
 
                 XHR({
@@ -19204,7 +19249,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
                         if( o.url === '404' ) {
 
-                            urlSite = 'http://' + window.location.host + ':' +
+                            urlSite = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
@@ -19230,7 +19275,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     }
                 });
             } else {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
@@ -19293,12 +19338,12 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                             patchPermLink='';
 
                         if( patchID == '' ) {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
                         } else {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
@@ -19322,7 +19367,8 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
     }
 });
-Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp');
+Ext.reg('mainpanel', ui.cmp.MainPanel);
+Ext.namespace('ui','ui.cmp');
 
 //config - { name, email }
 ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
@@ -19432,7 +19478,8 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.ManagePatchPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
 
 //------------------------------------------------------------------------------
 // NotInENGrid internals
@@ -19663,7 +19710,8 @@ ui.cmp.NotInENGrid.getInstance = function(config)
         ui.cmp._NotInENGrid.instance = new ui.cmp.NotInENGrid(config);
     }
     return ui.cmp._NotInENGrid.instance;
-};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
+};
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
 
 //------------------------------------------------------------------------------
 // PatchesTreeGrid internals
@@ -20500,6 +20548,8 @@ ui.cmp._PendingReviewGrid.store = new Ext.data.GroupingStore({
             name: 'maintainer'
         }, {
             name: 'fileModified'
+        }, {
+            name: 'translator'
         }]
     }),
     sortInfo: {
@@ -20557,6 +20607,10 @@ ui.cmp._PendingReviewGrid.columns = [{
 }, {
     header: _('Path'),
     dataIndex: 'path',
+    hidden: true
+}, {
+    header: _('Maintainer'),
+    dataIndex: 'translator',
     hidden: true
 }];
 
@@ -21556,7 +21610,8 @@ ui.cmp.PortletBugs.getInstance = function(config)
         ui.cmp._PortletBugs.instance = new ui.cmp.PortletBugs(config);
     }
     return ui.cmp._PortletBugs.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletInfo');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletInfo');
 
 //------------------------------------------------------------------------------
 // PortletInfo Internals
@@ -22216,7 +22271,8 @@ ui.cmp.PortletLocalMail.getInstance = function(config)
         ui.cmp._PortletLocalMail.instance = new ui.cmp.PortletLocalMail(config);
     }
     return ui.cmp._PortletLocalMail.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletSummary');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletSummary');
 
 //------------------------------------------------------------------------------
 // PortletSummary Internals
@@ -22413,7 +22469,8 @@ ui.cmp.PortletSummary.getInstance = function(config)
         ui.cmp._PortletSummary.instance = new ui.cmp.PortletSummary(config);
     }
     return ui.cmp._PortletSummary.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationGraph');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationGraph');
 
 function renderLibel(v) {
  return _(v);
@@ -22528,7 +22585,8 @@ ui.cmp.PortletTranslationGraph.getInstance = function(config)
         ui.cmp._PortletTranslationGraph.instance = new ui.cmp.PortletTranslationGraph(config);
     }
     return ui.cmp._PortletTranslationGraph.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationsGraph');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationsGraph');
 
 ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
@@ -22637,7 +22695,8 @@ ui.cmp.PortletTranslationsGraph.getInstance = function(config)
         ui.cmp._PortletTranslationsGraph.instance = new ui.cmp.PortletTranslationsGraph(config);
     }
     return ui.cmp._PortletTranslationsGraph.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslator','ui.cmp._PortletReviewer');
+};
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslator','ui.cmp._PortletReviewer');
 
 //------------------------------------------------------------------------------
 // PortletTranslator internals
@@ -23148,7 +23207,8 @@ ui.cmp.PortletTranslator.getInstance = function(config)
         ui.cmp._PortletTranslator.instance = new ui.cmp.PortletTranslator(config);
     }
     return ui.cmp._PortletTranslator.instance;
-};Ext.namespace('ui','ui.cmp');
+};
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.PreviewFile = Ext.extend(Ext.Window,
 {
@@ -23200,7 +23260,8 @@ ui.cmp.PreviewFile = Ext.extend(Ext.Window,
         });
 
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
+});
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
 
 //------------------------------------------------------------------------------
 // RepositoryTree internals
@@ -24401,7 +24462,8 @@ ui.cmp.SystemUpdatePrompt = Ext.extend(Ext.Window,
             new ui.task.SystemUpdateTask();
         }
     }]
-});Ext.namespace('ui','ui.cmp','ui.cmp._VCSLogGrid');
+});
+Ext.namespace('ui','ui.cmp','ui.cmp._VCSLogGrid');
 
 //------------------------------------------------------------------------------
 // VCSLogGrid internals
@@ -24648,7 +24710,8 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
         });
         ui.cmp.VCSLogGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+Ext.namespace('ui','ui.cmp');
 
 // ViewVCDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
@@ -24678,7 +24741,8 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
         });
         ui.cmp.ViewVCDiff.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._WorkTreeGrid', 'ui.cmp._WorkTreeGrid.menu');
+});
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._WorkTreeGrid', 'ui.cmp._WorkTreeGrid.menu');
 
 //------------------------------------------------------------------------------
 // WorkTreeGrid internals
@@ -26007,7 +26071,7 @@ var PhDOE = function()
                     break;
                 case 'tabs_found' :
                     title = _('Error');
-                    mess  = _('It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
+                    mess  = _('It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
                     break;
                 case 'folder_already_exist' :
                     title = _('Error');
