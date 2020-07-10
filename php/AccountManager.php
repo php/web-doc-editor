@@ -656,7 +656,7 @@ class AccountManager
      */
     private function register()
     {
-        $s = 'INSERT INTO `users` (`project`, `authService`, `authServiceID`, `vcs_login`, `email`, `anonymousIdent`, `conf`) VALUES ("%s","%s","%s","%s","%s","%s","%s")';
+        $s = 'INSERT INTO `users` (`project`, `authService`, `authServiceID`, `vcs_login`, `email`, `anonymousIdent`, `conf`, `last_connect`) VALUES ("%s","%s","%s","%s","%s","%s","%s", now())';
         $params = array($this->project, $this->authService, $this->authServiceID, $this->vcsLogin, $this->email, $this->anonymousIdent, json_encode($this->defaultConf));
 
         $this->conn->query($s, $params);
