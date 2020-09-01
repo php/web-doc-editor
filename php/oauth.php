@@ -342,13 +342,13 @@ class Oauth_linkedin
 
     public function RequestCode() {
 
-        $query_params = [
+        $query_params = array(
             'response_type' => 'code',
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirect_uri,
             'scope' => 'r_liteprofile r_emailaddress',
             'state' => 'DCEEFWF45453sdffef424'
-        ];
+        );
 
         $forward_url = $this->serveurURL . '?' . http_build_query($query_params);
 
@@ -385,21 +385,21 @@ class Oauth_linkedin
 
     public function getUserInfo($access_token) {
         $curl = curl_init($this->userInfoURL);
-        curl_setopt_array($curl, [
+        curl_setopt_array($curl, array(
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_HTTPHEADER => [
+            CURLOPT_HTTPHEADER => array(
                 'Authorization: Bearer ' . $access_token
-            ]
-        ]);
+            )
+        ));
 
         $user = json_decode(curl_exec($curl), true);
         
-        return [
+        return array(
             'id' => $user['id'],
             'name' => $user['localizedFirstName'] . ' ' . $user['localizedLastName'],
-        ];
+        );
     }
 
 
@@ -428,12 +428,12 @@ class Oauth_instagram
 
     public function RequestCode() {
 
-        $query_params = [
+        $query_params = array(
             'response_type' => 'code',
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirect_uri,
             'scope' => 'user_profile',
-        ];
+        );
 
         $forward_url = $this->serveurURL . '?' . http_build_query($query_params);
 
