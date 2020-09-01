@@ -52,7 +52,6 @@ class Oauth_github
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
 
         $httpResponse = curl_exec( $ch );
 
@@ -69,7 +68,6 @@ class Oauth_github
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => array( 'Authorization: token ' . $access_token ),
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
         $resp = curl_exec($curl);
         return json_decode($resp);
@@ -134,7 +132,6 @@ class Oauth_stackoverflow
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
 
         $httpResponse = curl_exec( $ch );
 
@@ -151,7 +148,6 @@ class Oauth_stackoverflow
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
 
         $resp = curl_exec($curl);
@@ -216,24 +212,22 @@ class Oauth_facebook
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
 
         $httpResponse = curl_exec( $ch );
 
-        parse_str($httpResponse, $output);
+        $output = json_decode($httpResponse, true);
 
         return $output["access_token"];
     }
 
     public function getUserInfo($access_token)
     {
-        $curl = curl_init($this->userInfoURL.'?access_token='.$access_token);
+        $curl = curl_init($this->userInfoURL . '?access_token=' . $access_token . '&fields=name,email');
 
         curl_setopt_array($curl, array(
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
 
         $resp = curl_exec($curl);
@@ -299,7 +293,6 @@ class Oauth_google
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
 
         $httpResponse = curl_exec( $ch );
 
@@ -316,7 +309,6 @@ class Oauth_google
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
 
         $resp = curl_exec($curl);
@@ -355,7 +347,7 @@ class Oauth_linkedin
             'response_type' => 'code',
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirect_uri,
-            'scope' => 'r_fullprofile r_emailaddress',
+            'scope' => 'r_liteprofile r_emailaddress',
             'state' => 'DCEEFWF45453sdffef424'
         );
 
@@ -384,7 +376,6 @@ class Oauth_linkedin
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
 
         $httpResponse = curl_exec( $ch );
 
@@ -403,7 +394,6 @@ class Oauth_linkedin
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
 
         $resp = curl_exec($curl);
@@ -419,7 +409,6 @@ class Oauth_linkedin
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-            CURLOPT_CAINFO => '/local/web/sites/ca-bundle.crt'
         ));
 
         $resp = curl_exec($curl);
@@ -446,7 +435,7 @@ class Oauth_instagram
 
         $this->serveurURL = 'https://api.instagram.com/oauth/authorize/';
         $this->tokenURL = 'https://api.instagram.com/oauth/access_token';
-        $this->userInfoURL = 'https://api.instagram.com/v1/user';
+        $this->userInfoURL = 'https://graph.instagram.com/me';
 
         // Prod - OK
         $this->redirect_uri = 'https://edit.php.net/';
@@ -456,11 +445,12 @@ class Oauth_instagram
 
     public function RequestCode() {
 
-        $query_params = array(
+        $query_params = [
             'response_type' => 'code',
             'client_id' => $this->clientID,
-            'redirect_uri' => $this->redirect_uri
-        );
+            'redirect_uri' => $this->redirect_uri,
+            'scope' => 'user_profile',
+        ];
 
         $forward_url = $this->serveurURL . '?' . http_build_query($query_params);
 
@@ -485,17 +475,27 @@ class Oauth_instagram
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
         curl_setopt( $ch, CURLOPT_HEADER, false );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postString );
-        curl_setopt( $ch, CURLOPT_CAINFO, "/local/web/sites/ca-bundle.crt");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
 
-        $httpResponse = curl_exec( $ch );
+        $httpResponse = curl_exec($ch);
 
         $httpResponse = json_decode($httpResponse);
 
         return $httpResponse;
     }
 
+    public function getUserInfo($access_token) {
+        $curl = curl_init($this->userInfoURL . '?access_token=' . $access_token . '&fields=username');
 
+        curl_setopt_array($curl, array(
+            CURLOPT_ENCODING => "",
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_USERAGENT => 'Php Docbook Online Editor',
+        ));
+
+        $resp = curl_exec($curl);
+
+        return json_decode($resp);
+    }
 }
-?>
