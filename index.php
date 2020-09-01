@@ -283,9 +283,9 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
 
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars(md5($user['profil']))."\",
-            auth.login     = \"".htmlspecialchars($user['profil'])."\",
-            auth.email     = \"".htmlspecialchars($user['email'])."\";
+            auth.serviceID = \"".htmlspecialchars($user['id'])."\",
+            auth.login     = \"".htmlspecialchars($user['name'])."\",
+            auth.email     = \"\";
 
         ";
 

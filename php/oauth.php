@@ -332,8 +332,7 @@ class Oauth_linkedin
 
         $this->serveurURL = 'https://www.linkedin.com/uas/oauth2/authorization';
         $this->tokenURL = 'https://www.linkedin.com/uas/oauth2/accessToken';
-        $this->userInfoURLEmail = 'https://api.linkedin.com/v1/people/~/email-address';
-        $this->userInfoURL = 'https://api.linkedin.com/v1/people/~:(firstName,lastName)';
+        $this->userInfoURL = 'https://api.linkedin.com/v2/me';
 
         // Prod - OK
         $this->redirect_uri = 'https://edit.php.net/';
@@ -343,13 +342,13 @@ class Oauth_linkedin
 
     public function RequestCode() {
 
-        $query_params = array(
+        $query_params = [
             'response_type' => 'code',
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirect_uri,
             'scope' => 'r_liteprofile r_emailaddress',
             'state' => 'DCEEFWF45453sdffef424'
-        );
+        ];
 
         $forward_url = $this->serveurURL . '?' . http_build_query($query_params);
 
@@ -367,56 +366,40 @@ class Oauth_linkedin
             "grant_type" => 'authorization_code'
         );
 
-        $postString = rawurldecode(http_build_query( $params ));
+        $postString = rawurldecode(http_build_query($params));
 
         $ch = curl_init($this->tokenURL);
 
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
-        curl_setopt( $ch, CURLOPT_HEADER, false );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postString );
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
 
-        $httpResponse = curl_exec( $ch );
+        $httpResponse = curl_exec($ch);
 
         $httpResponse = json_decode($httpResponse);
 
         return $httpResponse->access_token;
     }
 
-    public function getUserInfo($access_token)
-    {
-        //email
-
-        $curl = curl_init($this->userInfoURLEmail.'?oauth2_access_token='.$access_token);
-
-        curl_setopt_array($curl, array(
+    public function getUserInfo($access_token) {
+        $curl = curl_init($this->userInfoURL);
+        curl_setopt_array($curl, [
             CURLOPT_ENCODING => "",
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-        ));
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $access_token
+            ]
+        ]);
 
-        $resp = curl_exec($curl);
-        $xml = simplexml_load_string($resp);
-
-        $return['email'] = (string) $xml;
-
-        //profil
-
-        $curl = curl_init($this->userInfoURL.'?oauth2_access_token='.$access_token);
-
-        curl_setopt_array($curl, array(
-            CURLOPT_ENCODING => "",
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_USERAGENT => 'Php Docbook Online Editor',
-        ));
-
-        $resp = curl_exec($curl);
-        $xml = simplexml_load_string($resp);
-
-        $return['profil'] = $xml->{'first-name'}.' '.$xml->{'last-name'};
-
-        return $return;
+        $user = json_decode(curl_exec($curl), true);
+        
+        return [
+            'id' => $user['id'],
+            'name' => $user['localizedFirstName'] . ' ' . $user['localizedLastName'],
+        ];
     }
 
 
