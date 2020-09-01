@@ -247,14 +247,14 @@ if (!isset($_SESSION['userID']))
 
         $user = $google->getUserInfo($access_token);
 
-        $displayName = ( trim($user->displayName) == "" ) ? $user->emails[0]->value : $user->displayName;
+        $displayName = (trim($user->displayName) == "") ? $user->email : $user->displayName;
 
         $jsVar .= "
 
-            auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars($user->id)."\",
-            auth.login     = \"".htmlspecialchars($displayName)."\",
-            auth.email     = \"".htmlspecialchars($user->emails[0]->value)."\";
+            auth.service   = \"" . $_SESSION['oauth']['identService'] . "\",
+            auth.serviceID = \"" . htmlspecialchars($user->id) . "\",
+            auth.login     = \"" . htmlspecialchars($displayName) . "\",
+            auth.email     = \"" . htmlspecialchars($user->email) . "\";
 
         ";
 

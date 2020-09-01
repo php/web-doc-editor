@@ -251,7 +251,7 @@ class Oauth_google
 
         $this->serveurURL = 'https://accounts.google.com/o/oauth2/auth';
         $this->tokenURL = 'https://accounts.google.com/o/oauth2/token';
-        $this->userInfoURL = 'https://www.googleapis.com/plus/v1/people/me';
+        $this->userInfoURL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
         // Prod
         $this->redirect_uri = 'https://edit.php.net/';
@@ -303,7 +303,7 @@ class Oauth_google
 
     public function getUserInfo($access_token)
     {
-        $curl = curl_init($this->userInfoURL.'?access_token='.$access_token);
+        $curl = curl_init($this->userInfoURL.'?alt=json&access_token='.$access_token);
 
         curl_setopt_array($curl, array(
             CURLOPT_ENCODING => "",
