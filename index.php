@@ -117,6 +117,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'instagram';
 
         $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
+        $instagram->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $instagram->RequestCode();
     }
@@ -124,14 +125,15 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
 
         $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
+        $instagram->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $instagram->RequestToken($_GET['code']);
+        $user = $instagram->getUserInfo($access_token->access_token);
 
         $jsVar .= "
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars($access_token->user->id)."\",
-            auth.login     = \"".htmlspecialchars($access_token->user->full_name)."\",
+            auth.serviceID = \"".htmlspecialchars($user->id)."\",
+            auth.login     = \"".htmlspecialchars($user->username)."\",
             auth.email     = \"\";
-
         ";
 
     }
@@ -142,6 +144,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'github';
 
         $git = new Oauth_github($Conf['GLOBAL_CONFIGURATION']['oauth.github.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.github.clientSecret']);
+        $git->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $git->RequestCode();
     }
@@ -149,7 +152,7 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'github' && isset($_GET['code']) ) {
 
         $git = new Oauth_github($Conf['GLOBAL_CONFIGURATION']['oauth.github.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.github.clientSecret']);
-
+        $git->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $git->RequestToken($_GET['code']);
         $user = $git->getUserInfo($access_token);
 
@@ -170,6 +173,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'stackoverflow';
 
         $stack = new Oauth_stackoverflow($Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientSecret'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientKey']);
+        $stack->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $stack->RequestCode();
     }
@@ -177,6 +181,7 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'stackoverflow' && isset($_GET['code']) ) {
 
         $stack = new Oauth_stackoverflow($Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientSecret'], $Conf['GLOBAL_CONFIGURATION']['oauth.stackoverflow.clientKey']);
+        $stack->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $stack->RequestToken($_GET['code']);
 
         $user = $stack->getUserInfo($access_token);
@@ -198,6 +203,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'facebook';
 
         $facebook = new Oauth_facebook($Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientSecret']);
+        $facebook->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $facebook->RequestCode();
     }
@@ -205,6 +211,7 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'facebook' && isset($_GET['code']) ) {
 
         $facebook = new Oauth_facebook($Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.facebook.clientSecret']);
+        $facebook->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $facebook->RequestToken($_GET['code']);
 
         $user = $facebook->getUserInfo($access_token);
@@ -227,6 +234,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'google';
 
         $google = new Oauth_google($Conf['GLOBAL_CONFIGURATION']['oauth.google.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.google.clientSecret']);
+        $google->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $google->RequestCode();
     }
@@ -234,18 +242,19 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'google' && isset($_GET['code']) ) {
 
         $google = new Oauth_google($Conf['GLOBAL_CONFIGURATION']['oauth.google.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.google.clientSecret']);
+        $google->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $google->RequestToken($_GET['code']);
 
         $user = $google->getUserInfo($access_token);
 
-        $displayName = ( trim($user->displayName) == "" ) ? $user->emails[0]->value : $user->displayName;
+        $displayName = (trim($user->displayName) == "") ? $user->email : $user->displayName;
 
         $jsVar .= "
 
-            auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars($user->id)."\",
-            auth.login     = \"".htmlspecialchars($displayName)."\",
-            auth.email     = \"".htmlspecialchars($user->emails[0]->value)."\";
+            auth.service   = \"" . $_SESSION['oauth']['identService'] . "\",
+            auth.serviceID = \"" . htmlspecialchars($user->id) . "\",
+            auth.login     = \"" . htmlspecialchars($displayName) . "\",
+            auth.email     = \"" . htmlspecialchars($user->email) . "\";
 
         ";
 
@@ -258,6 +267,7 @@ if (!isset($_SESSION['userID']))
         $_SESSION['oauth']['identService'] = 'linkedin';
 
         $linkedin = new Oauth_linkedin($Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientSecret']);
+        $linkedin->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
 
         $linkedin->RequestCode();
     }
@@ -265,6 +275,7 @@ if (!isset($_SESSION['userID']))
     if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'linkedin' && isset($_GET['code']) ) {
 
         $linkedin = new Oauth_linkedin($Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.linkedin.clientSecret']);
+        $linkedin->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
         $access_token = $linkedin->RequestToken($_GET['code']);
 
         $user = $linkedin->getUserInfo($access_token);
@@ -272,9 +283,9 @@ if (!isset($_SESSION['userID']))
         $jsVar .= "
 
             auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars(md5($user['profil']))."\",
-            auth.login     = \"".htmlspecialchars($user['profil'])."\",
-            auth.email     = \"".htmlspecialchars($user['email'])."\";
+            auth.serviceID = \"".htmlspecialchars($user['id'])."\",
+            auth.login     = \"".htmlspecialchars($user['name'])."\",
+            auth.email     = \"\";
 
         ";
 
@@ -289,7 +300,7 @@ if (!isset($_SESSION['userID']))
 
         $connection = new TwitterOAuth($Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.twitter.clientSecret']);
 
-        $temporary_credentials = $connection->getRequestToken($Conf['GLOBAL_CONFIGURATION']['oauth.twitter.redirectURL']);
+        $temporary_credentials = $connection->getRequestToken($Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL']);
         $redirect_url = $connection->getAuthorizeURL($temporary_credentials);
 
         header('Location: ' . $redirect_url);

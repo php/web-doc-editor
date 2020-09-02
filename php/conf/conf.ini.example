@@ -1,0 +1,42 @@
+[GLOBAL_CONFIGURATION]
+
+www.user = apache
+www.group = apache
+
+sql.host = localhost
+sql.user = db-user
+sql.passwd = password
+sql.database = database
+
+vcs.type = svn
+
+data.path = "data/"
+
+php.bin = "/usr/bin/php"
+phd.bin = "/local/oldphp/bin/phd"
+
+xmllint.bin = "/usr/bin/xmllint"
+
+oauth.instagram.clientID = ""
+oauth.instagram.clientSecret = ""
+
+oauth.github.clientID = ""
+oauth.github.clientSecret = ""
+
+oauth.stackoverflow.clientID = ""
+oauth.stackoverflow.clientSecret = ""
+oauth.stackoverflow.clientKey = ""
+
+oauth.facebook.clientID = ""
+oauth.facebook.clientSecret = ""
+
+oauth.google.clientID = ""
+oauth.google.clientSecret = ""
+
+oauth.linkedin.clientID = ""
+oauth.linkedin.clientSecret = ""
+
+oauth.twitter.clientID = ""
+oauth.twitter.clientSecret = ""
+
+oauth.redirectURL = "https://edit.php.net/"
