@@ -258,7 +258,7 @@ class AccountManager
                   $_SESSION['userConf']  = $this->userConf;
 
                   // We update the email if this user have decided to change it.
-                  $this->updateEmail();
+                  $this->updateUser();
 
                 } else {
 
@@ -360,7 +360,7 @@ class AccountManager
                       $_SESSION['userConf']  = $this->userConf;
 
                       // We update the email if this user have decided to change it.
-                      $this->updateEmail();
+                      $this->updateUser();
 
                     } else {
 
@@ -433,8 +433,8 @@ class AccountManager
             $this->email     = $email;
 
             // Check DB
-            $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "%s" AND `authServiceID` = "%s" AND `vcs_login` = "%s" AND `anonymousIdent` = "%s"';
-            $params = array($project, $this->authService, $this->authServiceID, $this->vcsLogin, $this->anonymousIdent);
+            $s = 'SELECT * FROM `users` WHERE `project` = "%s" AND `authService` = "%s" AND `authServiceID` = "%s" AND `anonymousIdent` = "%s"';
+            $params = array($project, $this->authService, $this->authServiceID, $this->anonymousIdent);
 
             $r = $this->conn->query($s, $params);
 
@@ -450,8 +450,9 @@ class AccountManager
                 // ... and into the php's session (only specific var)
                 $_SESSION['userConf']  = $this->userConf;
 
-                // We update the email if this user have decided to change it.
-                $this->updateEmail();
+                // We update the login and email if this user have decided to change it.
+                // Or if it changed on external website
+                $this->updateUser();
 
             } else {
 
@@ -537,10 +538,10 @@ class AccountManager
         return false;
     }
 
-    public function updateEmail()
+    public function updateUser()
     {
-        $s = 'UPDATE `users` SET `email`="%s" WHERE `userID`=%d';
-        $params = array($this->email, $this->userID);
+        $s = 'UPDATE `users` SET `email`="%s", `vcs_login`="%s" WHERE `userID`=%d';
+        $params = array($this->email, $this->vcsLogin, $this->userID);
         $this->conn->query($s, $params);
     }
 
