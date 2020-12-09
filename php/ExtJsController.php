@@ -6,6 +6,7 @@
  */
 
 require_once dirname(__FILE__) . '/AccountManager.php';
+require_once dirname(__FILE__) . '/BingTranslator.php';
 require_once dirname(__FILE__) . '/BugReader.php';
 require_once dirname(__FILE__) . '/DictionaryManager.php';
 require_once dirname(__FILE__) . '/EntitiesAcronymsFetcher.php';
@@ -772,43 +773,31 @@ class ExtJsController
      */
     public function getBingTranslation()
     {
-        if (!AccountManager::getInstance()->isLogged()) {
+        $am = AccountManager::getInstance();
+
+        if (!$am->isLogged()) {
             return JsonResponseBuilder::failure();
         }
 
         $str = $this->getRequestVariable('str');
 
-        $lang = AccountManager::getInstance()->vcsLang;
+        $lang = $am->vcsLang;
+        $conf = $am->appConf;
 
-        $translation = false;
+        $bingApiKey = $conf['GLOBAL_CONFIGURATION']['bing.key'];
 
-        $str = str_replace("\n", "[@]", $str);
-
-        $bing = new MicrosoftTranslator("0Iwzej5BJeHK/2nvHh7/uJyHLhmnyFJEAuOYOfJ1QLg=");
-
-        $bing->translate('en', $lang, $str);
-
-        $bing->response->jsonResponse;
-
-        preg_match("/<string xmlns=\"(.[^\"]*)\">(.*)?<\/string>/e", $bing->response->translation, $match);
-
-        // Replace new line mark
-        $translation = str_replace("[@]", "<br>", $match[2]);
-
-        // Few substitutions
-        $translation = str_replace("&amp;" , "&", $translation);
-        $translation = str_replace("&amp;  ", "&", $translation);
-        $translation = str_replace("&#39;" , "'", $translation);
-        $translation = str_replace("&quot;", '"', $translation);
-        $translation = str_replace("&lt;"  , '<', $translation);
-        $translation = str_replace("&gt;"  , '>', $translation);
+        $bing = new BingTranslator($bingApiKey);
+        try {
+            $translation = $bing->translate('en', $lang, $str);
+        } catch (\Exception $exception) {
+            $translation = $exception->getMessage();
+        }
 
         return JsonResponseBuilder::success(
             array(
                 'translation' => $translation
             )
-         );
-
+        );
     }
 
     /**

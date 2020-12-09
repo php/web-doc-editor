@@ -17,6 +17,8 @@ phd.bin = "/local/oldphp/bin/phd"
 
 xmllint.bin = "/usr/bin/xmllint"
 
+bing.key = ""
+
 oauth.instagram.clientID = ""
 oauth.instagram.clientSecret = ""
 
