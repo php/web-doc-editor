@@ -8,7 +8,7 @@ sql.user = db-user
 sql.passwd = password
 sql.database = database
 
-vcs.type = svn
+vcs.type = git
 
 data.path = "data/"
 

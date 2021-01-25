@@ -131,7 +131,9 @@ Ext.override(Ext.form.Field, {
         this.initValue();
     }
 
-});// create namespace for plugins
+});
+
+// create namespace for plugins
 Ext.namespace('Ext.ux.plugins');
 
 /**
@@ -193,7 +195,9 @@ Ext.ux.IconCombo = Ext.extend(Ext.form.ComboBox, {
 });
 
 // register xtype
-Ext.reg('iconcombo', Ext.ux.IconCombo);/*
+Ext.reg('iconcombo', Ext.ux.IconCombo);
+
+/*
  Author       : Jay Garcia
  Site         : http://tdg-i.com
  Contact Info : jgarcia@tdg-i.com
@@ -505,7 +509,9 @@ Ext.ux.plugins.WindowDrawer = Ext.extend(Ext.Window, {
     }
 });
 
-Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);var PhDOE_loginPage = function()
+Ext.reg('windowdrawer', Ext.ux.plugins.WindowDrawer);
+
+var PhDOE_loginPage = function()
 {
     Ext.QuickTips.init();
     Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';

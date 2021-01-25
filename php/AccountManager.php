@@ -824,13 +824,12 @@ class AccountManager
 
             $karma = $userList[$user]['karma'];
 
-            // Must have ALL, phpdoc or phpdoc/$lang
-            if( in_array("ALL", $karma) || in_array("phpdoc", $karma) || in_array("phpdoc/$lang", $karma) ) {
+            // Must have ALL, doc or doc/$lang
+            if( in_array("ALL", $karma) || in_array("doc", $karma) || in_array("doc/$lang", $karma) ) {
                 return true;
-            } else {
-                return 'You haven\'t good Karma for the chosen language. Your Current karma is : '.implode(", ", $karma);
             }
 
+            return 'You haven\'t good Karma for the chosen language. Your Current karma is : '.implode(", ", $karma);
         }
         return 'You haven\'t any karma !';
 

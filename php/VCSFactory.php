@@ -23,6 +23,10 @@ class VCSFactory
                     require_once dirname(__FILE__) . '/SvnClient.php';
                     self::$instance = SvnClient::getInstance();
                     break;
+                case 'git':
+                    require_once dirname(__FILE__) . '/GitClient.php';
+                    self::$instance = GitClient::getInstance();
+                    break;
             }
         }
         return self::$instance;

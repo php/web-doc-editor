@@ -1,3 +1,7 @@
 /data/
 /php/conf/conf.ini
 /scripts/utils/yuicompressor.jar
+/vendor/
+/node_modules/
+/js/login-all*.js
+/js/main-all*.js

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "czproject/git-php": "^3.18",
+        "symfony/filesystem": "^5.2",
+        "symfony/finder": "^5.2"
+    }
+}

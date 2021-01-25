@@ -5,6 +5,7 @@ require_once dirname(__FILE__) . '/GTranslate.php';
 require_once dirname(__FILE__) . '/RepositoryManager.php';
 require_once dirname(__FILE__) . '/SaferExec.php';
 require_once dirname(__FILE__) . '/VCSFactory.php';
+require_once dirname(__FILE__) . '/GitRepository.php';
 
 class File
 {
@@ -92,6 +93,16 @@ class File
         }
 
         $this->conn = DBConnection::getInstance();
+    }
+
+    public function getGitRevision()
+    {
+        $appConf = AccountManager::getInstance()->appConf;
+        $project = AccountManager::getInstance()->project;
+
+        $repository = new GitRepository($appConf[$project]['vcs.path'] . $this->lang);
+
+        return trim($repository->getLastFileCommitId(ltrim($this->path.$this->name, '/')));
     }
 
     public function exist()
@@ -387,15 +398,11 @@ class File
         );
 
         // revision tag
-        $match = array();
-        preg_match('/<!-- .Revision: (\d+) . -->/', $content, $match);
-        if (!empty($match)) {
-            $info['rev'] = $match[1];
-        }
+        $info['rev'] = $this->getGitRevision();
 
         // Rev tag
         $match = array();
-        preg_match('/<!--\s*EN-Revision:\s*((\d+)|(n\/a))\s*Maintainer:\s*(\\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
+        preg_match('/<!--\s*EN-Revision:\s*((\S+)|(n\/a))\s*Maintainer:\s*(\S*)\s*Status:\s*(.+)\s*-->/U', $content, $match);
         if (!empty($match)) {
             $info['en-rev']     = ($match[1] == 'n/a') ? 0 : $match[1];
             $info['maintainer'] = $match[4];

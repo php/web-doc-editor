@@ -2815,6 +2815,7 @@ var CodeMirror = (function() {
 
   return CodeMirror;
 })();
+
 /**
  * Author: Hans Engel
  * Branched from CodeMirror's Scheme mode (by Koh Zi Han, based on implementation by Koh Zi Chun)
@@ -3022,6 +3023,7 @@ CodeMirror.defineMode("clojure", function (config, mode) {
 });
 
 CodeMirror.defineMIME("text/x-clojure", "clojure");
+
 CodeMirror.defineMode("xml", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
   var Kludges = parserConfig.htmlMode ? {
@@ -3282,6 +3284,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
 
 CodeMirror.defineMIME("application/xml", "xml");
 CodeMirror.defineMIME("text/html", {name: "xml", htmlMode: true});
+
 CodeMirror.defineMode("javascript", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
   var jsonMode = parserConfig.json;
@@ -3642,6 +3645,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
 
 CodeMirror.defineMIME("text/javascript", "javascript");
 CodeMirror.defineMIME("application/json", {name: "javascript", json: true});
+
 CodeMirror.defineMode("clike", function(config, parserConfig) {
   var indentUnit = config.indentUnit,
       keywords = parserConfig.keywords || {},
@@ -3876,6 +3880,7 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
     }
   });
 }());
+
 /**
  * xmlpure.js
  *
@@ -4366,6 +4371,7 @@ CodeMirror.defineMode("xmlpure", function(config, parserConfig) {
 
 CodeMirror.defineMIME("application/xml", "purexml");
 CodeMirror.defineMIME("text/xml", "purexml");
+
 CodeMirror.defineMode("css", function(config) {
   var indentUnit = config.indentUnit, type;
   function ret(style, tp) {type = tp; return style;}
@@ -4490,6 +4496,7 @@ CodeMirror.defineMode("css", function(config) {
 });
 
 CodeMirror.defineMIME("text/css", "css");
+
 (function() {
   function keywords(str) {
     var obj = {}, words = str.split(" ");
@@ -4611,6 +4618,7 @@ CodeMirror.defineMIME("text/css", "css");
   CodeMirror.defineMIME("application/x-httpd-php-open", {name: "php", startOpen: true});
   CodeMirror.defineMIME("text/x-php", phpConfig);
 })();
+
 CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
   var htmlMode = CodeMirror.getMode(config, {name: "xml", htmlMode: true});
   var jsMode = CodeMirror.getMode(config, "javascript");
@@ -4694,6 +4702,7 @@ CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
 });
 
 CodeMirror.defineMIME("text/html", "htmlmixed");
+
 CodeMirror.defineMode('rst', function(config, options) {
     function setState(state, fn, ctx) {
         state.fn = fn;
@@ -5020,6 +5029,7 @@ CodeMirror.defineMode('rst', function(config, options) {
 });
 
 CodeMirror.defineMIME("text/x-rst", "rst");
+
 // Define search commands. Depends on dialog.js or another
 // implementation of the openDialog method.
 
@@ -5134,6 +5144,7 @@ CodeMirror.defineMIME("text/x-rst", "rst");
   CodeMirror.commands.replace = replace;
   CodeMirror.commands.replaceAll = function(cm) {replace(cm, true);};
 })();
+
 (function(){
   function SearchCursor(cm, query, pos, caseFold) {
     this.atOccurrence = false; this.cm = cm;
@@ -5251,6 +5262,7 @@ CodeMirror.defineMIME("text/x-rst", "rst");
     return new SearchCursor(this, query, pos, caseFold);
   });
 })();
+
 // Open simple dialogs on top of an editor. Relies on dialog.css.
 
 (function() {
@@ -5313,7 +5325,9 @@ CodeMirror.defineMIME("text/x-rst", "rst");
       CodeMirror.connect(b, "focus", function() { ++blurring; });
     }
   });
-})();Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
+})();
+
+Ext.BLANK_IMAGE_URL = 'js/ExtJs/resources/images/default/s.gif';
 
 // Add ucFirst to string object
 String.prototype.ucFirst = function () {
@@ -5446,20 +5460,9 @@ Ext.override(Ext.form.Field, {
         this.initValue();
     }
 
-});/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
-Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
-    layout : 'anchor',
-    //autoEl : 'div',//already defined by Ext.Component
-    defaultType : 'portlet',
-    cls : 'x-portal-column'
 });
 
-Ext.reg('portalcolumn', Ext.ux.PortalColumn);/*!
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -5664,6 +5667,22 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
         Ext.ux.Portal.DropZone.superclass.unreg.call(this);
     }
 });
+
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ux.PortalColumn = Ext.extend(Ext.Container, {
+    layout : 'anchor',
+    //autoEl : 'div',//already defined by Ext.Component
+    defaultType : 'portlet',
+    cls : 'x-portal-column'
+});
+
+Ext.reg('portalcolumn', Ext.ux.PortalColumn);
+
 /*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -5678,7 +5697,9 @@ Ext.ux.Portlet = Ext.extend(Ext.Panel, {
     cls : 'x-portlet'
 });
 
-Ext.reg('portlet', Ext.ux.Portlet);/*!
+Ext.reg('portlet', Ext.ux.Portlet);
+
+/*!
  * Ext JS Library 3.3.1
  * Copyright(c) 2006-2010 Sencha Inc.
  * licensing@sencha.com
@@ -6209,67 +6230,6 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
     }
 });
 Ext.preg('roweditor', Ext.ux.grid.RowEditor);
-/*!
- * Ext JS Library 3.2.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
-Ext.ns('Ext.ux.form');
-
-/**
- * @class Ext.ux.form.SpinnerField
- * @extends Ext.form.NumberField
- * Creates a field utilizing Ext.ux.Spinner
- * @xtype spinnerfield
- */
-Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
-    actionMode: 'wrap',
-    deferHeight: true,
-    autoSize: Ext.emptyFn,
-    onBlur: Ext.emptyFn,
-    adjustSize: Ext.BoxComponent.prototype.adjustSize,
-
-	constructor: function(config) {
-		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
-
-		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
-
-		var plugins = config.plugins
-			? (Ext.isArray(config.plugins)
-				? config.plugins.push(spl)
-				: [config.plugins, spl])
-			: spl;
-
-		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
-	},
-
-    // private
-    getResizeEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    getPositionEl: function(){
-        return this.wrap;
-    },
-
-    // private
-    alignErrorIcon: function(){
-        if (this.wrap) {
-            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
-        }
-    },
-
-    validateBlur: function(){
-        return true;
-    }
-});
-
-Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
-
-//backwards compat
-Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
 
 /*!
  * Ext JS Library 3.2.0
@@ -6708,7 +6668,71 @@ Ext.ux.Spinner = Ext.extend(Ext.util.Observable, {
 });
 
 //backwards compat
-Ext.form.Spinner = Ext.ux.Spinner;/*!
+Ext.form.Spinner = Ext.ux.Spinner;
+
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+Ext.ns('Ext.ux.form');
+
+/**
+ * @class Ext.ux.form.SpinnerField
+ * @extends Ext.form.NumberField
+ * Creates a field utilizing Ext.ux.Spinner
+ * @xtype spinnerfield
+ */
+Ext.ux.form.SpinnerField = Ext.extend(Ext.form.NumberField, {
+    actionMode: 'wrap',
+    deferHeight: true,
+    autoSize: Ext.emptyFn,
+    onBlur: Ext.emptyFn,
+    adjustSize: Ext.BoxComponent.prototype.adjustSize,
+
+	constructor: function(config) {
+		var spinnerConfig = Ext.copyTo({}, config, 'incrementValue,alternateIncrementValue,accelerate,defaultValue,triggerClass,splitterClass');
+
+		var spl = this.spinner = new Ext.ux.Spinner(spinnerConfig);
+
+		var plugins = config.plugins
+			? (Ext.isArray(config.plugins)
+				? config.plugins.push(spl)
+				: [config.plugins, spl])
+			: spl;
+
+		Ext.ux.form.SpinnerField.superclass.constructor.call(this, Ext.apply(config, {plugins: plugins}));
+	},
+
+    // private
+    getResizeEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    getPositionEl: function(){
+        return this.wrap;
+    },
+
+    // private
+    alignErrorIcon: function(){
+        if (this.wrap) {
+            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        }
+    },
+
+    validateBlur: function(){
+        return true;
+    }
+});
+
+Ext.reg('spinnerfield', Ext.ux.form.SpinnerField);
+
+//backwards compat
+Ext.form.SpinnerField = Ext.ux.form.SpinnerField;
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7126,6 +7150,7 @@ statusBar.setStatus({
     }
 });
 Ext.reg('statusbar', Ext.ux.StatusBar);
+
 /*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -7277,6 +7302,7 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
 });
 
 Ext.preg('tabclosemenu', Ext.ux.TabCloseMenu);
+
 /*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -7409,7 +7435,9 @@ Ext.ux.tree.TreeGridSorter = Ext.extend(Ext.tree.TreeSorter, {
         var hds = this.tree.innerHd.select('td').removeClass(sc);
         hds.item(col).addClass(sc[dir == 'desc' ? 1 : 0]);
     }
-});/*!
+});
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7525,7 +7553,9 @@ Ext.tree.ColumnResizer = Ext.extend(Ext.util.Observable, {
             tree.headersDisabled = false;
         }, 100);
     }
-});/*!
+});
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7631,7 +7661,9 @@ Ext.ux.tree.TreeGridRootNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 
     collapse : Ext.emptyFn,
     expand : Ext.emptyFn
-});/*!
+});
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7648,7 +7680,9 @@ Ext.ux.tree.TreeGridLoader = Ext.extend(Ext.tree.TreeLoader, {
         }
         return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
     }
-});/*!
+});
+
+/*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
@@ -7687,6 +7721,7 @@ Ext.ux.tree.TreeGridLoader = Ext.extend(Ext.tree.TreeLoader, {
     Ext.reg('tgdatecolumn', Ext.tree.DateColumn);
     Ext.reg('tgbooleancolumn', Ext.tree.BooleanColumn);
 })();
+
 /*!
  * Ext JS Library 3.2.0
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -8141,7 +8176,9 @@ Ext.override(Ext.ux.tree.TreeGrid, {
       }
     }
   }
-});// Copyright (c) 2010 David Davis - http://xant.us/
+});
+
+// Copyright (c) 2010 David Davis - http://xant.us/
 // License: MIT
 Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 
@@ -8167,7 +8204,6 @@ Ext.ux.DblClickCloseTabs = Ext.extend( Object, {
 });
 
 Ext.preg( 'dblclickclosetabs', Ext.ux.DblClickCloseTabs );
-
 
 Ext.util.md5 = function(s, r, hexcase, chrsz)
 {
@@ -8343,7 +8379,9 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     }
 
     return (r ? binl2str(core_md5(str2binl(s), s.length * chrsz)) : binl2hex(core_md5(str2binl(s), s.length * chrsz)));
-};Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
+};
+
+Ext.ux.CodeMirror = Ext.extend(Ext.BoxComponent, {
 
     lineWrapping: false,
     previousLine: false,
@@ -8620,7 +8658,9 @@ Ext.util.md5 = function(s, r, hexcase, chrsz)
     }
 
 });
-Ext.reg('codemirror', Ext.ux.CodeMirror);Ext.ns('Ext.ux.grid');
+Ext.reg('codemirror', Ext.ux.CodeMirror);
+
+Ext.ns('Ext.ux.grid');
 
 Ext.ux.grid.GridSummary = function(config) {
         Ext.apply(this, config);
@@ -8846,7 +8886,9 @@ Ext.ux.grid.GridSummary.Calculations = {
         var t = data[colName] + Ext.num(v, 0), count = record.store.getCount();
         return rowIdx === count - 1 ? (t / count) : t;
     }
-};Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+};
+
+Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
 
     frame: null,
 
@@ -8881,7 +8923,9 @@ Ext.ux.grid.GridSummary.Calculations = {
         this.frame[ Ext.isIE?'onreadystatechange':'onload'] = callback.createDelegate(this.frame);
 
     }
-});/*
+});
+
+/*
  * MultiSelectTreePanel v 1.1
  *
  * This work is derivative of Ext-JS 2.2. Much of the code is modified versions of default code.
@@ -9696,6 +9740,7 @@ Ext.ux.MultiSelectTreePanel = Ext.extend(Ext.tree.TreePanel, {
 });
 
 Ext.reg('multiselecttreepanel', Ext.ux.MultiSelectTreePanel);
+
 /**
  * Ext.ux.ToastWindow
  *
@@ -9787,6 +9832,7 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
     focus: Ext.emptyFn
 
 });
+
 /**
  * Plugin for the Ext.Panel class to support a collapsed header title
  * Also implements vertical rotation for east and west border panels
@@ -9905,7 +9951,9 @@ Ext.ux.PanelCollapsedTitle = (function() {
     }
   };
   return this;
-})();/*
+})();
+
+/*
  * By Jake Knerr - Copyright 2010 - supersonicecho@gmail.com
  *
  * Version 1.0
@@ -10113,7 +10161,9 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
             }
 
         }
-});Ext.ux.UserNotes = Ext.extend(Ext.Button, {
+});
+
+Ext.ux.UserNotes = Ext.extend(Ext.Button, {
 
     originalTitle : _('Notes (<b>{0}</b>)'),
     text  : String.format(_('Notes (<b>{0}</b>)'), '-'),
@@ -10433,6 +10483,7 @@ Ext.ux.DDSlidingTab = Ext.extend(Ext.dd.DDProxy, {
 });
 
 Ext.reg('usernotes', Ext.ux.UserNotes);
+
 Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
@@ -10488,6 +10539,7 @@ ui.task.ChangeFileOwner = function(config)
         }
     });
 };
+
 Ext.namespace('ui','ui.task','ui.task._CheckBuildTask');
 
 ui.task._CheckBuildTask.display = function()
@@ -10585,6 +10637,7 @@ ui.task.CheckBuildTask = function()
         }
     });
 };
+
 Ext.namespace('ui','ui.task','ui.task._CheckEntitiesTask');
 
 ui.task._CheckEntitiesTask.display = function()
@@ -10662,7 +10715,9 @@ ui.task.CheckEntitiesTask = function()
             }
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeIdx}
 ui.task.CheckFileTask = function(config)
@@ -10752,7 +10807,9 @@ ui.task.CheckFileTask = function(config)
             ui.cmp.ErrorFileGrid.getInstance().store.reload();
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.CheckXml = function(config)
@@ -10794,7 +10851,9 @@ ui.task.CheckXml = function(config)
             msg.hide();
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { ftype, fpath, fname, noConfirm }
 ui.task.ClearLocalChangeTask = function(config)
@@ -10961,7 +11020,9 @@ ui.task.ClearLocalChangeTask = function(config)
             }, this
         );
     }
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { patchID }
 ui.task.DeletePatchTask = function(config)
@@ -11003,7 +11064,9 @@ ui.task.DeletePatchTask = function(config)
                 }
             }
         });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { str }
 ui.task.GetBingTranslation = function(config)
@@ -11034,6 +11097,7 @@ ui.task.GetBingTranslation = function(config)
         }
     });
 };
+
 Ext.namespace('ui','ui.task');
 
 // config - { xmlID }
@@ -11059,7 +11123,9 @@ ui.task.GetFileInfoByXmlID = function(config)
             );
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { prefix, original, ftype, fid, fpath, fname }
 ui.task.GetFileTask = function(config)
@@ -11324,7 +11390,9 @@ ui.task.GetFileTask = function(config)
             Ext.getCmp('main-panel').fireEvent('tabLoaded', this.prefix, this.fid);
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { str }
 ui.task.GetGGTranslation = function(config)
@@ -11355,6 +11423,7 @@ ui.task.GetGGTranslation = function(config)
         }
     });
 };
+
 Ext.namespace('ui','ui.task');
 
 ui.task.LoadConfigTask = function(config)
@@ -11410,6 +11479,7 @@ ui.task.LoadConfigTask = function(config)
         }
     });
 };
+
 Ext.namespace('ui','ui.task');
 
 // config - { fpath, fname, storeRecord }
@@ -11449,7 +11519,9 @@ ui.task.MarkDeleteTask = function(config)
             }
         }, this
     );
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { patchID, patchName, nodesToAdd }
 ui.task.MoveToPatch = function(config)
@@ -11497,7 +11569,9 @@ ui.task.MoveToPatch = function(config)
                 Ext.MessageBox.alert(_('Error'), _(o.err));
             }
         });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { patchID, patchName, nodesToAdd }
 ui.task.MoveToWork = function(config)
@@ -11544,7 +11618,9 @@ ui.task.MoveToWork = function(config)
                 Ext.MessageBox.alert('Error', o.err);
             }
         });
-};Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
+};
+
+Ext.namespace('ui', 'ui.task', 'ui.task._PingTask');
 
 ui.task.PingTask = function()
 {
@@ -11786,7 +11862,9 @@ ui.task.PingTask.getInstance = function()
         ui.task._PingTask.instance = new ui.task.PingTask();
     }
     return ui.task._PingTask.instance;
-};Ext.namespace('ui', 'ui.task');
+};
+
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.SaveFileTask = function(config)
@@ -11921,7 +11999,9 @@ ui.task.SaveFileTask = function(config)
 
         }
     });
-};Ext.namespace('ui', 'ui.task');
+};
+
+Ext.namespace('ui', 'ui.task');
 
 // config - {prefix, ftype, fid, fpath, fname, lang, storeRecord}
 ui.task.SaveTransFileTask = function(config){
@@ -11999,6 +12079,7 @@ ui.task.SaveTransFileTask = function(config){
         }
     });
 };
+
 Ext.namespace('ui','ui.task');
 
 // config - { item, value, [notify=true] }
@@ -12033,7 +12114,9 @@ ui.task.SetFileProgressTask = function(config)
             }
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { item, value, [notify=true] }
 ui.task.setTopicTask = function(config)
@@ -12064,7 +12147,9 @@ ui.task.setTopicTask = function(config)
 
         }
     });
-};Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
+};
+
+Ext.namespace('ui','ui.task','ui.task._SystemUpdateTask');
 
 ui.task._SystemUpdateTask.refresh_ui = function()
 {
@@ -12188,7 +12273,9 @@ ui.task.SystemUpdateTask = function()
             }
         }
     });
-};Ext.namespace('ui','ui.task');
+};
+
+Ext.namespace('ui','ui.task');
 
 // config - { item, value, [notify=true] }
 ui.task.UpdateConfTask = function(config)
@@ -12235,7 +12322,9 @@ ui.task.UpdateConfTask = function(config)
             }
         }
     });
-};Ext.namespace('ui','ui.task','ui.task._UpdateSingleFolderTask');
+};
+
+Ext.namespace('ui','ui.task','ui.task._UpdateSingleFolderTask');
 
 ui.task._UpdateSingleFolderTask.getUpdateFolderResponse = function(node)
 {
@@ -12359,7 +12448,9 @@ ui.task.UpdateSingleFolderTask = function(node)
         return;
     }
     ui.task._UpdateSingleFolderTask.update(node);
-};Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
+};
+
+Ext.namespace('ui','ui.task','ui.task._VCSCommitTask');
 
 ui.task._VCSCommitTask.getCommitResponse = function()
 {
@@ -12606,6 +12697,7 @@ ui.task.VCSCommitTask = function(config)
         ui.task._VCSCommitTask.commit(files, config.patchID);
     }
 };
+
 Ext.namespace('ui','ui.cmp');
 
 ui.cmp.About = Ext.extend(Ext.Window,
@@ -12645,7 +12737,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                             '</div>' +
                             '<div id="phd-oe-about-info">' + PhDOE.app.name + //' ver ' + PhDOE.app.ver + '<br/>' +
                                 //'UI: ' + PhDOE.app.uiRevision + '<br/>' +
-                                ' Copyright &copy; 2008-2012 The PHP Group<br/>' +
+                                ' Copyright &copy; 2008-' + new Date().format('Y') + ' The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
                                 _('and <a href="http://git.php.net/?p=web/doc-editor.git;a=summary" target="_blank">others</a>') +
                             '</div>'
@@ -12674,7 +12766,9 @@ ui.cmp.About = Ext.extend(Ext.Window,
         });
         ui.cmp.About.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._AnonymousPatchWin');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._AnonymousPatchWin');
 
 ui.cmp._AnonymousPatchWin.form = Ext.extend(Ext.FormPanel,
 {
@@ -12825,7 +12919,9 @@ ui.cmp.AnonymousPatchWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 //------------------------------------------------------------------------------
 // BingTranslationPanel
@@ -12872,7 +12968,9 @@ ui.cmp.BingTranslationPanel = Ext.extend(Ext.FormPanel,
         });
         ui.cmp.BingTranslationPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._BuildStatus');
 
 //------------------------------------------------------------------------------
 // BuildStatus Internals
@@ -13062,6 +13160,7 @@ ui.cmp.BuildStatus = Ext.extend(Ext.grid.GridPanel,
         this.on('rowcontextmenu', this.onRowContextMenu, this);
     }
 });
+
 Ext.namespace('ui','ui.cmp','ui.cmp._ChangeFileOwner');
 
 ui.cmp._ChangeFileOwner.store = new Ext.data.Store({
@@ -13180,6 +13279,7 @@ ui.cmp.ChangeFileOwner = Ext.extend(Ext.Window,
         this.show();
     }
 });
+
 Ext.namespace('ui','ui.cmp');
 
 ui.cmp.Chat = Ext.extend(Ext.Window,
@@ -13212,7 +13312,9 @@ ui.cmp.Chat = Ext.extend(Ext.Window,
         });
         ui.cmp.Chat.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
 {
@@ -13262,7 +13364,9 @@ ui.cmp.CheckBuildPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CheckBuildPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CheckDoc');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._CheckDoc');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
@@ -13587,7 +13691,9 @@ ui.cmp.CheckDoc = Ext.extend(Ext.grid.GridPanel,
         this.on('celldblclick',    this.onCellDblClick,    this);
         this.on('cellcontextmenu', this.onCellContextMenu, this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CheckEntities');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._CheckEntities');
 
 //------------------------------------------------------------------------------
 // CheckDoc Internals
@@ -13778,7 +13884,9 @@ ui.cmp.CheckEntities = Ext.extend(Ext.grid.GridPanel,
         this.on('rowcontextmenu', this.onContextClick, this);
         this.on('rowdblclick',    this.onRowdblclick,  this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
 {
@@ -13816,7 +13924,9 @@ ui.cmp.CheckEntitiesPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CheckEntitiesPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
 {
@@ -13892,7 +14002,9 @@ ui.cmp.CheckXmlWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._CommitLogManager');
 
 ui.cmp._CommitLogManager.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
@@ -14068,7 +14180,9 @@ ui.cmp.CommitLogManager = Ext.extend(Ext.Window,
         });
         ui.cmp.CommitLogManager.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp', 'ui.cmp._CommitPrompt');
+});
+
+Ext.namespace('ui','ui.cmp', 'ui.cmp._CommitPrompt');
 
 ui.cmp._CommitPrompt.store = new Ext.data.GroupingStore(
 {
@@ -14266,7 +14380,9 @@ ui.cmp.CommitPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.CommitPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._DictionaryGrid');
 
 //------------------------------------------------------------------------------
 // DictionaryGrid internals
@@ -14547,7 +14663,9 @@ ui.cmp.DictionaryGrid = Ext.extend(Ext.Panel,
         });
         ui.cmp.DictionaryGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
 {
@@ -14750,7 +14868,9 @@ ui.cmp.DirectActionWin = Ext.extend(Ext.Window,
 
         this.show();
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf','ui.cmp._EditorCmd2Conf');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._EditorConf','ui.cmp._EditorCmd2Conf');
 
 //------------------------------------------------------------------------------
 // EditorConf Win internals
@@ -16197,6 +16317,7 @@ ui.cmp.EditorConf = Ext.extend(Ext.Window,
         ui.cmp.EditorConf.superclass.initComponent.call(this);
     }
 });
+
 Ext.namespace('ui','ui.cmp','ui.cmp._EmailPrompt');
 
 // config - { name, email }
@@ -16290,6 +16411,7 @@ ui.cmp.EmailPrompt = Ext.extend(Ext.Window,
         ui.cmp.EmailPrompt.superclass.initComponent.call(this);
     }
 });
+
 Ext.namespace('ui','ui.cmp','ui.cmp._EntitiesAcronymsPanel');
 
 //------------------------------------------------------------------------------
@@ -16493,7 +16615,9 @@ ui.cmp.EntitiesAcronymsPanel = Ext.extend(Ext.Panel,
 
         ui.cmp.EntitiesAcronymsPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._ErrorFileGrid');
+});
+
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._ErrorFileGrid');
 
 //------------------------------------------------------------------------------
 // ErrorFileGrid internals
@@ -17040,6 +17164,7 @@ ui.cmp.ErrorFileGrid.getInstance = function(config){
     }
     return ui.cmp._ErrorFileGrid.instance;
 };
+
 Ext.namespace('ui','ui.cmp');
 
 // ExecDiff
@@ -17097,6 +17222,7 @@ ui.cmp.ExecDiff = Ext.extend(Ext.Panel,
         ui.cmp.ExecDiff.superclass.initComponent.call(this);
     }
 });
+
 Ext.namespace('ui','ui.cmp','ui.cmp._FilePanel');
 
 //------------------------------------------------------------------------------
@@ -18080,6 +18206,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 this.fname
                             );
                         }
+                    }, {
+                        tooltip: _('Copy English Git revision'),
+                        iconCls: 'iconEditInNewTab',
+                        scope: this,
+                        handler: function() {
+                            window.prompt("Copy to clipboard: Ctrl+C, Enter", this.form.storeRecord.data.en_revision);
+                        }
                     }]
                 }, '->', (( this.ftype !== 'GGTRANS' ) ?
                             new ui.cmp._FilePanel.tbar.items.usernotes({
@@ -18287,6 +18420,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
         ui.cmp.FilePanel.superclass.initComponent.call(this);
     }
 });
+
 Ext.namespace('ui','ui.cmp');
 
 //------------------------------------------------------------------------------
@@ -18334,7 +18468,9 @@ ui.cmp.GoogleTranslationPanel = Ext.extend(Ext.FormPanel,
         });
         ui.cmp.GoogleTranslationPanel.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._MainMenu');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._MainMenu');
 
 ui.cmp.MainMenu = function(config)
 {
@@ -18765,6 +18901,7 @@ Ext.extend(ui.cmp.MainMenu, Ext.menu.Menu,
         });
     }
 });
+
 Ext.namespace('ui','ui.cmp','ui.cmp.MainPanel');
 
 ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
@@ -19191,7 +19328,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
             // Load diff data only if FilePath & FileName exist
             if( FilePath !== '' && FileName !== '' )
             {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php';
 
                 XHR({
@@ -19204,7 +19341,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
 
                         if( o.url === '404' ) {
 
-                            urlSite = 'http://' + window.location.host + ':' +
+                            urlSite = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
@@ -19230,7 +19367,7 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                     }
                 });
             } else {
-                previewUrl = 'http://' + window.location.host + ':' +
+                previewUrl = 'https://' + window.location.host + ':' +
                                  window.location.port + '/diffPreview.php?'+Ext.urlEncode({
                                      msg: _('Documentation page not available')
                                 });
@@ -19293,12 +19430,12 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
                             patchPermLink='';
 
                         if( patchID == '' ) {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patch='+FilePath+FileName+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('File: ') + FilePath+FileName+'</h2></a>';
                         } else {
-                            patchPermLink = '<a href="http://' + window.location.host + ':' +
+                            patchPermLink = '<a href="https://' + window.location.host + ':' +
                                     window.location.port + window.location.pathname +
                                     '?patchID='+patchID+'&project=' + PhDOE.project + '"><h2>' +
                                     _('Direct link to this patch')+' ; ' + _('Patch Name: ') + patchName+'</h2></a>';
@@ -19322,7 +19459,9 @@ ui.cmp.MainPanel = Ext.extend(Ext.ux.SlidingTabPanel, {
         }
     }
 });
-Ext.reg('mainpanel', ui.cmp.MainPanel);Ext.namespace('ui','ui.cmp');
+Ext.reg('mainpanel', ui.cmp.MainPanel);
+
+Ext.namespace('ui','ui.cmp');
 
 //config - { name, email }
 ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
@@ -19432,7 +19571,9 @@ ui.cmp.ManagePatchPrompt = Ext.extend(Ext.Window,
         });
         ui.cmp.ManagePatchPrompt.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._NotInENGrid');
 
 //------------------------------------------------------------------------------
 // NotInENGrid internals
@@ -19663,7 +19804,9 @@ ui.cmp.NotInENGrid.getInstance = function(config)
         ui.cmp._NotInENGrid.instance = new ui.cmp.NotInENGrid(config);
     }
     return ui.cmp._NotInENGrid.instance;
-};Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
+};
+
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PatchesTreeGrid', 'ui.cmp._PatchesTreeGrid.menu');
 
 //------------------------------------------------------------------------------
 // PatchesTreeGrid internals
@@ -19735,9 +19878,9 @@ ui.cmp._PatchesTreeGrid.menu.patches = function(config){
 Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
     init: function(){
         var node = this.node, allFiles = [],
-        currentUser = node.parentNode.attributes.task,
-        currentUserIsAnonymous = node.parentNode.attributes.isAnonymous,
-        currentUserHaveKarma = node.parentNode.attributes.haveKarma;
+            currentUser = node.parentNode.attributes.task,
+            currentUserIsAnonymous = node.parentNode.attributes.isAnonymous,
+            currentUserHaveKarma = node.parentNode.attributes.haveKarma;
 
         // We search for files to pass to patch
         this.node.cascade(function(node){
@@ -19801,36 +19944,36 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                 iconCls: 'iconDownloadDiff',
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
-                    '?patchID=' +
-                    node.attributes.idDB +
-                    '&csrfToken=' +
-                    csrfToken;
+                        '?patchID=' +
+                        node.attributes.idDB +
+                        '&csrfToken=' +
+                        csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',
                 hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma))
             },
 
-            // Commit item only when this patch belong to an anonymous user or user without karma and the current user is a valid VCS user with karma
+                // Commit item only when this patch belong to an anonymous user or user without karma and the current user is a valid VCS user with karma
 
-            new ui.cmp._WorkTreeGrid.menu.commit({
-                hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma)),
-                module: 'patches',
-                from: currentUserIsAnonymous ? 'anonymousPatch' : 'patch',
-                node: false,
-                folderNode: false,
-                patchNode: this.node,
-                userNode: this.node.parentNode
-            }),
-            {
-                xtype: 'menuseparator',
-                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
-            },
-            new ui.cmp._WorkTreeGrid.menu.admin({
-                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
-                from: 'patch',
-                node: this.node
-            })
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    hidden: !(PhDOE.user.haveKarma && (currentUser === PhDOE.user.login || !currentUserHaveKarma)),
+                    module: 'patches',
+                    from: currentUserIsAnonymous ? 'anonymousPatch' : 'patch',
+                    node: false,
+                    folderNode: false,
+                    patchNode: this.node,
+                    userNode: this.node.parentNode
+                }),
+                {
+                    xtype: 'menuseparator',
+                    hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
+                },
+                new ui.cmp._WorkTreeGrid.menu.admin({
+                    hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
+                    from: 'patch',
+                    node: this.node
+                })
             ]
         });
     }
@@ -19872,15 +20015,15 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.folders, Ext.menu.Menu, {
                 xtype: 'menuseparator',
                 hidden: !PhDOE.user.haveKarma
             },
-            new ui.cmp._WorkTreeGrid.menu.commit({
-                hidden: !PhDOE.user.haveKarma,
-                module: 'patches',
-                from: 'folder',
-                node: false,
-                folderNode: this.node,
-                patchNode: this.node.parentNode,
-                userNode: this.node.parentNode.parentNode
-            })
+                new ui.cmp._WorkTreeGrid.menu.commit({
+                    hidden: !PhDOE.user.haveKarma,
+                    module: 'patches',
+                    from: 'folder',
+                    node: false,
+                    folderNode: this.node,
+                    patchNode: this.node.parentNode,
+                    userNode: this.node.parentNode.parentNode
+                })
             ]
         });
     }
@@ -19949,12 +20092,12 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 iconCls: 'iconDownloadDiff',
                 handler: function(){
                     window.location.href = './do/downloadPatch' +
-                    '?FilePath=' +
-                    FilePath +
-                    '&FileName=' +
-                    FileName +
-                    '&csrfToken=' +
-                    csrfToken;
+                        '?FilePath=' +
+                        FilePath +
+                        '&FileName=' +
+                        FileName +
+                        '&csrfToken=' +
+                        csrfToken;
                 }
             }, {
                 xtype: 'menuseparator',
@@ -19975,17 +20118,17 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.files, Ext.menu.Menu, {
                 hidden: !(PhDOE.user.haveKarma && (owner === PhDOE.user.login || !ownerHaveKarma))
             },
                 new ui.cmp._WorkTreeGrid.menu.commit({
-                module: 'patches',
-                hidden: !(PhDOE.user.haveKarma && (owner === PhDOE.user.login || !ownerHaveKarma)),
-                from: 'file',
-                node: this.node,
-                folderNode: this.node.parentNode,
-                patchNode: this.node.parentNode.parentNode,
-                userNode: this.node.parentNode.parentNode.parentNode
-            }), {
-                xtype: 'menuseparator',
-                hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
-            },
+                    module: 'patches',
+                    hidden: !(PhDOE.user.haveKarma && (owner === PhDOE.user.login || !ownerHaveKarma)),
+                    from: 'file',
+                    node: this.node,
+                    folderNode: this.node.parentNode,
+                    patchNode: this.node.parentNode.parentNode,
+                    userNode: this.node.parentNode.parentNode.parentNode
+                }), {
+                    xtype: 'menuseparator',
+                    hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin)
+                },
                 new ui.cmp._WorkTreeGrid.menu.admin({
                     hidden: !(PhDOE.user.isGlobalAdmin || PhDOE.user.isLangAdmin),
                     fileLang: FileLang,
@@ -20445,11 +20588,11 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
         var rootNode = this.getRootNode(), nbFiles = 0, user, folder, files, i, j, h, g;
 
         rootNode.cascade(function(node){
-                if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
-                        if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
-                                nbFiles++;
-                        }
+            if( !node.isRoot && node.attributes.type !== 'user' && node.attributes.type !== 'folder' && node.attributes.type !== 'patch') {
+                if (node.parentNode.parentNode.parentNode.attributes.task === PhDOE.user.login) {
+                    nbFiles++;
                 }
+            }
         }, this);
 
         return nbFiles;
@@ -20474,6 +20617,7 @@ ui.cmp.PatchesTreeGrid.getInstance = function(config){
     }
     return ui.cmp._PatchesTreeGrid.instance;
 };
+
 Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingReviewGrid');
 
 //------------------------------------------------------------------------------
@@ -20925,6 +21069,7 @@ ui.cmp.PendingReviewGrid.getInstance = function(config){
     }
     return ui.cmp._PendingReviewGrid.instance;
 };
+
 Ext.namespace('ui', 'ui.cmp', 'ui.cmp._PendingTranslateGrid');
 
 //------------------------------------------------------------------------------
@@ -21288,6 +21433,7 @@ ui.cmp.PendingTranslateGrid.getInstance = function(config){
     }
     return ui.cmp._PendingTranslateGrid.instance;
 };
+
 Ext.namespace('ui','ui.cmp','ui.cmp._PortletBugs');
 
 //------------------------------------------------------------------------------
@@ -21556,7 +21702,9 @@ ui.cmp.PortletBugs.getInstance = function(config)
         ui.cmp._PortletBugs.instance = new ui.cmp.PortletBugs(config);
     }
     return ui.cmp._PortletBugs.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletInfo');
+};
+
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletInfo');
 
 //------------------------------------------------------------------------------
 // PortletInfo Internals
@@ -21998,6 +22146,7 @@ ui.cmp.PortletInfo.getInstance = function(config)
     }
     return ui.cmp._PortletInfo.instance;
 };
+
 Ext.namespace('ui','ui.cmp','ui.cmp._PortletLocalMail');
 
 //------------------------------------------------------------------------------
@@ -22216,7 +22365,9 @@ ui.cmp.PortletLocalMail.getInstance = function(config)
         ui.cmp._PortletLocalMail.instance = new ui.cmp.PortletLocalMail(config);
     }
     return ui.cmp._PortletLocalMail.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletSummary');
+};
+
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletSummary');
 
 //------------------------------------------------------------------------------
 // PortletSummary Internals
@@ -22413,7 +22564,9 @@ ui.cmp.PortletSummary.getInstance = function(config)
         ui.cmp._PortletSummary.instance = new ui.cmp.PortletSummary(config);
     }
     return ui.cmp._PortletSummary.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationGraph');
+};
+
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationGraph');
 
 function renderLibel(v) {
  return _(v);
@@ -22528,7 +22681,9 @@ ui.cmp.PortletTranslationGraph.getInstance = function(config)
         ui.cmp._PortletTranslationGraph.instance = new ui.cmp.PortletTranslationGraph(config);
     }
     return ui.cmp._PortletTranslationGraph.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationsGraph');
+};
+
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslationsGraph');
 
 ui.cmp._PortletTranslationsGraph.store = new Ext.data.Store({
     proxy : new Ext.data.HttpProxy({
@@ -22637,7 +22792,9 @@ ui.cmp.PortletTranslationsGraph.getInstance = function(config)
         ui.cmp._PortletTranslationsGraph.instance = new ui.cmp.PortletTranslationsGraph(config);
     }
     return ui.cmp._PortletTranslationsGraph.instance;
-};Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslator','ui.cmp._PortletReviewer');
+};
+
+Ext.namespace('ui','ui.cmp','ui.cmp._PortletTranslator','ui.cmp._PortletReviewer');
 
 //------------------------------------------------------------------------------
 // PortletTranslator internals
@@ -23148,7 +23305,9 @@ ui.cmp.PortletTranslator.getInstance = function(config)
         ui.cmp._PortletTranslator.instance = new ui.cmp.PortletTranslator(config);
     }
     return ui.cmp._PortletTranslator.instance;
-};Ext.namespace('ui','ui.cmp');
+};
+
+Ext.namespace('ui','ui.cmp');
 
 ui.cmp.PreviewFile = Ext.extend(Ext.Window,
 {
@@ -23200,7 +23359,9 @@ ui.cmp.PreviewFile = Ext.extend(Ext.Window,
         });
 
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
+});
+
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._RepositoryTree');
 
 //------------------------------------------------------------------------------
 // RepositoryTree internals
@@ -23876,6 +24037,7 @@ ui.cmp.RepositoryTree.getInstance = function(config){
     }
     return ui.cmp._RepositoryTree.instance;
 };
+
 Ext.namespace('ui', 'ui.cmp', 'ui.cmp._StaleFileGrid');
 
 //------------------------------------------------------------------------------
@@ -24359,6 +24521,7 @@ ui.cmp.StaleFileGrid.getInstance = function(config){
     }
     return ui.cmp._StaleFileGrid.instance;
 };
+
 Ext.namespace('ui','ui.cmp');
 
 ui.cmp.SystemUpdatePrompt = Ext.extend(Ext.Window,
@@ -24401,7 +24564,9 @@ ui.cmp.SystemUpdatePrompt = Ext.extend(Ext.Window,
             new ui.task.SystemUpdateTask();
         }
     }]
-});Ext.namespace('ui','ui.cmp','ui.cmp._VCSLogGrid');
+});
+
+Ext.namespace('ui','ui.cmp','ui.cmp._VCSLogGrid');
 
 //------------------------------------------------------------------------------
 // VCSLogGrid internals
@@ -24648,7 +24813,9 @@ ui.cmp.VCSLogGrid = Ext.extend(Ext.grid.GridPanel,
         });
         ui.cmp.VCSLogGrid.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui','ui.cmp');
+});
+
+Ext.namespace('ui','ui.cmp');
 
 // ViewVCDiff
 // config - {prefix, fid, fpath, fname, rev1, rev2}
@@ -24678,7 +24845,9 @@ ui.cmp.ViewVCDiff = Ext.extend(Ext.Panel,
         });
         ui.cmp.ViewVCDiff.superclass.initComponent.call(this);
     }
-});Ext.namespace('ui', 'ui.cmp', 'ui.cmp._WorkTreeGrid', 'ui.cmp._WorkTreeGrid.menu');
+});
+
+Ext.namespace('ui', 'ui.cmp', 'ui.cmp._WorkTreeGrid', 'ui.cmp._WorkTreeGrid.menu');
 
 //------------------------------------------------------------------------------
 // WorkTreeGrid internals
@@ -25870,6 +26039,7 @@ ui.cmp.WorkTreeGrid.getInstance = function(config){
     }
     return ui.cmp._WorkTreeGrid.instance;
 };
+
 var PhDOE = function()
 {
     Ext.QuickTips.init();
@@ -26007,7 +26177,7 @@ var PhDOE = function()
                     break;
                 case 'tabs_found' :
                     title = _('Error');
-                    mess  = _('It seems that you have inserted tab caracters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
+                    mess  = _('It seems that you have inserted tab characters into this file. Please, replace each one by a single space.<br>Tip: You can use the "Re-indent this entire file" button to replace all tabs by spaces.');
                     break;
                 case 'folder_already_exist' :
                     title = _('Error');
