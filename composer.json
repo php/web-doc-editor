@@ -1,7 +1,13 @@
 {
+    "name": "php/web-doc-editor",
+    "description": "PHP Documentation editor – edit.php.net",
     "require": {
         "czproject/git-php": "^3.18",
         "symfony/filesystem": "^5.2",
-        "symfony/finder": "^5.2"
+        "symfony/finder": "^5.2",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
     }
 }
