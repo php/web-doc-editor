@@ -6,3 +6,4 @@
 /js/login-all*.js
 /js/main-all*.js
 /*.lock
+/package-lock.json
