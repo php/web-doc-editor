@@ -981,6 +981,13 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                                 this.fname
                             );
                         }
+                    }, {
+                        tooltip: _('Copy English Git revision'),
+                        iconCls: 'iconEditInNewTab',
+                        scope: this,
+                        handler: function() {
+                            window.prompt("Copy to clipboard: Ctrl+C, Enter", this.form.storeRecord.data.en_revision);
+                        }
                     }]
                 }, '->', (( this.ftype !== 'GGTRANS' ) ?
                             new ui.cmp._FilePanel.tbar.items.usernotes({

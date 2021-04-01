@@ -5,9 +5,10 @@
 * The MySQLi extension
 * The cURL extension
 * Shell exec privileges
-* native vcs-client (e.g. using Subversion should have native svn-client)
+* native git client
 * Php mail function must be activate
 * Apache mod-rewrite module
+* [Grunt](https://gruntjs.com/)
 
 ## Configuration
 * Configuration is set in php/conf/
@@ -34,5 +35,4 @@
 ## Other notes
 * Anonymous authentication : anonymous with blank password
 * Or use your own SVN credentials
-* After modifying any .js, run scripts/utils/compress.sh, you need yui-compressor-2.4.2+
-  The script will look for scripts/utils/yuicompressor.jar
+* After modifying any .js, `grunt`
