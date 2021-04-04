@@ -39,7 +39,7 @@ ui.cmp.About = Ext.extend(Ext.Window,
                                 //'UI: ' + PhDOE.app.uiRevision + '<br/>' +
                                 ' Copyright &copy; 2008-' + new Date().format('Y') + ' The PHP Group<br/>' +
                                 _('Author:') + ' <a href="mailto:yannick@php.net">Yannick Torr&egrave;s</a> ' +
-                                _('and <a href="http://git.php.net/?p=web/doc-editor.git;a=summary" target="_blank">others</a>') +
+                                _('and <a href="https://github.com/php/web-doc-editor/" target="_blank">others</a>') +
                             '</div>'
                 }, {
                     title : _('Help and support'),
