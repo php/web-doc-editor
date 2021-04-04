@@ -547,7 +547,7 @@ var i18n = new Array();
 // In file: ../../js/ui/component/About.js
   i18n["About {0}"] = "About {0}";
   i18n["Author:"] = "Author:";
-  i18n["and <a href=\"http://git.php.net/?p=web/doc-editor.git;a=summary\" target=\"_blank\">others</a>"] = "and <a href=\"http://git.php.net/?p=web/doc-editor.git;a=summary\" target=\"_blank\">others</a>";
+  i18n["and <a href=\"https://github.com/php/web-doc-editor/\" target=\"_blank\">others</a>"] = "and <a href=\"https://github.com/php/web-doc-editor/\" target=\"_blank\">others</a>";
   i18n["Credits"] = "Credits";
   i18n["Javascript FrameWork"] = "Javascript FrameWork";
   i18n["Code editor"] = "Code editor";
