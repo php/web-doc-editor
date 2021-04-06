@@ -314,7 +314,7 @@ class AccountManager
 
                 // If this app is installed into Php's server, we use the standad way to verify login/password
                 if( $_SERVER["SERVER_NAME"] == "doc.php.net" ) {
-                    // We try to authenticate this user to master php server.
+                    // We try to authenticate this user to main.php.net server.
                     $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
                     $return['authMethod'] = 'masterPhp';
                 } else {
