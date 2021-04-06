@@ -42,11 +42,11 @@ class SvnClient
 
         $ctx = stream_context_create(array("http" => $opts));
 
-        $s = file_get_contents("https://master.php.net/fetch/cvsauth.php", false, $ctx);
+        $s = file_get_contents("https://main.php.net/fetch/cvsauth.php", false, $ctx);
 
         $a = @unserialize($s);
         if (!is_array($a)) {
-                return 'svn.php.net seems to be down !';
+                return 'main.php.net seems to be down !';
         }
         if (isset($a["errno"])) {
                 if( $a["errno"] == 0 ) { return 'svn login failed'; }
