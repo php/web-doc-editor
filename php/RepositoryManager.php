@@ -118,7 +118,6 @@ class RepositoryManager
             }
         }
         return false;
-
     }
 
 
@@ -134,10 +133,10 @@ class RepositoryManager
 
         $lock = new LockFile('project_' . $project . '_lock_checkout_repository');
 
-        if ($lock->lock()) {
-            // exec the checkout
+        if ($lock->lock())
             $rtn = VCSFactory::getInstance()->checkout();
-        }
+        else
+            $rtn = array();
 
         $lock->release();
 
