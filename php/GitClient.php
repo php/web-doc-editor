@@ -174,4 +174,38 @@ class GitClient
 
         return 'Invalid Credential';
     }
+
+    public function masterPhpAuthenticate($username, $password)
+    {
+
+        $post = http_build_query(
+            array(
+                "token"    => getenv("TOKEN"),
+                "username" => $username,
+                "password" => $password
+            )
+        );
+
+        $opts = array(
+            "method"  => "POST",
+            "header"  => "Content-type: application/x-www-form-urlencoded",
+            "content" => $post,
+        );
+
+        $ctx = stream_context_create(array("http" => $opts));
+
+        $s = file_get_contents("https://main.php.net/fetch/cvsauth.php", false, $ctx);
+
+        $a = @unserialize($s);
+        if (!is_array($a)) {
+            return 'main.php.net seems to be down !';
+        }
+        if (isset($a["errno"])) {
+            if( $a["errno"] == 0 ) { return 'svn login failed'; }
+            if( $a["errno"] == 1 ) { return 'Bad login'; }
+            if( $a["errno"] == 2 ) { return 'Bad password'; }
+        }
+
+        return true;
+    }
 }

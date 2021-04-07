@@ -311,18 +311,10 @@ class AccountManager
 
                 $this->isAnonymous = false;
                 $this->anonymousIdent = '';
-
-                // If this app is installed into Php's server, we use the standad way to verify login/password
-                if( $_SERVER["SERVER_NAME"] == "doc.php.net" ) {
-                    // We try to authenticate this user to main.php.net server.
-                    $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
-                    $return['authMethod'] = 'masterPhp';
-                } else {
-                    // We try to authenticate this user to VCS server.
-                    $AuthReturn = VCSFactory::getInstance()->svnAuthenticate($vcsLogin, $vcsPasswd);
-                    $return['authMethod'] = 'svnServer';
-                }
-
+                
+                // We try to authenticate this user to main.php.net server.
+                $AuthReturn = VCSFactory::getInstance()->masterPhpAuthenticate($vcsLogin, $vcsPasswd);
+                $return['authMethod'] = 'masterPhp';
 
                 if( $AuthReturn !== true ) {
                     $return['state'] = false;
