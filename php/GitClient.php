@@ -24,10 +24,10 @@ class GitClient
         $appConf = AccountManager::getInstance()->appConf;
         $project = AccountManager::getInstance()->project;
 
-        $languages = ['en', 'ru'];
+        $languages = RepositoryManager::getInstance()->getAvailableLanguage();
         foreach ($languages as $language) {
             $commands = [
-                new ExecStatement('cd %s', [$appConf[$project]['vcs.path'] . $language]),
+                new ExecStatement('cd %s', [$appConf[$project]['vcs.path'] . strtolower($language['code'])]),
                 new ExecStatement('git fetch'),
                 new ExecStatement('git reset --hard origin/master'),
             ];
