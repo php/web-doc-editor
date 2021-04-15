@@ -27,7 +27,7 @@ class GitClient
         $languages = RepositoryManager::getInstance()->getAvailableLanguage();
         foreach ($languages as $language) {
             $commands = [
-                new ExecStatement('cd %s', [$appConf[$project]['vcs.path'] . strtolower($language['code'])]),
+                new ExecStatement('cd %s', [$appConf[$project]['vcs.path'] . $language['code']]),
                 new ExecStatement('git fetch'),
                 new ExecStatement('git reset --hard origin/master'),
             ];
