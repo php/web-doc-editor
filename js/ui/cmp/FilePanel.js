@@ -982,7 +982,7 @@ ui.cmp.FilePanel = Ext.extend(Ext.form.FormPanel,
                             );
                         }
                     }, {
-                        tooltip: _('Copy English Git revision'),
+                        text: _('Copy English Git revision'),
                         iconCls: 'iconEditInNewTab',
                         scope: this,
                         handler: function() {
