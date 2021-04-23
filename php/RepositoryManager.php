@@ -657,6 +657,58 @@ class RepositoryManager
     }
 
     /**
+     * Delete a patch and clear changes
+     *
+     * @param $patchID The ID of the patch we want to delete
+     * @return true
+     */
+    public function deleteAndClearPatch($patchID)
+    {
+        $am       = AccountManager::getInstance();
+        $project  = $am->project;
+
+        // We start by retrieve patch information
+        $patchInfo = $this->getPatchInfo($patchID);
+
+        if( !$patchInfo ) {
+            return 'patch_delete_dont_exist'; // the patch don't exist
+        } else {
+
+            // We must check if we can delete this patch
+            // Either this patch must be own by the current user or the current user is a global admin for this project
+            if( $patchInfo->userID != $am->userID && !$am->isAdmin() ) {
+                return 'patch_delete_isnt_own_by_current_user';
+            }
+        }
+
+        // We start by change files for this patch.
+        $s = 'DELETE FROM
+                `work`
+            WHERE
+                `project` = "%s" AND
+                `patchID` =  %d';
+        $params = array(
+            $project,
+            $patchID
+        );
+        $this->conn->query($s, $params);
+
+        // We now delete this patch
+        $s = 'DELETE FROM
+                `patches`
+            WHERE
+                `project` = "%s" AND
+                `id`      =  %d';
+        $params = array(
+            $project,
+            $patchID
+        );
+        $this->conn->query($s, $params);
+
+        return true;
+    }
+
+    /**
      * Get information about a patch by his ID.
      *
      * @param $patchID The ID of this patch

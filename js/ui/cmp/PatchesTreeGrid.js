@@ -107,6 +107,15 @@ Ext.extend(ui.cmp._PatchesTreeGrid.menu.patches, Ext.menu.Menu, {
                     });
                 }
             }, {
+                text: _('Delete this patch and clear this change'),
+                iconCls: 'iconTrash',
+                hidden: (currentUser !== PhDOE.user.login),
+                handler: function() {
+                    ui.task.DeleteAndClearPatchTask({
+                        patchID: node.attributes.idDB
+                    });
+                }
+            }, {
                 xtype: 'menuseparator',
                 hidden: !(currentUser == PhDOE.user.login)
             }, {
@@ -507,6 +516,35 @@ ui.cmp.PatchesTreeGrid = Ext.extend(Ext.ux.tree.TreeGrid, {
 
                     }
 
+                    // Now, we remove this patches
+                    patches.remove(true);
+
+                    // Is Folder contains some others child ? If not, we remove this user too.
+                    if (Ext.isEmpty(user.childNodes)) {
+                        user.remove(true);
+                    }
+
+                    // We update the FilesCounter
+                    this.updateFilesCounter();
+
+                    return;
+
+
+                }
+            }
+        }
+    },
+
+    deleteAndClearPatch: function(patchID){
+        var rootNode = this.getRootNode(), user, patches, folders, file, nodesToAdd = [], i, j, k, l;
+
+        for (i = 0; i < rootNode.childNodes.length; i++) {
+            user = rootNode.childNodes[i];
+
+            for (j = 0; j < user.childNodes.length; j++) {
+                patches = user.childNodes[j];
+
+                if (patches.attributes.idDB === patchID) {
                     // Now, we remove this patches
                     patches.remove(true);
 

@@ -2121,6 +2121,32 @@ class ExtJsController
             );
         }
     }
+
+    /**
+     * Delete a patch and clear changes.
+     * @params patchID The ID of the patch we want to delete
+     */
+    public function deleteAndClearPatch()
+    {
+        if (!AccountManager::getInstance()->isLogged()) {
+            return JsonResponseBuilder::failure();
+        }
+
+        $patchID = $this->getRequestVariable('patchID');
+
+        $r = RepositoryManager::getInstance()->deleteAndClearPatch($patchID);
+
+        if( $r === true ) {
+            return JsonResponseBuilder::success();
+        } else {
+            return JsonResponseBuilder::failure(
+                array(
+                    'err' => $r
+                )
+            );
+        }
+    }
+    
     /**
      * Get patch List for a the current user
      *
