@@ -19,7 +19,6 @@ $info = array(
                 "google" => 0,
                 "facebook" => 0,
                 "github" => 0,
-                "instagram" => 0,
                 "stackoverflow" => 0,
                 "linkedin" => 0
             )
@@ -190,7 +189,6 @@ echo "</table>(Nb connexion per auth Service :
 Google => ".$info["nbCon"]["authService"]["google"].";
 Facebook => ".$info["nbCon"]["authService"]["facebook"].";
 Github => ".$info["nbCon"]["authService"]["github"].";
-Instagram => ".$info["nbCon"]["authService"]["instagram"].";
 Stackoverflow => ".$info["nbCon"]["authService"]["stackoverflow"].";
 Linkedin => ".$info["nbCon"]["authService"]["linkedin"].";
 VCS => ".$info["nbCon"]["authService"]["VCS"].";

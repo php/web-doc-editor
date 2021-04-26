@@ -19,9 +19,6 @@ xmllint.bin = "/usr/bin/xmllint"
 
 bing.key = ""
 
-oauth.instagram.clientID = ""
-oauth.instagram.clientSecret = ""
-
 oauth.github.clientID = ""
 oauth.github.clientSecret = ""
 

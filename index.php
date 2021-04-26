@@ -111,33 +111,6 @@ if (!isset($_SESSION['userID']))
     // Init var
     if( !isset($_SESSION['oauth']) )  $_SESSION['oauth'] = array();
 
-    /* instagram */
-    if( isset($_GET['oauth']) && $_GET['oauth'] == 'instagram') {
-
-        $_SESSION['oauth']['identService'] = 'instagram';
-
-        $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
-        $instagram->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
-
-        $instagram->RequestCode();
-    }
-
-    if( isset($_SESSION['oauth']['identService']) && $_SESSION['oauth']['identService'] == 'instagram' && isset($_GET['code']) ) {
-
-        $instagram = new Oauth_instagram($Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientID'], $Conf['GLOBAL_CONFIGURATION']['oauth.instagram.clientSecret']);
-        $instagram->redirect_uri = $Conf['GLOBAL_CONFIGURATION']['oauth.redirectURL'];
-        $access_token = $instagram->RequestToken($_GET['code']);
-        $user = $instagram->getUserInfo($access_token->access_token);
-
-        $jsVar .= "
-            auth.service   = \"".$_SESSION['oauth']['identService']."\",
-            auth.serviceID = \"".htmlspecialchars($user->id)."\",
-            auth.login     = \"".htmlspecialchars($user->username)."\",
-            auth.email     = \"\";
-        ";
-
-    }
-
     /* Github */
     if( isset($_GET['oauth']) && $_GET['oauth'] == 'github') {
 

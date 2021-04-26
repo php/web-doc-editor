@@ -158,11 +158,7 @@ var PhDOE_loginPage = function()
                                         '</a>'+
                                         '<a href="?oauth=stackoverflow" title="Stackoverflow">'+
                                             '<img id="auth-img-stackoverflow" src="themes/img/auth_stackoverflow_40.png" />'+
-                                        '</a>'+
-                                        '<a href="?oauth=instagram" title="Instagram">'+
-                                            '<img id="auth-img-instagram" src="themes/img/auth_instagram_40.png" />'+
-                                        '</a>'+
-                                        '<br/>'+
+                                        '</a>'+                                 
                                         '<a href="?oauth=twitter" title="Twitter">'+
                                             '<img id="auth-img-twitter" src="themes/img/auth_twitter_40.png" />'+
                                         '</a>'+
@@ -179,7 +175,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-disable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "github" :
@@ -188,7 +183,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-disable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "google" :
@@ -197,7 +191,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-enable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "linkedin" :
@@ -206,7 +199,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-disable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-enable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "stackoverflow" :
@@ -215,16 +207,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-disable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-enable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "instagram" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-enable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-disable');
                                                     break;
                                                 case "twitter" :
@@ -233,7 +215,6 @@ var PhDOE_loginPage = function()
                                                     Ext.get('auth-img-google').addClass('oauth-disable');
                                                     Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                                     Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-instagram').addClass('oauth-disable');
                                                     Ext.get('auth-img-twitter').addClass('oauth-enable');
                                                     break;
                                             }
@@ -244,7 +225,6 @@ var PhDOE_loginPage = function()
                                             Ext.get('auth-img-google').addClass('oauth-disable');
                                             Ext.get('auth-img-linkedin').addClass('oauth-disable');
                                             Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                            Ext.get('auth-img-instagram').addClass('oauth-disable');
                                             Ext.get('auth-img-twitter').addClass('oauth-disable');
                                         }
                                     }

@@ -658,8 +658,6 @@ var PhDOE = function()
                                             libelContent = '<img src="themes/img/auth_stackoverflow.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'linkedin' ) {
                                             libelContent = '<img src="themes/img/auth_linkedin.png" style="vertical-align:middle"> '+PhDOE.user.login;
-                                        } else if( PhDOE.user.authService == 'instagram' ) {
-                                            libelContent = '<img src="themes/img/auth_instagram.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         } else if( PhDOE.user.authService == 'twitter' ) {
                                             libelContent = '<img src="themes/img/auth_twitter.png" style="vertical-align:middle"> '+PhDOE.user.login;
                                         }
