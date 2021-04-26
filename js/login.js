@@ -77,24 +77,6 @@ var PhDOE_loginPage = function()
 
         },
 
-        externalCredentials : function(service, name, id, email) {
-
-            this.authService = service;
-            this.authServiceID = id;
-
-            // Name is always given
-            Ext.getCmp('login-form-vcsLogin').setValue(name);
-            Ext.getCmp('login-form-vcsLogin').disable();
-            Ext.getCmp('login-form-vcsPasswd').disable();
-            Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_'+service+'.png" style="vertical-align: middle" /> <b>' + service.ucFirst() +'</b>', false);
-
-            if( email ) {
-                Ext.getCmp('login-form-email').setValue(email);
-            }
-
-            Ext.getCmp('login-btn').setText('Anonymous login');
-        },
-
         drawForm : function()
         {
             var win;
@@ -110,21 +92,6 @@ var PhDOE_loginPage = function()
                     plain       : true,
                     title       : 'Control Access',
                     iconCls     : 'iconKey',
-                    listeners: {
-                        show: function(w) {
-                            win.drawers.e.show();
-                            win.drawers.e.setHeight(240);
-                        },
-                        afterrender: function(w) {
-
-                            if( auth && auth.service ) {
-
-                                PhDOE_loginPage.externalCredentials(auth.service, auth.login, auth.serviceID, auth.email);
-
-                            }
-
-                        }
-                    },
                     plugins     : [
                         new Ext.ux.plugins.WindowDrawer({
                             html      : 'To request a VCS account please read :<div style="text-align: center; margin-top: 20px;"><span id="request-account"></span></div>',
@@ -134,102 +101,6 @@ var PhDOE_loginPage = function()
                             resizable : false,
                             height    : 80
                         }),
-                        new Ext.ux.plugins.WindowDrawer({
-                            title:'&nbsp;&nbsp;Sign in with...',
-                            side      : 'e',
-                            animate   : true,
-                            resizable : false,
-                            width     : 210,
-                            height    : 200,
-                            bodyStyle : 'margin: 10px;',
-                            html      : '<div id="auth-login">'+
-                                        '<a href="?oauth=facebook" title="Facebook">'+
-                                            '<img id="auth-img-fb" src="themes/img/auth_facebook_40.png" class="" />'+
-                                        '</a> '+
-                                        '<a href="?oauth=github" title="Github">'+
-                                            '<img id="auth-img-github" src="themes/img/auth_github_40.png" class="" />'+
-                                        '</a>'+
-                                        '<a href="?oauth=google" title="Google">'+
-                                            '<img id="auth-img-google" src="themes/img/auth_google_40.png" />'+
-                                        '</a> '+
-                                        '<br/>'+
-                                        '<a href="?oauth=linkedin" title="Linkedin">'+
-                                            '<img id="auth-img-linkedin" src="themes/img/auth_linkedin_40.png" />'+
-                                        '</a>'+
-                                        '<a href="?oauth=stackoverflow" title="Stackoverflow">'+
-                                            '<img id="auth-img-stackoverflow" src="themes/img/auth_stackoverflow_40.png" />'+
-                                        '</a>'+                                 
-                                        '<a href="?oauth=twitter" title="Twitter">'+
-                                            '<img id="auth-img-twitter" src="themes/img/auth_twitter_40.png" />'+
-                                        '</a>'+
-                                        '</div>',
-                            listeners: {
-                                    afterrender: function() {
-
-                                        if( auth.service ) {
-
-                                            switch(auth.service) {
-                                                case "facebook" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-enable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "github" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-enable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "google" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-enable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "linkedin" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-enable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "stackoverflow" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-enable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                                    break;
-                                                case "twitter" :
-                                                    Ext.get('auth-img-fb').addClass('oauth-disable');
-                                                    Ext.get('auth-img-github').addClass('oauth-disable');
-                                                    Ext.get('auth-img-google').addClass('oauth-disable');
-                                                    Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                                    Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                                    Ext.get('auth-img-twitter').addClass('oauth-enable');
-                                                    break;
-                                            }
-
-                                        } else {
-                                            Ext.get('auth-img-fb').addClass('oauth-disable');
-                                            Ext.get('auth-img-github').addClass('oauth-disable');
-                                            Ext.get('auth-img-google').addClass('oauth-disable');
-                                            Ext.get('auth-img-linkedin').addClass('oauth-disable');
-                                            Ext.get('auth-img-stackoverflow').addClass('oauth-disable');
-                                            Ext.get('auth-img-twitter').addClass('oauth-disable');
-                                        }
-                                    }
-                            }
-                        })
                     ],
                     items : [{
                         xtype     : 'panel',
@@ -297,7 +168,7 @@ var PhDOE_loginPage = function()
                         }, {
                             fieldLabel      : 'Login',
                             name            : 'vcsLogin',
-                            value           : ( loginApp ) ? loginApp : 'anonymous',
+                            value           : ( loginApp ) ? loginApp : '',
                             id              : 'login-form-vcsLogin',
                             enableKeyEvents : true,
                             listeners       : {
@@ -307,42 +178,6 @@ var PhDOE_loginPage = function()
                                         Ext.getCmp('login-form-vcsPasswd').focus();
                                     }
                                 },
-                                keyup: function(f,e)
-                                {
-                                    var v = this.getValue(),
-                                        currentLoginText = Ext.getCmp('login-btn').getText();
-
-                                    if( v == 'anonymous' || v == '' ) {
-                                        if( currentLoginText != 'Anonymous login' ) {
-                                            Ext.getCmp('login-btn').setText('Anonymous login');
-                                        }
-                                    } else {
-                                        if( currentLoginText == 'Anonymous login' ) {
-                                            Ext.getCmp('login-btn').setText('Login');
-                                        }
-                                    }
-
-                                },
-                                focus : function(f)
-                                {
-                                    var v = this.getValue();
-                                    if( v == 'anonymous' )
-                                    {
-                                        this.setValue('');
-                                        Ext.getCmp('login-btn').setText('Login');
-                                    }
-
-                                },
-                                blur : function(f)
-                                {
-                                    var v = this.getValue();
-                                    if( v == 'anonymous' || v == '' )
-                                    {
-                                        this.setValue('');
-                                        Ext.getCmp('login-btn').setText('Anonymous login');
-                                    }
-
-                                }
                             }
                         }, {
                             fieldLabel      : 'Password',
@@ -439,7 +274,7 @@ var PhDOE_loginPage = function()
                             }
                         }
                     }, '->', {
-                        text      :  ( loginApp && loginApp != 'anonymous' ) ? 'Login' : 'Anonymous login',
+                        text      :  'Login',
                         id        : 'login-btn',
                         disabled  : false,
                         listeners : {
@@ -485,32 +320,6 @@ var PhDOE_loginPage = function()
 
                                 } // validate
                             }
-                        }
-                    },{
-                        scope: this,
-                        text: 'Reset',
-                        handler: function() {
-
-                            Ext.getCmp('login-form-vcsLogin').enable();
-
-                            Ext.getCmp('login-form-vcsPasswd').enable();
-                            Ext.getCmp('login-form-vcsPasswd').setValue('');
-                            Ext.getCmp('login-form-auth').setText('<img src="themes/img/auth_php.png" style="vertical-align: middle" /> <b>Php.net</b>', false);
-
-                            this.authService = 'VCS';
-                            this.authServiceID = '';
-
-                            if( loginApp ) {
-                                Ext.getCmp('login-form-vcsLogin').setValue(loginApp);
-                                Ext.getCmp('login-btn').setText('Login');
-                                Ext.getCmp('login-form-email').setValue(Ext.util.Cookies.get("email"));
-
-                            } else {
-                                Ext.getCmp('login-form-vcsLogin').setValue('anonymous');
-                                Ext.getCmp('login-btn').setText('Anonymous login');
-                                Ext.getCmp('login-form-email').setValue('');
-                            }
-
                         }
                     }]
                 });
