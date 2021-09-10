@@ -6,12 +6,19 @@ class GitRepository extends \Cz\Git\GitRepository
 {
     public function getLastFileCommitId($path)
     {
+        $hashes = [];
         $this->begin();
-        $lastLine = exec('git log -n 1 --pretty=format:%H -- ' . $path);
+        exec('git log -n 5 --pretty=format:%H -- ' . $path, $hashes);
         $this->end();
 
-        if (preg_match('/^[0-9a-f]{40}$/i', $lastLine)) {
-            return $lastLine;
+        foreach ($hashes as $hash) {
+            if (
+                (strpos($this->getCommitMessage($hash), '[skip-revcheck]') !== false) ||
+                !preg_match('/^[0-9a-f]{40}$/i', $hash)) {
+                continue;
+            }
+
+            return $hash;
         }
 
         return null;
