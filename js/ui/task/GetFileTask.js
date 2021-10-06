@@ -188,14 +188,24 @@ ui.task.GetFileTask = function(config)
                             f.removeLine(1);
                         }
 
-                        f.setLine(1, '<!-- $Revision: $ -->');
+                        if(f.getLine(1) !== '<!-- $Revision: $ -->') {
+                            // f.setLine(0, '');
+                            f.insertLine(0, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->');
+                            f.insertLine(1, '<!-- Reviewed: no -->');
 
-                        f.insertLine(1, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->');
-                        f.insertLine(2, '<!-- Reviewed: no -->');
+                            // Ensure the next line is an empty line
+                            if( !Ext.isEmpty(f.getLine(3)) ) {
+                                f.insertLine(2,'');
+                            }
+                        } else {
+                            f.setLine(1, '<!-- $Revision: $ -->');
+                            f.insertLine(1, '<!-- EN-Revision: ' + o.originalRev + ' Maintainer: ' + PhDOE.user.login + ' Status: ready -->');
+                            f.insertLine(2, '<!-- Reviewed: no -->');
 
-                        // Ensure the next line is an empty line
-                        if( !Ext.isEmpty(f.getLine(4)) ) {
-                            f.insertLine(3,'');
+                            // Ensure the next line is an empty line
+                            if( !Ext.isEmpty(f.getLine(4)) ) {
+                                f.insertLine(3,'');
+                            }
                         }
 
                         // Mark as dirty this editor now
